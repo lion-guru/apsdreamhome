@@ -1140,7 +1140,10 @@ class EmployeeSelfServiceController extends BaseController
 
         $payslip = $this->db->fetch("
             SELECT pi.*, pr.run_number, pr.period_start, pr.period_end, pr.pay_date,
-                   u.name as employee_name, s.basic_salary, s.hra, s.da, s.conveyance, s.medical_allowance, s.special_allowance
+                   u.name as employee_name, u.email as employee_email,
+                   e.employee_code, e.department, e.designation,
+                   s.basic_salary, s.hra, s.da, s.conveyance, s.medical_allowance, s.special_allowance,
+                   s.pf_employee, s.tds, s.professional_tax
             FROM payroll_items pi
             JOIN payroll_runs pr ON pi.run_id = pr.id
             JOIN employees e ON pi.employee_id = e.id
@@ -1154,10 +1157,105 @@ class EmployeeSelfServiceController extends BaseController
             $this->redirect(BASE_URL . '/employee/self-service/payslips');
         }
 
-        // Generate PDF (simplified - would use TCPDF in production)
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: attachment; filename="payslip_' . $payslip['run_number'] . '.pdf"');
-        echo "PDF generation would go here - " . $payslip['employee_name'] . " - " . $payslip['run_number'];
+        // Generate PDF using TCPDF
+        require_once __DIR__ . '/../../../vendor/tecnickcom/tcpdf/tcpdf.php';
+
+        $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        $pdf->SetCreator('APS Dream Home');
+        $pdf->SetAuthor('APS Dream Home HR System');
+        $pdf->SetTitle('Payslip - ' . $payslip['run_number']);
+        $pdf->SetSubject('Salary Payslip');
+        $pdf->SetKeywords('payslip, salary, HR, APS Dream Home');
+
+        $pdf->SetHeaderData('assets/images/logo.png', 30, 'APS Dream Home', 'Salary Payslip - ' . $payslip['run_number']);
+        $pdf->setHeaderFont(array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+        $pdf->AddPage();
+
+        // Company header
+        $html = '<table style="width:100%; border:0;">';
+        $html .= '<tr><td style="width:60%;"><strong style="font-size:18px;color:#1e3a8a;">APS Dream Home</strong><br/>';
+        $html .= '<span style="font-size:10px;color:#64748b;">HR Management System</span></td>';
+        $html .= '<td style="width:40%;text-align:right;"><strong style="font-size:16px;color:#1e3a8a;">SALARY PAYSLIP</strong><br/>';
+        $html .= '<span style="font-size:10px;color:#64748b;">' . $payslip['run_number'] . '</span></td></tr>';
+        $html .= '</table><hr style="border:1px solid #e2e8f0;"/>';
+
+        // Employee info
+        $html .= '<table style="width:100%; border:0; margin-top:10px;">';
+        $html .= '<tr><td style="width:25%;"><strong>Employee Name:</strong></td><td style="width:25%;">' . htmlspecialchars($payslip['employee_name']) . '</td>';
+        $html .= '<td style="width:25%;"><strong>Employee Code:</strong></td><td style="width:25%;">' . htmlspecialchars($payslip['employee_code'] ?? '—') . '</td></tr>';
+        $html .= '<tr><td><strong>Email:</strong></td><td>' . htmlspecialchars($payslip['employee_email'] ?? '—') . '</td>';
+        $html .= '<td><strong>Department:</strong></td><td>' . htmlspecialchars($payslip['department'] ?? '—') . '</td></tr>';
+        $html .= '<tr><td><strong>Designation:</strong></td><td>' . htmlspecialchars($payslip['designation'] ?? '—') . '</td>';
+        $html .= '<td><strong>Employee Code:</strong></td><td>' . htmlspecialchars($payslip['employee_code'] ?? '—') . '</td></tr>';
+        $html .= '</table><hr style="border:1px solid #e2e8f0; margin:10px 0;"/>';
+
+        // Pay period
+        $html .= '<table style="width:100%; border:0; margin-top:10px;">';
+        $html .= '<tr><td style="width:25%;"><strong>Pay Period:</strong></td><td style="width:25%;">' . date('d M Y', strtotime($payslip['period_start'])) . ' to ' . date('d M Y', strtotime($payslip['period_end'])) . '</td>';
+        $html .= '<td style="width:25%;"><strong>Pay Date:</strong></td><td style="width:25%;">' . date('d M Y', strtotime($payslip['pay_date'])) . '</td></tr>';
+        $html .= '<tr><td><strong>Run Number:</strong></td><td>' . htmlspecialchars($payslip['run_number']) . '</td>';
+        $html .= '<td><strong>Pay Date:</strong></td><td>' . date('d M Y', strtotime($payslip['pay_date'])) . '</td></tr>';
+        $html .= '</table><hr style="border:1px solid #e2e8f0; margin:10px 0;"/>';
+
+        // Earnings
+        $html .= '<table style="width:100%; border-collapse:collapse; margin-top:10px;">';
+        $html .= '<tr style="background:#1e3a8a;color:white;"><th style="padding:8px;border:1px solid #e2e8f0;">Earnings</th><th style="padding:8px;border:1px solid #e2e8f0;">Amount (₹)</th></tr>';
+        
+        $basic = $payslip['basic_salary'] ?? 0;
+        $hra = $payslip['hra'] ?? 0;
+        $da = $payslip['da'] ?? 0;
+        $conveyance = $payslip['conveyance'] ?? 0;
+        $medical = $payslip['medical_allowance'] ?? 0;
+        $special = $payslip['special_allowance'] ?? 0;
+        $gross = $basic + $hra + $da + $conveyance + $medical + $special;
+
+        $html .= '<tr><td style="padding:8px;border:1px solid #e2e8f0;">Basic Salary</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($basic, 2) . '</td></tr>';
+        $html .= '<tr style="background:#f8fafc;"><td style="padding:8px;border:1px solid #e2e8f0;">HRA</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($hra, 2) . '</td></tr>';
+        $html .= '<tr><td style="padding:8px;border:1px solid #e2e8f0;">DA</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($da, 2) . '</td></tr>';
+        $html .= '<tr style="background:#f8fafc;"><td style="padding:8px;border:1px solid #e2e8f0;">Conveyance</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($conveyance, 2) . '</td></tr>';
+        $html .= '<tr><td style="padding:8px;border:1px solid #e2e8f0;">Medical Allowance</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($medical, 2) . '</td></tr>';
+        $html .= '<tr style="background:#f8fafc;"><td style="padding:8px;border:1px solid #e2e8f0;">Special Allowance</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($special, 2) . '</td></tr>';
+        $html .= '<tr style="background:#1e3a8a;color:white;font-weight:bold;"><td style="padding:8px;border:1px solid #e2e8f0;">Gross Earnings</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($gross, 2) . '</td></tr>';
+        $html .= '</table><br/>';
+
+        // Deductions
+        $pf = $payslip['pf_employee'] ?? 0;
+        $tds = $payslip['tds'] ?? 0;
+        $profTax = $payslip['professional_tax'] ?? 0;
+        $totalDeductions = $pf + $tds + $profTax;
+        $netPay = $gross - $totalDeductions;
+
+        $html .= '<table style="width:100%; border-collapse:collapse; margin-top:10px;">';
+        $html .= '<tr style="background:#dc2626;color:white;"><th style="padding:8px;border:1px solid #e2e8f0;">Deductions</th><th style="padding:8px;border:1px solid #e2e8f0;">Amount (₹)</th></tr>';
+        $html .= '<tr><td style="padding:8px;border:1px solid #e2e8f0;">PF (Employee)</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($pf, 2) . '</td></tr>';
+        $html .= '<tr style="background:#f8fafc;"><td style="padding:8px;border:1px solid #e2e8f0;">TDS</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($tds, 2) . '</td></tr>';
+        $html .= '<tr><td style="padding:8px;border:1px solid #e2e8f0;">Professional Tax</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($profTax, 2) . '</td></tr>';
+        $html .= '<tr style="background:#dc2626;color:white;font-weight:bold;"><td style="padding:8px;border:1px solid #e2e8f0;">Total Deductions</td><td style="padding:8px;border:1px solid #e2e8f0;text-align:right;">' . number_format($totalDeductions, 2) . '</td></tr>';
+        $html .= '</table><br/>';
+
+        // Net Pay
+        $html .= '<table style="width:100%; border-collapse:collapse; margin-top:10px;">';
+        $html .= '<tr style="background:#16a34a;color:white;font-weight:bold;font-size:14px;"><td style="padding:12px;border:1px solid #e2e8f0;">Net Pay</td><td style="padding:12px;border:1px solid #e2e8f0;text-align:right;">₹' . number_format($netPay, 2) . '</td></tr>';
+        $html .= '</table><br/><br/>';
+
+        // Footer
+        $html .= '<hr style="border:1px solid #e2e8f0; margin:20px 0;"/>';
+        $html .= '<table style="width:100%; border:0;">';
+        $html .= '<tr><td style="width:50%;"><strong>Prepared by:</strong> HR Department, APS Dream Home</td>';
+        $html .= '<td style="width:50%;text-align:right;"><strong>Authorized Signatory</strong></td></tr>';
+        $html .= '</table>';
+
+        $pdf->writeHTML($html, true, false, true, false, '');
+
+        $pdf->Output('payslip_' . $payslip['run_number'] . '.pdf', 'D');
         exit;
     }
 
