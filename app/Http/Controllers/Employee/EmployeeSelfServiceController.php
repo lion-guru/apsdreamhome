@@ -1367,4 +1367,61 @@ class EmployeeSelfServiceController extends BaseController
             'filters' => $_GET
         ]);
     }
+
+    // ──────────────────────────────────────────────
+    // DOCUMENT DETAIL & DOWNLOAD
+    // ──────────────────────────────────────────────
+
+    public function documentDetail($id)
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION["employee_id"];
+
+        $docVaultService = new \App\Services\DocumentVaultService();
+        $document = $docVaultService->getDocument($id);
+
+        if (!$document || $document["employee_id"] != $employeeId) {
+            $_SESSION["error"] = "Document not found";
+            $this->redirect(BASE_URL . "/employee/self-service/documents");
+        }
+
+        $verificationHistory = $this->db->fetchAll("
+            SELECT dv.*, u.name as verifier_name 
+            FROM document_verification_log dv
+            LEFT JOIN users u ON dv.verified_by = u.id
+            WHERE dv.document_id = ? AND dv.tenant_id = ?
+            ORDER BY dv.verified_at DESC
+        ", [$id, $this->tenantId()]);
+
+        return $this->render("employee/self_service/document_detail", [
+            "page_title" => "Document: " . $document["document_name"],
+            "document" => $document,
+            "verificationHistory" => $verificationHistory,
+        ]);
+    }
+
+    public function documentDownload($id)
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION["employee_id"];
+
+        $docVaultService = new \App\Services\DocumentVaultService();
+        $document = $docVaultService->getDocument($id);
+
+        if (!$document || $document["employee_id"] != $employeeId) {
+            $_SESSION["error"] = "Document not found";
+            $this->redirect(BASE_URL . "/employee/self-service/documents");
+        }
+
+        if (!empty($document["file_path"]) && file_exists(PUBLIC_PATH . "/" . $document["file_path"])) {
+            header("Content-Type: " . $document["mime_type"]);
+            header("Content-Disposition: attachment; filename=\"" . basename($document["file_path"]) . "\"");
+            header("Content-Length: " . $document["file_size"]);
+            readfile(PUBLIC_PATH . "/" . $document["file_path"]);
+            exit;
+        } else {
+            $_SESSION["error"] = "File not found";
+            $this->redirect(BASE_URL . "/employee/self-service/documents");
+        }
+    }
 }
