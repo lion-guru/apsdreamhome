@@ -15,9 +15,17 @@ $document = $document ?? [];
             <h4 class="mb-1 fw-bold"><i class="fas fa-file-alt me-2 text-primary"></i><?= htmlspecialchars($document['document_name'] ?? 'Unknown') ?></h4>
             <p class="text-muted mb-0 small"><?= htmlspecialchars($document['category_name'] ?? '') ?></p>
         </div>
-        <a href="<?= BASE_URL ?>/employee/self-service/documents" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i> Back
-        </a>
+        <div class="d-flex gap-2">
+            <?php if ($document['verification_status'] !== 'verified'): ?>
+                <form method="POST" action="<?= BASE_URL ?>/employee/self-service/documents/<?= $document['id'] ?>/verify" onsubmit="return confirm('Request verification for this document?')">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+                    <button type="submit" class="btn btn-warning"><i class="fas fa-shield-alt me-1"></i> Request Verification</button>
+                </form>
+            <?php endif; ?>
+            <a href="<?= BASE_URL ?>/employee/self-service/documents" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back
+            </a>
+        </div>
     </div>
 
     <!-- Status & Summary -->
