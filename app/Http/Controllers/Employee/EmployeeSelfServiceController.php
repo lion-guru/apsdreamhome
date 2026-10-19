@@ -1023,4 +1023,250 @@ class EmployeeSelfServiceController extends BaseController
             'filters' => $filters
         ]);
     }
+
+    // ──────────────────────────────────────────────
+    // EXPENSE CLAIMS
+    // ──────────────────────────────────────────────
+
+    public function expenses()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $claims = $this->service = new \App\Services\ExpenseReimbursementService();
+        $claims = $this->service->getEmployeeClaims($employeeId);
+        $categories = $this->service->getCategories(['is_active' => 1]);
+
+        return $this->render('employee/self_service/expenses', [
+            'page_title' => 'My Expense Claims',
+            'claims' => $claims,
+            'categories' => $categories,
+        ]);
+    }
+
+    public function expenseStore()
+    {
+        $this->requireEmployeeLogin();
+        $this->validateCsrfOrFail();
+
+        $data = [
+            'category_id' => (int)($_POST['category_id'] ?? 0),
+            'claim_date' => $_POST['claim_date'],
+            'description' => $_POST['description'] ?? '',
+            'items' => $_POST['items'] ?? [],
+        ];
+
+        $result = $this->service->submitClaim($_SESSION['employee_id'], $data);
+        $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+        $this->redirect(BASE_URL . '/employee/self-service/expenses');
+    }
+
+    public function expenseDetail($id)
+    {
+        $this->requireEmployeeLogin();
+        $claim = $this->service->getClaim($id);
+        if (!$claim || $claim['employee_id'] != $_SESSION['employee_id']) {
+            $_SESSION['error'] = 'Claim not found';
+            $this->redirect(BASE_URL . '/employee/self-service/expenses');
+        }
+        return $this->render('employee/self_service/expense_detail', [
+            'page_title' => 'Claim: ' . $claim['claim_number'],
+            'claim' => $claim,
+        ]);
+    }
+
+    // ──────────────────────────────────────────────
+    // PERFORMANCE & GOALS
+    // ──────────────────────────────────────────────
+
+    public function performance()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $performanceService = new \App\Services\PerformanceService();
+        $goals = $performanceService->getEmployeeGoals($employeeId);
+
+        return $this->render('employee/self_service/performance', [
+            'page_title' => 'My Performance & Goals',
+            'goals' => $goals,
+        ]);
+    }
+
+    public function performanceProgress()
+    {
+        $this->requireEmployeeLogin();
+        $this->validateCsrfOrFail();
+
+        $performanceService = new \App\Services\PerformanceService();
+        $result = $performanceService->recordProgress((int)($_POST['goal_id'] ?? 0), [
+            'checkpoint_date' => $_POST['checkpoint_date'],
+            'actual_value' => (float)($_POST['actual_value'] ?? 0),
+            'notes' => $_POST['notes'] ?? '',
+            'reviewer_id' => $_SESSION['employee_id'],
+        ]);
+        return $this->jsonResponse($result);
+    }
+
+    // ──────────────────────────────────────────────
+    // PAYSLIPS
+    // ──────────────────────────────────────────────
+
+    public function payslips()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $payrollService = new \App\Services\PayrollService();
+        // Get payslips for this employee
+        $payslips = $this->db->fetchAll("
+            SELECT pi.*, pr.run_number, pr.period_start, pr.period_end, pr.pay_date
+            FROM payroll_items pi
+            JOIN payroll_runs pr ON pi.run_id = pr.id
+            WHERE pi.employee_id = ? AND pi.tenant_id = ? AND pi.status = 'paid'
+            ORDER BY pr.period_end DESC
+        ", [$employeeId, $this->tenantId()]);
+
+        return $this->render('employee/self_service/payslips', [
+            'page_title' => 'My Payslips',
+            'payslips' => $payslips,
+        ]);
+    }
+
+    public function downloadPayslip($id)
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $payslip = $this->db->fetch("
+            SELECT pi.*, pr.run_number, pr.period_start, pr.period_end, pr.pay_date,
+                   u.name as employee_name, s.basic_salary, s.hra, s.da, s.conveyance, s.medical_allowance, s.special_allowance
+            FROM payroll_items pi
+            JOIN payroll_runs pr ON pi.run_id = pr.id
+            JOIN employees e ON pi.employee_id = e.id
+            JOIN users u ON e.user_id = u.id
+            LEFT JOIN salary_structures s ON pi.salary_structure_id = s.id
+            WHERE pi.id = ? AND pi.employee_id = ? AND pi.tenant_id = ? AND pi.status = 'paid'
+        ", [$id, $employeeId, $this->tenantId()]);
+
+        if (!$payslip) {
+            $_SESSION['error'] = 'Payslip not found';
+            $this->redirect(BASE_URL . '/employee/self-service/payslips');
+        }
+
+        // Generate PDF (simplified - would use TCPDF in production)
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="payslip_' . $payslip['run_number'] . '.pdf"');
+        echo "PDF generation would go here - " . $payslip['employee_name'] . " - " . $payslip['run_number'];
+        exit;
+    }
+
+    // ──────────────────────────────────────────────
+    // DOCUMENTS
+    // ──────────────────────────────────────────────
+
+    public function documents()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $docVaultService = new \App\Services\DocumentVaultService();
+        $documents = $docVaultService->getEmployeeDocuments($employeeId);
+        $categories = $docVaultService->getCategories(['is_active' => 1]);
+
+        return $this->render('employee/self_service/documents', [
+            'page_title' => 'My Documents',
+            'documents' => $documents,
+            'categories' => $categories,
+        ]);
+    }
+
+    public function documentUpload()
+    {
+        $this->requireEmployeeLogin();
+        $this->validateCsrfOrFail();
+
+        if (!isset($_FILES['document_file']) || $_FILES['document_file']['error'] !== UPLOAD_ERR_OK) {
+            $_SESSION['error'] = 'No file uploaded';
+            $this->redirect(BASE_URL . '/employee/self-service/documents');
+        }
+
+        $docVaultService = new \App\Services\DocumentVaultService();
+        $data = [
+            'category_id' => (int)($_POST['category_id'] ?? 0),
+            'document_name' => $_POST['document_name'] ?? '',
+            'issue_date' => $_POST['issue_date'] ?? null,
+            'expiry_date' => $_POST['expiry_date'] ?? null,
+            'issuing_authority' => $_POST['issuing_authority'] ?? null,
+            'document_number_ref' => $_POST['document_number_ref'] ?? null,
+            'is_confidential' => !empty($_POST['is_confidential']),
+            'access_level' => $_POST['access_level'] ?? 'self',
+        ];
+
+        try {
+            $result = $docVaultService->uploadDocument($_SESSION['employee_id'], $data, $_FILES['document_file']);
+            $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+        } catch (Exception $e) {
+            $_SESSION['error'] = 'Upload failed: ' . $e->getMessage();
+        }
+        $this->redirect(BASE_URL . '/employee/self-service/documents');
+    }
+
+    public function documentVerifyRequest($id)
+    {
+        $this->requireEmployeeLogin();
+        $this->validateCsrfOrFail();
+
+        $docVaultService = new \App\Services\DocumentVaultService();
+        $doc = $docVaultService->getDocument($id);
+        if (!$doc || $doc['employee_id'] != $_SESSION['employee_id']) {
+            $_SESSION['error'] = 'Document not found';
+            $this->redirect(BASE_URL . '/employee/self-service/documents');
+        }
+
+        $result = $docVaultService->verifyDocument($id, $_SESSION['employee_id'], 'pending', 'Employee requested verification');
+        $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
+        $this->redirect(BASE_URL . '/employee/self-service/documents');
+    }
+
+    // ──────────────────────────────────────────────
+    // LEAVE CALENDAR
+    // ──────────────────────────────────────────────
+
+    public function leaveCalendar()
+    {
+        $this->requireEmployeeLogin();
+        $employeeId = $_SESSION['employee_id'];
+
+        $holidayService = new \App\Services\HolidayCalendarService();
+        $filters = [
+            'type' => $_GET['type'] ?? null,
+            'region' => $_GET['region'] ?? null,
+            'year' => $_GET['year'] ?? null,
+            'month' => $_GET['month'] ?? null,
+            'is_active' => $_GET['is_active'] ?? null
+        ];
+
+        $holidays = $holidayService->getHolidays($filters);
+        $stats = $holidayService->getStats();
+        $holidayTypes = $holidayService->getHolidayTypes();
+
+        // Get employee leaves
+        $leaves = $this->db->fetchAll("
+            SELECT el.*, lt.name as leave_type_name
+            FROM employee_leaves el
+            LEFT JOIN leave_types lt ON el.leave_type_id = lt.id
+            WHERE el.employee_id = ? AND el.status IN ('approved', 'pending')
+            ORDER BY el.start_date
+        ", [$employeeId]);
+
+        return $this->render('employee/self_service/leave_calendar', [
+            'page_title' => 'Leave & Holiday Calendar',
+            'holidays' => $holidays,
+            'leaves' => $leaves,
+            'stats' => $stats,
+            'holiday_types' => $holidayTypes,
+            'filters' => $_GET
+        ]);
+    }
 }
