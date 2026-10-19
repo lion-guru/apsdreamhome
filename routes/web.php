@@ -1397,6 +1397,17 @@ $router->get('/employee/legal/quick-action-hub/counts', 'Employee\\LegalAdvisorC
 $router->post('/employee/legal/verify-stamp-paper', 'Employee\\LegalAdvisorController@verifyStampPaper');
 $router->post('/employee/legal/process-cancellation', 'Employee\\LegalAdvisorController@processCancellationSettlement');
 
+// Manual Calling Desk (Jio Fiber Free Calling & SMS)
+// Universal Quick Call & SMS Desk (any authenticated user — telecaller/HR/admin/associate/agent)
+$router->get('/quick-call', 'Universal\\QuickCallController@index');
+$router->post('/quick-call/log-call', 'Universal\\QuickCallController@logCall');
+$router->post('/quick-call/send-sms', 'Universal\\QuickCallController@sendSmsTemplate');
+$router->post('/quick-call/bulk-sms', 'Universal\\QuickCallController@bulkSms');
+
+$router->get('/employee/manual-calling', 'Employee\\ManualCallingDeskController@index');
+$router->post('/employee/manual-calling/log-call', 'Employee\\ManualCallingDeskController@logCall');
+$router->post('/employee/manual-calling/send-sms-template', 'Employee\\ManualCallingDeskController@sendSmsTemplate');
+
 $router->get('/employee/telecalling-dashboard', 'Employee\\TelecallingController@dashboard');
 $router->post('/employee/telecalling/log-call', 'Employee\\TelecallingController@logCall');
 $router->get('/employee/telecalling/desk', 'Employee\\TelecallingController@callingDesk');
@@ -2770,6 +2781,78 @@ $router->post('/admin/team/destroy/{id}', 'App\\Http\\Controllers\\Admin\\TeamCo
 $router->get('/admin/expenses', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
 $router->get('/admin/expenses/create', 'App\\Http\\Controllers\\Admin\\ExpensesController@create');
 $router->get('/admin/expense', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
+
+// ============================================================
+// PHASE 5 HR ADMIN ROUTES
+// ============================================================
+
+// Expense Reimbursement
+$router->get('/admin/expense-reimbursement', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@index');
+$router->get('/admin/expense-reimbursement/create', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@create');
+$router->post('/admin/expense-reimbursement/store', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@store');
+$router->get('/admin/expense-reimbursement/{id}', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@show');
+$router->get('/admin/expense-reimbursement/{id}/edit', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@edit');
+$router->post('/admin/expense-reimbursement/{id}/update', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@update');
+$router->post('/admin/expense-reimbursement/{id}/approve', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@approve');
+$router->post('/admin/expense-reimbursement/{id}/reject', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@reject');
+$router->post('/admin/expense-reimbursement/{id}/pay', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@pay');
+$router->post('/admin/expense-reimbursement/category/store', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@storeCategory');
+$router->get('/admin/expense-reimbursement/stats', 'App\\Http\\Controllers\\Admin\\ExpenseReimbursementController@stats');
+
+// Performance & Goals
+$router->get('/admin/performance', 'App\\Http\\Controllers\\Admin\\PerformanceController@index');
+$router->get('/admin/performance/create', 'App\\Http\\Controllers\\Admin\\PerformanceController@create');
+$router->post('/admin/performance/store', 'App\\Http\\Controllers\\Admin\\PerformanceController@store');
+$router->get('/admin/performance/{id}', 'App\\Http\\Controllers\\Admin\\PerformanceController@show');
+$router->get('/admin/performance/{id}/edit', 'App\\Http\\Controllers\\Admin\\PerformanceController@edit');
+$router->post('/admin/performance/{id}/update', 'App\\Http\\Controllers\\Admin\\PerformanceController@update');
+$router->post('/admin/performance/{id}/progress', 'App\\Http\\Controllers\\Admin\\PerformanceController@recordProgress');
+$router->get('/admin/performance/stats', 'App\\Http\\Controllers\\Admin\\PerformanceController@stats');
+
+// Payroll Management
+$router->get('/admin/payroll', 'App\\Http\\Controllers\\Admin\\PayrollController@index');
+$router->get('/admin/payroll/create', 'App\\Http\\Controllers\\Admin\\PayrollController@create');
+$router->post('/admin/payroll/store', 'App\\Http\\Controllers\\Admin\\PayrollController@store');
+$router->get('/admin/payroll/{id}', 'App\\Http\\Controllers\\Admin\\PayrollController@show');
+$router->post('/admin/payroll/{id}/calculate', 'App\\Http\\Controllers\\Admin\\PayrollController@calculate');
+$router->post('/admin/payroll/{id}/approve', 'App\\Http\\Controllers\\Admin\\PayrollController@approve');
+$router->post('/admin/payroll/{id}/process', 'App\\Http\\Controllers\\Admin\\PayrollController@process');
+$router->get('/admin/payroll/stats', 'App\\Http\\Controllers\\Admin\\PayrollController@stats');
+$router->get('/admin/statutory-returns', 'App\\Http\\Controllers\\Admin\\PayrollController@statutoryReturns');
+$router->post('/admin/statutory-returns/{id}/file', 'App\\Http\\Controllers\\Admin\\PayrollController@fileStatutoryReturn');
+
+// Recruitment / ATS
+$router->get('/admin/recruitment', 'App\\Http\\Controllers\\Admin\\RecruitmentController@index');
+$router->get('/admin/recruitment/create', 'App\\Http\\Controllers\\Admin\\RecruitmentController@create');
+$router->post('/admin/recruitment/store', 'App\\Http\\Controllers\\Admin\\RecruitmentController@store');
+$router->get('/admin/recruitment/{id}', 'App\\Http\\Controllers\\Admin\\RecruitmentController@show');
+$router->get('/admin/recruitment/{id}/edit', 'App\\Http\\Controllers\\Admin\\RecruitmentController@edit');
+$router->post('/admin/recruitment/{id}/update', 'App\\Http\\Controllers\\Admin\\RecruitmentController@update');
+$router->post('/admin/recruitment/{id}/publish', 'App\\Http\\Controllers\\Admin\\RecruitmentController@publish');
+$router->get('/admin/recruitment/{id}/applications', 'App\\Http\\Controllers\\Admin\\RecruitmentController@applications');
+$router->post('/admin/recruitment/applications/{appId}/schedule', 'App\\Http\\Controllers\\Admin\\RecruitmentController@scheduleInterview');
+$router->post('/admin/recruitment/interviews/{id}/feedback', 'App\\Http\\Controllers\\Admin\\RecruitmentController@submitFeedback');
+$router->post('/admin/recruitment/offers', 'App\\Http\\Controllers\\Admin\\RecruitmentController@createOffer');
+$router->post('/admin/recruitment/offers/{id}/send', 'App\\Http\\Controllers\\Admin\\RecruitmentController@sendOffer');
+$router->post('/admin/recruitment/offers/{id}/accept', 'App\\Http\\Controllers\\Admin\\RecruitmentController@acceptOffer');
+$router->get('/admin/recruitment/stats', 'App\\Http\\Controllers\\Admin\\RecruitmentController@stats');
+
+// Document Vault
+$router->get('/admin/document-vault', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@index');
+$router->get('/admin/document-vault/categories', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@categories');
+$router->post('/admin/document-vault/categories', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@storeCategory');
+$router->get('/admin/document-vault/documents', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@documents');
+$router->post('/admin/document-vault/upload', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@upload');
+$router->get('/admin/document-vault/{id}', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@show');
+$router->post('/admin/document-vault/{id}/verify', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@verify');
+$router->get('/admin/document-vault/requests', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@requests');
+$router->post('/admin/document-vault/requests', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@createRequest');
+$router->post('/admin/document-vault/requests/{id}/verify', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@verifyRequest');
+$router->get('/admin/document-vault/stats', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@stats');
+$router->post('/admin/document-vault/send-reminders', 'App\\Http\\Controllers\\Admin\\DocumentVaultController@sendReminders');
+
+// Admin Expenses
+$router->get('/admin/expenses', 'App\\Http\\Controllers\\Admin\\ExpensesController@index');
 
 // Admin FAQ
 $router->get('/admin/faqs', 'App\\Http\\Controllers\\Admin\\FaqController@index');
@@ -6611,6 +6694,31 @@ $router->post('/employee/self-service/offboarding/update', 'Employee\\EmployeeSe
 
 // Employee Self-Service Holiday Calendar
 $router->get('/employee/self-service/holiday-calendar', 'Employee\\EmployeeSelfServiceController@holidayCalendar');
+
+// ============================================================
+// PHASE 5 EMPLOYEE SELF-SERVICE ROUTES
+// ============================================================
+
+// Employee Expense Claims
+$router->get('/employee/self-service/expenses', 'Employee\\EmployeeSelfServiceController@expenses');
+$router->post('/employee/self-service/expenses/store', 'Employee\\EmployeeSelfServiceController@expenseStore');
+$router->get('/employee/self-service/expenses/{id}', 'Employee\\EmployeeSelfServiceController@expenseDetail');
+
+// Employee Performance & Goals
+$router->get('/employee/self-service/performance', 'Employee\\EmployeeSelfServiceController@performance');
+$router->post('/employee/self-service/performance/progress', 'Employee\\EmployeeSelfServiceController@performanceProgress');
+
+// Employee Payslips
+$router->get('/employee/self-service/payslips', 'Employee\\EmployeeSelfServiceController@payslips');
+$router->get('/employee/self-service/payslip/download/{id}', 'Employee\\EmployeeSelfServiceController@downloadPayslip');
+
+// Employee Documents
+$router->get('/employee/self-service/documents', 'Employee\\EmployeeSelfServiceController@documents');
+$router->post('/employee/self-service/documents/upload', 'Employee\\EmployeeSelfServiceController@documentUpload');
+$router->post('/employee/self-service/documents/{id}/verify', 'Employee\\EmployeeSelfServiceController@documentVerifyRequest');
+
+// Employee Leave Calendar
+$router->get('/employee/self-service/leave-calendar', 'Employee\\EmployeeSelfServiceController@leaveCalendar');
 
 // Admin Training / L&D
 $router->get('/admin/training/courses', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourses');
