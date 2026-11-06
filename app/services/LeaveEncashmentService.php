@@ -22,17 +22,28 @@ class LeaveEncashmentService
      */
     public function getEncashmentPolicy(int $employeeId): array
     {
-        $emp = $this->fetchOne("
-            SELECT e.id, e.designation, e.department, e.joining_date, e.salary
-            FROM employees e
-            WHERE e.id = ?{$this->tenantSql()}
-        ", array_merge([$employeeId], $this->tVal()));
+        // Phase 4/7: use IdentityService for profile lookup
+        $identity = new \App\Services\IdentityService();
+        $empUserId = $identity->resolveEmployeeUserId($employeeId);
+        $emp = null;
+        if ($empUserId > 0) {
+            $profile = $identity->getEmployeeProfile($empUserId);
+            if ($profile) {
+                $emp = [
+                    'id' => $employeeId,
+                    'designation' => $profile['designation'] ?? '',
+                    'department' => $profile['department'] ?? '',
+                    'joining_date' => $profile['joining_date'] ?? null,
+                    'salary' => $profile['salary'] ?? 0,
+                ];
+            }
+        }
 
         if (!$emp) return ['eligible' => false, 'message' => 'Employee not found'];
 
         // Get leave balances
-        $balances = $this->fetchAll("
-            SELECT lb.*, lt.name as leave_type_name, lt.code as leave_type_code, lt.is_encashable, lt.max_encashable_days
+        $balances = $this->db->fetchAll("
+            SELECT lb.*, lt.name as leave_type_name, lt.code as leave_type_code, lt.is_encashable
             FROM employee_leave_balances lb
             JOIN leave_types lt ON lb.leave_type_id = lt.id
             WHERE lb.employee_id = ? AND lb.year = YEAR(CURDATE()) AND lt.is_encashable = 1{$this->tenantSql()}
@@ -40,7 +51,7 @@ class LeaveEncashmentService
 
         $totalEncashable = 0;
         foreach ($balances as $b) {
-            $encashable = min($b['remaining_days'] ?? 0, $b['max_encashable_days'] ?? 0);
+            $encashable = $b['remaining_days'] ?? 0;
             $totalEncashable += $encashable;
         }
 
@@ -144,7 +155,7 @@ class LeaveEncashmentService
                     'net_amount' => $netAmount
                 ]
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -229,7 +240,7 @@ class LeaveEncashmentService
 
             $this->db->commit();
             return ['success' => true, 'message' => 'Leave encashment paid successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -289,10 +300,11 @@ class LeaveEncashmentService
     private function creditWallet(int $employeeId, float $amount, string $description, string $reference): void
     {
         try {
-            $emp = $this->fetchOne("SELECT user_id FROM employees WHERE id = ?", [$employeeId]);
-            if (!$emp) return;
+            // Phase 4/7: use IdentityService for legacy-id → user_id resolution
+            $empUserId = (new \App\Services\IdentityService())->resolveEmployeeUserId($employeeId);
+            if ($empUserId <= 0) return;
 
-            $wallet = $this->fetchOne("SELECT * FROM user_wallets WHERE user_id = ?", [$emp['user_id']]);
+            $wallet = $this->db->fetchOne("SELECT * FROM user_wallets WHERE user_id = ?", [$empUserId]);
             if (!$wallet) return;
 
             $newBalance = (float)$wallet['balance'] + $amount;
@@ -302,7 +314,7 @@ class LeaveEncashmentService
                 INSERT INTO wallet_transactions (wallet_id, type, amount, balance_after, description, reference, status, tenant_id, created_at)
                 VALUES (?, 'credit', ?, ?, ?, ?, 'completed', 1, NOW())
             ", [$wallet['id'], $amount, $newBalance, $reference, $reference]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Wallet credit failed: " . $e->getMessage());
         }
     }
