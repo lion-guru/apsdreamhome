@@ -623,11 +623,7 @@ class MLMCommissionEngine
                 $sourceUserId = (int)$booking['sales_manager_id'];
             } elseif (!empty($booking['associate_id'])) {
                 // plot_bookings.associate_id references associates.id (table PK), not users.id
-                $aStmt = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? LIMIT 1");
-                $aStmt->execute([$booking['associate_id']]);
-                $ar = $aStmt->fetch(PDO::FETCH_ASSOC);
-                if ($ar && !empty($ar['user_id'])) {
-                    $sourceUserId = (int)$ar['user_id'];
+                if (($sourceUserId = (new \App\Services\IdentityService())->resolveAssociateUserId((int)booking['associate_id'])) > 0) {
                 }
             }
             if ($sourceUserId <= 0) {
@@ -862,11 +858,7 @@ class MLMCommissionEngine
             if (!empty($booking['sales_manager_id'])) {
                 $sourceUserId = (int)$booking['sales_manager_id'];
             } elseif (!empty($booking['associate_id'])) {
-                $aStmt = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? LIMIT 1");
-                $aStmt->execute([$booking['associate_id']]);
-                $ar = $aStmt->fetch(PDO::FETCH_ASSOC);
-                if ($ar && !empty($ar['user_id'])) {
-                    $sourceUserId = (int)$ar['user_id'];
+                if (($sourceUserId = (new \App\Services\IdentityService())->resolveAssociateUserId((int)booking['associate_id'])) > 0) {
                 }
             }
             if ($sourceUserId <= 0) {

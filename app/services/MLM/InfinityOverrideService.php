@@ -297,10 +297,7 @@ class InfinityOverrideService
     {
         if (!$this->db) return null;
         try {
-            $stmt = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? LIMIT 1");
-            $stmt->execute([$associateId]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row ? (int)$row['user_id'] : null;
+            return (new \App\Services\IdentityService())->resolveAssociateUserId((int)$associateId) ?: null;
         } catch (\Throwable $e) {
             return null;
         }
