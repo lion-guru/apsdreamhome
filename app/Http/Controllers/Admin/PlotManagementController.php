@@ -17,11 +17,13 @@ class PlotManagementController extends AdminController
     use \App\Traits\TenantAwareTrait;
 
     private $loggingService;
+    private $cacheService;
 
     public function __construct()
     {
         parent::__construct();
         $this->loggingService = new LoggingService();
+        $this->cacheService = new \App\Services\CacheService();
 
         // Register middlewares
         $this->middleware('csrf', ['only' => ['store', 'update', 'destroy', 'bulkUpdate']]);
@@ -45,13 +47,13 @@ class PlotManagementController extends AdminController
     {
         try {
             $sites = $this->db->fetchAll("SELECT id, name, state_name, district_name, name as colony_name FROM colonies ORDER BY name");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $sites = [];
         }
         // S272: gata source list for plot cutting — parcels per colony (view filters by colony via JS).
         try {
             $gataParcels = $this->db->fetchAll("SELECT id, colony_id, khasra_no, village, area_bigha FROM land_parcels ORDER BY colony_id, khasra_no");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $gataParcels = [];
         }
         $this->render('admin/plots/create', [
@@ -105,7 +107,7 @@ class PlotManagementController extends AdminController
             if ($parcelId > 0) {
                 try {
                     $parcel = $this->db->fetchRow("SELECT id, colony_id, khasra_no FROM land_parcels WHERE id = ?", [$parcelId]);
-                } catch (\Exception $e) { $parcel = null; }
+                } catch (\Throwable $e) { $parcel = null; }
                 if (!$parcel || (int)$parcel['colony_id'] !== intval($data['colony_id'])) {
                     return $this->jsonError('Selected gata belongs to another colony', 400);
                 }
@@ -171,7 +173,7 @@ class PlotManagementController extends AdminController
 
             $this->setFlash('error', 'Failed to create plot');
             return $this->redirect('/admin/plots/create');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Plot Store error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to create plot: ' . $e->getMessage());
             return $this->redirect('/admin/plots/create');
@@ -239,8 +241,15 @@ class PlotManagementController extends AdminController
             $stmt->execute($params);
             $plots = $stmt->fetchAll();
 
-            // Get colonies for filter
-            $sites = $this->db->fetchAll("SELECT id, name as colony_name FROM colonies ORDER BY name");
+            // Cache colonies list (rarely changes, 10 min TTL)
+            $cacheKey = 'colonies_list';
+            $cachedSites = $this->cacheService->get($cacheKey);
+            if ($cachedSites !== false && $cachedSites !== '') {
+                $sites = json_decode($cachedSites, true);
+            } else {
+                $sites = $this->db->fetchAll("SELECT id, name as colony_name FROM colonies ORDER BY name");
+                $this->cacheService->set($cacheKey, json_encode($sites), 600);
+            }
 
             $data = [
                 'page_title' => 'Plot Management - APS Dream Home',
@@ -260,7 +269,7 @@ class PlotManagementController extends AdminController
             ];
 
             return $this->render('admin/plots/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Plot Management Index error: " . $e->getMessage());
             $data = [
                 'page_title' => 'Plot Management - APS Dream Home',
@@ -293,7 +302,7 @@ class PlotManagementController extends AdminController
             ];
 
             return $this->render('admin/plots/dashboard', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Plot Management Dashboard error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load dashboard');
             return $this->redirect('admin/plot_management');
@@ -369,7 +378,7 @@ class PlotManagementController extends AdminController
             ];
 
             return $this->render('admin/plots/allocation', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Plot Allocation error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load allocation data');
             return $this->redirect('admin/plot_management');
@@ -451,11 +460,11 @@ class PlotManagementController extends AdminController
                     'success' => true,
                     'message' => "Allocation {$action}d successfully"
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Process Allocation error: " . $e->getMessage());
             return $this->jsonError('Failed to process allocation', 500);
         }
@@ -528,7 +537,7 @@ class PlotManagementController extends AdminController
             ];
 
             return $this->render('admin/plots/development', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Plot Development error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load development data');
             return $this->redirect('admin/plot_management');
@@ -580,7 +589,7 @@ class PlotManagementController extends AdminController
                     } else {
                         $failed++;
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $failed++;
                 }
             }
@@ -591,7 +600,7 @@ class PlotManagementController extends AdminController
                 'updated' => $updated,
                 'failed' => $failed
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Bulk Update error: " . $e->getMessage());
             return $this->jsonError('Failed to perform bulk update', 500);
         }
@@ -632,7 +641,7 @@ class PlotManagementController extends AdminController
             $stats['pending_allocations'] = (int)($result['total'] ?? 0);
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Dashboard Stats error: " . $e->getMessage());
             return [];
         }
@@ -654,7 +663,7 @@ class PlotManagementController extends AdminController
                     ORDER BY plot_count DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Site Summary error: " . $e->getMessage());
             return [];
         }
@@ -692,7 +701,7 @@ class PlotManagementController extends AdminController
             });
 
             return array_slice($activities, 0, 10);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Recent Activity error: " . $e->getMessage());
             return [];
         }
@@ -731,7 +740,7 @@ class PlotManagementController extends AdminController
 
             $this->setFlash('error', 'Invalid export format');
             return $this->redirect('admin/plot_management');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Plot Management Export error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to export data');
             return $this->redirect('admin/plot_management');
@@ -923,7 +932,7 @@ class PlotManagementController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute(array_merge([$startDate, $endDate], $tParams));
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Plots Export error: " . $e->getMessage());
             return [];
         }
@@ -945,7 +954,7 @@ class PlotManagementController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Allocations Export error: " . $e->getMessage());
             return [];
         }
@@ -966,7 +975,7 @@ class PlotManagementController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Development Export error: " . $e->getMessage());
             return [];
         }
@@ -1041,7 +1050,7 @@ class PlotManagementController extends AdminController
             $histStmt = $this->db->prepare("SELECT l.*, u.name AS changed_by_name FROM plot_status_log l LEFT JOIN users u ON u.id = l.changed_by WHERE l.plot_id = ? ORDER BY l.created_at DESC");
             $histStmt->execute([$id]);
             $this->data['history'] = $histStmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['history'] = [];
         }
 
@@ -1100,7 +1109,7 @@ class PlotManagementController extends AdminController
                 "SELECT id, colony_id, khasra_no, village, area_bigha FROM land_parcels WHERE colony_id = ? ORDER BY khasra_no",
                 [(int)($this->data['plot']['colony_id'] ?? 0)]
             ) ?: [];
-        } catch (\Exception $e) { $this->data['gata_parcels'] = []; }
+        } catch (\Throwable $e) { $this->data['gata_parcels'] = []; }
 
         // Price history for edit view
         $phStmt = $this->db->prepare("SELECT * FROM price_history WHERE plot_id = ? ORDER BY created_at DESC LIMIT 10");
@@ -1166,7 +1175,7 @@ class PlotManagementController extends AdminController
             if ($parcelId > 0) {
                 try {
                     $parcel = $this->db->fetchRow("SELECT id, colony_id, khasra_no FROM land_parcels WHERE id = ?", [$parcelId]);
-                } catch (\Exception $e) { $parcel = null; }
+                } catch (\Throwable $e) { $parcel = null; }
                 if (!$parcel || (int)$parcel['colony_id'] !== (int)($old['colony_id'] ?? 0)) {
                     $this->setFlash('error', 'Selected gata belongs to another colony');
                     return $this->redirect('/admin/plots/' . $id . '/edit');
@@ -1230,7 +1239,7 @@ class PlotManagementController extends AdminController
                         'changed_by' => $_SESSION['user_id'] ?? 1,
                         'created_at' => date('Y-m-d H:i:s'),
                     ]);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     // status log table may not exist, skip
                             error_log("PlotManagementController.php: " . $e->getMessage());
                 }
@@ -1243,7 +1252,7 @@ class PlotManagementController extends AdminController
 
             $this->setFlash('success', 'Plot updated successfully');
             return $this->redirect('/admin/plots/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Plot Update error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to update plot: ' . $e->getMessage());
             return $this->redirect('/admin/plots/' . $id . '/edit');
@@ -1257,7 +1266,7 @@ class PlotManagementController extends AdminController
             $this->db->execute("UPDATE plots SET is_active = 0 WHERE id = ? AND tenant_id = ?", [$id, $tid]);
             $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'plot_deactivated', ['plot_id' => $id]);
             $this->setFlash('success', 'Plot deactivated successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to deactivate plot: ' . $e->getMessage());
         }
         $this->redirect('/admin/plots');
@@ -1293,9 +1302,9 @@ class PlotManagementController extends AdminController
                     'plot_id' => $id, 'old_status' => $old, 'new_status' => $status,
                     'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
                 ]);
-            } catch (\Exception $e) { error_log('PlotManagementController updateStatus log: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('PlotManagementController updateStatus log: ' . $e->getMessage()); }
             echo json_encode(['success' => true, 'message' => 'Status updated to ' . $status]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -1520,7 +1529,7 @@ class PlotManagementController extends AdminController
             }
 
             echo json_encode(['success' => true, 'message' => "$count plots updated", 'count' => $count]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -1565,7 +1574,7 @@ class PlotManagementController extends AdminController
                 'plot' => $plot,
                 'customers' => $customers ?: [],
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Book plot view error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load booking page');
             $this->redirect('/admin/plots');
@@ -1658,7 +1667,7 @@ class PlotManagementController extends AdminController
                         'updated_at' => date('Y-m-d H:i:s'),
                         'tenant_id' => $tid,
                     ]);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->loggingService->error("plot_allocations insert skipped: " . $e->getMessage());
                 }
 
@@ -1672,7 +1681,7 @@ class PlotManagementController extends AdminController
                         'plot_id' => $id, 'old_status' => $plot['status'], 'new_status' => 'booked',
                         'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
                     ]);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                             error_log("PlotManagementController.php: " . $e->getMessage());
                 }
 
@@ -1685,11 +1694,11 @@ class PlotManagementController extends AdminController
 
                 $this->setFlash('success', 'Plot booked successfully. Booking #' . $bookingId);
                 return $this->redirect('/admin/plots/' . $id);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Store Booking error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to create booking: ' . $e->getMessage());
             return $this->redirect('/admin/plots/' . $id . '/book');
@@ -1724,7 +1733,7 @@ class PlotManagementController extends AdminController
                 'plot' => $plot,
                 'customers' => $customers ?: [],
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Transfer plot view error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load transfer page');
             $this->redirect('/admin/plots');
@@ -1783,7 +1792,7 @@ class PlotManagementController extends AdminController
                         processed_by INT(11) NULL,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("PlotManagementController.php: " . $e->getMessage());
                 }
 
@@ -1815,7 +1824,7 @@ class PlotManagementController extends AdminController
                         'plot_id' => $id, 'old_status' => $plot['status'], 'new_status' => $newStatus,
                         'changed_by' => $_SESSION['user_id'] ?? 1, 'created_at' => date('Y-m-d H:i:s'),
                     ]);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                             error_log("PlotManagementController.php: " . $e->getMessage());
                 }
 
@@ -1827,11 +1836,11 @@ class PlotManagementController extends AdminController
 
                 $this->setFlash('success', 'Plot transferred successfully');
                 return $this->redirect('/admin/plots/' . $id);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Transfer Plot error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to transfer plot: ' . $e->getMessage());
             return $this->redirect('/admin/plots/' . $id . '/transfer');
@@ -1882,7 +1891,7 @@ class PlotManagementController extends AdminController
                 'stats' => $stats,
                 'colonies' => $colonies,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Availability view error: " . $e->getMessage());
             $this->render('admin/plots/availability', [
                 'page_title' => 'Plot Availability',
@@ -1922,7 +1931,7 @@ class PlotManagementController extends AdminController
                 ORDER BY c.name, p.block, p.plot_number", $params) ?: [];
 
             echo json_encode(['success' => true, 'data' => $plots]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -1948,7 +1957,7 @@ class PlotManagementController extends AdminController
                      WHERE status = 'hold' AND hold_expires_at IS NOT NULL AND hold_expires_at < NOW() AND tenant_id = ?",
                     [$tid]
                 );
-            } catch (\Exception $e) { error_log('PlotManagementController map auto-release: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('PlotManagementController map auto-release: ' . $e->getMessage()); }
 
             $colonies = $this->db->fetchAll("SELECT id, name FROM colonies ORDER BY name") ?: [];
             list($tSql, $tParams) = $this->tenantWhere();
@@ -1969,7 +1978,7 @@ class PlotManagementController extends AdminController
                     "SELECT DISTINCT plot_id FROM plot_bookings WHERE status = 'registration_done' AND plot_id IS NOT NULL"
                 ) ?: [];
                 foreach ($rows as $r) { $registryDone[(int)$r['plot_id']] = true; }
-            } catch (\Exception $e) { error_log('PlotManagementController map registry lookup: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('PlotManagementController map registry lookup: ' . $e->getMessage()); }
 
             // Countdown text for active holds
             $now = time();
@@ -1995,7 +2004,7 @@ class PlotManagementController extends AdminController
                 'map_statuses' => ['available', 'hold', 'booked', 'sold', 'registry_done', 'reserved', 'under_construction'],
                 'page_title' => 'Master Plot Map'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error loading plot map: ' . $e->getMessage());
             $this->redirect('/admin/plots');
         }
@@ -2045,10 +2054,10 @@ class PlotManagementController extends AdminController
                     'plot_id' => $id, 'old_status' => 'available', 'new_status' => 'hold',
                     'changed_by' => $me, 'created_at' => date('Y-m-d H:i:s'),
                 ]);
-            } catch (\Exception $e) { error_log('PlotManagementController holdPlot log: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('PlotManagementController holdPlot log: ' . $e->getMessage()); }
             $this->loggingService->logUserActivity($me, 'plot_hold_24h', ['plot_id' => $id]);
             $this->setFlash('success', 'Plot ' . ($plot['plot_number'] ?? $id) . ' held for 24 hours. No other agent can show it as available.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error('Hold plot error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to hold plot: ' . $e->getMessage());
         }
@@ -2088,10 +2097,10 @@ class PlotManagementController extends AdminController
                     'plot_id' => $id, 'old_status' => 'hold', 'new_status' => 'available',
                     'changed_by' => $me, 'created_at' => date('Y-m-d H:i:s'),
                 ]);
-            } catch (\Exception $e) { error_log('PlotManagementController releaseHold log: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('PlotManagementController releaseHold log: ' . $e->getMessage()); }
             $this->loggingService->logUserActivity($me, 'plot_hold_released', ['plot_id' => $id]);
             $this->setFlash('success', 'Hold released. Plot ' . ($plot['plot_number'] ?? $id) . ' is available again.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error('Release hold error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to release hold: ' . $e->getMessage());
         }
@@ -2115,7 +2124,7 @@ class PlotManagementController extends AdminController
             ) ?: [];
             $pending = 0;
             foreach ($rows as $r) { if (($r['status'] ?? '') === 'pending') $pending++; }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error('Hold requests error: ' . $e->getMessage());
             $rows = []; $pending = 0;
         }
@@ -2159,10 +2168,10 @@ class PlotManagementController extends AdminController
                     'plot_id' => (int)$req['plot_id'], 'old_status' => 'available', 'new_status' => 'hold',
                     'changed_by' => $me, 'created_at' => date('Y-m-d H:i:s'),
                 ]);
-            } catch (\Exception $e) { error_log('approveHoldRequest log: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('approveHoldRequest log: ' . $e->getMessage()); }
             $this->loggingService->logUserActivity($me, 'hold_request_approved', ['request_id' => $id, 'plot_id' => (int)$req['plot_id']]);
             $this->setFlash('success', 'Hold approved — plot locked for 24 hours.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error('Approve hold request error: ' . $e->getMessage());
             $this->setFlash('error', 'Approval failed.');
         }
@@ -2185,7 +2194,7 @@ class PlotManagementController extends AdminController
                 [trim((string)($_POST['admin_note'] ?? '')), $me, $id]
             );
             $this->setFlash('success', 'Hold request rejected.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Rejection failed.');
         }
         return $this->redirect('/admin/plots/hold-requests');

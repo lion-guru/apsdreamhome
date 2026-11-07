@@ -37,6 +37,24 @@ class ColonyController extends AdminController
             $state_id = (int)($_GET['state_id'] ?? 0);
             $district_id = (int)($_GET['district_id'] ?? 0);
 
+            // Cache states & districts (rarely change, 10 min TTL)
+            $cacheService = new \App\Services\CacheService();
+            $statesCache = $cacheService->get('states_list');
+            $districtsCache = $cacheService->get('districts_list');
+            $states = ($statesCache !== false && $statesCache !== '')
+                ? json_decode($statesCache, true)
+                : $this->db->fetchAll("SELECT id, name FROM states WHERE is_active = 1 ORDER BY name");
+            if ($statesCache === false || $statesCache === '') {
+                $cacheService->set('states_list', json_encode($states), 600);
+            }
+            $districts = ($districtsCache !== false && $districtsCache !== '')
+                ? json_decode($districtsCache, true)
+                : $this->db->fetchAll("SELECT id, name, state_id FROM districts WHERE is_active = 1 ORDER BY name");
+            if ($districtsCache === false || $districtsCache === '') {
+                $cacheService->set('districts_list', json_encode($districts), 600);
+            }
+
+            // Only cache unfiltered colony list (no search, no filters)
             $where = [];
             $params = [];
 
@@ -63,13 +81,6 @@ class ColonyController extends AdminController
                  $whereClause
                  ORDER BY c.name",
                 $params
-            );
-
-            $states = $this->db->fetchAll(
-                "SELECT id, name FROM states WHERE is_active = 1 ORDER BY name"
-            );
-            $districts = $this->db->fetchAll(
-                "SELECT id, name, state_id FROM districts WHERE is_active = 1 ORDER BY name"
             );
 
             $this->render('admin/colonies/index', [
