@@ -141,6 +141,7 @@ class Router
                 '/employee/register',
                 '/employee/logout',
                 '/ai/property-valuation/generate',
+                '/apsdreamhome/api/',
                 '/ai/',
                 '/admin/ai/',
                 '/admin/login',
@@ -317,7 +318,7 @@ class Router
                         } else {
                             $controllerInstance->$handlerMethod();
                         }
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         error_log("Controller error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
                         $this->show500($e->getMessage() . "\n" . $e->getTraceAsString());
                     } catch (\Error $e) {
