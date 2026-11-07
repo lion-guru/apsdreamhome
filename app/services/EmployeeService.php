@@ -66,7 +66,7 @@ class EmployeeService
             $this->pdo->commit();
             return ['success' => true, 'user_id' => $userId, 'employee_id' => $empId, 'employee_code' => $employeeCode];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -136,7 +136,7 @@ class EmployeeService
             $this->pdo->commit();
             return ['success' => true, 'message' => 'Employee updated successfully'];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -149,12 +149,11 @@ class EmployeeService
     {
         $this->pdo->beginTransaction();
         try {
-            $emp = $this->fetchOne("SELECT user_id FROM employees WHERE id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
-            if (!$emp) {
+            // Phase 4/7: use IdentityService for legacy-id → user_id resolution
+            $userId = (new \App\Services\IdentityService())->resolveEmployeeUserId($employeeId);
+            if ($userId <= 0) {
                 throw new \Exception('Employee not found');
             }
-
-            $userId = (int)$emp['user_id'];
 
             // Update both tables
             $this->execute("UPDATE employees SET status='inactive', updated_at=NOW() WHERE id=? AND tenant_id=?", [$employeeId, $this->tenantId()]);
@@ -163,7 +162,7 @@ class EmployeeService
             $this->pdo->commit();
             return ['success' => true, 'message' => 'Employee deactivated'];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
