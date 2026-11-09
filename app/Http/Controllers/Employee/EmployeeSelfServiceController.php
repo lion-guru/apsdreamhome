@@ -69,7 +69,7 @@ class EmployeeSelfServiceController extends BaseController
             // Try to find employee by user_id or admin_id
             $userId = $_SESSION['user_id'] ?? $_SESSION['admin_id'] ?? 0;
             if ($userId) {
-                $emp = $this->db->fetchOne("SELECT id FROM employees WHERE user_id = ? LIMIT 1", [$userId]);
+                $emp = $this->db->fetchOne("SELECT id FROM employee_profiles WHERE user_id = ? LIMIT 1", [$userId]);
                 if ($emp) {
                     $_SESSION['employee_id'] = (int)$emp['id'];
                     return;
@@ -443,11 +443,11 @@ class EmployeeSelfServiceController extends BaseController
         // Get colleagues in same department
         $employeeId = $_SESSION['employee_id'];
         $colleagues = $this->db->fetchAll("
-            SELECT e.id, e.name, e.designation
-            FROM employees e
+            SELECT e.id, u.name, e.designation
+            FROM employee_profiles e
             JOIN users u ON e.user_id = u.id
-            WHERE e.id != ? AND e.status = 'active' AND u.status = 'active'
-            ORDER BY e.name
+            WHERE e.id != ? AND u.status = 'active'
+            ORDER BY u.name
         ", [$employeeId]);
 
         return $this->render('employee/self_service/shift_swap_apply', [
@@ -1120,11 +1120,11 @@ class EmployeeSelfServiceController extends BaseController
         $payrollService = new \App\Services\PayrollService();
         // Get payslips for this employee
         $payslips = $this->db->fetchAll("
-            SELECT pi.*, pr.run_number, pr.period_start, pr.period_end, pr.pay_date
+            SELECT pi.*, pr.run_name AS run_number, pr.pay_period_start AS period_start, pr.pay_period_end AS period_end, pr.pay_date
             FROM payroll_items pi
             JOIN payroll_runs pr ON pi.run_id = pr.id
             WHERE pi.employee_id = ? AND pi.tenant_id = ? AND pi.status = 'paid'
-            ORDER BY pr.period_end DESC
+            ORDER BY pr.pay_period_end DESC
         ", [$employeeId, $this->tenantId()]);
 
         return $this->render('employee/self_service/payslips', [
@@ -1139,7 +1139,7 @@ class EmployeeSelfServiceController extends BaseController
         $employeeId = $_SESSION['employee_id'];
 
         $payslip = $this->db->fetch("
-            SELECT pi.*, pr.run_number, pr.period_start, pr.period_end, pr.pay_date,
+            SELECT pi.*, pr.run_name AS run_number, pr.pay_period_start AS period_start, pr.pay_period_end AS period_end, pr.pay_date,
                    u.name as employee_name, u.email as employee_email,
                    e.employee_code, e.department, e.designation,
                    s.basic_salary, s.hra, s.da, s.conveyance, s.medical_allowance, s.special_allowance,

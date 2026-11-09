@@ -1207,6 +1207,8 @@ $router->post('/associate/leads/bulk-whatsapp', 'App\\Http\\Controllers\\Associa
 $router->post('/associate/leads/{id}/assign', 'App\\Http\\Controllers\\Associate\\CrmController@assignLead');
 $router->post('/associate/leads/{id}/call', 'App\\Http\\Controllers\\Associate\\CrmController@logCall');
 $router->post('/associate/leads/{id}/recalculate-score', 'App\\Http\\Controllers\\Associate\\CrmController@recalculateScore');
+$router->post('/associate/leads/{id}/documents/upload', 'App\\Http\\Controllers\\Associate\\CrmController@leadDocumentUpload');
+$router->post('/associate/leads/{id}/documents/delete', 'App\\Http\\Controllers\\Associate\\CrmController@leadDocumentDelete');
 $router->post('/associate/leads/recalculate-all-scores', 'App\\Http\\Controllers\\Associate\\CrmController@recalculateAllScores');
 $router->get('/associate/leads/export', 'App\\Http\\Controllers\\Associate\\CrmController@exportLeads');
 $router->get('/associate/reports/business', 'App\\Http\\Controllers\\Associate\\CrmController@businessReport');
@@ -1602,6 +1604,7 @@ $router->get('/admin/property-valuations/property/{id}', 'AI\\PropertyValuationC
 // ============================================================
 $router->get('/ai/chatbot', 'AI\\AIWebController@chatbot');
 $router->get('/ai/assistant', 'Front\\AiAssistantController@index');
+$router->get('/associate/ai-dashboard', 'Associate\\AIDashboardController@index');
 $router->get('/ai/description-generator', 'AI\\AIWebController@descriptionGenerator');
 $router->get('/ai/suggestions', 'AI\\AIWebController@suggestions');
 $router->post('/ai/suggestions', 'AI\\AIWebController@generateSuggestions');
@@ -2489,6 +2492,10 @@ $router->get('/admin/payouts', 'App\\Http\\Controllers\\Admin\\CommissionAdminCo
 
 // Admin Payments
 $router->get('/admin/payments', 'App\\Http\\Controllers\\Admin\\PaymentController@index');
+$router->get('/admin/payments/reconciliation', 'App\\Http\\Controllers\\Admin\\PaymentReconciliationController@index');
+$router->post('/admin/payments/reconciliation/{id}/link', 'App\\Http\\Controllers\\Admin\\PaymentReconciliationController@link');
+$router->post('/admin/payments/reconciliation/{id}/void', 'App\\Http\\Controllers\\Admin\\PaymentReconciliationController@void');
+$router->post('/admin/payments/reconciliation/{id}/keep', 'App\\Http\\Controllers\\Admin\\PaymentReconciliationController@keep');
 $router->get('/admin/payments/show/{id}', 'App\\Http\\Controllers\\Admin\\PaymentController@show');
 $router->post('/admin/payments/process/{id}', 'App\\Http\\Controllers\\Admin\\PaymentController@processPayment');
 $router->post('/admin/payments/refund/{id}', 'App\\Http\\Controllers\\Admin\\PaymentController@refundPayment');
@@ -3812,7 +3819,7 @@ $router->post('/admin/inter-company/store', 'App\Http\Controllers\Admin\InterCom
 $router->get('/admin/inter-company/{id}', 'App\Http\Controllers\Admin\InterCompanyController@show');
 $router->post('/admin/inter-company/update/{id}', 'App\Http\Controllers\Admin\InterCompanyController@update');
 $router->post('/admin/inter-company/delete/{id}', 'App\Http\Controllers\Admin\InterCompanyController@delete');
-$router->post('/admin/inter-company/post/{id}', 'App\Http\Controllers\Admin\InterCompanyController@post');
+$router->post('/admin/inter-company/post/{id}', 'App\Http\Controllers\Admin\InterCompanyController@postTransaction');
 $router->post('/admin/inter-company/cancel/{id}', 'App\Http\Controllers\Admin\InterCompanyController@cancel');
 $router->get('/admin/inter-company/reconcile', 'App\Http\Controllers\Admin\InterCompanyController@reconciliation');
 $router->post('/admin/inter-company/reconcile/store', 'App\Http\Controllers\Admin\InterCompanyController@createReconciliation');
@@ -3954,6 +3961,7 @@ $router->post('/admin/ai-calling/training/save-voice-model', 'App\\Http\\Control
 $router->post('/admin/ai-calling/training/save-script', 'App\\Http\\Controllers\\Admin\\AICallingController@saveScript');
 $router->post('/admin/ai-calling/training/save-intent', 'App\\Http\\Controllers\\Admin\\AICallingController@saveIntent');
 $router->get('/admin/ai-calling/health', 'App\\Http\\Controllers\\Admin\\AICallingController@healthCheck');
+$router->get('/api/ai-calling/health', 'App\\Http\\Controllers\\Admin\\AICallingController@healthCheck'); // RESTful alias (sidebar points to dashboard)
 $router->get('/admin/ai-calling/history', 'App\\Http\\Controllers\\Admin\\AICallingController@history');
 $router->get('/admin/ai-calling/campaign', 'App\\Http\\Controllers\\Admin\\AICallingController@campaign');
 $router->get('/admin/ai-calling/analytics', 'App\\Http\\Controllers\\Admin\\AICallingController@analytics');
@@ -4446,6 +4454,7 @@ $router->get('/admin/customer-lead/file-extractions', 'App\\Http\\Controllers\\A
 // HR MANAGEMENT SYSTEM (New System)
 // â€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Â
 $router->get('/admin/hr', 'App\\Http\\Controllers\\Admin\\HRController@index');
+$router->get('/admin/hr/employees', 'App\\Http\\Controllers\\Admin\\HRController@users');
 $router->get('/admin/hr/users', 'App\\Http\\Controllers\\Admin\\HRController@users');
 $router->get('/admin/hr/users/create', 'App\\Http\\Controllers\\Admin\\HRController@createEmployee');
 $router->post('/admin/hr/users/store', 'App\\Http\\Controllers\\Admin\\HRController@storeEmployee');
@@ -6184,6 +6193,15 @@ $router->post('/admin/service-configs/test/{service}',  'Admin\\ServiceConfigCon
 $router->post('/admin/service-configs/reset/{service}', 'Admin\\ServiceConfigController@resetService');
 
 // ============================================================
+// DEAD LETTER QUEUE UI (messenger failed messages monitor)
+// ============================================================
+$router->get('/admin/messenger', 'Admin\\MessengerDashboardController@index');
+$router->get('/admin/messenger/dead-letters', 'Admin\\DeadLetterController@index');
+$router->post('/admin/messenger/dead-letters/{id}/retry', 'Admin\\DeadLetterController@retry');
+$router->post('/admin/messenger/dead-letters/{id}/delete', 'Admin\\DeadLetterController@delete');
+$router->post('/admin/messenger/dead-letters/cleanup', 'Admin\\DeadLetterController@cleanup');
+
+// ============================================================
 // URL ALIASES (fix 404s from sidebar mismatches)
 // ============================================================
 $router->get('/admin/backoffice/dashboard',  function() { header('Location: ' . BASE_URL . '/admin/backoffice'); exit; });
@@ -6718,7 +6736,10 @@ $router->get('/employee/self-service/payslip/download/{id}', 'Employee\\Employee
 
 // Employee Documents
 $router->get('/employee/self-service/documents', 'Employee\\EmployeeSelfServiceController@documents');
+$router->get('/employee/self-service/documents/upload', 'Employee\\EmployeeSelfServiceController@documentUpload');
 $router->post('/employee/self-service/documents/upload', 'Employee\\EmployeeSelfServiceController@documentUpload');
+$router->get('/employee/self-service/documents/{id}', 'Employee\\EmployeeSelfServiceController@documentDetail');
+$router->get('/employee/self-service/documents/{id}/download', 'Employee\\EmployeeSelfServiceController@documentDownload');
 $router->post('/employee/self-service/documents/{id}/verify', 'Employee\\EmployeeSelfServiceController@documentVerifyRequest');
 
 // Employee Leave Calendar

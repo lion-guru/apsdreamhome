@@ -30,6 +30,22 @@ class PlotManagementController extends AdminController
     }
 
     /**
+     * Bust plot/colony list caches after write operations.
+     * Ensures new plots/colonies auto-appear on public lists + dashboards.
+     */
+    private function bustPlotCaches(): void
+    {
+        try {
+            // Legacy colonies_list (string cache used in index())
+            $this->cacheService->delete('colonies_list');
+            // New App\Services\Cache\CacheService (serialize-based dashboards)
+            try { (new \App\Services\Cache\CacheService())->delete('colonies_list'); } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+            error_log('PlotManagementController::bustPlotCaches: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Plot categories/types management
      */
     public function categories()
@@ -167,6 +183,7 @@ class PlotManagementController extends AdminController
                         'tenant_id' => (int)$this->tenantId(),
                     ]);
                 } catch (\Throwable $e) { error_log('[Plot store] price_history: ' . $e->getMessage()); }
+                $this->bustPlotCaches();
                 $this->setFlash('success', 'Plot created successfully');
                 return $this->redirect('/admin/plots');
             }
@@ -1034,6 +1051,11 @@ class PlotManagementController extends AdminController
         $stmt = $this->db->prepare("SELECT p.*, c.name as colony_name, d.name as district_name, s.name as state_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id LEFT JOIN districts d ON c.district_id = d.id LEFT JOIN states s ON d.state_id = s.id WHERE p.id = ?");
         $stmt->execute([$id]);
         $this->data['plot'] = $stmt->fetch() ?: [];
+        if (empty($this->data['plot'])) {
+            http_response_code(404);
+            echo "Plot not found.";
+            exit;
+        }
 
         // Price history
         $phStmt = $this->db->prepare("SELECT ph.*, u.name as changed_by_name FROM price_history ph LEFT JOIN users u ON ph.changed_by = u.id WHERE ph.plot_id = ? ORDER BY ph.created_at DESC");
@@ -1250,6 +1272,7 @@ class PlotManagementController extends AdminController
                 'price_changed' => floatval($old['total_price']) != $newTotal
             ]);
 
+            $this->bustPlotCaches();
             $this->setFlash('success', 'Plot updated successfully');
             return $this->redirect('/admin/plots/' . $id);
         } catch (\Throwable $e) {
