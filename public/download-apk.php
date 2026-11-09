@@ -4,7 +4,17 @@
  * Uses chunked transfer encoding — no Content-Length header.
  * Flushes output aggressively at every level.
  */
-$file = __DIR__ . '/downloads/apsdreamhome.apk';
+$file = __DIR__ . '/downloads/apsdreamhome-latest.apk';
+if (!file_exists($file)) {
+    $file = __DIR__ . '/downloads/apsdreamhome-v1.2.10-release.apk';
+}
+if (!file_exists($file)) {
+    $file = __DIR__ . '/downloads/apsdreamhome-v1.2.8-release.apk';
+}
+
+if (!file_exists($file)) {
+    $file = __DIR__ . '/downloads/apsdreamhome.apk';
+}
 if (!file_exists($file)) {
     http_response_code(404);
     header('Content-Type: application/json');

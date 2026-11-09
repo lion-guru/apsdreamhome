@@ -1,7 +1,7 @@
 name: apsdreamhome_app_v2
 description: APS Dream Home Flutter application
 publish_to: 'none'
-version: 1.2.2+1
+version: 1.2.10+9
 environment:
   sdk: ^3.12.0
 
@@ -16,6 +16,7 @@ dependencies:
 
   # State management
   flutter_riverpod: ^3.3.2
+  riverpod: ^3.3.2
   go_router: ^17.3.0
 
   # Networking
@@ -48,6 +49,10 @@ dependencies:
 
   # Environment
   flutter_dotenv: ^6.0.1
+
+  # Background Tasks & Queue
+  flutter_background_service: ^5.0.5
+  rxdart: ^0.28.0
 
   # Code generation (freezed + json_serializable)
   freezed_annotation: ^3.1.0

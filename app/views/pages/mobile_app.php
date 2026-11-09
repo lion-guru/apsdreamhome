@@ -1,12 +1,13 @@
 <?php
 $page_title = $page_title ?? 'Mobile App - APS Dream Home';
-$apk_url_direct = BASE_URL . '/downloads/apsdreamhome.apk';
-$apk_url_release = BASE_URL . '/downloads/apsdreamhome-release.apk';
-$apk_url_php = BASE_URL . '/download-apk.php';
-$apk_size_debug = '252 MB';
-$apk_size_release = '87 MB';
-$app_version = '1.2.2';
-$updated_date = '2026-09-18';
+$apk_url_direct = BASE_URL . '/downloads/apsdreamhome-v1.2.10-release.apk';
+$apk_url_release = BASE_URL . '/downloads/apsdreamhome-latest.apk';
+$apk_url_php = BASE_URL . '/downloads/apsdreamhome-latest.apk';
+$apk_size_debug = '88.6 MB';
+$apk_size_release = '88.6 MB';
+$app_version = '1.2.10';
+$updated_date = '2026-10-21';
+
 ?>
 <div class="mobile-app-page">
     <style>
