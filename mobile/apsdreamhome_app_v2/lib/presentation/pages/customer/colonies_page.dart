@@ -37,6 +37,8 @@ class _ColoniesPageState extends ConsumerState<ColoniesPage> {
             decoration: InputDecoration(
               hintText: 'Search colonies...',
               prefixIcon: const Icon(Icons.search),
+              filled: true,
+              fillColor: AppTheme.surfaceColor,
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
                       onPressed: () {
@@ -105,6 +107,17 @@ class _ColoniesPageState extends ConsumerState<ColoniesPage> {
                 }
 
                 if (filteredColonies.isEmpty) {
+                  if (colonies.isEmpty) {
+                    return ListView(
+                      children: [
+                        const SizedBox(height: 100),
+                        AppWidgets.errorWidget(
+                          message: 'Unable to load colonies. Please check your internet connection.',
+                          onRetry: () => ref.refresh(coloniesProvider),
+                        ),
+                      ],
+                    );
+                  }
                   return ListView(
                     children: [
                       const SizedBox(height: 100),
@@ -153,7 +166,7 @@ class _ColoniesPageState extends ConsumerState<ColoniesPage> {
                 children: [
                   const SizedBox(height: 100),
                   AppWidgets.errorWidget(
-                    message: error.toString(),
+                    message: 'Unable to load colonies. Please check your internet connection.',
                     onRetry: () => ref.refresh(coloniesProvider),
                   ),
                 ],

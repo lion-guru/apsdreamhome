@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'core/router/app_router.dart';
 import 'core/services/notification_service.dart';
 import 'core/theme/app_theme.dart';
+import 'presentation/widgets/ai/ai_chatbot_widget.dart';
 
 /// Global navigator key for deep-link navigation from notifications
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -70,7 +71,17 @@ class _APSDreamHomeAppState extends ConsumerState<APSDreamHomeApp> {
               context.pop();
             }
           },
-          child: child ?? const SizedBox.shrink(),
+          child: Stack(
+            children: [
+              child ?? const SizedBox.shrink(),
+              // Floating AI Chatbot Widget
+              const Positioned(
+                right: 16,
+                bottom: 148,
+                child: AIChatbotWidget(isMini: true),
+              ),
+            ],
+          ),
         );
       },
     );

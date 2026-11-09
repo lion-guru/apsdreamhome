@@ -54,6 +54,24 @@ final allPlotsProvider = FutureProvider<List<Map<String, dynamic>>>((
   }
 });
 
+/// AI Recommendations provider — fetches personalized property recommendations
+final _aiRecommendationsProvider = FutureProvider<List<Map<String, dynamic>>?>((ref) async {
+  try {
+    final api = ref.read(apiServiceProvider);
+    final res = await api.get('/ai/property-recommendations/me', queryParameters: {'limit': '10'});
+    if (res['success'] != true) return null;
+    final data = res['data'];
+    if (data is Map && data['recommendations'] is List) {
+      return List<Map<String, dynamic>>.from(
+        (data['recommendations'] as List).map((e) => Map<String, dynamic>.from(e as Map)),
+      );
+    }
+    return null;
+  } catch (_) {
+    return null; // Guest users / no auth → hide section
+  }
+});
+
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -120,6 +138,8 @@ class _HomePageState extends ConsumerState<HomePage>
                   ),
                   SliverToBoxAdapter(child: _buildSearchBar(context)),
                   SliverToBoxAdapter(child: _buildQuickActions(context)),
+                  SliverToBoxAdapter(child: _buildAIRecommendations(context)),
+                  SliverToBoxAdapter(child: _buildSiteVisitVIPBanner(context)),
                   SliverToBoxAdapter(child: _buildToolsSection(context)),
                   _buildFeaturedColoniesSection(context, ref, coloniesAsync),
                   _buildAvailablePlotsSection(context, ref, plotsAsync),
@@ -135,8 +155,8 @@ class _HomePageState extends ConsumerState<HomePage>
             ),
           ),
         ),
-        // AI Assistant Button (above support FAB)
-        const Positioned(bottom: 92, right: 12, child: FloatingAIButton(isMini: true)),
+        // AI Assistant Button (above support FAB, positioned to avoid overlap)
+        const Positioned(bottom: 160, right: 12, child: FloatingAIButton(isMini: true)),
         // WhatsApp-style Support FAB
         const Positioned(bottom: 16, right: 8, child: SupportFAB()),
       ],
@@ -154,21 +174,32 @@ class _HomePageState extends ConsumerState<HomePage>
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: AppTheme.accentColor.withValues(alpha: 0.4),
+                width: 1.5,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.3),
-                  blurRadius: 8,
+                  color: AppTheme.primaryColor.withValues(alpha: 0.25),
+                  blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: const Icon(Icons.home_work, color: Colors.white, size: 26),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                'assets/images/app_logo_luxury.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.home_work_rounded,
+                  color: AppTheme.primaryColor,
+                  size: 26,
+                ),
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -178,15 +209,17 @@ class _HomePageState extends ConsumerState<HomePage>
                 Text(
                   AppConstants.appName,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    color: AppTheme.primaryColor,
                     fontSize: 20,
+                    letterSpacing: 0.5,
                   ),
                 ),
                 Text(
-                  'Premium Plots & Colonies',
+                  'Premium Plots & Townships • Gorakhpur',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white70,
+                    color: const Color(0xFF64748B),
+                    fontWeight: FontWeight.w600,
                     fontSize: 11,
                   ),
                 ),
@@ -200,12 +233,23 @@ class _HomePageState extends ConsumerState<HomePage>
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: const Color(0xFFE8DFD0),
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: const Icon(
                 Icons.headset_mic_rounded,
-                color: Colors.white,
+                color: AppTheme.primaryColor,
                 size: 20,
               ),
             ),
@@ -225,19 +269,19 @@ class _HomePageState extends ConsumerState<HomePage>
   ) {
     return coloniesAsync.when(
       data: (colonies) {
-        final featured = colonies.isNotEmpty ? colonies.first : null;
-        final name = featured?.name ?? 'Suryoday Heights';
-        final location = featured != null
-            ? featured.district.isNotEmpty
-                  ? '${featured.district}${featured.state.isNotEmpty ? ', ${featured.state}' : ''}'
-                  : (featured.location.isNotEmpty
-                        ? featured.location
-                        : 'Premium Location')
-            : 'Premium Plots in Gorakhpur';
-        final tagline = featured != null
-            ? 'From ₹${_formatNumber(featured.pricePerSqft)}/sqft'
-            : 'From ₹3,000/sqft';
-        final colonyId = featured?.id;
+        final active = colonies.where((c) => c.status.toLowerCase() == 'active').toList();
+        if (active.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        final featured = active.first;
+        final name = featured.name;
+        final location = featured.district.isNotEmpty
+            ? '${featured.district}${featured.state.isNotEmpty ? ', ${featured.state}' : ''}'
+            : (featured.location.isNotEmpty
+                ? featured.location
+                : 'Premium Location');
+        final tagline = 'From ₹${_formatLargeNumber(featured.pricePerSqft)}/sqft';
+        final colonyId = featured.id;
 
         return ScaleTransition(
           scale: _heroScaleAnimation,
@@ -325,26 +369,66 @@ class _HomePageState extends ConsumerState<HomePage>
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              featured != null
-                                  ? featured.status.toUpperCase()
-                                  : 'NEW LAUNCH',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.8,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.accentColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  featured != null
+                                      ? featured.status.toUpperCase()
+                                      : 'PREMIUM TOWNSHIP',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.8,
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.18),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.35),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.verified_rounded,
+                                      size: 12,
+                                      color: Color(0xFFFDE68A),
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'RERA VERIFIED',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 12),
                           Text(
@@ -387,7 +471,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                       ),
                                     ],
                                   ),
-                                  maxLines: 1,
+                                  maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -461,39 +545,48 @@ class _HomePageState extends ConsumerState<HomePage>
         margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.15),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.2),
-            width: 1,
+            color: const Color(0xFFE8DFD0),
+            width: 1.2,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.search_rounded,
-              color: Colors.white.withValues(alpha: 0.7),
+              color: AppTheme.primaryColor,
               size: 22,
             ),
             const SizedBox(width: 12),
-            Expanded(
+            const Expanded(
               child: Text(
                 'Search colonies, plots, locations...',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: Color(0xFF94A3B8),
                   fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
+                color: const Color(0xFFFAF7F0),
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFE8DFD0)),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.tune_rounded,
-                color: Colors.white.withValues(alpha: 0.7),
+                color: AppTheme.primaryColor,
                 size: 18,
               ),
             ),
@@ -570,10 +663,303 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
+  // ───────────────────────────── AI RECOMMENDATIONS ─────────────────────────────
+
+  Widget _buildAIRecommendations(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, _) {
+        final recsAsync = ref.watch(_aiRecommendationsProvider);
+        return recsAsync.when(
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+          data: (recs) {
+            if (recs == null || recs.isEmpty) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.auto_awesome, color: Color(0xFF9C27B0), size: 20),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Recommended For You',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () => context.push('/user/ai-suggestions'),
+                        child: const Text('See All', style: TextStyle(fontSize: 12)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 150,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: recs.length,
+                      itemBuilder: (context, index) {
+                        final rec = recs[index];
+                        return _buildRecommendationCard(rec);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildRecommendationCard(Map<String, dynamic> rec) {
+    final name = (rec['name'] ?? rec['plot_number'] ?? 'Plot').toString();
+    final colony = (rec['colony_name'] ?? rec['city'] ?? '').toString();
+    final price = rec['total_price'] ?? rec['price'];
+    final reason = (rec['reason'] ?? '').toString();
+    final confidence = (rec['confidence'] as num? ?? 0) * 100;
+
+    return Container(
+      width: 180,
+      margin: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFF3E5F5), Color(0xFFFFFFFF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.purple.shade100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.recommend, color: Color(0xFF9C27B0), size: 16),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  name,
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(colony, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+          if (price != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              '₹${price.toString()}',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0B194C)),
+            ),
+          ],
+          if (reason.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              reason,
+              style: TextStyle(fontSize: 11, color: Colors.purple.shade700, fontStyle: FontStyle.italic),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+          if (confidence > 0) ...[
+            const SizedBox(height: 6),
+            LinearProgressIndicator(
+              value: confidence / 100,
+              backgroundColor: Colors.purple.shade100,
+              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF9C27B0)),
+              minHeight: 4,
+              borderRadius: BorderRadius.circular(2),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '${confidence.toStringAsFixed(0)}% match',
+              style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // ───────────────────────────── VIP SITE VISIT BANNER ─────────────────────────────
+
+  Widget _buildSiteVisitVIPBanner(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0B194C), Color(0xFF1E3A8A)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFFD4AF37),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0B194C).withValues(alpha: 0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD4AF37),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.directions_car_rounded, size: 14, color: Color(0xFF0B194C)),
+                    SizedBox(width: 4),
+                    Text(
+                      'VIP COMPLIMENTARY',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF0B194C),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  'Gorakhpur Townships',
+                  style: TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Free AC Car Pickup & Site Visit',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              letterSpacing: 0.2,
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Pickup available from Railway Station, Airport, Mohaddipur or Home. Experience your future plot in person.',
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xFFCBD5E1),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => context.push('/book-site-visit'),
+                  icon: const Icon(Icons.calendar_month_rounded, size: 16),
+                  label: const Text(
+                    'Book Free Visit',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFD4AF37),
+                    foregroundColor: const Color(0xFF0B194C),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              OutlinedButton.icon(
+                onPressed: () => context.push('/maintenance-dues'),
+                icon: const Icon(Icons.receipt_long_rounded, size: 16, color: Colors.white),
+                label: const Text(
+                  'Maintenance',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.white38),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   // ───────────────────────────── TOOLS & MORE ─────────────────────────────
 
   Widget _buildToolsSection(BuildContext context) {
     final tools = [
+      const _ToolItem(
+        Icons.directions_car_rounded,
+        'Site Visit',
+        '/book-site-visit',
+        Color(0xFFE65100),
+      ),
+      const _ToolItem(
+        Icons.receipt_long_rounded,
+        'Maintenance',
+        '/maintenance-dues',
+        Color(0xFF0D9488),
+      ),
+      const _ToolItem(
+        Icons.support_agent_rounded,
+        'Helpdesk',
+        '/township-grievances',
+        Color(0xFF1E88E5),
+      ),
+      const _ToolItem(
+        Icons.domain_outlined,
+        'Township Ops',
+        '/township-operations',
+        Color(0xFF7C3AED),
+      ),
+      const _ToolItem(
+        Icons.wb_sunny_outlined,
+        'Solar Subsidy',
+        '/solar-subsidy',
+        Color(0xFFF59E0B),
+      ),
+      const _ToolItem(
+        Icons.event_available_rounded,
+        'Registry Appt',
+        '/registry-appointments',
+        Color(0xFF6D28D9),
+      ),
       const _ToolItem(
         Icons.calculate,
         'Stamp Duty',
@@ -787,30 +1173,24 @@ class _HomePageState extends ConsumerState<HomePage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.build_outlined, size: 18, color: Colors.white70),
-              const SizedBox(width: 6),
+              Icon(Icons.build_circle_outlined, size: 20, color: AppTheme.accentColor),
+              SizedBox(width: 8),
               Text(
-                'Tools & More',
+                'Tools & Quick Services',
                 style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white.withValues(alpha: 0.95),
-                  shadows: const [
-                    Shadow(
-                      blurRadius: 4,
-                      color: Colors.black26,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.primaryColor,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           SizedBox(
-            height: 76,
+            height: 80,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: tools.length,
@@ -820,28 +1200,40 @@ class _HomePageState extends ConsumerState<HomePage>
                 return GestureDetector(
                   onTap: () => context.push(tool.route),
                   child: Container(
-                    width: 72,
+                    width: 78,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        width: 1,
+                        color: const Color(0xFFE8DFD0),
+                        width: 1.2,
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(tool.icon, color: tool.color, size: 24),
                         const SizedBox(height: 6),
-                        Text(
-                          tool.label,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white.withValues(alpha: 0.9),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            tool.label,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.primaryColor,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
@@ -907,7 +1299,40 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
+  static const _luxuryColonyImages = [
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&auto=format&fit=crop&q=80',
+  ];
+
+  String _getFallbackColonyImage(int id) {
+    final idx = (id > 0 ? id - 1 : 0) % _luxuryColonyImages.length;
+    return _luxuryColonyImages[idx];
+  }
+
+  Widget _colonyPlaceholder([int id = 0]) {
+    final imgUrl = _getFallbackColonyImage(id);
+    return Image.network(
+      imgUrl,
+      fit: BoxFit.cover,
+      errorBuilder: (_, _, _) => Container(
+        color: const Color(0xFFF5EFE3),
+        child: const Center(
+          child: Icon(Icons.home_work_rounded, color: AppTheme.accentColor, size: 36),
+        ),
+      ),
+    );
+  }
+
   Widget _buildColonyHorizontalCard(BuildContext context, ColonyModel colony) {
+    final imgUrl = colony.displayImages.isNotEmpty
+        ? colony.displayImages.first
+        : _getFallbackColonyImage(colony.id);
+
     return GestureDetector(
       onTap: () => context.push('/colony-detail/${colony.id}'),
       child: Container(
@@ -915,16 +1340,15 @@ class _HomePageState extends ConsumerState<HomePage>
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFE8DFD0),
+            width: 1.2,
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primaryColor.withValues(alpha: 0.08),
-              blurRadius: 12,
+              color: const Color(0xFF0B194C).withValues(alpha: 0.06),
+              blurRadius: 14,
               offset: const Offset(0, 4),
-            ),
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -941,13 +1365,11 @@ class _HomePageState extends ConsumerState<HomePage>
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    colony.displayImages.isNotEmpty
-                        ? Image.network(
-                            colony.displayImages.first,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => _colonyPlaceholder(),
-                          )
-                        : _colonyPlaceholder(),
+                    Image.network(
+                      imgUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => _colonyPlaceholder(colony.id),
+                    ),
                     // Gradient overlay at bottom
                     Positioned(
                       bottom: 0,
@@ -961,7 +1383,7 @@ class _HomePageState extends ConsumerState<HomePage>
                             end: Alignment.bottomCenter,
                             colors: [
                               Colors.transparent,
-                              Colors.black.withValues(alpha: 0.6),
+                              Colors.black.withValues(alpha: 0.65),
                             ],
                           ),
                         ),
@@ -976,9 +1398,9 @@ class _HomePageState extends ConsumerState<HomePage>
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w800,
                           shadows: [
-                            Shadow(blurRadius: 4, color: Colors.black54),
+                            Shadow(blurRadius: 4, color: Colors.black87),
                           ],
                         ),
                       ),
@@ -993,15 +1415,22 @@ class _HomePageState extends ConsumerState<HomePage>
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.successColor,
+                          color: const Color(0xFF10B981),
                           borderRadius: BorderRadius.circular(12),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 4,
+                            ),
+                          ],
                         ),
                         child: Text(
                           colony.status.toUpperCase(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 9,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.4,
                           ),
                         ),
                       ),
@@ -1018,7 +1447,8 @@ class _HomePageState extends ConsumerState<HomePage>
                   Text(
                     colony.name,
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.primaryColor,
                       fontSize: 14,
                     ),
                     maxLines: 1,
@@ -1027,20 +1457,21 @@ class _HomePageState extends ConsumerState<HomePage>
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.location_on_outlined,
-                        size: 12,
-                        color: Colors.grey.shade500,
+                        size: 13,
+                        color: AppTheme.accentColor,
                       ),
-                      const SizedBox(width: 2),
+                      const SizedBox(width: 3),
                       Expanded(
                         child: Text(
                           colony.district.isNotEmpty
                               ? '${colony.district}${colony.state.isNotEmpty ? ', ${colony.state}' : ''}'
                               : colony.location,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 11,
-                            color: Colors.grey.shade500,
+                            color: Color(0xFF64748B),
+                            fontWeight: FontWeight.w500,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -1052,12 +1483,28 @@ class _HomePageState extends ConsumerState<HomePage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '${colony.availablePlots} plots avail.',
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFAF7F0),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: const Color(0xFFE8DFD0)),
+                        ),
+                        child: Text(
+                          '${colony.availablePlots} plots avail.',
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: AppTheme.primaryColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const Text(
+                        'Instant Registry',
                         style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey.shade600,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 9,
+                          color: Color(0xFF10B981),
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
@@ -1067,16 +1514,6 @@ class _HomePageState extends ConsumerState<HomePage>
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _colonyPlaceholder() {
-    return Center(
-      child: Icon(
-        Icons.home_work_outlined,
-        color: Colors.grey.shade300,
-        size: 40,
       ),
     );
   }
@@ -1690,8 +2127,8 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Widget _buildStatsCounter(BuildContext context) {
     final stats = [
-      const _StatData('5+', 'Colonies', Icons.location_city_rounded, Color(0xFF43A047)),
-      const _StatData('200+', 'Plots', Icons.grid_on_rounded, Color(0xFF1E88E5)),
+      const _StatData('7+', 'Colonies', Icons.location_city_rounded, Color(0xFF43A047)),
+      const _StatData('750+', 'Plots', Icons.grid_on_rounded, Color(0xFF1E88E5)),
       const _StatData('1000+', 'Families', Icons.people_rounded, Color(0xFFFF9800)),
       const _StatData('12+', 'Years', Icons.workspace_premium_rounded, Color(0xFF9C27B0)),
     ];
@@ -1700,19 +2137,19 @@ class _HomePageState extends ConsumerState<HomePage>
       margin: const EdgeInsets.fromLTRB(16, 4, 16, 16),
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.white.withValues(alpha: 0.15),
-            Colors.white.withValues(alpha: 0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.15),
-          width: 1,
+          color: const Color(0xFFE8DFD0),
+          width: 1.2,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0B194C).withValues(alpha: 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1723,7 +2160,7 @@ class _HomePageState extends ConsumerState<HomePage>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: stat.color.withValues(alpha: 0.2),
+                  color: stat.color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(stat.icon, color: stat.color, size: 22),
@@ -1732,17 +2169,18 @@ class _HomePageState extends ConsumerState<HomePage>
               Text(
                 stat.value,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppTheme.primaryColor,
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 stat.label,
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.7),
+                style: const TextStyle(
+                  color: Color(0xFF64748B),
                   fontSize: 11,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -2017,12 +2455,12 @@ class _HomePageState extends ConsumerState<HomePage>
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: const Color(0xFFE8DFD0), width: 1.2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -2032,7 +2470,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: feature.color.withValues(alpha: 0.1),
+                        color: feature.color.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(feature.icon, color: feature.color, size: 24),
@@ -2041,16 +2479,18 @@ class _HomePageState extends ConsumerState<HomePage>
                     Text(
                       feature.title,
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.primaryColor,
                         fontSize: 13,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       feature.description,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 11,
-                        color: Colors.grey.shade600,
+                        color: Color(0xFF64748B),
+                        fontWeight: FontWeight.w500,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -2232,17 +2672,10 @@ class _QuickActionWidgetState extends State<_QuickActionWidget>
             const SizedBox(height: 8),
             Text(
               widget.action.label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.white.withValues(alpha: 0.95),
-                shadows: const [
-                  Shadow(
-                    blurRadius: 4,
-                    color: Colors.black26,
-                    offset: Offset(0, 1),
-                  ),
-                ],
+                fontWeight: FontWeight.w700,
+                color: AppTheme.primaryColor,
               ),
             ),
           ],
@@ -2264,9 +2697,9 @@ class _NotificationBell extends StatelessWidget {
       icon: Stack(
         clipBehavior: Clip.none,
         children: [
-          Icon(
+          const Icon(
             Icons.notifications_outlined,
-            color: Colors.white.withValues(alpha: 0.9),
+            color: AppTheme.primaryColor,
             size: 26,
           ),
           Positioned(
@@ -2278,7 +2711,7 @@ class _NotificationBell extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppTheme.errorColor,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.primaryColor, width: 1.5),
+                border: Border.all(color: Colors.white, width: 1.5),
               ),
             ),
           ),
@@ -2301,16 +2734,23 @@ class _ProfileAvatar extends StatelessWidget {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
+          color: Colors.white,
           shape: BoxShape.circle,
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.3),
+            color: const Color(0xFFE8DFD0),
             width: 1.5,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF0B194C).withValues(alpha: 0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        child: Icon(
+        child: const Icon(
           Icons.person_outline,
-          color: Colors.white.withValues(alpha: 0.9),
+          color: AppTheme.primaryColor,
           size: 22,
         ),
       ),

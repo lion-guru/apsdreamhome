@@ -109,7 +109,7 @@ class MobilePropertyApiController extends BaseController
                     'sync_metadata' => $sync_metadata
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Properties API error');
         }
     }
@@ -131,7 +131,7 @@ class MobilePropertyApiController extends BaseController
             $property['features'] = $this->getPropertyFeatures($id);
 
             echo json_encode(['success' => true, 'data' => $property]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Single Property API error');
         }
     }
@@ -173,7 +173,7 @@ class MobilePropertyApiController extends BaseController
                 'message' => $message,
                 'is_favorited' => $is_favorited
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Toggle Favorite API error');
         }
     }
@@ -194,7 +194,7 @@ class MobilePropertyApiController extends BaseController
             $favorites = $this->getUserFavorites($user_id);
 
             echo json_encode(['success' => true, 'data' => $favorites]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'User Favorites API error');
         }
     }
@@ -209,7 +209,7 @@ class MobilePropertyApiController extends BaseController
             });
 
             echo json_encode(['success' => true, 'data' => $property_types]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Property Types API error');
         }
     }
@@ -224,7 +224,7 @@ class MobilePropertyApiController extends BaseController
             });
 
             echo json_encode(['success' => true, 'data' => $cities]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Cities API error');
         }
     }
@@ -258,7 +258,7 @@ class MobilePropertyApiController extends BaseController
                 'data' => $properties,
                 'pagination' => ['page' => $page, 'limit' => $limit, 'total' => $total, 'pages' => (int)ceil($total / $limit)]
             ], 'Properties fetched for sync');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobilePropertyApiController] exception: " . $e->getMessage());
             return $this->errorResponse('Internal server error');
         }
@@ -290,7 +290,7 @@ class MobilePropertyApiController extends BaseController
             foreach ($params as $key => $value) { if ($key !== 'limit' && $key !== 'offset') $stmt->bindValue(':' . $key, $value); }
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Get properties with filters error: ' . $e->getMessage());
             return [];
         }
@@ -304,7 +304,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare($sql);
             $stmt->execute(['id' => $id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Get property by ID error: ' . $e->getMessage());
             return null;
         }
@@ -317,7 +317,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM property_images WHERE property_id = :propertyId ORDER BY is_primary DESC, sort_order ASC");
             $stmt->execute(['propertyId' => $property_id]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Get property images error: ' . $e->getMessage());
             return [];
         }
@@ -330,7 +330,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM property_features WHERE property_id = :propertyId ORDER BY feature_category, feature_name");
             $stmt->execute(['propertyId' => $property_id]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Get property features error: ' . $e->getMessage());
             return [];
         }
@@ -354,7 +354,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return (int)$stmt->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -378,7 +378,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return (int)$stmt->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -390,7 +390,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare($sql);
             $stmt->execute(['last_sync' => $last_sync]);
             return (int)$stmt->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -401,7 +401,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare("SELECT COUNT(*) FROM sync_queue WHERE user_id = ?");
             $stmt->execute([$userId]);
             return (int)$stmt->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -412,7 +412,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare("SELECT id FROM properties WHERE id = ?");
             $stmt->execute([$id]);
             return (bool)$stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -423,7 +423,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare("SELECT id FROM property_favorites WHERE user_id = ? AND property_id = ?");
             $stmt->execute([$userId, $propertyId]);
             return (bool)$stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -432,7 +432,7 @@ class MobilePropertyApiController extends BaseController
     {
         try {
             $this->db->execute("INSERT INTO property_favorites (user_id, property_id, created_at) VALUES (?, ?, NOW())", [$userId, $propertyId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Add favorite error: " . $e->getMessage());
         }
     }
@@ -441,7 +441,7 @@ class MobilePropertyApiController extends BaseController
     {
         try {
             $this->db->execute("DELETE FROM property_favorites WHERE user_id = ? AND property_id = ?", [$userId, $propertyId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Remove favorite error: " . $e->getMessage());
         }
     }
@@ -451,7 +451,7 @@ class MobilePropertyApiController extends BaseController
         try {
             $stmt = $this->db->query("SELECT id, name, icon FROM property_types WHERE status = 'active' ORDER BY name");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -462,7 +462,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->query("SELECT DISTINCT city FROM properties WHERE status = 'active' ORDER BY city");
             $cities = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return array_map(fn($c) => $c['city'], $cities);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -523,7 +523,7 @@ class MobilePropertyApiController extends BaseController
                 'data' => $results,
                 'pagination' => ['page' => $page, 'limit' => $limit, 'total' => $total, 'pages' => (int)ceil($total / $limit)]
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Get user favorites error: ' . $e->getMessage());
             return [];
         }
@@ -560,7 +560,7 @@ class MobilePropertyApiController extends BaseController
             }
 
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Create inquiry error: ' . $e->getMessage());
             return false;
         }
@@ -776,7 +776,7 @@ class MobilePropertyApiController extends BaseController
                     ],
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobilePropertyApiController] getMarketplace() exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to fetch marketplace']);
@@ -821,7 +821,7 @@ class MobilePropertyApiController extends BaseController
                 'data' => $properties,
                 'count' => count($properties)
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobilePropertyApiController] getPremiumProperties() exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to fetch premium listings']);
@@ -1156,6 +1156,10 @@ class MobilePropertyApiController extends BaseController
                 $where[] = 'c.is_active = ?';
                 $params[] = $status === 'active' ? 1 : 0;
             }
+            // Default: active colonies only (inactive hidden from app lists).
+            if ($status === '') {
+                $where[] = 'c.is_active = 1';
+            }
             if ($districtId > 0) {
                 $where[] = 'c.district_id = ?';
                 $params[] = $districtId;
@@ -1187,8 +1191,21 @@ class MobilePropertyApiController extends BaseController
                 $colony['starting_price'] = (float)($colony['starting_price'] ?? 0);
                 $colony['is_featured'] = (bool)($colony['is_featured'] ?? false);
                 $colony['is_active'] = (bool)($colony['is_active'] ?? false);
-                $colony['image_url'] = $colony['image_path'] ? (str_starts_with((string)$colony['image_path'], 'http') ? $colony['image_path'] : BASE_URL . '/' . ltrim($colony['image_path'], '/')) : null;
-                $colony['layout_image_url'] = $colony['layout_image'] ? (str_starts_with((string)$colony['layout_image'], 'http') ? $colony['layout_image'] : BASE_URL . '/' . ltrim($colony['layout_image'], '/')) : null;
+                $colony['latitude'] = isset($colony['latitude']) && is_numeric($colony['latitude']) ? (float)$colony['latitude'] : 26.7606;
+                $colony['longitude'] = isset($colony['longitude']) && is_numeric($colony['longitude']) ? (float)$colony['longitude'] : 83.3730;
+
+                // Luxury showcase image fallback if empty
+                $defaultImages = [
+                    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop&q=80',
+                    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1000&auto=format&fit=crop&q=80',
+                    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1000&auto=format&fit=crop&q=80',
+                    'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1000&auto=format&fit=crop&q=80',
+                    'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1000&auto=format&fit=crop&q=80',
+                ];
+                $fallbackImg = $defaultImages[((int)$colony['id']) % count($defaultImages)];
+
+                $colony['image_url'] = $colony['image_path'] ? (str_starts_with((string)$colony['image_path'], 'http') ? $colony['image_path'] : BASE_URL . '/' . ltrim($colony['image_path'], '/')) : $fallbackImg;
+                $colony['layout_image_url'] = $colony['layout_image'] ? (str_starts_with((string)$colony['layout_image'], 'http') ? $colony['layout_image'] : BASE_URL . '/' . ltrim($colony['layout_image'], '/')) : 'https://images.unsplash.com/photo-1524230572899-a752b3835840?w=1000&auto=format&fit=crop&q=80';
             }
 
             echo json_encode([
@@ -1414,7 +1431,7 @@ class MobilePropertyApiController extends BaseController
                 return;
             }
             echo json_encode(['success' => true, 'data' => $plot]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('MobilePropertyApiController::getPlotDetail error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Internal server error']);
@@ -1473,7 +1490,7 @@ class MobilePropertyApiController extends BaseController
                     'pages' => (int)ceil($total / $limit),
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('MobilePropertyApiController::getAllPlots error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Internal server error']);
@@ -1510,7 +1527,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE plots SET status = 'hold', held_by = ?, held_at = NOW(), hold_expires_at = DATE_ADD(NOW(), INTERVAL {$holdHours} HOUR) WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$userId, $id, $tid]);
             echo json_encode(['success' => true, 'message' => 'Plot held successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('MobilePropertyApiController::holdPlot error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Internal server error']);
@@ -1530,7 +1547,7 @@ class MobilePropertyApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE plots SET status = 'available', held_by = NULL, held_at = NULL, hold_expires_at = NULL WHERE id = ? AND held_by = ? AND tenant_id = ?");
             $stmt->execute([$id, $userId, $tid]);
             echo json_encode(['success' => true, 'message' => 'Plot released successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('MobilePropertyApiController::releasePlot error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Internal server error']);
@@ -1548,7 +1565,7 @@ class MobilePropertyApiController extends BaseController
             $stmt->execute([$plot['colony_id'], $id, $plot['area_sqft']]);
             $similar = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true,'data'=>$similar]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>true,'data'=>[]]);
         }
     }
@@ -1560,7 +1577,7 @@ class MobilePropertyApiController extends BaseController
             $stmt->execute([$colonyId]);
             $plots = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success'=>true,'data'=>$plots]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>true,'data'=>[]]);
         }
     }
