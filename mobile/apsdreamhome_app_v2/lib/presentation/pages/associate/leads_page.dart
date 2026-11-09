@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../data/repositories/lead_repository.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../data/models/lead_model.dart';
+import '../../../data/services/lead_service.dart';
 import '../../widgets/app_widgets.dart';
 
 /// Leads Page - Connected to Repository
@@ -88,6 +90,16 @@ class _LeadsPageState extends ConsumerState<LeadsPage>
           IconButton(
             onPressed: _showFilterOptions,
             icon: const Icon(Icons.filter_list),
+          ),
+          IconButton(
+            onPressed: _showImportDialog,
+            tooltip: 'Import leads (CSV)',
+            icon: const Icon(Icons.upload_file_rounded),
+          ),
+          IconButton(
+            onPressed: _exportLeads,
+            tooltip: 'Export leads (CSV)',
+            icon: const Icon(Icons.download_rounded),
           ),
         ],
         bottom: TabBar(
@@ -237,8 +249,8 @@ class _LeadsPageState extends ConsumerState<LeadsPage>
 
     return RefreshIndicator(
       onRefresh: () async {
-        ref.refresh(myLeadsProvider(filters));
-      }, // ignore: unused_result
+        final _ = await ref.refresh(myLeadsProvider(filters));
+      },
       child: Consumer(
         builder: (context, ref, child) {
           final leadsAsync = ref.watch(myLeadsProvider(filters));
@@ -565,6 +577,95 @@ class _LeadsPageState extends ConsumerState<LeadsPage>
     } else {
       return '${(difference.inDays / 30).floor()} months ago';
     }
+  }
+
+  // ── Import (paste CSV: name,phone,email per line) ──
+  void _showImportDialog() {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Import Leads'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: TextField(
+            controller: controller,
+            maxLines: 8,
+            decoration: const InputDecoration(
+              hintText: 'Paste CSV lines:\nName, Phone, Email\nRajesh, 9876543210, r@mail.com',
+              border: OutlineInputBorder(),
+              isDense: true,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final text = controller.text.trim();
+              Navigator.of(ctx).pop();
+              if (text.isEmpty) return;
+              final lines = text.split('\n').where((l) => l.trim().isNotEmpty).toList();
+              int ok = 0, skip = 0;
+              final svc = LeadService();
+              for (final line in lines) {
+                final parts = line.split(',').map((p) => p.trim()).toList();
+                if (parts.length < 2 || parts[0].isEmpty || parts[1].length < 10) {
+                  skip++;
+                  continue;
+                }
+                try {
+                  await svc.createLead(
+                    name: parts[0],
+                    phone: parts[1],
+                    email: parts.length > 2 && parts[2].isNotEmpty ? parts[2] : null,
+                    source: 'import',
+                  );
+                  ok++;
+                } catch (_) {
+                  skip++;
+                }
+              }
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Imported $ok lead(s), skipped $skip')),
+                );
+                ref.invalidate(currentUserProvider);
+              }
+            },
+            child: const Text('Import'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Export (CSV share) ──
+  Future<void> _exportLeads() async {
+    final uid = ref.read(currentUserProvider).value?.id.toString() ?? '';
+    if (uid.isEmpty) return;
+    final leads = await LeadService().getLeadsForAssociate(uid);
+    if (leads.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No leads to export')),
+        );
+      }
+      return;
+    }
+    final buf = StringBuffer('name,phone,email,status,source\n');
+    for (final l in leads) {
+      buf.writeln('${_csvCell(l.name)},${_csvCell(l.phone)},${_csvCell(l.email)},${_csvCell(l.status)},${_csvCell(l.source)}');
+    }
+    await SharePlus.instance.share(ShareParams(text: buf.toString(), subject: 'Leads export (${leads.length})'));
+  }
+
+  String _csvCell(dynamic v) {
+    final s = (v ?? '').toString().replaceAll('"', "'").replaceAll('\n', ' ');
+    return s.contains(',') ? '"$s"' : s;
   }
 
   void _showFilterOptions() {
