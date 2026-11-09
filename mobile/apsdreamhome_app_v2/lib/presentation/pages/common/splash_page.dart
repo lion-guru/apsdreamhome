@@ -105,7 +105,7 @@ class _SplashPageState extends State<SplashPage>
                       borderRadius: BorderRadius.circular(32),
                       child: Image.asset(
                         'assets/images/aps_logo.webp',
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         errorBuilder: (_, _, _) => const Icon(
                           Icons.home_rounded,
                           size: 70,

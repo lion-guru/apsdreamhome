@@ -23,7 +23,9 @@ class _ColoniesPageState extends ConsumerState<ColoniesPage> {
   Widget build(BuildContext context) {
     final coloniesAsync = ref.watch(coloniesProvider);
 
-    return Column(
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
+      body: Column(
       children: [
         // Search Bar
         Padding(
@@ -160,6 +162,7 @@ class _ColoniesPageState extends ConsumerState<ColoniesPage> {
           ),
         ),
       ],
+      ),
     );
   }
 
@@ -179,19 +182,16 @@ class _ColoniesPageState extends ConsumerState<ColoniesPage> {
                   width: double.infinity,
                   height: MediaQuery.of(context).size.width > 600 ? 180 : 140,
                   color: Colors.grey.shade200,
-                  child: colony.displayImages.isNotEmpty
-                      ? Image.network(
-                          colony.displayImages.first,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(
-                              child: Icon(Icons.image_not_supported_outlined, color: Colors.grey, size: 50),
-                            );
-                          },
-                        )
-                      : const Center(
-                          child: Icon(Icons.home_work_outlined, color: Colors.grey, size: 50),
-                        ),
+                  child: Image.network(
+                    colony.displayImages.first,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.network(
+                        colony.luxuryHeroImage,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
                 ),
               ),
               Positioned(
@@ -214,6 +214,34 @@ class _ColoniesPageState extends ConsumerState<ColoniesPage> {
                   child: Text(
                     '${colony.availablePlots} Available',
                     style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.successColor),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 12,
+                left: 12,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.70),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: const Color(0xFFE5A93C), width: 0.8),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.verified, size: 12, color: Color(0xFFE5A93C)),
+                      SizedBox(width: 4),
+                      Text(
+                        'RERA & 143 MUTATION APPROVED',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.4,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
