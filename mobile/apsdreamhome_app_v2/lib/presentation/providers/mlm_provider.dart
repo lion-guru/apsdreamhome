@@ -1,9 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
+import '../../core/services/api_service.dart';
+import '../../core/utils/logger.dart';
 import '../../core/constants/app_constants.dart';
-import '../../core/providers/auth_provider.dart';
 
 final mlmProvider =
     StateNotifierProvider<MLMNotifier, AsyncValue<Map<String, dynamic>>>((ref) {
@@ -12,63 +12,54 @@ final mlmProvider =
 
 class MLMNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
   final Ref _ref;
-  final Dio _dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
 
   MLMNotifier(this._ref) : super(const AsyncValue.loading());
 
   Future<void> fetchMlmSummary() async {
     try {
-      final token = await _ref.read(authProvider.notifier).getToken();
-      final response = await _dio.get(
-        '${AppConstants.apiVersion}${AppConstants.mlmSummaryEndpoint}',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final api = ApiService();
+      final response = await api.get(AppConstants.mlmSummaryEndpoint);
 
-      if (response.data['success'] as bool) {
-        state = AsyncValue.data(response.data['data'] as Map<String, dynamic>);
+      if (response['success'] == true) {
+        state = AsyncValue.data(response['data'] as Map<String, dynamic>);
       } else {
-        throw Exception(
-            response.data['message'] ?? 'Failed to fetch MLM summary');
+        throw Exception(response['message'] ?? 'Failed to fetch MLM summary');
       }
     } catch (e) {
+      AppLogger.error('Error fetching MLM summary', e);
       state = AsyncValue.error(e, StackTrace.current);
     }
   }
 
   Future<List<dynamic>> fetchGenealogy() async {
     try {
-      final token = await _ref.read(authProvider.notifier).getToken();
-      final response = await _dio.get(
-        '${AppConstants.apiVersion}${AppConstants.genealogyEndpoint}',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final api = ApiService();
+      final response = await api.get(AppConstants.genealogyEndpoint);
 
-      if (response.data['success'] as bool) {
-        return response.data['data'] as List<dynamic>;
+      if (response['success'] == true) {
+        return response['data'] as List<dynamic>;
       } else {
-        throw Exception(
-            response.data['message'] ?? 'Failed to fetch genealogy');
+        throw Exception(response['message'] ?? 'Failed to fetch genealogy');
       }
     } catch (e) {
+      AppLogger.error('Error fetching genealogy', e);
       rethrow;
     }
   }
 
   Future<List<dynamic>> fetchBusinessBreakdown() async {
     try {
-      final token = await _ref.read(authProvider.notifier).getToken();
-      final response = await _dio.get(
-        '${AppConstants.apiVersion}${AppConstants.businessBreakdownEndpoint}',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final api = ApiService();
+      final response = await api.get(AppConstants.businessBreakdownEndpoint);
 
-      if (response.data['success'] as bool) {
-        return response.data['data'] as List<dynamic>;
+      if (response['success'] == true) {
+        return response['data'] as List<dynamic>;
       } else {
         throw Exception(
-            response.data['message'] ?? 'Failed to fetch business breakdown');
+            response['message'] ?? 'Failed to fetch business breakdown');
       }
     } catch (e) {
+      AppLogger.error('Error fetching business breakdown', e);
       rethrow;
     }
   }
@@ -76,18 +67,15 @@ class MLMNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
   Future<Map<String, dynamic>> requestPayout(
       double amount, String remarks) async {
     try {
-      final token = await _ref.read(authProvider.notifier).getToken();
-      final response = await _dio.post(
-        '${AppConstants.apiVersion}${AppConstants.requestPayoutEndpoint}',
-        data: {
-          'amount': amount,
-          'remarks': remarks,
-        },
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final api = ApiService();
+      final response = await api.post(AppConstants.requestPayoutEndpoint, data: {
+        'amount': amount,
+        'remarks': remarks,
+      });
 
-      return response.data as Map<String, dynamic>;
+      return response;
     } catch (e) {
+      AppLogger.error('Error requesting payout', e);
       rethrow;
     }
   }

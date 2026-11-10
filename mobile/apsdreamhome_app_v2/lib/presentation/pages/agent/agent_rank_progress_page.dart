@@ -457,10 +457,6 @@ final _agentRankProgressProvider =
       return Map<String, dynamic>.from(response['data'] as Map);
     }
   } catch (_) {}
-  // Mock data fallback
-  return {
-    'current_rank': 'Sr. Associate',
-    'current_gbv': 2100000,
-    'next_rank_gbv': 3500000,
-  };
+  // Honest empty state (no fake data)
+  return <String, dynamic>{};
 });

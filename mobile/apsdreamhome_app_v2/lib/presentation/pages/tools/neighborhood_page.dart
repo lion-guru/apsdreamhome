@@ -21,9 +21,9 @@ class _NeighborhoodPageState extends State<NeighborhoodPage> {
   bool _loading = true;
   String? _error;
 
-  int _walkScore = 0;
-  int _transitScore = 0;
-  int _lifestyleScore = 0;
+  int? _walkScore;
+  int? _transitScore;
+  int? _lifestyleScore;
 
   Map<String, List<_AmenityItem>> _landmarksByType = {};
 
@@ -181,13 +181,23 @@ class _NeighborhoodPageState extends State<NeighborhoodPage> {
         }
       }
 
-      // If API fails, use mock data as last resort
-      _loadMockData();
-      setState(() => _loading = false);
+      // If API fails, show honest empty state (no fake data)
+      setState(() {
+        _walkScore = null;
+        _transitScore = null;
+        _lifestyleScore = null;
+        _landmarksByType = {};
+        _loading = false;
+      });
     } catch (e) {
-      // Network error — use mock data
-      _loadMockData();
-      setState(() => _loading = false);
+      // Network error - show honest empty state (no fake data)
+      setState(() {
+        _walkScore = null;
+        _transitScore = null;
+        _lifestyleScore = null;
+        _landmarksByType = {};
+        _loading = false;
+      });
     }
   }
 
@@ -236,57 +246,6 @@ class _NeighborhoodPageState extends State<NeighborhoodPage> {
     }
   }
 
-  void _loadMockData() {
-    _walkScore = 82;
-    _transitScore = 74;
-    _lifestyleScore = 91;
-
-    _landmarksByType = {
-      'school': [
-        const _AmenityItem(
-          name: 'DPS School',
-          distance: '0.8 km',
-          icon: Icons.school_rounded,
-          color: Color(0xFF1565C0),
-          rating: 4.5,
-        ),
-        const _AmenityItem(
-          name: 'Kendriya Vidyalaya',
-          distance: '1.8 km',
-          icon: Icons.school_rounded,
-          color: Color(0xFF1565C0),
-          rating: 3.8,
-        ),
-      ],
-      'hospital': [
-        const _AmenityItem(
-          name: 'District Hospital',
-          distance: '1.5 km',
-          icon: Icons.local_hospital_rounded,
-          color: Color(0xFFE53935),
-          rating: 4.2,
-        ),
-      ],
-      'bank': [
-        const _AmenityItem(
-          name: 'State Bank of India',
-          distance: '0.5 km',
-          icon: Icons.account_balance_rounded,
-          color: Color(0xFF1565C0),
-          rating: 4.2,
-        ),
-      ],
-      'park': [
-        const _AmenityItem(
-          name: 'City Park',
-          distance: '0.6 km',
-          icon: Icons.park_rounded,
-          color: Color(0xFF2E7D32),
-          rating: 4.6,
-        ),
-      ],
-    };
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -393,7 +352,7 @@ class _NeighborhoodPageState extends State<NeighborhoodPage> {
     );
   }
 
-  Widget _buildScoreCard(String label, int score, Color color) {
+  Widget _buildScoreCard(String label, int? score, Color color) {
     return GlassCard(
       padding: const EdgeInsets.all(14),
       child: Column(
@@ -408,14 +367,14 @@ class _NeighborhoodPageState extends State<NeighborhoodPage> {
                   width: 50,
                   height: 50,
                   child: CircularProgressIndicator(
-                    value: score / 100,
+                    value: (score ?? 0) / 100,
                     strokeWidth: 4,
                     backgroundColor: Colors.grey.withValues(alpha: 0.2),
                     valueColor: AlwaysStoppedAnimation(color),
                   ),
                 ),
                 Text(
-                  '$score',
+                  score != null ? '$score' : '—',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

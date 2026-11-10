@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/auth_provider.dart';
@@ -157,13 +158,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             );
                           },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 14),
+                    _buildExploreGuestButton(),
+                    const SizedBox(height: 12),
                     _buildForgotPassword(),
                     const SizedBox(height: 8),
                     _buildDividerWithText(),
                     _buildSocialButtons(),
                     const SizedBox(height: 16),
                     _buildRegisterLink(),
+                    const SizedBox(height: 14),
+                    _buildWhatsAppHelpline(),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -186,49 +191,84 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             return Transform.scale(scale: value, child: child);
           },
           child: Container(
-            width: 88,
-            height: 88,
+            width: 96,
+            height: 96,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: AppTheme.accentColor.withValues(alpha: 0.6),
+                width: 2,
               ),
-              borderRadius: BorderRadius.circular(22),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.3),
-                  blurRadius: 20,
+                  color: const Color(0xFF0B194C).withValues(alpha: 0.12),
+                  blurRadius: 24,
                   offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: AppTheme.accentColor.withValues(alpha: 0.20),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: const Icon(
-              Icons.home_rounded,
-              size: 44,
-              color: Colors.white,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: Image.asset(
+                'assets/images/app_logo_luxury.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.home_work_rounded,
+                  size: 48,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 20),
-        ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [AppTheme.primaryColor, AppTheme.accentColor],
-          ).createShader(bounds),
-          child: Text(
-            'APS Dream Home',
-            style: Theme.of(context).textTheme.displayMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-            ),
+        const SizedBox(height: 18),
+        Text(
+          'APS DREAM HOME',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            color: AppTheme.primaryColor,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.5,
           ),
         ),
         const SizedBox(height: 8),
-        Text(
-          'Your Dream Property Awaits',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Colors.white70,
-            letterSpacing: 0.5,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppTheme.accentColor.withValues(alpha: 0.6),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.verified_rounded, size: 14, color: AppTheme.accentColor),
+              SizedBox(width: 6),
+              Text(
+                'RERA APPROVED TOWNSHIPS • GORAKHPUR',
+                style: TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -239,8 +279,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.15),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.goldBorder, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0B194C).withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -271,7 +319,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         size: 16,
                         color: _selectedTab == 0
                             ? Colors.white
-                            : Colors.white70,
+                            : const Color(0xFF64748B),
                       ),
                       const SizedBox(width: 6),
                       Text(
@@ -279,10 +327,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           color: _selectedTab == 0
                               ? Colors.white
-                              : Colors.white70,
+                              : const Color(0xFF64748B),
                           fontWeight: _selectedTab == 0
-                              ? FontWeight.w600
-                              : FontWeight.normal,
+                              ? FontWeight.w700
+                              : FontWeight.w500,
                         ),
                       ),
                     ],
@@ -318,7 +366,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         size: 16,
                         color: _selectedTab == 1
                             ? Colors.white
-                            : Colors.white70,
+                            : const Color(0xFF64748B),
                       ),
                       const SizedBox(width: 6),
                       Text(
@@ -326,10 +374,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           color: _selectedTab == 1
                               ? Colors.white
-                              : Colors.white70,
+                              : const Color(0xFF64748B),
                           fontWeight: _selectedTab == 1
-                              ? FontWeight.w600
-                              : FontWeight.normal,
+                              ? FontWeight.w700
+                              : FontWeight.w500,
                         ),
                       ),
                     ],
@@ -346,44 +394,56 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget _buildEmailLoginForm() {
     return Form(
       key: _formKey,
-      child: GlassCard(
+      child: Container(
         padding: const EdgeInsets.all(24),
-        opacity: 0.12,
-        blur: 8,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppTheme.goldBorder, width: 1.2),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF0B194C).withValues(alpha: 0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
         child: Column(
           children: [
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(
+                color: AppTheme.primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
               decoration: InputDecoration(
                 labelText: 'Email Address',
                 hintText: 'Enter your email',
-                hintStyle: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4),
+                hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+                labelStyle: const TextStyle(
+                  color: Color(0xFF64748B),
+                  fontWeight: FontWeight.w500,
                 ),
-                labelStyle: const TextStyle(color: Colors.white70),
                 prefixIcon: const Icon(
                   Icons.email_outlined,
-                  color: Colors.white70,
+                  color: AppTheme.primaryColor,
                 ),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.08),
+                fillColor: const Color(0xFFFAF7F0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
-                  ),
+                  borderSide: const BorderSide(color: Color(0xFFE8DFD0)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: const BorderSide(
                     color: AppTheme.accentColor,
-                    width: 1.5,
+                    width: 1.8,
                   ),
                 ),
                 errorBorder: OutlineInputBorder(
@@ -403,43 +463,45 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             TextFormField(
               controller: _passwordController,
               obscureText: _obscurePassword,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(
+                color: AppTheme.primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
               decoration: InputDecoration(
                 labelText: 'Password',
                 hintText: 'Enter your password',
-                hintStyle: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.4),
+                hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+                labelStyle: const TextStyle(
+                  color: Color(0xFF64748B),
+                  fontWeight: FontWeight.w500,
                 ),
-                labelStyle: const TextStyle(color: Colors.white70),
                 prefixIcon: const Icon(
                   Icons.lock_outline,
-                  color: Colors.white70,
+                  color: AppTheme.primaryColor,
                 ),
                 suffixIcon: IconButton(
                   onPressed: () =>
                       setState(() => _obscurePassword = !_obscurePassword),
                   icon: Icon(
                     _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.white70,
+                    color: const Color(0xFF64748B),
                   ),
                 ),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.08),
+                fillColor: const Color(0xFFFAF7F0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
-                  ),
+                  borderSide: const BorderSide(color: Color(0xFFE8DFD0)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: const BorderSide(
                     color: AppTheme.accentColor,
-                    width: 1.5,
+                    width: 1.8,
                   ),
                 ),
                 errorBorder: OutlineInputBorder(
@@ -467,20 +529,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     onChanged: (val) =>
                         setState(() => _rememberMe = val ?? false),
                     activeColor: AppTheme.accentColor,
-                    checkColor: AppTheme.primaryColor,
-                    side: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.4),
+                    checkColor: Colors.white,
+                    side: const BorderSide(
+                      color: Color(0xFF94A3B8),
                     ),
                   ),
                 ),
                 const SizedBox(width: 4),
-                Text(
+                const Text(
                   'Remember me',
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
+                  style: TextStyle(
+                    color: Color(0xFF334155),
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 14),
+            _buildDemoAccountsBar(),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               height: 52,
@@ -492,7 +559,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.4),
+                      color: AppTheme.primaryColor.withValues(alpha: 0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -546,41 +613,56 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Widget _buildPhoneLoginForm() {
-    return GlassCard(
+    return Container(
       padding: const EdgeInsets.all(24),
-      opacity: 0.12,
-      blur: 8,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppTheme.goldBorder, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0B194C).withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           TextFormField(
+            controller: _phoneController,
             keyboardType: TextInputType.phone,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(
+              color: AppTheme.primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
             decoration: InputDecoration(
               labelText: 'Phone Number',
               hintText: '+91 98765 43210',
-              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
-              labelStyle: const TextStyle(color: Colors.white70),
+              hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+              labelStyle: const TextStyle(
+                color: Color(0xFF64748B),
+                fontWeight: FontWeight.w500,
+              ),
               prefixIcon: const Icon(
                 Icons.phone_outlined,
-                color: Colors.white70,
+                color: AppTheme.primaryColor,
               ),
               filled: true,
-              fillColor: Colors.white.withValues(alpha: 0.08),
+              fillColor: const Color(0xFFFAF7F0),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(
-                  color: Colors.white.withValues(alpha: 0.15),
-                ),
+                borderSide: const BorderSide(color: Color(0xFFE8DFD0)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: const BorderSide(
                   color: AppTheme.accentColor,
-                  width: 1.5,
+                  width: 1.8,
                 ),
               ),
               errorBorder: OutlineInputBorder(
@@ -608,13 +690,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryColor.withValues(alpha: 0.4),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
                 ],
               ),
-               child: ElevatedButton(
+              child: ElevatedButton(
                 onPressed: _isLoading
                     ? null
                     : () async {
@@ -626,7 +708,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           );
                           return;
                         }
-                          setState(() => _isLoading = true);
+                        setState(() => _isLoading = true);
                         try {
                           await ref
                               .read(authProvider.notifier)
@@ -675,10 +757,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             ),
           ),
           const SizedBox(height: 12),
-          Text(
+          const Text(
             'We will send a verification code to your phone',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.6),
+              color: Color(0xFF64748B),
               fontSize: 13,
             ),
             textAlign: TextAlign.center,
@@ -689,22 +771,27 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Widget _buildDividerWithText() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 16),
       child: Row(
         children: [
-          Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.2))),
+          Expanded(
+            child: Divider(color: Color(0xFFE2D5BE), thickness: 1),
+          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               'or continue with',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: Color(0xFF64748B),
                 fontSize: 13,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
-          Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.2))),
+          Expanded(
+            child: Divider(color: Color(0xFFE2D5BE), thickness: 1),
+          ),
         ],
       ),
     );
@@ -731,7 +818,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           } else if (label == 'Google') {
             setState(() => _isLoading = true);
             try {
-              
               final result = await GoogleAuthService.signInWithGoogle();
               if (result == null) {
                 if (mounted) {
@@ -745,14 +831,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               final token = result['token'] as String?;
               final userData = result['user'] as Map<String, dynamic>?;
               if (token != null && userData != null) {
-                // Save token
                 final apiService = ApiService();
                 await apiService.saveToken(token);
-                // Create user model
                 final user = User.fromJson(userData);
-                // Set auth state
                 AuthBridge.instance.currentUser.value = user;
-                // Register FCM token
                 try {
                   final fcmToken = await NotificationService().getToken();
                   if (fcmToken != null) {
@@ -774,30 +856,33 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             } finally {
               if (mounted) setState(() => _isLoading = false);
             }
-          } else {
-            AppWidgets.showInfoSnackBar(
-              context,
-              '$label login coming soon. Use Email login for now.',
-            );
           }
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+            border: Border.all(color: const Color(0xFFE8DFD0)),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: Colors.white70, size: 22),
+              Icon(icon, color: AppTheme.primaryColor, size: 22),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.8),
+                style: const TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.w600,
                   fontSize: 14,
                 ),
               ),
@@ -816,8 +901,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         child: Text(
           'Forgot Password?',
           style: TextStyle(
-            color: AppTheme.accentColor.withValues(alpha: 0.9),
-            fontWeight: FontWeight.w500,
+            color: AppTheme.accentColor.withValues(alpha: 0.95),
+            fontWeight: FontWeight.w600,
             fontSize: 14,
           ),
         ),
@@ -829,11 +914,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           "Don't have an account? ",
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
+            color: Color(0xFF475569),
             fontSize: 14,
+            fontWeight: FontWeight.w500,
           ),
         ),
         TextButton(
@@ -843,16 +929,241 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          child: Text(
+          child: const Text(
             'Register Now',
             style: TextStyle(
-              color: AppTheme.accentColor.withValues(alpha: 0.9),
-              fontWeight: FontWeight.w600,
+              color: AppTheme.accentColor,
+              fontWeight: FontWeight.w800,
               fontSize: 14,
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildExploreGuestButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: OutlinedButton(
+        onPressed: () => context.go('/home'),
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(
+            color: AppTheme.accentColor,
+            width: 1.6,
+          ),
+          backgroundColor: Colors.white,
+          elevation: 2,
+          shadowColor: const Color(0xFFD4AF37).withValues(alpha: 0.2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.travel_explore_rounded,
+              color: AppTheme.accentColor,
+              size: 22,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'Explore Townships as Guest • बिना लॉगिन देखे',
+              style: TextStyle(
+                color: AppTheme.primaryColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDemoAccountsBar() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFAF7F0),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: const Color(0xFFE8DFD0),
+          width: 1.2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(
+                Icons.flash_on_rounded,
+                size: 14,
+                color: AppTheme.accentColor,
+              ),
+              SizedBox(width: 5),
+              Text(
+                'TEST ACCOUNTS (TAP TO AUTOFILL):',
+                style: TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildDemoChip(
+                  label: 'Customer',
+                  email: 'testuser@example.com',
+                  pass: 'Aps@2026',
+                  icon: Icons.person_rounded,
+                ),
+                const SizedBox(width: 6),
+                _buildDemoChip(
+                  label: 'Associate',
+                  email: 'testassociate@example.com',
+                  pass: 'Aps@2026',
+                  icon: Icons.handshake_rounded,
+                ),
+                const SizedBox(width: 6),
+                _buildDemoChip(
+                  label: 'Admin',
+                  email: 'admin@apsdreamhome.com',
+                  pass: 'Aps@2026',
+                  icon: Icons.shield_rounded,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDemoChip({
+    required String label,
+    required String email,
+    required String pass,
+    required IconData icon,
+  }) {
+    final isSelected = _emailController.text == email;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _selectedTab = 0;
+            _emailController.text = email;
+            _passwordController.text = pass;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Filled $label credentials ($email)'),
+              duration: const Duration(seconds: 2),
+              backgroundColor: AppTheme.primaryColor,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppTheme.accentColor.withValues(alpha: 0.15)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isSelected
+                  ? AppTheme.accentColor
+                  : const Color(0xFFD4AF37).withValues(alpha: 0.4),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 14,
+                color: isSelected ? AppTheme.accentColor : const Color(0xFF64748B),
+              ),
+              const SizedBox(width: 5),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? AppTheme.primaryColor : const Color(0xFF334155),
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWhatsAppHelpline() {
+    return Center(
+      child: InkWell(
+        onTap: () async {
+          final uri = Uri.parse(
+            'https://wa.me/917007444842?text=Hello%20APS%20Dream%20Home%2C%20I%20need%20assistance%20with%20the%20app',
+          );
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF25D366).withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: const Color(0xFF25D366).withValues(alpha: 0.5),
+              width: 1.2,
+            ),
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.chat_bubble_outline_rounded,
+                size: 15,
+                color: Color(0xFF1E824C),
+              ),
+              SizedBox(width: 8),
+              Text(
+                'WhatsApp Support: +91 7007444842',
+                style: TextStyle(
+                  color: Color(0xFF1E824C),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

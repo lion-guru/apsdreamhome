@@ -16,64 +16,6 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> {
   bool _isLoading = true;
   List<Map<String, dynamic>> _colonies = [];
 
-  static const _mockColonies = [
-    {
-      'name': 'Suryoday Colony',
-      'location': 'Sector 89, Gurgaon',
-      'type': 'Residential Plots',
-      'price_range': '₹25L - ₹85L',
-      'status': 'Ready to Move',
-      'completion': 95,
-      'features': [
-        'RERA Registered',
-        'Water & Electricity',
-        'Wide Roads',
-        'Park & Clubhouse',
-      ],
-    },
-    {
-      'name': 'Braj Radha Enclave',
-      'location': 'Sector 92, Gurgaon',
-      'type': 'Residential Plots',
-      'price_range': '₹30L - ₹1.2Cr',
-      'status': 'Under Development (40%)',
-      'completion': 65,
-      'features': [
-        'RERA Registered',
-        'Gated Community',
-        '24x7 Security',
-        'Temple Inside',
-      ],
-    },
-    {
-      'name': 'Raghunath Nagri',
-      'location': 'Sector 37C, Gurgaon',
-      'type': 'Residential + Commercial',
-      'price_range': '₹35L - ₹2Cr',
-      'status': 'Ready to Move',
-      'completion': 90,
-      'features': [
-        'Mixed Use',
-        'Metro Connectivity',
-        'Shopping Complex',
-        'School Nearby',
-      ],
-    },
-    {
-      'name': 'Budh Bihar Township',
-      'location': 'Sector 103, Gurgaon',
-      'type': 'Affordable Housing',
-      'price_range': '₹15L - ₹45L',
-      'status': 'Pre-Launch',
-      'completion': 30,
-      'features': [
-        'PMAY Eligible',
-        'Near Highway',
-        'Future Metro',
-        'Green Area',
-      ],
-    },
-  ];
 
   @override
   void initState() {
@@ -101,9 +43,7 @@ class _ProjectsPageState extends ConsumerState<ProjectsPage> {
     } catch (_) {}
     if (mounted) {
       setState(() {
-        _colonies = _mockColonies
-            .map((e) => Map<String, dynamic>.from(e))
-            .toList();
+        _colonies = [];
         _isLoading = false;
       });
     }

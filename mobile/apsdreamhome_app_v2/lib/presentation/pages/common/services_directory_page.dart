@@ -80,11 +80,11 @@ class _ServicesDirectoryPageState extends State<ServicesDirectoryPage> {
       return;
     } catch (_) {}
 
-    // Fallback to mock data
+    // Fallback: honest empty state (no fake listings)
     setState(() {
-      _categories = _mockCategories;
-      _featuredListings = _mockListings;
-      _jobs = _mockJobs;
+      _categories = [];
+      _featuredListings = [];
+      _jobs = [];
       _loading = false;
     });
   }
@@ -660,93 +660,4 @@ class _ServicesDirectoryPageState extends State<ServicesDirectoryPage> {
     return '₹${(minVal / 1000).toStringAsFixed(0)}K+/mo';
   }
 
-  static const _mockCategories = [
-    {
-      'name': 'Real Estate Agents',
-      'icon': 'fas fa-users',
-      'listing_count': 1250,
-    },
-    {'name': 'Home Loans', 'icon': 'fas fa-university', 'listing_count': 890},
-    {'name': 'Legal Services', 'icon': 'fas fa-gavel', 'listing_count': 456},
-    {
-      'name': 'Interior Design',
-      'icon': 'fas fa-paint-brush',
-      'listing_count': 678,
-    },
-    {'name': 'Construction', 'icon': 'fas fa-hard-hat', 'listing_count': 1102},
-    {
-      'name': 'Property Valuation',
-      'icon': 'fas fa-chart-line',
-      'listing_count': 334,
-    },
-    {'name': 'Insurance', 'icon': 'fas fa-shield-alt', 'listing_count': 567},
-    {'name': 'Moving & Packing', 'icon': 'fas fa-truck', 'listing_count': 789},
-    {
-      'name': 'Architects',
-      'icon': 'fas fa-drafting-compass',
-      'listing_count': 445,
-    },
-    {'name': 'Surveyors', 'icon': 'fas fa-ruler', 'listing_count': 234},
-    {'name': 'Brokers', 'icon': 'fas fa-handshake', 'listing_count': 1876},
-    {'name': 'Maintenance', 'icon': 'fas fa-tools', 'listing_count': 892},
-  ];
-
-  static const _mockListings = [
-    {
-      'business_name': 'ABC Realty',
-      'category_name': 'Real Estate Agents',
-      'rating': 4.8,
-      'review_count': 124,
-      'city': 'Gorakhpur',
-      'is_verified': true,
-    },
-    {
-      'business_name': 'HomeLoan India',
-      'category_name': 'Home Loans',
-      'rating': 4.6,
-      'review_count': 89,
-      'city': 'Online',
-      'is_verified': true,
-    },
-    {
-      'business_name': 'LegalEase Property',
-      'category_name': 'Legal Services',
-      'rating': 4.9,
-      'review_count': 203,
-      'city': 'Lucknow',
-      'is_verified': true,
-    },
-    {
-      'business_name': 'Design Studio Pro',
-      'category_name': 'Interior Design',
-      'rating': 4.7,
-      'review_count': 156,
-      'city': 'Gorakhpur',
-      'is_verified': true,
-    },
-  ];
-
-  static const _mockJobs = [
-    {
-      'title': 'Sales Executive',
-      'company': 'ABC Realty',
-      'location': 'Gorakhpur',
-      'salary_min': 25000,
-      'salary_max': 40000,
-    },
-    {
-      'title': 'Property Manager',
-      'company': 'HomeFirst',
-      'location': 'Lucknow',
-      'salary_min': 30000,
-      'salary_max': 50000,
-    },
-    {
-      'title': 'Legal Advisor',
-      'company': 'LegalEase',
-      'location': 'Varanasi',
-      'salary_min': 50000,
-      'salary_max': 80000,
-    },
-  ];
 }

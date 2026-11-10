@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
@@ -447,27 +449,85 @@ class AgentDocumentsPage extends ConsumerWidget {
     return '$bytes B';
   }
 
-  void _viewDocument(BuildContext context, Map<String, dynamic> doc) {
-    final docId = doc['id']?.toString() ?? '';
-    context.push('/agent/documents/$docId');
+  Future<void> _viewDocument(BuildContext context, Map<String, dynamic> doc) async {
+    final fileUrl = doc['url']?.toString() ?? '';
+    if (fileUrl.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No file link available for this document'),
+          backgroundColor: AppTheme.infoColor,
+        ),
+      );
+      return;
+    }
+    final uri = fileUrl.startsWith('http')
+        ? Uri.parse(fileUrl)
+        : Uri.parse('${AppConstants.baseUrl}$fileUrl');
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not open $fileUrl'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
-  void _downloadDocument(BuildContext context, Map<String, dynamic> doc) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Download started'),
-        backgroundColor: AppTheme.successColor,
-      ),
-    );
+  Future<void> _downloadDocument(BuildContext context, Map<String, dynamic> doc) async {
+    final fileUrl = doc['url']?.toString() ?? '';
+    if (fileUrl.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No file link available for this document'),
+          backgroundColor: AppTheme.infoColor,
+        ),
+      );
+      return;
+    }
+    final uri = fileUrl.startsWith('http')
+        ? Uri.parse(fileUrl)
+        : Uri.parse('${AppConstants.baseUrl}$fileUrl');
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not download $fileUrl'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
-  void _shareDocument(BuildContext context, Map<String, dynamic> doc) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Share functionality coming soon'),
-        backgroundColor: AppTheme.infoColor,
-      ),
-    );
+  Future<void> _shareDocument(BuildContext context, Map<String, dynamic> doc) async {
+    final title = doc['title']?.toString() ?? 'Document';
+    final type = doc['document_type']?.toString() ?? 'Document';
+    final createdAt = doc['created_at']?.toString() ?? '';
+    final fileUrl = doc['url']?.toString() ?? '';
+
+    final buffer = StringBuffer()
+      ..writeln('📄 $title')
+      ..writeln('Type: $type');
+    if (createdAt.isNotEmpty) {
+      buffer.writeln('Created: $createdAt');
+    }
+    if (fileUrl.isNotEmpty) {
+      buffer.writeln('File: $fileUrl');
+    }
+
+    try {
+      await SharePlus.instance.share(
+        ShareParams(text: buffer.toString(), subject: title),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not open share sheet: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
 
@@ -483,41 +543,8 @@ final _agentDocumentsProvider = FutureProvider.family<List<dynamic>, int>((ref, 
       return List<Map<String, dynamic>>.from(docs);
     }
   } catch (_) {}
-  // Mock data fallback
-  return [
-    {
-      'id': 1,
-      'title': 'Sale Deed - Plot A-101',
-      'document_type': 'deed',
-      'status': 'active',
-      'created_at': '2024-01-15',
-      'file_size': '2048576',
-    },
-    {
-      'id': 2,
-      'title': 'Sale Agreement - Plot B-205',
-      'document_type': 'agreement',
-      'status': 'pending',
-      'created_at': '2024-02-20',
-      'file_size': '1024000',
-    },
-    {
-      'id': 3,
-      'title': 'Payment Receipt - Booking #12345',
-      'document_type': 'receipt',
-      'status': 'active',
-      'created_at': '2024-03-10',
-      'file_size': '512000',
-    },
-    {
-      'id': 4,
-      'title': 'Construction Agreement - Plot C-303',
-      'document_type': 'contract',
-      'status': 'draft',
-      'created_at': '2024-03-15',
-      'file_size': '3072000',
-    },
-  ];
+  // Honest empty state (no fake documents)
+  return [];
 });
 
 // Helper Classes

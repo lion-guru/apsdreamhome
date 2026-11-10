@@ -506,40 +506,6 @@ final _agentFollowUpsProvider =
       return List<Map<String, dynamic>>.from(followUps);
     }
   } catch (_) {}
-  // Mock data fallback
-  return [
-    {
-      'id': 1,
-      'lead_id': 1,
-      'lead_name': 'Rajesh Kumar',
-      'lead_phone': '+91-9876543210',
-      'type': 'call',
-      'type_label': 'Call',
-      'scheduled_at': '2026-01-20 10:00:00',
-      'status': 'pending',
-      'notes': 'Interested in 2BHK flat in Suryoday Colony.',
-    },
-    {
-      'id': 2,
-      'lead_id': 2,
-      'lead_name': 'Priya Sharma',
-      'lead_phone': '+91-9876543211',
-      'type': 'meeting',
-      'type_label': 'Meeting',
-      'scheduled_at': '2026-01-21 14:30:00',
-      'status': 'pending',
-      'notes': 'Wants to discuss payment plans for Plot B-205',
-    },
-    {
-      'id': 3,
-      'lead_id': 3,
-      'lead_name': 'Amit Singh',
-      'lead_phone': '+91-9876543212',
-      'type': 'site_visit',
-      'type_label': 'Site Visit',
-      'scheduled_at': '2026-01-22 10:00:00',
-      'status': 'completed',
-      'notes': 'Site visit completed. Client liked Plot C-303.',
-    },
-  ];
+  // Honest empty state (no fake data)
+  return [];
 });

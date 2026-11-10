@@ -37,7 +37,19 @@ class _ReceiptViewPageState extends ConsumerState<ReceiptViewPage> {
 
     try {
       final type = widget.receiptType ?? 'emi';
-      final data = widget.receiptData ?? _getMockData(type);
+      if (widget.receiptData == null) {
+        if (mounted) {
+          setState(() => _isGenerating = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No receipt data available'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+      final data = widget.receiptData!;
 
       switch (type) {
         case 'emi':
@@ -96,49 +108,6 @@ class _ReceiptViewPageState extends ConsumerState<ReceiptViewPage> {
     }
   }
 
-  Map<String, dynamic> _getMockData(String type) {
-    if (type == 'emi') {
-      return {
-        'receiptNumber': 'EMI-2024-001',
-        'customerName': 'Ramesh Kumar',
-        'customerAddress': '123, Gandhi Nagar, Gorakhpur',
-        'customerPhone': '+91 98765 43210',
-        'bookingId': 'B001',
-        'plotNumber': 'P-45',
-        'colonyName': 'Suryoday Heights',
-        'emiNumber': 5,
-        'totalEMIs': 36,
-        'emiAmount': 5000,
-        'lateFee': 100,
-        'totalPaid': 5100,
-        'paymentDate': DateTime.now(),
-        'paymentMode': 'UPI',
-        'transactionId': 'UPI123456789',
-        'collectedBy': 'Field Agent - Rajesh',
-      };
-    } else {
-      return {
-        'bookingId': 'B001',
-        'customerName': 'Amit Sharma',
-        'customerAddress': '456, Rajendra Nagar, Gorakhpur',
-        'customerPhone': '+91 98765 43211',
-        'customerEmail': 'amit@example.com',
-        'plotNumber': 'P-67',
-        'colonyName': 'Raghunath City Center',
-        'plotSize': '150 sq yd',
-        'plotPrice': 3750000,
-        'bookingAmount': 375000,
-        'totalPrice': 3750000,
-        'emiAmount': 10000,
-        'totalEMIs': 36,
-        'bookingDate': DateTime.now(),
-        'paymentMode': 'Online Transfer',
-        'transactionId': 'NEFT987654321',
-        'salesPerson': 'Senior Associate - Priya',
-        'salesPersonPhone': '+91 98765 43222',
-      };
-    }
-  }
 
   Future<void> _printReceipt() async {
     if (_pdfFile == null) return;

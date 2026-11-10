@@ -71,11 +71,11 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
       return;
     } catch (_) {}
 
-    // Fallback to mock data
+    // Fallback: honest empty state (no fake services)
     if (mounted) {
       setState(() {
-        _services = _mockServices;
-        _projects = _mockProjects;
+        _services = [];
+        _projects = [];
         _loading = false;
       });
     }
@@ -754,19 +754,4 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
     }
   }
 
-  static const _mockServices = [
-    {'title': 'Residential Construction', 'icon': 'fas fa-home', 'description': 'Custom homes, villas, apartments & renovations', 'features': ['Custom Design', 'Villa Construction', 'Apartment Complexes', 'Home Renovation']},
-    {'title': 'Commercial Construction', 'icon': 'fas fa-building', 'description': 'Office buildings, retail spaces & industrial units', 'features': ['Office Buildings', 'Retail Spaces', 'Shopping Complexes', 'Industrial Units']},
-    {'title': 'Architectural & Design', 'icon': 'fas fa-drafting-compass', 'description': 'Architectural plans, 3D visualization & structural design', 'features': ['Architectural Plans', '3D Visualization', 'Structural Design', 'Vastu Consultation']},
-    {'title': 'Infrastructure Development', 'icon': 'fas fa-road', 'description': 'Roads, drainage, water supply & community facilities', 'features': ['Road Construction', 'Drainage Systems', 'Water Supply', 'Community Centers']},
-    {'title': 'Renovation & Remodeling', 'icon': 'fas fa-tools', 'description': 'Home, office & structural renovation services', 'features': ['Home Renovation', 'Office Renovation', 'Structural Repair', 'Waterproofing']},
-    {'title': 'Turnkey Solutions', 'icon': 'fas fa-handshake', 'description': 'End-to-end project management from design to handover', 'features': ['Project Management', 'Material Procurement', 'Labour Management', 'Quality Assurance']},
-  ];
-
-  static const _mockProjects = [
-    {'site_name': 'Suryoday Residential Complex', 'location': 'Gorakhpur, UP', 'status': 'completed', 'image': 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=600&h=400&q=80'},
-    {'site_name': 'Braj Radha Commercial Plaza', 'location': 'Gorakhpur, UP', 'status': 'completed', 'image': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&h=400&q=80'},
-    {'site_name': 'Raghunath Nagri Township', 'location': 'Gorakhpur, UP', 'status': 'in_progress', 'image': 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&h=400&q=80'},
-    {'site_name': 'Budh Bihar Affordable Housing', 'location': 'Gorakhpur, UP', 'status': 'in_progress', 'image': 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&h=400&q=80'},
-  ];
 }

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+
 import '../../../core/theme/app_theme.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 
 class DocumentEsignDetailPage extends StatefulWidget {
   final int documentId;
@@ -27,6 +32,7 @@ class _DocumentEsignDetailPageState extends State<DocumentEsignDetailPage> {
   String _content = '';
   String _signatureData = '';
   bool _isSigned = false;
+  bool _isDownloading = false;
   String? _errorMessage;
 
   @override
@@ -105,6 +111,135 @@ class _DocumentEsignDetailPageState extends State<DocumentEsignDetailPage> {
     } finally {
       if (mounted) setState(() => _isSigning = false);
     }
+  }
+
+  /// Build a signed PDF of the e-sign document and hand it to the platform
+  /// print/share sheet. Real PDF (via `pdf` package) — no stub.
+  Future<void> _downloadSignedDocument() async {
+    setState(() => _isDownloading = true);
+    try {
+      final doc = _document ?? const <String, dynamic>{};
+      final title = _title.trim().isEmpty ? 'Document' : _title.trim();
+      final content = _content;
+      final signature = _signatureData.trim();
+      final signedAt = (doc['signed_at'] ?? '').toString();
+      final verificationCode = (doc['verification_code'] ?? '').toString();
+
+      final docPdf = pw.Document();
+      docPdf.addPage(
+        pw.MultiPage(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(32),
+          build: (context) => [
+            pw.Header(
+              level: 0,
+              child: pw.Text(
+                'APS Dream Home',
+                style: pw.TextStyle(
+                  fontSize: 22,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.blueGrey900,
+                ),
+              ),
+            ),
+            pw.SizedBox(height: 4),
+            pw.Divider(color: PdfColors.blueGrey200),
+            pw.SizedBox(height: 12),
+            pw.Text(
+              title,
+              style: pw.TextStyle(
+                fontSize: 16,
+                fontWeight: pw.FontWeight.bold,
+              ),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              content.isEmpty ? '(No content recorded)' : content,
+              style: const pw.TextStyle(fontSize: 11, lineSpacing: 3),
+            ),
+            pw.SizedBox(height: 24),
+            pw.Divider(color: PdfColors.blueGrey200),
+            pw.SizedBox(height: 10),
+            _metaRow('Document Type',
+                (doc['document_type'] ?? 'transaction').toString()),
+            _metaRow('Status', 'SIGNED'),
+            if (signedAt.isNotEmpty) _metaRow('Signed At', signedAt),
+            if (verificationCode.isNotEmpty)
+              _metaRow('Verification Code', verificationCode),
+            pw.SizedBox(height: 18),
+            pw.Text(
+              'Authorised Signature',
+              style: pw.TextStyle(
+                fontSize: 10,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.blueGrey600,
+              ),
+            ),
+            pw.SizedBox(height: 4),
+            pw.Text(
+              signature.isEmpty ? '(No signature recorded)' : signature,
+              style: pw.TextStyle(
+                fontSize: 18,
+                fontStyle: pw.FontStyle.italic,
+                color: PdfColors.blueGrey900,
+              ),
+            ),
+            pw.SizedBox(height: 24),
+            pw.Text(
+              'This is a computer-generated document produced by APS Dream Home. '
+              'The verification code above can be used to validate this record.',
+              style: const pw.TextStyle(
+                fontSize: 8,
+                color: PdfColors.blueGrey500,
+              ),
+            ),
+          ],
+        ),
+      );
+
+      final bytes = await docPdf.save();
+      await Printing.layoutPdf(
+        onLayout: (_) async => bytes,
+        name: '${title.replaceAll(RegExp(r'[^\w\- ]'), '')}.pdf',
+      );
+    } catch (e) {
+      AppLogger.error('Error generating signed PDF', e);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not prepare the PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isDownloading = false);
+    }
+  }
+
+  pw.Widget _metaRow(String label, String value) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(vertical: 2),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.SizedBox(
+            width: 120,
+            child: pw.Text(
+              label,
+              style: pw.TextStyle(
+                fontSize: 10,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.blueGrey600,
+              ),
+            ),
+          ),
+          pw.Expanded(
+            child: pw.Text(value, style: const pw.TextStyle(fontSize: 10)),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildDocumentDetail() {
@@ -280,13 +415,9 @@ class _DocumentEsignDetailPageState extends State<DocumentEsignDetailPage> {
             children: [
               if (signed)
                 ElevatedButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Download feature coming soon')),
-                    );
-                  },
+                  onPressed: _isDownloading ? null : _downloadSignedDocument,
                   icon: const Icon(Icons.download),
-                  label: const Text('Download'),
+                  label: Text(_isDownloading ? 'Preparing...' : 'Download'),
                 ),
               TextButton(
                 onPressed: () => GoRouter.of(context).pop(),

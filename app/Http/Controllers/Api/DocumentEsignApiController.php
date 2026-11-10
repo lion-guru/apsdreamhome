@@ -23,17 +23,18 @@ class DocumentEsignApiController extends BaseApiController
     public function store()
     {
         $input = $this->getJsonInput();
-        
+
         $data = [
             'document_type' => $input['document_type'] ?? 'transaction',
             'title' => $input['title'] ?? '',
             'content' => $input['content'] ?? '',
+            'status' => 'pending',
             'created_by' => (int)($GLOBALS['api_user_id'] ?? 0),
             'tenant_id' => TenantContext::getId(),
         ];
 
-        $result = $this->service->createDocument($data);
-        
+        $result = $this->service->createESignDocument($data);
+
         if ($result['success']) {
             return $this->jsonSuccess(['id' => $result['id']], 'Document created successfully');
         }
@@ -56,8 +57,8 @@ class DocumentEsignApiController extends BaseApiController
             'verification_code' => $input['verification_code'] ?? bin2hex(random_bytes(16)),
         ];
 
-        $result = $this->service->signDocument((int)$id, $data);
-        
+        $result = $this->service->signESignDocument((int)$id, $data);
+
         if ($result['success']) {
             return $this->jsonSuccess(null, 'Document signed successfully');
         }
@@ -71,8 +72,8 @@ class DocumentEsignApiController extends BaseApiController
      */
     public function getDocument($id)
     {
-        $document = $this->service->getDocumentById((int)$id);
-        
+        $document = $this->service->getESignDocument((int)$id);
+
         if (!$document) {
             return $this->jsonError('Document not found', 404);
         }
@@ -86,9 +87,9 @@ class DocumentEsignApiController extends BaseApiController
      */
     public function getDocuments()
     {
-        $tenantId = TenantContext::getId();
-        $documents = $this->service->getDocumentsByTenant($tenantId);
-        
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        $documents = $this->service->getESignDocuments($userId);
+
         return $this->jsonSuccess(['documents' => $documents]);
     }
 }

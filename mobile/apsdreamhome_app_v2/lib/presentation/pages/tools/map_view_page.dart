@@ -69,9 +69,9 @@ class _MapViewPageState extends State<MapViewPage> {
         }
       }
     } catch (_) {}
-    // Fallback to mock data
+    // Fallback: honest empty state (no fake colonies on the map)
     setState(() {
-      _colonies = _mockColonies;
+      _colonies = [];
       _loading = false;
     });
   }
@@ -480,46 +480,4 @@ class _MapViewPageState extends State<MapViewPage> {
     );
   }
 
-  static final List<Map<String, dynamic>> _mockColonies = [
-    {
-      'id': '1',
-      'name': 'Suryoday Heights Phase 1',
-      'location': 'Gorakhpur',
-      'plots': 120,
-      'price': '₹3,000/sqft',
-      'status': 'active',
-    },
-    {
-      'id': '2',
-      'name': 'Raghunath City Center',
-      'location': 'Gorakhpur',
-      'plots': 80,
-      'price': '₹3,500/sqft',
-      'status': 'active',
-    },
-    {
-      'id': '3',
-      'name': 'Braj Radha Enclave',
-      'location': 'Lucknow',
-      'plots': 200,
-      'price': '₹4,200/sqft',
-      'status': 'active',
-    },
-    {
-      'id': '4',
-      'name': 'Budh Bihar Colony',
-      'location': 'Kushinagar',
-      'plots': 60,
-      'price': '₹2,800/sqft',
-      'status': 'active',
-    },
-    {
-      'id': '5',
-      'name': 'Ganga Nagri',
-      'location': 'Varanasi',
-      'plots': 150,
-      'price': '₹3,800/sqft',
-      'status': 'active',
-    },
-  ];
 }

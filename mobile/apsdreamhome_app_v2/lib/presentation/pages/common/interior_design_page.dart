@@ -84,9 +84,9 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
 
     if (mounted) {
       setState(() {
-        _services = _mockServices;
-        _portfolio = _mockPortfolio;
-        _testimonials = _mockTestimonials;
+        _services = [];
+        _portfolio = [];
+        _testimonials = [];
         _loading = false;
       });
     }
@@ -943,28 +943,6 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
     }
   }
 
-  static const _mockServices = [
-    {'title': 'Residential Interior', 'icon': 'fas fa-home', 'description': 'Complete home interior design & execution', 'features': ['Living Room', 'Bedroom', 'Kitchen', 'Bathroom']},
-    {'title': 'Commercial Interior', 'icon': 'fas fa-building', 'description': 'Office, retail & hospitality spaces', 'features': ['Office Design', 'Retail Stores', 'Restaurants', 'Hotels']},
-    {'title': 'Modular Kitchen', 'icon': 'fas fa-utensils', 'description': 'Custom modular kitchens with smart storage', 'features': ['Smart Storage', 'Premium Appliances', 'Ergonomic Design', 'Easy Maintenance']},
-    {'title': 'Lighting Design', 'icon': 'fas fa-lightbulb', 'description': 'Ambient, task & accent lighting planning', 'features': ['Mood Lighting', 'Energy Efficient', 'Smart Controls', 'Architectural']},
-    {'title': 'Furniture & Decor', 'icon': 'fas fa-couch', 'description': 'Custom furniture selection & procurement', 'features': ['Custom Furniture', 'Soft Furnishings', 'Art & Accessories', 'Space Planning']},
-    {'title': 'Vastu-Compliant Design', 'icon': 'fas fa-compass', 'description': 'Vastu-aligned layouts for harmony & prosperity', 'features': ['Direction Analysis', 'Element Balance', 'Remedies', 'Energy Flow']},
-  ];
-
-  static const _mockPortfolio = [
-    {'title': 'Modern 3BHK Apartment', 'category': 'Residential', 'image': 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&h=400&q=80', 'description': 'Contemporary minimalist design with neutral palette and smart storage solutions.'},
-    {'title': 'Luxury Villa Interior', 'category': 'Residential', 'image': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&h=400&q=80', 'description': 'Opulent villa with marble finishes, custom furniture, and automated lighting.'},
-    {'title': 'Corporate Office Space', 'category': 'Commercial', 'image': 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&h=400&q=80', 'description': 'Open-plan office with collaborative zones, ergonomic furniture, and biophilic design.'},
-    {'title': 'Boutique Hotel Lobby', 'category': 'Hospitality', 'image': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&h=400&q=80', 'description': 'Grand lobby with statement lighting, local art, and welcoming reception area.'},
-  ];
-
-  static const _mockTestimonials = [
-    {'name': 'Priya Sharma', 'location': 'Gorakhpur', 'message': 'The team transformed our 3BHK into a dream home. Every detail was perfect!'},
-    {'name': 'Rajesh Kumar', 'location': 'Lucknow', 'message': 'Professional, creative, and on budget. Highly recommend for commercial spaces.'},
-    {'name': 'Anita Singh', 'location': 'Varanasi', 'message': 'Vastu-compliant design that feels both modern and harmonious. Amazing work!'},
-    {'name': 'Vikash Gupta', 'location': 'Gorakhpur', 'message': 'Modular kitchen exceeded expectations. Smart storage and beautiful finish.'},
-  ];
 
   static final _designTools = [
     {'title': 'Cost Estimator', 'icon': Icons.calculate_rounded, 'color': Color(0xFF6A1B9A), 'description': 'Estimate interior design costs instantly', 'onTap': null},

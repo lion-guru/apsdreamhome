@@ -42,21 +42,9 @@ class _NewsPageState extends State<NewsPage> {
         }
       }
     } catch (_) {}
-    // Fallback to mock data
+    // Fallback: honest empty state (no fake news)
     setState(() {
-      _allPosts = _mockNews
-          .map(
-            (n) => {
-              'title': n.title,
-              'excerpt': n.excerpt,
-              'category': n.category,
-              'created_at': n.date,
-              'reading_time': n.readTime,
-              'views': n.views,
-              'featured_image': '',
-            },
-          )
-          .toList();
+      _allPosts = [];
       _loading = false;
     });
   }
@@ -370,59 +358,3 @@ class _NewsItem {
   });
 }
 
-const _mockNews = [
-  _NewsItem(
-    category: 'Market',
-    date: '8 Jul 2026',
-    readTime: '3 min',
-    title: 'Gorakhpur Real Estate Market Update Q2 2026',
-    excerpt:
-        'Residential colonies in Gorakhpur have witnessed steady price growth driven by infrastructure upgrades.',
-    views: 1245,
-  ),
-  _NewsItem(
-    category: 'Project',
-    date: '6 Jul 2026',
-    readTime: '2 min',
-    title: 'Budh Bihar Township Reaches 40% Construction Milestone',
-    excerpt:
-        'The affordable housing project near Sector 103 is on track for December 2027 delivery.',
-    views: 892,
-  ),
-  _NewsItem(
-    category: 'Company',
-    date: '4 Jul 2026',
-    readTime: '4 min',
-    title: 'APS Dream Home Launches Customer Referral Program 2.0',
-    excerpt:
-        'New tiered rewards system offers up to ₹5,000 per successful referral.',
-    views: 2103,
-  ),
-  _NewsItem(
-    category: 'Policy',
-    date: '1 Jul 2026',
-    readTime: '5 min',
-    title: 'RERA Compliance Deadline Extended — What Homebuyers Should Know',
-    excerpt:
-        'UP RERA extends compliance deadline for ongoing projects. Key implications for buyers.',
-    views: 1567,
-  ),
-  _NewsItem(
-    category: 'Project',
-    date: '28 Jun 2026',
-    readTime: '2 min',
-    title: 'Raghunath Nagri Commercial Plaza Now Open for Booking',
-    excerpt:
-        '12 premium commercial shops in the heart of Gorakhpur with metro connectivity.',
-    views: 734,
-  ),
-  _NewsItem(
-    category: 'Regulatory',
-    date: '7 Jul 2026',
-    readTime: '4 min',
-    title: 'UP Government Revises Circle Rates — Impact on Property Prices',
-    excerpt:
-        'New circle rates effective August 2026 may increase property registration costs by 8-12%.',
-    views: 2890,
-  ),
-];

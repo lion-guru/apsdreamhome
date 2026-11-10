@@ -485,31 +485,6 @@ final _agentSiteVisitsProvider =
       return List<Map<String, dynamic>>.from(visits);
     }
   } catch (_) {}
-  // Mock data fallback
-  return [
-    {
-      'id': 1,
-      'lead_name': 'Rajesh Kumar',
-      'lead_phone': '+91-9876543210',
-      'colony_name': 'Suryoday Heights',
-      'scheduled_at': '2026-09-01 10:00:00',
-      'status': 'scheduled',
-    },
-    {
-      'id': 2,
-      'lead_name': 'Priya Sharma',
-      'lead_phone': '+91-9876543211',
-      'colony_name': 'Braj Radha Nagri',
-      'scheduled_at': '2026-09-02 14:30:00',
-      'status': 'scheduled',
-    },
-    {
-      'id': 3,
-      'lead_name': 'Amit Singh',
-      'lead_phone': '+91-9876543212',
-      'colony_name': 'Raghunath Nagri',
-      'scheduled_at': '2026-08-15 11:00:00',
-      'status': 'completed',
-    },
-  ];
+  // Honest empty state (no fake data)
+  return [];
 });

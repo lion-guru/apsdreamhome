@@ -51,10 +51,10 @@ class _VastuPageState extends State<VastuPage> {
       }
     } catch (_) {}
 
-    // Fallback to mock data
+    // Fallback: honest empty state (no fake colonies)
     if (mounted) {
       setState(() {
-        _colonies = _mockColonies;
+        _colonies = [];
         _loading = false;
       });
     }
@@ -369,7 +369,7 @@ class _VastuPageState extends State<VastuPage> {
             ),
             itemCount: _colonies.length > 4 ? 4 : _colonies.length,
             itemBuilder: (context, index) {
-              final colony = _colonies[index] as Map<String, dynamic>;
+              final colony = _colonies[index];
               final imgUrl = (colony['image_path'] ?? colony['image'] ?? '').toString();
               final isUrl = imgUrl.startsWith('http');
 
@@ -612,38 +612,4 @@ class _VastuPageState extends State<VastuPage> {
     },
   ];
 
-  static const _mockColonies = [
-    {
-      'id': 1,
-      'name': 'Suryoday Colony',
-      'location': 'Gorakhpur, UP',
-      'starting_price': 2500000,
-      'image_path': 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&h=400&q=80',
-      'vastu_compliant': true,
-    },
-    {
-      'id': 2,
-      'name': 'Braj Radha Nagri',
-      'location': 'Gorakhpur, UP',
-      'starting_price': 3200000,
-      'image_path': 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&h=400&q=80',
-      'vastu_compliant': true,
-    },
-    {
-      'id': 3,
-      'name': 'Raghunath Nagri',
-      'location': 'Gorakhpur, UP',
-      'starting_price': 4500000,
-      'image_path': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&h=400&q=80',
-      'vastu_compliant': true,
-    },
-    {
-      'id': 4,
-      'name': 'Budh Bihar Township',
-      'location': 'Gorakhpur, UP',
-      'starting_price': 1800000,
-      'image_path': 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=600&h=400&q=80',
-      'vastu_compliant': true,
-    },
-  ];
 }

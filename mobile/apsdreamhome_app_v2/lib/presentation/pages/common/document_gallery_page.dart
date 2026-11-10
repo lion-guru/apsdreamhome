@@ -66,8 +66,8 @@ class _DocumentGalleryPageState extends State<DocumentGalleryPage> {
 
     if (mounted) {
       setState(() {
-        _categories = _mockCategories;
-        _documents = _mockDocuments;
+        _categories = [];
+        _documents = [];
         _loading = false;
       });
     }
@@ -462,74 +462,4 @@ class _DocumentGalleryPageState extends State<DocumentGalleryPage> {
     }
   }
 
-  static const _mockCategories = [
-    {'category': 'legal'},
-    {'category': 'registration'},
-    {'category': 'approval'},
-    {'category': 'compliance'},
-    {'category': 'financial'},
-  ];
-
-  static const _mockDocuments = [
-    {
-      'document_number': 'REG-2026-001',
-      'document_type': 'pdf',
-      'category': 'registration',
-      'issued_by': 'UP RERA',
-      'issue_date': '2026-01-15',
-      'expiry_date': '2031-01-14',
-      'verification_status': 'verified',
-      'url': '/documents/REG-2026-001.pdf',
-    },
-    {
-      'document_number': 'APP-2026-045',
-      'document_type': 'pdf',
-      'category': 'approval',
-      'issued_by': 'Gorakhpur Development Authority',
-      'issue_date': '2026-03-20',
-      'expiry_date': '2029-03-19',
-      'verification_status': 'verified',
-      'url': '/documents/APP-2026-045.pdf',
-    },
-    {
-      'document_number': 'LGL-2026-012',
-      'document_type': 'docx',
-      'category': 'legal',
-      'issued_by': 'Legal Department',
-      'issue_date': '2026-02-10',
-      'expiry_date': '',
-      'verification_status': 'pending',
-      'url': '/documents/LGL-2026-012.docx',
-    },
-    {
-      'document_number': 'CMP-2026-008',
-      'document_type': 'pdf',
-      'category': 'compliance',
-      'issued_by': 'Environmental Board',
-      'issue_date': '2026-04-05',
-      'expiry_date': '2027-04-04',
-      'verification_status': 'verified',
-      'url': '/documents/CMP-2026-008.pdf',
-    },
-    {
-      'document_number': 'FIN-2026-023',
-      'document_type': 'xlsx',
-      'category': 'financial',
-      'issued_by': 'Finance Department',
-      'issue_date': '2026-05-01',
-      'expiry_date': '2027-03-31',
-      'verification_status': 'verified',
-      'url': '/documents/FIN-2026-023.xlsx',
-    },
-    {
-      'document_number': 'APP-2025-089',
-      'document_type': 'pdf',
-      'category': 'approval',
-      'issued_by': 'Municipal Corporation',
-      'issue_date': '2025-11-12',
-      'expiry_date': '2026-11-11',
-      'verification_status': 'expired',
-      'url': '/documents/APP-2025-089.pdf',
-    },
-  ];
 }

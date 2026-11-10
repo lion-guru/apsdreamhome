@@ -1,10 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_constants.dart';
+import '../../core/services/api_service.dart';
+import '../../core/utils/logger.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/providers/auth_provider.dart';
 
 class PropertyAIChat extends ConsumerStatefulWidget {
   final int propertyId;
@@ -184,36 +183,31 @@ class _PropertyAIChatState extends ConsumerState<PropertyAIChat> {
     _scrollToBottom();
 
     try {
-      final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-      final token = await ref.read(authProvider.notifier).getToken();
-
-      final response = await dio.post(
-        '${AppConstants.apiVersion}/chat',
-        data: {
-          'message': text,
-          'property_id': widget.propertyId,
-          'context': 'sales_assistant'
-        },
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final api = ApiService();
+      final response = await api.post('/chat', data: {
+        'message': text,
+        'property_id': widget.propertyId,
+        'context': 'sales_assistant'
+      });
 
       if (mounted) {
         setState(() {
           _isTyping = false;
           _messages.add({
             'role': 'assistant',
-            'text': (response.data['response'] as String?) ??
+            'text': (response['response'] as String?) ??
                 'I am here to help. Could you clarify your question?'
           });
         });
         _scrollToBottom();
 
         // If intent detected, show a special lead capture toast or dialog
-        if (response.data['intent_detected'] == 'lead_generation') {
+        if (response['intent_detected'] == 'lead_generation') {
           _showLeadCapturedAnimation();
         }
       }
     } catch (e) {
+      AppLogger.error('Error sending AI chat message', e);
       if (mounted) setState(() => _isTyping = false);
     }
   }

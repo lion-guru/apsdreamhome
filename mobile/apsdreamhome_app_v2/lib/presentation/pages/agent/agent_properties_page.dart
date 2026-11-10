@@ -450,31 +450,6 @@ final _agentPropertiesProvider =
       return List<Map<String, dynamic>>.from(properties);
     }
   } catch (_) {}
-  // Mock data fallback
-  return [
-    {
-      'id': 1,
-      'title': 'Suryoday Heights - Plot A-101',
-      'location': 'Gorakhpur, UP',
-      'price': '2500000',
-      'property_type': 'Plot',
-      'status': 'available',
-    },
-    {
-      'id': 2,
-      'title': 'Braj Radha - Plot B-205',
-      'location': 'Mathura, UP',
-      'price': '1800000',
-      'property_type': 'Plot',
-      'status': 'booked',
-    },
-    {
-      'id': 3,
-      'title': 'Raghunath Nagri - Villa C-303',
-      'location': 'Varanasi, UP',
-      'price': '4500000',
-      'property_type': 'Villa',
-      'status': 'sold',
-    },
-  ];
+  // Honest empty state (no fake data)
+  return [];
 });

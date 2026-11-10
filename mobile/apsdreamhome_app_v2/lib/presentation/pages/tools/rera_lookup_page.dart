@@ -45,7 +45,7 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
       }
     } catch (_) {}
     setState(() {
-      _projects = _mockProjects;
+      _projects = [];
       _loadingProjects = false;
     });
   }
@@ -516,30 +516,4 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
     );
   }
 
-  static final List<Map<String, dynamic>> _mockProjects = [
-    {
-      'rera': 'UPRERAPRJ12345',
-      'project': 'APS Suryoday Colony',
-      'builder': 'APS Dream Home Developers',
-      'status': 'Registered',
-    },
-    {
-      'rera': 'UPRERAPRJ67890',
-      'project': 'APS Braj Radha Nagar',
-      'builder': 'APS Dream Home Developers',
-      'status': 'Registered',
-    },
-    {
-      'rera': 'UPRERAPRJ11111',
-      'project': 'APS Raghunath Nagri',
-      'builder': 'APS Dream Home Developers',
-      'status': 'Registered',
-    },
-    {
-      'rera': 'UPRERAPRJ22222',
-      'project': 'Green Valley Estate',
-      'builder': 'Green Developers Ltd.',
-      'status': 'Registered',
-    },
-  ];
 }

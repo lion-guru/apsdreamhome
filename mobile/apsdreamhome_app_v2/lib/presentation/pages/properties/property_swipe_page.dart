@@ -96,43 +96,9 @@ class _PropertySwipePageState extends ConsumerState<PropertySwipePage>
         }
       }
     } catch (_) {}
-    // Fallback to mock data
+    // Fallback: honest empty state (no fake property cards)
     setState(() {
-      _properties = [
-        {
-          'id': 1,
-          'title': 'Luxury 3BHK Apartment',
-          'location': 'Gomti Nagar, Lucknow',
-          'price': '₹85 Lakhs',
-          'size': '1450 sq. ft.',
-          'type': 'Apartment',
-          'badge': '🏆 Featured',
-          'color': [0xFF1A237E, 0xFF283593],
-          'icon': Icons.apartment,
-        },
-        {
-          'id': 2,
-          'title': 'Premium Villa',
-          'location': 'Hazratganj, Lucknow',
-          'price': '₹1.8 Crore',
-          'size': '3200 sq. ft.',
-          'type': 'Villa',
-          'badge': '🌿 Premium',
-          'color': [0xFF1B5E20, 0xFF2E7D32],
-          'icon': Icons.home,
-        },
-        {
-          'id': 3,
-          'title': 'Commercial Shop',
-          'location': 'Vibhuti Khand, Lucknow',
-          'price': '₹45 Lakhs',
-          'size': '650 sq. ft.',
-          'type': 'Commercial',
-          'badge': '📈 High ROI',
-          'color': [0xFF4A148C, 0xFF6A1B9A],
-          'icon': Icons.store,
-        },
-      ];
+      _properties = [];
       _isLoading = false;
     });
   }

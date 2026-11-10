@@ -445,34 +445,6 @@ final _agentMyTeamProvider =
       return List<Map<String, dynamic>>.from(members);
     }
   } catch (_) {}
-  // Mock data fallback
-  return [
-    {
-      'id': 1,
-      'name': 'Vikram Yadav',
-      'email': 'vikram@example.com',
-      'phone': '+91-9876500011',
-      'rank': 'Sr. Associate',
-      'status': 'active',
-      'created_at': '2025-06-10 09:00:00',
-    },
-    {
-      'id': 2,
-      'name': 'Sunita Devi',
-      'email': 'sunita@example.com',
-      'phone': '+91-9876500022',
-      'rank': 'Associate',
-      'status': 'active',
-      'created_at': '2025-08-22 11:30:00',
-    },
-    {
-      'id': 3,
-      'name': 'Ramesh Gupta',
-      'email': 'ramesh@example.com',
-      'phone': '+91-9876500033',
-      'rank': 'BDM',
-      'status': 'inactive',
-      'created_at': '2025-03-05 15:45:00',
-    },
-  ];
+  // Honest empty state (no fake data)
+  return [];
 });
