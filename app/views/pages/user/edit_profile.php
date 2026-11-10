@@ -9,12 +9,15 @@ $db = \App\Core\Database\Database::getInstance();
 $msg = '';
 $error = '';
 
+// Resolve the current user id ONCE, up front.
+// It used to be assigned only inside the `isset($_POST['update_basic'])` branch,
+// so on a plain GET request $uid was undefined -> the lookup below ran with
+// id = NULL -> no row -> "user_not_found" redirect on every page load.
+$uid = $_SESSION['user_id'] ?? $_SESSION['uid'] ?? $_SESSION['auser'] ?? 0;
+$uid = is_numeric($uid) ? (int)$uid : 0;
+
 // Handle Basic Profile Update
 if (isset($_POST['update_basic'])) {
-    // Get user ID from session properly
-    $uid = $_SESSION['user_id'] ?? $_SESSION['uid'] ?? $_SESSION['auser'] ?? 0;
-    $uid = is_numeric($uid) ? (int)$uid : 0;
-
     if ($uid <= 0) {
         $msg = __('user_edit_invalid_session', null, 'Invalid user session!');
         $msg_type = "error";
@@ -39,7 +42,7 @@ if (isset($_POST['update_basic'])) {
                 } else {
                     $error = __('user_edit_profile_failed', null, 'Failed to update profile.');
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $error = __('user_edit_profile_error', null, 'An error occurred while updating profile: ') . $e->getMessage();
             }
         } else {
@@ -73,7 +76,7 @@ if (isset($_POST['update_password'])) {
             } else {
                 $error = __('user_edit_old_password_incorrect', null, 'Incorrect old password.');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $error = __('user_edit_password_error', null, 'An error occurred while updating password: ') . $e->getMessage();
         }
     } else {

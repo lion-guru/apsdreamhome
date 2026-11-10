@@ -205,7 +205,7 @@ class PageController extends BaseController
                 }
 
                 $_SESSION['success'] = 'Your inquiry has been submitted successfully! We will get back to you soon.';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('Inquiry submission error: ' . $e->getMessage());
                 $_SESSION['errors'] = ['Something went wrong. Please try again.'];
             }
@@ -720,7 +720,7 @@ public function becomeAssociate()
                 $pageTitle = $row['title'];
                 $pageContent = $row['content'];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PageController loadPageContent: ' . $e->getMessage());
         }
         return [$pageTitle, $pageContent];
@@ -734,7 +734,7 @@ public function becomeAssociate()
             $post = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$post) { header('Location: /apsdreamhome/news'); exit; }
             $this->render('pages/news_detail', ['post' => $post]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PageController newsView: ' . $e->getMessage());
             header('Location: /apsdreamhome/news'); exit;
         }
@@ -748,7 +748,7 @@ public function becomeAssociate()
             $property = $stmt->fetch(\PDO::FETCH_ASSOC);
             if (!$property) { header('Location: /apsdreamhome/properties'); exit; }
             $this->render('pages/property_detail', ['property' => $property]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PageController userPropertyDetail: ' . $e->getMessage());
             header('Location: /apsdreamhome/properties'); exit;
         }
@@ -760,7 +760,7 @@ private function getPlans()
             $stmt->execute();
             $plans = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             return $plans ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PageController::getPlans Error: ' . $e->getMessage());
             return [];
         }
@@ -789,5 +789,154 @@ private function getPlans()
     public function aiChatbotPage()
     {
         return $this->toolsPageController->aiChatbotPage();
+    }
+
+    /* ============================================================
+       PAGES WHOSE CHILD CONTROLLERS DELEGATE BACK HERE
+       (AIController / ContactController / UserDashboardController
+        all call parent::<method>() — these implementations were
+        missing, so every one of those routes 500'd)
+       ============================================================ */
+
+    /**
+     * WhatsApp chat landing page.
+     * GET /whatsapp-chat
+     */
+    public function whatsappChat()
+    {
+        $this->render('pages/whatsapp_chat', [
+            'page_title'      => 'WhatsApp Chat - APS Dream Home',
+            'page_description' => 'Chat with our team on WhatsApp.',
+            'extraHead'       => '',
+        ]);
+    }
+
+    /**
+     * AI property suggestions (personalised recommendations).
+     * GET /user-ai-suggestions
+     */
+    public function userAiSuggestions()
+    {
+        $this->render('pages/user_ai_suggestions', [
+            'page_title'      => 'AI Suggestions - APS Dream Home',
+            'page_description' => 'Personalised property suggestions powered by AI.',
+            'extraHead'       => '',
+        ]);
+    }
+
+    /**
+     * Schedule a meeting page.
+     * GET /schedule-meeting
+     */
+    public function scheduleMeeting()
+    {
+        $this->render('pages/schedule_meeting', [
+            'page_title'      => 'Schedule a Meeting - APS Dream Home',
+            'page_description' => 'Book a meeting with our sales team.',
+        ]);
+    }
+
+    /**
+     * Handle the schedule-meeting form submit.
+     * POST /schedule-meeting
+     */
+    public function handleScheduleMeeting()
+    {
+        $name    = trim((string)($_POST['name'] ?? ''));
+        $email   = trim((string)($_POST['email'] ?? ''));
+        $phone   = trim((string)($_POST['phone'] ?? ''));
+        $date    = trim((string)($_POST['preferred_date'] ?? $_POST['date'] ?? ''));
+        $time    = trim((string)($_POST['preferred_time'] ?? $_POST['time'] ?? ''));
+        $message = trim((string)($_POST['message'] ?? ''));
+
+        if ($name === '' || ($email === '' && $phone === '')) {
+            $_SESSION['error'] = 'Please provide your name and a contact detail.';
+            $this->redirect(BASE_URL . '/schedule-meeting');
+            return;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            // NOTE: inquiries uses `type` (not inquiry_type) and has no
+            // `source` column.
+            $db->insert('inquiries', [
+                'tenant_id'    => \App\Core\Middleware\TenantContext::getId(),
+                'name'         => $name,
+                'email'        => $email,
+                'phone'        => $phone,
+                'message'      => trim('Meeting request - preferred: ' . ($date ?: '-') . ' ' . ($time ?: '-') . "\n" . $message),
+                'type'         => 'meeting',
+                'status'       => 'new',
+                'is_read'      => 0,
+                'priority'     => 'medium',
+                'posted_by'    => $uid,
+                'posted_by_type' => 'customer',
+                'created_at'   => date('Y-m-d H:i:s'),
+                'updated_at'   => date('Y-m-d H:i:s'),
+            ]);
+            $_SESSION['success'] = 'Meeting request received. We will call you back shortly.';
+        } catch (\Throwable $e) {
+            error_log('[PageController::handleScheduleMeeting] ' . $e->getMessage());
+            $_SESSION['error'] = 'Could not save your request. Please try again.';
+        }
+
+        $this->redirect(BASE_URL . '/schedule-meeting');
+    }
+
+    /**
+     * User profile edit page.
+     * GET|POST /user/edit-profile
+     *
+     * NOTE: pages/user/edit_profile.php is self-contained — it performs its own
+     * profile/password handling and reads the `users` row itself. The
+     * controller only needs to render it.
+     */
+    public function userEditProfile()
+    {
+        $uid = (int)($_SESSION['user_id'] ?? $_SESSION['uid'] ?? $_SESSION['auser'] ?? 0);
+        if ($uid <= 0) {
+            $this->redirect(BASE_URL . '/login');
+            return;
+        }
+
+        $this->render('pages/user/edit_profile', [
+            'page_title' => 'Edit Profile - APS Dream Home',
+        ]);
+    }
+
+    /**
+     * User investments page (UserDashboardController delegates here).
+     * GET /user/investments
+     */
+    public function userInvestments()
+    {
+        $uid = (int)($_SESSION['user_id'] ?? 0);
+        if ($uid <= 0) {
+            $this->redirect(BASE_URL . '/login');
+            return;
+        }
+
+        $db = \App\Core\Database\Database::getInstance();
+        $investments = [];
+        try {
+            // NOTE: the table is `investments` (no `customer_investments`);
+            // investment_plans exposes plan_name / expected_return_pct.
+            $investments = $db->fetchAll(
+                "SELECT ci.*, ip.plan_name, ip.expected_return_pct, ip.min_amount, ip.max_amount
+                 FROM investments ci
+                 LEFT JOIN investment_plans ip ON ip.id = ci.plan_id
+                 WHERE ci.user_id = ? AND ci.tenant_id = ?
+                 ORDER BY ci.id DESC",
+                [$uid, \App\Core\Middleware\TenantContext::getId()]
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[PageController::userInvestments] ' . $e->getMessage());
+        }
+
+        $this->render('pages/user/investments', [
+            'page_title'   => 'My Investments - APS Dream Home',
+            'investments'  => $investments,
+            'extraHead'    => '',
+        ]);
     }
 }
