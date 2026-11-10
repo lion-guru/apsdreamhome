@@ -46,6 +46,25 @@ class AIAgentApiController extends BaseController
      * POST /api/v2/mobile/ai-agent/chat
      * AI chat — send message, get intelligent response
      */
+    /**
+     * GET /api/v2/mobile/ai-agent/providers
+     * Get available AI providers and their status
+     */
+    public function providers(): void
+    {
+        try {
+            $gateway = AIGateway::getInstance();
+            $status = $gateway->getProvidersStatus();
+            $this->jsonResponse(['success' => true, 'providers' => $status]);
+        } catch (\Throwable $e) {
+            $this->jsonResponse(['success' => false, 'error' => 'Failed to get providers'], 500);
+        }
+    }
+
+    /**
+     * POST /api/v2/mobile/ai-agent/chat
+     * AI chat — send message, get intelligent response
+     */
     public function chat()
     {
         try {
@@ -54,6 +73,8 @@ class AIAgentApiController extends BaseController
             $agentRole = $input['agent_role'] ?? $_POST['agent_role'] ?? 'customerSupport';
             $agentId = $input['agent_id'] ?? $_POST['agent_id'] ?? 'mobile_user';
             $context = $input['context'] ?? [];
+            $provider = $input['provider'] ?? $_POST['provider'] ?? null;
+            $useRag = $input['use_rag'] ?? false;
 
             if (empty($message)) {
                 return $this->jsonResponse(['success' => false, 'error' => 'Message is required'], 400);
@@ -624,7 +645,7 @@ class AIAgentApiController extends BaseController
     /**
      * Get JSON input from request body
      */
-    private function getJsonInput(): array
+    protected function getJsonInput(): array
     {
         $rawInput = file_get_contents('php://input');
         if ($rawInput) {

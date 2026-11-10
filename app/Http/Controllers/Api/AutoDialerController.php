@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
-use App\Services\Voice\VoiceCallService;
+use App\Services\AI\VoiceService;
 use App\Services\Communication\WhatsAppSenderService;
 use App\Services\Communication\SMSService;
 
@@ -35,7 +35,7 @@ class AutoDialerController extends BaseController
     {
         parent::__construct();
         $this->db = \App\Core\Database\Database::getInstance();
-        $this->voiceService = new VoiceCallService();
+        $this->voiceService = new VoiceService();
         $this->whatsappService = new WhatsAppSenderService();
         $this->smsService = new \App\Services\Communication\SMSService();
     }
@@ -950,7 +950,7 @@ class AutoDialerController extends BaseController
         }
     }
 
-    private function getJsonInput(): array
+    protected function getJsonInput(): array
     {
         $rawInput = '';
         if (!empty($this->request) && method_exists($this->request, 'getContentAsString')) {
