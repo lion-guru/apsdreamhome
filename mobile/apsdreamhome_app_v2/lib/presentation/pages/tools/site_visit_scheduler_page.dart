@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../../core/constants/app_constants.dart';
+
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
+import '../../../core/theme/app_theme.dart';
 
 class SiteVisitSchedulerPage extends ConsumerStatefulWidget {
   const SiteVisitSchedulerPage({super.key});
@@ -33,8 +36,6 @@ class _SiteVisitSchedulerPageState
   List<Map<String, dynamic>> _colonies = [];
   List<Map<String, dynamic>> _timeSlots = [];
 
-  Dio get _dio => Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-
   @override
   void initState() {
     super.initState();
@@ -45,17 +46,18 @@ class _SiteVisitSchedulerPageState
   void _prefillUserData() {
     final user = ref.read(authProvider);
     if (user != null) {
-      _nameController.text = user.name ?? '';
+      _nameController.text = user.name;
       _phoneController.text = user.phone ?? '';
-      _emailController.text = user.email ?? '';
+      _emailController.text = user.email;
     }
   }
 
   Future<void> _fetchColonies() async {
     try {
-      final response = await _dio.get('/api/v2/mobile/colonies');
-      if (response.data['success'] == true) {
-        final data = response.data['data'] as List;
+      final api = ApiService();
+      final response = await api.get('/api/v2/mobile/colonies');
+      if (response['success'] == true) {
+        final data = response['data'] as List? ?? [];
         setState(() {
           _colonies = data.cast<Map<String, dynamic>>();
           _isLoadingColonies = false;
@@ -80,16 +82,15 @@ class _SiteVisitSchedulerPageState
     if (_selectedDate == null) return;
     setState(() => _isLoadingSlots = true);
     try {
+      final api = ApiService();
       final dateStr = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-      final response = await _dio.get(
-        '/api/v2/mobile/site-visit/slots',
-        queryParameters: {
-          'date': dateStr,
-          if (_selectedColony != null) 'colony_id': _selectedColony,
-        },
-      );
-      if (response.data['success'] == true) {
-        final slots = response.data['data']['slots'] as List;
+      final params = <String, dynamic>{'date': dateStr};
+      if (_selectedColony != null) {
+        params['colony_id'] = _selectedColony;
+      }
+      final response = await api.get('/api/v2/mobile/site-visit/slots', queryParameters: params);
+      if (response['success'] == true) {
+        final slots = response['data']?['slots'] as List? ?? [];
         setState(() {
           _timeSlots = slots.cast<Map<String, dynamic>>();
           _isLoadingSlots = false;
@@ -99,6 +100,7 @@ class _SiteVisitSchedulerPageState
         setState(() => _isLoadingSlots = false);
       }
     } catch (e) {
+      AppLogger.error('Error fetching time slots', e);
       setState(() => _isLoadingSlots = false);
     }
   }
@@ -155,25 +157,21 @@ class _SiteVisitSchedulerPageState
     setState(() => _isSubmitting = true);
 
     try {
-      final token = await ref.read(authProvider.notifier).getToken();
-      final response = await _dio.post(
-        '/api/v2/mobile/site-visit/book',
-        data: {
-          'colony_id': int.tryParse(_selectedColony ?? '') ?? 0,
-          'visit_date': DateFormat('yyyy-MM-dd').format(_selectedDate!),
-          'visit_time': _selectedTimeSlot!,
-          'name': _nameController.text.trim(),
-          'phone': _phoneController.text.trim(),
-          'email': _emailController.text.trim(),
-          'need_pickup': _needPickup,
-          'pickup_address': _pickupAddressController.text.trim(),
-          'guest_count': _guestCount,
-          'notes': _notesController.text.trim(),
-        },
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final api = ApiService();
+      final response = await api.post('/api/v2/mobile/site-visit/book', data: {
+        'colony_id': int.tryParse(_selectedColony ?? '') ?? 0,
+        'visit_date': DateFormat('yyyy-MM-dd').format(_selectedDate!),
+        'visit_time': _selectedTimeSlot!,
+        'name': _nameController.text.trim(),
+        'phone': _phoneController.text.trim(),
+        'email': _emailController.text.trim(),
+        'need_pickup': _needPickup,
+        'pickup_address': _pickupAddressController.text.trim(),
+        'guest_count': _guestCount,
+        'notes': _notesController.text.trim(),
+      });
 
-      final resData = response.data as Map<String, dynamic>;
+      final resData = response;
       if (resData['success'] == true) {
         setState(() => _isSubmitting = false);
         _showBookingConfirmation(resData['data'] as Map<String, dynamic>);
@@ -182,6 +180,7 @@ class _SiteVisitSchedulerPageState
         _showError((resData['message'] as String?) ?? 'Booking failed');
       }
     } catch (e) {
+      AppLogger.error('Error booking site visit', e);
       setState(() => _isSubmitting = false);
       _showError('Booking failed: $e');
     }

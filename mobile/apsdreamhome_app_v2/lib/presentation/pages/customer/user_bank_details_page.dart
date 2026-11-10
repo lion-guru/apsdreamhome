@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../core/providers/auth_provider.dart';
+
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/glass_card.dart';
 
@@ -25,7 +24,6 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
   final _bankNameController = TextEditingController();
   final _branchController = TextEditingController();
   final _upiIdController = TextEditingController();
-  Dio get _dio => Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
 
   @override
   void initState() {
@@ -36,12 +34,9 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
   Future<void> _fetchBankDetails() async {
     setState(() => _isLoading = true);
     try {
-      final token = await ref.read(authProvider.notifier).getToken();
-      final response = await _dio.get(
-        '/api/v2/mobile/user/bank-details',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      final resData = response.data as Map<String, dynamic>;
+      final api = ApiService();
+      final response = await api.get('/api/v2/mobile/user/bank-details');
+      final resData = response;
       if (resData['success'] == true && resData['data'] != null) {
         setState(() {
           _bankDetails = resData['data'] as Map<String, dynamic>;
@@ -52,6 +47,7 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
         setState(() => _isLoading = false);
       }
     } catch (e) {
+      AppLogger.error('Error fetching bank details', e);
       setState(() => _isLoading = false);
     }
   }
@@ -72,20 +68,16 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
 
     setState(() => _isLoading = true);
     try {
-      final token = await ref.read(authProvider.notifier).getToken();
-      final response = await _dio.post(
-        '/api/v2/mobile/user/bank-details',
-        data: {
-          'account_holder_name': _accountHolderController.text.trim(),
-          'account_number': _accountNumberController.text.trim(),
-          'ifsc_code': _ifscController.text.trim().toUpperCase(),
-          'bank_name': _bankNameController.text.trim(),
-          'branch': _branchController.text.trim(),
-          'upi_id': _upiIdController.text.trim(),
-        },
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      final resData = response.data as Map<String, dynamic>;
+      final api = ApiService();
+      final response = await api.post('/api/v2/mobile/user/bank-details', data: {
+        'account_holder_name': _accountHolderController.text.trim(),
+        'account_number': _accountNumberController.text.trim(),
+        'ifsc_code': _ifscController.text.trim().toUpperCase(),
+        'bank_name': _bankNameController.text.trim(),
+        'branch': _branchController.text.trim(),
+        'upi_id': _upiIdController.text.trim(),
+      });
+      final resData = response;
       if (mounted) {
         setState(() {
           _isLoading = false;

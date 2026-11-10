@@ -53,7 +53,18 @@ class _BookingPageState extends ConsumerState<BookingPage> {
         future: plotAsync,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: AppWidgets.shimmerLoading(
+                child: Container(
+                  height: 200,
+                  margin: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
+            );
           }
 
           final plot = snapshot.data;

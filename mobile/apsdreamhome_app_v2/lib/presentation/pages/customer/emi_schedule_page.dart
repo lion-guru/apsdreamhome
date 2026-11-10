@@ -1,10 +1,10 @@
-import 'package:dio/dio.dart';
+import '../../../core/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/app_constants.dart';
+import '../../../core/services/api_service.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/providers/auth_provider.dart';
+import '../../../core/utils/logger.dart';
 import '../../widgets/glass_card.dart';
 
 class EmiSchedulePage extends ConsumerStatefulWidget {
@@ -32,20 +32,16 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
 
   Future<void> _fetchSchedule() async {
     try {
-      final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-      final token = await ref.read(authProvider.notifier).getToken();
-      final response = await dio.get(
-        '${AppConstants.apiVersion}/customer/emi-schedule',
-        queryParameters: {'booking_id': widget.bookingId},
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final api = ApiService();
+      final response = await api.get('/customer/emi-schedule', queryParameters: {'booking_id': widget.bookingId});
       if (mounted) {
         setState(() {
-          _installments = (response.data['data'] as List<dynamic>?) ?? [];
+          _installments = (response['data'] as List<dynamic>?) ?? [];
           _isLoading = false;
         });
       }
     } catch (e) {
+      AppLogger.error('Error fetching EMI schedule', e);
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -258,13 +254,8 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
     setState(() => _isLoading = true);
 
     try {
-      final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-      final token = await ref.read(authProvider.notifier).getToken();
-      await dio.post(
-        '${AppConstants.apiVersion}/customer/pay-emi',
-        data: {'emi_id': emi['id'] as num, 'amount': emi['amount'] as num},
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final api = ApiService();
+      await api.post('/customer/pay-emi', data: {'emi_id': emi['id'] as num, 'amount': emi['amount'] as num});
 
       _fetchSchedule(); // Refresh
       if (mounted) {
@@ -276,6 +267,7 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
         );
       }
     } catch (e) {
+      AppLogger.error('Error processing EMI payment', e);
       if (mounted) setState(() => _isLoading = false);
     }
   }

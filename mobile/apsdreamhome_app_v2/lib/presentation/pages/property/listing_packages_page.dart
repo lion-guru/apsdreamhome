@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../data/services/payment_service.dart';
@@ -11,18 +13,14 @@ import '../../../data/services/payment_service.dart';
 /// Provider to fetch listing packages
 final listingPackagesProvider =
     FutureProvider<List<Map<String, dynamic>>>((ref) async {
-  final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-  final token = await ref.read(authProvider.notifier).getToken();
-
   try {
-    final response = await dio.get(
-      '${AppConstants.apiVersion}${AppConstants.listingPackagesEndpoint}',
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
-    );
-    final data = response.data['data'];
+    final api = ApiService();
+    final response = await api.get(AppConstants.listingPackagesEndpoint);
+    final data = response['data'];
     if (data is List) return data.cast<Map<String, dynamic>>();
     return [];
   } catch (e) {
+    AppLogger.error('Error fetching listing packages', e);
     // Return default packages if API unavailable
     return _defaultPackages();
   }
@@ -278,6 +276,7 @@ class _ListingPackagesPageState extends ConsumerState<ListingPackagesPage> {
   Future<void> _handleUpgrade() async {
     if (_selectedIndex < 0) return;
 
+    final api = ApiService();
     final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
     final token = await ref.read(authProvider.notifier).getToken();
     final packages = ref.read(listingPackagesProvider).value;
@@ -303,24 +302,22 @@ class _ListingPackagesPageState extends ConsumerState<ListingPackagesPage> {
 
     try {
       if (price <= 0) {
-        final response = await dio.post(
-          '${AppConstants.apiVersion}${AppConstants.listingActivateFreeEndpoint}',
+        final response = await api.post(
+          AppConstants.listingActivateFreeEndpoint,
           data: {
             'property_id': widget.propertyId,
             'package_id': packageId,
           },
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
         );
 
         if (mounted) {
-          final success = response.data['success'] == true;
+          final success = response['success'] == true;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
                 success
                     ? 'Listing upgraded to $packageName!'
-                    : response.data['message']?.toString() ??
-                        'Upgrade failed',
+                    : response['message']?.toString() ?? 'Upgrade failed',
               ),
               backgroundColor: success ? AppTheme.successColor : Colors.red,
             ),

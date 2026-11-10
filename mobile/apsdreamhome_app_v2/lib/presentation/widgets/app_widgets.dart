@@ -230,7 +230,11 @@ class AppWidgets {
     String? prefix,
     TextStyle? style,
   }) {
-    final formattedAmount = _formatCurrency(amount);
+    final formattedAmount = amount >= 10000000
+        ? 'Rs.' + (amount / 10000000).toStringAsFixed(2) + ' Cr'
+        : amount >= 100000
+            ? 'Rs.' + (amount / 100000).toStringAsFixed(2) + ' L'
+            : 'Rs.' + amount.toStringAsFixed(0);
     final symbol = prefix ?? AppConstants.currencySymbol;
     const defaultStyle = TextStyle(
       fontSize: 16,
@@ -333,16 +337,19 @@ class AppWidgets {
                   title,
                   style: const TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.primaryColor,
+                    letterSpacing: 0.3,
                   ),
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
-                      color: Colors.grey.shade500,
+                      color: Color(0xFF64748B),
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -352,7 +359,30 @@ class AppWidgets {
           if (onSeeAll != null)
             TextButton(
               onPressed: onSeeAll,
-              child: const Text('See All'),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'See All',
+                    style: TextStyle(
+                      color: AppTheme.accentColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
+                  SizedBox(width: 2),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 11,
+                    color: AppTheme.accentColor,
+                  ),
+                ],
+              ),
             ),
         ],
       ),
@@ -587,7 +617,7 @@ class AppWidgets {
   }
 
   // Format Currency
-  static String _formatCurrency(double amount) {
+  static String formatCurrency(double amount) {
     if (amount >= 10000000) {
       return '${(amount / 10000000).toStringAsFixed(2)} Cr';
     } else if (amount >= 100000) {
@@ -596,5 +626,73 @@ class AppWidgets {
       return '${(amount / 1000).toStringAsFixed(2)} K';
     }
     return amount.toStringAsFixed(0);
+  }
+
+  // Connectivity Indicator
+  static Widget connectivityIndicator({bool isOnline = true}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          isOnline ? Icons.wifi : Icons.wifi_off,
+          size: 14,
+          color: isOnline ? Colors.green : Colors.red,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          isOnline ? 'Online' : 'Offline',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: isOnline ? Colors.green : Colors.red,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Offline State Widget
+  static Widget offlineState({VoidCallback? onRetry}) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.wifi_off,
+              size: 80,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'No Internet Connection',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textPrimaryLight,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Please check your internet connection and try again.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppTheme.textSecondaryLight,
+              ),
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Retry'),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 }

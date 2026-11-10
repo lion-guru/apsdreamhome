@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../core/providers/auth_provider.dart';
+
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/glass_card.dart';
 
@@ -19,7 +18,6 @@ class _UserNetworkPageState extends ConsumerState<UserNetworkPage> {
   List<Map<String, dynamic>> _directReferrals = [];
   bool _isLoading = true;
   int _currentTab = 0;
-  Dio get _dio => Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
 
   @override
   void initState() {
@@ -30,57 +28,40 @@ class _UserNetworkPageState extends ConsumerState<UserNetworkPage> {
   Future<void> _fetchNetworkData() async {
     setState(() => _isLoading = true);
     try {
-      final token = await ref.read(authProvider.notifier).getToken();
+      final api = ApiService();
       final results = await Future.wait([
-        _dio.get('/api/v2/mobile/user/network-summary', options: Options(headers: {'Authorization': 'Bearer $token'})),
-        _dio.get('/api/v2/mobile/user/direct-referrals', options: Options(headers: {'Authorization': 'Bearer $token'})),
+        api.get('/api/v2/mobile/user/network-summary'),
+        api.get('/api/v2/mobile/user/direct-referrals'),
       ]);
 
-      if (results[0].data['success'] == true) {
+      if (results[0]['success'] == true) {
         setState(() {
-          _networkData = results[0].data['data'] as Map<String, dynamic>;
+          _networkData = results[0]['data'] as Map<String, dynamic>?;
         });
       }
 
-      if (results[1].data['success'] == true) {
-        final data = results[1].data['data'] as List;
+      if (results[1]['success'] == true) {
+        final data = results[1]['data'] as List? ?? [];
         setState(() {
           _directReferrals = data.cast<Map<String, dynamic>>();
           _isLoading = false;
         });
       } else {
-        _loadMockData();
+        setState(() {
+          _networkData = null;
+          _directReferrals = [];
+          _isLoading = false;
+        });
       }
     } catch (e) {
-      _loadMockData();
+      AppLogger.error('Error fetching network data', e);
+      setState(() {
+        _networkData = null;
+        _directReferrals = [];
+        _isLoading = false;
+      });
     }
   }
-
-  void _loadMockData() {
-    setState(() {
-      _networkData = {
-        'total_team': 42,
-        'direct_referrals': 8,
-        'active_members': 35,
-        'team_business_volume': 12500000,
-        'my_rank': 'Sr. Associate',
-        'next_rank': 'BDM',
-        'rank_progress': 0.65,
-      };
-      _directReferrals = [
-        {'id': 1, 'name': 'Rajesh Kumar', 'rank': 'Associate', 'join_date': '2025-01-15', 'business': 1200000, 'status': 'active'},
-        {'id': 2, 'name': 'Priya Sharma', 'rank': 'Associate', 'join_date': '2025-02-20', 'business': 850000, 'status': 'active'},
-        {'id': 3, 'name': 'Amit Singh', 'rank': 'Associate', 'join_date': '2025-03-10', 'business': 450000, 'status': 'inactive'},
-        {'id': 4, 'name': 'Sunita Devi', 'rank': 'Associate', 'join_date': '2025-04-05', 'business': 2100000, 'status': 'active'},
-        {'id': 5, 'name': 'Vikash Gupta', 'rank': 'Associate', 'join_date': '2025-05-12', 'business': 670000, 'status': 'active'},
-        {'id': 6, 'name': 'Anita Singh', 'rank': 'Associate', 'join_date': '2025-06-01', 'business': 320000, 'status': 'active'},
-        {'id': 7, 'name': 'Rohit Verma', 'rank': 'Associate', 'join_date': '2025-07-18', 'business': 150000, 'status': 'inactive'},
-        {'id': 8, 'name': 'Meera Patel', 'rank': 'Associate', 'join_date': '2025-08-10', 'business': 890000, 'status': 'active'},
-      ];
-      _isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

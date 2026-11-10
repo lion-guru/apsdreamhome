@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../core/providers/auth_provider.dart';
+
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/glass_card.dart';
 
@@ -34,7 +33,6 @@ class _UserNotificationSettingsPageState extends ConsumerState<UserNotificationS
     'whatsapp_security': true,
   };
   bool _isLoading = false;
-  Dio get _dio => Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
 
   @override
   void initState() {
@@ -45,12 +43,9 @@ class _UserNotificationSettingsPageState extends ConsumerState<UserNotificationS
   Future<void> _fetchSettings() async {
     setState(() => _isLoading = true);
     try {
-      final token = await ref.read(authProvider.notifier).getToken();
-      final response = await _dio.get(
-        '/api/v2/mobile/user/notification-preferences',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      final resData = response.data as Map<String, dynamic>;
+      final api = ApiService();
+      final response = await api.get('/api/v2/mobile/user/notification-preferences');
+      final resData = response;
       if (resData['success'] == true && resData['data'] != null) {
         setState(() {
           _settings = {..._settings, ...resData['data'] as Map<String, dynamic>};
@@ -60,6 +55,7 @@ class _UserNotificationSettingsPageState extends ConsumerState<UserNotificationS
         setState(() => _isLoading = false);
       }
     } catch (e) {
+      AppLogger.error('Error fetching notification settings', e);
       setState(() => _isLoading = false);
     }
   }
@@ -67,13 +63,9 @@ class _UserNotificationSettingsPageState extends ConsumerState<UserNotificationS
   Future<void> _saveSettings() async {
     setState(() => _isLoading = true);
     try {
-      final token = await ref.read(authProvider.notifier).getToken();
-      final response = await _dio.post(
-        '/api/v2/mobile/user/notification-preferences',
-        data: _settings,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      final resData = response.data as Map<String, dynamic>;
+      final api = ApiService();
+      final response = await api.post('/api/v2/mobile/user/notification-preferences', data: _settings);
+      final resData = response;
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -84,6 +76,7 @@ class _UserNotificationSettingsPageState extends ConsumerState<UserNotificationS
         );
       }
     } catch (e) {
+      AppLogger.error('Error saving notification settings', e);
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(

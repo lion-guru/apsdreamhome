@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dio/dio.dart';
 
 import '../../../core/constants/app_constants.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/theme/app_theme.dart';
 
 /// Provider to fetch user's posted properties
-final myListingsProvider = FutureProvider<List<Map<String, dynamic>>>((
-  ref,
-) async {
-  final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-  final token = await ref.read(authProvider.notifier).getToken();
-
+final myListingsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
   try {
-    final response = await dio.get(
-      '${AppConstants.apiVersion}${AppConstants.myListingsEndpoint}',
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
-    );
-    final data = response.data['data'];
+    final api = ApiService();
+    final response = await api.get(AppConstants.myListingsEndpoint);
+    final data = response['data'];
     if (data is Map && data.containsKey('listings')) {
       return (data['listings'] as List<dynamic>? ?? [])
           .cast<Map<String, dynamic>>();
@@ -29,6 +23,7 @@ final myListingsProvider = FutureProvider<List<Map<String, dynamic>>>((
     }
     return [];
   } catch (e) {
+    AppLogger.error('Error fetching my listings', e);
     return [];
   }
 });

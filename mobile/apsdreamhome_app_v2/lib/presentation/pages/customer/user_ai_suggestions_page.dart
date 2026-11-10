@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../core/providers/auth_provider.dart';
+
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/glass_card.dart';
 
@@ -17,7 +17,6 @@ class UserAISuggestionsPage extends ConsumerStatefulWidget {
 class _UserAISuggestionsPageState extends ConsumerState<UserAISuggestionsPage> {
   List<Map<String, dynamic>> _suggestions = [];
   bool _isLoading = true;
-  Dio get _dio => Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
 
   @override
   void initState() {
@@ -28,82 +27,27 @@ class _UserAISuggestionsPageState extends ConsumerState<UserAISuggestionsPage> {
   Future<void> _fetchSuggestions() async {
     setState(() => _isLoading = true);
     try {
-      final token = await ref.read(authProvider.notifier).getToken();
-      final response = await _dio.get(
-        '/api/v2/mobile/user/ai-suggestions',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      final resData = response.data as Map<String, dynamic>;
-      if (resData['success'] == true) {
-        final data = resData['data'] as List;
+      final api = ApiService();
+      final response = await api.get('/api/v2/mobile/user/ai-suggestions');
+      if (response['success'] == true) {
+        final data = response['data'] as List? ?? [];
         setState(() {
           _suggestions = data.cast<Map<String, dynamic>>();
           _isLoading = false;
         });
       } else {
-        _loadMockData();
+        setState(() {
+          _suggestions = [];
+          _isLoading = false;
+        });
       }
     } catch (e) {
-      _loadMockData();
+      AppLogger.error('Error fetching AI suggestions', e);
+      setState(() {
+        _suggestions = [];
+        _isLoading = false;
+      });
     }
-  }
-
-  void _loadMockData() {
-    setState(() {
-      _suggestions = [
-        {
-          'type': 'property',
-          'title': 'Perfect Match Found',
-          'description': 'A 3BHK plot in Suryoday Colony matches your saved search criteria perfectly.',
-          'priority': 'high',
-          'action_text': 'View Property',
-          'action_url': '/property-detail/123',
-          'image': 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=400&h=300&q=80',
-          'created_at': DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
-        },
-        {
-          'type': 'price_drop',
-          'title': 'Price Alert',
-          'description': 'A property you viewed has dropped by ₹2.5L. Check it out before it\'s gone!',
-          'priority': 'high',
-          'action_text': 'View Details',
-          'action_url': '/property-detail/456',
-          'image': 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=400&h=300&q=80',
-          'created_at': DateTime.now().subtract(const Duration(hours: 5)).toIso8601String(),
-        },
-        {
-          'type': 'investment',
-          'title': 'Investment Opportunity',
-          'description': 'Based on your budget, Braj Radha Nagri plots offer 18% projected returns.',
-          'priority': 'medium',
-          'action_text': 'Learn More',
-          'action_url': '/colony-detail/braj-radha',
-          'image': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&h=300&q=80',
-          'created_at': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
-        },
-        {
-          'type': 'emi',
-          'title': 'EMI Optimization',
-          'description': 'Switching to a 20-year tenure could save you ₹45,000 in interest.',
-          'priority': 'medium',
-          'action_text': 'Calculate',
-          'action_url': '/emi-calculator',
-          'image': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=400&h=300&q=80',
-          'created_at': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
-        },
-        {
-          'type': 'market',
-          'title': 'Market Insight',
-          'description': 'Gorakhpur property prices rose 12% YoY. Good time to invest in Raghunath Nagri.',
-          'priority': 'low',
-          'action_text': 'Read Report',
-          'action_url': '/news/market-report',
-          'image': 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=400&h=300&q=80',
-          'created_at': DateTime.now().subtract(const Duration(days: 3)).toIso8601String(),
-        },
-      ];
-      _isLoading = false;
-    });
   }
 
   @override

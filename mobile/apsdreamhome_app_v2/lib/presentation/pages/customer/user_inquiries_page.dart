@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../core/providers/auth_provider.dart';
+
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../widgets/glass_card.dart';
 
@@ -18,7 +17,6 @@ class _UserInquiriesPageState extends ConsumerState<UserInquiriesPage> {
   List<Map<String, dynamic>> _inquiries = [];
   bool _isLoading = true;
   String _selectedFilter = 'all';
-  Dio get _dio => Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
 
   @override
   void initState() {
@@ -29,17 +27,13 @@ class _UserInquiriesPageState extends ConsumerState<UserInquiriesPage> {
   Future<void> _fetchInquiries() async {
     setState(() => _isLoading = true);
     try {
-      final token = await ref.read(authProvider.notifier).getToken();
+      final api = ApiService();
       final params = <String, dynamic>{};
       if (_selectedFilter != 'all') {
         params['status'] = _selectedFilter;
       }
-      final response = await _dio.get(
-        '/api/v2/mobile/user/inquiries',
-        queryParameters: params,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      final resData = response.data as Map<String, dynamic>;
+      final response = await api.get('/api/v2/mobile/user/inquiries', queryParameters: params);
+      final resData = response;
       if (resData['success'] == true) {
         final data = resData['data'] as List;
         setState(() {
@@ -50,6 +44,7 @@ class _UserInquiriesPageState extends ConsumerState<UserInquiriesPage> {
         setState(() => _isLoading = false);
       }
     } catch (e) {
+      AppLogger.error('Error fetching inquiries', e);
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

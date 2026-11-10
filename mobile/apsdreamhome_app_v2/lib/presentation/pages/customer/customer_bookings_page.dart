@@ -3,20 +3,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/providers/auth_provider.dart';
 import '../../widgets/glass_card.dart';
-import 'package:dio/dio.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 
 final customerBookingsProvider = FutureProvider<List<dynamic>>((ref) async {
-  final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-  final token = await ref.read(authProvider.notifier).getToken();
-  
-  final response = await dio.get(
-    '${AppConstants.apiVersion}/customer/bookings',
-    options: Options(headers: {'Authorization': 'Bearer $token'}),
-  );
-  
-  return response.data['data'] as List<dynamic>;
+  try {
+    final api = ApiService();
+    final response = await api.get('/customer/bookings');
+    if (response['success'] == true && response['data'] != null) {
+      return (response['data'] as List).cast<dynamic>();
+    }
+    if (response['data'] is List) {
+      return (response['data'] as List).cast<dynamic>();
+    }
+    return [];
+  } catch (e) {
+    AppLogger.error('Error fetching customer bookings', e);
+    return [];
+  }
 });
 
 class CustomerBookingsPage extends ConsumerWidget {

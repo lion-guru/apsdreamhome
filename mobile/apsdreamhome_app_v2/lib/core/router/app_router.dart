@@ -10,10 +10,10 @@ import '../../presentation/pages/auth/otp_page.dart';
 
 // Customer
 import '../../presentation/pages/customer/home_page.dart';
-import '../../presentation/pages/customer/colonies_page.dart';
+import '../../presentation/pages/customer/customer_dashboard_page.dart';
 import '../../presentation/pages/customer/colony_detail_page.dart';
 import '../../presentation/pages/customer/plots_page.dart';
-import '../../presentation/pages/customer/booking_page.dart';
+import '../../presentation/pages/customer/colonies_page.dart';
 import '../../presentation/pages/customer/my_bookings_page.dart';
 import '../../presentation/pages/customer/registry_timeline_page.dart';
 import '../../presentation/pages/admin/payout_batches_page.dart';
@@ -127,7 +127,7 @@ import '../../presentation/pages/customer/customer_dashboard_page.dart';
 // Tools
 import '../../presentation/pages/tools/emi_calculator_page.dart';
 import '../../presentation/pages/tools/home_loan_eligibility_page.dart';
-import '../../presentation/pages/tools/property_valuation_page.dart';
+import '../../presentation/pages/tools/property_valuation_page.dart' as tools_pv;
 import '../../presentation/pages/tools/site_visit_scheduler_page.dart';
 import '../../presentation/pages/tools/my_site_visits_page.dart';
 import '../../presentation/pages/tools/map_view_page.dart';
@@ -136,6 +136,13 @@ import '../../presentation/pages/tools/live_chat_page.dart';
 // AI
 import '../../presentation/pages/ai/advanced_ai_chat_page.dart';
 import '../../presentation/pages/ai/ai_agent_dashboard_page.dart';
+import '../../presentation/pages/ai/ai_chatbot_page.dart';
+import '../../presentation/pages/ai/property_valuation_page.dart';
+import '../../presentation/pages/ai/rag_chat_page.dart';
+import '../../presentation/pages/ai/smart_routing_page.dart';
+import '../../presentation/pages/ai/email_classification_page.dart';
+import '../../presentation/pages/ai/document_scanner_page.dart';
+import '../../presentation/pages/ai/voice_call_page.dart';
 
 // Payment
 import '../../presentation/pages/payment/payment_page.dart';
@@ -143,6 +150,7 @@ import '../../presentation/pages/payment/payment_page.dart';
 // Associate
 import '../../presentation/pages/associate/associate_dashboard_page.dart';
 import '../../presentation/pages/associate/leads_page.dart';
+import '../../presentation/pages/customer/booking_page.dart';
 import '../../presentation/pages/associate/offline_booking_page.dart';
 import '../../presentation/pages/associate/commission_page.dart';
 import '../../presentation/pages/associate/payout_page.dart';
@@ -209,7 +217,7 @@ import '../../presentation/pages/telecaller/telecaller_dashboard_page.dart';
 import '../../presentation/pages/telecaller/auto_dialer_dashboard_page.dart';
 import '../../presentation/pages/telecaller/templates_page.dart';
 import '../../presentation/pages/telecaller/bulk_operations_page.dart';
-import '../../presentation/pages/telecaller/voice_call_page.dart';
+import '../../presentation/pages/telecaller/voice_call_page.dart' as tele_voice;
 
 // Phase 6 — Demand Letters & Construction
 import '../../presentation/pages/customer/demand_letters_page.dart';
@@ -220,6 +228,40 @@ import '../../presentation/pages/admin/material_inventory_page.dart';
 import '../../presentation/pages/customer/wallet_activation_page.dart';
 import '../../presentation/pages/customer/referral_earnings_page.dart';
 import '../../presentation/pages/customer/offers_page.dart';
+
+// Township Operations & Customer Features
+import '../../presentation/pages/customer/maintenance_dues_page.dart';
+import '../../presentation/pages/customer/township_grievances_page.dart';
+import '../../presentation/pages/customer/book_site_visit_page.dart';
+import '../../presentation/pages/customer/township_operations_page.dart';
+import '../../presentation/pages/customer/township_utility_detail_page.dart';
+import '../../presentation/pages/customer/registry_appointments_page.dart';
+import '../../presentation/pages/customer/registry_appointment_slip_page.dart';
+import '../../presentation/pages/customer/solar_subsidy_page.dart';
+
+// Web Parity Pages (Customer & Associate)
+import '../../presentation/pages/customer/customer_passbook_page.dart';
+import '../../presentation/pages/customer/plot_transfers_page.dart';
+import '../../presentation/pages/customer/loan_foreclosure_page.dart';
+import '../../presentation/pages/customer/nri_desk_page.dart';
+import '../../presentation/pages/customer/customer_journey_page.dart';
+import '../../presentation/pages/associate/associate_id_card_page.dart';
+import '../../presentation/pages/associate/associate_posters_page.dart';
+import '../../presentation/pages/associate/associate_tds_page.dart';
+import '../../presentation/pages/associate/associate_bonanza_page.dart';
+import '../../presentation/pages/agent/agent_collection_page.dart';
+
+// Deep Scan Feature Desks (Registry, Drone Timelapse, Allotments, Advances, Dossier, Alerts, Drawer)
+import '../../presentation/pages/customer/registry_desk_page.dart';
+import '../../presentation/pages/customer/colony_timelapse_page.dart';
+import '../../presentation/pages/customer/allotment_acceptance_page.dart';
+import '../../presentation/pages/associate/associate_advances_page.dart';
+import '../../presentation/pages/associate/associate_documents_page.dart';
+import '../../presentation/pages/customer/notification_preferences_page.dart';
+import '../../presentation/pages/agent/cash_drawer_page.dart';
+import '../../presentation/pages/property/property_auctions_page.dart';
+import '../../presentation/pages/customer/farmer_desk_page.dart';
+import '../../presentation/pages/customer/meeting_scheduler_page.dart';
 
 // User model
 import '../../data/models/user_model.dart';
@@ -349,9 +391,26 @@ GoRouter createRouter() {
       final isStampDuty = uri == '/stamp-duty-calculator';
       final isPlotConverter = uri == '/plot-converter';
       final isCompare = uri == '/compare';
+      final isNriDesk = uri == '/nri-desk';
+      final isAuctions = uri == '/property-auctions';
+      final isFarmerDesk = uri == '/farmer-desk';
+      final isMeetingScheduler = uri == '/meeting-scheduler';
+      final isColonyTimelapse = uri == '/colony-timelapse';
+      final isSolarSubsidy = uri == '/solar-subsidy';
+      final isTownshipOps = uri == '/township-operations' || uri.startsWith('/township-operations/');
+      final isFreeCarSiteVisit = uri == '/book-site-visit';
 
 final isPublicRoute =
           isSplash ||
+          isNriDesk ||
+          isAuctions ||
+          isFarmerDesk ||
+          isMeetingScheduler ||
+          isColonyTimelapse ||
+          isSolarSubsidy ||
+          isTownshipOps ||
+          isFreeCarSiteVisit ||
+
           isLoginPage ||
           isRegisterPage ||
           isForgotPassword ||
@@ -627,6 +686,150 @@ isDisclaimer ||
           ),
         ],
       ),
+
+      // ─── Township Operations & Resident Services ───
+      GoRoute(
+        path: '/maintenance-dues',
+        builder: (context, state) => const MaintenanceDuesPage(),
+      ),
+      GoRoute(
+        path: '/township-grievances',
+        builder: (context, state) => const TownshipGrievancesPage(),
+      ),
+      GoRoute(
+        path: '/book-site-visit',
+        builder: (context, state) {
+          final colonyId = int.tryParse(state.uri.queryParameters['colony_id'] ?? '');
+          return BookSiteVisitPage(initialColonyId: colonyId);
+        },
+      ),
+
+      // ─── Township Operations & Utilities (web ERP parity) ───
+      GoRoute(
+        path: '/township-operations',
+        builder: (context, state) => const TownshipOperationsPage(),
+      ),
+      GoRoute(
+        path: '/township-operations/:type',
+        builder: (context, state) => TownshipUtilityDetailPage(
+          type: state.pathParameters['type'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '/solar-subsidy',
+        builder: (context, state) => const SolarSubsidyPage(),
+      ),
+
+      // ─── Web Parity: Customer Desks ───
+      GoRoute(
+        path: '/customer-passbook',
+        builder: (context, state) => const CustomerPassbookPage(),
+      ),
+      GoRoute(
+        path: '/plot-transfers',
+        builder: (context, state) => const PlotTransfersPage(),
+      ),
+      GoRoute(
+        path: '/loan-foreclosure',
+        builder: (context, state) => const LoanForeclosurePage(),
+      ),
+      GoRoute(
+        path: '/nri-desk',
+        builder: (context, state) => const NriDeskPage(),
+      ),
+      GoRoute(
+        path: '/customer-journey/:bookingId',
+        builder: (context, state) {
+          final bookingId = int.tryParse(state.pathParameters['bookingId'] ?? '') ?? 1;
+          return CustomerJourneyPage(bookingId: bookingId);
+        },
+      ),
+      GoRoute(
+        path: '/registry-appointments',
+        builder: (context, state) => const RegistryAppointmentsPage(),
+      ),
+      GoRoute(
+        path: '/registry-appointments/:id/slip',
+        builder: (context, state) => RegistryAppointmentSlipPage(
+          appointmentId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+
+      // ─── Web Parity: Associate & Agent Tools ───
+      GoRoute(
+        path: '/associate/id-card',
+        builder: (context, state) => const AssociateIdCardPage(),
+      ),
+      GoRoute(
+        path: '/associate/marketing-posters',
+        builder: (context, state) => const AssociatePostersPage(),
+      ),
+      GoRoute(
+        path: '/associate/tds',
+        builder: (context, state) => const AssociateTdsPage(),
+      ),
+      GoRoute(
+        path: '/associate/bonanza-races',
+        builder: (context, state) => const AssociateBonanzaPage(),
+      ),
+      GoRoute(
+        path: '/agent/collections',
+        builder: (context, state) => const AgentCollectionPage(),
+      ),
+      GoRoute(
+        path: '/agent-collection',
+        builder: (context, state) => const AgentCollectionPage(),
+      ),
+      GoRoute(
+        path: '/associate-id-card',
+        builder: (context, state) => const AssociateIdCardPage(),
+      ),
+      GoRoute(
+        path: '/associate-posters',
+        builder: (context, state) => const AssociatePostersPage(),
+      ),
+      GoRoute(
+        path: '/associate-tds',
+        builder: (context, state) => const AssociateTdsPage(),
+      ),
+      GoRoute(
+        path: '/associate-bonanza',
+        builder: (context, state) => const AssociateBonanzaPage(),
+      ),
+
+      // ─── Deep Scan: Registry Desk, Drone Timelapse, Allotments, Advances, Dossier, Alerts, Drawer ───
+      GoRoute(
+        path: '/registry-desk',
+        builder: (context, state) => const RegistryDeskPage(),
+      ),
+      GoRoute(
+        path: '/colony-timelapse',
+        builder: (context, state) {
+          final id = int.tryParse(state.uri.queryParameters['colony_id'] ?? '') ?? 1;
+          return ColonyTimelapsePage(colonyId: id);
+        },
+      ),
+      GoRoute(
+        path: '/allotment-acceptance',
+        builder: (context, state) => const AllotmentAcceptancePage(),
+      ),
+      GoRoute(
+        path: '/associate-advances',
+        builder: (context, state) => const AssociateAdvancesPage(),
+      ),
+      GoRoute(
+        path: '/associate-documents',
+        builder: (context, state) => const AssociateDocumentsPage(),
+      ),
+      GoRoute(
+        path: '/notification-preferences',
+        builder: (context, state) => const NotificationPreferencesPage(),
+      ),
+      GoRoute(
+        path: '/cash-drawer',
+        builder: (context, state) => const CashDrawerPage(),
+      ),
+
 
       // ─── Customer Detail Routes (full-screen, with slide-up transition) ───
       GoRoute(
@@ -967,7 +1170,7 @@ isDisclaimer ||
       ),
       GoRoute(
         path: '/property-valuation',
-        builder: (context, state) => const PropertyValuationPage(),
+        builder: (context, state) => const tools_pv.PropertyValuationPage(),
       ),
       GoRoute(
         path: '/site-visit',
@@ -1181,6 +1384,34 @@ isDisclaimer ||
         path: '/ai-chat',
         builder: (context, state) => const AdvancedAIChatPage(),
       ),
+      GoRoute(
+        path: '/ai-chatbot',
+        builder: (context, state) => const AIChatbotPage(),
+      ),
+      GoRoute(
+        path: '/ai-property-valuation',
+        builder: (context, state) => const PropertyValuationPage(),
+      ),
+      GoRoute(
+        path: '/ai-rag-chat',
+        builder: (context, state) => const RAGChatPage(),
+      ),
+      GoRoute(
+        path: '/ai-smart-routing',
+        builder: (context, state) => const SmartRoutingPage(),
+      ),
+      GoRoute(
+        path: '/ai-email-classification',
+        builder: (context, state) => const EmailClassificationPage(),
+      ),
+      GoRoute(
+        path: '/ai-document-scanner',
+        builder: (context, state) => const DocumentScannerPage(),
+      ),
+      GoRoute(
+        path: '/ai-voice-call',
+        builder: (context, state) => const VoiceCallPage(),
+      ),
 
       // ─── Payment ───
       GoRoute(
@@ -1381,12 +1612,158 @@ isDisclaimer ||
       ),
       GoRoute(
         path: '/auto-dialer/voice',
-        builder: (context, state) => VoiceCallPage(
+        builder: (context, state) => tele_voice.VoiceCallPage(
           leadId: state.uri.queryParameters['leadId'] != null
               ? int.tryParse(state.uri.queryParameters['leadId']!)
               : null,
         ),
       ),
+
+      // ─── Web Parity & Township Ops Customer Routes ───
+      GoRoute(
+        path: '/customer-passbook',
+        builder: (context, state) => const CustomerPassbookPage(),
+      ),
+      GoRoute(
+        path: '/plot-transfers',
+        builder: (context, state) => const PlotTransfersPage(),
+      ),
+      GoRoute(
+        path: '/loan-foreclosure',
+        builder: (context, state) => const LoanForeclosurePage(),
+      ),
+      GoRoute(
+        path: '/nri-desk',
+        builder: (context, state) => const NriDeskPage(),
+      ),
+      GoRoute(
+        path: '/customer-journey/:bookingId',
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['bookingId'] ?? '1') ?? 1;
+          return CustomerJourneyPage(bookingId: id);
+        },
+      ),
+      GoRoute(
+        path: '/registry-desk',
+        builder: (context, state) => const RegistryDeskPage(),
+      ),
+      GoRoute(
+        path: '/colony-timelapse',
+        builder: (context, state) => const ColonyTimelapsePage(),
+      ),
+      GoRoute(
+        path: '/allotment-acceptance',
+        builder: (context, state) => const AllotmentAcceptancePage(),
+      ),
+      GoRoute(
+        path: '/notification-preferences',
+        builder: (context, state) => const NotificationPreferencesPage(),
+      ),
+      GoRoute(
+        path: '/maintenance-dues',
+        builder: (context, state) => const MaintenanceDuesPage(),
+      ),
+      GoRoute(
+        path: '/township-grievances',
+        builder: (context, state) => const TownshipGrievancesPage(),
+      ),
+      GoRoute(
+        path: '/book-site-visit',
+        builder: (context, state) => const BookSiteVisitPage(),
+      ),
+      GoRoute(
+        path: '/township-operations',
+        builder: (context, state) => const TownshipOperationsPage(),
+      ),
+      GoRoute(
+        path: '/township-operations/:type',
+        builder: (context, state) => TownshipUtilityDetailPage(
+          type: state.pathParameters['type'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '/solar-subsidy',
+        builder: (context, state) => const SolarSubsidyPage(),
+      ),
+      GoRoute(
+        path: '/registry-appointments',
+        builder: (context, state) => const RegistryAppointmentsPage(),
+      ),
+      GoRoute(
+        path: '/registry-appointment-slip/:id',
+        builder: (context, state) => RegistryAppointmentSlipPage(
+          appointmentId: state.pathParameters['id'] ?? '',
+        ),
+      ),
+
+      // ─── Deep Scan Round 3 Features ───
+      GoRoute(
+        path: '/property-auctions',
+        builder: (context, state) => const PropertyAuctionsPage(),
+      ),
+      GoRoute(
+        path: '/farmer-desk',
+        builder: (context, state) => const FarmerDeskPage(),
+      ),
+      GoRoute(
+        path: '/meeting-scheduler',
+        builder: (context, state) => const MeetingSchedulerPage(),
+      ),
+
+      // ─── Associate & Agent Web Parity Desks ───
+      GoRoute(
+        path: '/associate-id-card',
+        builder: (context, state) => const AssociateIdCardPage(),
+      ),
+      GoRoute(
+        path: '/associate/id-card',
+        builder: (context, state) => const AssociateIdCardPage(),
+      ),
+      GoRoute(
+        path: '/associate-posters',
+        builder: (context, state) => const AssociatePostersPage(),
+      ),
+      GoRoute(
+        path: '/associate/marketing-posters',
+        builder: (context, state) => const AssociatePostersPage(),
+      ),
+      GoRoute(
+        path: '/associate-tds',
+        builder: (context, state) => const AssociateTdsPage(),
+      ),
+      GoRoute(
+        path: '/associate/tds',
+        builder: (context, state) => const AssociateTdsPage(),
+      ),
+      GoRoute(
+        path: '/associate-bonanza',
+        builder: (context, state) => const AssociateBonanzaPage(),
+      ),
+      GoRoute(
+        path: '/associate/bonanza-races',
+        builder: (context, state) => const AssociateBonanzaPage(),
+      ),
+      GoRoute(
+        path: '/agent-collection',
+        builder: (context, state) => const AgentCollectionPage(),
+      ),
+      GoRoute(
+        path: '/agent/collections',
+        builder: (context, state) => const AgentCollectionPage(),
+      ),
+      GoRoute(
+        path: '/associate-advances',
+        builder: (context, state) => const AssociateAdvancesPage(),
+      ),
+      GoRoute(
+        path: '/associate-documents',
+        builder: (context, state) => const AssociateDocumentsPage(),
+      ),
+      GoRoute(
+        path: '/cash-drawer',
+        builder: (context, state) => const CashDrawerPage(),
+      ),
+
 
       // ─── Employee Shell ───
       ShellRoute(

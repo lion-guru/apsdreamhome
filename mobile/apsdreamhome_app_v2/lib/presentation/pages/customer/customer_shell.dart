@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../widgets/app_widgets.dart';
 
 /// Customer Shell — Bottom Navigation for authenticated customers.
 /// Uses AuthBridge (ValueNotifier) instead of Riverpod to avoid InheritedModel assertion.
@@ -99,7 +100,7 @@ class _CustomerShellState extends State<CustomerShell> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  user.name.split(' ').first ?? '',
+                  user.name.split(' ').first,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -116,7 +117,17 @@ class _CustomerShellState extends State<CustomerShell> {
             ),
         ],
       ),
-      body: widget.child,
+      body: Column(
+        children: [
+          // Connectivity Indicator
+          AppWidgets.connectivityIndicator(
+            isOnline: true,
+          ),
+          Expanded(
+            child: widget.child,
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => context.go(_tabs[index]),

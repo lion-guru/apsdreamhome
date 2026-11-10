@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
-import '../../../core/constants/app_constants.dart';
+
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/providers/auth_provider.dart';
 
 class SellPropertyPage extends ConsumerStatefulWidget {
   const SellPropertyPage({super.key});
@@ -30,7 +31,7 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppConstants.defaultPadding),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -128,26 +129,20 @@ class _SellPropertyPageState extends ConsumerState<SellPropertyPage> {
     setState(() => _isSubmitting = true);
 
     try {
-      final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-      final token = await ref.read(authProvider.notifier).getToken();
-
-      final response = await dio.post(
-        '${AppConstants.apiVersion}/properties/submit',
-        data: {
-          'title': _titleController.text,
-          'property_type': _propertyType,
-          'price': _priceController.text,
-          'location': _locationController.text,
-          'description': _descController.text,
-        },
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
+      final api = ApiService();
+      final response = await api.post('/properties/submit', data: {
+        'title': _titleController.text,
+        'property_type': _propertyType,
+        'price': _priceController.text,
+        'location': _locationController.text,
+        'description': _descController.text,
+      });
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              (response.data['message'] as String?) ?? 'Submitted!',
+              (response['message'] as String?) ?? 'Submitted!',
             ),
             backgroundColor: Colors.green,
           ),

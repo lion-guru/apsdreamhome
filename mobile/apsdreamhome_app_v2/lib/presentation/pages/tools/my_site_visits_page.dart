@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../core/providers/auth_provider.dart';
+
+import '../../../core/services/api_service.dart';
+import '../../../core/utils/logger.dart';
+import '../../../core/theme/app_theme.dart';
 
 class MySiteVisitsPage extends ConsumerStatefulWidget {
   const MySiteVisitsPage({super.key});
@@ -15,7 +17,6 @@ class _MySiteVisitsPageState extends ConsumerState<MySiteVisitsPage> {
   List<Map<String, dynamic>> _visits = [];
   bool _isLoading = true;
   String _selectedFilter = 'all';
-  Dio get _dio => Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
 
   @override
   void initState() {
@@ -26,19 +27,15 @@ class _MySiteVisitsPageState extends ConsumerState<MySiteVisitsPage> {
   Future<void> _fetchVisits() async {
     setState(() => _isLoading = true);
     try {
-      final token = await ref.read(authProvider.notifier).getToken();
+      final api = ApiService();
       final params = <String, dynamic>{};
       if (_selectedFilter != 'all') {
         params['status'] = _selectedFilter;
       }
-      final response = await _dio.get(
-        '/api/v2/mobile/site-visit/my-visits',
-        queryParameters: params,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      final resData = response.data as Map<String, dynamic>;
+      final response = await api.get('/api/v2/mobile/site-visit/my-visits', queryParameters: params);
+      final resData = response;
       if (resData['success'] == true) {
-        final data = resData['data'] as List;
+        final data = resData['data'] as List? ?? [];
         setState(() {
           _visits = data.cast<Map<String, dynamic>>();
           _isLoading = false;
@@ -47,6 +44,7 @@ class _MySiteVisitsPageState extends ConsumerState<MySiteVisitsPage> {
         setState(() => _isLoading = false);
       }
     } catch (e) {
+      AppLogger.error('Error fetching site visits', e);
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -81,13 +79,9 @@ class _MySiteVisitsPageState extends ConsumerState<MySiteVisitsPage> {
     if (confirm != true) return;
 
     try {
-      final token = await ref.read(authProvider.notifier).getToken();
-      final response = await _dio.post(
-        '/api/v2/mobile/site-visit/cancel',
-        data: {'visit_id': visitId, 'reason': 'Cancelled by user'},
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-      final resData = response.data as Map<String, dynamic>;
+      final api = ApiService();
+      final response = await api.post('/api/v2/mobile/site-visit/cancel', data: {'visit_id': visitId, 'reason': 'Cancelled by user'});
+      final resData = response;
       if (resData['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
