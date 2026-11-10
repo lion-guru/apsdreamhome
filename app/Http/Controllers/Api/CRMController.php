@@ -6,11 +6,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\BaseController;
 use App\Services\CRMService;
 use App\Models\User;
+// NOTE (S447): without these imports `Lead::query()` / `Colony::query()`
+// resolved to App\Http\Controllers\Api\Lead / ::Colony (the controller's own
+// namespace) -> "Class not found" -> the admin overview 500'd.
+use App\Models\Lead;
+use App\Models\Colony;
 use App\Middleware\RateLimiter;
-use \App\Traits\TenantAwareTrait;
 
 class CRMController extends BaseController
 {
@@ -71,7 +76,8 @@ class CRMController extends BaseController
         ];
     }
 
-    public function json($data, int $status = 200) {
+    public function json($data, int $status = 200): void
+    {
         http_response_code($status);
         header('Content-Type: application/json');
         echo json_encode($data);
@@ -345,112 +351,106 @@ class CRMController extends BaseController
 
     public function adminOverview() {
         $tid = (int)$this->tenantId();
-        $tidSql = $tid > 1 ? " AND leads.tenant_id = ?" : "";
-        
-        $uFilter = $tid > 1 ? "tenant_id = ?" : "";
-        $uFilterParams = $tid > 1 ? [$tid] : [];
+        $db = $this->db;
 
-        // Use Query Builder for all queries to prevent SQL injection
-        $query = User::query()->where('deleted_at', null);
-        if ($tid > 1) {
-            $query->where('tenant_id', $tid);
+        // FIXED (S447): this method referenced THREE model classes that do not
+        // exist in app/Models (PlotBooking, MlmCommissionLedger, CrmInteraction)
+        // and missed the Lead/Colony imports -> the class lookup fataled
+        // ("Class App\Http\Controllers\Api\PlotBooking not found") and the
+        // whole admin overview 500'd. It also built $stats twice (the second
+        // assignment overwrote the first). Everything is queried directly now.
+        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        $tenantParams = $tid > 1 ? [$tid] : [];
+
+        $count = function (string $sql, array $params = []) use ($db): int {
+            try {
+                $row = $db->fetchOne($sql, $params);
+                return (int)($row['c'] ?? 0);
+            } catch (\Throwable $e) {
+                error_log('[CRMController::adminOverview] ' . $e->getMessage());
+                return 0;
+            }
+        };
+
+        $stats = [];
+
+        $stats['total_users'] = $count(
+            "SELECT COUNT(*) AS c FROM users WHERE deleted_at IS NULL" . $tenantWhere,
+            $tenantParams
+        );
+
+        $stats['active_associates'] = $count(
+            "SELECT COUNT(*) AS c FROM users
+             WHERE deleted_at IS NULL AND role = 'associate'" . $tenantWhere,
+            $tenantParams
+        );
+
+        $stats['bookings_today'] = $count(
+            "SELECT COUNT(*) AS c FROM plot_bookings
+             WHERE DATE(created_at) = ?" . $tenantWhere,
+            array_merge([date('Y-m-d')], $tenantParams)
+        );
+
+        try {
+            $rev = $db->fetchOne(
+                "SELECT COALESCE(SUM(total_plot_value), 0) AS total FROM plot_bookings
+                 WHERE status != 'cancelled'" . $tenantWhere,
+                $tenantParams
+            );
+            $stats['total_revenue'] = (float)($rev['total'] ?? 0);
+        } catch (\Throwable $e) {
+            error_log('[CRMController::adminOverview] revenue: ' . $e->getMessage());
+            $stats['total_revenue'] = 0.0;
         }
-        $stats['total_users'] = $query->count();
 
-        $stats['active_associates'] = User::query()
-            ->where('deleted_at', null)
-            ->where('role', 'associate')
-            ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
-            ->count();
+        $stats['total_leads'] = $count(
+            "SELECT COUNT(*) AS c FROM leads WHERE deleted_at IS NULL" . $tenantWhere,
+            $tenantParams
+        );
 
-        $stats['bookings_today'] = PlotBooking::query()
-            ->whereDate('created_at', now()->toDateString())
-            ->count();
+        $stats['hot_leads'] = $count(
+            "SELECT COUNT(*) AS c FROM leads
+             WHERE lead_category = 'hot' AND deleted_at IS NULL" . $tenantWhere,
+            $tenantParams
+        );
 
-        $stats['total_revenue'] = PlotBooking::query()
-            ->where('status', '!=', 'cancelled')
-            ->sum('total_plot_value');
+        $stats['total_colonies'] = $count(
+            "SELECT COUNT(*) AS c FROM colonies WHERE deleted_at IS NULL" . $tenantWhere,
+            $tenantParams
+        );
 
-        $stats['total_leads'] = Lead::query()
-            ->whereNull('deleted_at')
-            ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
-            ->count();
+        $stats['total_plots'] = $count(
+            "SELECT COUNT(*) AS c FROM plots WHERE deleted_at IS NULL" . $tenantWhere,
+            $tenantParams
+        );
 
-        $stats['hot_leads'] = Lead::query()
-            ->where('lead_category', 'hot')
-            ->whereNull('deleted_at')
-            ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
-            ->count();
-
-        $stats['total_colonies'] = Colony::query()
-            ->whereNull('deleted_at')
-            ->count();
-
-        $stats['total_plots'] = \App\Models\Plot::query()
-            ->whereNull('deleted_at')
-            ->count();
-
-        $stats['pending_commissions'] = \App\Models\MlmCommissionLedger::query()
-            ->where('status', 'pending')
-            ->count();
+        $stats['pending_commissions'] = $count(
+            "SELECT COUNT(*) AS c FROM mlm_commission_ledger WHERE status = 'pending'" . $tenantWhere,
+            $tenantParams
+        );
 
         // Recent activity from CRM interactions
-        $recent_activity = \App\Models\CrmInteraction::query()
-            ->join('leads', 'leads.id', '=', 'crm_interactions.lead_id')
-            ->select('crm_interactions.interaction_type', 'crm_interactions.subject', 'crm_interactions.body', 'crm_interactions.created_at', 'leads.name as lead_name')
-            ->when($tid > 1, fn($q) => $q->where('leads.tenant_id', $tid))
-            ->orderBy('crm_interactions.created_at', 'desc')
-            ->limit(10)
-            ->get()
-            ->toArray();
+        try {
+            $recent_activity = $db->fetchAll(
+                "SELECT ci.interaction_type, ci.subject, ci.body, ci.created_at, l.name AS lead_name
+                 FROM crm_interactions ci
+                 LEFT JOIN leads l ON l.id = ci.lead_id"
+                . ($tid > 1 ? " WHERE ci.tenant_id = ? OR l.tenant_id = ?" : "")
+                . " ORDER BY ci.created_at DESC LIMIT 10",
+                $tid > 1 ? [$tid, $tid] : []
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[CRMController::adminOverview] interactions: ' . $e->getMessage());
+            $recent_activity = [];
+        }
 
-        $stats = [
-            'total_users' => User::query()->where('deleted_at', null)->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))->count(),
-            'active_associates' => User::query()
-                ->where('deleted_at', null)
-                ->where('role', 'associate')
-                ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
-                ->count(),
-            'bookings_today' => PlotBooking::query()
-                ->whereDate('created_at', now()->toDateString())
-                ->count(),
-            'total_revenue' => PlotBooking::query()
-                ->where('status', '!=', 'cancelled')
-                ->sum('total_plot_value'),
-            'pending_commissions' => \App\Models\MlmCommissionLedger::query()
-                ->where('status', 'pending')
-                ->count(),
-            'total_leads' => Lead::query()
-                ->whereNull('deleted_at')
-                ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
-                ->count(),
-            'hot_leads' => Lead::query()
-                ->where('lead_category', 'hot')
-                ->whereNull('deleted_at')
-                ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
-                ->count(),
-            'total_colonies' => \App\Models\Colony::query()
-                ->whereNull('deleted_at')
-                ->count(),
-            'total_plots' => \App\Models\Plot::query()
-                ->whereNull('deleted_at')
-                ->count(),
-            'pending_commissions' => \App\Models\MlmCommissionLedger::query()
-                ->where('status', 'pending')
-                ->count(),
-        ];
-
-        // Recent activity from CRM interactions
-        $recent_activity = \App\Models\CrmInteraction::query()
-            ->join('leads', 'leads.id', '=', 'crm_interactions.lead_id')
-            ->select('crm_interactions.interaction_type', 'crm_interactions.subject', 'crm_interactions.body', 'crm_interactions.created_at', 'leads.name as lead_name')
-            ->when($tid > 1, fn($q) => $q->where('leads.tenant_id', $tid))
-            ->orderBy('crm_interactions.created_at', 'desc')
-            ->limit(10)
-            ->get()
-            ->toArray();
-
-        $this->json(['success' => true, 'stats' => $stats, 'recent_activity' => $recent_activity]);
+        $this->json([
+            'success' => true,
+            'data' => [
+                'stats' => $stats,
+                'recent_activity' => $recent_activity,
+            ],
+        ]);
     }
 
     // ─── Admin Employees List ──────────────────────────────────────

@@ -259,6 +259,63 @@ class DocumentService
         return $engines;
     }
 
+    /**
+     * Active document categories.
+     *
+     * LegalApiController::getCategories() / ::getTemplates() call these on the
+     * service; they were never implemented (the legacy
+     * LegalDocumentService is now a thin wrapper over this class) so both
+     * endpoints 500'd with "Call to undefined method".
+     */
+    public function getCategories(): array
+    {
+        try {
+            return $this->db->fetchAll(
+                "SELECT id, name, description, parent_id, sort_order
+                 FROM document_categories
+                 WHERE is_active = 1
+                 ORDER BY sort_order ASC, name ASC"
+            ) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[DocumentService::getCategories] ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Document templates, optionally filtered by category.
+     */
+    public function getTemplates(array $filters = []): array
+    {
+        try {
+            $sql = "SELECT id, template_code, template_name, description, category,
+                           variables, header_logo, footer_text, page_size, orientation
+                    FROM document_templates
+                    WHERE tenant_id = ?";
+            $params = [$this->tenantId()];
+
+            if (!empty($filters['category_id'])) {
+                $sql .= " AND id = ?";
+                $params[] = (int)$filters['category_id'];
+            }
+            if (!empty($filters['category'])) {
+                $sql .= " AND category = ?";
+                $params[] = (string)$filters['category'];
+            }
+            if (!empty($filters['template_code'])) {
+                $sql .= " AND template_code = ?";
+                $params[] = (string)$filters['template_code'];
+            }
+
+            $sql .= " ORDER BY template_name ASC";
+
+            return $this->db->fetchAll($sql, $params) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[DocumentService::getTemplates] ' . $e->getMessage());
+            return [];
+        }
+    }
+
     public function getDocumentTypes(): array
     {
         // Standard document types supported by AI extraction

@@ -1251,16 +1251,30 @@ class MobileUserApiController extends BaseController
         $this->setCorsHeaders();
         $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
-        $input = json_decode(file_get_contents('php://input'), true);
-        $password = $input['password'] ?? '';
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $password = (string)($input['password'] ?? '');
+        $confirm  = (string)($input['confirm'] ?? '');
+
+        // FIXED (S447): the old code only verified the password when one was
+        // SUPPLIED - posting an empty body soft-deleted the account with no
+        // confirmation at all. Deleting an account must always require the
+        // current password AND an explicit confirmation string.
+        if ($password === '') {
+            http_response_code(422);
+            echo json_encode(['success'=>false,'error'=>'Password is required to delete the account']);
+            return;
+        }
+        if (strtoupper(trim($confirm)) !== 'DELETE') {
+            http_response_code(422);
+            echo json_encode(['success'=>false,'error'=>'Type DELETE to confirm account deletion']);
+            return;
+        }
         try {
-            if (!empty($password)) {
-                $stmt = $this->db->prepare("SELECT password FROM users WHERE id = ?");
-                $stmt->execute([$userId]);
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($user && !password_verify($password, $user['password'])) {
-                    http_response_code(400); echo json_encode(['success'=>false,'error'=>'Incorrect password']); return;
-                }
+            $stmt = $this->db->prepare("SELECT password FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$user || !password_verify($password, $user['password'])) {
+                http_response_code(400); echo json_encode(['success'=>false,'error'=>'Incorrect password']); return;
             }
             $this->db->prepare("UPDATE users SET status = 'inactive', name = CONCAT(name, '_deleted_', id), email = CONCAT('deleted_', id, '@deleted.com'), updated_at = NOW() WHERE id = ?")->execute([$userId]);
             try { $this->db->prepare("DELETE FROM api_tokens WHERE user_id = ?")->execute([$userId]); } catch (\Throwable $t) { error_log("MobileUserApiController::" . __FUNCTION__ . " query failed: " . $t->getMessage()); }
@@ -3197,6 +3211,11 @@ class MobileUserApiController extends BaseController
         $this->requireAuth();
         $userId = $this->getCurrentUserId();
         $empId = $this->getEmployeeId($userId);
+        if ($empId <= 0) {
+            // The caller is not an employee (customer/agent token).
+            $this->jsonResponse(['success' => true, 'data' => []]);
+            return;
+        }
         if (!$empId) {
             echo json_encode(['success' => false, 'error' => 'Employee not found']);
             return;
@@ -3220,6 +3239,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
             $leaveTypeId = (int)($input['leave_type_id'] ?? 0);
             $days = (int)($input['days'] ?? 0);
@@ -3571,6 +3595,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             if (!$empId) {
                 $this->jsonError('Employee not found', 404);
                 return;
@@ -3628,6 +3657,11 @@ class MobileUserApiController extends BaseController
         $this->requireAuth();
         $userId = $GLOBALS['api_user_id'] ?? 0;
         $empId = $this->getEmployeeId($userId);
+        if ($empId <= 0) {
+            // The caller is not an employee (customer/agent token).
+            $this->jsonResponse(['success' => true, 'data' => []]);
+            return;
+        }
         if (!$empId) { $this->jsonError('Employee not found', 404); return; }
         try {
             $service = new \App\Services\OvertimeService();
@@ -3652,6 +3686,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $service = new \App\Services\HelpdeskService();
             $tickets = $service->getEmployeeTickets($empId);
             $this->jsonResponse(['success' => true, 'data' => $tickets]);
@@ -3667,6 +3706,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             if (!$empId) { $this->jsonError('Employee not found', 404); return; }
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
             $category = $input['category'] ?? 'other';
@@ -3698,6 +3742,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $service = new \App\Services\HelpdeskService();
             $ticket = $service->getTicket((int)$id);
             if (!$ticket || $ticket['employee_id'] != $this->getEmployeeId($GLOBALS['api_user_id'] ?? 0)) {
@@ -3718,6 +3767,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
             $ticketId = (int)($input['ticket_id'] ?? 0);
             $message = trim($input['message'] ?? '');
@@ -3737,6 +3791,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
             $ticketId = (int)($input['ticket_id'] ?? 0);
             if (!$ticketId) { $this->jsonError('Ticket ID required', 400); return; }
@@ -3783,6 +3842,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
             $courseId = (int)($input['course_id'] ?? 0);
             if (!$courseId) { $this->jsonError('Course ID required', 400); return; }
@@ -3800,6 +3864,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $service = new \App\Services\TrainingService();
             $progress = $service->getEmployeeAssignments($empId);
             $this->jsonResponse(['success' => true, 'data' => $progress]);
@@ -3834,6 +3903,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $service = new \App\Services\EmployeeAssetService();
             $assets = $service->getEmployeeAssets($empId);
             $this->jsonResponse(['success' => true, 'data' => $assets]);
@@ -3849,6 +3923,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
             $assetId = (int)($input['asset_id'] ?? 0);
             $issue = trim($input['issue'] ?? '');
@@ -3870,6 +3949,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $service = new \App\Services\AnnouncementService();
             $announcements = $service->getEmployeeAnnouncements($empId);
             $this->jsonResponse(['success' => true, 'data' => $announcements]);
@@ -3885,6 +3969,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
             $id = (int)($input['id'] ?? 0);
             if (!$id) { $this->jsonError('Announcement ID required', 400); return; }
@@ -3905,6 +3994,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $service = new \App\Services\SalaryAdvanceService();
             $advances = $service->getEmployeeAdvances($empId);
             $pending = $service->getPendingRepayments($empId);
@@ -3921,6 +4015,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
             $service = new \App\Services\SalaryAdvanceService();
             $result = $service->requestAdvance($empId, $input);
@@ -3936,6 +4035,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $service = new \App\Services\SalaryAdvanceService();
             $advance = $service->getAdvance((int)$id);
             if (!$advance || $advance['employee_id'] != $empId) {
@@ -3957,6 +4061,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $service = new \App\Services\EmployeeGrievanceService();
             $grievances = $service->getEmployeeGrievances($empId);
             $this->jsonResponse(['success' => true, 'data' => $grievances]);
@@ -3972,6 +4081,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
             $service = new \App\Services\EmployeeGrievanceService();
             $result = $service->createGrievance($empId, $input);
@@ -3987,6 +4101,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $service = new \App\Services\EmployeeGrievanceService();
             $grievance = $service->getGrievance((int)$id, $empId);
             if (!$grievance) { $this->jsonError('Grievance not found', 404); return; }
@@ -4042,6 +4161,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $service = new \App\Services\ShiftSwapService();
             $swaps = $service->getEmployeeSwaps($empId);
             $this->jsonResponse(['success' => true, 'data' => $swaps]);
@@ -4057,6 +4181,11 @@ class MobileUserApiController extends BaseController
         try {
             $userId = $GLOBALS['api_user_id'] ?? 0;
             $empId = $this->getEmployeeId($userId);
+            if ($empId <= 0) {
+                // The caller is not an employee (customer/agent token).
+                $this->jsonResponse(['success' => true, 'data' => []]);
+                return;
+            }
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
             $service = new \App\Services\ShiftSwapService();
             $result = $service->requestSwap($empId, $input);
@@ -4113,11 +4242,31 @@ class MobileUserApiController extends BaseController
     }
 
     protected function getEmployeeId(int $userId): ?int {
-        if (!$userId) return null;
-        $stmt = $this->db->prepare("SELECT id FROM employee_profiles WHERE user_id = ? LIMIT 1");
-        $stmt->execute([$userId]);
-        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $result ? (int)$result['id'] : null;
+        if (!$userId) return 0;
+        try {
+            $stmt = $this->db->prepare("SELECT id FROM employee_profiles WHERE user_id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($result) return (int)$result['id'];
+        } catch (\Throwable $e) {
+            error_log('[MobileUserApiController::getEmployeeId] ' . $e->getMessage());
+        }
+
+        // Fallback: the identity unification (Wave 3+) migrated employees 6+ into
+        // `employee_profiles` but employees 1-5 are still only in `employees`.
+        // Without this fallback those employees resolved to null and every
+        // employee self-service endpoint 500'd with a TypeError.
+        try {
+            $stmt = $this->db->prepare("SELECT id FROM employees WHERE user_id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($result) return (int)$result['id'];
+        } catch (\Throwable $e) {
+            error_log('[MobileUserApiController::getEmployeeId legacy] ' . $e->getMessage());
+        }
+
+        // 0 = the caller is not an employee (e.g. a customer token).
+        return 0;
     }
 
     protected function jsonError(string $message, int $status = 400): void {
