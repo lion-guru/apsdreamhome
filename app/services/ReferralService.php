@@ -314,20 +314,25 @@ class ReferralService
     public function getDirectReferrals($user_id)
     {
         try {
+            // NOTE: `users` has no `type` column — it is `role`.
             $stmt = $this->conn->prepare("
-                SELECT 
-                    u.id, u.name, u.email, u.type, u.created_at,
-                    mp.referral_code, mp.total_commission
+                SELECT
+                    u.id, u.name, u.email, u.role, u.status, u.created_at,
+                    mp.referral_code, mp.total_commission, mp.lifetime_sales, mp.current_level
                 FROM mlm_referrals r
                 JOIN users u ON r.referred_user_id = u.id
-                JOIN mlm_profiles mp ON u.id = mp.user_id
+                LEFT JOIN mlm_profiles mp ON mp.user_id = u.id
                 WHERE r.referrer_user_id = ?
                 " . $this->tenantSql() . "
                 ORDER BY r.created_at DESC
             ");
         } catch (\Throwable $e) {
-        // Gracefully handle dropped table ref
-        error_log($e->getMessage());
+            // Gracefully handle a dropped table reference.
+            // The old code logged the error and then fell through to
+            // `$stmt->execute()` on an UNDEFINED variable -> fatal
+            // "Call to a member function execute() on null".
+            error_log('[ReferralService::getDirectReferrals] ' . $e->getMessage());
+            return [];
         }
         $params = [$user_id];
         if ($this->tenantId() > 1) $params[] = $this->tenantId();
@@ -770,7 +775,7 @@ class ReferralService
 
             // Send referral commission email to referrer
             try {
-                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc = new \App\Services\Communication\EmailService();
                 $emailSvc->sendReferralCommission($referrerId, [
                     'referrer_name' => $referrer['name'] ?? 'User',
                     'commission_amount' => number_format($commissionAmount, 2),
@@ -908,7 +913,7 @@ class ReferralService
 
             // Send notification to referrer
             try {
-                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc = new \App\Services\Communication\EmailService();
                 $emailSvc->sendReferralCommission($referrerId, [
                     'referrer_name' => $referrer['name'] ?? 'User',
                     'commission_amount' => number_format($commissionAmount, 2),
@@ -1601,7 +1606,7 @@ class ReferralService
 
             // Send notification to referrer
             try {
-                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc = new \App\Services\Communication\EmailService();
                 $emailSvc->sendReferralCommission($referrerId, [
                     'referrer_name' => $referrer['name'] ?? 'User',
                     'commission_amount' => number_format($bonusAmount, 2),
