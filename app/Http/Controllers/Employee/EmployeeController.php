@@ -129,7 +129,7 @@ class EmployeeController extends BaseController
             } else {
                 throw new Exception('Invalid email or password');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logLoginAttempt($_POST['email'] ?? '', false, $e->getMessage());
             $_SESSION['error'] = $e->getMessage();
             $this->redirect('/employee/login');
@@ -151,7 +151,7 @@ class EmployeeController extends BaseController
                 $_SERVER['HTTP_USER_AGENT'] ?? '',
                 $details
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Login log error: ' . $e->getMessage());
         }
     }
@@ -292,7 +292,7 @@ class EmployeeController extends BaseController
             ];
 
             return $viewRoutes[$mapping['dashboard_view']] ?? null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Dashboard resolve error: ' . $e->getMessage());
             return null;
         }
@@ -374,13 +374,13 @@ class EmployeeController extends BaseController
                 } else {
                     $data['dept_requests'] = null;
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('Employee dashboard dept requests error: ' . $e->getMessage());
                 $data['dept_requests'] = null;
             }
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Dashboard data error: " . $e->getMessage());
             return [];
         }
@@ -420,7 +420,7 @@ class EmployeeController extends BaseController
             $performance['pending_tasks'] = $pending['pending'] ?? 0;
 
             return $performance;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Performance data error: " . $e->getMessage());
             return [];
         }
@@ -440,10 +440,10 @@ class EmployeeController extends BaseController
                 $params[] = $filters['month'];
             }
 
-            $query .= " ORDER BY attendance_date DESC, check_in DESC LIMIT 30";
+            $query .= " ORDER BY attendance_date DESC, check_in_time DESC LIMIT 30";
 
             return $this->db->fetchAll($query, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Attendance data error: " . $e->getMessage());
             return [];
         }
@@ -459,7 +459,7 @@ class EmployeeController extends BaseController
                 "SELECT * FROM employee_activities WHERE employee_id = ? ORDER BY created_at DESC LIMIT 10",
                 [$employeeId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Activities data error: " . $e->getMessage());
             return [];
         }
@@ -492,7 +492,7 @@ class EmployeeController extends BaseController
                 'success' => true,
                 'message' => 'Checked in successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -526,7 +526,7 @@ class EmployeeController extends BaseController
                 'success' => true,
                 'message' => 'Checked out successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -558,7 +558,7 @@ class EmployeeController extends BaseController
                 'success' => true,
                 'message' => 'Task updated successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -625,7 +625,7 @@ class EmployeeController extends BaseController
                 'success' => true,
                 'message' => 'Profile updated successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -712,6 +712,20 @@ class EmployeeController extends BaseController
     /**
      * Check if employee is logged in
      */
+    /**
+     * Run a query and return [] when the table/column does not exist.
+     * Dashboard tiles must never 500 the whole page.
+     */
+    private function safeFetchAll(string $sql, array $params = []): array
+    {
+        try {
+            return $this->db->fetchAll($sql, $params) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[EmployeeController::safeFetchAll] ' . $e->getMessage());
+            return [];
+        }
+    }
+
     private function isEmployeeLoggedIn()
     {
         return isset($_SESSION['employee_id']) && !empty($_SESSION['employee_id']);
@@ -720,7 +734,7 @@ class EmployeeController extends BaseController
     /**
      * Middleware to check employee authentication
      */
-    protected function middleware($name, $options = [])
+    protected function middleware(string $name, array $options = []): void
     {
         if ($name === 'employee.auth' && !$this->isEmployeeLoggedIn()) {
             $this->redirect('/employee/login');
@@ -754,7 +768,7 @@ class EmployeeController extends BaseController
                         if (!empty($t['due_date']) && $t['due_date'] < $now && $s !== 'completed') $stats['overdue']++;
                     }
                 }
-            } catch (\Exception $e) { $tasks = []; }
+            } catch (\Throwable $e) { $tasks = []; }
         }
         $this->render('employee_leads/tasks', [
             'page_title' => 'My Tasks',
@@ -793,7 +807,7 @@ class EmployeeController extends BaseController
                     $act = $a['action'] ?? 'other';
                     $stats['types'][$act] = ($stats['types'][$act] ?? 0) + 1;
                 }
-            } catch (\Exception $e) { $activities = []; }
+            } catch (\Throwable $e) { $activities = []; }
         }
         $this->render('employee_leads/activities', [
             'page_title' => 'Activity Timeline',
@@ -825,7 +839,7 @@ class EmployeeController extends BaseController
                     $stats['total_hours'] += (float)($a['hours'] ?? 0);
                 }
                 $stats['total_hours'] = round($stats['total_hours'], 1);
-            } catch (\Exception $e) { $attendance = []; }
+            } catch (\Throwable $e) { $attendance = []; }
         }
         $this->render('users/attendance', [
             'page_title' => 'Attendance',
@@ -872,7 +886,7 @@ class EmployeeController extends BaseController
                     "SELECT title, priority, status, due_date, completed_at FROM tasks WHERE assigned_to = ? ORDER BY updated_at DESC LIMIT 8",
                     [$employeeId]
                 );
-            } catch (\Exception $e) { error_log("EmployeeController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log("EmployeeController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         }
         $this->render('employee_leads/performance', [
             'page_title' => 'Performance Overview',
@@ -897,7 +911,7 @@ class EmployeeController extends BaseController
                     if ($st === 'paid') { $stats['paid']++; $stats['total_earned'] += (float)($s['net_pay'] ?? 0); }
                     else $stats['pending']++;
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $salary_history = [];
             }
         }
@@ -929,7 +943,7 @@ class EmployeeController extends BaseController
                     else $stats['pending']++;
                     if (!empty($d['expiry_date']) && $d['expiry_date'] < $now) $stats['expired']++;
                 }
-            } catch (\Exception $e) { $documents = []; }
+            } catch (\Throwable $e) { $documents = []; }
         }
         $this->render('employee_leads/documents', [
             'page_title' => 'My Documents',
@@ -970,7 +984,7 @@ class EmployeeController extends BaseController
             } else {
                 $_SESSION['error'] = 'Please select a file to upload.';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Upload failed: ' . $e->getMessage();
         }
         $this->redirect('/employee/documents');
@@ -1011,7 +1025,7 @@ class EmployeeController extends BaseController
                     if (isset($stats[$st])) $stats[$st]++;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Employee leaves error: " . $e->getMessage());
         }
         $this->render('users/leaves', [
@@ -1081,7 +1095,7 @@ class EmployeeController extends BaseController
                 'status' => 'pending',
             ]);
             $_SESSION['flash_success'] = 'Leave application submitted successfully! Waiting for approval.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Leave apply error: " . $e->getMessage());
             $_SESSION['flash_error'] = 'Failed to submit leave application. Please try again.';
         }
@@ -1108,7 +1122,7 @@ class EmployeeController extends BaseController
                  WHERE el.id = ? AND el.employee_id = ?",
                 [$id, $employeeId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Leave detail error: " . $e->getMessage());
         }
         if (!$leave) {
@@ -1144,7 +1158,7 @@ class EmployeeController extends BaseController
             }
             $this->db->update('employee_leaves', ['status' => 'cancelled'], ['id' => $id, 'tenant_id' => (int)$this->tenantId()]);
             $_SESSION['flash_success'] = 'Leave application cancelled successfully.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Leave cancel error: " . $e->getMessage());
             $_SESSION['flash_error'] = 'Failed to cancel leave application.';
         }
@@ -1192,7 +1206,7 @@ class EmployeeController extends BaseController
                     }
                     unset($sub);
                 }
-            } catch (\Exception $e) { error_log("EmployeeController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log("EmployeeController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         }
         $this->render('users/reporting_structure', [
             'page_title' => 'Reporting Structure',
@@ -1233,7 +1247,7 @@ class EmployeeController extends BaseController
             $countStmt = $this->db->prepare($countSql);
             $countStmt->execute($params);
             $total = $countStmt->fetch(\PDO::FETCH_ASSOC)['total'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $total = 0;
         }
         $totalPages = max(1, ceil($total / $perPage));
@@ -1243,7 +1257,7 @@ class EmployeeController extends BaseController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $properties = [];
         }
 
@@ -1300,12 +1314,12 @@ class EmployeeController extends BaseController
                     $message = ($msgs[$action] ?? 'Your property status has been updated.') . "\n\nContact: +91 92771 21112 | info@apsdreamhome.com";
                     @mail($to, $subject, $message, "From: info@apsdreamhome.com\r\nReply-To: info@apsdreamhome.com");
                 }
-            } catch (\Exception $e2) {
+            } catch (\Throwable $e2) {
                 error_log("Employee property notification error: " . $e2->getMessage());
             }
 
             $_SESSION['success'] = "Property #$id status updated to: $status";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Employee property action error: " . $e->getMessage());
             $_SESSION['error'] = "Failed to update property status";
         }
@@ -1318,7 +1332,7 @@ class EmployeeController extends BaseController
         header('Content-Type: application/json');
         try {
             echo json_encode(['success' => true, 'tasks' => $this->getEmployeeTasks($_SESSION['employee_id'] ?? 0)]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'tasks' => []]);
         }
         exit;
@@ -1329,7 +1343,7 @@ class EmployeeController extends BaseController
         header('Content-Type: application/json');
         try {
             echo json_encode(['success' => true, 'performance' => $this->getEmployeePerformance($_SESSION['employee_id'] ?? 0)]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'performance' => []]);
         }
         exit;
@@ -1340,10 +1354,230 @@ class EmployeeController extends BaseController
         header('Content-Type: application/json');
         try {
             echo json_encode(['success' => true, 'attendance' => $this->getEmployeeAttendance($_SESSION['employee_id'] ?? 0)]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'attendance' => []]);
         }
         exit;
+    }
+
+    // ──────────────────────────────────────────────
+    // DASHBOARD OVERVIEWS (routes/employee.php targets these)
+    // ──────────────────────────────────────────────
+
+    /**
+     * Employee dashboard overview (CS / general employee view).
+     * GET /employee/dashboard-overview, GET /employee/cs-dashboard
+     */
+    public function dashboardOverview()
+    {
+        if (!$this->isEmployeeLoggedIn()) {
+            $this->redirect(BASE_URL . '/employee/login');
+            return;
+        }
+        $employeeId = (int)$_SESSION['employee_id'];
+
+        $data = $this->getEmployeeDashboardData($employeeId);
+
+        return $this->render('employee/dashboard', [
+            'pageTitle'        => 'Dashboard',
+            'totalTasks'       => $data['total_tasks'] ?? 0,
+            'totalProperties'  => $data['total_properties'] ?? 0,
+            'totalInquiries'   => $data['total_inquiries'] ?? 0,
+            'upcomingVisits'   => $data['upcoming_visits'] ?? [],
+            'recentActivity'   => $data['recent_activity'] ?? [],
+            'activity'         => $data['recent_activity'] ?? [],
+            'notifications'    => $data['notifications'] ?? [],
+            'notif'            => $data['notifications'] ?? [],
+        ]);
+    }
+
+    /**
+     * Employee payslips list.
+     * GET /employee/payslips
+     */
+    public function payslips()
+    {
+        if (!$this->isEmployeeLoggedIn()) {
+            $this->redirect(BASE_URL . '/employee/login');
+            return;
+        }
+        $employeeId = (int)$_SESSION['employee_id'];
+
+        $payslips = $this->db->fetchAll(
+            "SELECT * FROM salary_payments
+             WHERE employee_id = ? AND tenant_id = ?
+             ORDER BY payment_date DESC, id DESC",
+            [$employeeId, $this->tenantId()]
+        ) ?: [];
+
+        return $this->render('employee/self_service/payslips', [
+            'page_title' => 'My Payslips',
+            'payslips'   => $payslips,
+        ]);
+    }
+
+    /**
+     * Operations dashboard (ops / infrastructure / vendors).
+     * GET /employee/ops-dashboard, /employee/infrastructure, /employee/vendors
+     */
+    public function opsDashboard()
+    {
+        if (!$this->isEmployeeLoggedIn()) {
+            $this->redirect(BASE_URL . '/employee/login');
+            return;
+        }
+        $tid = $this->tenantId();
+
+        $activeProjects = $this->safeFetchAll(
+            "SELECT * FROM projects WHERE tenant_id = ? AND status IN ('in_progress','ongoing','active') ORDER BY id DESC LIMIT 50",
+            [$tid]
+        );
+
+        // NOTE: vendors has no `name` column -> `vendor_name` (verified via DESCRIBE)
+        $activeVendors = $this->safeFetchAll(
+            "SELECT * FROM vendors WHERE tenant_id = ? AND status = 'active' ORDER BY vendor_name LIMIT 50",
+            [$tid]
+        );
+
+        // NOTE: there is no `approvals` / `operations` table in this schema.
+        // pricing_approvals + construction_approvals are the real approval
+        // queues; daily_operations_log is the operations ledger.
+        $pendingApprovals = $this->safeFetchAll(
+            "SELECT * FROM pricing_approvals WHERE tenant_id = ? AND status = 'pending' ORDER BY id DESC LIMIT 30",
+            [$tid]
+        );
+
+        $pendingOperations = $this->safeFetchAll(
+            "SELECT * FROM daily_operations_log WHERE tenant_id = ? ORDER BY id DESC LIMIT 30",
+            [$tid]
+        );
+
+        $siteVisitsToday = $this->safeFetchAll(
+            "SELECT * FROM site_visits WHERE tenant_id = ? AND DATE(created_at) = CURDATE() ORDER BY id DESC LIMIT 30",
+            [$tid]
+        );
+
+        $projectStatus = [];
+        foreach ($activeProjects as $p) {
+            $st = (string)($p['status'] ?? 'unknown');
+            $projectStatus[$st] = ($projectStatus[$st] ?? 0) + 1;
+        }
+
+        return $this->render('employee/ops_dashboard', [
+            'pageTitle'          => 'Operations Dashboard',
+            'activeProjects'     => $activeProjects,
+            'activeVendors'      => $activeVendors,
+            'pendingApprovals'   => $pendingApprovals,
+            'pendingOperations'  => $pendingOperations,
+            'siteVisitsToday'    => $siteVisitsToday,
+            'projectStatus'      => $projectStatus,
+        ]);
+    }
+
+    /**
+     * Sales dashboard (deals / pipeline).
+     * GET /employee/sales-dashboard, /employee/deals
+     */
+    public function salesDashboard()
+    {
+        if (!$this->isEmployeeLoggedIn()) {
+            $this->redirect(BASE_URL . '/employee/login');
+            return;
+        }
+        $employeeId = (int)$_SESSION['employee_id'];
+        $tid = $this->tenantId();
+
+        $deals = $this->safeFetchAll(
+            "SELECT * FROM deals WHERE tenant_id = ? AND assigned_to = ? ORDER BY id DESC LIMIT 50",
+            [$tid, $employeeId]
+        );
+
+        // NOTE: deals stores the value in `deal_value` (no `amount` column)
+        $totalSales = 0.0;
+        foreach ($deals as $d) {
+            $totalSales += (float)($d['deal_value'] ?? 0);
+        }
+        $activeDeals = array_values(array_filter($deals, fn($d) => in_array((string)($d['status'] ?? ''), ['active', 'open', 'proposal', 'negotiation'], true)));
+
+        $pendingFollowups = $this->safeFetchAll(
+            "SELECT * FROM followups WHERE tenant_id = ? AND assigned_to = ? AND status = 'pending' ORDER BY id DESC LIMIT 30",
+            [$tid, $employeeId]
+        );
+
+        // NOTE: `properties` has no colony_id column and `deals` has no
+        // property_id either — group by the colony the lead belongs to.
+        $salesByColony = $this->safeFetchAll(
+            "SELECT l.colony_id, c.name AS colony_name, COALESCE(SUM(d.deal_value), 0) AS total
+             FROM deals d
+             LEFT JOIN leads l ON l.id = d.lead_id
+             LEFT JOIN colonies c ON c.id = l.colony_id
+             WHERE d.tenant_id = ?
+             GROUP BY l.colony_id, c.name
+             ORDER BY total DESC
+             LIMIT 20",
+            [$tid]
+        );
+
+        $closed = array_values(array_filter($deals, fn($d) => in_array((string)($d['status'] ?? ''), ['won', 'closed', 'confirmed'], true)));
+        $conversionRate = count($deals) > 0 ? round((count($closed) / count($deals)) * 100, 2) : 0.0;
+
+        return $this->render('employee/sales_dashboard', [
+            'pageTitle'        => 'Sales Dashboard',
+            'deals'            => $deals,
+            'activeDeals'      => $activeDeals,
+            'totalSales'       => $totalSales,
+            'pendingFollowups' => $pendingFollowups,
+            'salesByColony'    => $salesByColony,
+            'conversionRate'   => $conversionRate,
+        ]);
+    }
+
+    /**
+     * Marketing dashboard (campaigns / lead sources).
+     * GET /employee/marketing-dashboard, /employee/campaigns
+     */
+    public function marketingDashboard()
+    {
+        if (!$this->isEmployeeLoggedIn()) {
+            $this->redirect(BASE_URL . '/employee/login');
+            return;
+        }
+        $tid = $this->tenantId();
+
+        // NOTE: campaigns PK is `campaign_id`, not `id`
+        $campaigns = $this->safeFetchAll(
+            "SELECT * FROM campaigns WHERE tenant_id = ? ORDER BY campaign_id DESC LIMIT 50",
+            [$tid]
+        );
+
+        $activeCampaigns = array_values(array_filter($campaigns, fn($c) => in_array((string)($c['status'] ?? ''), ['active', 'running', 'scheduled'], true)));
+
+        $blogPosts = $this->safeFetchAll(
+            "SELECT id, title, slug, status, published_at, created_at FROM blog_posts WHERE tenant_id = ? ORDER BY id DESC LIMIT 20",
+            [$tid]
+        );
+
+        $totalLeads = (int)($this->db->fetchOne("SELECT COUNT(*) c FROM leads WHERE tenant_id = ?", [$tid])['c'] ?? 0);
+
+        $leadSources = $this->db->fetchAll(
+            "SELECT source, COUNT(*) AS count FROM leads WHERE tenant_id = ? GROUP BY source ORDER BY count DESC LIMIT 20",
+            [$tid]
+        ) ?: [];
+
+        $socialShares = $this->safeFetchAll(
+            "SELECT platform, COUNT(*) AS count FROM social_media_posts WHERE tenant_id = ? GROUP BY platform ORDER BY count DESC LIMIT 20",
+            [$tid]
+        );
+
+        return $this->render('employee/marketing_dashboard', [
+            'pageTitle'      => 'Marketing Dashboard',
+            'campaigns'      => $campaigns,
+            'activeCampaigns' => $activeCampaigns,
+            'blogPosts'      => $blogPosts,
+            'totalLeads'     => $totalLeads,
+            'leadSources'    => $leadSources,
+            'socialShares'   => $socialShares,
+        ]);
     }
 
     public function notifications()
@@ -1502,7 +1736,7 @@ class EmployeeController extends BaseController
                 default:
                     return $default;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("DeptStats error for {$slug}: " . $e->getMessage());
             return $default;
         }

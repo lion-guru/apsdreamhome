@@ -79,8 +79,14 @@ class EmployeeService
     {
         $this->pdo->beginTransaction();
         try {
-            // Get employee record to find user_id
-            $emp = $this->fetchOne("SELECT * FROM employees WHERE id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+            // Get employee record to find user_id (profile-first, legacy fallback)
+            $emp = $this->fetchOne("
+                SELECT ep.legacy_id AS id, ep.*, u.id AS user_id
+                FROM employee_profiles ep
+                JOIN users u ON u.id = ep.user_id
+                WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?)
+                  AND ep.tenant_id = ?
+            ", [$employeeId, $employeeId, $employeeId, $this->tenantId()]);
             if (!$emp) {
                 throw new \Exception('Employee not found');
             }
@@ -126,6 +132,22 @@ class EmployeeService
                 $stmt->execute($empParams);
             }
 
+            // Mirror profile-supported fields into employee_profiles (best effort; 0 rows is valid)
+            $profileData = [];
+            foreach (['department', 'designation', 'salary', 'joining_date', 'pan_number', 'aadhaar_number', 'bank_account', 'bank_ifsc', 'status'] as $field) {
+                if (array_key_exists($field, $data) && $data[$field] !== '' && $data[$field] !== null) {
+                    $profileData[$field] = $data[$field];
+                }
+            }
+            if (!empty($profileData)) {
+                $profileSet = array_map(static fn($field) => $field . ' = ?', array_keys($profileData));
+                $profileParams = array_values($profileData);
+                $profileParams[] = $employeeId;
+                $profileParams[] = $this->tenantId();
+                $stmt = $this->pdo->prepare("UPDATE employee_profiles SET " . implode(', ', $profileSet) . ", updated_at=NOW() WHERE legacy_id = ? AND tenant_id = ?");
+                $stmt->execute($profileParams);
+            }
+
             // 3. Handle password change separately
             if (!empty($data['password'])) {
                 $hash = password_hash($data['password'], PASSWORD_DEFAULT);
@@ -155,9 +177,10 @@ class EmployeeService
                 throw new \Exception('Employee not found');
             }
 
-            // Update both tables
+            // Update all identity representations (legacy remains functional)
             $this->execute("UPDATE employees SET status='inactive', updated_at=NOW() WHERE id=? AND tenant_id=?", [$employeeId, $this->tenantId()]);
             $this->execute("UPDATE users SET status='inactive', updated_at=NOW() WHERE id=? AND tenant_id=?", [$userId, $this->tenantId()]);
+            $this->execute("UPDATE employee_profiles SET status='inactive', updated_at=NOW() WHERE (legacy_id = ? OR user_id = ? OR id = ?) AND tenant_id = ?", [$employeeId, $employeeId, $employeeId, $this->tenantId()]);
 
             $this->pdo->commit();
             return ['success' => true, 'message' => 'Employee deactivated'];
@@ -170,15 +193,56 @@ class EmployeeService
 
     /**
      * Get employee with user data (joined)
+     *
+     * The identity unification (Wave 3+) moved employees into
+     * `employee_profiles`, but the migration only covered a SUBSET of the
+     * legacy `employees` rows (employees 1-5 in this DB are still only in
+     * `employees`). Without the fallback below, getEmployeeWithUser() threw
+     * "Employee not found" for those employees — the employee profile page
+     * 500'd. Fall back to the legacy table, then to the users row.
      */
     public function getEmployeeWithUser(int $employeeId): ?array
     {
-        return $this->fetchOne("
-            SELECT e.*, u.name as user_name, u.email as user_email, u.phone as user_phone, u.created_at as user_created
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id{$this->tJoin('u')}
-            WHERE e.id=? AND e.tenant_id=?
-        ", array_merge([$employeeId], $this->tVal()));
+        $employee = $this->fetchOne("
+            SELECT ep.legacy_id AS id, ep.*, u.name as user_name, u.email as user_email, u.phone as user_phone, u.created_at as user_created
+            FROM employee_profiles ep
+            LEFT JOIN users u ON u.id = ep.user_id
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?)
+              AND ep.tenant_id = ?
+        ", [$employeeId, $employeeId, $employeeId, $this->tenantId()]);
+
+        if ($employee) {
+            return $employee;
+        }
+
+        // Fallback 1: legacy `employees` table (not yet migrated)
+        try {
+            $legacy = $this->fetchOne("
+                SELECT e.id AS id, e.*, u.name as user_name, u.email as user_email,
+                       u.phone as user_phone, u.created_at as user_created
+                FROM employees e
+                LEFT JOIN users u ON u.id = e.user_id
+                WHERE e.id = ? OR e.user_id = ?
+                LIMIT 1
+            ", [$employeeId, $employeeId]);
+            if ($legacy) {
+                return $legacy;
+            }
+        } catch (\Throwable $e) {
+            error_log('[EmployeeService::getEmployeeWithUser] legacy fallback: ' . $e->getMessage());
+        }
+
+        // Fallback 2: the id was a user id — resolve via users
+        $user = $this->fetchOne("
+            SELECT u.id AS id, u.name AS user_name, u.email AS user_email, u.phone AS user_phone,
+                   u.created_at AS user_created, u.role, u.status
+            FROM users u WHERE u.id = ? LIMIT 1
+        ", [$employeeId]);
+        if ($user) {
+            return $user;
+        }
+
+        throw new \Exception('Employee not found');
     }
 
     /**
@@ -187,32 +251,33 @@ class EmployeeService
     public function getAllEmployees(array $filters = []): array
     {
         $sql = "
-            SELECT e.*, u.name as user_name, u.email as user_email, u.phone as user_phone, u.status as user_status
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id{$this->tJoin('u')}
-            WHERE e.tenant_id=?
+            SELECT ep.legacy_id AS id, u.name as user_name, u.email as user_email, u.phone as user_phone, u.status as user_status,
+                   ep.*
+            FROM employee_profiles ep
+            JOIN users u ON u.id = ep.user_id
+            WHERE ep.tenant_id=?
         ";
         $params = [$this->tenantId()];
 
         if (!empty($filters['search'])) {
-            $sql .= " AND (e.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
+            $sql .= " AND (u.name LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)";
             $s = "%{$filters['search']}%";
             $params[] = $s; $params[] = $s; $params[] = $s;
         }
         if (!empty($filters['department'])) {
-            $sql .= " AND e.department=?";
+            $sql .= " AND ep.department=?";
             $params[] = $filters['department'];
         }
         if (!empty($filters['status'])) {
-            $sql .= " AND e.status=?";
+            $sql .= " AND ep.status=?";
             $params[] = $filters['status'];
         }
         if (!empty($filters['role'])) {
-            $sql .= " AND e.role=?";
+            $sql .= " AND u.role=?";
             $params[] = $filters['role'];
         }
 
-        $sql .= " ORDER BY e.created_at DESC";
+        $sql .= " ORDER BY ep.created_at DESC";
 
         if (!empty($filters['limit'])) {
             $sql .= " LIMIT " . (int)$filters['limit'] . " OFFSET " . (int)($filters['offset'] ?? 0);
@@ -236,6 +301,14 @@ class EmployeeService
             WHERE user_id=? AND tenant_id=?
         ", [$user['name'], $user['email'], $user['phone'], $user['department'] ?? 'General', $user['status'], $userId, $this->tenantId()]);
 
+        $profileStatus = ($user['status'] ?? '') === 'active' ? 'active' : ($user['status'] ?? 'active');
+        $this->execute("
+            UPDATE employee_profiles SET
+                department=?, status=?,
+                updated_at=NOW()
+            WHERE user_id=? AND tenant_id=?
+        ", [$user['department'] ?? 'General', $profileStatus, $userId, $this->tenantId()]);
+
         return true;
     }
 
@@ -244,7 +317,16 @@ class EmployeeService
      */
     public function syncToUser(int $employeeId): bool
     {
-        $emp = $this->fetchOne("SELECT * FROM employees WHERE id=?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+        $emp = $this->fetchOne("
+            SELECT ep.legacy_id AS id, ep.*, u.id AS user_id, u.name AS user_name, u.email AS user_email, u.phone AS user_phone
+            FROM employee_profiles ep
+            JOIN users u ON u.id = ep.user_id
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?)
+              AND ep.tenant_id = ?
+        ", [$employeeId, $employeeId, $employeeId, $this->tenantId()]);
+        if (!$emp) {
+            return false;
+        }
         if (!$emp || !$emp['user_id']) return false;
 
         $this->execute("
@@ -252,7 +334,7 @@ class EmployeeService
                 name=?, email=?, phone=?, department=?, status=?,
                 updated_at=NOW()
             WHERE id=? AND tenant_id=?
-        ", [$emp['name'], $emp['email'], $emp['phone'], $emp['department'] ?? 'General', $emp['status'], $emp['user_id'], $this->tenantId()]);
+        ", [$emp['user_name'] ?? $emp['name'], $emp['user_email'] ?? $emp['email'], $emp['user_phone'] ?? $emp['phone'], $emp['department'] ?? 'General', $emp['status'], $emp['user_id'], $this->tenantId()]);
 
         return true;
     }
@@ -262,14 +344,14 @@ class EmployeeService
      */
     public function getStats(): array
     {
-        $total = $this->fetchOne("SELECT COUNT(*) as c FROM employees WHERE tenant_id=?", [$this->tenantId()]);
-        $active = $this->fetchOne("SELECT COUNT(*) as c FROM employees WHERE status='active' AND tenant_id=?", [$this->tenantId()]);
-        $inactive = $this->fetchOne("SELECT COUNT(*) as c FROM employees WHERE status='inactive' AND tenant_id=?", [$this->tenantId()]);
-        $onLeave = $this->fetchOne("SELECT COUNT(*) as c FROM employees WHERE status='on_leave' AND tenant_id=?", [$this->tenantId()]);
+        $total = $this->fetchOne("SELECT COUNT(*) as c FROM employee_profiles WHERE tenant_id=?", [$this->tenantId()]);
+        $active = $this->fetchOne("SELECT COUNT(*) as c FROM employee_profiles WHERE status='active' AND tenant_id=?", [$this->tenantId()]);
+        $inactive = $this->fetchOne("SELECT COUNT(*) as c FROM employee_profiles WHERE status='inactive' AND tenant_id=?", [$this->tenantId()]);
+        $onLeave = ['c' => 0];
 
         $deptStats = $this->fetchAll("
-            SELECT department, COUNT(*) as count 
-            FROM employees 
+            SELECT department, COUNT(*) as count
+            FROM employee_profiles
             WHERE tenant_id=? AND department IS NOT NULL AND department!=''
             GROUP BY department ORDER BY count DESC
         ", [$this->tenantId()]);
