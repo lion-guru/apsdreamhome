@@ -15,6 +15,49 @@
 
 > **🧹 DISK RULE (new, since S445):** C: drive 0 bytes free = MariaDB ALTER fails with Errcode 28 (looks like a schema bug, isn't). Run `powershell -ExecutionPolicy Bypass -File scripts\cleanup_disk.ps1` BEFORE any heavy build/migration. `-Aggressive` adds the Gradle cache (~3 GB, slows next build).
 
+> **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
+
+## Session 448: Mobile API Runtime Sweep — 34 → 0 × 500, Account-Delete Hole Closed, APK 1.2.10+13 Deployed (2026-11-10)
+
+### Trigger
+User: "do next" — the static route sweep was green, so the next layer is **running** the mobile API and the mobile APK itself.
+
+### The Sweep
+Extract every `/api/v2/mobile/*` + `/api/v2/*` route from `routes/api.php` (391) → probe each with a real bearer token → histogram. **First run: 34 × HTTP 500.**
+
+### Root causes (all real, all 500s)
+1. **`getJsonInput()` visibility fatal** — `BaseApiController::getJsonInput()` is `protected`, but `AutoDialerController` and `AIAgentApiController` redeclared it as **`private`** → PHP fatal "Access level to … must be protected" at class-load → **every endpoint in both controllers 500'd**. (`private` → `protected`.)
+2. **`personal_access_tokens` does not exist** (1146) in 3 controllers — the real table is `api_tokens` and the token is stored **RAW** (not sha256'd), matching `ApiAuthMiddleware::isValidToken`.
+3. **`getUserId()` returned user id 1 for an UNAUTHENTICATED request** — anybody could read another customer's data. Now returns null + a `requireUserId()` guard that 401s.
+4. **`getEmployeeId()` only read `employee_profiles`** — employees 1–5 were never migrated by the identity unification → null → `getEmployeeAssets(null)` → TypeError → 500 on 6 employee self-service endpoints. Added the legacy `employees` fallback + "not an employee → empty list" guards on 23 call sites.
+5. **`QueryBuilder` was missing `whereNull`, `whereDate`, `sum`, `avg`, `pluck`** → "Call to undefined method". Worse: the compiler had **no case for `NotNull`**, so every `whereNotNull()` clause was **silently dropped** from the SQL — the filter had no effect at all.
+6. **`CRMController::adminOverview()` referenced 3 models that don't exist** (`PlotBooking`, `MlmCommissionLedger`, `CrmInteraction`) and missed the `Lead`/`Colony` imports → class-lookup fatal. It also built `$stats` twice (second assignment overwrote the first). Rewritten with direct, tenant-scoped queries → returns real numbers (75 users, 756 plots, ₹1.16 Cr revenue, 7 colonies).
+7. **`ApiAuthService::refreshToken()` and `DocumentService::getCategories()/getTemplates()` never existed** → 4 endpoints 500'd. Implemented (refresh revokes the old token and issues a new one; categories/templates read the real `document_categories` / `document_templates` tables).
+8. **`getPassbook()` returned a FABRICATED ledger** — 8 hardcoded installments, invented totals, and a fallback to *the first booking in the whole system* when the customer had none. Replaced with the customer's real `booking_payment_schedules` rows; the cross-customer fallback is gone.
+
+### 🔴 Security hole found and closed
+`MobileUserApiController::deleteAccount()` deleted the account **when no password was supplied** (the password check was inside `if (!empty($password))`). An empty POST body wiped the account. Now requires the password **and** a literal `confirm: "DELETE"`. Verified: empty body → 422, wrong password → 400, missing confirm → 422, account intact.
+
+> During this sweep my own probe POSTed `{}` to every POST endpoint and soft-deleted the test customer (id 3, `customer1@apsdreamhome.com` → `deleted_3@deleted.com`). **Restored byte-exact** (name, email, status, `updated_at`) and verified all table counts were unchanged (users 75 · plots 756 · leads 994 · bookings 20 · plot_bookings 3). The probe was rewritten to GET-only. See lesson _783.
+
+### Mobile release
+- `flutter analyze lib`: **0 errors**
+- **APK 1.2.10+13** built (90.3 MB), signature `0e585f24…0dbe` — **identical to the deployed 1.2.10+12**, so it upgrades in place. Deployed to `public/downloads/apsdreamhome-v1.2.10-release.apk` + `apsdreamhome-latest.apk` (HTTP 200, served bytes == disk bytes).
+- **AAB 1.2.10+13** (83.2 MB) built → `public/downloads/apsdreamhome-v1.2.10-release.aab` (HTTP 200) for Play Console upload.
+- Note: `flutter build` reports "failed to produce an .apk/.aab" but the file IS produced under `android/app/build/outputs/…` — Flutter looks in `build/`. Copy from `android/app/build/outputs/`.
+
+### Verification
+- Mobile API sweep: **34 × 500 → 0** (246 GET routes: 200 × 116, 400 × 13, 401 × 117 role-restricted — the 401s are admin/associate endpoints probed with a customer token, i.e. correct).
+- `php testing/master_test_runner.php`: **10/10 PASSED** (16.13s / 16.6s — two consecutive clean runs).
+- DB zero drift: users 75 · plots 756 · leads 994 · employees 15 · document_esign 0.
+
+### Key Lessons (carried, continued)
+_781. **A missing method is a fatal at class-load, not at call time.** `private function getJsonInput()` redeclaring a `protected` parent method kills the WHOLE controller the moment the class is loaded — every route in it 500s, and the error names the visibility rule, not the endpoint you were probing.
+_782. **A query builder that silently DROPS a clause is worse than one that throws.** `QueryBuilder::compileWheres()` had no `case 'NotNull'`, so `whereNotNull()` produced a filter that was never applied — no error, wrong results. When you add a `where` type, add its compiler case in the same commit.
+_783. **Never blanket-POST an empty body to every endpoint.** `deleteAccount()` deleted the caller with no password, and my own sweep triggered it on a real customer row. **Sweep GET-only by default; probe mutations against a throwaway account; and treat any endpoint whose name contains delete/remove/purge/clear as off-limits to automated probes.**
+_784. **The API must never answer with fiction.** The passbook returned a hardcoded 8-installment ledger and invented totals, and fell back to *another customer's booking*. A payment ledger is the highest-trust surface in the product — it must come from `booking_payment_schedules` or be empty.
+_785. **A sweep that mutates is a test suite with no fixtures.** Restore anything it touches (byte-exact, not "close enough"), verify every table count, and change the probe before running it again.
+
 ## Session 447: Mobile↔Backend API Contract Sweep — 19 Orphan Endpoints, ReferralService Fatal Fixed, upi_id Migration (2026-11-10)
 
 ### Trigger
