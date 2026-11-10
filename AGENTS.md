@@ -13,6 +13,46 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
+> **🧹 DISK RULE (new, since S445):** C: drive 0 bytes free = MariaDB ALTER fails with Errcode 28 (looks like a schema bug, isn't). Run `powershell -ExecutionPolicy Bypass -File scripts\cleanup_disk.ps1` BEFORE any heavy build/migration. `-Aggressive` adds the Gradle cache (~3 GB, slows next build).
+
+## Session 445: Mobile App Deep Scan Round 2 — ApiService Conversion, Honest Empty States, E-Sign API 500 Fix, Disk Guard (2026-11-10)
+
+### Trigger
+User: "do next" — continue mobile deep scan (Dio-direct pages → ApiService, mock-only pages → honest empty states) + fix the e-sign "Download coming soon" stub.
+
+### Backend — 3 REAL bugs found by probe (not by reading)
+1. **`DocumentEsignApiController` called 3 methods that don't exist** (`signDocument`, `getDocumentById`, `getDocumentsByTenant`) → **every** mobile e-sign endpoint 500'd. Live method-existence probe confirmed. Fixed → now calls `createESignDocument` / `getESignDocument` / `getESignDocuments`.
+2. **`DocumentService::getESignDocuments()` queried a non-existent `user_id` column** (`document_esign` uses `created_by`) → always 1054, swallowed by its own try/catch → silently returned `[]`. Fixed + tenant-scoped.
+3. **`DocumentService` used `$this->pdo` in 9 places but the class only has `$this->db`** → `Call to a member function prepare() on null`. All 9 fixed (probe caught it: the new `reviewJob` probe printed the warning stack).
+
+### Backend — new service methods
+- `DocumentService::signESignDocument(int $id, array $data)` — tenant-scoped sign; rejects empty signature, cancelled docs, missing ids.
+- `DocumentService::reviewJob(int $id, int $reviewerId, array $corrections, string $action)` — approve sets `verified_by`/`verified_at`; correct applies only real `documents` columns with DATE-format validation (phantom cols + bad dates rejected, not 500).
+
+### Mobile (Flutter)
+- **Dio → ApiService**: `mlm_provider.dart`, `property_ai_chat.dart` (last 2 holdouts; `listing_packages_page.dart` keeps Dio only for the Razorpay `PaymentService` contract).
+- **Honest empty states (14 pages, mock data deleted)**: agent documents / follow-ups / my-team / properties / rank-progress / site-visits, construction services, document gallery, interior design, projects, services directory, vastu, map view, neighborhood, news, RERA lookup, property swipe, receipt view.
+- **Real "coming soon" removals**: agent documents share → `SharePlus` (real document text + file URL); view/download → `url_launcher` on the real file URL; e-sign Download → **real PDF** via `pdf` + `printing` packages (title, content, signature, verification code, QR-free legal footer); login page dead branch removed.
+
+### Tooling
+- New `scripts/cleanup_disk.ps1` — removes only regenerable artifacts (Flutter/Android build dirs, Android SDK `sources`/`emulator.backup`, stale temp, old DB dumps keeping newest N). `-Aggressive` adds the Gradle cache. Never touches the DB, `.git`, source, SDK platforms/build-tools/emulator, Gradle deps, or Pub cache.
+
+### Verification
+- `flutter analyze lib`: **0 errors** (79 warnings / 425 infos, all pre-existing deprecations)
+- `php testing/master_test_runner.php`: **10/10 PASSED** (16.25s)
+- e-sign E2E probe: **9/9** (create → list → get → sign → persisted → empty-sig rejected → missing-id rejected → cleanup → CLEAN:YES)
+- `reviewJob` probe: **7/7** (approve → correct → bad-date rejected → phantom-col rejected → missing-id rejected → cleanup → CLEAN:YES)
+- Live HTTP: LIST 200 · STORE 200 · SIGN 200 · GET 200 (full signed payload returned)
+- Strict per-class sweep (`$this->service->X()` vs actual class methods): **OK — no missing service method calls in API controllers**
+- DB counts zero drift: users 75 · plots 756 · leads 994 · documents 27 · document_esign 0
+- Commits: `55c3b6de6` (Dio→ApiService + analyze errors) · `94dbcb18c` (honest empty states + e-sign fix + PDF download)
+
+### Key Lessons (carried, continued)
+_766. **A service-call sweep proves a whole bug family in one shot** — the global "method exists anywhere in Services" sweep masked `DocumentAIController::reviewJob()` because `reviewJob` existed on a *different* class. A per-class reflection sweep (resolve the injected service class → check its own + inherited methods) found the one real miss in seconds.
+_767. **`$this->pdo` vs `$this->db` is a silent runtime fatal, not a lint error** — `php -l` passes, the file loads, and the failure only appears at the first DB call ("prepare() on null"). Grep the property name against the class's own declarations; `Database::prepare()` returns a real PDOStatement, so `->db` is a drop-in.
+_768. **A mock-data fallback is a lie the user pays for** — 14 pages silently showed fake colonies/news/RERA numbers/documents when the API failed. Honest empty state + an error message is strictly better than a plausible fiction; for RERA/receipts a fake number is worse than "no data".
+_769. **A 0-byte C: drive surfaces as a MySQL schema error** — Errcode 28 during `ALTER TABLE` reads like a collation bug. `Get-PSDrive`/`[System.IO.DriveInfo]::new('C').AvailableFreeSpace` FIRST, then diagnose. Disk is now guarded by `scripts/cleanup_disk.ps1`.
+
 ## Session 352: Voice/IVR Admin Dashboard + Employee Menu Link Repair + AI Voice System Setup Guide (2026-10-19)
 
 ### Trigger
