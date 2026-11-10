@@ -15,6 +15,51 @@
 
 > **🧹 DISK RULE (new, since S445):** C: drive 0 bytes free = MariaDB ALTER fails with Errcode 28 (looks like a schema bug, isn't). Run `powershell -ExecutionPolicy Bypass -File scripts\cleanup_disk.ps1` BEFORE any heavy build/migration. `-Aggressive` adds the Gradle cache (~3 GB, slows next build).
 
+## Session 446: Systemic 500 Sweep — 21 Broken Pages → 0 (1779 Routes), 46 Missing Controller Actions Implemented (2026-11-10)
+
+### Trigger
+User: "do next" — after the mobile round, sweep the WHOLE backend for broken pages instead of fixing one at a time.
+
+### The Sweep (this is the reusable technique)
+1. Extract every GET route from `routes/web.php` (1779 literal-path routes) → probe each with `curl` using an authenticated cookie jar → histogram of status codes.
+2. **First sweep: 21 × HTTP 500.** Not one bug — a family.
+3. Static sweep (no autoloading!): every route → does the target controller file declare the target method? **96 route→method breaks.**
+4. Cross-reference with the app's own `logs/php_error.log` ("Controller error: Call to undefined method …") → the exact missing-method list.
+
+### Root causes found (all real, all 500)
+1. **Routes existed, controller methods did not.** `routes/employee.php` overrides `routes/web.php` for the same paths and pointed at `EmployeeSelfServiceController@index/dashboard/…` and `EmployeeController@dashboardOverview/opsDashboard/…` — **26 actions that were never written**. The views existed the whole time (`app/views/employee/self_service/*`), the routes existed, the controller actions did not. Every employee portal page was a hard 500.
+2. **Child controller delegating to a parent method that does not exist** — `AIController@whatsappChat/userAiSuggestions`, `ContactController@scheduleMeeting`, `UserDashboardController@userEditProfile` all did `return parent::X()` but `PageController` (a facade over 7 sub-controllers) never had those methods.
+3. **`ApiKeyController@guide` rendered the LIST view** (`admin/features/api_keys`) instead of the guide view that exists next to it (`admin/features/api_keys_guide.php`) → the list view needs `$keys/$stats` which only `index()` provides → `count(null)`.
+4. **View bug: `$uid` defined only inside a POST branch** — `pages/user/edit_profile.php` assigned `$uid` inside `if (isset($_POST['update_basic']))`, so on GET it was undefined → `SELECT * FROM users WHERE id = NULL` → "user_not_found" redirect on every page load.
+5. **`EmployeeService::getEmployeeWithUser()` only read `employee_profiles`** — the identity unification (Wave 3+) migrated employees 6,27,28,29,111… but employees **1–5 were never migrated**, so `getEmployeeWithUser(1)` threw "Employee not found". Added a legacy-`employees` fallback, then a `users` fallback.
+6. **Phantom columns in the new queries** — `vendors.name` (real: `vendor_name`), `campaigns.id` (real: `campaign_id`), `properties.colony_id` (does not exist), `deals.amount` (real: `deal_value`), `leave_applications.employee_id/leave_type_id/days` (real: `user_id/leave_type/total_days`), `salary_payments.financial_year` (real: `payment_year`), `tax_slabs.tenant_id/income_from` (real: `tax_type/min_amount`), `inquiries.inquiry_type/source` (real: `type`), `investments` (not `customer_investments`). Every one fixed against a live `DESCRIBE`.
+7. **`payroll_runs` has no `notes`/`run_number` shape the views assumed**, `employees` vs `employee_profiles` split, `approvals`/`operations`/`social_shares` tables never existed.
+
+### Implemented (46 new controller actions + 2 new views)
+- `EmployeeSelfServiceController` — 26 actions: `index`, `dashboard`, `surveySubmit`, `advanceStore`, `encashmentStore`, `overtimeStore`, `reportAssetIssue`, `markAnnouncementRead`, `shiftSwapStore`, `shiftSwapRespondStore`, `helpdeskCreate/Store/Detail`, `grievanceStore`, `taxRegime/Store`, `taxCalculator`, `investmentDeclaration`, `uploadInvestmentProof`, `form16`, `downloadForm16`, `leave`, `reimbursement`, `profile`, `changePassword`, `attendance` (+ private `currentFinancialYear/fyLabel/declarationTable` helpers).
+- `EmployeeController` — `dashboardOverview`, `payslips`, `opsDashboard`, `salesDashboard`, `marketingDashboard` (+ `safeFetchAll()` so one missing table can never 500 a whole dashboard).
+- `PageController` — `whatsappChat`, `userAiSuggestions`, `scheduleMeeting`, `handleScheduleMeeting`, `userEditProfile`, `userInvestments`.
+- `PayrollController` — `generateBatch`, `payslip`, `downloadPayslipPdf` (real TCPDF payslip), `edit`, `update`, `advances`, `addAdvance`.
+- `MobileUserApiController` — `investmentCancel` (wallet refund **with** a `wallet_transactions` ledger row), `getOvertimeDetail`, `gratuityReport`.
+- `FarmerController` — `addLandHolding`, `storeLandHolding`, `addPurchase`, `storePurchase` + 2 new views (`farmer_portal/land_holding_form.php`, `farmer_portal/purchase_form.php`).
+- `EmployeeService::getEmployeeWithUser()` — legacy-table + users fallbacks.
+
+### Verification
+- **HTTP sweep over 1779 routes: 21 × 500 → 0 × 500.** (200: 230 · 302: 1540 auth-redirects · 403: 4 · 404: 1 · 401: 1)
+- Static route→method sweep: **96 → 29** (remaining 29 = 20 `colonyPipeline*` + 6 `ThreeSixtyDegree*` + 3, all never-built API features, not page breaks).
+- Targeted probes: employee portal 11/11 → 200 · admin 9/9 → 200 · payroll 5/5 → 200/302 · farmer 2/2 → 200 · mobile API gratuity+investments → 200.
+- `php testing/master_test_runner.php`: **10/10 PASSED** (16.55s)
+- DB zero drift: users 75 · plots 756 · leads 994 · employees 15 · document_esign 0
+- Commits: `499fded7a` (employee portal) · `0823481c9` (PageController + edit_profile view) · `b5856a67f` (api-keys guide) · `1e0f5a4e1` (payroll + mobile API + farmer)
+
+### Key Lessons (carried, continued)
+_772. **A full-route HTTP sweep finds a bug FAMILY in one pass.** 21 broken pages turned out to be 96 route→method breaks behind 5 root causes. Fixing them one-by-one (the previous 4 sessions' style) would have taken many rounds; one sweep + one static cross-check named all of them in minutes.
+_773. **"The route exists" ≠ "the feature exists".** `routes/employee.php` registered 26 employee-portal actions against a controller that never implemented them. The views existed, the routes existed, the actions did not. **Always verify the action exists, not the route.**
+_774. **A view can have a real bug that only a GET reveals** — `$uid` assigned only inside a POST branch. POST-only code paths hide GET-path undefined variables. Probe the page you changed, not just the form that submits to it.
+_775. **DESCRIBE the table before you write the query.** 9 phantom-column bugs in one batch (`vendors.name`, `campaigns.id`, `properties.colony_id`, `deals.amount`, `leave_applications.employee_id`, `salary_payments.financial_year`, `tax_slabs.tenant_id`, `inquiries.inquiry_type`, `customer_investments`). The live schema is the only truth; the migration file and the old code are both fiction.
+_776. **An identity migration that covers a SUBSET breaks every reader of the migrated table.** `employee_profiles` only holds employees 6,27,28,29,111+; employees 1–5 still live in `employees`. `getEmployeeWithUser()` read only the new table → "Employee not found" → 500 on the profile page. **A reader of a migrated table needs a fallback to the legacy table until the migration is complete.**
+_777. **One missing table must not take down a whole dashboard.** `approvals`, `operations`, `social_shares` never existed; a `safeFetchAll()` wrapper turns "table missing" into an empty tile instead of a 500 page.
+
 ## Session 445: Mobile App Deep Scan Round 2 — ApiService Conversion, Honest Empty States, E-Sign API 500 Fix, Disk Guard (2026-11-10)
 
 ### Trigger
