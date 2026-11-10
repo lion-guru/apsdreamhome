@@ -15,6 +15,38 @@
 
 > **🧹 DISK RULE (new, since S445):** C: drive 0 bytes free = MariaDB ALTER fails with Errcode 28 (looks like a schema bug, isn't). Run `powershell -ExecutionPolicy Bypass -File scripts\cleanup_disk.ps1` BEFORE any heavy build/migration. `-Aggressive` adds the Gradle cache (~3 GB, slows next build).
 
+## Session 447: Mobile↔Backend API Contract Sweep — 19 Orphan Endpoints, ReferralService Fatal Fixed, upi_id Migration (2026-11-10)
+
+### Trigger
+User: "do next" — the backend route sweep was green, so the next layer is the **contract between the Flutter app and the backend**.
+
+### The Sweep (mobile → backend)
+Extract every API path referenced anywhere under `mobile/apsdreamhome_app_v2/lib/` (123 distinct paths) → match each against every route in `routes/web.php` + `routes/api.php` (4815 routes, `{param}` → `*`, prefix-aware) → **19 paths with no backend route**.
+
+### Real gaps found and fixed
+1. **5 customer endpoints the mobile pages call every single visit** — `user_inquiries_page.dart`, `user_bank_details_page.dart`, `user_network_page.dart` called `/api/v2/mobile/user/inquiries`, `/user/bank-details` (GET+POST), `/user/network-summary`, `/user/direct-referrals`. **None of them existed** → every one of those pages was permanently empty. Added the 5 routes + `MobileUserApiController::{getUserInquiries, getUserBankDetails, saveUserBankDetails, getNetworkSummary, getDirectReferrals}`.
+2. **`ReferralService::getDirectReferrals()` had an undefined `$stmt`** — the `catch` block logged the error and then fell through to `$stmt->execute()` on a variable that was never assigned → `Call to a member function execute() on null`. The catch now returns `[]`. Also `u.type` → `u.role` (`users` has no `type`), and `JOIN mlm_profiles` → `LEFT JOIN` (a user without an MLM profile was silently dropped).
+3. **`user_bank_accounts` had no `upi_id` column** — the mobile Bank Details form writes a UPI id that was silently dropped on every save. Added via an **idempotent migration** `database/migrations/add_upi_id_to_user_bank_accounts_s447.php` (run 1 = ADD, run 2 = SKIP).
+4. Response-shape mismatches fixed against the real service output (not the assumed one): `getNetworkStats()` returns `rank => {current_label, business, next => {label}, progress_percent}` and `profile => {current_level, lifetime_sales}` — the controller now maps those, and `rank_progress` is normalised to 0..1 for the mobile progress bar.
+
+### False positives the sweep correctly separated out
+- `/api/v2/mobile/` and `/api/v2/mobile/site-visits/` — base paths with a suffix appended at the call site (`...site-visits/{id}/assign` **does** exist).
+- 8 × `shift-roster/*` constants — **dead code**: the constants and the `ApiService` methods exist, but **zero** pages call them and the backend only has `/admin/shift-roster/*` (web-session, view-rendering) with no mobile API. Left alone deliberately — building an API for a feature with no consumer is speculative.
+- 4 × `async_job_queue_service.dart` paths — that service file is untracked new code that nothing imports.
+
+### Verification
+- Mobile API sweep: **19 → 4 real** (all 4 dead-code / false-positive buckets).
+- Live probes: inquiries · bank-details GET · network-summary · direct-referrals → **all 200** with correctly shaped payloads.
+- `php testing/master_test_runner.php`: **10/10 PASSED**
+- Migration idempotency proven (ADD then SKIP).
+- `flutter analyze lib`: **0 errors**
+- Commits: `22bfb8b3c` (5 endpoints + migration) · `c93cb0f18` (ReferralService fatal)
+
+### Key Lessons (carried, continued)
+_778. **The contract between client and server is its own layer.** A green route sweep on the server says nothing about whether the CLIENT's calls resolve. Sweep the client's referenced paths against the server's route table — that found 5 endpoints the mobile app calls on every page visit and the server never had.
+_779. **A `catch` that logs and falls through is a fatal in disguise.** `ReferralService::getDirectReferrals()` caught a prepare() error, logged it, and then used the `$stmt` that the catch never created → `execute() on null`. A catch that recovers must `return` a safe value; a catch that only logs must re-throw.
+_780. **An incomplete migration breaks its READERS, not just its writers.** `employee_profiles` covered employees 6+ but not 1–5, so `getEmployeeWithUser()` threw for the missing ones. Any reader of a migrated table needs a fallback to the legacy table until the migration is complete — the same pattern applies to a column added to only part of the data.
+
 ## Session 446: Systemic 500 Sweep — 21 Broken Pages → 0 (1779 Routes), 46 Missing Controller Actions Implemented (2026-11-10)
 
 ### Trigger
