@@ -163,6 +163,30 @@ class QueryBuilder
     /**
      * Add a "where not null" clause to the query.
      */
+    /**
+     * Conditionally apply a clause (Laravel-style).
+     *
+     * CRMController and others chain ->when($tid > 1, fn($q) => $q->where('tenant_id', $tid))
+     * for tenant scoping. This builder had no `when()`, so the call fell through
+     * __call() to an object without the method ->
+     * "Call to undefined method App\Core\Database\QueryBuilder::when()" and every
+     * endpoint that used it 500'd.
+     *
+     * @param mixed $condition
+     * @param callable $callback  receives ($this)
+     * @param callable|null $default  receives ($this) when the condition is false
+     */
+    public function when($condition, callable $callback, ?callable $default = null): self
+    {
+        if ($condition) {
+            $callback($this, $condition);
+        } elseif ($default !== null) {
+            $default($this, $condition);
+        }
+
+        return $this;
+    }
+
     public function whereNotNull($column, $boolean = 'and'): self
     {
         $this->wheres[] = [
@@ -172,6 +196,72 @@ class QueryBuilder
         ];
 
         return $this;
+    }
+
+    /**
+     * Add a "IS NULL" constraint.
+     *
+     * FIXED (S447): this method did not exist -> every chain that used it
+     * died with "Call to undefined method QueryBuilder::whereNull()".
+     */
+    public function whereNull($column, $boolean = 'and'): self
+    {
+        $this->wheres[] = [
+            'type' => 'Null',
+            'column' => $column,
+            'boolean' => $boolean,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Add a "DATE(column) = ?" constraint (Laravel's whereDate).
+     */
+    public function whereDate($column, $value, $boolean = 'and'): self
+    {
+        $this->wheres[] = [
+            'type' => 'Date',
+            'column' => $column,
+            'operator' => '=',
+            'value' => $value,
+            'boolean' => $boolean,
+        ];
+
+        $this->addBinding($value, 'where');
+
+        return $this;
+    }
+
+    /**
+     * Sum a column (Laravel's sum()).
+     */
+    public function sum(string $column): float
+    {
+        $row = $this->aggregate('SUM', [$column]);
+        return (float)($row[0]['aggregate'] ?? 0);
+    }
+
+    /**
+     * Avg a column (Laravel's avg()).
+     */
+    public function avg(string $column): float
+    {
+        $row = $this->aggregate('AVG', [$column]);
+        return (float)($row[0]['aggregate'] ?? 0);
+    }
+
+    /**
+     * Pluck a single column into a flat list (Laravel's pluck()).
+     */
+    public function pluck(string $column): array
+    {
+        $rows = $this->get([$column]);
+        $out = [];
+        foreach ($rows as $row) {
+            $out[] = is_array($row) ? ($row[$column] ?? null) : $row;
+        }
+        return $out;
     }
 
     /**
@@ -488,6 +578,21 @@ class QueryBuilder
                 case 'NotIn':
                     $placeholders = implode(', ', array_fill(0, count($where['values']), '?'));
                     $sql[] = $where['column'] . ' NOT IN (' . $placeholders . ')';
+                    break;
+
+                case 'Null':
+                    $sql[] = $where['column'] . ' IS NULL';
+                    break;
+
+                case 'NotNull':
+                    // FIXED (S447): this case was missing, so every
+                    // whereNotNull() clause was silently dropped from the SQL
+                    // and the filter had no effect.
+                    $sql[] = $where['column'] . ' IS NOT NULL';
+                    break;
+
+                case 'Date':
+                    $sql[] = 'DATE(' . $where['column'] . ') ' . $where['operator'] . ' ?';
                     break;
             }
         }
