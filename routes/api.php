@@ -76,6 +76,203 @@ $router->post('/api/voice-assistant/query', 'Api\VoiceAssistantController@query'
     ->middleware(applyRateLimit('api.default'));
 $router->get('/api/voice-assistant', 'Api\VoiceAssistantController@index')
     ->middleware(applyRateLimit('api.default'));
+
+// ============================================================
+// AI CHATBOT & SMART SEARCH
+// ============================================================
+$router->post('/api/ai/chat', 'Api\AIChatbotController@chat')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/chat/providers', 'Api\AIChatbotController@providers')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/chat/set-provider', 'Api\AIChatbotController@setProvider')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/chat/current-provider', 'Api\AIChatbotController@currentProvider')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/chat/clear', 'Api\AIChatbotController@clearHistory')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/chat/history', 'Api\AIChatbotController@history')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/chat/export', 'Api\AIChatbotController@exportConversation')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/chat/import', 'Api\AIChatbotController@importConversation')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/chat/history', 'Api\AIChatbotController@getHistory')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/chat/test-provider', 'Api\AIChatbotController@testProvider')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/chat/status', 'Api\AIChatbotController@status')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/ai/lead-from-photo', 'Api\AIChatbotController@leadFromPhoto')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/ai/visit-confirm', 'Api\AIChatbotController@visitConfirm')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Smart Search
+$router->post('/api/ai/search', 'Api\SmartSearchController@search')
+    ->middleware(applyRateLimit('api.search'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/search/suggestions', 'Api\SmartSearchController@suggestions')
+    ->middleware(applyRateLimit('api.search'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/search/filters', 'Api\SmartSearchController@filters')
+    ->middleware(applyRateLimit('api.search'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Lead Scoring & Deal Probability
+$router->get('/api/ai/lead-score/{leadId}', 'Api\LeadScoringController@getScore')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/deal-probability/{leadId}', 'Api\LeadScoringController@getDealProbability')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/lead-score/bulk', 'Api\LeadScoringController@bulkScore')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/lead-score/priority', 'Api\LeadScoringController@priorityLeads')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/lead-score/{leadId}/recalculate', 'Api\LeadScoringController@recalculate')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Property Recommendations
+$router->post('/api/ai/property-recommendations', 'Api\PropertyRecommendationController@getRecommendations')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/property-recommendations/me', 'Api\PropertyRecommendationController@getMyRecommendations')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/property-recommendations/lead/{leadId}', 'Api\PropertyRecommendationController@getLeadRecommendations')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Deal Probability
+$router->post('/api/ai/deal-probability', 'Api\DealProbabilityController@calculateProbability')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/deal-probability/bulk', 'Api\DealProbabilityController@bulkCalculate')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// AI ADMIN ENDPOINTS
+// ============================================================
+$router->get('/api/ai/admin/dashboard', 'Api\AIAnalyticsController@dashboard')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/admin/insights', 'Api\AIAnalyticsController@insights')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// EXECUTIVE AI (CEO-LEVEL AI AGENT)
+// ============================================================
+$router->get('/api/ai/executive/health', 'Api\ExecutiveAIController@health')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/ai/executive/snapshot', 'Api\ExecutiveAIController@snapshot')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/ai/executive/summary', 'Api\ExecutiveAIController@summary')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/ai/executive/ask', 'Api\ExecutiveAIController@ask')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/ai/executive/report', 'Api\ExecutiveAIController@report')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/ai/executive/execute', 'Api\ExecutiveAIController@execute')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/ai/executive/competitive', 'Api\ExecutiveAIController@competitive')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/ai/executive/resources', 'Api\ExecutiveAIController@resources')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/ai/executive/briefing', 'Api\ExecutiveAIController@briefing')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/ai/executive/weekly-review', 'Api\ExecutiveAIController@weeklyReview')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->post('/api/ai/executive/insight', 'Api\ExecutiveAIController@insight')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+$router->get('/api/ai/executive/actions', 'Api\ExecutiveAIController@actions')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// EMAIL CLASSIFICATION & SMART ROUTING
+// ============================================================
+$router->post('/api/ai/email/classify', 'Api\EmailClassificationController@classify')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/email/route', 'Api\EmailClassificationController@route')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/email/batch-classify', 'Api\EmailClassificationController@batchClassify')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/email/categories', 'Api\EmailClassificationController@categories')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// SMART ROUTING
+// ============================================================
+$router->post('/api/ai/routing/lead', 'Api\SmartRoutingController@routeLead')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/routing/bulk-leads', 'Api\SmartRoutingController@bulkRouteLeads')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/routing/task', 'Api\SmartRoutingController@routeTask')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/routing/associates', 'Api\SmartRoutingController@getAssociates')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/ai/routing/load-balance', 'Api\SmartRoutingController@loadBalance')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/ai/routing/rebalance', 'Api\SmartRoutingController@rebalance')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Voice Assistant
+$router->post('/api/voice-assistant/query', 'Api\VoiceAssistantController@query')
+    ->middleware(applyRateLimit('api.default'));
+$router->get('/api/voice-assistant', 'Api\VoiceAssistantController@index')
+    ->middleware(applyRateLimit('api.default'));
 $router->get('/api/v2/mobile/sync', 'Api\MobileSyncApiController@syncProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads', 'Api\CRMController@createLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads/batch-sync', 'Api\MobileSyncApiController@batchSyncLeads')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -124,8 +321,17 @@ $router->get('/api/v2/mobile/promotional-offers', 'Api\MobileUserApiController@p
 // ============================================================
 $router->get('/api/v2/mobile/investment-plans', 'Api\MobileUserApiController@investmentPlans')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/user/investments', 'Api\MobileUserApiController@userInvestments')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/user/ai-suggestions', 'Api\MobileUserApiController@userAiSuggestions')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/user/invest', 'Api\MobileUserApiController@investmentCreate')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/user/investment/cancel', 'Api\MobileUserApiController@investmentCancel')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+// Customer inquiries / bank details / network — the mobile pages read these
+// (user_inquiries_page.dart, user_bank_details_page.dart, user_network_page.dart)
+// but no backend route existed, so every call 404'd.
+$router->get('/api/v2/mobile/user/inquiries', 'Api\MobileUserApiController@getUserInquiries')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/user/bank-details', 'Api\MobileUserApiController@getUserBankDetails')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/user/bank-details', 'Api\MobileUserApiController@saveUserBankDetails')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/user/network-summary', 'Api\MobileUserApiController@getNetworkSummary')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/user/direct-referrals', 'Api\MobileUserApiController@getDirectReferrals')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 $router->get('/api/v2/mobile/mlm/genealogy', 'Api\MobileMLMApiController@getGenealogy')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/mlm/business-breakdown', 'Api\MobileMLMApiController@getBusinessBreakdown')->middleware('App\Http\Middleware\ApiAuthMiddleware');
@@ -210,24 +416,74 @@ $router->post('/api/v2/mobile/self-service/profile/change-password', 'Api\Mobile
 $router->get('/api/v2/mobile/self-service/attendance', 'Api\MobileUserApiController@getAttendance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/self-service/attendance/stats', 'Api\MobileUserApiController@getAttendanceStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// Gratuity
-$router->get('/api/v2/mobile/gratuity/calculator', 'Api\MobileUserApiController@gratuityCalculator')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/gratuity/report', 'Api\MobileUserApiController@gratuityEligibilityReport')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/gratuity/detail/{id}', 'Api\MobileUserApiController@gratuityDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+// ============================================================
+// MOBILE API V2 — Employee Self-Service: Encashment, Overtime, Helpdesk, Training
+// ============================================================
 
-// Full & Final Settlement
+// Encashment
+$router->get('/api/v2/mobile/self-service/encashment', 'Api\MobileUserApiController@getEncashment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/encashment/apply', 'Api\MobileUserApiController@applyEncashment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Overtime
+$router->get('/api/v2/mobile/self-service/overtime', 'Api\MobileUserApiController@getOvertime')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/overtime/apply', 'Api\MobileUserApiController@requestOvertime')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/overtime/{id}', 'Api\MobileUserApiController@getOvertimeDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Helpdesk / Tickets
+$router->get('/api/v2/mobile/self-service/helpdesk', 'Api\MobileUserApiController@getHelpdeskTickets')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/helpdesk/create', 'Api\MobileUserApiController@createTicket')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/helpdesk/{id}', 'Api\MobileUserApiController@getTicketDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/helpdesk/{id}/reply', 'Api\MobileUserApiController@addTicketReply')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/helpdesk/{id}/close', 'Api\MobileUserApiController@closeTicket')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Training
+$router->get('/api/v2/mobile/self-service/training', 'Api\MobileUserApiController@getTrainingCourses')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/training/{id}', 'Api\MobileUserApiController@getTrainingDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/training/{id}/enroll', 'Api\MobileUserApiController@enrollInTraining')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/training/{id}/progress', 'Api\MobileUserApiController@getTrainingProgress')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/training/{id}/complete', 'Api\MobileUserApiController@completeTrainingModule')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Asset Assignment
+$router->get('/api/v2/mobile/self-service/assets', 'Api\MobileUserApiController@getAssets')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/assets/report-issue', 'Api\MobileUserApiController@reportAssetIssue')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Announcements
+$router->get('/api/v2/mobile/self-service/announcements', 'Api\MobileUserApiController@getAnnouncements')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/announcements/{id}/read', 'Api\MobileUserApiController@markAnnouncementRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Advances / Salary Advances
+$router->get('/api/v2/mobile/self-service/advances', 'Api\MobileUserApiController@getAdvances')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/advances/apply', 'Api\MobileUserApiController@applyAdvance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/advances/{id}', 'Api\MobileUserApiController@getAdvanceDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Grievances
+$router->get('/api/v2/mobile/self-service/grievances', 'Api\MobileUserApiController@getGrievances')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/grievances/create', 'Api\MobileUserApiController@createGrievance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/grievances/{id}', 'Api\MobileUserApiController@getGrievanceDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/grievances/{id}/comment', 'Api\MobileUserApiController@addGrievanceComment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/grievances/{id}/close', 'Api\MobileUserApiController@closeGrievance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Shift Swaps
+$router->get('/api/v2/mobile/self-service/shift-swaps', 'Api\MobileUserApiController@getShiftSwaps')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/shift-swaps/request', 'Api\MobileUserApiController@requestShiftSwap')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/shift-swaps/{id}', 'Api\MobileUserApiController@getShiftSwapDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/shift-swaps/{id}/respond', 'Api\MobileUserApiController@respondShiftSwap')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Announcements
+$router->get('/api/v2/mobile/self-service/announcements', 'Api\MobileUserApiController@getAnnouncements')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/self-service/announcements/{id}/read', 'Api\MobileUserApiController@markAnnouncementRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Gratuity & F&F
+$router->get('/api/v2/mobile/gratuity/calculator', 'Api\MobileUserApiController@gratuityCalculator')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/gratuity/report', 'Api\MobileUserApiController@gratuityReport')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/gratuity/detail/{id}', 'Api\MobileUserApiController@gratuityDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/fnf/calculator', 'Api\MobileUserApiController@fnfCalculator')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/fnf/process', 'Api\MobileUserApiController@fnfProcess')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
-// Shift Roster & Overtime
-$router->get('/api/v2/mobile/shift-roster/shift-types', 'Api\MobileUserApiController@shiftTypes')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/shift-roster/roster', 'Api\MobileUserApiController@getRoster')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/shift-roster/assign-shift', 'Api\MobileUserApiController@assignShift')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/shift-roster/overtime-requests', 'Api\MobileUserApiController@overtimeRequests')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/shift-roster/overtime-request', 'Api\MobileUserApiController@requestOvertime')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->post('/api/v2/mobile/shift-roster/overtime-requests/{id}', 'Api\MobileUserApiController@processOvertime')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/shift-roster/overtime-reports', 'Api\MobileUserApiController@overtimeReports')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/shift-roster/shift-coverage', 'Api\MobileUserApiController@shiftCoverage')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+// ============================================================
+// Attendance
+$router->get('/api/v2/mobile/self-service/attendance', 'Api\MobileUserApiController@getAttendance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/self-service/attendance/stats', 'Api\MobileUserApiController@getAttendanceStats')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
 // MOBILE API V2 — FCM Token Registration
@@ -266,8 +522,88 @@ $router->get('/api/v2/mobile/plots/all', 'Api\MobilePropertyApiController@getAll
 
 // Property detail + search under /api/v2/mobile/ prefix
 $router->get('/api/v2/mobile/properties/featured', 'Api\MobilePropertyApiController@getFeaturedProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/properties/{id}', 'Api\MobilePropertyApiController@propertyDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/properties/search', 'Api\MobilePropertyApiController@searchProperties');
+
+// ============================================================
+// MOBILE API V2 — Township Operations: Maintenance, Grievances, Site Visits
+// ============================================================
+$router->get('/api/v2/mobile/maintenance-dues', 'Api\MobileTownshipApiController@getMaintenanceDues');
+$router->post('/api/v2/mobile/maintenance-dues/{id}/pay', 'Api\MobileTownshipApiController@payMaintenanceDue');
+$router->get('/api/v2/mobile/township-grievances', 'Api\MobileTownshipApiController@getTownshipGrievances');
+$router->post('/api/v2/mobile/township-grievances', 'Api\MobileTownshipApiController@createTownshipGrievance');
+$router->post('/api/v2/mobile/site-visits/book', 'Api\MobileTownshipApiController@bookSiteVisit');
+$router->get('/api/v2/mobile/site-visits/my-visits', 'Api\MobileTownshipApiController@getMySiteVisits');
+
+// ============================================================
+// MOBILE API V2 — Township Operations & Utilities (read-only monitoring)
+// ============================================================
+$router->get('/api/v2/mobile/township/operations', 'Api\MobileTownshipOpsApiController@getOperations');
+$router->get('/api/v2/mobile/township/operations/{type}', 'Api\MobileTownshipOpsApiController@getUtilityDetail');
+$router->get('/api/v2/mobile/township/colonies/{id}/utilities', 'Api\MobileTownshipOpsApiController@getColonyUtilities');
+$router->get('/api/v2/mobile/solar/requests', 'Api\MobileTownshipOpsApiController@getSolarRequests');
+
+// ============================================================
+// MOBILE API V2 — Web-to-Mobile Parity Endpoints (Customer & Associate)
+// ============================================================
+$router->get('/api/v2/mobile/passbook', 'Api\MobileFeatureEndpointsController@getPassbook');
+$router->post('/api/v2/mobile/passbook/simulate', 'Api\MobileFeatureEndpointsController@simulatePrepayment');
+$router->get('/api/v2/mobile/plot-transfers', 'Api\MobileFeatureEndpointsController@getPlotTransfers');
+$router->post('/api/v2/mobile/plot-transfers/apply', 'Api\MobileFeatureEndpointsController@applyPlotTransfer');
+$router->get('/api/v2/mobile/foreclosure/preview', 'Api\MobileFeatureEndpointsController@getForeclosurePreview');
+$router->post('/api/v2/mobile/foreclosure/request', 'Api\MobileFeatureEndpointsController@requestForeclosure');
+$router->get('/api/v2/mobile/nri-desk', 'Api\MobileFeatureEndpointsController@getNriDesk');
+$router->post('/api/v2/mobile/nri-desk/inquiry', 'Api\MobileFeatureEndpointsController@submitNriInquiry');
+$router->get('/api/v2/mobile/customer-journey/{bookingId}', 'Api\MobileFeatureEndpointsController@getCustomerJourney');
+$router->get('/api/v2/mobile/associate/id-card', 'Api\MobileFeatureEndpointsController@getAssociateIdCard');
+$router->get('/api/v2/mobile/associate/marketing-posters', 'Api\MobileFeatureEndpointsController@getAssociatePosters');
+$router->get('/api/v2/mobile/associate/tds', 'Api\MobileFeatureEndpointsController@getAssociateTds');
+$router->get('/api/v2/mobile/associate/bonanza-races', 'Api\MobileFeatureEndpointsController@getAssociateBonanza');
+$router->get('/api/v2/mobile/agent/collections', 'Api\MobileFeatureEndpointsController@getAgentCollections');
+$router->post('/api/v2/mobile/agent/collections/create', 'Api\MobileFeatureEndpointsController@createAgentCollection');
+
+// Registry Desk & Sub-Registrar Appointments
+$router->get('/api/v2/mobile/registry/desk', 'Api\MobileFeatureEndpointsController@getRegistryDesk');
+$router->post('/api/v2/mobile/registry/book', 'Api\MobileFeatureEndpointsController@bookRegistrySlot');
+
+// Colony Construction & Drone Timelapse
+$router->get('/api/v2/mobile/colony/{id}/timelapse', 'Api\MobileFeatureEndpointsController@getColonyTimelapse');
+
+// Digital Allotment Letter Acceptance
+$router->get('/api/v2/mobile/allotments', 'Api\MobileFeatureEndpointsController@getAllotments');
+$router->post('/api/v2/mobile/allotments/accept', 'Api\MobileFeatureEndpointsController@acceptAllotment');
+
+// Associate Commission Advances & Festival Loans
+$router->get('/api/v2/mobile/associate/advances', 'Api\MobileFeatureEndpointsController@getAssociateAdvances');
+$router->post('/api/v2/mobile/associate/advances/apply', 'Api\MobileFeatureEndpointsController@applyAssociateAdvance');
+
+// Associate Official Document Vault
+$router->get('/api/v2/mobile/associate/documents', 'Api\MobileFeatureEndpointsController@getAssociateDocuments');
+
+// Multi-Channel Notification Preferences
+$router->get('/api/v2/mobile/notification-preferences', 'Api\MobileFeatureEndpointsController@getNotificationPreferences');
+$router->post('/api/v2/mobile/notification-preferences/save', 'Api\MobileFeatureEndpointsController@saveNotificationPreferences');
+
+// Daily Cash Drawer & Safe Closing Desk
+$router->get('/api/v2/mobile/cash-drawer/today', 'Api\MobileFeatureEndpointsController@getCashDrawerToday');
+$router->post('/api/v2/mobile/cash-drawer/close', 'Api\MobileFeatureEndpointsController@submitCashDrawerClosing');
+
+// Property Auctions & Live Bidding Desk
+$router->get('/api/v2/mobile/auctions', 'Api\MobileFeatureEndpointsController@getAuctions');
+$router->post('/api/v2/mobile/auctions/{id}/bid', 'Api\MobileFeatureEndpointsController@placeAuctionBid');
+
+// Farmer & Landowner Partner Desk
+$router->get('/api/v2/mobile/farmer/dashboard', 'Api\MobileFeatureEndpointsController@getFarmerDashboard');
+$router->post('/api/v2/mobile/farmer/offer-land', 'Api\MobileFeatureEndpointsController@submitFarmerLandOffer');
+
+// VIP Executive Meeting & Consultation Scheduler
+$router->get('/api/v2/mobile/meetings/slots', 'Api\MobileFeatureEndpointsController@getExecutiveMeetings');
+$router->post('/api/v2/mobile/meetings/book', 'Api\MobileFeatureEndpointsController@bookExecutiveMeeting');
+
+// Rental Property Marketplace (किराया का घर)
+$router->get('/api/v2/rentals', 'Api\MobileFeatureEndpointsController@getRentals');
+$router->post('/api/v2/rentals/post', 'Api\MobileFeatureEndpointsController@postRental');
+$router->get('/api/v2/mobile/rentals', 'Api\MobileFeatureEndpointsController@getRentals');
+$router->post('/api/v2/mobile/rentals/post', 'Api\MobileFeatureEndpointsController@postRental');
 
 $router->get('/api/health', 'Api\SystemController@health');
 $router->get('/api/properties', 'Api\PropertyController@index');
@@ -420,6 +756,8 @@ $router->get('/api/v1/search/properties', 'Api\SearchController@searchProperties
     ->middleware('App\Http\Middleware\DeprecationHeaderMiddleware');
 $router->post('/api/v1/finance/emi-calculate', 'Api\NewFeaturesApiController@calculateEmi')
     ->middleware('App\Http\Middleware\DeprecationHeaderMiddleware');
+$router->post('/api/v1/ocr/extract', 'Api\NewFeaturesApiController@ocrExtract')
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // Advanced Search API Routes
 $router->get('/api/search/properties', 'Api\SearchController@searchProperties');
@@ -442,6 +780,7 @@ $router->get('/api/voice-agent/stats', 'App\Http\Controllers\Api\VoiceAgentContr
 $router->get('/api/voice-agent/call-history', 'App\Http\Controllers\Api\VoiceAgentController@getCallHistory');
 
 // AI Agent API Routes (Mobile App)
+$router->get('/api/v2/mobile/ai-agent/providers', 'App\Http\Controllers\Api\AIAgentApiController@providers');
 $router->post('/api/v2/mobile/ai-agent/chat', 'App\Http\Controllers\Api\AIAgentApiController@chat');
 $router->post('/api/v2/mobile/ai-agent/process-lead', 'App\Http\Controllers\Api\AIAgentApiController@processLead');
 $router->post('/api/v2/mobile/ai-agent/analyze-property', 'App\Http\Controllers\Api\AIAgentApiController@analyzeProperty');
@@ -515,7 +854,7 @@ $router->post('/api/track/whatsapp-click', function() {
         $db = \App\Core\Database\Database::getInstance();
         $db->execute("INSERT INTO whatsapp_click_log (user_id, source_page, referral_page, clicked_at) VALUES (?, ?, ?, NOW())",
             [$userId, $source, $page]);
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         error_log("WA track error: " . $e->getMessage());
     }
     echo json_encode(['success' => true]);
@@ -1029,6 +1368,13 @@ $router->get('/api/v2/mobile/search-history', 'Api\SearchHistoryApiController@in
 
 $router->get('/api/v2/mobile/registry/timeline/{bookingId}', 'Api\RegistryTimelineApiController@timeline')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/registry/possession-certificate/{bookingId}', 'Api\RegistryTimelineApiController@certificate')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// ============================================================
+// REGISTRY APPOINTMENT API (Mobile — book SRO registry date slot)
+// ============================================================
+$router->get('/api/v2/mobile/registry-appointments', 'Api\RegistryAppointmentApiController@list')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/v2/mobile/registry-appointments/{id}/slip', 'Api\RegistryAppointmentApiController@slip')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/registry-appointments/book', 'Api\RegistryAppointmentApiController@book')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
 // PAYOUT BATCH API (Mobile — staff bulk payout list/detail/CSV export)

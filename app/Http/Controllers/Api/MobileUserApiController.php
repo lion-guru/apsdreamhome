@@ -3240,6 +3240,242 @@ class MobileUserApiController extends BaseController
     // ============================================================
 
     /**
+     * Customer inquiries list.
+     * GET /api/v2/mobile/user/inquiries
+     */
+    public function getUserInquiries()
+    {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Authentication required']);
+                return;
+            }
+
+            $status = trim((string)($_GET['status'] ?? ''));
+            $params = [$userId];
+            $sql = "SELECT id, name, email, phone, message, type, status, priority,
+                           is_read, followup_count, last_followup_at, created_at, updated_at
+                    FROM inquiries
+                    WHERE tenant_id = ? AND (user_id = ? OR email = ? OR posted_by = ?)";
+            // The customer's own inquiries: by user_id, or by the email they used.
+            $sql = "SELECT id, name, email, phone, message, type, status, priority,
+                           is_read, followup_count, last_followup_at, created_at, updated_at
+                    FROM inquiries
+                    WHERE tenant_id = ? AND (user_id = ? OR posted_by = ?)";
+            $params = [$this->tenantId(), $userId, $userId];
+
+            if ($status !== '' && $status !== 'all') {
+                $sql .= " AND status = ?";
+                $params[] = $status;
+            }
+            $sql .= " ORDER BY created_at DESC LIMIT 100";
+
+            $rows = $this->db->fetchAll($sql, $params) ?: [];
+
+            $this->jsonResponse(['success' => true, 'data' => $rows]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get User Inquiries');
+        }
+    }
+
+    /**
+     * The customer's saved bank details (one primary account).
+     * GET /api/v2/mobile/user/bank-details
+     */
+    public function getUserBankDetails()
+    {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Authentication required']);
+                return;
+            }
+
+            $stmt = $this->db->prepare(
+                "SELECT id, account_holder_name, account_number, ifsc_code, bank_name,
+                        branch_name AS branch, upi_id, is_primary, is_verified, created_at
+                 FROM user_bank_accounts
+                 WHERE user_id = ?
+                 ORDER BY is_primary DESC, id DESC
+                 LIMIT 1"
+            );
+            $stmt->execute([$userId]);
+            $row = $stmt->fetch() ?: null;
+
+            $this->jsonResponse(['success' => true, 'data' => $row]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get User Bank Details');
+        }
+    }
+
+    /**
+     * Save the customer's bank details (upsert on the primary slot).
+     * POST /api/v2/mobile/user/bank-details
+     */
+    public function saveUserBankDetails()
+    {
+        $this->setCorsHeaders();
+        try {
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Authentication required']);
+                return;
+            }
+
+            $holder   = trim((string)($input['account_holder_name'] ?? ''));
+            $number   = trim((string)($input['account_number'] ?? ''));
+            $ifsc     = strtoupper(trim((string)($input['ifsc_code'] ?? '')));
+            $bank     = trim((string)($input['bank_name'] ?? ''));
+            $branch   = trim((string)($input['branch'] ?? ''));
+            $upiId    = trim((string)($input['upi_id'] ?? ''));
+
+            if ($holder === '' || $number === '' || $ifsc === '') {
+                $this->jsonError('Account holder, account number and IFSC are required');
+                return;
+            }
+            if (!preg_match('/^[A-Z]{4}0[A-Z0-9]{6}$/', $ifsc)) {
+                $this->jsonError('Invalid IFSC code');
+                return;
+            }
+
+            $tid = $this->tenantId();
+
+            $stmt = $this->db->prepare(
+                "SELECT id FROM user_bank_accounts WHERE user_id = ? ORDER BY is_primary DESC, id DESC LIMIT 1"
+            );
+            $stmt->execute([$userId]);
+            $existing = $stmt->fetch() ?: null;
+
+            if ($existing) {
+                $upd = $this->db->prepare(
+                    "UPDATE user_bank_accounts
+                     SET account_holder_name = ?, account_number = ?, ifsc_code = ?,
+                         bank_name = ?, branch_name = ?, upi_id = ?, updated_at = NOW()
+                     WHERE id = ?"
+                );
+                $upd->execute([$holder, $number, $ifsc, $bank ?: null, $branch ?: null, $upiId ?: null, (int)$existing['id']]);
+                $id = (int)$existing['id'];
+            } else {
+                $ins = $this->db->prepare(
+                    "INSERT INTO user_bank_accounts
+                        (tenant_id, user_id, account_type, account_holder_name, account_number,
+                         bank_name, branch_name, ifsc_code, upi_id, is_primary, status, created_at, updated_at)
+                     VALUES (?, ?, 'bank', ?, ?, ?, ?, ?, ?, 1, 'active', NOW(), NOW())"
+                );
+                $ins->execute([$tid, $userId, $holder, $number, $bank ?: null, $branch ?: null, $ifsc, $upiId ?: null]);
+                $id = (int)$this->db->lastInsertId();
+            }
+
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Bank details saved',
+                'data'    => ['id' => $id],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Save User Bank Details');
+        }
+    }
+
+    /**
+     * Network summary for the customer (team size, ranks, business volume).
+     * GET /api/v2/mobile/user/network-summary
+     */
+    public function getNetworkSummary()
+    {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Authentication required']);
+                return;
+            }
+
+            $service = new \App\Services\ReferralService();
+            $stats   = $service->getNetworkStats($userId);
+            $direct  = $service->getDirectReferrals($userId);
+
+            // getNetworkStats() returns:
+            //   total_team, direct_referrals, total_commission,
+            //   rank => [current_label, business, next => [label, required], progress_percent]
+            $rankInfo = is_array($stats['rank'] ?? null) ? $stats['rank'] : [];
+            $nextInfo = is_array($rankInfo['next'] ?? null) ? $rankInfo['next'] : [];
+
+            $activeMembers = 0;
+            $volume = 0.0;
+            foreach ($direct as $d) {
+                if (in_array((string)($d['status'] ?? ''), ['active', 'approved'], true)) {
+                    $activeMembers++;
+                }
+                $volume += (float)($d['lifetime_sales'] ?? $d['business'] ?? 0);
+            }
+            if ($volume <= 0.0) {
+                $volume = (float)($rankInfo['business'] ?? $stats['profile']['lifetime_sales'] ?? 0);
+            }
+
+            $progressPct = (float)($rankInfo['progress_percent'] ?? 0);
+
+            $this->jsonResponse([
+                'success' => true,
+                'data'    => [
+                    'total_team'           => (int)($stats['total_team'] ?? count($direct)),
+                    'direct_referrals'     => (int)($stats['direct_referrals'] ?? count($direct)),
+                    'active_members'       => $activeMembers,
+                    'team_business_volume' => $volume,
+                    'my_rank'              => (string)($rankInfo['current_label'] ?? $stats['profile']['current_level'] ?? 'Associate'),
+                    'next_rank'            => (string)($nextInfo['label'] ?? ''),
+                    'rank_progress'        => $progressPct > 1.0 ? round($progressPct / 100, 4) : $progressPct,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Network Summary');
+        }
+    }
+
+    /**
+     * The customer's direct referrals.
+     * GET /api/v2/mobile/user/direct-referrals
+     */
+    public function getDirectReferrals()
+    {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Authentication required']);
+                return;
+            }
+
+            $service = new \App\Services\ReferralService();
+            $rows = $service->getDirectReferrals($userId) ?: [];
+
+            $out = [];
+            foreach ($rows as $r) {
+                $out[] = [
+                    'id'        => (int)($r['id'] ?? 0),
+                    'name'      => (string)($r['name'] ?? $r['referrer_name'] ?? ''),
+                    'rank'      => (string)($r['current_level'] ?? $r['rank'] ?? $r['mlm_rank'] ?? 'Associate'),
+                    'join_date' => (string)($r['join_date'] ?? $r['created_at'] ?? ''),
+                    'business'  => (float)($r['lifetime_sales'] ?? $r['business'] ?? $r['business_volume'] ?? 0),
+                    'status'    => (string)($r['status'] ?? 'active'),
+                ];
+            }
+
+            $this->jsonResponse(['success' => true, 'data' => $out]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Direct Referrals');
+        }
+    }
+
+    /**
      * Cancel an investment before it matures.
      * POST /api/v2/mobile/user/investment/cancel
      */
