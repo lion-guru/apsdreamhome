@@ -137,6 +137,165 @@ class FarmerController extends BaseController
         }
     }
 
+    // ============================================================
+    // MISSING ACTIONS (routes existed, methods did not)
+    // ============================================================
+
+    /**
+     * Form: add a land holding for a farmer.
+     * GET /farmers/{id}/add-land-holding
+     */
+    public function addLandHolding($id)
+    {
+        try {
+            $farmer = $this->farmerModel->getFarmerById((int)$id);
+            if (!$farmer) {
+                throw new \Exception('Farmer not found');
+            }
+
+            return $this->render('farmer_portal/land_holding_form', [
+                'page_title' => 'Add Land Holding - ' . ($farmer['name'] ?? ''),
+                'farmer'     => $farmer,
+                'farmer_id'  => (int)$id,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('FarmerController::addLandHolding() error: ' . $e->getMessage());
+            $this->setFlash('error', $e->getMessage());
+            $this->redirect('/farmers_admin/list');
+        }
+    }
+
+    /**
+     * Store a land holding for a farmer.
+     * POST /farmers/{id}/store-land-holding
+     */
+    public function storeLandHolding($id)
+    {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new \Exception('Invalid request method');
+            }
+
+            $farmerId = (int)$id;
+            $farmer = $this->farmerModel->getFarmerById($farmerId);
+            if (!$farmer) {
+                throw new \Exception('Farmer not found');
+            }
+
+            $data = [
+                'tenant_id'            => (int)(\App\Core\Middleware\TenantContext::getId() ?: 1),
+                'farmer_id'            => $farmerId,
+                'khasra_number'        => Security::sanitize($_POST['khasra_number'] ?? '') ?: null,
+                'land_area'            => (float)($_POST['land_area'] ?? 0),
+                'land_area_unit'       => Security::sanitize($_POST['land_area_unit'] ?? 'acre') ?: 'acre',
+                'land_type'            => Security::sanitize($_POST['land_type'] ?? '') ?: null,
+                'soil_type'            => Security::sanitize($_POST['soil_type'] ?? '') ?: null,
+                'irrigation_source'    => Security::sanitize($_POST['irrigation_source'] ?? '') ?: null,
+                'water_source'         => Security::sanitize($_POST['water_source'] ?? '') ?: null,
+                'electricity_available' => (int)($_POST['electricity_available'] ?? 0) ? 1 : 0,
+                'road_access'          => Security::sanitize($_POST['road_access'] ?? '') ?: null,
+                'location'             => Security::sanitize($_POST['location'] ?? '') ?: null,
+                'village'              => Security::sanitize($_POST['village'] ?? '') ?: null,
+                'tehsil'               => Security::sanitize($_POST['tehsil'] ?? '') ?: null,
+                'district'             => Security::sanitize($_POST['district'] ?? '') ?: null,
+                'state'                => Security::sanitize($_POST['state'] ?? '') ?: null,
+                'land_value'           => (float)($_POST['land_value'] ?? 0),
+                'current_status'       => Security::sanitize($_POST['current_status'] ?? 'owned') ?: 'owned',
+                'ownership_document'   => Security::sanitize($_POST['ownership_document'] ?? '') ?: null,
+                'mutation_document'    => Security::sanitize($_POST['mutation_document'] ?? '') ?: null,
+                'acquisition_status'   => Security::sanitize($_POST['acquisition_status'] ?? 'none') ?: 'none',
+                'acquisition_date'     => Security::sanitize($_POST['acquisition_date'] ?? '') ?: null,
+                'acquisition_amount'   => (float)($_POST['acquisition_amount'] ?? 0),
+                'payment_status'       => Security::sanitize($_POST['payment_status'] ?? 'pending') ?: 'pending',
+                'payment_received'     => (float)($_POST['payment_received'] ?? 0),
+                'remarks'              => Security::sanitize($_POST['remarks'] ?? '') ?: null,
+                'created_at'           => date('Y-m-d H:i:s'),
+                'updated_at'           => date('Y-m-d H:i:s'),
+            ];
+
+            $db = \App\Core\Database\Database::getInstance();
+            $db->insert('farmer_land_holdings', $data);
+
+            $this->setFlash('success', 'Land holding added successfully');
+            $this->redirect('/farmers_admin/' . $farmerId);
+        } catch (\Throwable $e) {
+            error_log('FarmerController::storeLandHolding() error: ' . $e->getMessage());
+            $this->setFlash('error', $e->getMessage());
+            $this->redirect('/farmers/' . (int)$id . '/add-land-holding');
+        }
+    }
+
+    /**
+     * Form: record a land purchase by a farmer.
+     * GET /farmers/{id}/add-purchase
+     */
+    public function addPurchase($id)
+    {
+        try {
+            $farmer = $this->farmerModel->getFarmerById((int)$id);
+            if (!$farmer) {
+                throw new \Exception('Farmer not found');
+            }
+
+            return $this->render('farmer_portal/purchase_form', [
+                'page_title' => 'Record Land Purchase - ' . ($farmer['name'] ?? ''),
+                'farmer'     => $farmer,
+                'farmer_id'  => (int)$id,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('FarmerController::addPurchase() error: ' . $e->getMessage());
+            $this->setFlash('error', $e->getMessage());
+            $this->redirect('/farmers_admin/list');
+        }
+    }
+
+    /**
+     * Store a land purchase transaction for a farmer.
+     * POST /farmers/{id}/store-purchase
+     */
+    public function storePurchase($id)
+    {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new \Exception('Invalid request method');
+            }
+
+            $farmerId = (int)$id;
+            $farmer = $this->farmerModel->getFarmerById($farmerId);
+            if (!$farmer) {
+                throw new \Exception('Farmer not found');
+            }
+
+            $amount = (float)($_POST['amount'] ?? 0);
+            if ($amount <= 0) {
+                throw new \Exception('Purchase amount must be greater than zero');
+            }
+
+            $db = \App\Core\Database\Database::getInstance();
+            $db->insert('farmer_transactions', [
+                'tenant_id'         => (int)(\App\Core\Middleware\TenantContext::getId() ?: 1),
+                'farmer_id'         => $farmerId,
+                'transaction_type'  => 'land_purchase',
+                'amount'            => $amount,
+                'payment_method'    => Security::sanitize($_POST['payment_method'] ?? 'bank_transfer') ?: 'bank_transfer',
+                'reference_number' => Security::sanitize($_POST['reference_number'] ?? '') ?: null,
+                'transaction_date'  => Security::sanitize($_POST['transaction_date'] ?? date('Y-m-d')) ?: date('Y-m-d'),
+                'description'      => Security::sanitize($_POST['description'] ?? '') ?: null,
+                'status'            => Security::sanitize($_POST['status'] ?? 'completed') ?: 'completed',
+                'created_by'        => (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0),
+                'created_at'        => date('Y-m-d H:i:s'),
+                'updated_at'        => date('Y-m-d H:i:s'),
+            ]);
+
+            $this->setFlash('success', 'Land purchase recorded successfully');
+            $this->redirect('/farmers_admin/' . $farmerId);
+        } catch (\Throwable $e) {
+            error_log('FarmerController::storePurchase() error: ' . $e->getMessage());
+            $this->setFlash('error', $e->getMessage());
+            $this->redirect('/farmers/' . (int)$id . '/add-purchase');
+        }
+    }
+
     /**
      * Show farmer details
      */
@@ -285,7 +444,7 @@ class FarmerController extends BaseController
         try {
             $farmers = $this->farmerModel->getFarmersByState($stateId);
             $this->jsonResponse($farmers);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError($e->getMessage());
         }
     }

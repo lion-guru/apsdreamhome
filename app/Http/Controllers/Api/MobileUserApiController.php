@@ -27,7 +27,7 @@ class MobileUserApiController extends BaseController
             }
             $profile = $this->getUserProfileData($userId);
             echo json_encode(['success' => true, 'data' => $profile]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'User Profile API error');
         }
     }
@@ -44,7 +44,7 @@ class MobileUserApiController extends BaseController
             }
             $documents = $this->getUserDocuments($userId);
             echo json_encode(['success' => true, 'data' => $documents]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'User Documents API error');
         }
     }
@@ -90,7 +90,7 @@ class MobileUserApiController extends BaseController
                     $lockerService = new \App\Services\DocumentLockerService();
                     $title = \App\Core\Security::sanitize($_POST['title'] ?? (ucfirst($documentType) . ' Document'));
                     $lockerService->addDocument($userId, $title, $documentType, $fileUrl);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("Failed to record document in locker: " . $e->getMessage());
                 }
                 echo json_encode(['success' => true, 'message' => 'Document uploaded successfully', 'url' => $fileUrl]);
@@ -98,7 +98,7 @@ class MobileUserApiController extends BaseController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'message' => 'Failed to save document']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Upload Document API error');
         }
     }
@@ -154,7 +154,7 @@ class MobileUserApiController extends BaseController
             });
 
             echo json_encode(['success' => true, 'data' => $documents]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Get Customer Documents API error');
         }
     }
@@ -166,7 +166,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -177,7 +177,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM user_documents WHERE user_id = ? ORDER BY created_at DESC");
             $stmt->execute([$userId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -253,7 +253,7 @@ class MobileUserApiController extends BaseController
             }
             $bookingId = $this->createBooking($userId, $validated);
             echo json_encode(['success' => true, 'booking_id' => $bookingId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Create Booking API error');
         }
     }
@@ -270,7 +270,7 @@ class MobileUserApiController extends BaseController
         try {
             $inquiries = $this->getInquiriesData($userId);
             echo json_encode(['success' => true, 'data' => $inquiries]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'List Inquiries API error');
         }
     }
@@ -296,7 +296,7 @@ class MobileUserApiController extends BaseController
                 'message' => 'Inquiry submitted successfully',
                 'inquiry_id' => $inquiryId
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Submit Inquiry API error');
         }
     }
@@ -313,7 +313,7 @@ class MobileUserApiController extends BaseController
         try {
             $dashboard = $this->getReferralDashboardData($userId);
             echo json_encode(['success' => true, 'data' => $dashboard]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Referral Dashboard API error');
         }
     }
@@ -332,7 +332,7 @@ class MobileUserApiController extends BaseController
             $medium = \App\Core\Security::sanitize($input['medium'] ?? 'share');
             $this->trackReferralShareData($userId, $medium);
             echo json_encode(['success' => true, 'message' => 'Referral share tracked']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Track Referral Share API error');
         }
     }
@@ -350,7 +350,7 @@ class MobileUserApiController extends BaseController
         try {
             $bookings = $this->getCustomerBookingsData($userId);
             echo json_encode(['success' => true, 'data' => $bookings]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Customer Bookings API error');
         }
     }
@@ -369,7 +369,7 @@ class MobileUserApiController extends BaseController
             $bookingId = (int)($input['booking_id'] ?? 0);
             $emiSchedule = $this->getEmiScheduleData($userId, $bookingId);
             echo json_encode(['success' => true, 'data' => $emiSchedule]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'EMI Schedule API error');
         }
     }
@@ -389,7 +389,7 @@ class MobileUserApiController extends BaseController
             }
             $result = $this->processEmiPayment($userId, $bookingId, $amount);
             echo json_encode(['success' => true, 'message' => 'EMI payment processed', 'payment_id' => $result]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'EMI Payment API error');
         }
     }
@@ -411,7 +411,7 @@ class MobileUserApiController extends BaseController
             }
             $profile = $this->getUserProfileData($userId);
             echo json_encode(['success' => true, 'data' => $profile]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Profile V2 API error');
         }
     }
@@ -429,7 +429,7 @@ class MobileUserApiController extends BaseController
             $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             $properties = MobilePropertyApiController::getPropertiesWithFilters($this->db, $input, $userId);
             echo json_encode(['success' => true, 'data' => $properties]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Mobile Properties API error');
         }
     }
@@ -441,7 +441,7 @@ class MobileUserApiController extends BaseController
             $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             $dashboard = $this->getDashboardData($userId);
             echo json_encode(['success' => true, 'data' => $dashboard]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Dashboard V2 API error');
         }
     }
@@ -453,7 +453,7 @@ class MobileUserApiController extends BaseController
             $userId = (int)($GLOBALS['api_user_id'] ?? 0);
             $dashboard = $this->getDashboardData($userId);
             echo json_encode(['success' => true, 'data' => $dashboard]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Dashboard V3 API error');
         }
     }
@@ -479,7 +479,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO fcm_tokens (user_id, token) VALUES (?, ?) ON DUPLICATE KEY UPDATE token = VALUES(token)");
             $stmt->execute([$userId, $token]);
             echo json_encode(['success' => true, 'message' => 'Push token registered']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Register Push Token API error');
         }
     }
@@ -551,7 +551,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE users SET profile_image = ? WHERE id = ?");
             $stmt->execute([$avatarUrl, $userId]);
             echo json_encode(['success' => true, 'message' => 'Avatar uploaded successfully', 'url' => $avatarUrl]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Upload Avatar API error');
         }
     }
@@ -583,7 +583,7 @@ class MobileUserApiController extends BaseController
             }
             $profile = $this->getUserProfileData($userId);
             echo json_encode(['success' => true, 'data' => $profile]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Update Profile API error');
         }
     }
@@ -600,7 +600,7 @@ class MobileUserApiController extends BaseController
         try {
             $payouts = MobileMLMApiController::getPendingPayoutsData($this->db, $userId);
             echo json_encode(['success' => true, 'data' => $payouts]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Pending Payouts API error');
         }
     }
@@ -619,7 +619,7 @@ class MobileUserApiController extends BaseController
             $paymentMethod = \App\Core\Security::sanitize($input['payment_method'] ?? 'bank');
             $result = MobileMLMApiController::processPayoutsAction($this->db, $userId, $paymentMethod);
             echo json_encode(['success' => true, 'message' => 'Payouts processed', 'processed' => $result]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Process Payouts API error');
         }
     }
@@ -636,7 +636,7 @@ class MobileUserApiController extends BaseController
         try {
             $history = MobileMLMApiController::getPayoutHistoryData($this->db, $userId);
             echo json_encode(['success' => true, 'data' => $history]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Payout History API error');
         }
     }
@@ -653,7 +653,7 @@ class MobileUserApiController extends BaseController
         try {
             $notifications = $this->getNotificationsData($userId);
             echo json_encode(['success' => true, 'data' => $notifications]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Customer Notifications API error');
         }
     }
@@ -671,7 +671,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0");
             $stmt->execute([$userId]);
             echo json_encode(['success' => true, 'message' => 'All notifications marked as read']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Mark Notifications Read API error');
         }
     }
@@ -688,7 +688,7 @@ class MobileUserApiController extends BaseController
         try {
             $tickets = $this->getSupportTicketsData($userId);
             echo json_encode(['success' => true, 'data' => $tickets]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Support Tickets API error');
         }
     }
@@ -712,9 +712,9 @@ class MobileUserApiController extends BaseController
                 echo json_encode(['success' => false, 'error' => 'Authentication required']);
                 return;
             }
-            $ticketId = $this->createTicket($userId, $validated);
+            $ticketId = $this->insertSupportTicket($userId, $validated);
             echo json_encode(['success' => true, 'ticket_id' => $ticketId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Create Support Ticket API error');
         }
     }
@@ -729,9 +729,9 @@ class MobileUserApiController extends BaseController
             return;
         }
         try {
-            $ticket = $this->getTicketDetail($userId, (int)$id);
+            $ticket = $this->getSupportTicketDetailRecord($userId, (int)$id);
             echo json_encode(['success' => true, 'data' => $ticket]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Support Ticket Detail API error');
         }
     }
@@ -748,7 +748,7 @@ class MobileUserApiController extends BaseController
         try {
             $conversations = $this->getConversationsData($userId);
             echo json_encode(['success' => true, 'data' => $conversations]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Conversations API error');
         }
     }
@@ -765,7 +765,7 @@ class MobileUserApiController extends BaseController
         try {
             $messages = $this->getMessagesData($userId, (int)$otherUserId);
             echo json_encode(['success' => true, 'data' => $messages]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Messages API error');
         }
     }
@@ -790,7 +790,7 @@ class MobileUserApiController extends BaseController
             }
             $messageId = $this->sendMessageData($userId, $validated);
             echo json_encode(['success' => true, 'message_id' => $messageId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Send Message API error');
         }
     }
@@ -808,7 +808,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE messages SET read_at = NOW() WHERE sender_id = ? AND receiver_id = ? AND read_at IS NULL");
             $stmt->execute([$otherUserId, $userId]);
             echo json_encode(['success' => true, 'message' => 'Messages marked as read']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Mark Messages Read API error');
         }
     }
@@ -825,7 +825,7 @@ class MobileUserApiController extends BaseController
         try {
             $count = $this->getUnreadCountData($userId);
             echo json_encode(['success' => true, 'count' => $count]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Unread Count API error');
         }
     }
@@ -854,7 +854,7 @@ class MobileUserApiController extends BaseController
             $notifService = new \App\Services\NotificationService($this->db);
             $notifId = $notifService->notify($validated['title'], $validated['message'], $userId, $validated['type'] ?? 'system');
             echo json_encode(['success' => true, 'notification_id' => $notifId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Create Notification API error');
         }
     }
@@ -872,7 +872,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ? AND id = ?");
             $stmt->execute([$userId, (int)$id]);
             echo json_encode(['success' => true, 'message' => 'Notification marked as read']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Mark Notification Read API error');
         }
     }
@@ -890,7 +890,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare("DELETE FROM notifications WHERE user_id = ? AND id = ?");
             $stmt->execute([$userId, (int)$id]);
             echo json_encode(['success' => true, 'message' => 'Notification deleted']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Delete Notification API error');
         }
     }
@@ -907,7 +907,7 @@ class MobileUserApiController extends BaseController
         try {
             $accounts = $this->getUserBankAccountsData($userId);
             echo json_encode(['success' => true, 'data' => $accounts]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Bank Accounts API error');
         }
     }
@@ -934,7 +934,7 @@ class MobileUserApiController extends BaseController
             }
             $accountId = $this->saveUserBankAccountData($userId, $validated);
             echo json_encode(['success' => true, 'message' => 'Bank account saved', 'account_id' => $accountId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Save Bank Account API error');
         }
     }
@@ -958,7 +958,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare("DELETE FROM user_bank_accounts WHERE user_id = ? AND id = ?");
             $stmt->execute([$userId, $accountId]);
             echo json_encode(['success' => true, 'message' => 'Bank account deleted']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Delete Bank Account API error');
         }
     }
@@ -975,7 +975,7 @@ class MobileUserApiController extends BaseController
         try {
             $addresses = $this->getUserAddressesData($userId);
             echo json_encode(['success' => true, 'data' => $addresses]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'User Addresses API error');
         }
     }
@@ -1003,7 +1003,7 @@ class MobileUserApiController extends BaseController
             }
             $addressId = $this->saveUserAddressData($userId, $validated);
             echo json_encode(['success' => true, 'message' => 'Address saved', 'address_id' => $addressId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Save Address API error');
         }
     }
@@ -1027,7 +1027,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare("DELETE FROM user_addresses WHERE user_id = ? AND id = ?");
             $stmt->execute([$userId, $addressId]);
             echo json_encode(['success' => true, 'message' => 'Address deleted']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Delete Address API error');
         }
     }
@@ -1086,7 +1086,7 @@ class MobileUserApiController extends BaseController
 
             $this->db->commit();
             return $emi['id'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }
@@ -1117,7 +1117,7 @@ class MobileUserApiController extends BaseController
     private function getNotificationsData($userId)
     {
         // NOTE: notifications has no `data` column; template_data (TEXT, JSON payload) is its equivalent.
-        $stmt = $this->db->prepare("SELECT id, title, message, type, template_data AS data, action_url, is_read, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
+        $stmt = $this->db->prepare("SELECT id, title, message, type, is_read, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -1129,14 +1129,14 @@ class MobileUserApiController extends BaseController
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    private function createTicket($userId, $data)
+    private function insertSupportTicket($userId, $data)
     {
         $stmt = $this->db->prepare("INSERT INTO support_tickets (user_id, subject, message, category, status, created_at, updated_at) VALUES (?, ?, ?, ?, 'open', NOW(), NOW())");
         $stmt->execute([$userId, $data['subject'], $data['message'], $data['category'] ?? 'general']);
         return $this->db->lastInsertId();
     }
 
-    private function getTicketDetail($userId, $id)
+    private function getSupportTicketDetailRecord($userId, $id)
     {
         $stmt = $this->db->prepare("SELECT t.*, u.name as user_name FROM support_tickets t JOIN users u ON t.user_id = u.id WHERE t.id = ? AND t.user_id = ?");
         $stmt->execute([$id, $userId]);
@@ -1226,7 +1226,7 @@ class MobileUserApiController extends BaseController
             $prefs = json_encode($input);
             $this->db->prepare("UPDATE users SET notification_preferences = ? WHERE id = ?")->execute([$prefs, $userId]);
             echo json_encode(['success'=>true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>true]);
         }
     }
@@ -1242,7 +1242,7 @@ class MobileUserApiController extends BaseController
             $prefs = json_encode($input);
             $this->db->prepare("UPDATE users SET preferences = ? WHERE id = ?")->execute([$prefs, $userId]);
             echo json_encode(['success'=>true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>true]);
         }
     }
@@ -1265,7 +1265,7 @@ class MobileUserApiController extends BaseController
             $this->db->prepare("UPDATE users SET status = 'inactive', name = CONCAT(name, '_deleted_', id), email = CONCAT('deleted_', id, '@deleted.com'), updated_at = NOW() WHERE id = ?")->execute([$userId]);
             try { $this->db->prepare("DELETE FROM api_tokens WHERE user_id = ?")->execute([$userId]); } catch (\Throwable $t) { error_log("MobileUserApiController::" . __FUNCTION__ . " query failed: " . $t->getMessage()); }
             echo json_encode(['success'=>true,'message'=>'Account deleted']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -1292,7 +1292,7 @@ class MobileUserApiController extends BaseController
                 $stats['completed']++;
             }
             echo json_encode(['success' => true, 'data' => ['payments' => $payments, 'stats' => $stats]]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => true, 'data' => ['payments' => [], 'stats' => ['total_paid' => 0, 'total_count' => 0, 'completed' => 0, 'pending' => 0, 'failed' => 0]]]);
         }
     }
@@ -1339,7 +1339,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->query("SELECT id, title, department, location, employment_type, experience_required, salary_range, vacancies, description, requirements, created_at FROM careers WHERE status = 'open' ORDER BY created_at DESC");
             $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'data' => $jobs]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => true, 'data' => []]);
         }
     }
@@ -1352,7 +1352,7 @@ class MobileUserApiController extends BaseController
             $job = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$job) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Not found']); return; }
             echo json_encode(['success' => true, 'data' => $job]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -1377,7 +1377,7 @@ class MobileUserApiController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO career_applications (career_id, full_name, email, phone, cover_letter, experience_years, current_company, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'new', ?, NOW())");
             $stmt->execute([$jobId, $name, $email, $phone, $coverLetter, $experience, $company, $tid]);
             echo json_encode(['success' => true, 'message' => 'Application submitted successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -1391,9 +1391,9 @@ class MobileUserApiController extends BaseController
             try {
                 $stmt2 = $this->db->query("SELECT id, name, position, photo, bio, experience, expertise, linkedin, facebook_url, instagram_url, category, group_name, sort_order FROM team_members WHERE status = 'active' ORDER BY sort_order ASC, id ASC LIMIT 10");
                 $team = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-            } catch (\Exception $e) { error_log("MobileUserApiController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log("MobileUserApiController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
             echo json_encode(['success' => true, 'data' => ['content' => $content, 'team' => $team, 'stats' => ['projects' => 4, 'plots' => 5000, 'families' => 500, 'colonies' => 4]]]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => true, 'data' => ['content' => [], 'team' => [], 'stats' => ['projects' => 4, 'plots' => 5000, 'families' => 500, 'colonies' => 4]]]);
         }
     }
@@ -1406,7 +1406,7 @@ class MobileUserApiController extends BaseController
             $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
             $loans = $svc->listLoans(['customer_id' => $userId]);
             echo json_encode(['success'=>true, 'data' => $loans]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -1423,7 +1423,7 @@ class MobileUserApiController extends BaseController
             $guarantors = $svc->getGuarantors((int)$id);
             $documents = $svc->getDocuments((int)$id);
             echo json_encode(['success'=>true, 'data'=>['loan'=>$loan,'installments'=>$installments,'guarantors'=>$guarantors,'documents'=>$documents]]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -1436,7 +1436,7 @@ class MobileUserApiController extends BaseController
             $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
             $installments = $svc->getInstallments((int)$id);
             echo json_encode(['success'=>true, 'data'=>$installments]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -1459,7 +1459,7 @@ class MobileUserApiController extends BaseController
             $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
             $result = $svc->createLoan($input);
             echo json_encode($result);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -1471,7 +1471,7 @@ class MobileUserApiController extends BaseController
             $offers = $svc->getOffers();
             $offers = array_map(function($o) { return ['id'=>$o['id'],'name'=>$o['name'],'description'=>$o['description'],'offer_type'=>$o['offer_type'],'interest_free_months'=>$o['interest_free_months'],'max_tenure_months'=>$o['max_tenure_months'],'max_amount'=>$o['max_amount']]; }, $offers);
             echo json_encode(['success'=>true, 'data'=>$offers]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -1501,7 +1501,7 @@ class MobileUserApiController extends BaseController
             $svc = new \App\Services\Loan\CompanyLoanService($this->db->getConnection());
             $result = $svc->calculateEarlySettlement((int)$id);
             echo json_encode($result);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success'=>false, 'error'=>$e->getMessage()]);
         }
     }
@@ -2629,7 +2629,7 @@ class MobileUserApiController extends BaseController
                 $requests = $service->getPendingOvertime();
             } else {
                 // Service works on employees.id, not users.id — resolve first
-                $emp = $this->db->fetch("SELECT id FROM employees WHERE user_id=? LIMIT 1", [$userId]);
+                $emp = $this->db->fetch("SELECT id FROM employee_profiles WHERE user_id=? LIMIT 1", [$userId]);
                 $requests = $emp ? $service->getEmployeeOvertime((int)$emp['id']) : [];
             }
             echo json_encode(['success' => true, 'data' => $requests]);
@@ -2646,7 +2646,7 @@ class MobileUserApiController extends BaseController
             if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Auth required']); return; }
 
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-            $emp = $this->db->fetch("SELECT id FROM employees WHERE user_id=? LIMIT 1", [$userId]);
+            $emp = $this->db->fetch("SELECT id FROM employee_profiles WHERE user_id=? LIMIT 1", [$userId]);
             if (!$emp) { http_response_code(404); echo json_encode(['success'=>false,'error'=>'Employee record not found']); return; }
 
             $service = new \App\Services\ShiftRosterService();
@@ -2666,7 +2666,7 @@ class MobileUserApiController extends BaseController
         $this->setCorsHeaders();
         try {
             $approverId = (int)($GLOBALS['api_user_id'] ?? 0);
-            // Approval is an HR/admin action: employees must not self-approve via API.
+            // Approval is an HR/admin action: employee_profiles must not self-approve via API.
             $approver = $this->db->fetch("SELECT role FROM users WHERE id=? LIMIT 1", [$approverId]);
             if (!$approver || !in_array($approver['role'] ?? '', ['admin', 'super_admin', 'manager'], true)) {
                 http_response_code(403);
@@ -2751,6 +2751,56 @@ class MobileUserApiController extends BaseController
         } catch (\Throwable $e) {
             error_log('userInvestments error: ' . $e->getMessage());
             echo json_encode(['success' => false, 'error' => 'Failed to fetch investments']);
+        }
+    }
+
+    /**
+     * GET /api/v2/mobile/user/ai-suggestions
+     * AI property recommendations shaped for mobile suggestions page:
+     * each item = {type, title, description, priority, action_text, action_url, image, created_at}
+     */
+    public function userAiSuggestions() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+                return;
+            }
+
+            $recService = new \App\Services\PropertyRecommendationService();
+            $result = $recService->getRecommendations([
+                'user_id' => $userId,
+                'limit' => 10,
+                'exclude_booked' => true,
+            ]);
+
+            $recs = [];
+            if (!empty($result['recommendations']) && is_array($result['recommendations'])) {
+                foreach ($result['recommendations'] as $r) {
+                    $name = (string)($r['name'] ?? $r['plot_number'] ?? 'Plot');
+                    $colony = (string)($r['colony_name'] ?? $r['city'] ?? '');
+                    $price = $r['total_price'] ?? $r['price'] ?? null;
+                    $plotId = (int)($r['id'] ?? 0);
+                    $recs[] = [
+                        'type' => 'property',
+                        'title' => $name . ' — ' . $colony,
+                        'description' => $r['reason'] ?? 'Recommended based on your preferences',
+                        'priority' => (($r['confidence'] ?? 0) >= 0.7) ? 'high' : 'medium',
+                        'action_text' => 'View Property',
+                        'action_url' => $plotId > 0 ? '/properties/' . $plotId : '/properties',
+                        'image' => $r['image_url'] ?? $r['image_path'] ?? null,
+                        'price' => $price,
+                        'match_score' => $r['confidence'] ?? null,
+                    ];
+                }
+            }
+
+            echo json_encode(['success' => true, 'data' => $recs]);
+        } catch (\Throwable $e) {
+            error_log('userAiSuggestions error: ' . $e->getMessage());
+            echo json_encode(['success' => false, 'error' => 'Failed to fetch suggestions']);
         }
     }
 
@@ -3137,5 +3187,711 @@ class MobileUserApiController extends BaseController
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Payment verification failed']);
         }
+    }
+
+    // ============================================================
+    // EMPLOYEE SELF-SERVICE: Encashment
+    // ============================================================
+    public function getEncashment() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        $userId = $this->getCurrentUserId();
+        $empId = $this->getEmployeeId($userId);
+        if (!$empId) {
+            echo json_encode(['success' => false, 'error' => 'Employee not found']);
+            return;
+        }
+        try {
+            $service = new \App\Services\LeaveEncashmentService();
+            $policy = $service->getEncashmentPolicy($empId);
+            echo json_encode(['success' => true, 'data' => $policy]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Encashment Policy');
+        }
+    }
+
+    public function applyEncashment() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->jsonError('Invalid request', 400);
+            return;
+        }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+            $leaveTypeId = (int)($input['leave_type_id'] ?? 0);
+            $days = (int)($input['days'] ?? 0);
+            if (!$leaveTypeId || $days <= 0) {
+                $this->jsonError('Leave type and days required', 400);
+                return;
+            }
+            $service = new \App\Services\LeaveEncashmentService();
+            $result = $service->processEncashment($empId, $leaveTypeId, $days);
+            $this->jsonResponse($result);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Apply Encashment');
+        }
+    }
+
+    // ============================================================
+    // MISSING ACTIONS (routes existed, methods did not)
+    // ============================================================
+
+    /**
+     * Cancel an investment before it matures.
+     * POST /api/v2/mobile/user/investment/cancel
+     */
+    public function investmentCancel()
+    {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
+            if ($id <= 0) {
+                $this->jsonError('Investment id is required');
+                return;
+            }
+
+            $db = \App\Core\Database\Database::getInstance();
+            $row = $db->fetchOne(
+                "SELECT * FROM investments WHERE id = ? AND user_id = ? LIMIT 1",
+                [$id, $userId]
+            );
+
+            if (!$row) {
+                $this->jsonError('Investment not found', 404);
+                return;
+            }
+            if (in_array((string)($row['status'] ?? ''), ['cancelled', 'matured', 'withdrawn'], true)) {
+                $this->jsonError('Investment cannot be cancelled in its current state');
+                return;
+            }
+
+            // Refund the principal into the wallet (with a ledger row so the
+            // money movement is auditable) if the user has an active wallet.
+            $refunded = 0.0;
+            try {
+                $wallet = $db->fetchOne(
+                    "SELECT id, balance FROM user_wallets WHERE user_id = ? AND is_active = 1 LIMIT 1",
+                    [$userId]
+                );
+                if ($wallet) {
+                    $refunded = (float)($row['principal_amount'] ?? $row['current_value'] ?? 0);
+                    $balanceBefore = (float)($wallet['balance'] ?? 0);
+                    $balanceAfter = $balanceBefore + $refunded;
+
+                    $db->execute(
+                        "UPDATE user_wallets
+                         SET balance = ?, total_credited = total_credited + ?, updated_at = NOW()
+                         WHERE id = ?",
+                        [$balanceAfter, $refunded, (int)$wallet['id']]
+                    );
+
+                    $db->insert('wallet_transactions', [
+                        'tenant_id'            => (int)($row['tenant_id'] ?? \App\Core\Middleware\TenantContext::getId() ?: 1),
+                        'user_id'              => $userId,
+                        'transaction_type'     => 'credit',
+                        'transaction_category' => 'adjustment',
+                        'amount'               => $refunded,
+                        'balance_before'       => $balanceBefore,
+                        'balance_after'        => $balanceAfter,
+                        'description'          => 'Investment #' . $id . ' cancelled - principal refunded',
+                        'reference_id'         => $id,
+                        'reference_type'       => 'investment',
+                        'status'               => 'completed',
+                        'created_at'           => date('Y-m-d H:i:s'),
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                error_log('[MobileUserApiController::investmentCancel] wallet refund: ' . $e->getMessage());
+            }
+
+            $db->execute(
+                "UPDATE investments SET status = 'cancelled', updated_at = NOW() WHERE id = ?",
+                [$id]
+            );
+
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Investment cancelled',
+                'data'    => ['id' => $id, 'refunded' => $refunded],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Cancel Investment');
+        }
+    }
+
+    /**
+     * Detail of a single overtime request.
+     * GET /api/v2/mobile/self-service/overtime/{id}
+     */
+    public function getOvertimeDetail($id = null)
+    {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            $empId = $this->getEmployeeId($userId);
+            if (!$empId) {
+                $this->jsonError('Employee not found', 404);
+                return;
+            }
+
+            $requestId = (int)($id ?? ($_GET['id'] ?? 0));
+            if ($requestId <= 0) {
+                $this->jsonError('Overtime request id is required');
+                return;
+            }
+
+            $service = new \App\Services\OvertimeService();
+            $requests = $service->getEmployeeRequests($empId);
+            $match = null;
+            foreach ($requests as $r) {
+                if ((int)($r['id'] ?? 0) === $requestId) {
+                    $match = $r;
+                    break;
+                }
+            }
+
+            if (!$match) {
+                $this->jsonError('Overtime request not found', 404);
+                return;
+            }
+
+            $this->jsonResponse(['success' => true, 'data' => $match]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Overtime Detail');
+        }
+    }
+
+    /**
+     * Gratuity liability report (all eligible employees).
+     * GET /api/v2/mobile/gratuity/report
+     */
+    public function gratuityReport()
+    {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $service = new \App\Services\GratuityService();
+            $report = $service->getLiabilityReport();
+            $this->jsonResponse(['success' => true, 'data' => $report]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Gratuity Report');
+        }
+    }
+
+    // ============================================================
+    // Overtime
+    // ============================================================
+    public function getOvertime() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        $userId = $GLOBALS['api_user_id'] ?? 0;
+        $empId = $this->getEmployeeId($userId);
+        if (!$empId) { $this->jsonError('Employee not found', 404); return; }
+        try {
+            $service = new \App\Services\OvertimeService();
+            $requests = $service->getEmployeeRequests($empId);
+            $policy = $service->getEmployeePolicy($empId);
+            $this->jsonResponse(['success' => true, 'data' => ['requests' => $requests, 'policy' => $policy]]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Overtime');
+        }
+    }
+
+    
+
+    
+
+    // ============================================================
+    // Helpdesk / Tickets
+    // ============================================================
+    public function getHelpdeskTickets() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $service = new \App\Services\HelpdeskService();
+            $tickets = $service->getEmployeeTickets($empId);
+            $this->jsonResponse(['success' => true, 'data' => $tickets]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Helpdesk Tickets');
+        }
+    }
+
+    public function createTicket() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            if (!$empId) { $this->jsonError('Employee not found', 404); return; }
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $category = $input['category'] ?? 'other';
+            $subject = trim($input['subject'] ?? '');
+            $description = trim($input['description'] ?? '');
+            $priority = $input['priority'] ?? 'medium';
+            $attachment = $input['attachment'] ?? null;
+            if (empty($subject) || empty($description)) {
+                $this->jsonError('Subject and description required', 400);
+                return;
+            }
+            $service = new \App\Services\HelpdeskService();
+            $ticket = $service->createTicket($empId, [
+                'category' => $category,
+                'subject' => $subject,
+                'description' => $description,
+                'priority' => $priority,
+                'attachment' => $attachment,
+            ]);
+            $this->jsonResponse(['success' => true, 'message' => 'Ticket created', 'ticket' => $ticket]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Create Ticket');
+        }
+    }
+
+    public function getTicketDetail($id) {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $service = new \App\Services\HelpdeskService();
+            $ticket = $service->getTicket((int)$id);
+            if (!$ticket || $ticket['employee_id'] != $this->getEmployeeId($GLOBALS['api_user_id'] ?? 0)) {
+                $this->jsonError('Ticket not found', 404);
+                return;
+            }
+            $comments = $this->db->fetchAll("SELECT ht.*, u.name as author_name FROM helpdesk_ticket_comments ht LEFT JOIN users u ON ht.employee_id = u.id WHERE ht.ticket_id = ? ORDER BY ht.created_at ASC", [$id]);
+            $this->jsonResponse(['success' => true, 'data' => ['ticket' => $ticket, 'comments' => $comments]]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Ticket Detail');
+        }
+    }
+
+    public function addTicketReply() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $ticketId = (int)($input['ticket_id'] ?? 0);
+            $message = trim($input['message'] ?? '');
+            if (!$ticketId || !$message) { $this->jsonError('Ticket ID and message required', 400); return; }
+            $service = new \App\Services\HelpdeskService();
+            $result = $service->addComment((int)$input['ticket_id'], $this->getEmployeeId($GLOBALS['api_user_id'] ?? 0), $input['message']);
+            $this->jsonResponse(['success' => true, 'message' => 'Reply added', 'comment' => $result]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Add Ticket Reply');
+        }
+    }
+
+    public function closeTicket() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $ticketId = (int)($input['ticket_id'] ?? 0);
+            if (!$ticketId) { $this->jsonError('Ticket ID required', 400); return; }
+            $service = new \App\Services\HelpdeskService();
+            $result = $service->closeTicket($empId, (int)$input['ticket_id']);
+            $this->jsonResponse(['success' => true, 'message' => 'Ticket closed']);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Close Ticket');
+        }
+    }
+
+    // ============================================================
+    // Training
+    // ============================================================
+    public function getTrainingCourses() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $service = new \App\Services\TrainingService();
+            $courses = $service->getCourses();
+            $this->jsonResponse(['success' => true, 'data' => $courses]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Training Courses');
+        }
+    }
+
+    public function getTrainingDetail($id) {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $service = new \App\Services\TrainingService();
+            $course = $service->getCourse((int)$id);
+            if (!$course) { $this->jsonError('Course not found', 404); return; }
+            $this->jsonResponse(['success' => true, 'data' => $course]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Training Detail');
+        }
+    }
+
+    public function enrollInTraining() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $courseId = (int)($input['course_id'] ?? 0);
+            if (!$courseId) { $this->jsonError('Course ID required', 400); return; }
+            $service = new \App\Services\TrainingService();
+            $assignmentId = $service->assignCourse($this->getEmployeeId($userId), (int)$input['course_id']);
+            $this->jsonResponse(['success' => true, 'message' => 'Enrolled successfully', 'assignment_id' => $assignmentId]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Enroll in Training');
+        }
+    }
+
+    public function getTrainingProgress() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $service = new \App\Services\TrainingService();
+            $progress = $service->getEmployeeAssignments($empId);
+            $this->jsonResponse(['success' => true, 'data' => $progress]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Training Progress');
+        }
+    }
+
+    public function completeTrainingModule() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $contentId = (int)($input['content_id'] ?? 0);
+            if (!$contentId) { $this->jsonError('Content ID required', 400); return; }
+            $service = new \App\Services\TrainingService();
+            $result = $service->markContentComplete($this->getEmployeeId($GLOBALS['api_user_id'] ?? 0), (int)$input['content_id']);
+            $this->jsonResponse($result);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Complete Training Module');
+        }
+    }
+
+    // ============================================================
+    // Assets
+    // ============================================================
+    public function getAssets() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $service = new \App\Services\EmployeeAssetService();
+            $assets = $service->getEmployeeAssets($empId);
+            $this->jsonResponse(['success' => true, 'data' => $assets]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Assets');
+        }
+    }
+
+    public function reportAssetIssue() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $assetId = (int)($input['asset_id'] ?? 0);
+            $issue = trim($input['issue'] ?? '');
+            if (!$assetId || !$issue) { $this->jsonError('Asset ID and issue required', 400); return; }
+            $service = new \App\Services\EmployeeAssetService();
+            $result = $service->reportIssue($empId, (int)$input['asset_id'], $input['issue']);
+            $this->jsonResponse(['success' => true, 'message' => 'Issue reported']);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Report Asset Issue');
+        }
+    }
+
+    // ============================================================
+    // Announcements
+    // ============================================================
+    public function getAnnouncements() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $service = new \App\Services\AnnouncementService();
+            $announcements = $service->getEmployeeAnnouncements($empId);
+            $this->jsonResponse(['success' => true, 'data' => $announcements]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Announcements');
+        }
+    }
+
+    public function markAnnouncementRead() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $id = (int)($input['id'] ?? 0);
+            if (!$id) { $this->jsonError('Announcement ID required', 400); return; }
+            $service = new \App\Services\AnnouncementService();
+            $result = $service->markAsRead((int)$input['id'], $empId);
+            $this->jsonResponse(['success' => true, 'message' => 'Marked as read']);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Mark Announcement Read');
+        }
+    }
+
+    // ============================================================
+    // Advances / Salary Advances
+    // ============================================================
+    public function getAdvances() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $service = new \App\Services\SalaryAdvanceService();
+            $advances = $service->getEmployeeAdvances($empId);
+            $pending = $service->getPendingRepayments($empId);
+            $this->jsonResponse(['success' => true, 'data' => ['advances' => $advances, 'pending_repayments' => $pending]]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Advances');
+        }
+    }
+
+    public function applyAdvance() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $service = new \App\Services\SalaryAdvanceService();
+            $result = $service->requestAdvance($empId, $input);
+            $this->jsonResponse($result);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Apply Advance');
+        }
+    }
+
+    public function getAdvanceDetail($id) {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $service = new \App\Services\SalaryAdvanceService();
+            $advance = $service->getAdvance((int)$id);
+            if (!$advance || $advance['employee_id'] != $empId) {
+                $this->jsonError('Advance not found', 404);
+                return;
+            }
+            $this->jsonResponse(['success' => true, 'data' => $advance]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Advance Detail');
+        }
+    }
+
+    // ============================================================
+    // Grievances
+    // ============================================================
+    public function getGrievances() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $service = new \App\Services\EmployeeGrievanceService();
+            $grievances = $service->getEmployeeGrievances($empId);
+            $this->jsonResponse(['success' => true, 'data' => $grievances]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Grievances');
+        }
+    }
+
+    public function createGrievance() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $service = new \App\Services\EmployeeGrievanceService();
+            $result = $service->createGrievance($empId, $input);
+            $this->jsonResponse($result);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Create Grievance');
+        }
+    }
+
+    public function getGrievanceDetail($id) {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $service = new \App\Services\EmployeeGrievanceService();
+            $grievance = $service->getGrievance((int)$id, $empId);
+            if (!$grievance) { $this->jsonError('Grievance not found', 404); return; }
+            $this->jsonResponse(['success' => true, 'data' => $grievance]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Grievance Detail');
+        }
+    }
+
+    public function addGrievanceComment() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $grievanceId = (int)($input['grievance_id'] ?? 0);
+            $comment = trim($input['comment'] ?? '');
+            if (!$grievanceId || !$comment) { $this->jsonError('Grievance ID and comment required', 400); return; }
+            $service = new \App\Services\EmployeeGrievanceService();
+            $result = $service->addComment((int)$input['grievance_id'], $this->getEmployeeId($GLOBALS['api_user_id'] ?? 0), $input['comment']);
+            $this->jsonResponse(['success' => true, 'message' => 'Comment added', 'comment' => $result]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Add Grievance Comment');
+        }
+    }
+
+    public function closeGrievance() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $id = (int)($input['id'] ?? 0);
+            $rating = (int)($input['rating'] ?? 0);
+            $feedback = trim($input['feedback'] ?? '');
+            if (!$id || $rating < 1 || $rating > 5) { $this->jsonError('Grievance ID and rating (1-5) required', 400); return; }
+            $service = new \App\Services\EmployeeGrievanceService();
+            $result = $service->closeWithRating($this->getEmployeeId($GLOBALS['api_user_id'] ?? 0), (int)$input['id'], (int)$input['rating'], $input['feedback']);
+            $this->jsonResponse($result);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Close Grievance');
+        }
+    }
+
+    // ============================================================
+    // Shift Swaps
+    // ============================================================
+    public function getShiftSwaps() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $service = new \App\Services\ShiftSwapService();
+            $swaps = $service->getEmployeeSwaps($empId);
+            $this->jsonResponse(['success' => true, 'data' => $swaps]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Shift Swaps');
+        }
+    }
+
+    public function requestShiftSwap() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $userId = $GLOBALS['api_user_id'] ?? 0;
+            $empId = $this->getEmployeeId($userId);
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $service = new \App\Services\ShiftSwapService();
+            $result = $service->requestSwap($empId, $input);
+            $this->jsonResponse($result);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Request Shift Swap');
+        }
+    }
+
+    public function getShiftSwapDetail($id) {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        try {
+            $service = new \App\Services\ShiftSwapService();
+            $swap = $service->getSwap((int)$id);
+            if (!$swap) { $this->jsonError('Swap not found', 404); return; }
+            $this->jsonResponse(['success' => true, 'data' => $swap]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Get Shift Swap Detail');
+        }
+    }
+
+    public function respondShiftSwap() {
+        $this->setCorsHeaders();
+        $this->requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->jsonError('Invalid request', 400); return; }
+        try {
+            $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $id = (int)($input['id'] ?? 0);
+            $action = $input['action'] ?? '';
+            if (!$id || !in_array($action, ['accept', 'reject'])) { $this->jsonError('Valid ID and action required', 400); return; }
+            $service = new \App\Services\ShiftSwapService();
+            $result = $service->respondToSwap((int)$input['id'], $input['action']);
+            $this->jsonResponse(['success' => true, 'message' => 'Response recorded']);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Respond Shift Swap');
+        }
+    }
+
+    // ============================================================
+    // Helper Methods
+    // ============================================================
+    protected function requireAuth() {
+        $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+        if (!$userId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Authentication required']);
+            exit;
+        }
+    }
+
+    protected function getCurrentUserId(): int {
+        return (int)($GLOBALS['api_user_id'] ?? 0);
+    }
+
+    protected function getEmployeeId(int $userId): ?int {
+        if (!$userId) return null;
+        $stmt = $this->db->prepare("SELECT id FROM employee_profiles WHERE user_id = ? LIMIT 1");
+        $stmt->execute([$userId]);
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result ? (int)$result['id'] : null;
+    }
+
+    protected function jsonError(string $message, int $status = 400): void {
+        http_response_code($status);
+        echo json_encode(['success' => false, 'error' => $message]);
+        exit;
+    }
+
+    public function jsonResponse($data, int $status = 200): void {
+        http_response_code($status);
+        echo json_encode($data);
     }
 }
