@@ -27,7 +27,7 @@ class MobileMLMApiController extends BaseController
             }
             $summary = $this->getMlmUserSummary($userId);
             echo json_encode(['success' => true, 'data' => $summary]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'MLM Summary API error');
         }
     }
@@ -44,7 +44,7 @@ class MobileMLMApiController extends BaseController
             }
             $payouts = $this->getMlmPayoutHistory($userId);
             echo json_encode(['success' => true, 'data' => $payouts]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'MLM Payouts API error');
         }
     }
@@ -61,7 +61,7 @@ class MobileMLMApiController extends BaseController
             }
             $incentives = $this->getMlmIncentiveDashboard($userId);
             echo json_encode(['success' => true, 'data' => $incentives]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'MLM Incentives API error');
         }
     }
@@ -72,7 +72,7 @@ class MobileMLMApiController extends BaseController
         try {
             $pending = $this->getPendingMlmPayouts();
             echo json_encode(['success' => true, 'data' => $pending]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Pending Payouts API error');
         }
     }
@@ -123,7 +123,7 @@ class MobileMLMApiController extends BaseController
             $summary['paid_payouts'] = (float)$stmt->fetchColumn();
 
             return $summary;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileMLMApiController] getMlmUserSummary error: " . $e->getMessage());
             return [
                 'user_id' => $userId,
@@ -149,7 +149,7 @@ class MobileMLMApiController extends BaseController
             $stmt = $this->db->prepare("SELECT id, amount, level, payment_method, status, processed_at, created_at FROM mlm_payouts WHERE user_id = ? ORDER BY created_at DESC LIMIT 50");
             $stmt->execute([$userId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileMLMApiController] getMlmPayoutHistory error: " . $e->getMessage());
             return [];
         }
@@ -178,7 +178,7 @@ class MobileMLMApiController extends BaseController
             $incentives['pending_incentives'] = (float)$stmt->fetchColumn();
 
             return $incentives;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileMLMApiController] getMlmIncentiveDashboard error: " . $e->getMessage());
             return [
                 'total_incentives' => 0,
@@ -195,7 +195,7 @@ class MobileMLMApiController extends BaseController
         try {
             $result = $this->processMlmPayouts();
             echo json_encode(['success' => true, 'message' => 'Payouts processed successfully', 'processed_count' => $result]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Process Payouts API error');
         }
     }
@@ -218,7 +218,7 @@ class MobileMLMApiController extends BaseController
                 'total_referrals' => count($members),
                 'members' => $members,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileMLMApiController] getMlmNetworkTree error: " . $e->getMessage());
             return ['user_id' => $userId, 'total_referrals' => 0, 'members' => []];
         }
@@ -251,7 +251,7 @@ class MobileMLMApiController extends BaseController
             $breakdown['recent_payouts'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $breakdown;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileMLMApiController] getMlmBusinessBreakdown error: " . $e->getMessage());
             return ['total_payouts' => 0, 'paid_amount' => 0, 'pending_amount' => 0, 'by_status' => [], 'recent_payouts' => []];
         }
@@ -262,7 +262,7 @@ class MobileMLMApiController extends BaseController
         try {
             $stmt = $this->db->query("SELECT id, gross_amount, status, payment_mode, created_at FROM mlm_payouts ORDER BY created_at DESC LIMIT 50");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileMLMApiController] getGlobalPayoutHistory error: " . $e->getMessage());
             return [];
         }
@@ -274,7 +274,7 @@ class MobileMLMApiController extends BaseController
         try {
             $history = $this->getGlobalPayoutHistory();
             echo json_encode(['success' => true, 'data' => $history]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Payout History API error');
         }
     }
@@ -291,7 +291,7 @@ class MobileMLMApiController extends BaseController
             }
             $tree = $this->getMlmNetworkTree($userId);
             echo json_encode(['success' => true, 'data' => $tree]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Genealogy API error');
         }
     }
@@ -308,7 +308,7 @@ class MobileMLMApiController extends BaseController
             }
             $breakdown = $this->getMlmBusinessBreakdown($userId);
             echo json_encode(['success' => true, 'data' => $breakdown]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Business Breakdown API error');
         }
     }
@@ -364,7 +364,7 @@ class MobileMLMApiController extends BaseController
                     'pagination' => ['page' => $page, 'limit' => $limit, 'total' => $total, 'pages' => (int)ceil($total / $limit)]
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileMLMApiController] exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Internal server error']);
@@ -393,7 +393,7 @@ class MobileMLMApiController extends BaseController
 
             $db->commit();
             return count($payouts);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $db->rollBack();
             throw $e;
         }
@@ -423,7 +423,7 @@ class MobileMLMApiController extends BaseController
 
             $result = $this->trackReferralData($userId, $referralCode, $source);
             echo json_encode(['success' => true, 'message' => 'Referral tracked', 'data' => $result]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Track Referral API error');
         }
     }
@@ -444,7 +444,7 @@ class MobileMLMApiController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO attendance (user_id, punch_in_time, punch_in_location, punch_in_ip, date, created_at) VALUES (?, NOW(), ?, ?, CURDATE(), NOW())");
             $stmt->execute([$userId, $location, $ip]);
             echo json_encode(['success' => true, 'message' => 'Punched in successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Punch In API error');
         }
     }
@@ -472,7 +472,7 @@ class MobileMLMApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE attendance SET punch_out_time = NOW(), updated_at = NOW() WHERE id = ?");
             $stmt->execute([$record['id']]);
             echo json_encode(['success' => true, 'message' => 'Punched out successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Punch Out API error');
         }
     }
@@ -491,7 +491,7 @@ class MobileMLMApiController extends BaseController
             $stmt->execute([$userId]);
             $status = $stmt->fetch(PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'data' => $status]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Attendance Status API error');
         }
     }
@@ -593,7 +593,7 @@ class MobileMLMApiController extends BaseController
             }
 
             echo json_encode(['success' => true, 'data' => $progress]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Internal server error']);
@@ -628,7 +628,7 @@ class MobileMLMApiController extends BaseController
             $this->db->query($sql, [$userId, $amount, $remarks, (int)$this->tenantId()]);
 
             echo json_encode(['success' => true, 'message' => 'Payout request submitted successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -675,7 +675,7 @@ class MobileMLMApiController extends BaseController
         }
         try {
             // Resolve associate row for this user
-            $stmt = $this->db->prepare("SELECT id FROM associates WHERE user_id = ? LIMIT 1");
+            $stmt = $this->db->prepare("SELECT id FROM associate_profiles WHERE user_id = ? LIMIT 1");
             $stmt->execute([$userId]);
             $assoc = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$assoc) {
@@ -771,7 +771,7 @@ class MobileMLMApiController extends BaseController
         $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) { http_response_code(401); echo json_encode(['success'=>false,'error'=>'Unauthorized']); return; }
         try {
-            $service = new \App\Services\MLM\SalaryIncentiveService($this->pdo);
+            $service = new \App\Services\MLM\SalaryIncentiveService($this->db->getConnection());
             $summary = $service->checkSalaryIncentiveEligibility($userId);
             echo json_encode(['success'=>true,'data'=>$summary]);
         } catch (\Throwable $e) {
@@ -783,7 +783,7 @@ class MobileMLMApiController extends BaseController
     {
         $this->setCorsHeaders();
         try {
-            $service = new \App\Services\MLM\SalaryIncentiveService($this->pdo);
+            $service = new \App\Services\MLM\SalaryIncentiveService($this->db->getConnection());
             echo json_encode(['success'=>true,'data'=>$service->getSalaryTiers()]);
         } catch (\Throwable $e) {
             echo json_encode(['success'=>false,'error'=>'Failed to get targets']);

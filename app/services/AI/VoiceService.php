@@ -507,7 +507,7 @@ class VoiceService
                 JOIN drip_campaigns c ON c.id = e.campaign_id
                 WHERE e.status = 'active' AND c.status = 'active' AND e.next_send_at <= NOW()" . ($tid > 1 ? " AND e.tenant_id = ? AND c.tenant_id = ?" : "") . "
                 ORDER BY e.next_send_at ASC LIMIT ?";
-            $stmt = $this->pdo->prepare($sql);
+            $stmt = $this->db->prepare($sql);
             $params = $tid > 1 ? [$tid, $tid, $limit] : [$limit];
             $stmt->execute($params);
             $enrollments = $stmt->fetchAll();
@@ -544,7 +544,7 @@ class VoiceService
                 }
                 $logId = $this->logEnrollment((int)$enr['id'], (int)$enr['campaign_id'], $sent ? 'sent' : 'failed', $sent ? $renderedSubject : $sendErr, (int)$email['id']);
                 if ($sent) {
-                    $this->pdo->prepare("UPDATE drip_email_log SET status = 'sent', sent_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$logId, $tid] : [$logId]);
+                    $this->db->prepare("UPDATE drip_email_log SET status = 'sent', sent_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$logId, $tid] : [$logId]);
                 }
                 $nextEmail = $emails[$nextStep + 1] ?? null;
                 $nextSend = null;
@@ -552,10 +552,10 @@ class VoiceService
                     $delay = ((int)$nextEmail['delay_days'] * 86400) + ((int)$nextEmail['delay_hours'] * 3600);
                     $nextSend = date('Y-m-d H:i:s', time() + $delay);
                 }
-                $this->pdo->prepare("UPDATE drip_enrollments SET current_step = current_step + 1, total_sent = total_sent + ?, last_sent_at = NOW(), next_send_at = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))
+                $this->db->prepare("UPDATE drip_enrollments SET current_step = current_step + 1, total_sent = total_sent + ?, last_sent_at = NOW(), next_send_at = ? WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))
                     ->execute($tid > 1 ? [$sent ? 1 : 0, $nextSend, $enr['id'], $tid] : [$sent ? 1 : 0, $nextSend, $enr['id']]);
                 if ($sent) {
-                    $this->pdo->prepare("UPDATE drip_campaigns SET emails_sent = emails_sent + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$enr['campaign_id'], $tid] : [$enr['campaign_id']]);
+                    $this->db->prepare("UPDATE drip_campaigns SET emails_sent = emails_sent + 1 WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""))->execute($tid > 1 ? [$enr['campaign_id'], $tid] : [$enr['campaign_id']]);
                     $stats['sent']++;
                 } else {
                     $stats['failed']++;
@@ -875,6 +875,90 @@ class VoiceService
                 [$days]
             )['count'] ?? 0
         ];
+    }
+
+    public function getVoiceStats(): array
+    {
+        $base = $this->getStats(30);
+        try {
+            $row = $this->db->fetchOne("SELECT COUNT(*) AS calls, COALESCE(SUM(duration_seconds),0) AS total_duration FROM voice_call_logs") ?: [];
+        } catch (\Throwable $e) {
+            $row = [];
+        }
+        $calls = (int)($row['calls'] ?? 0);
+        $base['calls'] = $calls;
+        $base['notes'] = (int)($this->db->fetchOne("SELECT COUNT(*) AS c FROM lead_notes")['c'] ?? 0);
+        $base['total_calls'] = $calls;
+        $base['total_duration'] = (int)($row['total_duration'] ?? 0);
+        return $base;
+    }
+
+    public function ping(): bool
+    {
+        return true;
+    }
+
+    public function getActiveChannels(): array
+    {
+        return [];
+    }
+
+    public function getSIPPeers(): array
+    {
+        return [];
+    }
+
+    public function saveVoiceNote(int $leadId, int $userId, string $transcript): array
+    {
+        $transcript = trim($transcript);
+        if ($transcript === '') {
+            return ['success' => false, 'message' => 'Transcript is empty'];
+        }
+        try {
+            $id = $this->db->insert('lead_notes', [
+                'tenant_id' => 1,
+                'lead_id' => $leadId ?: null,
+                'note' => 'Voice note: ' . $transcript,
+                'content' => $transcript,
+                'created_by' => $userId ?: null,
+            ]);
+            return ['success' => true, 'message' => 'Voice note saved', 'id' => $id];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'message' => 'Failed to save voice note: ' . $e->getMessage()];
+        }
+    }
+
+    public function processVoiceCommand(string $command, int $userId = 0): array
+    {
+        $cmd = trim($command);
+        if ($cmd === '') {
+            return ['success' => false, 'message' => 'Command is empty'];
+        }
+        $intents = [
+            'next_meeting' => ['next meeting', 'meeting', 'next meeting'],
+            'hot_leads' => ['hot lead', 'hot leads'],
+            'dictate_note' => ['note', 'note jodo'],
+            'start_call' => ['call', 'call karo'],
+        ];
+        $intent = 'unknown';
+        foreach ($intents as $key => $phrases) {
+            foreach ($phrases as $phrase) {
+                if (stripos($cmd, $phrase) !== false) { $intent = $key; break 2; }
+            }
+        }
+        return ['success' => true, 'intent' => $intent, 'command' => $cmd];
+    }
+
+    public function getRecentVoiceActivity(int $userId = 0, int $limit = 20): array
+    {
+        try {
+            return $this->db->fetchAll(
+                "SELECT * FROM ai_call_sessions ORDER BY started_at DESC, id DESC LIMIT ?",
+                [$limit]
+            ) ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function getQueueStats(): array
