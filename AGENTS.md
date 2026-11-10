@@ -50,7 +50,20 @@ User: "do next" — after the mobile round, sweep the WHOLE backend for broken p
 - Targeted probes: employee portal 11/11 → 200 · admin 9/9 → 200 · payroll 5/5 → 200/302 · farmer 2/2 → 200 · mobile API gratuity+investments → 200.
 - `php testing/master_test_runner.php`: **10/10 PASSED** (16.55s)
 - DB zero drift: users 75 · plots 756 · leads 994 · employees 15 · document_esign 0
-- Commits: `499fded7a` (employee portal) · `0823481c9` (PageController + edit_profile view) · `b5856a67f` (api-keys guide) · `1e0f5a4e1` (payroll + mobile API + farmer)
+- Commits: `499fded7a` (employee portal) · `0823481c9` (PageController + edit_profile view) · `b5856a67f` (api-keys guide) · `a209e5d01` (payroll + mobile API + farmer)
+
+### Follow-up round — the last 26 route breaks (never-built API features)
+- **20 × `MobileAdminApiController@colonyPipeline*`** — the mobile colony pipeline (layout → plots → pricing → costs). Tables existed (`colony_layouts`, `colony_development_costs`, `colony_pricing_feasibility`, `colony_price_revisions`, `plots`) but **no controller action did**. Implemented all 20 with money-safe rules: pricing / plan-apply only touch `status='available'` plots (never a booked/sold plot's agreed price), plot delete is a soft delete restricted to available plots, all writes are tenant-scoped.
+- **6 × `ThreeSixtyDegreeApiController`** — the class did not exist at all. Created `app/Http/Controllers/Api/ThreeSixtyDegreeApiController.php`: dashboard + customer / associate / plot / booking / colony lenses, each with its own `safeAll()/safeOne()` so one missing dimension cannot take the whole 360 view down.
+- `plots` schema traps found while writing these: the price columns are `price_per_sqft` / `base_price_per_sqft` / `final_price_per_sqft` (**not** `base_price`), and it is `dimension_label` (**not** `dimensions`).
+
+### Final verification
+- **Static route→method sweep: 96 → 1** (the 1 is a comment in `routes/api.php`, not a route).
+- **All 5267 routes now resolve to a real controller class + method.**
+- Live probes: colony-pipeline 11/11 → 200 (404 only where the colony genuinely has no current layout) · 360-degree 6/6 → 200.
+- `php testing/master_test_runner.php`: **10/10 PASSED**
+- DB zero drift: users 75 · plots 756 · leads 994 · employees 15 · document_esign 0
+- Commits: `499fded7a` (employee portal) · `0823481c9` (PageController + edit_profile view) · `b5856a67f` (api-keys guide) · `a209e5d01` (payroll + mobile API + farmer) · `aaac2437a` (log) · `4e257eb6c` (colony pipeline + 360-degree)
 
 ### Key Lessons (carried, continued)
 _772. **A full-route HTTP sweep finds a bug FAMILY in one pass.** 21 broken pages turned out to be 96 route→method breaks behind 5 root causes. Fixing them one-by-one (the previous 4 sessions' style) would have taken many rounds; one sweep + one static cross-check named all of them in minutes.
