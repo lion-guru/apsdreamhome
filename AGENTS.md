@@ -25,6 +25,10 @@ User: "do next" — continue mobile deep scan (Dio-direct pages → ApiService, 
 2. **`DocumentService::getESignDocuments()` queried a non-existent `user_id` column** (`document_esign` uses `created_by`) → always 1054, swallowed by its own try/catch → silently returned `[]`. Fixed + tenant-scoped.
 3. **`DocumentService` used `$this->pdo` in 9 places but the class only has `$this->db`** → `Call to a member function prepare() on null`. All 9 fixed (probe caught it: the new `reviewJob` probe printed the warning stack).
 
+### Backend — 2 more undefined-`$this->pdo` 500s found by a live page sweep
+- `app/services/AI/VoiceService.php` — 4 property sites (`$this->pdo->prepare(...)`) but the class only has `$this->db = Database::getInstance()`. `loadProviders()` runs in the constructor → **every** voice route 500'd. Fixed to `$this->db->prepare(...)` (the `Database` wrapper's `prepare()` returns a real PDOStatement).
+- `app/Http/Controllers/Api/MobileMLMApiController.php` — passed `$this->pdo` (undefined) into `SalaryIncentiveService(?\PDO $pdo)` → TypeError/null → all 3 MLM mobile endpoints 500'd. Fixed to `$this->db->getConnection()` (raw PDO, as the constructor's type demands).
+
 ### Backend — new service methods
 - `DocumentService::signESignDocument(int $id, array $data)` — tenant-scoped sign; rejects empty signature, cancelled docs, missing ids.
 - `DocumentService::reviewJob(int $id, int $reviewerId, array $corrections, string $action)` — approve sets `verified_by`/`verified_at`; correct applies only real `documents` columns with DATE-format validation (phantom cols + bad dates rejected, not 500).
@@ -39,19 +43,25 @@ User: "do next" — continue mobile deep scan (Dio-direct pages → ApiService, 
 
 ### Verification
 - `flutter analyze lib`: **0 errors** (79 warnings / 425 infos, all pre-existing deprecations)
-- `php testing/master_test_runner.php`: **10/10 PASSED** (16.25s)
+- `php testing/master_test_runner.php`: **10/10 PASSED** (16.43s)
 - e-sign E2E probe: **9/9** (create → list → get → sign → persisted → empty-sig rejected → missing-id rejected → cleanup → CLEAN:YES)
 - `reviewJob` probe: **7/7** (approve → correct → bad-date rejected → phantom-col rejected → missing-id rejected → cleanup → CLEAN:YES)
 - Live HTTP: LIST 200 · STORE 200 · SIGN 200 · GET 200 (full signed payload returned)
 - Strict per-class sweep (`$this->service->X()` vs actual class methods): **OK — no missing service method calls in API controllers**
+- Admin page sweep (9 routes, authenticated): app-feedback · auctions · campaign-templates · drip-campaigns · fleet · live-chat · onboarding · search-history · voice-uploads → **all 200** (3 were 500 before the revert)
+- MLM mobile API: summary · payouts · incentives → **all 200** (were 500 before the fix)
+- Voice routes: `/admin/crm/voice` · `/admin/sim-calling` · `/admin/voice-calling` → **all 200**
+- Customer portal: `/user/documents` · `/user/wallet` · `/user/passbook` → **200**; `/api/chat/poll` → 200
 - DB counts zero drift: users 75 · plots 756 · leads 994 · documents 27 · document_esign 0
-- Commits: `55c3b6de6` (Dio→ApiService + analyze errors) · `94dbcb18c` (honest empty states + e-sign fix + PDF download)
+- Commits: `55c3b6de6` (Dio→ApiService + analyze errors) · `94dbcb18c` (honest empty states + e-sign fix + PDF download) · `649221eac` (VoiceService + MobileMLM undefined `$this->pdo`) · `1af04e288` (cleanup_disk.ps1 + this log)
 
 ### Key Lessons (carried, continued)
 _766. **A service-call sweep proves a whole bug family in one shot** — the global "method exists anywhere in Services" sweep masked `DocumentAIController::reviewJob()` because `reviewJob` existed on a *different* class. A per-class reflection sweep (resolve the injected service class → check its own + inherited methods) found the one real miss in seconds.
 _767. **`$this->pdo` vs `$this->db` is a silent runtime fatal, not a lint error** — `php -l` passes, the file loads, and the failure only appears at the first DB call ("prepare() on null"). Grep the property name against the class's own declarations; `Database::prepare()` returns a real PDOStatement, so `->db` is a drop-in.
 _768. **A mock-data fallback is a lie the user pays for** — 14 pages silently showed fake colonies/news/RERA numbers/documents when the API failed. Honest empty state + an error message is strictly better than a plausible fiction; for RERA/receipts a fake number is worse than "no data".
 _769. **A 0-byte C: drive surfaces as a MySQL schema error** — Errcode 28 during `ALTER TABLE` reads like a collation bug. `Get-PSDrive`/`[System.IO.DriveInfo]::new('C').AvailableFreeSpace` FIRST, then diagnose. Disk is now guarded by `scripts/cleanup_disk.ps1`.
+_770. **`$this->pdo` (property) and `$this->pdo()` (method) are different things — never blind-replace one for the other.** A sweep reported "18 classes with an undefined `$this->pdo`"; 16 of them actually had a `protected function pdo(): \PDO` helper and were **fine**. My blanket regex `\$this->pdo\b → $this->db` turned `$this->pdo()->prepare()` into `$this->db()->prepare()` and broke 3 admin pages (500). The reversal had to be done per-file by comparing HEAD's `pdo()` count vs `db()` count. **Always distinguish `->` from `()` before a scripted rename, and prove the sweep's claims against a live page before editing 18 files.**
+_771. **A sweep's output is a hypothesis, not a finding** — the `$this->pdo` sweep produced 18 "broken" classes; live HTTP probing showed only 2 truly broken and 3 that my own "fix" had just broken. Grep finds *candidates*; only a request proves a defect.
 
 ## Session 352: Voice/IVR Admin Dashboard + Employee Menu Link Repair + AI Voice System Setup Guide (2026-10-19)
 
