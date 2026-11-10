@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\ApiKeyService;
-use \App\Traits\TenantAwareTrait;
 
 class ApiKeyController extends AdminController
 {
@@ -158,7 +158,10 @@ class ApiKeyController extends AdminController
         $this->data = array_merge($this->data, [
             'page_title' => 'API Keys Guide',
         ]);
-        return $this->render('admin/features/api_keys', $this->data);
+        // NOTE: the guide has its own view (admin/features/api_keys_guide.php).
+        // Rendering the list view here made the page 500 (the list view needs
+        // $keys/$stats/$new_key which only index() provides).
+        return $this->render('admin/features/api_keys_guide', $this->data);
     }
 
     public function store()
