@@ -56,7 +56,7 @@ class MobileAdminApiController extends BaseController
             }
             $this->db->commit();
             return $this->jsonResponse(['success' => true, 'message' => 'Leads synced successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             error_log('MobileAdminApiController::batchSyncLeads failed: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
@@ -81,7 +81,7 @@ class MobileAdminApiController extends BaseController
             $input = $validated;
             $leadId = $this->createLead($input);
             echo json_encode(['success' => true, 'lead_id' => $leadId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Submit Lead API error');
         }
     }
@@ -98,7 +98,7 @@ class MobileAdminApiController extends BaseController
         try {
             $dashboard = $this->getEmployeeDashboardData($userId);
             echo json_encode(['success' => true, 'data' => $dashboard]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Employee Dashboard API error');
         }
     }
@@ -115,7 +115,7 @@ class MobileAdminApiController extends BaseController
         try {
             $tasks = $this->getEmployeeTasksData($userId);
             echo json_encode(['success' => true, 'data' => $tasks]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Employee Tasks API error');
         }
     }
@@ -132,7 +132,7 @@ class MobileAdminApiController extends BaseController
         try {
             $attendance = $this->getEmployeeAttendanceData($userId);
             echo json_encode(['success' => true, 'data' => $attendance]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Employee Attendance API error');
         }
     }
@@ -149,7 +149,7 @@ class MobileAdminApiController extends BaseController
         try {
             $bookings = $this->getAdminBookingsData($userId);
             echo json_encode(['success' => true, 'data' => $bookings]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Admin Bookings API error');
         }
     }
@@ -168,7 +168,7 @@ class MobileAdminApiController extends BaseController
             $status = \App\Core\Security::sanitize($input['status'] ?? 'pending');
             $this->updateBookingStatusData((int)$id, $status);
             echo json_encode(['success' => true, 'message' => 'Booking status updated']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Update Booking Status API error');
         }
     }
@@ -185,7 +185,7 @@ class MobileAdminApiController extends BaseController
         try {
             $commissions = $this->getCommissionsData($userId);
             echo json_encode(['success' => true, 'data' => $commissions]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Commissions API error');
         }
     }
@@ -204,7 +204,7 @@ class MobileAdminApiController extends BaseController
             $action = \App\Core\Security::sanitize($input['action'] ?? '');
             $result = $this->processCommissionAction((int)$id, $action);
             echo json_encode(['success' => true, 'message' => 'Commission action processed', 'result' => $result]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Commission Action API error');
         }
     }
@@ -221,7 +221,7 @@ class MobileAdminApiController extends BaseController
         try {
             $plots = $this->getPlotsData($userId);
             echo json_encode(['success' => true, 'data' => $plots]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Plots API error');
         }
     }
@@ -238,7 +238,7 @@ class MobileAdminApiController extends BaseController
         try {
             $users = $this->getUsersData($userId);
             echo json_encode(['success' => true, 'data' => $users]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Users API error');
         }
     }
@@ -255,7 +255,7 @@ class MobileAdminApiController extends BaseController
         try {
             $reports = $this->getReportsData($userId);
             echo json_encode(['success' => true, 'data' => $reports]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Reports API error');
         }
     }
@@ -272,7 +272,7 @@ class MobileAdminApiController extends BaseController
         try {
             $dashboard = $this->getTelecallerDashboardData($userId);
             echo json_encode(['success' => true, 'data' => $dashboard]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Telecaller Dashboard API error');
         }
     }
@@ -289,7 +289,7 @@ class MobileAdminApiController extends BaseController
         try {
             $stats = $this->getDashboardStatsData($userId);
             echo json_encode(['success' => true, 'data' => $stats]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Dashboard Stats API error');
         }
     }
@@ -306,7 +306,7 @@ class MobileAdminApiController extends BaseController
         try {
             $trend = $this->getSalesTrendData($userId);
             echo json_encode(['success' => true, 'data' => $trend]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Sales Trend API error');
         }
     }
@@ -323,7 +323,7 @@ class MobileAdminApiController extends BaseController
         try {
             $associates = $this->getTopAssociatesData($userId);
             echo json_encode(['success' => true, 'data' => $associates]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Top Associates API error');
         }
     }
@@ -340,7 +340,7 @@ class MobileAdminApiController extends BaseController
         try {
             $performance = $this->getColonyPerformanceData($userId);
             echo json_encode(['success' => true, 'data' => $performance]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Colony Performance API error');
         }
     }
@@ -357,7 +357,7 @@ class MobileAdminApiController extends BaseController
         try {
             $collection = $this->getEmiCollectionData($userId);
             echo json_encode(['success' => true, 'data' => $collection]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'EMI Collection API error');
         }
     }
@@ -374,7 +374,7 @@ class MobileAdminApiController extends BaseController
         try {
             $conversion = $this->getLeadConversionData($userId);
             echo json_encode(['success' => true, 'data' => $conversion]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Lead Conversion API error');
         }
     }
@@ -391,7 +391,7 @@ class MobileAdminApiController extends BaseController
         try {
             $sales = $this->getDailySalesData($userId);
             echo json_encode(['success' => true, 'data' => $sales]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Daily Sales API error');
         }
     }
@@ -573,6 +573,879 @@ class MobileAdminApiController extends BaseController
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // ============================================================
+    // COLONY PIPELINE (routes existed, actions did not)
+    // Layout -> plots -> pricing -> costs for a colony, driven from mobile.
+    // ============================================================
+
+    private function colonyPipelineDb()
+    {
+        return \App\Core\Database\Database::getInstance();
+    }
+
+    private function colonyPipelineTenantId(): int
+    {
+        return (int) (\App\Core\Middleware\TenantContext::getId() ?: 1);
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/dashboard */
+    public function colonyPipelineDashboard()
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+
+            $colonies = $db->fetchAll(
+                "SELECT c.id, c.name, c.status,
+                        (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.deleted_at IS NULL) AS total_plots,
+                        (SELECT COUNT(*) FROM plots p WHERE p.colony_id = c.id AND p.status = 'available' AND p.deleted_at IS NULL) AS available_plots,
+                        (SELECT COUNT(*) FROM colony_layouts l WHERE l.colony_id = c.id AND l.is_current = 1 AND l.deleted_at IS NULL) AS has_layout,
+                        (SELECT COUNT(*) FROM colony_development_costs dc WHERE dc.colony_id = c.id AND dc.deleted_at IS NULL) AS cost_entries,
+                        (SELECT COUNT(*) FROM colony_pricing_feasibility pf WHERE pf.colony_id = c.id) AS pricing_rows
+                 FROM colonies c
+                 WHERE c.tenant_id = ?
+                 ORDER BY c.name",
+                [$tid]
+            ) ?: [];
+
+            $totals = [
+                'colonies'     => count($colonies),
+                'total_plots'  => array_sum(array_map(fn($c) => (int)($c['total_plots'] ?? 0), $colonies)),
+                'available'    => array_sum(array_map(fn($c) => (int)($c['available_plots'] ?? 0), $colonies)),
+                'with_layout'  => count(array_filter($colonies, fn($c) => (int)($c['has_layout'] ?? 0) > 0)),
+                'with_pricing' => count(array_filter($colonies, fn($c) => (int)($c['pricing_rows'] ?? 0) > 0)),
+            ];
+
+            $this->jsonResponse(['success' => true, 'data' => ['colonies' => $colonies, 'totals' => $totals]]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Colony Pipeline Dashboard');
+        }
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/detail/{colonyId} */
+    public function colonyPipelineDetail($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+
+            $colony = $db->fetchOne(
+                "SELECT id, name, status, total_plots, available_plots, starting_price, description
+                 FROM colonies WHERE id = ? AND tenant_id = ? LIMIT 1",
+                [$cid, $tid]
+            );
+            if (!$colony) {
+                $this->jsonError('Colony not found', 404);
+                return;
+            }
+
+            $layout = $db->fetchOne(
+                "SELECT * FROM colony_layouts
+                 WHERE colony_id = ? AND tenant_id = ? AND is_current = 1 AND deleted_at IS NULL
+                 ORDER BY id DESC LIMIT 1",
+                [$cid, $tid]
+            );
+
+            $plotStats = $db->fetchOne(
+                "SELECT COUNT(*) AS total,
+                        SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) AS available,
+                        SUM(CASE WHEN status = 'booked' THEN 1 ELSE 0 END) AS booked,
+                        SUM(CASE WHEN status = 'sold' THEN 1 ELSE 0 END) AS sold
+                 FROM plots WHERE colony_id = ? AND deleted_at IS NULL",
+                [$cid]
+            ) ?: [];
+
+            $costs = $db->fetchAll(
+                "SELECT * FROM colony_development_costs
+                 WHERE colony_id = ? AND tenant_id = ? AND deleted_at IS NULL
+                 ORDER BY id DESC LIMIT 200",
+                [$cid, $tid]
+            ) ?: [];
+
+            $pricing = $db->fetchOne(
+                "SELECT * FROM colony_pricing_feasibility
+                 WHERE colony_id = ? AND tenant_id = ? ORDER BY id DESC LIMIT 1",
+                [$cid, $tid]
+            );
+
+            $this->jsonResponse([
+                'success' => true,
+                'data'    => [
+                    'colony'     => $colony,
+                    'layout'    => $layout,
+                    'plot_stats' => $plotStats,
+                    'costs'     => $costs,
+                    'pricing'   => $pricing,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Colony Pipeline Detail');
+        }
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/layout/{colonyId} */
+    public function colonyPipelineLayout($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+
+            $layout = $db->fetchOne(
+                "SELECT * FROM colony_layouts
+                 WHERE colony_id = ? AND tenant_id = ? AND is_current = 1 AND deleted_at IS NULL
+                 ORDER BY id DESC LIMIT 1",
+                [$cid, $tid]
+            );
+
+            if (!$layout) {
+                $this->jsonError('No current layout for this colony', 404);
+                return;
+            }
+
+            $map = json_decode((string)($layout['plot_map_json'] ?? '{}'), true);
+            $this->jsonResponse([
+                'success' => true,
+                'data'    => [
+                    'layout'  => $layout,
+                    'plot_map' => is_array($map) ? $map : [],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Colony Pipeline Layout');
+        }
+    }
+
+    /** POST /api/v2/mobile/colony-pipeline/generate-plots/{colonyId} */
+    public function colonyPipelineGeneratePlots($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+
+            $layout = $db->fetchOne(
+                "SELECT * FROM colony_layouts
+                 WHERE colony_id = ? AND tenant_id = ? AND is_current = 1 AND deleted_at IS NULL
+                 ORDER BY id DESC LIMIT 1",
+                [$cid, $tid]
+            );
+            if (!$layout) {
+                $this->jsonError('Save a layout before generating plots', 422);
+                return;
+            }
+
+            $map = json_decode((string)($layout['plot_map_json'] ?? '{}'), true);
+            $plots = is_array($map) ? ($map['plots'] ?? $map) : [];
+            if (!is_array($plots) || empty($plots)) {
+                $this->jsonError('The layout does not contain any plots', 422);
+                return;
+            }
+
+            $basePrice = (float)($input['base_price'] ?? 0);
+            $created = 0;
+            $skipped = 0;
+
+            foreach ($plots as $p) {
+                if (!is_array($p)) {
+                    continue;
+                }
+                $number = (string)($p['number'] ?? $p['plot_number'] ?? '');
+                if ($number === '') {
+                    continue;
+                }
+                $exists = $db->fetchOne(
+                    "SELECT id FROM plots WHERE colony_id = ? AND plot_number = ? LIMIT 1",
+                    [$cid, $number]
+                );
+                if ($exists) {
+                    $skipped++;
+                    continue;
+                }
+                $area = (float)($p['area'] ?? $p['area_sqft'] ?? 0);
+                $rate = (float)($p['rate'] ?? $basePrice);
+                $total = $area > 0 && $rate > 0 ? $area * $rate : 0;
+
+                $db->insert('plots', [
+                    'tenant_id'    => $tid,
+                    'colony_id'    => $cid,
+                    'plot_number'  => $number,
+                    'plot_type'    => (string)($p['type'] ?? 'residential'),
+                    'area_sqft'    => $area,
+                    'dimension_label' => (string)($p['dimensions'] ?? ''),
+                    'facing'       => (string)($p['facing'] ?? ''),
+                    'base_price_per_sqft' => $rate,
+                    'final_price_per_sqft' => $rate,
+                    'total_price'  => $total,
+                    'status'       => 'available',
+                    'is_active'    => 1,
+                    'created_at'   => date('Y-m-d H:i:s'),
+                    'updated_at'   => date('Y-m-d H:i:s'),
+                ]);
+                $created++;
+            }
+
+            $this->jsonResponse([
+                'success' => true,
+                'message' => "Generated {$created} plots ({$skipped} already existed)",
+                'data'    => ['created' => $created, 'skipped' => $skipped],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Generate Plots');
+        }
+    }
+
+    /** POST /api/v2/mobile/colony-pipeline/save-layout/{colonyId} */
+    public function colonyPipelineSaveLayout($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+
+            $name = trim((string)($input['layout_name'] ?? 'Mobile Layout'));
+            $mapJson = isset($input['plot_map'])
+                ? (is_string($input['plot_map']) ? $input['plot_map'] : json_encode($input['plot_map']))
+                : '{}';
+
+            // version bump: previous current layout is archived
+            $db->execute(
+                "UPDATE colony_layouts SET is_current = 0, updated_at = NOW()
+                 WHERE colony_id = ? AND tenant_id = ? AND is_current = 1",
+                [$cid, $tid]
+            );
+
+            $version = 1 + (int)($db->fetchOne(
+                "SELECT COALESCE(MAX(version), 0) v FROM colony_layouts WHERE colony_id = ? AND tenant_id = ?",
+                [$cid, $tid]
+            )['v'] ?? 0);
+
+            $db->insert('colony_layouts', [
+                'tenant_id'     => $tid,
+                'colony_id'     => $cid,
+                'layout_name'   => $name,
+                'version'       => $version,
+                'layout_type'   => (string)($input['layout_type'] ?? 'residential'),
+                'road_area_pct' => (float)($input['road_area_pct'] ?? 0),
+                'common_area_pct' => (float)($input['common_area_pct'] ?? 0),
+                'is_current'    => 1,
+                'plot_map_json' => $mapJson,
+                'total_plots'   => (int)($input['total_plots'] ?? 0),
+                'total_area_sqft' => (float)($input['total_area_sqft'] ?? 0),
+                'notes'         => (string)($input['notes'] ?? ''),
+                'status'        => 'draft',
+                'created_at'    => date('Y-m-d H:i:s'),
+                'updated_at'    => date('Y-m-d H:i:s'),
+            ]);
+
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Layout saved',
+                'data'    => ['version' => $version],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Save Layout');
+        }
+    }
+
+    /** POST /api/v2/mobile/colony-pipeline/delete-plots/{colonyId} */
+    public function colonyPipelineDeletePlots($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+
+            // Only soft-delete plots that are still available — never touch a
+            // booked/sold plot (money + customer records are attached).
+            $ids = array_values(array_filter(array_map('intval', (array)($input['plot_ids'] ?? []))));
+            if (empty($ids)) {
+                $this->jsonError('No plot ids supplied');
+                return;
+            }
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $params = array_merge([$cid, $tid], $ids);
+            $stmt = $db->prepare(
+                "UPDATE plots SET deleted_at = NOW(), updated_at = NOW()
+                 WHERE colony_id = ? AND tenant_id = ? AND status = 'available'
+                   AND id IN ($placeholders)"
+            );
+            $stmt->execute($params);
+            $deleted = $stmt->rowCount();
+
+            $this->jsonResponse([
+                'success' => true,
+                'message' => "{$deleted} plot(s) removed",
+                'data'    => ['deleted' => $deleted],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Delete Plots');
+        }
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/pricing/{colonyId} */
+    public function colonyPipelinePricing($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+
+            $row = $db->fetchOne(
+                "SELECT * FROM colony_pricing_feasibility WHERE colony_id = ? AND tenant_id = ? ORDER BY id DESC LIMIT 1",
+                [$cid, $tid]
+            );
+
+            $this->jsonResponse([
+                'success' => true,
+                'data'    => [
+                    'pricing'   => $row,
+                    'revisions' => $db->fetchAll(
+                        "SELECT * FROM colony_price_revisions WHERE colony_id = ? AND tenant_id = ? ORDER BY id DESC LIMIT 20",
+                        [$cid, $tid]
+                    ) ?: [],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Colony Pipeline Pricing');
+        }
+    }
+
+    /** POST /api/v2/mobile/colony-pipeline/calculate-pricing/{colonyId} */
+    public function colonyPipelineCalculatePricing($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+
+            $rawArea = (float)($input['total_raw_area_sqft'] ?? 0);
+            $yieldPct = (float)($input['saleable_area_yield_pct'] ?? 70);
+            if ($rawArea <= 0 || $yieldPct <= 0) {
+                $this->jsonError('total_raw_area_sqft and saleable_area_yield_pct are required', 422);
+                return;
+            }
+
+            $saleable = $rawArea * ($yieldPct / 100);
+
+            $landCost = (float)($input['land_cost_total'] ?? 0);
+            $registryCost = (float)($input['registry_cost_total'] ?? 0);
+            $devCost = (float)($input['development_cost_total'] ?? $this->colonyPipelineCostTotal($db, $cid, $tid));
+            $approvalsCost = (float)($input['approvals_cost_total'] ?? 0);
+
+            $totalCost = $landCost + $registryCost + $devCost + $approvalsCost;
+            $rawBasis = $totalCost / max($rawArea, 1);
+
+            $profitPct = (float)($input['target_profit_pct'] ?? 15);
+            $overheadPct = (float)($input['office_overhead_pct'] ?? 3);
+            $mlmPct = (float)($input['mlm_budget_pct'] ?? 5);
+            $markup = (float)($input['markup_factor'] ?? 1);
+
+            $multiplier = (1 + $profitPct / 100) * (1 + $overheadPct / 100) * (1 + $mlmPct / 100) * $markup;
+            $recommended = round($rawBasis * $multiplier, 2);
+
+            $db->insert('colony_pricing_feasibility', [
+                'tenant_id'                => $tid,
+                'colony_id'                => $cid,
+                'total_raw_area_sqft'      => $rawArea,
+                'saleable_area_yield_pct'  => $yieldPct,
+                'saleable_area_sqft'       => round($saleable, 2),
+                'land_cost_total'          => $landCost,
+                'registry_cost_total'      => $registryCost,
+                'development_cost_total'   => $devCost,
+                'approvals_cost_total'     => $approvalsCost,
+                'raw_cost_basis_ppsf'      => round($rawBasis, 2),
+                'target_profit_pct'        => $profitPct,
+                'office_overhead_pct'      => $overheadPct,
+                'mlm_budget_pct'           => $mlmPct,
+                'markup_factor'            => $markup,
+                'recommended_price_ppsf'   => $recommended,
+                'notes'                    => (string)($input['notes'] ?? ''),
+                'created_by'               => (int)($GLOBALS['api_user_id'] ?? 0),
+                'created_at'               => date('Y-m-d H:i:s'),
+            ]);
+
+            $this->jsonResponse([
+                'success' => true,
+                'data'    => [
+                    'total_cost'          => round($totalCost, 2),
+                    'raw_cost_basis_ppsf' => round($rawBasis, 2),
+                    'recommended_price_ppsf' => $recommended,
+                    'saleable_area_sqft'  => round($saleable, 2),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Calculate Pricing');
+        }
+    }
+
+    /** POST /api/v2/mobile/colony-pipeline/apply-pricing/{colonyId} */
+    public function colonyPipelineApplyPricing($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+
+            $pricePpsf = (float)($input['price_ppsf'] ?? 0);
+            if ($pricePpsf <= 0) {
+                $this->jsonError('price_ppsf must be greater than zero', 422);
+                return;
+            }
+
+            // Only AVAILABLE plots are repriced — booked/sold plots keep the
+            // price the customer agreed on.
+            $stmt = $db->prepare(
+                "SELECT id, area_sqft FROM plots
+                 WHERE colony_id = ? AND tenant_id = ? AND status = 'available' AND deleted_at IS NULL"
+            );
+            $stmt->execute([$cid, $tid]);
+            $plots = $stmt->fetchAll() ?: [];
+
+            $updated = 0;
+            foreach ($plots as $p) {
+                $area = (float)($p['area_sqft'] ?? 0);
+                $total = round($area * $pricePpsf, 2);
+                $db->execute(
+                    "UPDATE plots SET base_price_per_sqft = ?, final_price_per_sqft = ?, total_price = ?, updated_at = NOW() WHERE id = ?",
+                    [$pricePpsf, $pricePpsf, $total, (int)$p['id']]
+                );
+                $updated++;
+            }
+
+            $db->execute(
+                "UPDATE colony_pricing_feasibility SET applied_price_ppsf = ? WHERE colony_id = ? AND tenant_id = ?",
+                [$pricePpsf, $cid, $tid]
+            );
+
+            $this->jsonResponse([
+                'success' => true,
+                'message' => "Repriced {$updated} available plot(s)",
+                'data'    => ['updated' => $updated, 'price_ppsf' => $pricePpsf],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Apply Pricing');
+        }
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/costs/{colonyId} */
+    public function colonyPipelineCosts($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+
+            $costs = $db->fetchAll(
+                "SELECT * FROM colony_development_costs
+                 WHERE colony_id = ? AND tenant_id = ? AND deleted_at IS NULL
+                 ORDER BY id DESC LIMIT 300",
+                [$cid, $tid]
+            ) ?: [];
+
+            $summary = [
+                'entries'  => count($costs),
+                'total'    => array_sum(array_map(fn($c) => (float)($c['amount'] ?? 0), $costs)),
+                'paid'     => array_sum(array_map(fn($c) => (float)($c['paid_amount'] ?? 0), $costs)),
+                'balance'  => array_sum(array_map(fn($c) => (float)($c['balance_amount'] ?? 0), $costs)),
+            ];
+
+            $this->jsonResponse(['success' => true, 'data' => ['costs' => $costs, 'summary' => $summary]]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Colony Pipeline Costs');
+        }
+    }
+
+    /** POST /api/v2/mobile/colony-pipeline/costs/store/{colonyId} */
+    public function colonyPipelineStoreCost($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+
+            $amount = (float)($input['amount'] ?? 0);
+            if ($amount <= 0) {
+                $this->jsonError('amount must be greater than zero', 422);
+                return;
+            }
+
+            $gstRate = (float)($input['gst_rate'] ?? 0);
+            $gstAmount = (float)($input['gst_amount'] ?? round($amount * $gstRate / 100, 2));
+            $paid = (float)($input['paid_amount'] ?? 0);
+
+            $db->insert('colony_development_costs', [
+                'tenant_id'          => $tid,
+                'colony_id'          => $cid,
+                'cost_type'          => (string)($input['cost_type'] ?? 'other'),
+                'vendor_id'          => (int)($input['vendor_id'] ?? 0) ?: null,
+                'vendor_name'        => (string)($input['vendor_name'] ?? ''),
+                'work_description'   => (string)($input['work_description'] ?? ''),
+                'invoice_number'     => (string)($input['invoice_number'] ?? ''),
+                'invoice_date'       => (string)($input['invoice_date'] ?? date('Y-m-d')),
+                'amount'             => $amount,
+                'gst_amount'         => $gstAmount,
+                'gst_rate'           => $gstRate,
+                'tds_section'        => (string)($input['tds_section'] ?? ''),
+                'tds_amount'         => (float)($input['tds_amount'] ?? 0),
+                'payment_status'     => (string)($input['payment_status'] ?? 'pending'),
+                'paid_amount'        => $paid,
+                'balance_amount'     => max(0, $amount - $paid),
+                'completion_date'    => (string)($input['completion_date'] ?? ''),
+                'status'             => (string)($input['status'] ?? 'active'),
+                'created_at'         => date('Y-m-d H:i:s'),
+                'updated_at'         => date('Y-m-d H:i:s'),
+            ]);
+
+            $this->jsonResponse(['success' => true, 'message' => 'Cost entry saved']);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Store Colony Cost');
+        }
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/plots/{colonyId} */
+    public function colonyPipelinePlots($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+
+            $limit = max(1, min(500, (int)($_GET['limit'] ?? 100)));
+            $offset = max(0, (int)($_GET['offset'] ?? 0));
+
+            $plots = $db->fetchAll(
+                "SELECT id, plot_number, plot_type, area_sqft, dimension_label, facing,
+                        base_price_per_sqft, total_price, status, is_active
+                 FROM plots
+                 WHERE colony_id = ? AND tenant_id = ? AND deleted_at IS NULL
+                 ORDER BY id DESC LIMIT $limit OFFSET $offset",
+                [$cid, $tid]
+            ) ?: [];
+
+            $this->jsonResponse(['success' => true, 'data' => ['plots' => $plots]]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Colony Pipeline Plots');
+        }
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/plots/stats/{colonyId} */
+    public function colonyPipelinePlotsStats($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+
+            $stats = $db->fetchOne(
+                "SELECT COUNT(*) AS total,
+                        SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) AS available,
+                        SUM(CASE WHEN status = 'booked' THEN 1 ELSE 0 END) AS booked,
+                        SUM(CASE WHEN status = 'sold' THEN 1 ELSE 0 END) AS sold,
+                        SUM(CASE WHEN status = 'hold' THEN 1 ELSE 0 END) AS hold,
+                        COALESCE(SUM(total_price), 0) AS inventory_value,
+                        COALESCE(AVG(area_sqft), 0) AS avg_area,
+                        COALESCE(AVG(total_price), 0) AS avg_price
+                 FROM plots WHERE colony_id = ? AND tenant_id = ? AND deleted_at IS NULL",
+                [$cid, $tid]
+            ) ?: [];
+
+            $this->jsonResponse(['success' => true, 'data' => $stats]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Colony Pipeline Plots Stats');
+        }
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/map/{colonyId} */
+    public function colonyPipelineMap($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+
+            $layout = $db->fetchOne(
+                "SELECT id, layout_name, layout_file_url, layout_plan_image, plot_map_json, total_plots, total_area_sqft
+                 FROM colony_layouts
+                 WHERE colony_id = ? AND tenant_id = ? AND is_current = 1 AND deleted_at IS NULL
+                 ORDER BY id DESC LIMIT 1",
+                [$cid, $tid]
+            );
+
+            if (!$layout) {
+                $this->jsonError('No current layout for this colony', 404);
+                return;
+            }
+
+            $map = json_decode((string)($layout['plot_map_json'] ?? '{}'), true);
+
+            $this->jsonResponse([
+                'success' => true,
+                'data'    => [
+                    'layout'   => $layout,
+                    'plot_map' => is_array($map) ? $map : [],
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Colony Pipeline Map');
+        }
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/map/geojson/{colonyId} */
+    public function colonyPipelineMapGeoJson($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+
+            $rows = $db->fetchAll(
+                "SELECT id, plot_number, plot_type, area_sqft, dimension_label, facing, base_price_per_sqft, total_price, status
+                 FROM plots WHERE colony_id = ? AND tenant_id = ? AND deleted_at IS NULL",
+                [$cid, $tid]
+            ) ?: [];
+
+            $features = [];
+            foreach ($rows as $r) {
+                $geometry = null;
+                // plot_map_json may carry WKT/GeoJSON per plot
+                $features[] = [
+                    'type'       => 'Feature',
+                    'id'         => (string)$r['id'],
+                    'geometry'   => $geometry,
+                    'properties' => [
+                        'plot_number' => $r['plot_number'],
+                        'plot_type'   => $r['plot_type'],
+                        'area_sqft'   => $r['area_sqft'],
+                        'facing'      => $r['facing'],
+                        'base_price'  => $r['base_price_per_sqft'],
+                        'total_price' => $r['total_price'],
+                        'status'      => $r['status'],
+                    ],
+                ];
+            }
+
+            $this->jsonResponse([
+                'success' => true,
+                'data'    => [
+                    'type'     => 'FeatureCollection',
+                    'features' => $features,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Colony Pipeline GeoJSON');
+        }
+    }
+
+    /** POST /api/v2/mobile/colony-pipeline/pricing-plan/save/{colonyId} */
+    public function colonyPipelineSavePricingPlan($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+            $input = json_decode(file_get_contents('php://input'), true) ?: [];
+
+            $name = trim((string)($input['name'] ?? 'Pricing Plan'));
+            $rows = $input['rows'] ?? [];
+            if (!is_array($rows) || empty($rows)) {
+                $this->jsonError('rows are required', 422);
+                return;
+            }
+
+            $total = 0.0;
+            foreach ($rows as $r) {
+                $total += (float)(is_array($r) ? ($r['price'] ?? 0) : 0);
+            }
+
+            $db->insert('colony_price_revisions', [
+                'tenant_id'         => $tid,
+                'colony_id'         => $cid,
+                'current_price'     => (float)($input['current_price'] ?? 0),
+                'new_price'         => $total,
+                'effective_date'    => (string)($input['effective_date'] ?? date('Y-m-d')),
+                'announcement_title' => $name,
+                'is_active'         => 0,
+                'created_by'        => (int)($GLOBALS['api_user_id'] ?? 0),
+                'created_at'        => date('Y-m-d H:i:s'),
+            ]);
+
+            $this->jsonResponse(['success' => true, 'message' => 'Pricing plan saved']);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Save Pricing Plan');
+        }
+    }
+
+    /** POST /api/v2/mobile/colony-pipeline/pricing-plan/activate/{colonyId}/{planId} */
+    public function colonyPipelineActivatePricingPlan($colonyId = null, $planId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+            $pid = (int)$planId;
+
+            $plan = $db->fetchOne(
+                "SELECT * FROM colony_price_revisions WHERE id = ? AND colony_id = ? AND tenant_id = ? LIMIT 1",
+                [$pid, $cid, $tid]
+            );
+            if (!$plan) {
+                $this->jsonError('Pricing plan not found', 404);
+                return;
+            }
+
+            $db->execute(
+                "UPDATE colony_price_revisions SET is_active = 0 WHERE colony_id = ? AND tenant_id = ?",
+                [$cid, $tid]
+            );
+            $db->execute(
+                "UPDATE colony_price_revisions SET is_active = 1 WHERE id = ?",
+                [$pid]
+            );
+
+            $this->jsonResponse(['success' => true, 'message' => 'Pricing plan activated']);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Activate Pricing Plan');
+        }
+    }
+
+    /** POST /api/v2/mobile/colony-pipeline/pricing-plan/apply/{colonyId}/{planId} */
+    public function colonyPipelineApplyPricingPlan($colonyId = null, $planId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+            $pid = (int)$planId;
+
+            $plan = $db->fetchOne(
+                "SELECT * FROM colony_price_revisions WHERE id = ? AND colony_id = ? AND tenant_id = ? LIMIT 1",
+                [$pid, $cid, $tid]
+            );
+            if (!$plan) {
+                $this->jsonError('Pricing plan not found', 404);
+                return;
+            }
+
+            $ppsf = (float)($plan['new_price'] ?? 0);
+            if ($ppsf <= 0) {
+                $this->jsonError('The pricing plan has no usable price', 422);
+                return;
+            }
+
+            $stmt = $db->prepare(
+                "SELECT id, area_sqft FROM plots
+                 WHERE colony_id = ? AND tenant_id = ? AND status = 'available' AND deleted_at IS NULL"
+            );
+            $stmt->execute([$cid, $tid]);
+            $plots = $stmt->fetchAll() ?: [];
+
+            $updated = 0;
+            foreach ($plots as $p) {
+                $total = round((float)($p['area_sqft'] ?? 0) * $ppsf, 2);
+                $db->execute(
+                    "UPDATE plots SET base_price_per_sqft = ?, final_price_per_sqft = ?, total_price = ?, updated_at = NOW() WHERE id = ?",
+                    [$ppsf, $ppsf, $total, (int)$p['id']]
+                );
+                $updated++;
+            }
+
+            $this->jsonResponse([
+                'success' => true,
+                'message' => "Applied plan to {$updated} available plot(s)",
+                'data'    => ['updated' => $updated, 'price_ppsf' => $ppsf],
+            ]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Apply Pricing Plan');
+        }
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/pricing-plan/history/{colonyId} */
+    public function colonyPipelinePricingPlanHistory($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+
+            $history = $db->fetchAll(
+                "SELECT id, current_price, new_price, effective_date, announcement_title, is_active, created_by, created_at
+                 FROM colony_price_revisions
+                 WHERE colony_id = ? AND tenant_id = ?
+                 ORDER BY id DESC LIMIT 100",
+                [$cid, $tid]
+            ) ?: [];
+
+            $this->jsonResponse(['success' => true, 'data' => ['history' => $history]]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Pricing Plan History');
+        }
+    }
+
+    /** GET /api/v2/mobile/colony-pipeline/pricing-plan/applications/{colonyId} */
+    public function colonyPipelinePricingPlanApplications($colonyId = null)
+    {
+        $this->setCorsHeaders();
+        try {
+            $db = $this->colonyPipelineDb();
+            $tid = $this->colonyPipelineTenantId();
+            $cid = (int)$colonyId;
+
+            // Which plots currently carry a price that came from a plan, and
+            // which of those already have a customer attached.
+            $applications = $db->fetchAll(
+                "SELECT p.id AS plot_id, p.plot_number, p.area_sqft, p.base_price_per_sqft, p.total_price,
+                        p.status AS plot_status, p.updated_at AS priced_at,
+                        (SELECT COUNT(*) FROM plot_bookings pb WHERE pb.plot_id = p.id) AS bookings
+                 FROM plots p
+                 WHERE p.colony_id = ? AND p.tenant_id = ? AND p.deleted_at IS NULL
+                   AND p.base_price_per_sqft > 0
+                 ORDER BY p.updated_at DESC LIMIT 200",
+                [$cid, $tid]
+            ) ?: [];
+
+            $this->jsonResponse(['success' => true, 'data' => ['applications' => $applications]]);
+        } catch (\Throwable $e) {
+            $this->handleApiError($e, 'Pricing Plan Applications');
+        }
+    }
+
+    private function colonyPipelineCostTotal($db, int $colonyId, int $tid): float
+    {
+        $row = $db->fetchOne(
+            "SELECT COALESCE(SUM(amount), 0) t FROM colony_development_costs
+             WHERE colony_id = ? AND tenant_id = ? AND deleted_at IS NULL",
+            [$colonyId, $tid]
+        );
+        return (float)($row['t'] ?? 0);
+    }
+
     public function submitProperty()
     {
         $this->setCorsHeaders();
@@ -617,7 +1490,7 @@ class MobileAdminApiController extends BaseController
 
             $result = $submissionService->submitProperty($data);
             echo json_encode($result);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileAdminApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -637,7 +1510,7 @@ class MobileAdminApiController extends BaseController
             $submissionService = new \App\Services\PropertySubmissionService();
             $data = $submissionService->getUserSubmissions($userId);
             echo json_encode(['success' => true, 'data' => $data]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileAdminApiController] exception: " . $e->getMessage());
 
             http_response_code(500);
@@ -677,7 +1550,7 @@ class MobileAdminApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE leads SET status = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$status, $id, $tid]);
             echo json_encode(['success'=>true,'message'=>'Status updated']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -695,7 +1568,7 @@ class MobileAdminApiController extends BaseController
             $stmt = $this->db->prepare("UPDATE leads SET next_activity_date = ?, notes = CONCAT(COALESCE(notes,''), ?), updated_at = NOW() WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$followupDate, "\n[Follow-up: $notes]", $id, $tid]);
             echo json_encode(['success'=>true,'message'=>'Follow-up scheduled']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -720,7 +1593,7 @@ class MobileAdminApiController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, created_by, activity_type, description, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
             $stmt->execute([$id, $userId, $type, $description, $tid]);
             echo json_encode(['success'=>true,'message'=>'Activity logged']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -740,7 +1613,7 @@ class MobileAdminApiController extends BaseController
             $stmt->execute([$dealValue, $id, $tid]);
             $this->db->prepare("INSERT INTO lead_activities (lead_id, created_by, activity_type, description, tenant_id, created_at) VALUES (?, ?, 'conversion', 'Lead converted to deal', ?, NOW())")->execute([$id, $userId, $tid]);
             echo json_encode(['success'=>true,'message'=>'Lead converted']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -757,7 +1630,7 @@ class MobileAdminApiController extends BaseController
             $stmt->execute(["\n[Lost: $reason]", $id, $tid]);
             $this->db->prepare("INSERT INTO lead_activities (lead_id, created_by, activity_type, description, tenant_id, created_at) VALUES (?, ?, 'lost', ?, ?, NOW())")->execute([$id, $userId, 'Lead lost: ' . $reason, $tid]);
             echo json_encode(['success'=>true,'message'=>'Lead marked as lost']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -779,7 +1652,7 @@ class MobileAdminApiController extends BaseController
                 'closed_lost' => (int)($stats['closed_lost'] ?? 0),
                 'total' => array_sum($stats),
             ]]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
@@ -799,7 +1672,7 @@ class MobileAdminApiController extends BaseController
             $stmt->execute([$id, $userId, $desc, $tid]);
             $this->db->prepare("UPDATE leads SET updated_at = NOW() WHERE id = ? AND tenant_id = ?")->execute([$id, $tid]);
             echo json_encode(['success'=>true,'message'=>'Call logged']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500); echo json_encode(['success'=>false,'error'=>$e->getMessage()]);
         }
     }
