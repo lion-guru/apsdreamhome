@@ -51,7 +51,7 @@ class PerformanceService
                 default:
                     return $this->getFromFile($cacheKey, $default);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Cache get error: ' . $e->getMessage());
             return $default;
         }
@@ -74,7 +74,7 @@ class PerformanceService
                 default:
                     return $this->setToFile($cacheKey, $value, $ttl);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Cache set error: ' . $e->getMessage());
             return false;
         }
@@ -96,7 +96,7 @@ class PerformanceService
                 default:
                     return $this->deleteFromFile($cacheKey);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Cache delete error: ' . $e->getMessage());
             return false;
         }
@@ -116,7 +116,7 @@ class PerformanceService
                 default:
                     return $this->clearFileCache();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Cache clear error: ' . $e->getMessage());
             return false;
         }
@@ -194,7 +194,7 @@ class PerformanceService
                 'active_connections' => $connections['Value'] ?? 0,
                 'database_size' => $this->getDatabaseSize()
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'error' => $e->getMessage(),
                 'average_query_time' => 0,
@@ -258,7 +258,7 @@ class PerformanceService
                 default:
                     return $this->clearFileCache();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to clear performance cache: ' . $e->getMessage());
             return false;
         }
@@ -485,7 +485,7 @@ class PerformanceService
     
     private function getLoadAverage(): array
     {
-        $load = sys_getloadavg();
+        $load = function_exists('sys_getloadavg') ? sys_getloadavg() : [0, 0, 0];
         return is_array($load) ? $load : [0, 0, 0];
     }
     
@@ -526,7 +526,7 @@ class PerformanceService
         try {
             $size = $this->db->fetchOne("SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS 'size_mb' FROM information_schema.tables WHERE table_schema = DATABASE()");
             return $size['size_mb'] . ' MB';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 'Unknown';
         }
     }
@@ -551,7 +551,7 @@ class PerformanceService
                 $tableName = array_values($table)[0];
                 $this->db->execute("OPTIMIZE TABLE `{$tableName}`");
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Database optimization failed: ' . $e->getMessage());
         }
     }

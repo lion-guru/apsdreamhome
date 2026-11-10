@@ -159,7 +159,7 @@ class MonitoringController extends AdminController
             try {
                 $tableCountResult = $this->db->fetchColumn("SHOW TABLES");
                 $tableCount = is_array($tableCountResult) ? count($tableCountResult) : 0;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $tableCount = 0;
             }
 
@@ -288,7 +288,7 @@ class MonitoringController extends AdminController
         $dbStats = [];
         try {
             $dbStats = $this->db->getPerformanceStats();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $dbStats = ['query_count' => 0, 'slow_queries' => 0, 'average_time' => 0];
         }
 
@@ -480,7 +480,7 @@ class MonitoringController extends AdminController
     private function getUptime()
     {
         if (function_exists('sys_getloadavg')) {
-            $load = sys_getloadavg();
+            $load = function_exists('sys_getloadavg') ? sys_getloadavg() : [0, 0, 0];
             return [
                 'load_1min' => $load[0],
                 'load_5min' => $load[1],

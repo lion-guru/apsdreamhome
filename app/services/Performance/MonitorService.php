@@ -176,7 +176,7 @@ class PerformanceMonitor {
      */
     private function getUnixCpuUsage() {
         // Unix-like CPU usage via /proc filesystem
-        $load = \sys_getloadavg();
+        $load = function_exists('sys_getloadavg') ? \sys_getloadavg() : [0, 0, 0];
         return ($load[0] / $this->getCpuCoreCount()) * 100;
     }
 

@@ -282,7 +282,7 @@ class AlertManagerService
     {
         // Get system load average (Linux)
         if (function_exists('sys_getloadavg')) {
-            $load = sys_getloadavg();
+            $load = function_exists('sys_getloadavg') ? sys_getloadavg() : [0, 0, 0];
             return $load[0] / 4; // Assuming 4 cores, convert to percentage
         }
         

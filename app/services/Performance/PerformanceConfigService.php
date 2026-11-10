@@ -86,7 +86,7 @@ class PerformanceConfigService
                 'message' => 'Configuration updated successfully'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to update config", [
                 'key' => $key,
                 'error' => $e->getMessage()
@@ -128,7 +128,7 @@ class PerformanceConfigService
                     return $this->cacheFile($cacheKey, $serializedData, $expiresAt);
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to cache data", [
                 'key' => $key,
                 'error' => $e->getMessage()
@@ -169,7 +169,7 @@ class PerformanceConfigService
 
             return $data !== null ? unserialize($data) : $default;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get cached data", [
                 'key' => $key,
                 'error' => $e->getMessage()
@@ -200,7 +200,7 @@ class PerformanceConfigService
                     return $this->deleteCachedFile($cacheKey);
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to delete cached data", [
                 'key' => $key,
                 'error' => $e->getMessage()
@@ -243,7 +243,7 @@ class PerformanceConfigService
                 'items_cleared' => $cleared
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to clear cache", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -281,7 +281,7 @@ class PerformanceConfigService
             // Also log to file for debugging
             $this->logToFile($event, $data, $executionTime, $level);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback to file logging only
             $this->logToFile($event, $data, $executionTime, $level);
         }
@@ -389,7 +389,7 @@ class PerformanceConfigService
 
             return $metrics;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get performance metrics", ['error' => $e->getMessage()]);
             return [];
         }
@@ -437,7 +437,7 @@ class PerformanceConfigService
                 'improvements' => $improvements
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Performance optimization failed", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -576,7 +576,7 @@ class PerformanceConfigService
 
     private function clearCacheApcu(): int
     {
-        apcu_clear();
+        if (function_exists('apcu_clear')) { apcu_clear(); }
         return 1;
     }
 

@@ -103,7 +103,7 @@ class PHPOptimizerService
                 'improvements' => $improvements
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PHP optimization failed", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -173,7 +173,7 @@ class PHPOptimizerService
                 'message' => "Configuration {$key} updated successfully"
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to update PHP configuration", [
                 'key' => $key,
                 'value' => $value,
@@ -256,7 +256,7 @@ class PHPOptimizerService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get optimization stats", ['error' => $e->getMessage()]);
             return [];
         }
@@ -310,7 +310,7 @@ class PHPOptimizerService
                 'benchmark' => $benchmark
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Benchmark failed", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -518,7 +518,7 @@ class PHPOptimizerService
 
         // OpCache status
         if (function_exists('opcache_get_status')) {
-            $opcacheStatus = opcache_get_status();
+            $opcacheStatus = function_exists('opcache_get_status') ? opcache_get_status() : null;
             $metrics['opcache'] = [
                 'enabled' => $opcacheStatus['opcache_enabled'] ?? false,
                 'hit_rate' => $this->calculateOpCacheHitRate($opcacheStatus),
@@ -528,7 +528,7 @@ class PHPOptimizerService
         }
 
         // Server load
-        $metrics['server_load'] = sys_getloadavg() ?? [0, 0, 0];
+        $metrics['server_load'] = function_exists('sys_getloadavg') ? sys_getloadavg() : [0, 0, 0];
 
         return $metrics;
     }

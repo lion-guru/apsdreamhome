@@ -24,7 +24,7 @@ class PropertyFavorite extends Model {
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute([$user_id, $property_id]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Add favorite error: ' . $e->getMessage());
             return false;
         }
@@ -39,7 +39,7 @@ class PropertyFavorite extends Model {
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute([$user_id, $property_id]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Remove favorite error: ' . $e->getMessage());
             return false;
         }
@@ -56,7 +56,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->rowCount() > 0;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Check favorite error: ' . $e->getMessage());
             return false;
         }
@@ -80,7 +80,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('User favorites fetch error: ' . $e->getMessage());
             return [];
         }
@@ -97,7 +97,7 @@ class PropertyFavorite extends Model {
 
             return (int)$stmt->fetch()['count'];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Favorite count error: ' . $e->getMessage());
             return 0;
         }
@@ -133,7 +133,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Popular properties fetch error: ' . $e->getMessage());
             return [];
         }
@@ -169,7 +169,7 @@ class PropertyFavorite extends Model {
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Favorites stats error: ' . $e->getMessage());
             return [];
         }
@@ -191,7 +191,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Favorites trends error: ' . $e->getMessage());
             return [];
         }
@@ -206,7 +206,7 @@ class PropertyFavorite extends Model {
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute([$property_id]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Remove property favorites error: ' . $e->getMessage());
             return false;
         }
@@ -221,7 +221,7 @@ class PropertyFavorite extends Model {
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute([$user_id]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Remove user favorites error: ' . $e->getMessage());
             return false;
         }
@@ -245,7 +245,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('API favorites fetch error: ' . $e->getMessage());
             return [];
         }
@@ -274,7 +274,7 @@ class PropertyFavorite extends Model {
 
             return $success_count;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Bulk add favorites error: ' . $e->getMessage());
             return 0;
         }
@@ -294,7 +294,7 @@ class PropertyFavorite extends Model {
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute($params);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Bulk remove favorites error: ' . $e->getMessage());
             return false;
         }
@@ -320,7 +320,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetch();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('User favorites stats error: ' . $e->getMessage());
             return [];
         }
@@ -345,7 +345,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetch();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Property favorites stats error: ' . $e->getMessage());
             return [];
         }
@@ -373,14 +373,30 @@ class PropertyFavorite extends Model {
             $data = $stmt->fetchAll();
 
             if ($format === 'csv') {
-                return generateCSVReport($data);
+                // NOTE (S448): generateCSVReport() does not exist in this
+                // codebase -> "Call to undefined function" -> the CSV export
+                // 500'd. Build the CSV inline.
+                if (empty($data)) {
+                    return '';
+                }
+                $headers = array_keys((array)($data[0] ?? []));
+                $lines = [implode(',', array_map(fn($h) => '"' . str_replace('"', '""', (string)$h) . '"', $headers))];
+                foreach ($data as $row) {
+                    $cells = [];
+                    foreach ($headers as $h) {
+                        $v = is_array($row) ? ($row[$h] ?? '') : '';
+                        $cells[] = '"' . str_replace('"', '""', (string)$v) . '"';
+                    }
+                    $lines[] = implode(',', $cells);
+                }
+                return implode("\n", $lines);
             } elseif ($format === 'json') {
                 return json_encode($data, JSON_PRETTY_PRINT);
             }
 
             return $data;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Favorites export error: ' . $e->getMessage());
             return false;
         }
@@ -403,7 +419,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Recent favorites fetch error: ' . $e->getMessage());
             return [];
         }
@@ -432,7 +448,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Favorites search error: ' . $e->getMessage());
             return [];
         }
@@ -464,7 +480,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Favorites date range fetch error: ' . $e->getMessage());
             return [];
         }
@@ -490,7 +506,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Favorites activity data error: ' . $e->getMessage());
             return [];
         }
@@ -525,7 +541,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Top favorites by location error: ' . $e->getMessage());
             return [];
         }
@@ -551,7 +567,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetch();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Favorite conversion rate error: ' . $e->getMessage());
             return [];
         }
@@ -571,7 +587,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->rowCount();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Orphaned favorites cleanup error: ' . $e->getMessage());
             return 0;
         }
@@ -596,7 +612,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Mobile API favorites fetch error: ' . $e->getMessage());
             return [];
         }
@@ -662,7 +678,7 @@ class PropertyFavorite extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Favorite recommendations error: ' . $e->getMessage());
             return [];
         }

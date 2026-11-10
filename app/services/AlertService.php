@@ -261,7 +261,7 @@ class AlertService
     private function checkSystemLoad()
     {
         if (function_exists('sys_getloadavg')) {
-            $load = sys_getloadavg();
+            $load = function_exists('sys_getloadavg') ? sys_getloadavg() : [0, 0, 0];
             if ($load[0] > $this->thresholds['system_load']) {
                 $this->createAlert(
                     'warning',

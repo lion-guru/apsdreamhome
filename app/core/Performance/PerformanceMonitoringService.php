@@ -133,7 +133,7 @@ class PerformanceMonitoringService
 
         // CPU metrics (if available)
         if (function_exists('sys_getloadavg')) {
-            $load = sys_getloadavg();
+            $load = function_exists('sys_getloadavg') ? sys_getloadavg() : [0, 0, 0];
             $metrics['cpu']['load_1min'] = [
                 'value' => round($load[0] * 100, 2),
                 'unit' => '%',

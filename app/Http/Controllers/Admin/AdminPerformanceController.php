@@ -29,13 +29,13 @@ class AdminPerformanceController extends AdminController
             $opcacheHits = 0;
             $opcacheMisses = 0;
             if ($opcacheEnabled) {
-                $st = @opcache_get_status();
+                $st = function_exists('opcache_get_status') ? @opcache_get_status() : false;
                 $opcacheHits = $st['opcache_statistics']['num_hits'] ?? 0;
                 $opcacheMisses = $st['opcache_statistics']['num_misses'] ?? 0;
             }
             $slowQueries = (int)($this->db->query("SHOW GLOBAL STATUS LIKE 'Slow_queries'")->fetchColumn());
             $totalQueries = (int)($this->db->query("SHOW GLOBAL STATUS LIKE 'Queries'")->fetchColumn());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $phpVersion = phpversion();
             $mysqlVersion = $memoryUsed = $memoryPeak = $memoryLimitBytes = $diskFree = $diskTotal = $diskUsed = 0;
             $uptime = $serverSoftware = '';

@@ -59,7 +59,7 @@ class PayoutStrategy implements CommissionStrategy
      */
     public function createPayoutBatch(array $userIds): array
     {
-        $ledgerService = app(\App\Services\Commission\CommissionLedgerService::class);
+        $ledgerService = new \App\Services\Commission\CommissionLedgerService();
         $batch = $ledgerService->createPayoutBatch($userIds);
         
         return [

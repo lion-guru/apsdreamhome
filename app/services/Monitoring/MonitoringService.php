@@ -70,7 +70,7 @@ class MonitoringService
     private function getCpuUsage()
     {
         if (function_exists('sys_getloadavg')) {
-            $load = sys_getloadavg();
+            $load = function_exists('sys_getloadavg') ? sys_getloadavg() : [0, 0, 0];
             return [
                 'load_1' => $load[0] ?? 0,
                 'load_5' => $load[1] ?? 0,
@@ -103,7 +103,7 @@ class MonitoringService
     private function getLoadAverage()
     {
         if (function_exists('sys_getloadavg')) {
-            return sys_getloadavg();
+            return function_exists('sys_getloadavg') ? sys_getloadavg() : [0, 0, 0];
         }
         return [0, 0, 0];
     }
@@ -138,7 +138,7 @@ class MonitoringService
             $stmt = $this->db->query("SHOW PROCESSLIST");
             $connections = $stmt->fetchAll();
             return count($connections);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -156,7 +156,7 @@ class MonitoringService
             $stmt = $this->db->query("SELECT COUNT(*) as active_sessions FROM user_sessions WHERE last_activity > DATE_SUB(NOW(), INTERVAL 30 MINUTE)");
             $result = $stmt->fetch();
             return (int) $result['active_sessions'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -190,7 +190,7 @@ class MonitoringService
                 $metrics['active_sessions'],
                 $tenantId,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error('Failed to store system metrics: ' . $e->getMessage());
         }
     }
@@ -219,7 +219,7 @@ class MonitoringService
             ]);
 
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $endTime = microtime(true);
             $duration = round(($endTime - $startTime) * 1000, 2);
 
@@ -373,7 +373,7 @@ class MonitoringService
             ");
             $stmt->execute([$hours]);
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error('Failed to retrieve historical metrics: ' . $e->getMessage());
             return [];
         }

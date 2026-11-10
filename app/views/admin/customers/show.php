@@ -71,8 +71,8 @@
                                     <span class="badge bg-<?= ($customer['status'] ?? 'active') === 'active' ? 'success' : 'secondary' ?>-subtle text-<?= ($customer['status'] ?? 'active') === 'active' ? 'success' : 'secondary' ?> rounded-pill px-3"><?= ucfirst($customer['status'] ?? 'Active') ?></span>
                                     <hr class="my-3">
                                     <h6><i class="fas fa-id-card me-2"></i> KYC Details</h6>
-                                    <p class="text-muted small"><strong>Aadhaar:</strong> <?= mask_aadhaar($customer['aadhaar'] ?? '') ?></p>
-                                    <p class="text-muted small"><strong>PAN:</strong> <?= mask_pan($customer['pan'] ?? '') ?></p>
+                                    <p class="text-muted small"><strong>Aadhaar:</strong> <?= \App\Helpers\UtilityHelper::maskData($customer['aadhaar'] ?? '', 'aadhaar') ?></p>
+                                    <p class="text-muted small"><strong>PAN:</strong> <?= \App\Helpers\UtilityHelper::maskData($customer['pan'] ?? '', 'pan') ?></p>
                                     <p class="text-muted small"><strong>Phone:</strong> <?= $customer['phone'] ?? '-' ?></p>
                                     <p class="text-muted small"><strong>Alt. Phone:</strong> <?= $customer['alt_phone'] ?? '-' ?></p>
                                     <p class="text-muted small"><strong>City/State:</strong> <?= ($customer['city'] ?? '') . ', ' . ($customer['state'] ?? '') ?></p>

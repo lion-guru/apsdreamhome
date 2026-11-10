@@ -30,7 +30,11 @@ $agent_info = null;
 
 // Fetch property details
 try {
-    $conn = getMysqliConnection();
+    // NOTE (S448): getMysqliConnection() does not exist in this codebase ->
+    // "Call to undefined function" -> the property details page 500'd.
+    // The code below uses $conn->prepare() + PDO::FETCH_ASSOC, so it needs the
+    // PDO connection (the Database wrapper's getConnection()).
+    $conn = \App\Core\Database\Database::getInstance()->getConnection();
 
     // Get main property information
     $query = "
@@ -74,7 +78,7 @@ try {
     $related_stmt->execute([$property_id, $property['property_type_id']]);
     $related_properties = $related_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log('Error fetching property details: ' . $e->getMessage());
     $error_message = 'Unable to load property details. Please try again later.';
 }
