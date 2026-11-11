@@ -17,6 +17,65 @@
 
 > **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
 
+## Session 452: Web 500 Sweep Round 2 - 37 -> 0 x 500 (1989 GET Routes), Autoload Shim + Global config() Helper, Missing Query-Runner Family, MariaDB Aria Crash Recovery (2026-11-11)
+
+### Trigger
+Owner: "apne suggestin se aur improve karo context tumhare pas hai" -> continue the sweep-based verification from S449/S450.
+
+### The headline
+S450 closed the sweep at "0 x 500" but with a **flawed probe**: 8 concurrent workers shared ONE cookie jar, so PHP session-file contention made ~1600 routes answer 302 instead of rendering. Fixing the probe (one session per worker + re-login on an auth-redirect) revealed **37 REAL 500s**. All 37 are now 0, verified on the live tree by **two consecutive identical sweeps** (200 x1615, 301 x50, 302 x294, 400 x11, 401 x1, 403 x17, 404 x1, **500 x0**).
+
+### Root causes fixed (37 routes -> 13 families)
+1. **`App\Core\App` could never be autoloaded.** The class is DECLARED in `app/Core/Legacy/AppCoreService.php`, but the autoloader maps the FQCN `App\Core\App` to the PATH `app/Core/App.php` - which did not exist. So `class_exists('App\Core\App')` was ALWAYS false, and `App\Core\App::database()` threw "Class not found". `BaseApiController::validateApiKey()` calls it inside a try/catch, so **every API-key request answered 500** ("Internal server error during API key validation"). Fix: a 28-line `app/Core/App.php` that `require_once`s the legacy file.
+2. **The global `config()` helper did not exist.** `app/Helpers/env.php` defines `config()` and `route()`, but it was only ever required from `app/Core/Config.php` - which is never loaded. `config('app.name')` was an UNDEFINED FUNCTION (a fatal in `Core\SEOOptimizer` and `Models\Pivot`). Fix: load `app/Helpers/env.php` from `config/bootstrap.php` AFTER `app/helpers.php` (the latter owns the richer `env()`), and upgrade `config()` to resolve dotted keys against `App\Core\Config\Config` (which loads `config/*.php`) with the old `$_ENV` walk as fallback.
+3. **A missing query-runner family (9 services).** `HolidayCalendarService`, `OffboardingService`, `OnboardingService`, `EmployeeAssetService`, `HelpdeskService`, `LeaveEncashmentService`, `OvertimeService`, `SalaryAdvanceService`, `ShiftSwapService` all call `$this->fetchAll($sql, $params)` / `$this->fetchOne(...)` internally - the helper was never written. Every method that used it fataled. Fix: a real `fetchAll`/`fetchOne` pair per service (prepare + execute + `PDO::FETCH_ASSOC`, catch -> `[]`/`null`).
+4. **Missing service methods** (the route called a method that did not exist): `DocumentService::getStats/getRequests/getEmployeeDocuments`, `OcrService::listOcrDocuments/listClassifications/listExecutions`, `AIService::getStats`, `User::getUserById`, `LocalStorage::copy/move` (+ `implements StorageInterface`), `CampaignService::isUnsubscribed`.
+5. **Phantom columns** (query built against an imagined schema): `states.created_at`, `system_logs.category` (-> `action`), `team_messages.type/recipients`, `vendors.name` (-> `vendor_name`), `job_applications.job_id/status`, `media_library.file_type/category/deleted_at/created_at` (-> `media_type`/`uploaded_at`), `document_categories.tenant_id/is_mandatory`, `training_courses.title/code/category` (-> `course_title`/`course_category`, and there is NO `code` column), and `employee_documents` - **a table that never existed**; the real one is `documents` (which has `user_id`, not `employee_id`, and `uploaded_on`, not `created_at`).
+6. **`App\Core\Database\Database` vs the raw-PDO services.** `PayrollService`/`TrainingService`/`RecruitmentService` hold a raw PDO in `$conn`; three of my own new methods had used `$this->db` (a property that does not exist on them) and silently returned `[]`. Caught by reflection, not by the sweep.
+7. **`WHERE WHERE`.** `DocumentVaultService` built `$sql = "... WHERE $whereSql"` while `$whereSql` already began with `WHERE` -> SQL 1064 on every document-vault page. Also a duplicated tenant placeholder (-> HY093) and a `LEFT JOIN ... ON 1=1` cross join that multiplied 27 documents into 80 rows.
+8. **Column/value count mismatch (1136).** `RecommendationEngine::saveRecommendations()` built ONE multi-row INSERT whose column list had 5 names but whose value list had `2 + 3*N` entries. Now inserts one row per recommendation.
+9. **`App\Core\App` injected into the FRONT `AdminController`.** `Admin\PerformanceController` imported the tiny front `AdminController` (no `$db`) -> `fetchAll() on null`. Fix: import `Admin\AdminController` and set `$this->db` explicitly.
+10. **A view reaching for `$db`.** `admin/performance/{create,edit,show}.php` called `$db->fetchAll(...)` but no `$db` is in view scope -> `fetchAll() on null`. Fix: `$db = $db ?? \App\Core\Database\Database::getInstance();`.
+11. **`/admin/ai/dashboard`** was a raw closure that `require`d `app/views/admin/layouts/admin.php` - a file that does not exist. Repointed at `AIDashboardController@index`.
+12. **A missing view file.** `AjaxController::getLeadTimeline()` required `app/views/admin/ajax/get-lead-timeline.php` -> "Failed opening required". The file now exists and serves the CRM `lead_activities` timeline.
+
+### The verification method that caught all of this (and the one that did not)
+- **Live tree sweep**: 1989 literal GET routes, 6 sessions (one per worker), re-login on an auth-redirect, histogram of status codes.
+- **STAGED-tree sweep**: materialise the INDEX as a second git worktree (`git write-tree` + `commit-tree` + `worktree add`) and run the SAME probes against it. This is what proved the commit is safe on its own: **HEAD failed 27 of 31 probed routes, the staged tree failed 0** - 22 fixed, **0 regressions**.
+- **A probe that reports an `exit()` as a failure is a probe bug.** A controller that does `echo json; exit;` never reaches the line that writes the result marker. The first probe reported 9 healthy JSON endpoints as "EXITED (no result)". Fixed by moving the marker write into a `register_shutdown_function` that reads the output buffer.
+
+### MariaDB crash recovery (the disk-full aftershock)
+The C: drive hit 0 bytes free again mid-session -> MariaDB aborted with `Errcode 28 (No space left on device)` and then would not start at all:
+```
+[ERROR] Plugin 'Aria' registration as a STORAGE ENGINE failed.
+[ERROR] Could not open mysql.plugin table. Some plugins may be not loaded
+[ERROR] Failed to initialize plugins.  [ERROR] Aborting
+```
+Recovery (per the DB RESTORE PROTOCOL - a **safety copy of `C:\xampp\mysql\data\mysql` + the aria_log files was taken first**, 99.4 MB):
+1. `aria_chk --recover` on every `mysql\*.MAI` (24 tables).
+2. `columns_priv` still failed with "aria_sort_buffer_size is too small" -> `--safe-recover` fixed it (the keycache path, not the sort path).
+3. Deleted the stale `aria_log.00000001` **and** `aria_log_control` (the control file still pointed at the deleted log -> "Cannot find checkpoint record at LSN").
+4. mysqld started; **every table count was byte-identical to the pre-crash baseline** (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0) - **zero data loss**, and no restore was needed.
+
+### Verification
+- Live web sweep: **1989 GET routes -> 0 x 500**, twice, with identical histograms.
+- Staged-tree probe: **22 routes fixed, 0 regressions, 0 still broken** vs a plain-HEAD probe of the same 31 routes.
+- Every staged file lints clean **inside the materialised staged tree** (not just in the worktree).
+- Every route in the staged `routes/web.php` resolves to a class+method that exists in the staged tree.
+- No staged file references a class that is not in the commit (the parallel actor's UNTRACKED controllers were found and removed from the staged `routes/web.php`).
+- `php testing/master_test_runner.php` -> **10/10 PASSED** (24.71s).
+- DB zero drift; probe litter cleaned (16 `api_tokens` rows from today's test-suite logins deleted; `storage/cache` cleared).
+
+### Key Lessons (carried, continued)
+_806. **A shared cookie jar across concurrent workers silently converts every route into a 302.** PHP session files are per-session, and one worker's `session_write_close()` rewrote the others' session. One jar per worker + re-login on an auth-redirect is the minimum; two identical sweeps are the minimum evidence.
+_807. **A class that is DECLARED somewhere is not the same as a class that is RESOLVABLE.** `App\Core\App` existed, was correct, was even used by four core classes - and `class_exists()` still returned false forever, because the autoloader maps FQCNs to PATHS. Autoload-ability is a separate property from existence.
+_808. **A helper can be missing in nine files at once.** `$this->fetchAll($sql, $params)` was a repo-wide service convention that nine services used and none implemented. Grep for the CALL, not for the definition - the definition genuinely does not exist anywhere.
+_809. **Probe the tree you are about to COMMIT, not the tree you are editing.** Materialising the index as a worktree and running the same probes against it found 2 regressions and 1 parse error that the live worktree never showed (my function-granularity staging had put methods AFTER the class's closing brace).
+_810. **A blanket `str_replace` over a file hits every similar line, not just the broken one.** Repointing `vendors.name` also rewrote a `users` query's `ORDER BY`; dropping a `LEFT JOIN ... ON ed.category_id` also hit a query whose alias was `dr`. Blanket replaces need a per-file, per-alias assertion.
+_811. **"mysql.plugin table" is not a plugin problem.** It is the Aria engine failing to open ONE system table, which aborts plugin init and therefore the whole server. The repair is `aria_chk --recover` (or `--safe-recover` when the sort buffer is too small) on every Aria table, THEN delete `aria_log.*` AND `aria_log_control` - the control file alone keeps pointing at the dead log.
+_812. **A probe that writes its result AFTER the call misses every controller that calls `exit()`.** Put the marker write in a shutdown function and read the output buffer from there, or half your "failures" are successes.
+_813. **Before staging a shared file, check whether the OTHER actor already committed your fix.** HEAD moved 5 times during this session; a by-function rebuild that copies "my S451-marked functions" will find nothing to copy if their commit already landed those functions. Re-read HEAD per file, and verify what is still missing before staging.
+
 ## Session 451: C: Disk Forensics - 32 GB Dead Space in OpenCode DB, 2 Safe Cleanup Scripts, 1165 Uncommitted Files Found (2026-11-11)
 
 ### Trigger
