@@ -109,7 +109,7 @@ void showShareLeadSheet({
                     color: const Color(0xFF25D366),
                     onTap: () {
                       final msg = _buildShareMessage(nameText, phoneText, sourceText, link);
-                      Share.share(msg, sharePositionOrigin: null);
+                      SharePlus.instance.share(ShareParams(text: msg));
                       Navigator.pop(ctx);
                     },
                   ),
@@ -122,7 +122,7 @@ void showShareLeadSheet({
                     color: Colors.blue,
                     onTap: () {
                       final msg = _buildShareMessage(nameText, phoneText, sourceText, link);
-                      Share.share(msg, sharePositionOrigin: null);
+                      SharePlus.instance.share(ShareParams(text: msg));
                       Navigator.pop(ctx);
                     },
                   ),
@@ -135,7 +135,7 @@ void showShareLeadSheet({
                     color: AppTheme.primaryColor,
                     onTap: () {
                       final msg = _buildShareMessage(nameText, phoneText, sourceText, link);
-                      Share.share(msg, sharePositionOrigin: null);
+                      SharePlus.instance.share(ShareParams(text: msg));
                       Navigator.pop(ctx);
                     },
                   ),

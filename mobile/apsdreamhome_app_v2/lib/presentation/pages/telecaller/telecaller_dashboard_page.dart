@@ -847,18 +847,17 @@ class _TelecallerDashboardPageState
                           } catch (e) {
                             // Continue
                           }
-                          if (mounted) {
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Lead transfer request sent to manager',
-                                ),
-                                backgroundColor: Colors.green,
+                          if (!context.mounted) return;
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Lead transfer request sent to manager',
                               ),
-                            );
-                            ref.invalidate(telecallerDashboardProvider);
-                          }
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          ref.invalidate(telecallerDashboardProvider);
                         },
                         icon: const Icon(Icons.transfer_within_a_station),
                         label: const Text('Transfer'),

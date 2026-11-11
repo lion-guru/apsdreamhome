@@ -14,7 +14,7 @@ final isOnlineProvider = Provider<bool>((ref) {
   return connectivity.when(
     data: (results) => results.isNotEmpty && !results.contains(ConnectivityResult.none),
     loading: () => true,
-    error: (_, __) => true,
+    error: (_, _) => true,
   );
 });
 
@@ -123,7 +123,7 @@ class SyncIndicator extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final syncStatus = ref.watch(syncStatusProvider);
-    final pendingCount = 0; // TODO: Get from sync queue
+    const pendingCount = 0; // TODO: Get from sync queue
 
     if (compact) {
       return _buildCompact(ref);
@@ -353,7 +353,6 @@ class CompactSyncIndicator extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final syncStatus = ref.watch(syncStatusProvider);
-    final isOnline = ref.watch(isOnlineProvider);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -635,7 +634,7 @@ class OfflineDataBanner extends ConsumerWidget {
               ),
             ),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
         ],
       ),
     );

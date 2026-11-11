@@ -269,7 +269,7 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
         children: [
           Text('Our Services', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('Expert construction services tailored to your needs', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('Expert construction services tailored to your needs', style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 20),
           GridView.builder(
             shrinkWrap: true,
@@ -362,7 +362,7 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
         children: [
           Text('Our Process', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('Streamlined construction from concept to completion', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('Streamlined construction from concept to completion', style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 20),
           Row(
             children: [
@@ -393,7 +393,7 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
           const SizedBox(height: 10),
           Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)),
           const SizedBox(height: 4),
-          Text(desc, style: TextStyle(color: Colors.white54, fontSize: 10), textAlign: TextAlign.center, maxLines: 2),
+          Text(desc, style: const TextStyle(color: Colors.white54, fontSize: 10), textAlign: TextAlign.center, maxLines: 2),
         ],
       ),
     );
@@ -409,7 +409,7 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
         children: [
           Text('Recent Projects', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('Showcasing our completed construction projects', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('Showcasing our completed construction projects', style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 20),
           SizedBox(
             height: 220,
@@ -465,7 +465,7 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
                             const SizedBox(height: 4),
                             Text(
                               p['location']?.toString() ?? '',
-                              style: TextStyle(color: Colors.white54, fontSize: 11),
+                              style: const TextStyle(color: Colors.white54, fontSize: 11),
                             ),
                           ],
                         ),
@@ -502,7 +502,7 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
           children: [
             Text('Get a Free Quote', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
-            Text('Fill the form and our team will contact you within 24 hours', style: TextStyle(color: Colors.white70, fontSize: 13)),
+            const Text('Fill the form and our team will contact you within 24 hours', style: TextStyle(color: Colors.white70, fontSize: 13)),
             const SizedBox(height: 20),
             Form(
               key: _formKey,
@@ -640,7 +640,7 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
 
   Widget _buildDropdown() {
     return DropdownButtonFormField<String>(
-      value: _selectedType,
+      initialValue: _selectedType,
       style: const TextStyle(color: Colors.white),
       dropdownColor: const Color(0xFF1A1A2E),
       icon: Icon(Icons.arrow_drop_down_rounded, color: Colors.white.withValues(alpha: 0.5)),
@@ -727,7 +727,7 @@ class _ConstructionServicesPageState extends State<ConstructionServicesPage> {
             Icon(icon, color: AppTheme.accentColor, size: 24),
             const SizedBox(height: 6),
             Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
-            Text(subtitle, style: TextStyle(color: Colors.white54, fontSize: 10)),
+            Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 10)),
           ],
         ),
       ),

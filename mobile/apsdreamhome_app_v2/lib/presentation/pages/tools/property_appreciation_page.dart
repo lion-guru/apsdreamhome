@@ -21,7 +21,7 @@ class _PropertyAppreciationPageState extends State<PropertyAppreciationPage> {
         Card(child: Padding(padding: const EdgeInsets.all(16), child: Column(children:[
           TextField(keyboardType: TextInputType.number, decoration: const InputDecoration(labelText:'Current Value (₹)', prefixIcon: Icon(Icons.home)), onChanged:(v){ setState(()=> _current=double.tryParse(v)??_current); }),
           const SizedBox(height:16),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children:[const Text('Appreciation Rate', style:TextStyle(fontWeight:FontWeight.bold)), Container(padding: const EdgeInsets.symmetric(horizontal:12,vertical:6), decoration: BoxDecoration(color:const Color(0xFF667EEA).withOpacity(0.1), borderRadius: BorderRadius.circular(20)), child: Text('${_rate.toStringAsFixed(1)}%', style:const TextStyle(fontWeight:FontWeight.bold, color:Color(0xFF667EEA))))]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children:[const Text('Appreciation Rate', style:TextStyle(fontWeight:FontWeight.bold)), Container(padding: const EdgeInsets.symmetric(horizontal:12,vertical:6), decoration: BoxDecoration(color:const Color(0xFF667EEA).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)), child: Text('${_rate.toStringAsFixed(1)}%', style:const TextStyle(fontWeight:FontWeight.bold, color:Color(0xFF667EEA))))]),
           Slider(value:_rate, min:1, max:15, divisions:28, label:'${_rate.toStringAsFixed(1)}%', onChanged:(v)=> setState(()=> _rate=v)),
           const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children:[Text('1%'), Text('15%')]),
           const SizedBox(height:12),
@@ -38,7 +38,7 @@ class _PropertyAppreciationPageState extends State<PropertyAppreciationPage> {
         const SizedBox(height:12),
         Container(width: double.infinity, padding: const EdgeInsets.all(16), decoration: BoxDecoration(color:Colors.blue.shade50, borderRadius: BorderRadius.circular(12)), child: Column(children:[Text('Rent Income Total', style:TextStyle(color:Colors.blue.shade700, fontSize:12)), Text('₹${fmt(rentTotal)}', style:TextStyle(color:Colors.blue.shade700, fontSize:18, fontWeight:FontWeight.bold)), Text('$_years years @ $_rent%', style:TextStyle(color:Colors.grey.shade600, fontSize:11))])),
         const SizedBox(height:16),
-        Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color:Colors.amber.shade50, borderRadius: BorderRadius.circular(8), border: Border.all(color:Colors.amber.shade200)), child: Row(children:[Icon(Icons.info, color:Colors.amber.shade700, size:20), const SizedBox(width:8), Expanded(child: Text('Future = Current \u00D7 (1+rate)^years. Gorakhpur avg 5-7%.', style:TextStyle(fontSize:11)))])),
+        Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(color:Colors.amber.shade50, borderRadius: BorderRadius.circular(8), border: Border.all(color:Colors.amber.shade200)), child: Row(children:[Icon(Icons.info, color:Colors.amber.shade700, size:20), const SizedBox(width:8), const Expanded(child: Text('Future = Current \u00D7 (1+rate)^years. Gorakhpur avg 5-7%.', style:TextStyle(fontSize:11)))])),
       ])),
     );
   }

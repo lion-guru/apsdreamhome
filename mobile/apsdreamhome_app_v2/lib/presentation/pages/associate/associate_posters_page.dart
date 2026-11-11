@@ -34,7 +34,7 @@ class _AssociatePostersPageState extends ConsumerState<AssociatePostersPage> {
   String _selectedCategory = 'All';
 
   Future<void> _sharePoster(String caption) async {
-    final uri = Uri.parse("https://wa.me/?text=${Uri.encodeComponent(caption)}");
+    final uri = Uri.parse('https://wa.me/?text=${Uri.encodeComponent(caption)}');
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
@@ -140,7 +140,7 @@ class _AssociatePostersPageState extends ConsumerState<AssociatePostersPage> {
                             height: 200,
                             width: double.infinity,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
+                            errorBuilder: (_, _, _) => Container(
                               height: 200,
                               color: const Color(0xFF0B194C),
                               child: const Center(child: Icon(Icons.apartment, size: 60, color: Color(0xFFD4AF37))),

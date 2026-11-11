@@ -170,7 +170,7 @@ class _MapViewPageState extends State<MapViewPage> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             transform: isSelected
-                ? (Matrix4.identity()..scale(1.2, 1.2, 1.2))
+                ? (Matrix4.identity()..scaleByDouble(1.2, 1.2, 1.2, 1.0))
                 : Matrix4.identity(),
             child: Column(
               children: [

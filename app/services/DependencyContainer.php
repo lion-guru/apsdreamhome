@@ -275,47 +275,47 @@ class DependencyContainer implements ContainerInterface
         // Logger
         $this->singleton('logger', function(): \Psr\Log\LoggerInterface {
             return new class implements \Psr\Log\LoggerInterface {
-                public function emergency(\Stringable|string $message, array $context = []): void
+                public function emergency(mixed $message, array $context = []): void
                 {
                     $this->log('emergency', (string)$message, $context);
                 }
 
-                public function alert(\Stringable|string $message, array $context = []): void
+                public function alert(mixed $message, array $context = []): void
                 {
                     $this->log('alert', (string)$message, $context);
                 }
 
-                public function critical(\Stringable|string $message, array $context = []): void
+                public function critical(mixed $message, array $context = []): void
                 {
                     $this->log('critical', (string)$message, $context);
                 }
 
-                public function error(\Stringable|string $message, array $context = []): void
+                public function error(mixed $message, array $context = []): void
                 {
                     $this->log('error', (string)$message, $context);
                 }
 
-                public function warning(\Stringable|string $message, array $context = []): void
+                public function warning(mixed $message, array $context = []): void
                 {
                     $this->log('warning', (string)$message, $context);
                 }
 
-                public function notice(\Stringable|string $message, array $context = []): void
+                public function notice(mixed $message, array $context = []): void
                 {
                     $this->log('notice', (string)$message, $context);
                 }
 
-                public function info(\Stringable|string $message, array $context = []): void
+                public function info(mixed $message, array $context = []): void
                 {
                     $this->log('info', (string)$message, $context);
                 }
 
-                public function debug(\Stringable|string $message, array $context = []): void
+                public function debug(mixed $message, array $context = []): void
                 {
                     $this->log('debug', (string)$message, $context);
                 }
 
-                public function log(mixed $level, \Stringable|string $message, array $context = []): void
+                public function log(mixed $level, mixed $message, array $context = []): void
                 {
                     $logEntry = date('[Y-m-d H:i:s]') . ' ' . strtoupper((string)$level) . ': ' . (string)$message;
                     if (!empty($context)) {

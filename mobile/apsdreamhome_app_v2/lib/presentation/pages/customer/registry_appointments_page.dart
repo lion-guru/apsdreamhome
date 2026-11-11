@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/services/api_service.dart';
@@ -287,9 +286,9 @@ class _RegistryAppointmentsPageState
             ),
             const SizedBox(height: 20),
             // --- Existing appointments ---
-            Row(
+            const Row(
               children: [
-                const Text(
+                Text(
                   'My Appointments',
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
@@ -327,20 +326,20 @@ class _RegistryAppointmentsPageState
                 ],
               )
             else if (_appointments.isEmpty)
-              GlassCard(
+              const GlassCard(
                 child: Column(
                   children: [
-                    const Icon(Icons.event_busy_outlined,
+                    Icon(Icons.event_busy_outlined,
                         size: 44, color: Colors.black26),
-                    const SizedBox(height: 12),
-                    const Text(
+                    SizedBox(height: 12),
+                    Text(
                       'No registry appointments yet',
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
                           color: AppTheme.primaryColor),
                     ),
-                    const SizedBox(height: 6),
-                    const Text(
+                    SizedBox(height: 6),
+                    Text(
                       'Book your first SRO registry slot above. '
                       'You will need your plot Booking ID.',
                       textAlign: TextAlign.center,

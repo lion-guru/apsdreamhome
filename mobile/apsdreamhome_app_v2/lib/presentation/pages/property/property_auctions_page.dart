@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:apsdreamhome_app_v2/core/services/api_service.dart';
+import '../../../core/services/api_service.dart';
 
 class PropertyAuctionsPage extends ConsumerStatefulWidget {
   const PropertyAuctionsPage({super.key});
@@ -123,15 +123,15 @@ class _PropertyAuctionsPageState extends ConsumerState<PropertyAuctionsPage>
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
+              const Row(
                 children: [
-                  const Icon(Icons.gavel_rounded,
+                  Icon(Icons.gavel_rounded,
                       color: Color(0xFFD4AF37), size: 28),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Place Official Bid',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF0B194C),
@@ -416,14 +416,14 @@ class _PropertyAuctionsPageState extends ConsumerState<PropertyAuctionsPage>
                   children: [
                     Container(
                       height: 140,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0B194C),
-                        borderRadius: const BorderRadius.vertical(
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF0B194C),
+                        borderRadius: BorderRadius.vertical(
                             top: Radius.circular(16)),
                         gradient: LinearGradient(
                           colors: [
-                            const Color(0xFF0B194C),
-                            const Color(0xFF1E3A8A),
+                            Color(0xFF0B194C),
+                            Color(0xFF1E3A8A),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -447,8 +447,8 @@ class _PropertyAuctionsPageState extends ConsumerState<PropertyAuctionsPage>
                             color: Colors.redAccent,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Row(
-                            children: const [
+                          child: const Row(
+                            children: [
                               Icon(Icons.fiber_manual_record,
                                   color: Colors.white, size: 10),
                               SizedBox(width: 4),

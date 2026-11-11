@@ -211,7 +211,6 @@ class _ChatDetailPageState extends ConsumerState<ChatDetailPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF1A1A2E) : const Color(0xFFF5F5F5);
     final myBubble = isDark
         ? const Color(0xFF4F46E5)
         : AppConstants.primaryColor;

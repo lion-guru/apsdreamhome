@@ -524,12 +524,13 @@ class AIEmployeeAgent {
     String category;
     if (score >= 80) {
       category = 'Hot';
-    } else if (score >= 60)
+    } else if (score >= 60) {
       category = 'Warm';
-    else if (score >= 40)
+    } else if (score >= 40) {
       category = 'Cold';
-    else
+    } else {
       category = 'Low Priority';
+    }
 
     return AIEmployeeWorkResult(
       success: true,

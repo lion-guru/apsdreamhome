@@ -118,4 +118,4 @@ abstract class PropertyInquiry with _$PropertyInquiry {
 
 enum InquiryType { call, whatsapp, email, visit, message }
 
-enum InquiryStatus { new_inquiry, contacted, inDiscussion, negotiating, closed, converted }
+enum InquiryStatus { newInquiry, contacted, inDiscussion, negotiating, closed, converted }

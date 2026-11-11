@@ -86,7 +86,7 @@ class AIScoreBadge extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            '${score!.toStringAsFixed(0)}',
+            score!.toStringAsFixed(0),
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w700,
@@ -137,8 +137,6 @@ class AIScoreBadgeLarge extends StatelessWidget {
     if (score == null) {
       return const SizedBox.shrink();
     }
-
-    final color = _getScoreColor(score!);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -244,7 +242,6 @@ class AIScoreDistributionChart extends StatelessWidget {
         const SizedBox(height: 12),
         ...buckets.map((bucket) {
           final range = bucket['range'] as String;
-          final label = bucket['label'] as String;
           final color = bucket['color'] as Color;
           final count = distribution[range] ?? 0;
           final percentage = totalCount > 0 ? (count / totalCount * 100).round() : 0;
@@ -297,7 +294,7 @@ class AIScoreDistributionChart extends StatelessWidget {
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

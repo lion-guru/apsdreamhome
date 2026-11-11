@@ -231,10 +231,10 @@ class AppWidgets {
     TextStyle? style,
   }) {
     final formattedAmount = amount >= 10000000
-        ? 'Rs.' + (amount / 10000000).toStringAsFixed(2) + ' Cr'
+        ? 'Rs.${(amount / 10000000).toStringAsFixed(2)} Cr'
         : amount >= 100000
-            ? 'Rs.' + (amount / 100000).toStringAsFixed(2) + ' L'
-            : 'Rs.' + amount.toStringAsFixed(0);
+            ? 'Rs.${(amount / 100000).toStringAsFixed(2)} L'
+            : 'Rs.${amount.toStringAsFixed(0)}';
     final symbol = prefix ?? AppConstants.currencySymbol;
     const defaultStyle = TextStyle(
       fontSize: 16,
@@ -674,7 +674,7 @@ class AppWidgets {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'Please check your internet connection and try again.',
               textAlign: TextAlign.center,
               style: TextStyle(

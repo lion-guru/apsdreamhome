@@ -153,11 +153,11 @@ class _CustomerPassbookPageState extends ConsumerState<CustomerPassbookPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
-                    const Icon(Icons.savings_outlined, color: Color(0xFFD4AF37)),
-                    const SizedBox(width: 8),
-                    const Text('Prepayment Savings Simulator', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Color(0xFF0B194C))),
+                    Icon(Icons.savings_outlined, color: Color(0xFFD4AF37)),
+                    SizedBox(width: 8),
+                    Text('Prepayment Savings Simulator', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Color(0xFF0B194C))),
                   ],
                 ),
                 const SizedBox(height: 8),

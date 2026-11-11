@@ -3,10 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/services/api_service.dart';
-import '../../../presentation/pages/auth/login_page.dart';
-import '../../../presentation/pages/auth/register_page.dart';
-import '../../../presentation/pages/customer/colonies_page.dart';
-import '../../../presentation/pages/customer/plots_page.dart';
 
 class PublicHomePage extends ConsumerStatefulWidget {
   const PublicHomePage({super.key});
@@ -17,9 +13,9 @@ class PublicHomePage extends ConsumerStatefulWidget {
 
 class _PublicHomePageState extends ConsumerState<PublicHomePage> {
   final PageController _pageController = PageController();
-  int _currentPage = 0;
+  final int _currentPage = 0;
   List<Map<String, dynamic>> _featuredColonies = [];
-  List<Map<String, dynamic>> _featuredPlots = [];
+  final List<Map<String, dynamic>> _featuredPlots = [];
   bool _isLoading = true;
 
   @override
@@ -114,7 +110,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                     fit: BoxFit.cover,
                     color: Colors.black.withValues(alpha: 0.3),
                     colorBlendMode: BlendMode.darken,
-                    errorBuilder: (_, __, ___) => Container(),
+                    errorBuilder: (_, _, _) => Container(),
                   ),
                 ),
                 SafeArea(
@@ -129,7 +125,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                             Image.asset(
                               'assets/images/app_logo_luxury.png',
                               height: 48,
-                              errorBuilder: (_, __, ___) => const Icon(
+                              errorBuilder: (_, _, _) => const Icon(
                                 Icons.apartment,
                                 color: Colors.white,
                                 size: 48,
@@ -172,11 +168,11 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                                 borderRadius: BorderRadius.circular(24),
                                 border: Border.all(color: AppTheme.goldColor, width: 1.5),
                               ),
-                              child: Row(
+                              child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.verified, color: AppTheme.goldColor, size: 18),
-                                  const SizedBox(width: 8),
+                                  Icon(Icons.verified, color: AppTheme.goldColor, size: 18),
+                                  SizedBox(width: 8),
                                   Text(
                                     'RERA APPROVED \u2022 GORAKHPUR \u2022 LUCKNOW',
                                     style: TextStyle(
@@ -190,7 +186,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                               ),
                             ),
                             const SizedBox(height: 24),
-                            Text(
+                            const Text(
                               'Find Your Dream Home\nwith APS Dream Home',
                               style: TextStyle(
                                 color: Colors.white,
@@ -336,7 +332,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Featured Townships',
                   style: TextStyle(
                     fontSize: 24,
@@ -346,7 +342,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                 ),
                 TextButton(
                   onPressed: () => context.go('/colonies'),
-                  child: Text('View All', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.w600)),
+                  child: const Text('View All', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.w600)),
                 ),
               ],
             ),
@@ -377,7 +373,6 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
     final location = (colony['location'] ?? colony['city'] ?? 'Gorakhpur').toString();
     final price = colony['min_price'] ?? colony['starting_price'] ?? 0;
     final image = (colony['image'] ?? colony['banner_image'])?.toString();
-    final plotsAvailable = colony['plots_available'] ?? colony['available_plots'] ?? 0;
     final reraNumber = colony['rera_number'];
 
     return Container(
@@ -407,7 +402,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                         height: 160,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildPlaceholderImage(),
+                        errorBuilder: (_, _, _) => _buildPlaceholderImage(),
                       )
                     : _buildPlaceholderImage(),
               ),
@@ -421,11 +416,11 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                       color: AppTheme.goldColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.verified, color: Colors.white, size: 14),
-                        const SizedBox(width: 4),
+                        Icon(Icons.verified, color: Colors.white, size: 14),
+                        SizedBox(width: 4),
                         Text(
                           'RERA',
                           style: TextStyle(
@@ -464,7 +459,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                   children: [
                     Text(
                       '₹${_formatPrice(price)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 18,
                         color: AppTheme.primaryColor,
@@ -485,7 +480,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                         onPressed: () => context.go('/colony-detail/${colony['id'].toString()}'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppTheme.primaryColor,
-                          side: BorderSide(color: AppTheme.primaryColor),
+                          side: const BorderSide(color: AppTheme.primaryColor),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text('View Details'),
@@ -553,7 +548,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Available Plots',
                   style: TextStyle(
                     fontSize: 24,
@@ -563,7 +558,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                 ),
                 TextButton(
                   onPressed: () => context.go('/plots'),
-                  child: Text('View All', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.w600)),
+                  child: const Text('View All', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.w600)),
                 ),
               ],
             ),
@@ -591,7 +586,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
             child: Center(
               child: TextButton(
                 onPressed: () => context.go('/plots'),
-                child: Text('View All Plots', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.w600, fontSize: 16)),
+                child: const Text('View All Plots', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.w600, fontSize: 16)),
               ),
             ),
           ),
@@ -633,7 +628,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                         height: 120,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildPlaceholderImage(),
+                        errorBuilder: (_, _, _) => _buildPlaceholderImage(),
                       )
                     : _buildPlaceholderImage(),
               ),
@@ -691,7 +686,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                   children: [
                     Text(
                       '₹${_formatPrice(price)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 15,
                         color: AppTheme.primaryColor,
@@ -732,7 +727,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Smart Tools',
                   style: TextStyle(
                     fontSize: 24,
@@ -742,7 +737,7 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
                 ),
                 TextButton(
                   onPressed: () => context.go('/tools-hub'),
-                  child: Text('View All', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.w600)),
+                  child: const Text('View All', style: TextStyle(color: AppTheme.goldColor, fontWeight: FontWeight.w600)),
                 ),
               ],
             ),
@@ -824,8 +819,8 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(24),
+          const Padding(
+            padding: EdgeInsets.all(24),
             child: Text(
               'Happy Homeowners',
               style: TextStyle(
@@ -908,13 +903,13 @@ class _PublicHomePageState extends ConsumerState<PublicHomePage> {
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
           ),
         ),
         child: Column(
           children: [
-            Text(
+            const Text(
               'Ready to Find Your Dream Home?',
               style: TextStyle(
                 color: Colors.white,

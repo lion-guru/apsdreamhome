@@ -108,7 +108,7 @@ class _CareerDetailPageState extends ConsumerState<CareerDetailPage> {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
               begin: Alignment.topLeft,
@@ -187,7 +187,7 @@ class _CareerDetailPageState extends ConsumerState<CareerDetailPage> {
                       label: const Text('Share'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppTheme.primaryColor,
-                        side: BorderSide(color: AppTheme.primaryColor),
+                        side: const BorderSide(color: AppTheme.primaryColor),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
@@ -277,14 +277,14 @@ class _CareerDetailPageState extends ConsumerState<CareerDetailPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
                   ),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       'Ready to Join Our Team?',
                       style: TextStyle(
                         color: Colors.white,
@@ -345,7 +345,7 @@ class _CareerDetailPageState extends ConsumerState<CareerDetailPage> {
         const SizedBox(width: 12),
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w800,
             color: AppTheme.primaryColor,
@@ -355,7 +355,7 @@ class _CareerDetailPageState extends ConsumerState<CareerDetailPage> {
     );
   }
 
-  Widget _buildBulletList(List items) {
+  Widget _buildBulletList(List<dynamic> items) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: items.map((item) {

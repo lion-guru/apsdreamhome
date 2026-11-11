@@ -36,7 +36,7 @@ class AuditLog extends Model
     /**
      * Get all audit logs with filters
      */
-    public function getAll($filters = [], $limit = 50, $offset = 0)
+    public static function getAll($filters = [], $limit = 50, $offset = 0, $perPage = 20)
     {
         $query = static::query()
             ->select(['al.*', 'u.auser as user_name'])

@@ -45,7 +45,6 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
   String _referralCode = '';
   PropertyListing? _property;
   bool _isLoading = true;
-  String? _loadError;
   int _galleryIndex = 0;
   bool _inquiryExpanded = false;
   bool _inquirySubmitting = false;
@@ -73,7 +72,6 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _loadError = e.toString();
           _isLoading = false;
         });
       }
@@ -155,10 +153,10 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
           location: _displayLocation,
         );
       } else {
-        await Share.share(message);
+        await SharePlus.instance.share(ShareParams(text: message));
       }
     } catch (e) {
-      await Share.share(message);
+      await SharePlus.instance.share(ShareParams(text: message));
     }
   }
 

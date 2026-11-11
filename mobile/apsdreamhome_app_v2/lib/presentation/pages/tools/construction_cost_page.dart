@@ -65,13 +65,11 @@ class _ConstructionCostPageState extends State<ConstructionCostPage> {
   }
 
   void _share() {
-    Share.share(
-      'Construction Cost Estimate\n'
+    SharePlus.instance.share(ShareParams(text: 'Construction Cost Estimate\n'
       'Area: ${_areaController.text} sqft\n'
       'Finish: $_finishLevel\n'
       'Total Cost: ₹${_format(_totalCost)}\n'
-      'Per SqFt: ₹${_perSqftCost.toStringAsFixed(0)}',
-    );
+      'Per SqFt: ₹${_perSqftCost.toStringAsFixed(0)}'));
   }
 
   String _format(double n) {

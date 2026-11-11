@@ -23,7 +23,7 @@ class LegalDocumentPreviewPage extends ConsumerWidget {
 
     void share() {
       if (content.isNotEmpty) {
-        Share.share('$title\n\n$content', subject: title);
+        SharePlus.instance.share(ShareParams(text: '$title\n\n$content', subject: title));
       }
     }
 

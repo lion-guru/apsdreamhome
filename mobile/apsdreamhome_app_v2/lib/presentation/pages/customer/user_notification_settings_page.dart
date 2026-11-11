@@ -214,7 +214,7 @@ class _UserNotificationSettingsPageState extends ConsumerState<UserNotificationS
                     }
                   });
                 },
-                activeColor: color,
+                activeThumbColor: color,
                 inactiveThumbColor: Colors.grey,
                 inactiveTrackColor: Colors.white.withValues(alpha: 0.1),
               ),

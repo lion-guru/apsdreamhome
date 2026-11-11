@@ -521,9 +521,11 @@ class ReceiptService {
   /// Share PDF via WhatsApp, Email, etc.
   Future<void> shareReceipt(File pdfFile, {String? text}) async {
     try {
-      await Share.shareXFiles(
-        [XFile(pdfFile.path)],
-        text: text ?? 'Please find your receipt attached.',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(pdfFile.path)],
+          text: text ?? 'Please find your receipt attached.',
+        ),
       );
       AppLogger.info('Receipt shared successfully');
     } catch (e) {

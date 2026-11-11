@@ -90,7 +90,7 @@ class _MilestonesSheet extends ConsumerWidget {
             Text('Status: $st • ${pct.toStringAsFixed(0)}%', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
             const SizedBox(height: 6),
             ClipRRect(borderRadius: BorderRadius.circular(6), child: LinearProgressIndicator(value: (pct/100).clamp(0,1), minHeight: 6)),
-            if (photo.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8), child: ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(photo.startsWith('http') ? photo : '${AppConstants.baseUrl}/$photo', height: 120, width: double.infinity, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox()))),
+            if (photo.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8), child: ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(photo.startsWith('http') ? photo : '${AppConstants.baseUrl}/$photo', height: 120, width: double.infinity, fit: BoxFit.cover, errorBuilder: (_, _, _) => const SizedBox()))),
           ]));
         });
       }, loading: () => const Center(child: CircularProgressIndicator()), error: (e, _) => Center(child: Text(e.toString())))),

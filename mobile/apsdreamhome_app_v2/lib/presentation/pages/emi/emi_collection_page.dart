@@ -21,7 +21,6 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
   bool _isLoading = true;
   String? _error;
 
-  Map<String, dynamic> _data = {};
   List<Map<String, dynamic>> _todayDues = [];
   Map<String, dynamic> _todayStats = {};
   List<Map<String, dynamic>> _todayCollections = [];
@@ -41,7 +40,6 @@ class _EMICollectionPageState extends ConsumerState<EMICollectionPage> {
       if (res['success'] == true && res['data'] != null) {
         final d = res['data'] as Map<String, dynamic>;
         setState(() {
-          _data = d;
           _todayDues =
               (d['today_dues'] as List?)?.cast<Map<String, dynamic>>() ?? [];
           _todayStats = (d['today_stats'] as Map<String, dynamic>?) ?? {};

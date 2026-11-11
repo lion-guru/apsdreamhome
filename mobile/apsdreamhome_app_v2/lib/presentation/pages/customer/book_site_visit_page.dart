@@ -100,11 +100,11 @@ class _BookSiteVisitPageState extends State<BookSiteVisitPage> {
           context: context,
           builder: (ctx) => AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: Row(
+            title: const Row(
               children: [
-                const Icon(Icons.check_circle, color: Color(0xFF10B981), size: 28),
-                const SizedBox(width: 10),
-                const Text('Visit Scheduled!', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+                Icon(Icons.check_circle, color: Color(0xFF10B981), size: 28),
+                SizedBox(width: 10),
+                Text('Visit Scheduled!', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
               ],
             ),
             content: Column(
@@ -317,7 +317,7 @@ class _BookSiteVisitPageState extends State<BookSiteVisitPage> {
                   title: const Text('Require Free Car Pickup & Drop', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Color(0xFF0B194C))),
                   subtitle: const Text('We provide comfortable sanitized vehicle pickup for you & family', style: TextStyle(fontSize: 11, color: Colors.grey)),
                   value: _pickupRequired,
-                  activeColor: const Color(0xFF0B194C),
+                  activeThumbColor: const Color(0xFF0B194C),
                   onChanged: (val) => setState(() => _pickupRequired = val),
                 ),
               ),

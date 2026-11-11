@@ -28,7 +28,6 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
   String? _error;
   String _view = 'start'; // start, chat
   Timer? _pollTimer;
-  bool _showNamePrompt = false;
 
   @override
   void initState() {
@@ -48,7 +47,6 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
 
   Future<void> _loadWidgetSettings() async {
     try {
-      final service = ref.read(chatServiceProvider);
       // Try to get widget settings to test connectivity
       // If fails, it will fall back to mock mode in startSession
       // Just show the start view regardless
@@ -82,7 +80,6 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
             _session = session;
             _isLoading = false;
             _view = 'chat';
-            _showNamePrompt = false;
           });
           // Load any existing chat history for this session
           _loadChatHistory(session.token);
@@ -633,20 +630,6 @@ class _LiveChatPageState extends ConsumerState<LiveChatPage> {
     );
   }
 
-  Widget _infoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, size: 18, color: Colors.grey[500]),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildChatView() {
     return Column(

@@ -72,7 +72,7 @@ class _PlotTransfersPageState extends ConsumerState<PlotTransfersPage> {
                 const Text('Select Plot for Transfer:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                 const SizedBox(height: 6),
                 DropdownButtonFormField<int>(
-                  value: selectedBookingId,
+                  initialValue: selectedBookingId,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -161,14 +161,13 @@ class _PlotTransfersPageState extends ConsumerState<PlotTransfersPage> {
                           'transfer_reason': reasonCtrl.text.trim(),
                           'transfer_amount': double.tryParse(amountCtrl.text.trim()) ?? 0.0,
                         });
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text((res as Map<String, dynamic>?)?['message']?.toString() ?? 'Transfer application submitted!')),
-                          );
-                          ref.invalidate(plotTransfersProvider);
-                        }
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text((res as Map<String, dynamic>?)?['message']?.toString() ?? 'Transfer application submitted!')),
+                        );
+                        ref.invalidate(plotTransfersProvider);
                       } catch (e) {
-                        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
                       }
                     },
                     child: const Text('Submit Transfer Request', style: TextStyle(fontWeight: FontWeight.w700)),
@@ -209,7 +208,7 @@ class _PlotTransfersPageState extends ConsumerState<PlotTransfersPage> {
           onPressed: () => _openApplyModal(context, (data['eligible_bookings'] as List<dynamic>?) ?? []),
         ),
         loading: () => null,
-        error: (_, __) => null,
+        error: (_, _) => null,
       ),
       body: transfersAsync.when(
         data: (data) => _buildBody(context, data),

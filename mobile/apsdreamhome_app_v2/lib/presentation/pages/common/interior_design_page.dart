@@ -280,7 +280,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
         children: [
           Text('Design Services', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('Comprehensive interior design solutions for every space', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('Comprehensive interior design solutions for every space', style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 20),
           GridView.builder(
             shrinkWrap: true,
@@ -378,7 +378,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
         children: [
           Text('Free Design Tools', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('Plan your space with our interactive calculators', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('Plan your space with our interactive calculators', style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 20),
           GridView.builder(
             shrinkWrap: true,
@@ -444,7 +444,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
         children: [
           Text('Our Portfolio', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('Recent interior design projects', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('Recent interior design projects', style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 20),
           SizedBox(
             height: 240,
@@ -497,7 +497,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                                       ),
                                       Text(
                                         item['category']?.toString() ?? '',
-                                        style: TextStyle(color: Colors.white70, fontSize: 10),
+                                        style: const TextStyle(color: Colors.white70, fontSize: 10),
                                       ),
                                     ],
                                   ),
@@ -537,7 +537,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
         children: [
           Text('Client Testimonials', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('What our clients say about us', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('What our clients say about us', style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 20),
           GridView.builder(
             shrinkWrap: true,
@@ -574,7 +574,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                           backgroundColor: AppTheme.accentColor.withValues(alpha: 0.2),
                           child: Text(
                             (t['name']?.toString() ?? 'C')[0].toUpperCase(),
-                            style: TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.w600, fontSize: 12),
+                            style: const TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.w600, fontSize: 12),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -588,7 +588,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                               ),
                               Text(
                                 t['location']?.toString() ?? '',
-                                style: TextStyle(color: Colors.white54, fontSize: 9),
+                                style: const TextStyle(color: Colors.white54, fontSize: 9),
                               ),
                             ],
                           ),
@@ -617,7 +617,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
           children: [
             Text('Free Design Consultation', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
-            Text('Book a free consultation with our expert designers', style: TextStyle(color: Colors.white70, fontSize: 13)),
+            const Text('Book a free consultation with our expert designers', style: TextStyle(color: Colors.white70, fontSize: 13)),
             const SizedBox(height: 20),
             Form(
               key: _formKey,
@@ -779,7 +779,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
     required void Function(String?) onChanged,
   }) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       style: const TextStyle(color: Colors.white),
       dropdownColor: const Color(0xFF1A1A2E),
       icon: Icon(Icons.arrow_drop_down_rounded, color: Colors.white.withValues(alpha: 0.5)),
@@ -860,7 +860,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
             Icon(icon, color: AppTheme.accentColor, size: 24),
             const SizedBox(height: 6),
             Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
-            Text(subtitle, style: TextStyle(color: Colors.white54, fontSize: 10)),
+            Text(subtitle, style: const TextStyle(color: Colors.white54, fontSize: 10)),
           ],
         ),
       ),
@@ -871,9 +871,6 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
     await launchUrl(Uri.parse('tel:7007444842'));
   }
 
-  Future<void> _launchEmail() async {
-    await launchUrl(Uri.parse('mailto:info@apsdreamhome.com'));
-  }
 
   Future<void> _launchWhatsApp() async {
     await launchUrl(Uri.parse('https://wa.me/917007444842'));
@@ -909,7 +906,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                   children: [
                     Text(item['title']?.toString() ?? 'Project Details', style: AppTheme.titleLarge.copyWith(color: Colors.white)),
                     const SizedBox(height: 8),
-                    Text(item['category']?.toString() ?? '', style: TextStyle(color: AppTheme.accentColor, fontSize: 13)),
+                    Text(item['category']?.toString() ?? '', style: const TextStyle(color: AppTheme.accentColor, fontSize: 13)),
                     const SizedBox(height: 16),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
@@ -920,7 +917,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                     const SizedBox(height: 16),
                     Text('Project Details', style: AppTheme.titleMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 12),
-                    Text(item['description']?.toString() ?? 'No description available', style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.5)),
+                    Text(item['description']?.toString() ?? 'No description available', style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5)),
                   ],
                 ),
               ),
@@ -945,11 +942,11 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
 
 
   static final _designTools = [
-    {'title': 'Cost Estimator', 'icon': Icons.calculate_rounded, 'color': Color(0xFF6A1B9A), 'description': 'Estimate interior design costs instantly', 'onTap': null},
-    {'title': 'Room Planner', 'icon': Icons.straighten_rounded, 'color': Color(0xFF4CAF50), 'description': 'Plan room layouts with dimensions', 'onTap': null},
-    {'title': 'Budget Planner', 'icon': Icons.pie_chart_rounded, 'color': Color(0xFFFF6F00), 'description': 'Allocate budget across design categories', 'onTap': null},
-    {'title': 'Color Palette', 'icon': Icons.palette_rounded, 'color': Color(0xFF2979FF), 'description': 'Generate color schemes by room & style', 'onTap': null},
-    {'title': 'Furniture Layout', 'icon': Icons.chair_rounded, 'color': Color(0xFF4CAF50), 'description': 'Plan furniture placement for any room', 'onTap': null},
-    {'title': 'Material Selector', 'icon': Icons.format_paint_rounded, 'color': Color(0xFFE91E63), 'description': 'Compare materials & finishes', 'onTap': null},
+    {'title': 'Cost Estimator', 'icon': Icons.calculate_rounded, 'color': const Color(0xFF6A1B9A), 'description': 'Estimate interior design costs instantly', 'onTap': null},
+    {'title': 'Room Planner', 'icon': Icons.straighten_rounded, 'color': const Color(0xFF4CAF50), 'description': 'Plan room layouts with dimensions', 'onTap': null},
+    {'title': 'Budget Planner', 'icon': Icons.pie_chart_rounded, 'color': const Color(0xFFFF6F00), 'description': 'Allocate budget across design categories', 'onTap': null},
+    {'title': 'Color Palette', 'icon': Icons.palette_rounded, 'color': const Color(0xFF2979FF), 'description': 'Generate color schemes by room & style', 'onTap': null},
+    {'title': 'Furniture Layout', 'icon': Icons.chair_rounded, 'color': const Color(0xFF4CAF50), 'description': 'Plan furniture placement for any room', 'onTap': null},
+    {'title': 'Material Selector', 'icon': Icons.format_paint_rounded, 'color': const Color(0xFFE91E63), 'description': 'Compare materials & finishes', 'onTap': null},
   ];
 }

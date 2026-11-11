@@ -65,12 +65,10 @@ class _SipVsRealestatePageState extends State<SipVsRealestatePage> {
   }
 
   void _share() {
-    Share.share(
-      'SIP vs Real Estate Comparison\n'
+    SharePlus.instance.share(ShareParams(text: 'SIP vs Real Estate Comparison\n'
       'Tenure: $_tenure years\n'
       'SIP Final: ₹${_format(_sipFinalValue)}\n'
-      'Property Final: ₹${_format(_propertyFinalValue)}',
-    );
+      'Property Final: ₹${_format(_propertyFinalValue)}'));
   }
 
   String _format(double n) {

@@ -212,7 +212,7 @@ class _DocumentScannerPageState extends ConsumerState<DocumentScannerPage> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: _selectedType,
+                      initialValue: _selectedType,
                       decoration: const InputDecoration(
                         labelText: 'Document Type',
                         border: OutlineInputBorder(),

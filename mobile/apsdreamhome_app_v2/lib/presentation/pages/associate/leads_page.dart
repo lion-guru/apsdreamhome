@@ -249,7 +249,7 @@ class _LeadsPageState extends ConsumerState<LeadsPage>
 
     return RefreshIndicator(
       onRefresh: () async {
-        final _ = await ref.refresh(myLeadsProvider(filters));
+        ref.invalidate(myLeadsProvider(filters));
       },
       child: Consumer(
         builder: (context, ref, child) {

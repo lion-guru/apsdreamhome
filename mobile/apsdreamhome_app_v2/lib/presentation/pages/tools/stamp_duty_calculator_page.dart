@@ -252,7 +252,7 @@ class _StampDutyCalculatorPageState extends State<StampDutyCalculatorPage> {
         '${_cess > 0 ? 'Cess: ₹${_formatIndian(_cess)}\n' : ''}'
         'Total Cost: ₹${_formatIndian(_totalCost)}';
 
-    Share.share(text);
+    SharePlus.instance.share(ShareParams(text: text));
   }
 
   void _saveCalculation() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:apsdreamhome_app_v2/core/services/api_service.dart';
+import '../../../core/services/api_service.dart';
 
 final colonyTimelapseProvider = FutureProvider.autoDispose.family<Map<String, dynamic>, int>((ref, colonyId) async {
   final api = ApiService();

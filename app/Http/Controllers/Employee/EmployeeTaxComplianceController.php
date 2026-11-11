@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Employee;
 
 use App\Traits\TenantAwareTrait;
 
-class EmployeeTaxComplianceController extends AdminController
+class EmployeeTaxComplianceController extends \App\Http\Controllers\Admin\AdminController
 {
     use TenantAwareTrait;
 

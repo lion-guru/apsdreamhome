@@ -123,13 +123,11 @@ class _ReraLookupPageState extends State<ReraLookupPage> {
 
   void _share() {
     if (_result == null) return;
-    Share.share(
-      'RERA Lookup Result\n'
+    SharePlus.instance.share(ShareParams(text: 'RERA Lookup Result\n'
       'Project: ${_result!['project']}\n'
       'RERA: ${_result!['rera']}\n'
       'Status: ${_result!['status']}\n'
-      'Builder: ${_result!['builder']}',
-    );
+      'Builder: ${_result!['builder']}'));
   }
 
   @override

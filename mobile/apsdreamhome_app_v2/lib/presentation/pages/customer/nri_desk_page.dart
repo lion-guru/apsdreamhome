@@ -105,11 +105,11 @@ class _NriDeskPageState extends ConsumerState<NriDeskPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 children: [
-                  const Icon(Icons.public, color: Color(0xFFD4AF37), size: 28),
-                  const SizedBox(width: 10),
-                  const Text('Invest from Anywhere in the World', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 16)),
+                  Icon(Icons.public, color: Color(0xFFD4AF37), size: 28),
+                  SizedBox(width: 10),
+                  Text('Invest from Anywhere in the World', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 16)),
                 ],
               ),
               const SizedBox(height: 8),

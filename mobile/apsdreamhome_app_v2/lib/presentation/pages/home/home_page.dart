@@ -139,7 +139,7 @@ class HomePage extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Recent Activity
-              Text(
+              const Text(
                 'Recent Activity',
                 style: TextStyle(
                   fontSize: 18,
@@ -374,7 +374,7 @@ class HomePage extends ConsumerWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
                     color: AppTheme.textPrimaryLight,
@@ -383,7 +383,7 @@ class HomePage extends ConsumerWidget {
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppTheme.textSecondaryLight,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -394,7 +394,7 @@ class HomePage extends ConsumerWidget {
           ),
           Text(
             time,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppTheme.textSecondaryLight,
               fontSize: 12,
               fontWeight: FontWeight.w500,

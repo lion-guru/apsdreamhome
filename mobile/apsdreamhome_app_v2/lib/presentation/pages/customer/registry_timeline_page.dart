@@ -104,7 +104,7 @@ class RegistryTimelinePage extends ConsumerWidget {
       blur: 8,
       padding: const EdgeInsets.all(16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: const [Icon(Icons.event_available, color: AppTheme.successColor), SizedBox(width: 8), Text('Sub-Registrar Appointment', style: TextStyle(fontWeight: FontWeight.w700))]),
+        const Row(children: [Icon(Icons.event_available, color: AppTheme.successColor), SizedBox(width: 8), Text('Sub-Registrar Appointment', style: TextStyle(fontWeight: FontWeight.w700))]),
         const SizedBox(height: 8),
         Text('When: $dt', style: const TextStyle(fontSize: 13)),
         Text('Venue: $venue', style: const TextStyle(fontSize: 13)),
@@ -139,7 +139,7 @@ class RegistryTimelinePage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: const [Icon(Icons.route, color: AppTheme.primaryColor), SizedBox(width: 8), Text('Live Progress', style: TextStyle(fontWeight: FontWeight.w700))]),
+          const Row(children: [Icon(Icons.route, color: AppTheme.primaryColor), SizedBox(width: 8), Text('Live Progress', style: TextStyle(fontWeight: FontWeight.w700))]),
           const SizedBox(height: 12),
           for (int i = 0; i < stages.length; i++) _buildStep(i, stages[i] as Map<String, dynamic>, i == stages.length - 1),
         ],
@@ -215,7 +215,7 @@ class RegistryTimelinePage extends ConsumerWidget {
       blur: 8,
       padding: const EdgeInsets.all(16),
       child: Column(children: [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: const [Icon(Icons.workspace_premium, color: Color(0xFFd4af37)), SizedBox(width: 8), Text('Possession Certificate', style: TextStyle(fontWeight: FontWeight.w700))]),
+        const Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.workspace_premium, color: Color(0xFFd4af37)), SizedBox(width: 8), Text('Possession Certificate', style: TextStyle(fontWeight: FontWeight.w700))]),
         const SizedBox(height: 8),
         Text(
           canDownload ? 'Your handover is complete. Download the official certificate.' : 'Unlocks after Stage 7 (Mutation & Possession) is completed.',

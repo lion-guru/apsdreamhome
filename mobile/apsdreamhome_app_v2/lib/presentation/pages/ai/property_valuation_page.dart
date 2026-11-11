@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/services/api_service.dart';
-import '../../../core/utils/logger.dart';
 
 class PropertyValuationPage extends ConsumerStatefulWidget {
   final String? propertyId;
@@ -207,7 +206,7 @@ class _PropertyValuationPageState extends ConsumerState<PropertyValuationPage> {
     return FilterChip(
       label: Text(label),
       selected: value,
-      onSelected: (v) => onChanged(v ?? false),
+      onSelected: (v) => onChanged(v),
       selectedColor: color,
       checkmarkColor: Colors.white,
     );
@@ -293,7 +292,7 @@ class _PropertyValuationPageState extends ConsumerState<PropertyValuationPage> {
                           child: _buildBoolChip(
                             label: 'Corner Plot',
                             value: _hasCornerPlot,
-                            onChanged: (v) => setState(() => _hasCornerPlot = v ?? false),
+                            onChanged: (v) => setState(() => _hasCornerPlot = v),
                             color: accentColor,
                           ),
                         ),
@@ -302,7 +301,7 @@ class _PropertyValuationPageState extends ConsumerState<PropertyValuationPage> {
                           child: _buildBoolChip(
                             label: 'Park Facing',
                             value: _hasParkFacing,
-                            onChanged: (v) => setState(() => _hasParkFacing = v ?? false),
+                            onChanged: (v) => setState(() => _hasParkFacing = v),
                             color: accentColor,
                           ),
                         ),
@@ -312,7 +311,7 @@ class _PropertyValuationPageState extends ConsumerState<PropertyValuationPage> {
                     _buildBoolChip(
                       label: 'Wider Road',
                       value: _hasWiderRoad,
-                      onChanged: (v) => setState(() => _hasWiderRoad = v ?? false),
+                      onChanged: (v) => setState(() => _hasWiderRoad = v),
                       color: accentColor,
                     ),
                     const SizedBox(height: 20),

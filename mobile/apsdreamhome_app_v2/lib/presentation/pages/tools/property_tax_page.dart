@@ -202,14 +202,13 @@ class _PropertyTaxPageState extends State<PropertyTaxPage> {
   }
 
   void _share() {
-    Share.share(
-      'Property Tax Calculation\n'
+    SharePlus.instance.share(ShareParams(text: 'Property Tax Calculation\n'
       'State: $_selectedState\n'
       'Type: $_propertyType\n'
       'City Category: $_cityCategory\n'
       'Annual Tax: ₹${_taxAmount.toStringAsFixed(0)}\n'
-      'Rate: ₹${_ratePerSqft.toStringAsFixed(2)}/sqft',
-    );
+      'Rate: ₹${_ratePerSqft.toStringAsFixed(2)}/sqft'
+      '\nEffective rate: ${_effectiveRate.toStringAsFixed(2)}%'));
   }
 
   @override

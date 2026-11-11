@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apsdreamhome_app_v2/core/services/api_service.dart';
+import '../../../core/services/api_service.dart';
 
 final cashDrawerProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
   final api = ApiService();

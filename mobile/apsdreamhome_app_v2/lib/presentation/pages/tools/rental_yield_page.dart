@@ -57,12 +57,10 @@ class _RentalYieldPageState extends State<RentalYieldPage> {
   }
 
   void _share() {
-    Share.share(
-      'Rental Yield Calculation\n'
+    SharePlus.instance.share(ShareParams(text: 'Rental Yield Calculation\n'
       'Property Value: ₹${_format(_propertyValueController.text)}\n'
       'Gross Yield: ${_grossYield.toStringAsFixed(2)}%\n'
-      'Net Yield: ${_netYield.toStringAsFixed(2)}%',
-    );
+      'Net Yield: ${_netYield.toStringAsFixed(2)}%'));
   }
 
   String _format(String raw) {

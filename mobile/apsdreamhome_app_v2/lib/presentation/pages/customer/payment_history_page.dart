@@ -245,7 +245,6 @@ class _PaymentHistoryPageState extends ConsumerState<PaymentHistoryPage> {
 
     final isSuccess = status == 'completed' || status == 'success';
     final isPending = status == 'pending';
-    final isFailed = status == 'failed' || status == 'cancelled';
 
     final statusColor = isSuccess
         ? AppTheme.successColor

@@ -160,7 +160,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
                   ? Image.network(
                       url,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, _, _) => Container(
                         color: AppTheme.primaryColor.withValues(alpha: 0.1),
                         child: const Center(child: Icon(Icons.image, size: 48, color: Colors.grey)),
                       ),
@@ -221,7 +221,7 @@ class _GalleryPageState extends ConsumerState<GalleryPage> {
                   child: Image.network(
                     url,
                     fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.error, size: 64, color: Colors.white),
+                    errorBuilder: (_, _, _) => const Icon(Icons.error, size: 64, color: Colors.white),
                   ),
                 ),
               ),

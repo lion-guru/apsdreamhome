@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' show log;
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -280,7 +281,7 @@ class SyncService {
         }, conflictAlgorithm: ConflictAlgorithm.replace);
       }
     } catch (e) {
-      print('Error downloading data: $e');
+      log('Error downloading data: $e');
       rethrow;
     }
   }
@@ -299,7 +300,7 @@ class SyncService {
   Future<void> _updateLastSyncTime() async {
     // This would typically be stored in secure storage
     // For now, we'll just print it
-    print('Last sync time: ${DateTime.now().toIso8601String()}');
+    log('Last sync time: ${DateTime.now().toIso8601String()}');
   }
 
   // Queue operations for offline changes

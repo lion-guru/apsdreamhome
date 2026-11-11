@@ -67,7 +67,7 @@ class OffersPage extends ConsumerWidget {
                                 children: [
                                   Text(
                                     '${o['discount_percentage'] ?? 0}%',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: AppTheme.primaryColor,

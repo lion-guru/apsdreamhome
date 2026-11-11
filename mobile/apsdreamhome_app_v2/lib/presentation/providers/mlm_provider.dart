@@ -11,9 +11,8 @@ final mlmProvider =
 });
 
 class MLMNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>>> {
-  final Ref _ref;
 
-  MLMNotifier(this._ref) : super(const AsyncValue.loading());
+  MLMNotifier(Ref ref) : super(const AsyncValue.loading());
 
   Future<void> fetchMlmSummary() async {
     try {

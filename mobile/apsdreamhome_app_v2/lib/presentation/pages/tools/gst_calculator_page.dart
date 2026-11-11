@@ -47,13 +47,11 @@ class _GstCalculatorPageState extends State<GstCalculatorPage> {
   }
 
   void _share() {
-    Share.share(
-      'GST on Property\n'
+    SharePlus.instance.share(ShareParams(text: 'GST on Property\n'
       'Property Type: $_propertyType\n'
       'GST Rate: $_gstRate%\n'
       'GST Amount: ₹${_gstAmount.toStringAsFixed(0)}\n'
-      'Total: ₹${_totalWithGst.toStringAsFixed(0)}',
-    );
+      'Total: ₹${_totalWithGst.toStringAsFixed(0)}'));
   }
 
   @override

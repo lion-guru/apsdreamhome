@@ -91,7 +91,7 @@ class _ContactPageState extends ConsumerState<ContactPage> {
               width: double.infinity,
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -101,7 +101,7 @@ class _ContactPageState extends ConsumerState<ContactPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Get in Touch',
                     style: TextStyle(
                       color: Colors.white,
@@ -136,7 +136,7 @@ class _ContactPageState extends ConsumerState<ContactPage> {
             const SizedBox(height: 32),
 
             // Contact Form
-            Text(
+            const Text(
               'Send Us a Message',
               style: TextStyle(
                 fontSize: 24,
@@ -343,7 +343,7 @@ class _ContactPageState extends ConsumerState<ContactPage> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+          borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

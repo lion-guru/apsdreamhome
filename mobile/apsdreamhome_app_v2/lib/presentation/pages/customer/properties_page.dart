@@ -518,19 +518,29 @@ class _PropertiesPageState extends ConsumerState<PropertiesPage> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      ..._sortOptions.map((option) => RadioListTile<String>(
-                        title: Text(_getSortLabel(option)),
-                        value: option,
+                      // NOTE (S453): RadioListTile.groupValue / .onChanged
+                      // were deprecated in Flutter 3.32 - a RadioGroup
+                      // ancestor now owns the group value.
+                      RadioGroup<String>(
                         groupValue: _selectedSortBy,
                         onChanged: (value) {
+                          if (value == null) return;
                           setModalState(() {
-                            _selectedSortBy = value!;
+                            _selectedSortBy = value;
                           });
                           setState(() {
-                            _selectedSortBy = value!;
+                            _selectedSortBy = value;
                           });
                         },
-                      )),
+                        child: Column(
+                          children: _sortOptions
+                              .map((option) => RadioListTile<String>(
+                                    title: Text(_getSortLabel(option)),
+                                    value: option,
+                                  ))
+                              .toList(),
+                        ),
+                      ),
                       
                       const SizedBox(height: 24),
                       

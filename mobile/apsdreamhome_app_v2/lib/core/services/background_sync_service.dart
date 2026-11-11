@@ -12,7 +12,7 @@ class BackgroundSyncService {
   static Future<void> initialize() async {
     await Workmanager().initialize(
       callbackDispatcher,
-      isInDebugMode: kDebugMode,
+
     );
     
     // Register periodic tasks

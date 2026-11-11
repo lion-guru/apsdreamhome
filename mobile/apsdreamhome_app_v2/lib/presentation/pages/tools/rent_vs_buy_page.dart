@@ -85,14 +85,12 @@ class _RentVsBuyPageState extends State<RentVsBuyPage> {
   }
 
   void _share() {
-    Share.share(
-      'Rent vs Buy Analysis\n'
+    SharePlus.instance.share(ShareParams(text: 'Rent vs Buy Analysis\n'
       'Tenure: $_tenure years\n'
       'Rent Total: ₹${_format(_totalRentPaid)}\n'
       'Future Value: ₹${_format(_futurePropertyValue)}\n'
       'Buy Net Wealth: ₹${_format(_netWealthBuy)}\n'
-      'Rent Net Wealth: ₹${_format(_netWealthRent)}',
-    );
+      'Rent Net Wealth: ₹${_format(_netWealthRent)}'));
   }
 
   String _format(double n) {

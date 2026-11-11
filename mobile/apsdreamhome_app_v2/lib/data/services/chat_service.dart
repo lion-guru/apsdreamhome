@@ -197,9 +197,10 @@ class ChatService {
       final data = response.data;
       if (data is Map<String, dynamic> && data['success'] == true) {
         final raw = data['messages'];
-        if (raw is List) {
+        if (raw is List<dynamic>) {
           return List<Map<String, dynamic>>.from(
-              raw.whereType<Map>().map((e) => Map<String, dynamic>.from(e)));
+              raw.whereType<Map<dynamic, dynamic>>()
+                  .map((e) => Map<String, dynamic>.from(e)));
         }
         return <Map<String, dynamic>>[];
       }

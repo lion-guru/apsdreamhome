@@ -265,9 +265,11 @@ class ExportService {
   /// Share exported file
   Future<void> shareExportedFile(String filePath, {String? subject}) async {
     try {
-      await Share.shareXFiles(
-        [XFile(filePath)],
-        subject: subject ?? 'APS Dream Home Export',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(filePath)],
+          subject: subject ?? 'APS Dream Home Export',
+        ),
       );
     } catch (e) {
       AppLogger.error('Error sharing file', e);

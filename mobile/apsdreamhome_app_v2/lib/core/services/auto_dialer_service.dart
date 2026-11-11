@@ -24,7 +24,7 @@ class AutoDialerService {
 
   final bool _useMock = false;
 
-  Map<String, dynamic> _handleResponse(Response response) {
+  Map<String, dynamic> _handleResponse(Response<dynamic> response) {
     final data = response.data;
     if (data is Map<String, dynamic>) return data;
     if (data is Map) return Map<String, dynamic>.from(data);

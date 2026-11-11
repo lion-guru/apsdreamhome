@@ -79,7 +79,7 @@ class _AgentCollectionPageState extends ConsumerState<AgentCollectionPage> {
                 ),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
-                  value: paymentMode,
+                  initialValue: paymentMode,
                   decoration: InputDecoration(labelText: 'Payment Mode', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
                   items: const [
                     DropdownMenuItem(value: 'cash', child: Text('Cash in Hand')),
@@ -129,15 +129,14 @@ class _AgentCollectionPageState extends ConsumerState<AgentCollectionPage> {
                           'cheque_number': chequeCtrl.text.trim(),
                           'remarks': remarksCtrl.text.trim(),
                         });
-                        if (mounted) {
-                          final msg = ((res as Map<String, dynamic>?)?['message'] ?? 'Collection logged successfully!').toString();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(msg)),
-                          );
-                          ref.invalidate(agentCollectionsProvider);
-                        }
+                        if (!context.mounted) return;
+                        final msg = ((res as Map<String, dynamic>?)?['message'] ?? 'Collection logged successfully!').toString();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(msg)),
+                        );
+                        ref.invalidate(agentCollectionsProvider);
                       } catch (e) {
-                        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
                       }
                     },
                     child: const Text('Log Collection & Issue Receipt', style: TextStyle(fontWeight: FontWeight.w700)),

@@ -24,7 +24,7 @@ class Pivot extends Model
     /**
      * The attributes that aren't mass assignable.
      */
-    protected array $guarded = [];
+    protected $guarded = [];
 
     /**
      * Create a new pivot model instance.

@@ -69,14 +69,14 @@ class _GenealogyPageState extends ConsumerState<GenealogyPage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          final _ = await ref.refresh(genealogyTreeProvider(_selectedDepth));
+          ref.invalidate(genealogyTreeProvider(_selectedDepth));
         },
         child: genealogyAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => AppWidgets.errorWidget(
             message: error.toString(),
             onRetry: () async {
-            final _ = await ref.refresh(genealogyTreeProvider(_selectedDepth));
+            ref.invalidate(genealogyTreeProvider(_selectedDepth));
           },
           ),
           data: (genealogy) {

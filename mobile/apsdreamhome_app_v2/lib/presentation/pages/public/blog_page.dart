@@ -124,7 +124,7 @@ class _BlogPageState extends ConsumerState<BlogPage> {
                   height: 200,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (_, _, _) => Container(
                     height: 200,
                     color: AppTheme.primaryColor.withValues(alpha: 0.1),
                     child: const Center(child: Icon(Icons.article, size: 48, color: Colors.grey)),
@@ -173,10 +173,10 @@ class _BlogPageState extends ConsumerState<BlogPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 12),
-                  Row(
+                  const Row(
                     children: [
-                      const Icon(Icons.arrow_forward_ios, size: 14, color: AppTheme.primaryColor),
-                      const SizedBox(width: 4),
+                      Icon(Icons.arrow_forward_ios, size: 14, color: AppTheme.primaryColor),
+                      SizedBox(width: 4),
                       Text(
                         'Read More',
                         style: TextStyle(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/services/auto_dialer_service.dart';
 
 class TemplatesPage extends ConsumerStatefulWidget {
   const TemplatesPage({super.key});
@@ -11,7 +10,6 @@ class TemplatesPage extends ConsumerStatefulWidget {
 
 class _TemplatesPageState extends ConsumerState<TemplatesPage>
     with SingleTickerProviderStateMixin {
-  final AutoDialerService _dialerService = AutoDialerService();
   late TabController _tabController;
   bool _isLoading = true;
 

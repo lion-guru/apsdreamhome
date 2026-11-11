@@ -135,7 +135,7 @@ class _DocumentEsignDetailPageState extends State<DocumentEsignDetailPage> {
               level: 0,
               child: pw.Text(
                 'APS Dream Home',
-                style: pw.TextStyle(
+                style: const pw.TextStyle(
                   fontSize: 22,
                   fontWeight: pw.FontWeight.bold,
                   color: PdfColors.blueGrey900,
@@ -147,7 +147,7 @@ class _DocumentEsignDetailPageState extends State<DocumentEsignDetailPage> {
             pw.SizedBox(height: 12),
             pw.Text(
               title,
-              style: pw.TextStyle(
+              style: const pw.TextStyle(
                 fontSize: 16,
                 fontWeight: pw.FontWeight.bold,
               ),
@@ -169,7 +169,7 @@ class _DocumentEsignDetailPageState extends State<DocumentEsignDetailPage> {
             pw.SizedBox(height: 18),
             pw.Text(
               'Authorised Signature',
-              style: pw.TextStyle(
+              style: const pw.TextStyle(
                 fontSize: 10,
                 fontWeight: pw.FontWeight.bold,
                 color: PdfColors.blueGrey600,
@@ -178,7 +178,7 @@ class _DocumentEsignDetailPageState extends State<DocumentEsignDetailPage> {
             pw.SizedBox(height: 4),
             pw.Text(
               signature.isEmpty ? '(No signature recorded)' : signature,
-              style: pw.TextStyle(
+              style: const pw.TextStyle(
                 fontSize: 18,
                 fontStyle: pw.FontStyle.italic,
                 color: PdfColors.blueGrey900,
@@ -227,7 +227,7 @@ class _DocumentEsignDetailPageState extends State<DocumentEsignDetailPage> {
             width: 120,
             child: pw.Text(
               label,
-              style: pw.TextStyle(
+              style: const pw.TextStyle(
                 fontSize: 10,
                 fontWeight: pw.FontWeight.bold,
                 color: PdfColors.blueGrey600,

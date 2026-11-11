@@ -63,9 +63,10 @@ class _VoiceCallPageState extends ConsumerState<VoiceCallPage> {
           _callStatus = 'Failed';
         });
         final err = response.data['error'] as String? ?? 'Call failed';
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(err ?? 'Call failed'),
+            content: Text(err),
             backgroundColor: Colors.red,
           ),
         );

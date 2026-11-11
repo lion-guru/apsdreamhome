@@ -1171,6 +1171,7 @@ class CampaignService
             return $stmt->fetchAll();
         } catch (\Throwable $e) {
             error_log($e->getMessage());
+            return [];
         }
     }
 

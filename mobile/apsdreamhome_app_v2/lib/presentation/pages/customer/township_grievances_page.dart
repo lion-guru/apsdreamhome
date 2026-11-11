@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../widgets/glass_card.dart';
 
 final townshipGrievancesProvider = FutureProvider<List<dynamic>>((ref) async {
   final api = ApiService();
@@ -224,18 +223,18 @@ class _TownshipGrievancesPageState extends ConsumerState<TownshipGrievancesPage>
         'description': desc,
       });
 
-      if (mounted) {
-        Navigator.pop(modalCtx);
-        _titleController.clear();
-        _descController.clear();
-        ref.invalidate(townshipGrievancesProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text((res['message'] as String?) ?? 'Grievance submitted successfully! Token: ${res['ticket_token']}'),
-            backgroundColor: const Color(0xFF0B194C),
-          ),
-        );
-      }
+      if (!modalCtx.mounted) return;
+      Navigator.pop(modalCtx);
+      _titleController.clear();
+      _descController.clear();
+      ref.invalidate(townshipGrievancesProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text((res['message'] as String?) ?? 'Grievance submitted successfully! Token: ${res['ticket_token']}'),
+          backgroundColor: const Color(0xFF0B194C),
+        ),
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Submission failed: $e')));

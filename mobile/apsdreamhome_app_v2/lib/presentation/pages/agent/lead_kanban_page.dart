@@ -163,7 +163,7 @@ class _LeadKanbanPageState extends ConsumerState<LeadKanbanPage>
               child: ReorderableListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 itemCount: leads.length,
-                onReorder: (oldIndex, newIndex) {
+                onReorderItem: (oldIndex, newIndex) {
                   // Reorder within stage (visual only for now)
                 },
                 itemBuilder: (context, index) {
@@ -411,17 +411,15 @@ class _LeadKanbanPageState extends ConsumerState<LeadKanbanPage>
                       lead.id,
                       stages[currentIndex + 1],
                     );
-                if (mounted) {
-                  AppWidgets.showSuccessSnackBar(
-                    context,
-                    'Lead advanced to ${stages[currentIndex + 1]}',
-                  );
-                  setState(() {});
-                }
+                if (!context.mounted) return;
+                AppWidgets.showSuccessSnackBar(
+                  context,
+                  'Lead advanced to ${stages[currentIndex + 1]}',
+                );
+                setState(() {});
               } catch (e) {
-                if (mounted) {
-                  AppWidgets.showErrorSnackBar(context, 'Failed: $e');
-                }
+                if (!context.mounted) return;
+                AppWidgets.showErrorSnackBar(context, 'Failed: $e');
               }
             },
             child: const Text('Advance'),

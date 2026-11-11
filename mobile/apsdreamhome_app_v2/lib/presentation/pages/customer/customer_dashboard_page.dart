@@ -137,7 +137,7 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
       padding: const EdgeInsets.fromLTRB(20, 40, 20, 28),
       decoration: BoxDecoration(
         gradient: AppTheme.primaryGradient,
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
             color: AppTheme.primaryColor.withValues(alpha: 0.25),
@@ -307,7 +307,7 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: AppTheme.textSecondaryLight,
@@ -395,7 +395,7 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
           const SizedBox(height: 6),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 10.5,
               fontWeight: FontWeight.w600,
               color: AppTheme.textPrimaryLight,
@@ -423,7 +423,7 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Your Bookings',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.textPrimaryLight),
               ),
@@ -455,7 +455,7 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
                       child: const Icon(Icons.home_outlined, size: 32, color: AppTheme.goldColor),
                     ),
                     const SizedBox(height: 14),
-                    Text(
+                    const Text(
                       'No active bookings yet',
                       style: TextStyle(color: AppTheme.textSecondaryLight, fontSize: 15, fontWeight: FontWeight.w600),
                     ),
@@ -506,15 +506,15 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
               child: const Icon(Icons.support_agent, color: Colors.white, size: 26),
             ),
             const SizedBox(width: 16),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Need Help?',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.textPrimaryLight),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     'Our team is here to assist you',
                     style: TextStyle(fontSize: 13, color: AppTheme.textSecondaryLight),
@@ -539,7 +539,7 @@ class _CustomerDashboardPageState extends ConsumerState<CustomerDashboardPage> {
     return OutlinedButton.icon(
       onPressed: onTap,
       icon: Icon(icon, size: 16, color: AppTheme.primaryColor),
-      label: Text(label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryColor)),
+      label: Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.primaryColor)),
       style: OutlinedButton.styleFrom(
         foregroundColor: AppTheme.primaryColor,
         side: BorderSide(color: AppTheme.primaryColor.withValues(alpha: 0.4), width: 1),

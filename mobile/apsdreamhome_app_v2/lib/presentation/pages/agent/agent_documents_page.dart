@@ -413,22 +413,6 @@ class AgentDocumentsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildPlaceholder() {
-    return Container(
-      width: 80,
-      height: 60,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.primaryColor.withValues(alpha: 0.2),
-            AppTheme.secondaryColor.withValues(alpha: 0.2),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: const Icon(Icons.description_rounded, size: 32, color: Colors.grey),
-    );
-  }
 
   String _formatDate(String dateStr) {
     try {
@@ -453,7 +437,7 @@ class AgentDocumentsPage extends ConsumerWidget {
     final fileUrl = doc['url']?.toString() ?? '';
     if (fileUrl.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('No file link available for this document'),
           backgroundColor: AppTheme.infoColor,
         ),
@@ -478,7 +462,7 @@ class AgentDocumentsPage extends ConsumerWidget {
     final fileUrl = doc['url']?.toString() ?? '';
     if (fileUrl.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('No file link available for this document'),
           backgroundColor: AppTheme.infoColor,
         ),
@@ -548,36 +532,5 @@ final _agentDocumentsProvider = FutureProvider.family<List<dynamic>, int>((ref, 
 });
 
 // Helper Classes
-class _StatItem {
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  const _StatItem(this.label, this.value, this.icon, this.color);
-}
 
-class _FunnelStage {
-  final String title;
-  final String count;
-  final IconData icon;
-  final Color color;
-  final double progress;
-  const _FunnelStage(this.title, this.count, this.icon, this.color, this.progress);
-}
 
-class _SourceStat {
-  final String name;
-  final String count;
-  final String rate;
-  final IconData icon;
-  final Color color;
-  const _SourceStat(this.name, this.count, this.rate, this.icon, this.color);
-}
-
-class _MonthData {
-  final String label;
-  final int leads;
-  final int contacted;
-  final int converted;
-  const _MonthData(this.label, this.leads, this.contacted, this.converted);
-}

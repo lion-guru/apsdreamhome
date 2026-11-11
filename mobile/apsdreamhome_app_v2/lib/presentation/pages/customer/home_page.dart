@@ -287,11 +287,7 @@ class _HomePageState extends ConsumerState<HomePage>
           scale: _heroScaleAnimation,
           child: GestureDetector(
             onTap: () {
-              if (colonyId != null) {
-                context.push('/colony-detail/$colonyId');
-              } else {
-                context.push('/colonies');
-              }
+              context.push('/colony-detail/$colonyId');
             },
             child: Container(
               margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
@@ -382,9 +378,7 @@ class _HomePageState extends ConsumerState<HomePage>
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
-                                  featured != null
-                                      ? featured.status.toUpperCase()
-                                      : 'PREMIUM TOWNSHIP',
+                                  featured.status.toUpperCase(),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 9,
@@ -671,7 +665,7 @@ class _HomePageState extends ConsumerState<HomePage>
         final recsAsync = ref.watch(_aiRecommendationsProvider);
         return recsAsync.when(
           loading: () => const SizedBox.shrink(),
-          error: (_, __) => const SizedBox.shrink(),
+          error: (_, _) => const SizedBox.shrink(),
           data: (recs) {
             if (recs == null || recs.isEmpty) return const SizedBox.shrink();
             return Padding(

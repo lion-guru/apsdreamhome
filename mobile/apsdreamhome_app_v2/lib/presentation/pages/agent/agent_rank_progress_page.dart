@@ -135,7 +135,6 @@ class AgentRankProgressPage extends ConsumerWidget {
     final currentRank =
         progress['current_rank']?.toString() ?? 'Associate';
     final currentGbv = _toDouble(progress['current_gbv']);
-    final nextGbv = _toDouble(progress['next_rank_gbv']);
 
     // Find the next target from the static ladder
     final double target = _nextTargetFor(currentGbv);

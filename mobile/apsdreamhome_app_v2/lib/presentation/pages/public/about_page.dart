@@ -49,15 +49,88 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Company info loaded from /site-settings
+            if (_companyInfo != null) ...[
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (_companyInfo!['company_name'] ??
+                              _companyInfo!['name'] ??
+                              'APS Dream Home')
+                          .toString(),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (_companyInfo!['description'] != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        _companyInfo!['description'].toString(),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ],
+                    if (_companyInfo!['address'] != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        _companyInfo!['address'].toString(),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                    if (_companyInfo!['phone'] != null ||
+                        _companyInfo!['email'] != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        [
+                          if (_companyInfo!['phone'] != null)
+                            _companyInfo!['phone'].toString(),
+                          if (_companyInfo!['email'] != null)
+                            _companyInfo!['email'].toString(),
+                        ].join('  |  '),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppTheme.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
             // Hero Section
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
                   begin: Alignment.topLeft,
@@ -70,14 +143,14 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                   Image.asset(
                     'assets/images/app_logo_luxury.png',
                     height: 80,
-                    errorBuilder: (_, __, ___) => const Icon(
+                    errorBuilder: (_, _, _) => const Icon(
                       Icons.apartment,
                       color: Colors.white,
                       size: 80,
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Text(
+                  const Text(
                     'About APS Dream Home',
                     style: TextStyle(
                       color: Colors.white,
@@ -124,7 +197,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Our Mission',
                               style: TextStyle(
                                 fontSize: 24,
@@ -180,7 +253,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                             child: const Icon(Icons.visibility, color: Colors.blue, size: 28),
                           ),
                           const SizedBox(height: 16),
-                          Text(
+                          const Text(
                             'Our Vision',
                             style: TextStyle(
                               fontSize: 20,
@@ -228,7 +301,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                             child: const Icon(Icons.verified, color: Colors.green, size: 28),
                           ),
                           const SizedBox(height: 16),
-                          Text(
+                          const Text(
                             'Our Promise',
                             style: TextStyle(
                               fontSize: 20,
@@ -261,7 +334,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Our Journey in Numbers',
                     style: TextStyle(
                       fontSize: 24,
@@ -292,7 +365,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Why Choose APS Dream Home?',
                     style: TextStyle(
                       fontSize: 24,
@@ -348,7 +421,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Leadership Team',
                     style: TextStyle(
                       fontSize: 24,
@@ -377,7 +450,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Certifications & Affiliations',
                     style: TextStyle(
                       fontSize: 24,
@@ -407,13 +480,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
                 ),
               ),
               child: Column(
                 children: [
-                  Text(
+                  const Text(
                     'Ready to Start Your Journey?',
                     style: TextStyle(
                       color: Colors.white,
@@ -501,7 +574,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           const SizedBox(height: 16),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.w800,
               color: AppTheme.primaryColor,
@@ -552,7 +625,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: AppTheme.primaryColor,
@@ -595,8 +668,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             radius: 40,
             backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
             backgroundImage: AssetImage(imagePath),
-            onBackgroundImageError: (_, __) {},
-            child: Icon(Icons.person, size: 40, color: AppTheme.primaryColor),
+            onBackgroundImageError: (_, _) {},
+            child: const Icon(Icons.person, size: 40, color: AppTheme.primaryColor),
           ),
           const SizedBox(height: 16),
           Text(

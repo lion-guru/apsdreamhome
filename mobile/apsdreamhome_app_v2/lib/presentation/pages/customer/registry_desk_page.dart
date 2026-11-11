@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apsdreamhome_app_v2/core/services/api_service.dart';
+import '../../../core/services/api_service.dart';
 
 final registryDeskProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
   final api = ApiService();
@@ -189,13 +189,12 @@ class _RegistryDeskPageState extends ConsumerState<RegistryDeskPage> {
                                     'witness_2_phone': _w2PhoneCtrl.text.trim(),
                                     'notes': _notesCtrl.text.trim(),
                                   });
-                                  if (mounted) {
-                                    final msg = ((res as Map<String, dynamic>?)?['message'] ?? 'Appointment slot requested!').toString();
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-                                    ref.invalidate(registryDeskProvider);
-                                  }
+                                  if (!context.mounted) return;
+                                  final msg = ((res as Map<String, dynamic>?)?['message'] ?? 'Appointment slot requested!').toString();
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+                                  ref.invalidate(registryDeskProvider);
                                 } catch (e) {
-                                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                                  if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
                                 } finally {
                                   if (mounted) setState(() => _submitting = false);
                                 }

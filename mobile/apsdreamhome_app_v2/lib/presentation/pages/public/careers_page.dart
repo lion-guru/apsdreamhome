@@ -149,7 +149,7 @@ class _CareersPageState extends ConsumerState<CareersPage> {
                             ),
                             child: Text(
                               department,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: AppTheme.primaryColor,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
@@ -197,7 +197,7 @@ class _CareersPageState extends ConsumerState<CareersPage> {
                     label: const Text('Share'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppTheme.primaryColor,
-                      side: BorderSide(color: AppTheme.primaryColor),
+                      side: const BorderSide(color: AppTheme.primaryColor),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                   ),

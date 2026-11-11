@@ -164,11 +164,11 @@ class _RegistryAppointmentSlipPageState
                         color: Colors.white, size: 26),
                   ),
                   const SizedBox(width: 12),
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Registry Appointment Slip',
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
@@ -176,10 +176,10 @@ class _RegistryAppointmentSlipPageState
                             color: AppTheme.primaryColor,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(
                           'APS Dream Home • Sub-Registrar Office',
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: Colors.black54, fontSize: 12.5),
                         ),
                       ],

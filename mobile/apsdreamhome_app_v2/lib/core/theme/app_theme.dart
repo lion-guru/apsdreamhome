@@ -229,7 +229,7 @@ class AppTheme {
         shadowColor: shadowLight,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
+          side: const BorderSide(
             color: goldBorder,
             width: 1,
           ),
@@ -257,7 +257,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: primaryColor,
-          side: BorderSide(color: primaryColor, width: 1.5),
+          side: const BorderSide(color: primaryColor, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -280,11 +280,11 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: primaryColor, width: 2),
+          borderSide: const BorderSide(color: primaryColor, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: errorColor, width: 2),
+          borderSide: const BorderSide(color: errorColor, width: 2),
         ),
         filled: true,
         fillColor: Colors.grey.shade50,
@@ -294,7 +294,7 @@ class AppTheme {
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
-        hintStyle: TextStyle(
+        hintStyle: const TextStyle(
           color: textHint,
           fontSize: 14,
         ),
@@ -317,13 +317,13 @@ class AppTheme {
           borderRadius: BorderRadius.circular(20),
         ),
         backgroundColor: Colors.white,
-        titleTextStyle: TextStyle(
+        titleTextStyle: const TextStyle(
           fontFamily: _fontFamily,
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: primaryColor,
         ),
-        contentTextStyle: TextStyle(
+        contentTextStyle: const TextStyle(
           fontFamily: _fontFamily,
           fontSize: 16,
           color: textPrimaryLight,
@@ -401,7 +401,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: accentColor, width: 2),
+          borderSide: const BorderSide(color: accentColor, width: 2),
         ),
         filled: true,
         fillColor: Colors.grey.shade800,
@@ -457,11 +457,11 @@ class AppTheme {
         width: 1,
       ),
       boxShadow: [
-        BoxShadow(
+        const BoxShadow(
           color: shadowLight,
           blurRadius: 10,
           spreadRadius: 0,
-          offset: const Offset(0, 4),
+          offset: Offset(0, 4),
         ),
       ],
     );
@@ -476,11 +476,11 @@ class AppTheme {
       gradient: gradient ?? primaryGradient,
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
-        BoxShadow(
+        const BoxShadow(
           color: shadowDark,
           blurRadius: 20,
           spreadRadius: 0,
-          offset: const Offset(0, 8),
+          offset: Offset(0, 8),
         ),
       ],
     );
@@ -495,11 +495,11 @@ class AppTheme {
       color: color ?? Colors.white,
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
-        BoxShadow(
+        const BoxShadow(
           color: shadowLight,
           blurRadius: 16,
           spreadRadius: 0,
-          offset: const Offset(0, 8),
+          offset: Offset(0, 8),
         ),
       ],
     );

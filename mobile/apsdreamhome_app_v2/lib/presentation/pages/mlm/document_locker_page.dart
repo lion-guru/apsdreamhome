@@ -123,6 +123,7 @@ class DocumentLockerPage extends ConsumerWidget {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: source, maxWidth: 2048);
     if (picked == null) return;
+    if (!context.mounted) return;
 
     ScaffoldMessenger.of(
       context,

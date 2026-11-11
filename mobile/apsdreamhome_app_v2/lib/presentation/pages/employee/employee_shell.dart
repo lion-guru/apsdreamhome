@@ -89,7 +89,7 @@ class _EmployeeShellState extends State<EmployeeShell> {
                     await AuthService().logout();
                   } catch (_) {}
                   AuthBridge.instance.currentUser.value = null;
-                  if (mounted) context.go('/login');
+                  if (context.mounted) context.go('/login');
                 },
                 icon: const Icon(Icons.logout, size: 20),
               ),

@@ -433,7 +433,7 @@ class _FullScreenGalleryState extends State<_FullScreenGallery> {
   }
 
   void _shareCurrent() {
-    Share.share(widget.images[_currentIndex].url);
+    SharePlus.instance.share(ShareParams(text: widget.images[_currentIndex].url));
   }
 
   void _downloadCurrent() async {

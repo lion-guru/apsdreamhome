@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:developer' show log;
 import 'package:share_plus/share_plus.dart';
 import '../../core/services/api_service.dart';
 import '../repositories/kyc_repository_provider.dart';
@@ -60,13 +61,13 @@ class ReferralService {
         location: location,
       );
 
-      await Share.share(message);
+      await SharePlus.instance.share(ShareParams(text: message));
 
       // Track referral on backend
       await _trackReferral(referralCode, propertyId);
       return true;
     } catch (e) {
-      print('Error sharing via WhatsApp: $e');
+      log('Error sharing via WhatsApp: $e');
       return false;
     }
   }
@@ -80,7 +81,7 @@ class ReferralService {
         'source': 'whatsapp',
       });
     } catch (e) {
-      print('Error tracking referral: $e');
+      log('Error tracking referral: $e');
     }
   }
 
@@ -90,7 +91,7 @@ class ReferralService {
       final profile = await _api.get('/user/profile');
       return (profile['data'] as Map<String, dynamic>?)?['referral_code'] as String?;
     } catch (e) {
-      print('Error getting referral code: $e');
+      log('Error getting referral code: $e');
       return null;
     }
   }

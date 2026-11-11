@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apsdreamhome_app_v2/core/services/api_service.dart';
+import '../../../core/services/api_service.dart';
 
 final associateAdvancesProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
   final api = ApiService();
@@ -129,13 +129,12 @@ class _AssociateAdvancesPageState extends ConsumerState<AssociateAdvancesPage> {
                                     'tenure_months': _tenure,
                                     'purpose': _purposeCtrl.text.trim(),
                                   });
-                                  if (mounted) {
-                                    final msg = ((res as Map<String, dynamic>?)?['message'] ?? 'Advance request submitted!').toString();
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-                                    ref.invalidate(associateAdvancesProvider);
-                                  }
+                                  if (!context.mounted) return;
+                                  final msg = ((res as Map<String, dynamic>?)?['message'] ?? 'Advance request submitted!').toString();
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+                                  ref.invalidate(associateAdvancesProvider);
                                 } catch (e) {
-                                  if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                                  if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
                                 } finally {
                                   if (mounted) setState(() => _submitting = false);
                                 }

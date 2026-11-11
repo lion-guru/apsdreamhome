@@ -86,7 +86,6 @@ class _BlogDetailPageState extends ConsumerState<BlogDetailPage> {
 
   Widget _buildPostContent() {
     final title = (_post!['title'] ?? 'Untitled').toString();
-    final content = (_post!['content'] ?? '').toString();
     final image = (_post!['featured_image'] ?? _post!['image'])?.toString();
     final date = _post!['published_at'] ?? _post!['created_at'];
     final author = (_post!['author'] ?? _post!['author_name'])?.toString();
@@ -100,7 +99,7 @@ class _BlogDetailPageState extends ConsumerState<BlogDetailPage> {
             width: double.infinity,
             height: 300,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
+            errorBuilder: (_, _, _) => Container(
               height: 300,
               color: AppTheme.primaryColor.withValues(alpha: 0.1),
               child: const Center(child: Icon(Icons.article, size: 64, color: Colors.grey)),
@@ -146,7 +145,7 @@ class _BlogDetailPageState extends ConsumerState<BlogDetailPage> {
                           backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
                           child: Text(
                             author[0].toUpperCase(),
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.w600,
                             ),
@@ -213,7 +212,7 @@ class _BlogDetailPageState extends ConsumerState<BlogDetailPage> {
             const SizedBox(width: 8),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppTheme.primaryColor,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,

@@ -341,20 +341,4 @@ class _NewsPageState extends State<NewsPage> {
   }
 }
 
-class _NewsItem {
-  final String category;
-  final String date;
-  final String readTime;
-  final String title;
-  final String excerpt;
-  final int views;
-  const _NewsItem({
-    required this.category,
-    required this.date,
-    required this.readTime,
-    required this.title,
-    required this.excerpt,
-    required this.views,
-  });
-}
 

@@ -65,25 +65,6 @@ class _ColonyHealthPageState extends State<ColonyHealthPage>
     }
   }
 
-  Color _gradeColor(String? grade) {
-    switch (grade) {
-      case 'A+':
-      case 'A':
-        return AppTheme.successColor;
-      case 'B+':
-      case 'B':
-        return Colors.teal;
-      case 'C+':
-      case 'C':
-        return AppTheme.warningColor;
-      case 'D':
-        return Colors.deepOrange;
-      case 'F':
-        return AppTheme.errorColor;
-      default:
-        return Colors.grey;
-    }
-  }
 
   Color _scoreColor(int score) {
     if (score >= 80) return AppTheme.successColor;

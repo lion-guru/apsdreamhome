@@ -106,13 +106,11 @@ class _CapitalGainsPageState extends State<CapitalGainsPage> {
   }
 
   void _share() {
-    Share.share(
-      'Capital Gains Tax Calculation\n'
+    SharePlus.instance.share(ShareParams(text: 'Capital Gains Tax Calculation\n'
       'Holding Period: $_holdingPeriod\n'
       'Capital Gain: ₹${_format(_capitalGain)}\n'
       'Tax Liability: ₹${_format(_taxLiability)}\n'
-      'Net Proceeds: ₹${_format(_netProceeds)}',
-    );
+      'Net Proceeds: ₹${_format(_netProceeds)}'));
   }
 
   String _format(double n) {

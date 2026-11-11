@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:apsdreamhome_app_v2/core/services/api_service.dart';
+import '../../../core/services/api_service.dart';
 
 class MeetingSchedulerPage extends ConsumerStatefulWidget {
   const MeetingSchedulerPage({super.key});
@@ -185,15 +185,15 @@ class _MeetingSchedulerPageState extends ConsumerState<MeetingSchedulerPage> {
                           ),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Row(
+                        child: const Row(
                           children: [
-                            const Icon(Icons.handshake_rounded,
+                            Icon(Icons.handshake_rounded,
                                 color: Color(0xFFD4AF37), size: 36),
-                            const SizedBox(width: 14),
+                            SizedBox(width: 14),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
+                                children: [
                                   Text(
                                     'VIP Executive Session',
                                     style: TextStyle(
@@ -323,7 +323,7 @@ class _MeetingSchedulerPageState extends ConsumerState<MeetingSchedulerPage> {
                               icon: const Icon(Icons.calendar_month,
                                   color: Color(0xFF0B194C)),
                               label: Text(
-                                "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}",
+                                '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF0B194C),

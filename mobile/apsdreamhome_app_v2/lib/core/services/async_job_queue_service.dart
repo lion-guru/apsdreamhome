@@ -355,7 +355,7 @@ class AsyncJobQueueService {
       'userId': userId,
       'title': title,
       'message': message,
-      if (type != null) 'type': type,
+      'type': ?type,
     },
     priority: priority,
   );
@@ -372,7 +372,7 @@ class AsyncJobQueueService {
       'to': to,
       'subject': subject,
       'body': body,
-      if (template != null) 'template': template,
+      'template': ?template,
     },
     priority: priority,
   );
@@ -397,7 +397,7 @@ class AsyncJobQueueService {
     payload: {
       'template': template,
       'data': data,
-      if (filename != null) 'filename': filename,
+      'filename': ?filename,
     },
     priority: priority,
   );

@@ -63,7 +63,7 @@ class _ReferralPageState extends ConsumerState<ReferralPage> {
         'Join APS Dream Home using my referral code $_referralCode and get exclusive benefits!'
             '\nhttps://apsdreamhome.com/ref/$_referralCode';
     try {
-      await Share.share(message);
+      await SharePlus.instance.share(ShareParams(text: message));
       final api = ref.read(apiServiceProvider);
       await api.post('/user/referral/share', data: {'channel': 'share'});
     } catch (_) {}
@@ -74,7 +74,7 @@ class _ReferralPageState extends ConsumerState<ReferralPage> {
         'Join APS Dream Home using my referral code $_referralCode and get exclusive benefits!'
             '\nhttps://apsdreamhome.com/ref/$_referralCode';
     try {
-      await Share.share(message);
+      await SharePlus.instance.share(ShareParams(text: message));
       final api = ref.read(apiServiceProvider);
       await api.post('/user/referral/share', data: {'channel': 'whatsapp'});
     } catch (_) {}

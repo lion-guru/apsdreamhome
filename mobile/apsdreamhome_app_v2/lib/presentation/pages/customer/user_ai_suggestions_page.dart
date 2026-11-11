@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/api_service.dart';
@@ -139,22 +138,22 @@ class _UserAISuggestionsPageState extends ConsumerState<UserAISuggestionsPage> {
       'market': Icons.analytics_rounded,
     };
     final typeColors = {
-      'property': Color(0xFF2196F3),
-      'price_drop': Color(0xFFEF5350),
-      'investment': Color(0xFF66BB6A),
-      'emi': Color(0xFFFF9800),
-      'market': Color(0xFF9C27B0),
+      'property': const Color(0xFF2196F3),
+      'price_drop': const Color(0xFFEF5350),
+      'investment': const Color(0xFF66BB6A),
+      'emi': const Color(0xFFFF9800),
+      'market': const Color(0xFF9C27B0),
     };
 
     final priorityColors = {
-      'high': Color(0xFFEF5350),
-      'medium': Color(0xFFFF9800),
-      'low': Color(0xFF42A5F5),
+      'high': const Color(0xFFEF5350),
+      'medium': const Color(0xFFFF9800),
+      'low': const Color(0xFF42A5F5),
     };
 
     final icon = typeIcons[type] ?? Icons.lightbulb_rounded;
-    final color = typeColors[type] ?? Color(0xFF9C27B0);
-    final priorityColor = priorityColors[priority] ?? Color(0xFF42A5F5);
+    final color = typeColors[type] ?? const Color(0xFF9C27B0);
+    final priorityColor = priorityColors[priority] ?? const Color(0xFF42A5F5);
 
     String timeAgo = '';
     if (createdAt.isNotEmpty) {

@@ -153,7 +153,7 @@ class _DocumentGalleryPageState extends State<DocumentGalleryPage> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
+          const Text(
             'Browse and download verified documents',
             style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
@@ -349,7 +349,7 @@ class _DocumentGalleryPageState extends State<DocumentGalleryPage> {
       rightColumnChildren.add(
         IconButton(
           onPressed: () => _launchUrl(docUrl.toString()),
-          icon: Icon(Icons.open_in_new_rounded, color: AppTheme.accentColor, size: 20),
+          icon: const Icon(Icons.open_in_new_rounded, color: AppTheme.accentColor, size: 20),
           tooltip: 'View Document',
         ),
       );

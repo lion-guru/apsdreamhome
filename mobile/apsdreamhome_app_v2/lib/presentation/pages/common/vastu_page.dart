@@ -197,7 +197,7 @@ class _VastuPageState extends State<VastuPage> {
                     color: AppTheme.accentColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.auto_awesome_rounded, color: AppTheme.accentColor, size: 24),
+                  child: const Icon(Icons.auto_awesome_rounded, color: AppTheme.accentColor, size: 24),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -209,7 +209,7 @@ class _VastuPageState extends State<VastuPage> {
               ],
             ),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'Vastu Shastra is the ancient Indian science of architecture that harmonizes buildings with natural forces. '
               'Our colonies are designed with Vastu principles to ensure:',
               style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.6),
@@ -245,14 +245,14 @@ class _VastuPageState extends State<VastuPage> {
                         ),
                         Text(
                           item['desc'] as String,
-                          style: TextStyle(color: Colors.white54, fontSize: 11),
+                          style: const TextStyle(color: Colors.white54, fontSize: 11),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-            )).toList(),
+            )),
           ],
         ),
       ),
@@ -267,7 +267,7 @@ class _VastuPageState extends State<VastuPage> {
         children: [
           Text('Core Vastu Principles', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('Fundamental guidelines applied in all our projects', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('Fundamental guidelines applied in all our projects', style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 20),
           GridView.builder(
             shrinkWrap: true,
@@ -329,11 +329,11 @@ class _VastuPageState extends State<VastuPage> {
           blur: 8,
           child: Column(
             children: [
-              Icon(Icons.construction_rounded, size: 48, color: Colors.white30),
+              const Icon(Icons.construction_rounded, size: 48, color: Colors.white30),
               const SizedBox(height: 12),
               Text('Vastu-Compliant Colonies', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
-              Text('Our Vastu-verified colonies are coming soon. Check back later!', style: TextStyle(color: Colors.white54, fontSize: 13), textAlign: TextAlign.center),
+              const Text('Our Vastu-verified colonies are coming soon. Check back later!', style: TextStyle(color: Colors.white54, fontSize: 13), textAlign: TextAlign.center),
             ],
           ),
         ),
@@ -351,12 +351,12 @@ class _VastuPageState extends State<VastuPage> {
               Text('Vastu-Compliant Colonies', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
               TextButton(
                 onPressed: () => context.go('/colonies'),
-                child: Text('View All', style: TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.w600)),
+                child: const Text('View All', style: TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.w600)),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text('Projects designed with Vastu principles for harmonious living', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('Projects designed with Vastu principles for harmonious living', style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 20),
           GridView.builder(
             shrinkWrap: true,
@@ -397,14 +397,14 @@ class _VastuPageState extends State<VastuPage> {
                                 color: AppTheme.warningColor.withValues(alpha: 0.9),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: Row(
+                              child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(Icons.verified_rounded, size: 10, color: Colors.white),
-                                  const SizedBox(width: 3),
+                                  SizedBox(width: 3),
                                   Text(
                                     'Vastu Verified',
-                                    style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w600),
+                                    style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w600),
                                   ),
                                 ],
                               ),
@@ -427,12 +427,12 @@ class _VastuPageState extends State<VastuPage> {
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(Icons.location_on_rounded, size: 11, color: Colors.white54),
+                              const Icon(Icons.location_on_rounded, size: 11, color: Colors.white54),
                               const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
                                   colony['location']?.toString() ?? '',
-                                  style: TextStyle(color: Colors.white54, fontSize: 10),
+                                  style: const TextStyle(color: Colors.white54, fontSize: 10),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -489,14 +489,14 @@ class _VastuPageState extends State<VastuPage> {
         blur: 12,
         child: Column(
           children: [
-            Icon(Icons.support_agent_rounded, size: 40, color: AppTheme.accentColor),
+            const Icon(Icons.support_agent_rounded, size: 40, color: AppTheme.accentColor),
             const SizedBox(height: 12),
             Text(
               'Need Vastu Consultation?',
               style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'Our Vastu experts can help you choose the perfect plot in our Vastu-compliant colonies.',
               style: TextStyle(color: Colors.white70, fontSize: 13),
               textAlign: TextAlign.center,
@@ -523,10 +523,9 @@ class _VastuPageState extends State<VastuPage> {
         children: [
           Text('Vastu FAQs', style: AppTheme.titleLarge.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('Common questions about Vastu compliance', style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const Text('Common questions about Vastu compliance', style: TextStyle(color: Colors.white70, fontSize: 14)),
           const SizedBox(height: 16),
           ..._faqs.asMap().entries.map((entry) {
-            final index = entry.key;
             final faq = entry.value;
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
@@ -547,7 +546,7 @@ class _VastuPageState extends State<VastuPage> {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                       child: Text(
                         faq['answer']?.toString() ?? '',
-                        style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.5),
+                        style: const TextStyle(color: Colors.white70, fontSize: 12, height: 1.5),
                       ),
                     ),
                   ],
@@ -579,14 +578,14 @@ class _VastuPageState extends State<VastuPage> {
   }
 
   static final _principles = [
-    {'icon': Icons.explore_rounded, 'color': Color(0xFF6A1B9A), 'title': 'Direction & Orientation', 'desc': 'Main entrance, rooms & kitchen aligned with cardinal directions'},
-    {'icon': Icons.crop_free_rounded, 'color': Color(0xFFE91E63), 'title': 'Plot Shape & Slope', 'desc': 'Square/rectangular plots with NE-SW slope for prosperity'},
-    {'icon': Icons.balance_rounded, 'color': Color(0xFF4CAF50), 'title': 'Five Elements Balance', 'desc': 'Earth, Water, Fire, Air, Space in correct zones'},
-    {'icon': Icons.kitchen_rounded, 'color': Color(0xFFFF6F00), 'title': 'Kitchen in SE (Agni)', 'desc': 'Fire element placement for health & prosperity'},
-    {'icon': Icons.bedroom_parent_rounded, 'color': Color(0xFF2979FF), 'title': 'Master Bedroom SW', 'desc': 'Stability, restful sleep & authority for head of family'},
-    {'icon': Icons.water_drop_rounded, 'color': Color(0xFF00BCD4), 'title': 'Water in NE (Ishan)', 'desc': 'Underground tank, borewell & drainage in northeast'},
-    {'icon': Icons.wc_rounded, 'color': Color(0xFF795548), 'title': 'Toilets in NW/SE', 'desc': 'Avoid NE & SW; proper ventilation & slope'},
-    {'icon': Icons.park_rounded, 'color': Color(0xFF8BC34A), 'title': 'Open Space in NE', 'desc': 'Gardens, lawns & water bodies in northeast for positivity'},
+    {'icon': Icons.explore_rounded, 'color': const Color(0xFF6A1B9A), 'title': 'Direction & Orientation', 'desc': 'Main entrance, rooms & kitchen aligned with cardinal directions'},
+    {'icon': Icons.crop_free_rounded, 'color': const Color(0xFFE91E63), 'title': 'Plot Shape & Slope', 'desc': 'Square/rectangular plots with NE-SW slope for prosperity'},
+    {'icon': Icons.balance_rounded, 'color': const Color(0xFF4CAF50), 'title': 'Five Elements Balance', 'desc': 'Earth, Water, Fire, Air, Space in correct zones'},
+    {'icon': Icons.kitchen_rounded, 'color': const Color(0xFFFF6F00), 'title': 'Kitchen in SE (Agni)', 'desc': 'Fire element placement for health & prosperity'},
+    {'icon': Icons.bedroom_parent_rounded, 'color': const Color(0xFF2979FF), 'title': 'Master Bedroom SW', 'desc': 'Stability, restful sleep & authority for head of family'},
+    {'icon': Icons.water_drop_rounded, 'color': const Color(0xFF00BCD4), 'title': 'Water in NE (Ishan)', 'desc': 'Underground tank, borewell & drainage in northeast'},
+    {'icon': Icons.wc_rounded, 'color': const Color(0xFF795548), 'title': 'Toilets in NW/SE', 'desc': 'Avoid NE & SW; proper ventilation & slope'},
+    {'icon': Icons.park_rounded, 'color': const Color(0xFF8BC34A), 'title': 'Open Space in NE', 'desc': 'Gardens, lawns & water bodies in northeast for positivity'},
   ];
 
   static const _faqs = [

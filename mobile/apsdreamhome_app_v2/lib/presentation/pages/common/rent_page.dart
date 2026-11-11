@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/services/api_service.dart';
-import '../../widgets/glass_card.dart';
 
 class RentPage extends StatefulWidget {
   const RentPage({super.key});
@@ -13,7 +12,6 @@ class RentPage extends StatefulWidget {
 class _RentPageState extends State<RentPage> {
   final ApiService _api = ApiService();
   bool _isLoading = false;
-  String? _errorMessage;
   String _selectedLocation = 'All';
   String _selectedBhk = 'All';
   String _searchQuery = '';
@@ -147,7 +145,6 @@ class _RentPageState extends State<RentPage> {
   Future<void> _fetchRentals() async {
     setState(() {
       _isLoading = true;
-      _errorMessage = null;
     });
 
     try {
@@ -225,7 +222,7 @@ class _RentPageState extends State<RentPage> {
     final descCtrl = TextEditingController();
     String propType = 'flat';
     int bhk = 2;
-    String furnished = 'semi-furnished';
+    const String furnished = 'semi-furnished';
 
     showModalBottomSheet(
       context: context,
@@ -253,8 +250,8 @@ class _RentPageState extends State<RentPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: const [
+                        const Row(
+                          children: [
                             Icon(Icons.add_home_work, color: Color(0xFF0B194C)),
                             SizedBox(width: 8),
                             Text(
@@ -332,7 +329,7 @@ class _RentPageState extends State<RentPage> {
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            value: propType,
+                            initialValue: propType,
                             isDense: true,
                             decoration: const InputDecoration(
                               labelText: 'Type',
@@ -350,7 +347,7 @@ class _RentPageState extends State<RentPage> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: DropdownButtonFormField<int>(
-                            value: bhk,
+                            initialValue: bhk,
                             isDense: true,
                             decoration: const InputDecoration(
                               labelText: 'BHK',
@@ -426,15 +423,14 @@ class _RentPageState extends State<RentPage> {
                             // Handled gracefully
                           }
 
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Rental Listing Published Successfully! Verified by APS Desk.'),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                            _fetchRentals();
-                          }
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Rental Listing Published Successfully! Verified by APS Desk.'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          _fetchRentals();
                         },
                       ),
                     ),
@@ -509,7 +505,7 @@ class _RentPageState extends State<RentPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFD4AF37).withOpacity(0.2),
+                        color: const Color(0xFFD4AF37).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: const Color(0xFFD4AF37)),
                       ),
@@ -543,7 +539,7 @@ class _RentPageState extends State<RentPage> {
                           )
                         : null,
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.1),
+                    fillColor: Colors.white.withValues(alpha: 0.1),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -567,7 +563,7 @@ class _RentPageState extends State<RentPage> {
                           label: Text(loc),
                           selected: isSelected,
                           selectedColor: const Color(0xFFD4AF37),
-                          backgroundColor: Colors.white.withOpacity(0.12),
+                          backgroundColor: Colors.white.withValues(alpha: 0.12),
                           labelStyle: TextStyle(
                             color: isSelected ? const Color(0xFF0B194C) : Colors.white,
                             fontSize: 12,
@@ -594,7 +590,7 @@ class _RentPageState extends State<RentPage> {
                           label: Text(bhk),
                           selected: isSelected,
                           selectedColor: Colors.white,
-                          backgroundColor: Colors.white.withOpacity(0.1),
+                          backgroundColor: Colors.white.withValues(alpha: 0.1),
                           labelStyle: TextStyle(
                             color: isSelected ? const Color(0xFF0B194C) : Colors.white70,
                             fontSize: 11,
@@ -673,7 +669,7 @@ class _RentPageState extends State<RentPage> {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFF0B194C).withOpacity(0.08),
+                                          color: const Color(0xFF0B194C).withValues(alpha: 0.08),
                                           borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Text(

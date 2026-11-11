@@ -11,8 +11,10 @@ use App\Services\LoggingService;
  * Advanced file operations and management
  * Custom MVC implementation without Laravel dependencies
  */
-class FileService extends ServiceTenantTrait
+class FileService
 {
+    use \App\Traits\ServiceTenantTrait;
+
     private $database;
     private $logger;
     private $allowedExtensions;
@@ -147,7 +149,12 @@ class FileService extends ServiceTenantTrait
                 ':uploaded_at' => 'NOW()'
             ];
             
-            $this->tenantInsertData($columns, $values);
+            // tenantInsertData() returns the tenant_id column/value pair
+            // (it takes no arguments).
+            foreach ($this->tenantInsertData() as $k => $v) {
+                $columns[] = $k;
+                $values[':' . $k] = $v;
+            }
             
             $sql .= ' (' . implode(', ', $columns) . ') VALUES (' . 
                 implode(', ', array_map(fn($k) => ':' . $k, $columns)) . ')' 
@@ -179,7 +186,10 @@ class FileService extends ServiceTenantTrait
         try {
             $sql = "SELECT * FROM files WHERE id = :id";
             $params = ['id' => $fileId];
-            $this->tenantWhere($sql, $params);
+            // tenantSql() embeds the int tenant id (this class binds NAMED
+            // params, so the trait's positional tenantWhere() would leave an
+            // unbound "?" placeholder).
+            $sql .= $this->tenantSql();
             $stmt = $this->database->prepare($sql);
             foreach ($params as $key => $value) {
                 $stmt->bindParam(':'.$key, $value);
@@ -200,7 +210,10 @@ class FileService extends ServiceTenantTrait
         try {
             $sql = "SELECT * FROM files WHERE category = :category ORDER BY uploaded_at DESC LIMIT :limit";
             $params = ['category' => $category, 'limit' => $limit];
-            $this->tenantWhere($sql, $params);
+            // tenantSql() embeds the int tenant id (this class binds NAMED
+            // params, so the trait's positional tenantWhere() would leave an
+            // unbound "?" placeholder).
+            $sql .= $this->tenantSql();
             $stmt = $this->database->prepare($sql);
             foreach ($params as $key => $value) {
                 $stmt->bindParam(':'.$key, $value);
@@ -233,7 +246,10 @@ class FileService extends ServiceTenantTrait
             // Delete database record
             $sql = "DELETE FROM files WHERE id = :id";
             $params = ['id' => $fileId];
-            $this->tenantWhere($sql, $params);
+            // tenantSql() embeds the int tenant id (this class binds NAMED
+            // params, so the trait's positional tenantWhere() would leave an
+            // unbound "?" placeholder).
+            $sql .= $this->tenantSql();
             $stmt = $this->database->prepare($sql);
             foreach ($params as $key => $value) {
                 $stmt->bindParam(':'.$key, $value);
@@ -264,12 +280,11 @@ class FileService extends ServiceTenantTrait
                         COUNT(DISTINCT category) as categories,
                         COUNT(CASE WHEN uploaded_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as recent_files
                      FROM files";
-            $params = [];
-            $this->tenantWhere($sql, $params);
+            // tenantSql() embeds the int tenant id (this class binds NAMED
+            // params, so the trait's positional tenantWhere() would leave an
+            // unbound "?" placeholder).  This query has no other params.
+            $sql .= $this->tenantSql();
             $stmt = $this->database->prepare($sql);
-            foreach ($params as $key => $value) {
-                $stmt->bindParam(':'.$key, $value);
-            }
             $stmt->execute();
             return $stmt->fetch();
         } catch (\Throwable $e) {
@@ -286,7 +301,10 @@ class FileService extends ServiceTenantTrait
         try {
             $sql = "SELECT * FROM files WHERE uploaded_at < DATE_SUB(NOW(), INTERVAL :days DAY)";
             $params = ['days' => $daysOld];
-            $this->tenantWhere($sql, $params);
+            // tenantSql() embeds the int tenant id (this class binds NAMED
+            // params, so the trait's positional tenantWhere() would leave an
+            // unbound "?" placeholder).
+            $sql .= $this->tenantSql();
             $stmt = $this->database->prepare($sql);
             foreach ($params as $key => $value) {
                 $stmt->bindParam(':'.$key, $value);
@@ -365,7 +383,10 @@ class FileService extends ServiceTenantTrait
         try {
             $sql = "SELECT * FROM files WHERE original_name LIKE :query";
             $params = ['query' => '%' . $query . '%'];
-            $this->tenantWhere($sql, $params);
+            // tenantSql() embeds the int tenant id (this class binds NAMED
+            // params, so the trait's positional tenantWhere() would leave an
+            // unbound "?" placeholder).
+            $sql .= $this->tenantSql();
             
             if ($category) {
                 $sql .= " AND category = :category";

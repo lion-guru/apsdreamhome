@@ -16,7 +16,6 @@ class _AgreementPageState extends ConsumerState<AgreementPage> {
   final _api = ApiService();
   List<Map<String, dynamic>> _documents = [];
   bool _isLoading = true;
-  String? _error;
 
   @override
   void initState() {

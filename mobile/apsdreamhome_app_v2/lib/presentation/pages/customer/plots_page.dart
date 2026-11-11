@@ -138,7 +138,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
               const SizedBox(width: 6),
               Text(
                 item['label'] as String,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: AppTheme.textSecondaryLight,
@@ -209,7 +209,7 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
         const SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w600,
             color: AppTheme.textSecondaryLight,

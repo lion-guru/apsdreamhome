@@ -116,8 +116,8 @@ class _AssociateIdCardPageState extends ConsumerState<AssociateIdCardPage> {
                 icon: const Icon(Icons.share),
                 label: const Text('Share on WhatsApp', style: TextStyle(fontWeight: FontWeight.w700)),
                 onPressed: () async {
-                  final text = "👋 Hello! I am *$name*, authorized real estate channel partner at *APS Dream Home Developers Gorakhpur*.\n\n🆔 Associate Code: *$code*\n🌟 Rank: *$rank*\n📞 Call/WhatsApp: $phone\n\nExplore our RERA & Mutation-verified townships: https://apsdreamhome.com/ref/$code";
-                  final uri = Uri.parse("https://wa.me/?text=${Uri.encodeComponent(text)}");
+                  final text = '👋 Hello! I am *$name*, authorized real estate channel partner at *APS Dream Home Developers Gorakhpur*.\n\n🆔 Associate Code: *$code*\n🌟 Rank: *$rank*\n📞 Call/WhatsApp: $phone\n\nExplore our RERA & Mutation-verified townships: https://apsdreamhome.com/ref/$code';
+                  final uri = Uri.parse('https://wa.me/?text=${Uri.encodeComponent(text)}');
                   if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
                 },
               ),
@@ -288,7 +288,7 @@ class _AssociateIdCardPageState extends ConsumerState<AssociateIdCardPage> {
 
           // QR Code
           if (qrUrl.isNotEmpty)
-            Image.network(qrUrl, width: 140, height: 140, errorBuilder: (_, __, ___) => const Icon(Icons.qr_code_2, size: 120, color: Color(0xFF0B194C)))
+            Image.network(qrUrl, width: 140, height: 140, errorBuilder: (_, _, _) => const Icon(Icons.qr_code_2, size: 120, color: Color(0xFF0B194C)))
           else
             const Icon(Icons.qr_code_2, size: 120, color: Color(0xFF0B194C)),
           const SizedBox(height: 8),

@@ -450,10 +450,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     }
     await Clipboard.setData(ClipboardData(text: code));
     try {
-      await Share.share(
-        'Join APS Dream Home with my referral code: $code\n'
-        'Download the app and use code $code during registration.',
-        subject: 'APS Dream Home Referral',
+      await SharePlus.instance.share(
+        ShareParams(
+          text: 'Join APS Dream Home with my referral code: $code\n'
+              'Download the app and use code $code during registration.',
+          subject: 'APS Dream Home Referral',
+        ),
       );
     } catch (_) {
       _showSnackBar('Referral code "$code" copied to clipboard');
@@ -1988,10 +1990,10 @@ class _RegistryPayoutSection extends StatelessWidget {
           const Row(children: [Icon(Icons.verified_outlined, size: 20, color: Color(0xFF0d9488)), SizedBox(width: 8), Text('Registry & Payouts', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppTheme.textPrimaryLight))]),
           const Divider(height: 20),
           _ActionTile(icon: Icons.assignment_turned_in_outlined, label: 'My Bookings & Registry', subtitle: 'Track allotment → possession (7 stages)', color: const Color(0xFF0d9488), onTap: () => GoRouter.of(context).push('/my-bookings')),
-          _ActionTile(icon: Icons.receipt_long_rounded, label: 'Demand Letters', subtitle: 'EMIs due, overdue + pay link & PDF (new)', color: Color(0xFFe11d48), onTap: () => GoRouter.of(context).push('/demand-letters')),
+          _ActionTile(icon: Icons.receipt_long_rounded, label: 'Demand Letters', subtitle: 'EMIs due, overdue + pay link & PDF (new)', color: const Color(0xFFe11d48), onTap: () => GoRouter.of(context).push('/demand-letters')),
           _ActionTile(icon: Icons.account_balance_wallet_outlined, label: 'Payout Batches', subtitle: 'Commission batches & bank exports (staff)', color: const Color(0xFF7c3aed), onTap: () => GoRouter.of(context).push('/admin/payout-batches')),
-          _ActionTile(icon: Icons.construction_rounded, label: 'Site Work Progress', subtitle: 'Roads/Drainage/Electricity % + photo', color: Color(0xFFea580c), onTap: () => GoRouter.of(context).push('/admin/colony-progress')),
-          _ActionTile(icon: Icons.inventory_2_rounded, label: 'Material Stock', subtitle: 'Cement/Bricks/Steel + low-stock alert', color: Color(0xFF0d9488), onTap: () => GoRouter.of(context).push('/admin/material-inventory')),
+          _ActionTile(icon: Icons.construction_rounded, label: 'Site Work Progress', subtitle: 'Roads/Drainage/Electricity % + photo', color: const Color(0xFFea580c), onTap: () => GoRouter.of(context).push('/admin/colony-progress')),
+          _ActionTile(icon: Icons.inventory_2_rounded, label: 'Material Stock', subtitle: 'Cement/Bricks/Steel + low-stock alert', color: const Color(0xFF0d9488), onTap: () => GoRouter.of(context).push('/admin/material-inventory')),
           _ActionTile(icon: Icons.location_on_outlined, label: 'Site Visits', subtitle: 'Executive dispatch & colony pin', color: AppTheme.successColor, onTap: () => GoRouter.of(context).push('/agent/site-visits'), showDivider: false),
         ]),
       ),
@@ -2043,7 +2045,7 @@ class _AgentFeaturesSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    decoration: BoxDecoration(color: it.color.withOpacity(0.08), borderRadius: BorderRadius.circular(8), border: Border.all(color: it.color.withOpacity(0.2))),
+                    decoration: BoxDecoration(color: it.color.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8), border: Border.all(color: it.color.withValues(alpha: 0.2))),
                     child: Row(children: [Icon(it.icon, size: 18, color: it.color), const SizedBox(width: 8), Expanded(child: Text(it.label, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: it.color), overflow: TextOverflow.ellipsis))]),
                   ),
                 );

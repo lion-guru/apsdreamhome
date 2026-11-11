@@ -239,7 +239,7 @@ class _UserNetworkPageState extends ConsumerState<UserNetworkPage> {
                 ),
                 child: Text(
                   'Next: $nextRank',
-                  style: TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.w600, fontSize: 12),
+                  style: const TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.w600, fontSize: 12),
                 ),
               ),
             ],
@@ -256,13 +256,13 @@ class _UserNetworkPageState extends ConsumerState<UserNetworkPage> {
               value: progress,
               minHeight: 8,
               backgroundColor: Colors.white.withValues(alpha: 0.1),
-              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.accentColor),
+              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accentColor),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             '${(progress * 100).toInt()}% Complete',
-            style: TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.w600, fontSize: 12),
+            style: const TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.w600, fontSize: 12),
           ),
         ],
       ),
@@ -271,10 +271,10 @@ class _UserNetworkPageState extends ConsumerState<UserNetworkPage> {
 
   Widget _buildStatsGrid() {
     final stats = [
-      {'label': 'Total Team', 'value': _networkData!['total_team']?.toString() ?? '0', 'icon': Icons.people_rounded, 'color': Color(0xFF2196F3)},
-      {'label': 'Direct Referrals', 'value': _networkData!['direct_referrals']?.toString() ?? '0', 'icon': Icons.person_add_rounded, 'color': Color(0xFF4CAF50)},
-      {'label': 'Active Members', 'value': _networkData!['active_members']?.toString() ?? '0', 'icon': Icons.check_circle_rounded, 'color': Color(0xFF66BB6A)},
-      {'label': 'Team Business', 'value': _formatCurrency(_networkData!['team_business_volume'] as num? ?? 0), 'icon': Icons.trending_up_rounded, 'color': Color(0xFFFF9800)},
+      {'label': 'Total Team', 'value': _networkData!['total_team']?.toString() ?? '0', 'icon': Icons.people_rounded, 'color': const Color(0xFF2196F3)},
+      {'label': 'Direct Referrals', 'value': _networkData!['direct_referrals']?.toString() ?? '0', 'icon': Icons.person_add_rounded, 'color': const Color(0xFF4CAF50)},
+      {'label': 'Active Members', 'value': _networkData!['active_members']?.toString() ?? '0', 'icon': Icons.check_circle_rounded, 'color': const Color(0xFF66BB6A)},
+      {'label': 'Team Business', 'value': _formatCurrency(_networkData!['team_business_volume'] as num? ?? 0), 'icon': Icons.trending_up_rounded, 'color': const Color(0xFFFF9800)},
     ];
 
     return GridView.builder(
@@ -345,9 +345,9 @@ class _UserNetworkPageState extends ConsumerState<UserNetworkPage> {
                 child: const Icon(Icons.attach_money_rounded, color: Color(0xFFFF9800), size: 22),
               ),
               const SizedBox(width: 12),
-              Text(
+              const Text(
                 'Team Business Volume',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15),
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15),
               ),
             ],
           ),
@@ -380,7 +380,7 @@ class _UserNetworkPageState extends ConsumerState<UserNetworkPage> {
               const Spacer(),
               Text(
                 '${_directReferrals.where((r) => r['status'] == 'active').length} Active',
-                style: TextStyle(color: AppTheme.successColor, fontWeight: FontWeight.w500, fontSize: 13),
+                style: const TextStyle(color: AppTheme.successColor, fontWeight: FontWeight.w500, fontSize: 13),
               ),
             ],
           ),
@@ -442,7 +442,7 @@ class _UserNetworkPageState extends ConsumerState<UserNetworkPage> {
             backgroundColor: AppTheme.accentColor.withValues(alpha: 0.2),
             child: Text(
               name.isNotEmpty ? name[0].toUpperCase() : '?',
-              style: TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.w600, fontSize: 18),
+              style: const TextStyle(color: AppTheme.accentColor, fontWeight: FontWeight.w600, fontSize: 18),
             ),
           ),
           const SizedBox(width: 14),

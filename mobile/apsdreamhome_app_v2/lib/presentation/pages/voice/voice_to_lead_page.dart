@@ -69,13 +69,13 @@ class _VoiceToLeadPageState extends ConsumerState<VoiceToLeadPage> {
         });
         _processVoiceInput(result.recognizedWords);
       },
-      listenFor: const Duration(seconds: 30),
-      pauseFor: const Duration(seconds: 3),
-      localeId: 'en_IN',
       listenOptions: SpeechListenOptions(
         cancelOnError: true,
         partialResults: true,
         autoPunctuation: true,
+        listenFor: const Duration(seconds: 30),
+        pauseFor: const Duration(seconds: 3),
+        localeId: 'en_IN',
       ),
     );
   }
@@ -189,7 +189,7 @@ class _VoiceToLeadPageState extends ConsumerState<VoiceToLeadPage> {
       }
     } catch (e) {
       // Fallback silently if API fails or offline - we already have local parsing
-      print('AI Parsing failed, using local fallback: $e');
+      debugPrint('AI Parsing failed, using local fallback: $e');
     }
   }
 

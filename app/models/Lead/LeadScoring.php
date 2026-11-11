@@ -11,7 +11,7 @@ use DateTime;
  */
 class LeadScoring extends Model
 {
-    protected $table = 'lead_scores';
+    protected static $table = 'lead_scores';
     protected static $tenantScoped = true;
 
     /**
@@ -221,6 +221,7 @@ class LeadScoring extends Model
             )->fetchAll();
         } catch (\Throwable $e) {
             // Gracefully handle dropped table ref
+            return [];
         }
     }
 

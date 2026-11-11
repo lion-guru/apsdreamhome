@@ -111,7 +111,7 @@ class _WhatsAppTemplatesPageState extends State<WhatsAppTemplatesPage> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
+          const Text(
             'Pre-approved message templates for automated communication',
             style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
@@ -364,7 +364,7 @@ class _WhatsAppTemplatesPageState extends State<WhatsAppTemplatesPage> {
                             children: [
                               const Icon(Icons.smartphone_rounded, color: Color(0xFF25D366), size: 20),
                               const SizedBox(width: 8),
-                              Text('Preview', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)),
+                              const Text('Preview', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)),
                               const Spacer(),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -395,7 +395,7 @@ class _WhatsAppTemplatesPageState extends State<WhatsAppTemplatesPage> {
                     ),
                     if (variables.isNotEmpty) ...[
                       const SizedBox(height: 16),
-                      Text('Variables Used', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)),
+                      const Text('Variables Used', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)),
                       const SizedBox(height: 10),
                       Wrap(
                         spacing: 8,
@@ -408,7 +408,7 @@ class _WhatsAppTemplatesPageState extends State<WhatsAppTemplatesPage> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.code_rounded, size: 14, color: Colors.white70),
+                                const Icon(Icons.code_rounded, size: 14, color: Colors.white70),
                                 const SizedBox(width: 6),
                                 Text(
                                   '{{${v.toString()}}}',
@@ -431,10 +431,9 @@ class _WhatsAppTemplatesPageState extends State<WhatsAppTemplatesPage> {
   }
 
   void _copyTemplate(Map<String, dynamic> template) {
-    final body = template['body']?.toString() ?? template['content']?.toString() ?? '';
     // In a real app, you'd use clipboard
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Template copied to clipboard'),
         backgroundColor: AppTheme.successColor,
       ),

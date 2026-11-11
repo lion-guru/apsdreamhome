@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'dart:developer' show log;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../constants/app_constants.dart';
@@ -56,7 +57,7 @@ class ApiService {
       LogInterceptor(
         requestBody: true,
         responseBody: true,
-        logPrint: (object) => print(object),
+        logPrint: (object) => log(object.toString()),
       ),
     );
   }
@@ -204,7 +205,6 @@ class ApiService {
     
     // Try to get cached data first
     final cachedData = storage.getCachedEmiData();
-    final isFresh = storage.isCacheFresh();
     
     if (cachedData != null && cachedData.isNotEmpty) {
       // Return cached data immediately
@@ -453,8 +453,8 @@ class ApiService {
       '${AppConstants.siteVisitDispatchEndpoint}$visitId${AppConstants.siteVisitAssignSuffix}',
       data: {
         'executive_id': executiveId,
-        if (cabAssigned != null) 'cab_assigned': cabAssigned,
-        if (pickupTime != null) 'pickup_time': pickupTime,
+        'cab_assigned': ?cabAssigned,
+        'pickup_time': ?pickupTime,
       },
     );
     return response;
@@ -472,10 +472,10 @@ class ApiService {
       '${AppConstants.siteVisitDispatchEndpoint}$visitId${AppConstants.siteVisitOutcomeSuffix}',
       data: {
         'outcome': outcome,
-        if (plotPreference != null) 'plot_preference': plotPreference,
-        if (budgetFeedback != null) 'budget_feedback': budgetFeedback,
-        if (outcomeNotes != null) 'outcome_notes': outcomeNotes,
-        if (followupDate != null) 'followup_date': followupDate,
+        'plot_preference': ?plotPreference,
+        'budget_feedback': ?budgetFeedback,
+        'outcome_notes': ?outcomeNotes,
+        'followup_date': ?followupDate,
       },
     );
     return response;
@@ -892,7 +892,7 @@ class ApiService {
     return await request(
       method: 'GET',
       endpoint: AppConstants.rosterEndpoint,
-      queryParameters: {'start_date': startDate, 'end_date': endDate, if (employeeId != null) 'employee_id': employeeId},
+      queryParameters: {'start_date': startDate, 'end_date': endDate, 'employee_id': ?employeeId},
     );
   }
 
@@ -984,7 +984,7 @@ class ApiService {
         'plan_id': planId,
         'amount': amount,
         'payment_mode': paymentMode ?? 'wallet',
-        if (referrerUserId != null) 'referrer_user_id': referrerUserId,
+        'referrer_user_id': ?referrerUserId,
       },
     );
   }

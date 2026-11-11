@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:apsdreamhome_app_v2/core/services/api_service.dart';
+import '../../../core/services/api_service.dart';
 
 class FarmerDeskPage extends ConsumerStatefulWidget {
   const FarmerDeskPage({super.key});
@@ -92,8 +92,8 @@ class _FarmerDeskPageState extends ConsumerState<FarmerDeskPage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      children: const [
+                    const Row(
+                      children: [
                         Icon(Icons.agriculture_rounded,
                             color: Color(0xFFD4AF37), size: 28),
                         SizedBox(width: 10),
@@ -149,7 +149,7 @@ class _FarmerDeskPageState extends ConsumerState<FarmerDeskPage> {
                         Expanded(
                           flex: 2,
                           child: DropdownButtonFormField<String>(
-                            value: selectedUnit,
+                            initialValue: selectedUnit,
                             decoration: InputDecoration(
                               labelText: 'Unit',
                               filled: true,

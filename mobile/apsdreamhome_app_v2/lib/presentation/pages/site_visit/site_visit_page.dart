@@ -89,7 +89,7 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
 
     // Get initial position
     final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high));
 
     int? activeVisitId = _visitId;
     if (activeVisitId == null) {
@@ -106,7 +106,7 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
           activeVisitId = int.tryParse(response['visit_id']?.toString() ?? '');
         }
       } catch (e) {
-        print('Failed to start site visit on server: $e');
+        debugPrint('Failed to start site visit on server: $e');
       }
     }
 
@@ -126,7 +126,7 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
 
   Future<void> _updateLocation() async {
     final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high));
 
     setState(() {
       _currentPosition = position;
@@ -149,7 +149,7 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
           lng: position.longitude,
         );
       } catch (e) {
-        print('Failed to send GPS update to server: $e');
+        debugPrint('Failed to send GPS update to server: $e');
       }
     }
   }
@@ -161,7 +161,7 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
       try {
         await ApiService().completeSiteVisit(visitId: _visitId!);
       } catch (e) {
-        print('Failed to complete site visit on server: $e');
+        debugPrint('Failed to complete site visit on server: $e');
       }
     }
 

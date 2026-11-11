@@ -172,7 +172,19 @@ class _BookingPageState extends ConsumerState<BookingPage> {
 
                         const SizedBox(height: 16),
 
-                        buildPaymentPlanOption(
+                        // NOTE (S453): Radio.groupValue / Radio.onChanged were
+                        // deprecated in Flutter 3.32 - a RadioGroup ancestor
+                        // now owns the group value.
+                        RadioGroup<String>(
+                          groupValue: selectedPaymentPlan,
+                          onChanged: (v) {
+                            if (v != null) {
+                              setState(() => selectedPaymentPlan = v);
+                            }
+                          },
+                          child: Column(
+                            children: [
+                              buildPaymentPlanOption(
                           value: 'token',
                           title: 'Token Amount',
                           subtitle: 'Pay 10% to block the plot',
@@ -184,14 +196,17 @@ class _BookingPageState extends ConsumerState<BookingPage> {
 
                         const SizedBox(height: 12),
 
-                        buildPaymentPlanOption(
-                          value: 'full',
-                          title: 'Full Payment',
-                          subtitle: 'Pay 100% and get extra benefits',
-                          amount: plot.totalPrice,
-                          selected: selectedPaymentPlan == 'full',
-                          onSelect: () =>
-                              setState(() => selectedPaymentPlan = 'full'),
+                              buildPaymentPlanOption(
+                                value: 'full',
+                                title: 'Full Payment',
+                                subtitle: 'Pay 100% and get extra benefits',
+                                amount: plot.totalPrice,
+                                selected: selectedPaymentPlan == 'full',
+                                onSelect: () =>
+                                    setState(() => selectedPaymentPlan = 'full'),
+                              ),
+                            ],
+                          ),
                         ),
 
                         const SizedBox(height: 24),
@@ -429,8 +444,6 @@ class _BookingPageState extends ConsumerState<BookingPage> {
           children: [
             Radio<String>(
               value: value,
-              groupValue: selectedPaymentPlan,
-              onChanged: (v) => onSelect(),
               activeColor: AppTheme.primaryColor,
             ),
             Expanded(
@@ -516,6 +529,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       AppWidgets.showErrorSnackBar(context, 'Booking failed: $e');
     } finally {
       if (mounted) {

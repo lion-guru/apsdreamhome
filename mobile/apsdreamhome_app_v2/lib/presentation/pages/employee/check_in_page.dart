@@ -71,7 +71,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
     }
 
     return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high));
   }
 
   double _haversineDistance(double lat1, double lng1, double lat2, double lng2) {

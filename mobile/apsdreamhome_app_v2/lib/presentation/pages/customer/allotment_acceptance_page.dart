@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apsdreamhome_app_v2/core/services/api_service.dart';
+import '../../../core/services/api_service.dart';
 
 final allotmentListProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
   final api = ApiService();
@@ -81,13 +81,12 @@ class _AllotmentAcceptancePageState extends ConsumerState<AllotmentAcceptancePag
                               'allotment_id': allotmentId,
                               'otp': _otpCtrl.text.trim(),
                             });
-                            if (mounted) {
-                              final msg = ((res as Map<String, dynamic>?)?['message'] ?? 'Allotment accepted successfully!').toString();
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-                              ref.invalidate(allotmentListProvider);
-                            }
+                            if (!context.mounted) return;
+                            final msg = ((res as Map<String, dynamic>?)?['message'] ?? 'Allotment accepted successfully!').toString();
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+                            ref.invalidate(allotmentListProvider);
                           } catch (e) {
-                            if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                            if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
                           } finally {
                             if (mounted) setState(() => _submitting = false);
                           }

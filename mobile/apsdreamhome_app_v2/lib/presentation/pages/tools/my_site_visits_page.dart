@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/logger.dart';
-import '../../../core/theme/app_theme.dart';
 
 class MySiteVisitsPage extends ConsumerStatefulWidget {
   const MySiteVisitsPage({super.key});
@@ -83,6 +81,7 @@ class _MySiteVisitsPageState extends ConsumerState<MySiteVisitsPage> {
       final response = await api.post('/api/v2/mobile/site-visit/cancel', data: {'visit_id': visitId, 'reason': 'Cancelled by user'});
       final resData = response;
       if (resData['success'] == true) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Row(
@@ -97,6 +96,7 @@ class _MySiteVisitsPageState extends ConsumerState<MySiteVisitsPage> {
         );
         _fetchVisits();
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(resData['message'] as String? ?? 'Cancel failed'),
@@ -105,6 +105,7 @@ class _MySiteVisitsPageState extends ConsumerState<MySiteVisitsPage> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Cancel failed: $e'),

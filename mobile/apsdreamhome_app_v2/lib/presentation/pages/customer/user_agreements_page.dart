@@ -473,22 +473,5 @@ String _formatCurrency(String value) {
   return num.toStringAsFixed(0);
 }
 
-String _getStatusLabel(Map<String, dynamic> agreement) {
-  final status = agreement['status']?.toString() ?? 'pending';
-  return status == 'signed' || status == 'active' || status == 'published' ? 'Signed' : 'Pending Signature';
-}
 
-bool _isAgreementSigned(Map<String, dynamic> agreement) {
-  final status = agreement['status']?.toString() ?? '';
-  return status == 'signed' || status == 'active' || status == 'published';
-}
 
-Color _getStatusColor(Map<String, dynamic> agreement) {
-  final status = agreement['status']?.toString() ?? '';
-  return (status == 'signed' || status == 'active' || status == 'published') ? AppTheme.successColor : AppTheme.warningColor;
-}
-
-IconData _getStatusIcon(Map<String, dynamic> agreement) {
-  final status = agreement['status']?.toString() ?? '';
-  return (status == 'signed' || status == 'active' || status == 'published') ? Icons.check_circle_rounded : Icons.pending_rounded;
-}

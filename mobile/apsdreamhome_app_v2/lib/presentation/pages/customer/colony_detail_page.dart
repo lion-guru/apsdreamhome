@@ -28,7 +28,7 @@ class ColonyDetailPage extends ConsumerWidget {
         '${colony.pricePerSqft > 0 ? "Price from ₹${AppWidgets.formatCurrency(colony.pricePerSqft)}/sqft" : ""}\n'
         'Plots: ${colony.availablePlots} available out of ${colony.totalPlots}\n'
         'View details: https://apsdreamhome.com/colonies/$colonyId';
-    Share.share(message, subject: colony.name);
+    SharePlus.instance.share(ShareParams(text: message, subject: colony.name));
   }
 
   @override

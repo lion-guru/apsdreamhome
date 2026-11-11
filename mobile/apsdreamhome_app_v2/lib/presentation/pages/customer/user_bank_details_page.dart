@@ -349,15 +349,15 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
           blur: 6,
           child: Row(
             children: [
-              Icon(Icons.security_rounded, color: AppTheme.accentColor, size: 24),
+              const Icon(Icons.security_rounded, color: AppTheme.accentColor, size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Secure & Encrypted',
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
                     ),
                     Text(
                       'Your bank details are encrypted and never shared with third parties.',

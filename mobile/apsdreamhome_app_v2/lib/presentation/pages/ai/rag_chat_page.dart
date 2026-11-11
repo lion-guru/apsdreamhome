@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../core/services/api_service.dart';
-import '../../../core/utils/logger.dart';
 
 class RAGChatPage extends ConsumerStatefulWidget {
   const RAGChatPage({super.key});
@@ -90,10 +87,11 @@ class _RAGChatPageState extends ConsumerState<RAGChatPage> {
           if (mounted) _addBotMessage(reply);
         } else {
           final err = data['error'] as String?;
-          if (mounted)
+          if (mounted) {
             _addBotMessage(
               'Sorry, I encountered an error: ${err ?? 'Unknown error'}',
             );
+          }
         }
       }
     } catch (e) {
@@ -198,7 +196,7 @@ class _RAGChatPageState extends ConsumerState<RAGChatPage> {
                       style: TextStyle(
                           fontSize: 12, color: Colors.grey.shade600)),
                   const SizedBox(width: 8),
-                  SizedBox(
+                  const SizedBox(
                     height: 12,
                     width: 12,
                     child: CircularProgressIndicator(strokeWidth: 2),

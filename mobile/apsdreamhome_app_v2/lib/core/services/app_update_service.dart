@@ -130,8 +130,8 @@ class AppUpdateService {
     await showDialog(
       context: context,
       barrierDismissible: !result.isRequired,
-      builder: (context) => WillPopScope(
-        onWillPop: () async => !result.isRequired,
+      builder: (context) => PopScope(
+        canPop: !result.isRequired,
         child: AlertDialog(
           title: Row(
             children: [

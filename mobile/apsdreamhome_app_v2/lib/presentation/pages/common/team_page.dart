@@ -18,9 +18,7 @@ class _TeamPageState extends State<TeamPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
   List<_TeamMember> _teamMembers = _defaultTeamMembers;
-  bool _isLoadingTeam = true;
 
   @override
   void initState() {
@@ -32,7 +30,6 @@ class _TeamPageState extends State<TeamPage>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-    _slideAnimation =
         Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
           CurvedAnimation(
             parent: _animationController,
@@ -122,7 +119,6 @@ class _TeamPageState extends State<TeamPage>
             if (mounted) {
               setState(() {
                 _teamMembers = members;
-                _isLoadingTeam = false;
               });
             }
             return;
@@ -130,7 +126,6 @@ class _TeamPageState extends State<TeamPage>
         }
       }
     } catch (_) {}
-    if (mounted) setState(() => _isLoadingTeam = false);
   }
 
   @override

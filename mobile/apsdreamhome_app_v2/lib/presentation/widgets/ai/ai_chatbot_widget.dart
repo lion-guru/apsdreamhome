@@ -32,7 +32,7 @@ class _AIChatbotWidgetState extends ConsumerState<AIChatbotWidget> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<_ChatMessage> _messages = [];
-  String _selectedProvider = 'groq';
+  final String _selectedProvider = 'groq';
 
   @override
   void initState() {
@@ -79,7 +79,7 @@ class _AIChatbotWidgetState extends ConsumerState<AIChatbotWidget> {
         'use_rag': true,
         'temperature': 0.7,
         'max_tokens': 1000,
-        ?'image_path': imagePath,
+        'image_path': imagePath,
       };
       final response = await apiService.post('/api/ai/chat', data: requestData);
 

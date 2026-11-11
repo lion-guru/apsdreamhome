@@ -605,9 +605,11 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
         },
       );
 
+      if (!mounted) return;
       Navigator.pop(context);
 
       // Show result
+      if (!mounted) return;
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
