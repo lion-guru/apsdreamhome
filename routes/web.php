@@ -290,6 +290,20 @@ $router->get('/projects/budha-city', 'Front\\ProjectController@budhaCity');
 $router->get('/projects/{slug}', 'Front\\ProjectController@projectDetails');
 $router->get('/projects/{location}', 'Front\\ProjectController@projectsByLocation');
 
+// Location landing pages (app/views/locations/*) - six complete marketing /
+// SEO pages that were built but never wired to a route, so they were
+// unreachable. NOTE (S450): they live under /project-locations/* and NOT
+// under /projects/*, because a literal '/projects/suryoday-colony' would
+// shadow the DB-driven '/projects/{slug}' project page (there IS a real
+// SURYODAY COLONY row in the projects table). '/locations/{slug}' is the
+// colony-by-slug alias, so that namespace was avoided too.
+$router->get('/project-locations/budha-city',      'Front\\ProjectController@locationLanding');
+$router->get('/project-locations/suryoday-colony', 'Front\\ProjectController@locationLanding');
+$router->get('/project-locations/raghunath-nagri', 'Front\\ProjectController@locationLanding');
+$router->get('/project-locations/bohisawagar',     'Front\\ProjectController@locationLanding');
+$router->get('/project-locations/ram-nagri',       'Front\\ProjectController@locationLanding');
+$router->get('/project-locations/ganga-nagri',     'Front\\ProjectController@locationLanding');
+
 // Dynamic Colony Pages (single-template, DB-driven)
 $router->get('/colony/{slug}', 'Front\\ProjectController@colonyDetail');
 $router->get('/plots', 'Front\\PlotIndexController@index');

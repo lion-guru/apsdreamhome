@@ -26,9 +26,21 @@ class LocalizationController extends AdminController
      */
     private function requireLocalizationService(): void
     {
+        // NOTE (S450): the router instantiates controllers with NO arguments,
+        // so the constructor-injected service was ALWAYS null and every
+        // localization endpoint answered 503 "Localization service not
+        // available". Self-resolve it here instead of failing.
         if ($this->localizationService === null) {
-            $this->response(['success' => false, 'message' => 'Localization service not available'], 503);
-            exit;
+            try {
+                $this->localizationService = new \App\Services\Localization\LocalizationService(
+                    \App\Core\Database\Database::getInstance(),
+                    null
+                );
+            } catch (\Throwable $e) {
+                $this->logger?->error('Localization service unavailable: ' . $e->getMessage());
+                $this->response(['success' => false, 'message' => 'Localization service not available'], 503);
+                exit;
+            }
         }
     }
 

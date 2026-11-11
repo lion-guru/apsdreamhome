@@ -144,7 +144,60 @@ class ProjectController extends PageController
 
     public function budhaCity()
     {
-        return $this->projectDetails('budha-city');
+        // NOTE (S450): this used to delegate to projectDetails('budha-city'),
+        // which looks the slug up in the `projects` table. There is no such
+        // row (the table holds only Braj Radha Nagri x2 + SURYODAY COLONY), so
+        // the page 404'd for every visitor - even though the Budha City
+        // marketing page HAS been built (app/views/locations/kushinagar-budha-city.php).
+        return $this->locationLanding('budha-city');
+    }
+
+    /**
+     * Location landing pages (app/views/locations/*).
+     *
+     * NOTE (S450): six complete marketing/SEO landing pages were built but
+     * never wired to a route, so they were unreachable. Five are layout
+     * partials; one (bohisawagar) is a full standalone HTML document and is
+     * emitted as-is by the render() self-rendering safeguard.
+     */
+    public function locationLanding($slug = null)
+    {
+        if ($slug === null || $slug === '') {
+            // A LITERAL route (no {param}) makes the router call the handler
+            // with NO arguments, so the slug has to come from the path.
+            $path = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '');
+            $slug = basename(rtrim($path, '/'));
+        }
+
+        $map = [
+            'budha-city'      => ['kushinagar-budha-city', 'Budha City - Kushinagar'],
+            'suryoday-colony' => ['gorakhpur-suryoday-colony', 'Suryoday Colony - Gorakhpur'],
+            'raghunath-nagri' => ['gorakhpur-raghunath-nagri', 'Raghunath Nagri - Gorakhpur'],
+            'bohisawagar'     => ['gorakhpur-bohisawagar', 'Bohisawagar - Gorakhpur'],
+            'ram-nagri'       => ['lucknow-ram-nagri', 'Ram Nagri - Lucknow'],
+            'ganga-nagri'     => ['varanasi-ganga-nagri', 'Ganga Nagri - Varanasi'],
+        ];
+
+        $key = strtolower(trim((string)$slug));
+        if (!isset($map[$key])) {
+            http_response_code(404);
+            $this->render('errors/404', ['page_title' => 'Page Not Found']);
+            return;
+        }
+
+        [$view, $title] = $map[$key];
+
+        // The partials guard with isset()/empty() and fall back to their own
+        // copy, but pass empty defaults so PHP emits no undefined-variable
+        // warnings.
+        $this->render('locations/' . $view, [
+            'page_title' => $title,
+            'project'    => null,
+            'video'      => [],
+            'videos'     => [],
+            'amenity'    => [],
+            'amenities'  => [],
+        ]);
     }
 
     public function suyodayColonyPage()

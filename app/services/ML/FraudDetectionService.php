@@ -36,12 +36,18 @@ class FraudDetectionService
     public function analyzeUserBehavior($userId)
     {
         $tid = $this->getTenantId();
-        $sql = "SELECT DATEDIFF(NOW(), created_at) as account_age, 
-                       status as verification_status, 
-                       COALESCE(activity_logs_unified, 0) as activity_logs_unified,
-                       '' as last_login_ip,
-                       status
-                FROM users WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
+        // NOTE (S450): `activity_logs_unified` is NOT a column on `users` -
+        // it is the COUNT of the user's rows in the activity_logs_unified
+        // table. Selecting it as a column made every fraud analysis die with
+        // "Unknown column 'activity_logs_unified' in 'field list'" (1054).
+        // `last_login_ip` IS a real users column, so read it instead of
+        // hardcoding an empty string.
+        $sql = "SELECT DATEDIFF(NOW(), u.created_at) as account_age,
+                       u.status as verification_status,
+                       (SELECT COUNT(*) FROM activity_logs_unified a WHERE a.user_id = u.id) as activity_logs_unified,
+                       COALESCE(u.last_login_ip, '') as last_login_ip,
+                       u.status
+                FROM users u WHERE u.id = ?" . ($tid > 1 ? " AND u.tenant_id = ?" : "");
 
         $user = $this->db->fetch($sql, $tid > 1 ? [$userId, $tid] : [$userId]);
         
