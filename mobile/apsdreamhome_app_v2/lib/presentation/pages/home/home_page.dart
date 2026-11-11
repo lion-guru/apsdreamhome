@@ -141,13 +141,16 @@ class HomePage extends ConsumerWidget {
               // Recent Activity
               Text(
                 'Recent Activity',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.textPrimaryLight,
+                ),
               ),
               const SizedBox(height: 16),
 
               GlassCard(
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
                     _buildActivityItem(
@@ -156,7 +159,7 @@ class HomePage extends ConsumerWidget {
                       title: 'New Lead Added',
                       subtitle: 'Rahul Sharma - 3 BHK Interest',
                       time: '2 hours ago',
-                      color: Colors.green,
+                      color: AppTheme.successColor,
                     ),
                     const Divider(height: 1),
                     _buildActivityItem(
@@ -174,7 +177,7 @@ class HomePage extends ConsumerWidget {
                       title: 'Property Status Updated',
                       subtitle: 'Plot A-12 marked as Sold',
                       time: '2 days ago',
-                      color: Colors.blue,
+                      color: AppTheme.infoColor,
                     ),
                   ],
                 ),
@@ -230,7 +233,7 @@ class HomePage extends ConsumerWidget {
         icon: Icons.add_circle_outline,
         title: 'Add Lead',
         subtitle: 'Create new lead',
-        color: Colors.green,
+        color: AppTheme.successColor,
         onTap: () => _navigateToLeads(context),
       ),
       QuickAction(
@@ -251,7 +254,7 @@ class HomePage extends ConsumerWidget {
         icon: Icons.call_outlined,
         title: 'Quick Call',
         subtitle: 'Contact leads',
-        color: Colors.blue,
+        color: AppTheme.infoColor,
         onTap: () => _makeQuickCall(context),
       ),
     ];
@@ -261,7 +264,7 @@ class HomePage extends ConsumerWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 1.2,
+        childAspectRatio: 1.1,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
@@ -269,22 +272,42 @@ class HomePage extends ConsumerWidget {
       itemBuilder: (context, index) {
         final action = actions[index];
         return GlassCard(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(14),
           child: InkWell(
             onTap: !isConnected && action.requiresNetwork ? null : action.onTap,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  width: 56,
+                  height: 56,
                   decoration: BoxDecoration(
-                    color: action.color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    gradient: LinearGradient(
+                      colors: [
+                        action.color.withValues(alpha: 0.15),
+                        action.color.withValues(alpha: 0.05),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: action.color.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: action.color.withValues(alpha: 0.12),
+                        blurRadius: 8,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                   child: Icon(
                     action.icon,
-                    size: 28,
+                    size: 26,
                     color: !isConnected && action.requiresNetwork
                         ? Colors.grey
                         : action.color,
@@ -293,20 +316,23 @@ class HomePage extends ConsumerWidget {
                 const SizedBox(height: 12),
                 Text(
                   action.title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: !isConnected && action.requiresNetwork
-                            ? Colors.grey
-                            : null,
-                      ),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: !isConnected && action.requiresNetwork
+                        ? Colors.grey
+                        : AppTheme.textPrimaryLight,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   action.subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.shade600,
-                      ),
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -326,42 +352,53 @@ class HomePage extends ConsumerWidget {
     required Color color,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: color.withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
             child: Icon(icon, size: 20, color: color),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: AppTheme.textPrimaryLight,
+                  ),
                 ),
+                const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.shade600,
-                      ),
+                  style: TextStyle(
+                    color: AppTheme.textSecondaryLight,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
           ),
           Text(
             time,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey.shade500,
-                ),
+            style: TextStyle(
+              color: AppTheme.textSecondaryLight,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),

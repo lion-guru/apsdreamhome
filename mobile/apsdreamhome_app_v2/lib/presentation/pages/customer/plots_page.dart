@@ -7,6 +7,7 @@ import '../../../data/services/colony_service.dart';
 import '../../../data/models/colony_model.dart';
 import '../../../data/models/plot_model.dart';
 import '../../widgets/app_widgets.dart';
+import '../../widgets/glass_card.dart';
 
 class PlotsPage extends ConsumerStatefulWidget {
   final String? colonyId;
@@ -69,7 +70,18 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(
+        child: AppWidgets.shimmerLoading(
+          child: Container(
+            height: 200,
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+      ),
       error: (error, stack) => AppWidgets.errorWidget(
         message: error.toString(),
         onRetry: () => ref.refresh(colonyProvider(widget.colonyId!)),
@@ -106,14 +118,8 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
       {'color': AppTheme.plotSold, 'label': 'Sold'},
     ];
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4),
-        ],
-      ),
+    return GlassCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: items.map((item) {
@@ -121,17 +127,22 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 12,
-                height: 12,
+                width: 14,
+                height: 14,
                 decoration: BoxDecoration(
                   color: item['color'] as Color,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: Colors.white, width: 1),
                 ),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 6),
               Text(
                 item['label'] as String,
-                style: const TextStyle(fontSize: 11),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.textSecondaryLight,
+                ),
               ),
             ],
           );
@@ -141,13 +152,12 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
   }
 
   Widget _buildStatsBar(ColonyModel colony) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: Colors.grey.shade50,
+    return GlassCard(
+      padding: const EdgeInsets.all(14),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem('Total', colony.totalPlots.toString()),
+          _buildStatItem('Total', colony.totalPlots.toString(), AppTheme.primaryColor),
           _buildStatItem(
             'Available',
             colony.availablePlots.toString(),
@@ -174,28 +184,44 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
   }
 
   Widget _buildStatItem(String label, String value, [Color? color]) {
+    final c = color ?? AppTheme.primaryColor;
     return Column(
       children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: c.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: c.withValues(alpha: 0.3), width: 1),
+          ),
+          child: Icon(Icons.circle, color: c, size: 10),
+        ),
+        const SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: color ?? Colors.black87,
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+            color: c,
+            letterSpacing: -0.3,
           ),
         ),
         const SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.textSecondaryLight,
+          ),
         ),
       ],
     );
   }
 
   Widget _buildFilterChips() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return GlassCard(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -205,11 +231,28 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: ChoiceChip(
-                  label: Text(filter.toUpperCase()),
+                  label: Text(
+                    filter.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? Colors.white : AppTheme.textSecondaryLight,
+                    ),
+                  ),
                   selected: isSelected,
+                  selectedColor: AppTheme.primaryColor,
+                  backgroundColor: Colors.white.withValues(alpha: 0.7),
                   onSelected: (selected) {
                     setState(() => _selectedFilter = filter);
                   },
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                      color: isSelected ? AppTheme.primaryColor : Colors.grey.shade200,
+                      width: 1,
+                    ),
+                  ),
                 ),
               );
             }),
@@ -339,33 +382,31 @@ class _PlotsPageState extends ConsumerState<PlotsPage> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: const Color(0xFFE8DFD0), width: 1.2),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.06),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+                        color: const Color(0xFF0B194C).withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              AppTheme.primaryColor,
-                              AppTheme.secondaryColor,
-                            ],
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: SizedBox(
+                          width: 68,
+                          height: 68,
+                          child: Image.network(
+                            colony.displayImages.first,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => Image.network(
+                              colony.luxuryHeroImage,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.apartment,
-                          color: Colors.white,
-                          size: 28,
                         ),
                       ),
                       const SizedBox(width: 14),

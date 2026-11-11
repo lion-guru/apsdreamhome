@@ -35,17 +35,17 @@ class GlassCard extends StatelessWidget {
           margin: margin,
           padding: padding,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: opacity),
+            color: Colors.white.withValues(alpha: 0.92),
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: 1.5,
+              color: const Color(0xFFE8DFD0),
+              width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 12,
-                spreadRadius: 2,
+                color: const Color(0xFF0B194C).withValues(alpha: 0.06),
+                blurRadius: 16,
+                spreadRadius: 0,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -75,10 +75,10 @@ class GradientBackground extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: colors ?? [
-            const Color(0xFF1A237E),
-            const Color(0xFF3949AB),
-            const Color(0xFF5C6BC0),
-            const Color(0xFF1A237E),
+            const Color(0xFFFDFBF7),
+            const Color(0xFFF9F5EC),
+            const Color(0xFFF5EFE3),
+            const Color(0xFFEFE7D8),
           ],
           stops: const [0.0, 0.3, 0.7, 1.0],
         ),
@@ -133,11 +133,11 @@ class _MeshGradientBackgroundState extends State<MeshGradientBackground>
 
     final gradientColors = widget.colors ??
         const [
-          Color(0xFF0D1B3E),
-          Color(0xFF1A237E),
-          Color(0xFF283593),
-          Color(0xFF1A237E),
-          Color(0xFF0D1B3E),
+          Color(0xFFFDFBF7), // Warm Pearl Ivory
+          Color(0xFFF9F5EC), // Soft Champagne Cream
+          Color(0xFFF5EFE3), // Sunlit Golden Mist
+          Color(0xFFEFE7D8), // Elegant Warm Gold
+          Color(0xFFFDFBF7), // Warm Pearl Ivory
         ];
 
     return Container(
@@ -158,11 +158,11 @@ class _MeshGradientBackgroundState extends State<MeshGradientBackground>
                 top: -80 + shift1,
                 right: -60 + shift2,
                 child: Container(
-                  width: 220,
-                  height: 220,
+                  width: 240,
+                  height: 240,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFFFFD700).withValues(alpha: 0.07 + t * 0.03),
+                    color: const Color(0xFFD4AF37).withValues(alpha: 0.12 + t * 0.04),
                   ),
                 ),
               ),
@@ -170,11 +170,11 @@ class _MeshGradientBackgroundState extends State<MeshGradientBackground>
                 bottom: 100 + shift3,
                 left: -40 + shift4,
                 child: Container(
-                  width: 180,
-                  height: 180,
+                  width: 200,
+                  height: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF42A5F5).withValues(alpha: 0.06 + t * 0.02),
+                    color: const Color(0xFFF58220).withValues(alpha: 0.08 + t * 0.03),
                   ),
                 ),
               ),
@@ -182,11 +182,11 @@ class _MeshGradientBackgroundState extends State<MeshGradientBackground>
                 top: 180 - shift2,
                 right: 60 + shift1,
                 child: Container(
-                  width: 140,
-                  height: 140,
+                  width: 150,
+                  height: 150,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFFE040FB).withValues(alpha: 0.04 + t * 0.02),
+                    color: const Color(0xFFE5A93C).withValues(alpha: 0.07 + t * 0.02),
                   ),
                 ),
               ),
@@ -194,11 +194,11 @@ class _MeshGradientBackgroundState extends State<MeshGradientBackground>
                 bottom: -40 - shift1,
                 right: -20 + shift3,
                 child: Container(
-                  width: 160,
-                  height: 160,
+                  width: 180,
+                  height: 180,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFFFFD700).withValues(alpha: 0.05 + t * 0.02),
+                    color: const Color(0xFFD4AF37).withValues(alpha: 0.10 + t * 0.03),
                   ),
                 ),
               ),
