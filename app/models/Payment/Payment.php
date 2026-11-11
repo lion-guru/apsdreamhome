@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Payment;
 
 use App\Models\Model;
 use App\Core\Database;

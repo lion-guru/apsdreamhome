@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Core\UnifiedModel;
-use Illuminate\Support\Str;
+// NOTE (S448): Illuminate is NOT a dependency of this project, so
+// Illuminate\Support\Str never existed -> fatal on model load.
+use App\Core\Support\Str;
 
 /**
  * LegalDocument Model

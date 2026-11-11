@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Services\Legacy;
+
+// NOTE (S448): without this import AdminLogger:: resolved to
+// App\Services\Legacy\AdminLogger -> class not found -> fatal.
+use App\Http\Middleware\AdminLogger;
 /**
  * Advanced Password Management Utility
  * Provides secure password handling, hashing, and validation
@@ -152,7 +156,9 @@ class PasswordManager {
         $passwordData = self::hashPassword($newPassword);
 
         // Log password reset event
-        AdminLogger::log('PASSWORD_RESET', [
+        // NOTE (S448): AdminLogger::log() takes ($message, $level); the old
+        // ($message, $context[]) shape put an ARRAY in the level slot.
+        AdminLogger::logAction('PASSWORD_RESET', [
             'user_id' => $userId,
             'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
         ]);

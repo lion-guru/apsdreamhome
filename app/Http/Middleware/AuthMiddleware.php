@@ -2,6 +2,11 @@
 
 namespace App\Services\Legacy;
 
+// NOTE (S448): without these imports SecurityUtility:: / AdminLogger:: resolved
+// to App\Services\Legacy\... -> class not found -> fatal.
+use App\Core\Security as SecurityUtility;
+use App\Http\Middleware\AdminLogger;
+
 /**
  * Advanced Authentication Middleware
  * Provides robust authentication and authorization mechanisms
@@ -21,11 +26,11 @@ class AuthMiddleware
     public static function validateAdminCredentials($username, $password)
     {
         // Sanitize inputs
-        $username = SecurityUtility::sanitizeInput($username, 'username');
-        $password = SecurityUtility::sanitizeInput($password, 'password');
+        $username = SecurityUtility::sanitize($username, 'username');
+        $password = SecurityUtility::sanitize($password, 'password');
 
         if (!$username || !$password) {
-            AdminLogger::log('INVALID_LOGIN_ATTEMPT', [
+            AdminLogger::logAction('INVALID_LOGIN_ATTEMPT', [
                 'reason' => 'Invalid input format',
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
             ]);
@@ -63,7 +68,7 @@ class AuthMiddleware
             }
 
             if (!$user) {
-                AdminLogger::log('LOGIN_ATTEMPT_NONEXISTENT_USER', [
+                AdminLogger::logAction('LOGIN_ATTEMPT_NONEXISTENT_USER', [
                     'username' => $username,
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
                 ]);
@@ -72,7 +77,7 @@ class AuthMiddleware
 
             // Verify password (bcrypt only)
             if (!isset($user['password']) || !password_verify($password, $user['password'])) {
-                AdminLogger::log('INVALID_PASSWORD_ATTEMPT', [
+                AdminLogger::logAction('INVALID_PASSWORD_ATTEMPT', [
                     'username' => $username,
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
                 ]);
@@ -82,7 +87,7 @@ class AuthMiddleware
             // Check if user has admin privileges
             $role = $user['role'] ?? 'user';
             if (!in_array($role, ['admin', 'super_admin', 'manager', 'employee'])) {
-                AdminLogger::log('UNAUTHORIZED_ROLE_LOGIN', [
+                AdminLogger::logAction('UNAUTHORIZED_ROLE_LOGIN', [
                     'username' => $username,
                     'role' => $role,
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
@@ -93,7 +98,7 @@ class AuthMiddleware
             // Successful login
             self::createSecureSession($user['username'] ?? $username);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             AdminLogger::logError('DATABASE_AUTH_ERROR', [
                 'message' => $e->getMessage(),
                 'username' => $username
@@ -153,7 +158,7 @@ class AuthMiddleware
         $_SESSION['last_activity'] = time();
 
         // Log successful login
-        AdminLogger::log('ADMIN_LOGIN_SUCCESS', [
+        AdminLogger::logAction('ADMIN_LOGIN_SUCCESS', [
             'username' => $username,
             'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
         ]);
@@ -189,7 +194,7 @@ class AuthMiddleware
     public static function destroySession()
     {
         // Log session destruction
-        AdminLogger::log('ADMIN_SESSION_DESTROYED', [
+        AdminLogger::logAction('ADMIN_SESSION_DESTROYED', [
             'username' => $_SESSION['admin_username'] ?? 'Unknown',
             'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
         ]);
@@ -211,7 +216,7 @@ class AuthMiddleware
     public static function requireAdminAuth()
     {
         if (!self::isAdminSessionValid()) {
-            AdminLogger::log('UNAUTHORIZED_ACCESS_ATTEMPT', [
+            AdminLogger::logAction('UNAUTHORIZED_ACCESS_ATTEMPT', [
                 'url' => $_SERVER['REQUEST_URI'] ?? 'Unknown',
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
             ]);

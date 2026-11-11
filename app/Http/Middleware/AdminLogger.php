@@ -30,6 +30,17 @@ class AdminLogger
      * @param array $context Additional context
      * @return bool Success
      */
+    // Log levels (restored for the legacy App\Services\Legacy\ callers)
+    public const LEVEL_DEBUG   = 'debug';
+    public const LEVEL_INFO    = 'info';
+    public const LEVEL_NOTICE  = 'notice';
+    public const LEVEL_WARNING = 'warning';
+    public const LEVEL_ERROR   = 'error';
+    public const LEVEL_CRITICAL = 'critical';
+    public const LEVEL_ALERT   = 'alert';
+    public const LEVEL_EMERGENCY = 'emergency';
+    public const LEVEL_SECURITY = 'security';
+
     public static function logAction($action, $context = [])
     {
         try {

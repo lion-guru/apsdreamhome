@@ -2,7 +2,7 @@
 
 namespace App\Services\AI;
 
-use App\Services\AI\Modules\NLPProcessor;
+use App\Services\AI\modules\NLPProcessor;
 use Exception;
 
 /**

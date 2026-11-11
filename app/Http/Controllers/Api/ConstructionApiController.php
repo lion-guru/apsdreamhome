@@ -22,7 +22,7 @@ class ConstructionApiController extends BaseApiController
             $st->execute($tenantParams);
             $colonies = $st->fetchAll(\PDO::FETCH_ASSOC);
             return $this->jsonSuccess(['colonies' => $colonies]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ConstructionApiController::colonyProgress error: ' . $e->getMessage());
             return $this->jsonError('Failed', 500);
         }
@@ -37,7 +37,11 @@ class ConstructionApiController extends BaseApiController
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             [$tenantSql, $tenantParams] = $this->tenantWhere();
-            $st = $db->prepare("SELECT m.*, c.name as colony_name FROM colony_milestones m LEFT JOIN colonies c ON m.colony_id=c.id WHERE m.colony_id=?" . $tenantSql . " ORDER BY m.category ASC, m.created_at DESC");
+            // NOTE (S449): colony_milestones and colonies BOTH have tenant_id,
+            // so the shared unqualified ' AND tenant_id = ?' is ambiguous ->
+            // "Column 'tenant_id' in where clause is ambiguous". Qualify it.
+            $tenantSqlM = str_replace(' AND tenant_id', ' AND m.tenant_id', $tenantSql);
+            $st = $db->prepare("SELECT m.*, c.name as colony_name FROM colony_milestones m LEFT JOIN colonies c ON m.colony_id=c.id WHERE m.colony_id=?" . $tenantSqlM . " ORDER BY m.category ASC, m.created_at DESC");
             $st->execute(array_merge([$colonyId], $tenantParams));
             $rows = $st->fetchAll(\PDO::FETCH_ASSOC);
             $base = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
@@ -45,7 +49,7 @@ class ConstructionApiController extends BaseApiController
                 if (!empty($r['site_photo_path'])) $r['site_photo_url'] = $base . '/' . $r['site_photo_path'];
             }
             return $this->jsonSuccess(['milestones' => $rows, 'colony_id' => $colonyId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed', 500);
         }
     }
@@ -72,7 +76,7 @@ class ConstructionApiController extends BaseApiController
             $st->execute($tenantParams);
             $logs = $st->fetchAll(\PDO::FETCH_ASSOC);
             return $this->jsonSuccess(['materials' => $materials, 'total_value' => $total, 'usage_logs' => $logs]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed', 500);
         }
     }
@@ -105,7 +109,7 @@ class ConstructionApiController extends BaseApiController
             $st->execute(array_merge([$newStock, $totalVal, $newStatus, $materialId], $tenantParams));
             $db->commit();
             return $this->jsonSuccess(['new_stock' => $newStock, 'status' => $newStatus], 'Usage logged');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (isset($db) && $db->inTransaction()) $db->rollBack();
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }

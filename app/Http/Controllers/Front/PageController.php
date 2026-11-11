@@ -181,9 +181,14 @@ class PageController extends BaseController
                     INSERT INTO inquiries (name, email, phone, subject, message, status, tenant_id, created_at)
                     VALUES (?, ?, ?, ?, ?, 'new', ?, NOW())
                 ");
+                // NOTE (S449): inquiries.tenant_id is NOT NULL DEFAULT 1, but
+                // this used to bind NULL whenever the visitor was on the
+                // default tenant -> "Column 'tenant_id' cannot be null"
+                // (1048), so the PUBLIC lead form failed for every visitor.
+                $tid = (int)$this->tenantId();
                 $stmt->execute([
                     $name, $email, $phone, $subject, $message,
-                    $this->tenantId() > 1 ? $this->tenantId() : null
+                    $tid > 1 ? $tid : 1
                 ]);
 
                 $inquiryId = (int)$db->lastInsertId();

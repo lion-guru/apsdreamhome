@@ -78,7 +78,7 @@ class InquiryController extends AdminController
             $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM inquiries WHERE status = ?");
             $stmt->execute([$status]);
             return $stmt->fetch()['cnt'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -114,7 +114,7 @@ class InquiryController extends AdminController
                 $updateStmt = $this->db->prepare("UPDATE inquiries SET status = 'contacted', updated_at = NOW() WHERE id = ? $tSql");
                 $updateStmt->execute(array_merge([$id], $tParams));
                 $inquiry['status'] = 'contacted';
-            } catch (\Exception $e) { error_log('InquiryController view status update: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('InquiryController view status update: ' . $e->getMessage()); }
         }
 
         // Fetch assigned staff member info
@@ -186,7 +186,7 @@ class InquiryController extends AdminController
                     \App\Core\Cache::delete('admin_notify_inquiries_today');
                     $this->setFlash('success', 'Inquiry assigned successfully and notification sent to staff member.');
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->setFlash('error', 'Failed to assign inquiry: ' . $e->getMessage());
             }
             $this->redirect('/admin/inquiries/view/' . $id);
@@ -201,6 +201,19 @@ class InquiryController extends AdminController
             $id = $_POST['id'] ?? 0;
             $status = $_POST['status'] ?? 'new';
 
+            // NOTE (S449): the raw POST value used to go straight into the
+            // `status` ENUM column - any value outside the enum was rejected
+            // by MySQL in strict mode ("Data truncated for column 'status'"),
+            // so the update silently failed. Whitelist against the values the
+            // admin UI offers (views/admin/inquiries/index.php + view.php)
+            // plus the ones the employee portal uses.
+            $allowedStatuses = ['new', 'pending', 'contacted', 'in_progress', 'completed', 'closed'];
+            if (!in_array($status, $allowedStatuses, true)) {
+                $this->setFlash('error', 'Invalid status selected');
+                $this->redirect('/admin/inquiries');
+                return;
+            }
+
             try {
                 list($tSql, $tParams) = $this->tenantWhere();
                 $stmt = $this->db->prepare("UPDATE inquiries SET status = ?, updated_at = NOW() WHERE id = ? $tSql");
@@ -208,7 +221,7 @@ class InquiryController extends AdminController
                 \App\Core\Cache::delete('admin_notify_inquiries_pending');
                 \App\Core\Cache::delete('admin_notify_inquiries_today');
                 $this->setFlash('success', 'Status updated successfully');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->setFlash('error', 'Failed to update status');
             }
         }
@@ -227,7 +240,7 @@ class InquiryController extends AdminController
             $stmt = $this->db->prepare("DELETE FROM inquiries WHERE id = ? $tSql");
             $stmt->execute(array_merge([$id], $tParams));
             $this->setFlash('success', 'Inquiry deleted successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to delete inquiry');
         }
         $this->redirect('/admin/inquiries');

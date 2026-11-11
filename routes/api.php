@@ -499,7 +499,6 @@ $router->get('/api/v2/mobile/user/favorites/stats', 'Api\MobilePropertyApiContro
 // MOBILE API V2 — Colonies & Plots (Public Browsing)
 // ============================================================
 $router->get('/api/v2/mobile/colonies', 'Api\MobilePropertyApiController@getColonies');
-$router->get('/api/v2/mobile/colonies/search', 'Api\MobilePropertyApiController@searchColonies');
 $router->get('/api/v2/mobile/colonies/{id}', 'Api\MobilePropertyApiController@getColonyDetail');
 $router->get('/api/v2/mobile/colonies/{id}/stats', 'Api\MobilePropertyApiController@getColonyStats');
 $router->get('/api/v2/mobile/colonies/{id}/plots', 'Api\MobilePropertyApiController@getColonyPlots');
@@ -522,7 +521,6 @@ $router->get('/api/v2/mobile/plots/all', 'Api\MobilePropertyApiController@getAll
 
 // Property detail + search under /api/v2/mobile/ prefix
 $router->get('/api/v2/mobile/properties/featured', 'Api\MobilePropertyApiController@getFeaturedProperties')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/properties/search', 'Api\MobilePropertyApiController@searchProperties');
 
 // ============================================================
 // MOBILE API V2 — Township Operations: Maintenance, Grievances, Site Visits
@@ -665,14 +663,21 @@ $router->get('/api/notifications/unread', 'App\\Http\\Controllers\\AIAssistantCo
 $router->get('/api/monitoring/health', 'App\\Http\\Controllers\\MonitoringController@healthCheck');
 
 // ============================================================
-// MOBILE API V2 (JWT Auth)
+// MOBILE API V2 (legacy prefix - same handlers as /api/v2/mobile/*)
 // ============================================================
+// NOTE (S449): this namespace had NO auth middleware on its user-scoped
+// routes, so $GLOBALS['api_user_id'] was never set. Every one of them
+// then 401'd - and dashboardV2/dashboardV3 silently answered with the
+// dashboard of user id 0 (always empty) instead of the caller's own.
+// The canonical /api/v2/mobile/* twins already carry ApiAuthMiddleware;
+// mirror that here. Public browse/search stay open, exactly like their
+// canonical counterparts (/api/v2/mobile/properties/browse, .../search).
 $router->post('/api/mobile/auth/login', 'Api\MobileAuthApiController@loginV2');
 $router->post('/api/mobile/auth/refresh', 'Api\MobileAuthApiController@refreshV2');
-$router->get('/api/mobile/profile', 'Api\MobileUserApiController@profileV2');
+$router->get('/api/mobile/profile', 'Api\MobileUserApiController@profileV2')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/mobile/properties', 'Api\MobilePropertyApiController@properties');
-$router->get('/api/mobile/dashboard', 'Api\MobileUserApiController@dashboardV2');
-$router->post('/api/mobile/notifications/register', 'Api\MobileUserApiController@registerPushTokenV2');
+$router->get('/api/mobile/dashboard', 'Api\MobileUserApiController@dashboardV2')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/mobile/notifications/register', 'Api\MobileUserApiController@registerPushTokenV2')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
 // MOBILE API V2 EXTENDED — Properties, Bookings, Inquiries, Profile
@@ -680,18 +685,18 @@ $router->post('/api/mobile/notifications/register', 'Api\MobileUserApiController
 $router->get('/api/mobile/v2/properties', 'Api\MobilePropertyApiController@browseProperties');
 $router->get('/api/mobile/v2/properties/search', 'Api\MobilePropertyApiController@searchProperties');
 $router->get('/api/mobile/v2/properties/{id}', 'Api\MobilePropertyApiController@propertyDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/mobile/v2/bookings', 'Api\MobileBookingApiController@listBookings');
-$router->get('/api/mobile/v2/bookings/{id}', 'Api\MobileBookingApiController@bookingDetail');
-$router->post('/api/mobile/v2/bookings/{id}/pay', 'Api\MobileBookingApiController@recordBookingPayment');
+$router->get('/api/mobile/v2/bookings', 'Api\MobileBookingApiController@listBookings')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/mobile/v2/bookings/{id}', 'Api\MobileBookingApiController@bookingDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/mobile/v2/bookings/{id}/pay', 'Api\MobileBookingApiController@recordBookingPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/mobile/v2/inquiries', 'Api\MobileUserApiController@submitInquiryV2');
-$router->get('/api/mobile/v2/inquiries', 'Api\MobileUserApiController@listInquiries');
-$router->put('/api/mobile/v2/profile', 'Api\MobileUserApiController@updateProfileV2');
-$router->get('/api/mobile/v2/dashboard', 'Api\MobileUserApiController@dashboardV3');
+$router->get('/api/mobile/v2/inquiries', 'Api\MobileUserApiController@listInquiries')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->put('/api/mobile/v2/profile', 'Api\MobileUserApiController@updateProfileV2')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/mobile/v2/dashboard', 'Api\MobileUserApiController@dashboardV3')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // Employee Dashboard API Routes (mobile v2)
-$router->get('/api/mobile/v2/employee/dashboard', 'Api\MobileAdminApiController@employeeDashboard');
-$router->get('/api/mobile/v2/employee/tasks', 'Api\MobileAdminApiController@employeeTasks');
-$router->get('/api/mobile/v2/employee/attendance', 'Api\MobileAdminApiController@employeeAttendance');
+$router->get('/api/mobile/v2/employee/dashboard', 'Api\MobileAdminApiController@employeeDashboard')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/mobile/v2/employee/tasks', 'Api\MobileAdminApiController@employeeTasks')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->get('/api/mobile/v2/employee/attendance', 'Api\MobileAdminApiController@employeeAttendance')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // AI Dashboard API Routes
 $router->post('/api/ai-dashboard/training', 'App\\Http\\Controllers\\AIDashboardController@startTraining');
@@ -760,7 +765,6 @@ $router->post('/api/v1/ocr/extract', 'Api\NewFeaturesApiController@ocrExtract')
     ->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // Advanced Search API Routes
-$router->get('/api/search/properties', 'Api\SearchController@searchProperties');
 $router->get('/api/search/suggestions', 'Api\SearchController@getSuggestions');
 $router->get('/api/search/facets', 'Api\SearchController@getFacets');
 $router->get('/api/search/recent', 'Api\SearchController@getRecentSearches');
@@ -912,9 +916,6 @@ $router->get('/api/docs/spec/{version}', 'App\Http\Controllers\Api\DocsControlle
 $router->get('/api/docs/list', 'App\Http\Controllers\Api\DocsController@list');
 $router->post('/api/twilio/voice/gather', 'Api\TwilioVoiceWebhookController@gather');
 
-// API v1 Routes
-$router->get('/api/v1/search/properties', 'Api\SearchController@searchProperties');
-$router->post('/api/v1/finance/emi-calculate', 'Api\NewFeaturesApiController@calculateEmi');
 
 // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
 // CRM API (Flutter Lead Management + Pipeline + Follow-ups)
@@ -1137,7 +1138,6 @@ $router->get('/api/v2/mobile/leads', 'Api\CRMController@leads')->middleware('App
 $router->post('/api/v2/mobile/leads/create', 'Api\CRMController@createLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/leads/{id}', 'Api\CRMController@leadDetail')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->put('/api/v2/mobile/leads/{id}', 'Api\CRMController@updateLead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
-$router->get('/api/v2/mobile/leads/search', 'Api\CRMController@search')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/leads/follow-ups', 'Api\CRMController@followUpReminders')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads/{id}/status', 'Api\MobileAdminApiController@changeLeadStatus')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/leads/{id}/follow-up', 'Api\MobileAdminApiController@scheduleLeadFollowup')->middleware('App\Http\Middleware\ApiAuthMiddleware');

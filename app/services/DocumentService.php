@@ -357,11 +357,11 @@ class DocumentService
     {
         $where = ['1=1' . $this->tenantSql()];
         $params = $this->tenantId() > 1 ? [$this->tenantId()] : [];
-        if (!empty($filters['status'])) { $where[] = "status = ?"; $params[] = $filters['status']; }
-        if (!empty($filters['document_type'])) { $where[] = "document_type = ?"; $params[] = $filters['status']; }
-        if (!empty($filters['category'])) { $where[] = "category = ?"; $params[] = $filters['category']; }
+        if (!empty($filters['status'])) { $where[] = "verification_status = ?"; $params[] = $filters['status']; }
+        if (!empty($filters['document_type'])) { $where[] = "document_type = ?"; $params[] = $filters['document_type']; }
+        if (!empty($filters['category'])) { $where[] = "type = ?"; $params[] = $filters['category']; }
         if (!empty($filters['user_id'])) { $where[] = "user_id = ?"; $params[] = $filters['user_id']; }
-        $sql = "SELECT * FROM documents WHERE " . implode(' AND ', $where) . " ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+        $sql = "SELECT * FROM documents WHERE " . implode(' AND ', $where) . " ORDER BY uploaded_on DESC LIMIT $limit OFFSET $offset";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll() ?: [];

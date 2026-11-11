@@ -4,6 +4,10 @@ namespace App\Services\Accounting;
 use PDO;
 use Exception;
 use \App\Traits\ServiceTenantTrait;
+// NOTE (S448): without these imports TenantContext:: / Database:: resolved to
+// App\Services\Accounting\... -> class not found -> fatal.
+use App\Core\Middleware\TenantContext;
+use App\Core\Database\Database;
 
 class AccountingIntegrationService
 {
@@ -78,7 +82,7 @@ class AccountingIntegrationService
 
             $this->db->commit();
             return ['success' => true, 'payment_id' => $paymentId, 'total_paid' => $totalPaid];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollback();
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -156,7 +160,7 @@ class AccountingIntegrationService
 
             $this->db->commit();
             return ['success' => true, 'commission_id' => $commissionId];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollback();
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -204,7 +208,7 @@ class AccountingIntegrationService
 
             $this->db->commit();
             return ['success' => true, 'rera_amount' => $reraFee];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollback();
             return ['success' => false, 'error' => $e->getMessage()];
         }

@@ -3,7 +3,7 @@
 namespace App\Services\AI\Agents\specialized;
 
 use App\Services\AI\Agents\BaseAgent;
-use App\Services\AI\Modules\RecommendationEngine;
+use App\Services\AI\modules\RecommendationEngine;
 
 /**
  * RecommendationAgent - Specialized agent for personalized property matching

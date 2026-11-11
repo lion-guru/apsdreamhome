@@ -123,6 +123,12 @@ class ProjectProgressController extends AdminController
         $selectedColony = null;
         try {
             [$tenantSql, $tenantParams] = $this->tenantWhere();
+            // NOTE (S449): colony_milestones and colonies BOTH have tenant_id,
+            // so the shared unqualified ' AND tenant_id = ?' is ambiguous when
+            // both are joined -> "Column 'tenant_id' in where clause is
+            // ambiguous". The milestone query below joins them, so it needs
+            // the qualified form.
+            $tenantSqlM = str_replace(' AND tenant_id', ' AND m.tenant_id', $tenantSql);
             $stmt = $this->db->prepare("
                 SELECT c.id, c.name, c.slug, c.phase, c.total_plots, c.available_plots, c.status as colony_status,
                     d.name as district_name,
@@ -149,7 +155,7 @@ class ProjectProgressController extends AdminController
                     SELECT m.*, c.name as colony_name
                     FROM colony_milestones m
                     LEFT JOIN colonies c ON m.colony_id = c.id
-                    WHERE m.colony_id = ?" . $tenantSql . "
+                    WHERE m.colony_id = ?" . $tenantSqlM . "
                     ORDER BY m.category ASC, m.created_at DESC
                 ");
                 $stmt->execute(array_merge([$colonyId], $tenantParams));

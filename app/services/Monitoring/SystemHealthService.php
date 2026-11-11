@@ -1,6 +1,11 @@
 <?php
 namespace App\Services\Monitoring;
 
+
+// NOTE (S449): this file is namespaced, so a bare PDO:: resolves to
+// <this-namespace>\PDO -> "Class App\...\PDO not found" fatal. The
+// custom autoloader does not fall back to the global PDO class.
+use PDO;
 class SystemHealthService
 {
     private $db;

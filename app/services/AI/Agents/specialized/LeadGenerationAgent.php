@@ -3,7 +3,7 @@
 namespace App\Services\AI\Agents\specialized;
 
 use App\Services\AI\Agents\BaseAgent;
-use App\Services\AI\Modules\NLPProcessor;
+use App\Services\AI\modules\NLPProcessor;
 
 /**
  * LeadGenerationAgent - Specialized agent for identifying and generating leads
@@ -105,7 +105,7 @@ class LeadGenerationAgent extends BaseAgent {
                     [$score, $message, $details, $phone]
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error generating lead: " . $e->getMessage());
         }
     }

@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Services\Legacy;
+
+// NOTE (S448): without this import AdminLogger:: resolved to
+// App\Services\Legacy\AdminLogger -> class not found -> fatal.
+use App\Http\Middleware\AdminLogger;
 // Two-Factor Authentication Management System
 
 class TwoFactorManager
@@ -63,7 +67,7 @@ class TwoFactorManager
             return $token;
         } catch (\Exception $e) {
             if (\class_exists('AdminLogger')) {
-                AdminLogger::log("2FA token generation error: " . $e->getMessage(), ['user_id' => $user_id], AdminLogger::LEVEL_SECURITY);
+                AdminLogger::logAction("2FA token generation error: " . $e->getMessage(), ['user_id' => $user_id] + ['level' => 'security']);
             } else {
                 \error_log("2FA token generation error: " . $e->getMessage());
             }
@@ -90,7 +94,7 @@ class TwoFactorManager
             // Token not found or expired
             if (!$token_data) {
                 if (\class_exists('AdminLogger')) {
-                    AdminLogger::log("Invalid 2FA token attempt", ['user_id' => $user_id], AdminLogger::LEVEL_SECURITY);
+                    AdminLogger::logAction("Invalid 2FA token attempt", ['user_id' => $user_id] + ['level' => 'security']);
                 }
                 return false;
             }
@@ -102,7 +106,7 @@ class TwoFactorManager
             return true;
         } catch (\Exception $e) {
             if (\class_exists('AdminLogger')) {
-                AdminLogger::log("2FA token validation error: " . $e->getMessage(), ['user_id' => $user_id], AdminLogger::LEVEL_SECURITY);
+                AdminLogger::logAction("2FA token validation error: " . $e->getMessage(), ['user_id' => $user_id] + ['level' => 'security']);
             } else {
                 \error_log("2FA token validation error: " . $e->getMessage());
             }
@@ -156,7 +160,7 @@ class TwoFactorManager
     {
         if (!$this->email_service) {
             if (\class_exists('AdminLogger')) {
-                AdminLogger::log("Email service not configured for 2FA", ['email' => $email], AdminLogger::LEVEL_SECURITY);
+                AdminLogger::logAction("Email service not configured for 2FA", ['email' => $email] + ['level' => 'security']);
             }
             return;
         }
@@ -176,7 +180,7 @@ class TwoFactorManager
     {
         if (!$this->sms_service) {
             if (\class_exists('AdminLogger')) {
-                AdminLogger::log("SMS service not configured for 2FA", ['phone' => $phone], AdminLogger::LEVEL_SECURITY);
+                AdminLogger::logAction("SMS service not configured for 2FA", ['phone' => $phone] + ['level' => 'security']);
             }
             return;
         }
@@ -230,11 +234,11 @@ class TwoFactorManager
             $this->db->execute($sql);
 
             if (\class_exists('AdminLogger')) {
-                AdminLogger::log("Cleaned up expired 2FA tokens", [], AdminLogger::LEVEL_INFO);
+                AdminLogger::logAction("Cleaned up expired 2FA tokens", [] + ['level' => 'info']);
             }
         } catch (\Exception $e) {
             if (\class_exists('AdminLogger')) {
-                AdminLogger::log("Error cleaning up 2FA tokens: " . $e->getMessage(), [], AdminLogger::LEVEL_ERROR);
+                AdminLogger::logAction("Error cleaning up 2FA tokens: " . $e->getMessage(), [] + ['level' => 'error']);
             }
         }
     }
@@ -243,13 +247,28 @@ class TwoFactorManager
 // Helper function for dependency injection
 function getTwoFactorManager()
 {
-    $container = container(); // Assuming dependency container is loaded
+    // NOTE (S448): container() is a LARAVEL helper - it does not exist in
+    // this codebase -> "Call to undefined function" -> fatal whenever the
+    // 2FA service was constructed. Resolve the dependencies directly.
+    $db = \App\Core\Database\Database::getInstance();
 
-    // Lazy load dependencies
-    $db = $container->resolve('db_connection');
-    $logger = $container->resolve('logger');
-    $email_service = $container->resolve('email_service', null);
-    $sms_service = $container->resolve('sms_service', null);
+    $logger = null;
+    if (class_exists('App\Core\Logger')) {
+        // App\Core\Logger is a class_alias of App\Services\SystemLogger, whose
+        // API is instance-based (error()/info()/...) - there is no
+        // getInstance(). Build it directly.
+        $logger = new \App\Services\SystemLogger();
+    }
+
+    $email_service = null;
+    if (class_exists('App\Services\EmailService')) {
+        $email_service = new \App\Services\EmailService();
+    }
+
+    $sms_service = null;
+    if (class_exists('App\Services\SmsService')) {
+        $sms_service = new \App\Services\SmsService();
+    }
 
     return new TwoFactorManager($db, $logger, $email_service, $sms_service);
 }

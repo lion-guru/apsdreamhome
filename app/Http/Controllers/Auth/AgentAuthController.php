@@ -78,7 +78,7 @@ class AgentAuthController extends BaseController
 
         // CAPTCHA validation (mandatory — brute-force protection)
         $captcha_code = trim($_POST['captcha_code'] ?? '');
-        if (empty($captcha_code) || !SimpleCaptcha::validate($captcha_code)) {
+        if (empty($captcha_code) || !\SimpleCaptcha::validate($captcha_code)) {
             $errors[] = 'Invalid or expired security code. Please try again.';
         }
 
@@ -127,7 +127,7 @@ class AgentAuthController extends BaseController
             $_SESSION['success'] = $result['message'];
             header('Location: ' . BASE_URL . '/agent/login');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Agent registration error: " . $e->getMessage());
             $_SESSION['errors'] = ["Registration failed: " . $e->getMessage()];
             header('Location: ' . BASE_URL . '/agent/register');
@@ -235,7 +235,7 @@ class AgentAuthController extends BaseController
             $_SESSION['errors'] = ["Invalid email or password"];
             header('Location: ' . BASE_URL . '/agent/login');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['errors'] = ["Login failed"];
             header('Location: ' . BASE_URL . '/agent/login');
             exit;

@@ -1,4 +1,11 @@
 <?php
+
+namespace App\Services;
+
+// NOTE (S449): this file is namespaced, so a bare PDO:: resolves to
+// App\Services\PDO / App\Core\PDO -> "Class not found" fatal.
+// The custom autoloader does not fall back to the global class.
+use PDO;
 /**
  * Advanced Search Service for APS Dream Home
  * Provides powerful search functionality with filtering, suggestions, and history
@@ -180,18 +187,34 @@ $query = "SELECT p.*, u.name as user_name, u.phone as user_phone,
             }
             
             // Get total count for pagination
-            $countQuery = str_replace("SELECT p.*, u.name as user_name, u.phone as user_phone,
-                      d.name as district_name, s.name as state_name", "SELECT COUNT(*) as total", $query);
+            // NOTE (S449): this used to be a str_replace() on a multi-line
+            // SELECT prefix whose indentation did NOT match the query
+            // string, so the replace never fired and the "count" query was
+            // still the full property SELECT. fetch() then returned the
+            // first property row (or false when there were none), so $total
+            // was ALWAYS null and total_pages was always 0 - the pagination
+            // was silently broken. Rebuild the SELECT list instead: keep
+            // everything from the first FROM onwards.
+            $countQuery = preg_replace(
+                '/^\s*SELECT\b.*?\bFROM\b/is',
+                'SELECT COUNT(*) as total FROM',
+                $query,
+                1
+            );
+            if (!is_string($countQuery) || $countQuery === '') {
+                $countQuery = "SELECT COUNT(*) as total FROM user_properties p WHERE p.status = 'approved'";
+            }
             $countQuery = preg_replace('/ORDER BY.*$/s', '', $countQuery);
             $countQuery = preg_replace('/LIMIT.*$/s', '', $countQuery);
-            
+
             if (!empty($bindings)) {
                 $stmt = $this->db->prepare($countQuery);
                 $stmt->execute($bindings);
-                $total = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
             } else {
-                $total = $this->db->query($countQuery)->fetch(PDO::FETCH_ASSOC)['total'];
+                $row = $this->db->query($countQuery)->fetch(PDO::FETCH_ASSOC);
             }
+            $total = (int)($row['total'] ?? 0);
             
             return [
                 'results' => $results,
@@ -251,7 +274,7 @@ $query = "SELECT p.*, u.name as user_name, u.phone as user_phone,
                 if ($this->tenantId() > 1) $recentParams[':stid'] = $this->tenantId();
                 $stmt->execute($recentParams);
                 $suggestions = array_merge($suggestions, $stmt->fetchAll(PDO::FETCH_ASSOC));
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Table might not exist yet
                         error_log("AdvancedSearchService.php: " . $e->getMessage());
             }
@@ -274,7 +297,7 @@ $query = "SELECT p.*, u.name as user_name, u.phone as user_phone,
             $stmt->execute($params);
             
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to save search history: " . $e->getMessage());
             return false;
         }
@@ -297,7 +320,7 @@ $query = "SELECT p.*, u.name as user_name, u.phone as user_phone,
             }
             
             return $results;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -316,7 +339,7 @@ $query = "SELECT p.*, u.name as user_name, u.phone as user_phone,
             
             $results = $this->db->query($query)->fetchAll(PDO::FETCH_ASSOC);
             return $results;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

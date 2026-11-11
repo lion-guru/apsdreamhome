@@ -220,7 +220,7 @@ class MobileUserApiController extends BaseController
         $stmt->execute([$userId]);
         $data['converted_referrals'] = (int)$stmt->fetchColumn();
 
-        $stmt = $this->db->prepare("SELECT COALESCE(SUM(bonus), 0) as total FROM referral_commissions WHERE referrer_id = ?");
+        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) as total FROM referral_commissions WHERE referrer_id = ?");
         $stmt->execute([$userId]);
         $data['total_earned'] = (float)$stmt->fetchColumn();
 
@@ -1189,7 +1189,7 @@ class MobileUserApiController extends BaseController
 
     private function getUserBankAccountsData($userId)
     {
-        $stmt = $this->db->prepare("SELECT id, account_holder_name, account_number, ifsc_code, bank_name, is_default, created_at FROM user_bank_accounts WHERE user_id = ? ORDER BY created_at DESC");
+        $stmt = $this->db->prepare("SELECT id, account_holder_name, account_number, ifsc_code, bank_name, is_primary AS is_default, created_at FROM user_bank_accounts WHERE user_id = ? ORDER BY created_at DESC");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -1203,7 +1203,7 @@ class MobileUserApiController extends BaseController
 
     private function getUserAddressesData($userId)
     {
-        $stmt = $this->db->prepare("SELECT id, address_line1, address_line2, city, state, postal_code, is_default, created_at FROM user_addresses WHERE user_id = ? ORDER BY created_at DESC");
+        $stmt = $this->db->prepare("SELECT id, address_line1, address_line2, city, state, pincode AS postal_code, is_primary AS is_default, created_at FROM user_addresses WHERE user_id = ? ORDER BY created_at DESC");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

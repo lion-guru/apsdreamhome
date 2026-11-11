@@ -399,8 +399,8 @@ class MobileAdminApiController extends BaseController
     private function getEmployeeDashboardData($userId)
     {
         $data = [];
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM bookings WHERE assigned_to = ? AND DATE(created_at) = CURDATE()");
-        $stmt->execute([$userId]);
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM bookings WHERE (associate_id = ? OR created_by = ?) AND DATE(created_at) = CURDATE()");
+        $stmt->execute([$userId, $userId]);
         $data['todays_bookings'] = (int)$stmt->fetchColumn();
 
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM leads WHERE assigned_to = ? AND status = 'new'");
@@ -416,7 +416,7 @@ class MobileAdminApiController extends BaseController
 
     private function getEmployeeTasksData($userId)
     {
-        $stmt = $this->db->prepare("SELECT id, title, description, status, due_date, created_at FROM tasks WHERE assignee_id = ? AND status != 'completed' ORDER BY created_at DESC");
+        $stmt = $this->db->prepare("SELECT id, title, description, status, due_date, created_at FROM tasks WHERE assigned_to = ? AND status != 'completed' ORDER BY created_at DESC");
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

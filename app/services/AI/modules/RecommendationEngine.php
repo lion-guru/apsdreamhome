@@ -1,6 +1,5 @@
 <?php
-
-namespace App\Services\AI\Modules;
+namespace App\Services\AI\modules;
 
 use App\Services\RecommendationService;
 

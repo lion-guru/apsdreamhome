@@ -461,15 +461,31 @@ class ResellTransactionService
     public function getUserTransactions(int $userId, string $role = 'all', int $limit = 50): array
     {
         $tid = $this->getTenantId();
-        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
+        // NOTE (S449): 'rt.' is required - resell_transactions, resell_properties
+        // and users ALL have a tenant_id column, so an unqualified
+        // ' AND tenant_id = ?' is ambiguous -> ERROR 1052.
+        $tenantWhere = $tid > 1 ? " AND rt.tenant_id = ?" : "";
         $tenantParams = $tid > 1 ? [$tid] : [];
 
-        $whereRole = '';
-        if ($role === 'seller') $whereRole = 'AND seller_id = ?';
-        elseif ($role === 'buyer') $whereRole = 'AND buyer_id = ?';
-        elseif ($role === 'referrer') $whereRole = 'AND buyer_referrer_id = ?';
+        // Role filter: the caller can ask for one side of the deal only.
+        // NOTE (S449): this filter was COMPUTED but never applied to the SQL.
+        $roleSql = '';
+        $roleParams = [];
+        if ($role === 'seller') {
+            $roleSql = ' AND rt.seller_id = ?';
+            $roleParams = [$userId];
+        } elseif ($role === 'buyer') {
+            $roleSql = ' AND rt.buyer_id = ?';
+            $roleParams = [$userId];
+        } elseif ($role === 'referrer') {
+            $roleSql = ' AND rt.buyer_referrer_id = ?';
+            $roleParams = [$userId];
+        }
 
-        $params = array_merge([$userId], $tenantParams);
+        // NOTE (S449): the WHERE below binds the user id THREE times
+        // (seller / buyer / referrer) but only ONE param was passed ->
+        // "SQLSTATE[HY093]: Invalid parameter number". Bind all three.
+        $params = array_merge([$userId, $userId, $userId], $roleParams, $tenantParams);
 
         $sql = "SELECT rt.*, rp.title as property_title, rp.property_type,
                        u_seller.name as seller_name, u_buyer.name as buyer_name, u_ref.name as referrer_name
@@ -479,6 +495,7 @@ class ResellTransactionService
                 LEFT JOIN users u_buyer ON rt.buyer_id = u_buyer.id
                 LEFT JOIN users u_ref ON rt.buyer_referrer_id = u_ref.id
                 WHERE (rt.seller_id = ? OR rt.buyer_id = ? OR rt.buyer_referrer_id = ?)
+                {$roleSql}
                 {$tenantWhere}
                 ORDER BY rt.deal_closed_at DESC
                 LIMIT {$limit}";

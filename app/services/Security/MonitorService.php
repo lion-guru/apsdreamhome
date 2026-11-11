@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Services\Legacy;
+
+// NOTE (S448): without this import AdminLogger:: resolved to
+// App\Services\Legacy\AdminLogger -> class not found -> fatal.
+use App\Http\Middleware\AdminLogger;
 /**
  * Advanced Security Monitoring and Threat Detection System
  * Provides comprehensive security monitoring, anomaly detection, and threat prevention

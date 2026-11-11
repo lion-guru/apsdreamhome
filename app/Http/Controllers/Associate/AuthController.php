@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Associate;
 
 use App\Http\Controllers\BaseController;
+// NOTE (S448): without this import TenantContext:: resolved to
+// App\Http\Controllers\Associate\TenantContext -> class not found -> fatal.
+use App\Core\Middleware\TenantContext;
 
 /**
  * AssociateAuthController

@@ -4,6 +4,8 @@
  * Provides comprehensive monitoring, logging, and alerting
  */
 
+namespace App\Core;
+
 class Monitor {
     private static $logFile;
     private static $metrics = [];
@@ -86,10 +88,10 @@ class Monitor {
         
         // Check database connection
         try {
-            $db = Database::getInstance();
+            $db = \App\Core\Database\Database::getInstance();
             $db->query("SELECT 1")->fetch();
             $health['checks']['database'] = 'pass';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $health['checks']['database'] = 'fail';
             $health['status'] = 'unhealthy';
             self::log('CRITICAL', 'Database health check failed', ['error' => $e->getMessage()]);
