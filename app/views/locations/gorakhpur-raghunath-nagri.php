@@ -80,7 +80,7 @@
                         <div class="col-6 col-md-4 col-lg-3">
                             <div class="card h-100 border-0 shadow-sm text-center p-4 hover-up">
                                 <div class="mb-3">
-                                    <img src="<?= BASE_URL ?>/images/<?= htmlspecialchars($item['image'] ?? '') ?>" alt="<?= htmlspecialchars($item['alt_text'] ?? '') ?>" class="img-fluid">
+                                    <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($item['image'] ?? '') ?>" alt="<?= htmlspecialchars($item['alt_text'] ?? '') ?>" class="img-fluid">
                                 </div>
                                 <h6 class="fw-bold mb-0"><?= $item['title'] ?></h6>
                             </div>

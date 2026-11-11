@@ -47,7 +47,12 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
     <style>
         .project-hero {
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-                url('assets/images/projects/gorakhpur/bohisawagar-banner.jpg');
+                /* NOTE (S450): 'assets/images/projects/gorakhpur/bohisawagar-banner.jpg'
+     does not exist in this repo, and the url() was RELATIVE (so it
+     resolved against the page path and 404'd even if it did). Use an
+     absolute BASE_URL path and a real Gorakhpur township photo until the
+     dedicated Bohisawagar banner is supplied. */
+  url('<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg');
             background-size: cover;
             background-position: center;
             color: white;

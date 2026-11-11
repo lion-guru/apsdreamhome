@@ -187,8 +187,21 @@ class ProjectController extends PageController
 
         [$view, $title] = $map[$key];
 
+        // The gallery images live in public/assets/images/amenities/ and the
+        // views prefix them with BASE_URL . '/assets/images/'. Captions below
+        // were checked against the actual files, not invented.
+        $amenities = [
+            ['title' => 'Site Development & Drainage', 'image' => 'amenities/1.jpg', 'alt_text' => $title . ' - site development and drainage works'],
+            ['title' => 'Hospital / Medical Facility', 'image' => 'amenities/2.jpg', 'alt_text' => $title . ' - hospital'],
+            ['title' => 'Landscaped Parks & Walkways', 'image' => 'amenities/3.jpg', 'alt_text' => $title . ' - landscaped park'],
+            ['title' => 'Wide Roads & Covered Parking', 'image' => 'amenities/4.jpg', 'alt_text' => $title . ' - internal roads and parking'],
+            ['title' => 'Street Lighting at Night', 'image' => 'amenities/5.jpg', 'alt_text' => $title . ' - lit internal road'],
+            ['title' => 'School & Education', 'image' => 'amenities/6.jpg', 'alt_text' => $title . ' - school campus'],
+            ['title' => '24x7 Security', 'image' => 'amenities/7.jpg', 'alt_text' => $title . ' - security'],
+        ];
+
         // The partials guard with isset()/empty() and fall back to their own
-        // copy, but pass empty defaults so PHP emits no undefined-variable
+        // copy, but pass defaults so PHP emits no undefined-variable
         // warnings.
         $this->render('locations/' . $view, [
             'page_title' => $title,
@@ -196,7 +209,7 @@ class ProjectController extends PageController
             'video'      => [],
             'videos'     => [],
             'amenity'    => [],
-            'amenities'  => [],
+            'amenities'  => $amenities,
         ]);
     }
 
