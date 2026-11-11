@@ -34,7 +34,7 @@ class NocController extends AdminController
                  ORDER BY r.created_at DESC
                  LIMIT 100"
             )->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $registries = [];
         }
         try {
@@ -48,7 +48,7 @@ class NocController extends AdminController
                  ORDER BY n.created_at DESC
                  LIMIT 100"
             )->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $nocs = [];
         }
         return $this->render('admin/legal/noc-index', [
@@ -75,7 +75,7 @@ class NocController extends AdminController
                  ORDER BY pb.id DESC
                  LIMIT 200"
             )->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $bookings = [];
         }
         return $this->render('admin/legal/noc-eligibility', [
@@ -123,7 +123,7 @@ class NocController extends AdminController
                  ORDER BY pb.id DESC
                  LIMIT 200"
             )->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $bookings = [];
         }
 
@@ -161,7 +161,7 @@ class NocController extends AdminController
             );
             $stmt->execute([$id]);
             $registry = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $registry = null;
         }
         if (!$registry) {
@@ -198,7 +198,7 @@ class NocController extends AdminController
             );
             $stmt->execute([$id]);
             $noc = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $noc = null;
         }
         if (!$noc) {

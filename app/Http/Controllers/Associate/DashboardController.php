@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Associate;
 
 use App\Http\Controllers\BaseController;
-use App\Traits\TenantAwareTrait;
+use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use App\Traits\TenantAwareTrait;
+use App\Services\Cache\CacheService;
 
 /**
  * AssociateDashboardController
@@ -14,9 +16,12 @@ class DashboardController extends BaseController
 {
     use TenantAwareTrait;
 
+    private $cacheService;
+
     public function __construct()
     {
         parent::__construct();
+        $this->cacheService = new CacheService();
     }
 
     /**
@@ -40,6 +45,14 @@ class DashboardController extends BaseController
         $userId = $_SESSION['user_id'];
         $tid = TenantContext::getId();
 
+        // ── Dashboard cache (5 min TTL) ──
+        $cacheKey = 'associate_dashboard:' . $userId . ':' . $tid;
+        $cached = $this->cacheService->get($cacheKey);
+        if ($cached !== false && $cached !== null) {
+            $this->render('associate/dashboard', $cached, 'layouts/associate');
+            return;
+        }
+
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
 
@@ -49,6 +62,9 @@ class DashboardController extends BaseController
             if ($tid > 1) $params[] = $tid;
             $stmt->execute($params);
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            // Get associate profile
+            $assoc = $db->fetchOne("SELECT * FROM associate_profiles WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1", $params);
 
             // Get wallet balance
             $stmt = $db->prepare("SELECT points_balance AS balance FROM wallet_points WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1");
@@ -100,47 +116,37 @@ class DashboardController extends BaseController
             $stmt->execute($params);
             $recentLeads = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
-            // Get associate_id for this user
-            $stmt = $db->prepare("SELECT id FROM associates WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1");
-            $params = [$userId];
-            if ($tid > 1) $params[] = $tid;
-            $stmt->execute($params);
-            $associateRow = $stmt->fetch(\PDO::FETCH_ASSOC);
-            $associateId = $associateRow ? (int)$associateRow['id'] : 0;
-
-            // My bookings count
+            // My bookings count (using user_id directly)
             $myBookings = 0;
             $overdueEmis = 0;
             $emiThisMonth = 0.0;
-            if ($associateId > 0) {
-                $stmt = $db->prepare("SELECT COUNT(*) FROM plot_bookings WHERE associate_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " AND status NOT IN ('cancelled')");
-                $params = [$associateId];
-                if ($tid > 1) $params[] = $tid;
-                $stmt->execute($params);
-                $myBookings = (int)$stmt->fetchColumn();
+            $stmt = $db->prepare("SELECT COUNT(*) FROM plot_bookings WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " AND status NOT IN ('cancelled')");
+            $params = [$userId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
+            $myBookings = (int)$stmt->fetchColumn();
 
-                // Overdue EMIs
-                $stmt = $db->prepare("SELECT COUNT(*) FROM booking_payment_schedules bps
-                    JOIN plot_bookings pb ON pb.id = bps.booking_id
-                    WHERE pb.associate_id = ? AND bps.status = 'overdue'" . ($tid > 1 ? " AND bps.tenant_id = ?" : ""));
-                $params = [$associateId];
-                if ($tid > 1) $params[] = $tid;
-                $stmt->execute($params);
-                $overdueEmis = (int)$stmt->fetchColumn();
+            // Overdue EMIs
+            $stmt = $db->prepare("SELECT COUNT(*) FROM booking_payment_schedules bps
+                JOIN plot_bookings pb ON pb.id = bps.booking_id
+                WHERE pb.user_id = ? AND bps.status = 'overdue'" . ($tid > 1 ? " AND bps.tenant_id = ?" : ""));
+            $params = [$userId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
+            $overdueEmis = (int)$stmt->fetchColumn();
 
-                // EMI due this month (pending + overdue)
-                $stmt = $db->prepare("SELECT COALESCE(SUM(bps.amount), 0) FROM booking_payment_schedules bps
-                    JOIN plot_bookings pb ON pb.id = bps.booking_id
-                    WHERE pb.associate_id = ? AND bps.status IN ('pending','overdue')
-                    AND YEAR(bps.due_date) = YEAR(CURDATE()) AND MONTH(bps.due_date) = MONTH(CURDATE())" . ($tid > 1 ? " AND bps.tenant_id = ?" : ""));
-                $params = [$associateId];
-                if ($tid > 1) $params[] = $tid;
-                $stmt->execute($params);
-                $emiThisMonth = (float)$stmt->fetchColumn();
-            }
+            // EMI due this month (pending + overdue)
+            $stmt = $db->prepare("SELECT COALESCE(SUM(bps.amount), 0) FROM booking_payment_schedules bps
+                JOIN plot_bookings pb ON pb.id = bps.booking_id
+                WHERE pb.user_id = ? AND bps.status IN ('pending','overdue')
+                AND YEAR(bps.due_date) = YEAR(CURDATE()) AND MONTH(bps.due_date) = MONTH(CURDATE())" . ($tid > 1 ? " AND bps.tenant_id = ?" : ""));
+            $params = [$userId];
+            if ($tid > 1) $params[] = $tid;
+            $stmt->execute($params);
+            $emiThisMonth = (float)$stmt->fetchColumn();
 
-// Team monthly sales volume per generation (L1/L2/L3): sqft + value + deals
-            // closed this month by downline associates (plot_bookings via associates.user_id).
+            // Team monthly sales volume per generation (L1/L2/L3): sqft + value + deals
+            // closed this month by downline associates (plot_bookings via user_id).
             $teamVolume = ['L1' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L2' => ['sqft' => 0, 'value' => 0, 'deals' => 0], 'L3' => ['sqft' => 0, 'value' => 0, 'deals' => 0]];
             try {
                 $genIds = [$userId];
@@ -156,10 +162,9 @@ class DashboardController extends BaseController
                     if (empty($genIds)) break;
                     $ph2 = implode(',', array_fill(0, count($genIds), '?'));
                     $vSql = "SELECT COUNT(DISTINCT pb.id) AS deals, COALESCE(SUM(p.area_sqft),0) AS sqft, COALESCE(SUM(pb.total_plot_value),0) AS value
-                             FROM associates a
-                             JOIN plot_bookings pb ON pb.associate_id = a.id
+                             FROM plot_bookings pb
                              LEFT JOIN plots p ON p.id = pb.plot_id
-                             WHERE a.user_id IN ($ph2) AND pb.status NOT IN ('cancelled')
+                             WHERE pb.user_id IN ($ph2) AND pb.status NOT IN ('cancelled')
                                AND YEAR(pb.created_at) = YEAR(CURDATE()) AND MONTH(pb.created_at) = MONTH(CURDATE())";
                     $vp = $genIds;
                     $vStmt = $db->prepare($vSql);
@@ -215,19 +220,19 @@ class DashboardController extends BaseController
                 $r = $db->prepare("SELECT COUNT(*) c FROM followups WHERE assigned_to = ? AND status = 'pending' AND followup_date <= CURDATE(){$tSql}");
                 $r->execute($tp);
                 $todayActions['followups_due'] = (int)($r->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0);
-                $r = $db->prepare("SELECT COUNT(*) c FROM site_visits WHERE agent_id = ? AND visit_date = CURDATE() AND status <> 'cancelled'{$tSql}");
+                $r = $db->prepare("SELECT COUNT(*) c FROM site_visits WHERE user_id = ? AND visit_date = CURDATE() AND status <> 'cancelled'{$tSql}");
                 $r->execute($tp);
                 $todayActions['visits_today'] = (int)($r->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0);
                 $lp = [$userId, $userId];
                 if ($tid > 1) $lp[] = $tid;
-                $r = $db->prepare("SELECT COUNT(*) c FROM leads WHERE (assigned_to = ? OR created_by = ?){$tSql} AND first_response_at IS NULL AND created_at < DATE_SUB(NOW(), INTERVAL 30 MINUTE)");
+                $r = $db->prepare("SELECT COUNT(*) c FROM leads WHERE (assigned_to = ? OR created_by = ?) AND first_response_at IS NULL AND created_at < DATE_SUB(NOW(), INTERVAL 30 MINUTE){$tSql}");
                 $r->execute($lp);
                 $todayActions['unresponded'] = (int)($r->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0);
             } catch (\Throwable $e) {
                 error_log('Associate dashboard today-actions: ' . $e->getMessage());
             }
 
-            $this->render('associate/dashboard', [
+            $dashboardData = [
                 'page_title' => 'Associate Dashboard - APS Dream Home',
                 'page_description' => 'Welcome to your Associate Dashboard',
                 'user' => $user,
@@ -251,7 +256,12 @@ class DashboardController extends BaseController
                 'today_actions' => $todayActions,
                 'referral_earnings_breakdown' => $referralEarningsBreakdown,
                 'attribution_stats' => $attributionStats,
-            ], 'layouts/associate');
+            ];
+
+            // Cache dashboard data for 5 minutes (300 seconds)
+            $this->cacheService->set($cacheKey, $dashboardData, 300);
+
+            $this->render('associate/dashboard', $dashboardData, 'layouts/associate');
 
         } catch (\Throwable $e) {
             error_log('AssociateDashboardController error: ' . $e->getMessage());
@@ -285,7 +295,7 @@ class DashboardController extends BaseController
 
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            
+
             // Total leads by source
             $sourceSql = "SELECT COALESCE(source, 'direct') as source, COUNT(*) as count 
                           FROM leads l 
@@ -299,7 +309,7 @@ class DashboardController extends BaseController
             $stmt = $db->prepare($sourceSql);
             $stmt->execute($sourceParams);
             $sourceStats = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-            
+
             $sourceMap = [];
             foreach ($sourceStats as $stat) {
                 $sourceMap[$stat['source']] = (int)$stat['count'];
@@ -316,29 +326,18 @@ class DashboardController extends BaseController
             $lStmt = $db->prepare($leadSql);
             $lStmt->execute($leadParams);
             $totalLeads = (int)$lStmt->fetchColumn();
-            
-            // Total bookings (lookup associate_id)
-            $assocStmt = $db->prepare("SELECT id FROM associates WHERE user_id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1");
-            $assocParams = [$userId];
-            if ($tid > 1) {
-                $assocParams[] = $tid;
-            }
-            $assocStmt->execute($assocParams);
-            $assocRow = $assocStmt->fetch(\PDO::FETCH_ASSOC);
-            $assocId = $assocRow ? (int)$assocRow['id'] : 0;
 
+            // Total bookings (using user_id directly)
             $totalBookings = 0;
-            if ($assocId > 0) {
-                $bSql = "SELECT COUNT(*) FROM plot_bookings 
-                         WHERE associate_id = ? AND status NOT IN ('cancelled', 'rejected')" . ($tid > 1 ? " AND tenant_id = ?" : "");
-                $bParams = [$assocId];
-                if ($tid > 1) {
-                    $bParams[] = $tid;
-                }
-                $bStmt = $db->prepare($bSql);
-                $bStmt->execute($bParams);
-                $totalBookings = (int)$bStmt->fetchColumn();
+            $bSql = "SELECT COUNT(*) FROM plot_bookings 
+                     WHERE user_id = ? AND status NOT IN ('cancelled', 'rejected')" . ($tid > 1 ? " AND tenant_id = ?" : "");
+            $bParams = [$userId];
+            if ($tid > 1) {
+                $bParams[] = $tid;
             }
+            $bStmt = $db->prepare($bSql);
+            $bStmt->execute($bParams);
+            $totalBookings = (int)$bStmt->fetchColumn();
 
             // Conversion rate
             $conversionRate = $totalLeads > 0 ? round(($totalBookings / $totalLeads) * 100, 1) : 0;
@@ -372,4 +371,3 @@ class DashboardController extends BaseController
         }
     }
 }
-

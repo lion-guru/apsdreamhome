@@ -24,7 +24,7 @@ try {
     $stmtAdmin->execute([$hashBcrypt, $hashArgon2id]);
     $adminUpdated = $stmtAdmin->rowCount();
     echo "Updated {$adminUpdated} records in 'admin' table.\n";
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "Notice: Admin table update: " . $e->getMessage() . "\n";
 }
 
@@ -32,7 +32,7 @@ try {
 try {
     $pdo->query("DELETE FROM login_attempts");
     echo "Cleared 'login_attempts' table.\n";
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "Notice: login_attempts error: " . $e->getMessage() . "\n";
 }
 
@@ -64,7 +64,7 @@ try {
         $v2 = !empty($a['apass']) ? password_verify($passwordPlain, $a['apass']) : 'empty';
         echo "  Admin ID {$a['id']} (user: " . ($a['username'] ?: $a['email']) . "): password=" . var_export($v1, true) . ", apass=" . var_export($v2, true) . "\n";
     }
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "Admin verification notice: " . $e->getMessage() . "\n";
 }
 

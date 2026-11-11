@@ -54,7 +54,7 @@ class AutomationTriggerService
 
             $this->addToCampaign($leadId, $lead, $tid);
             $this->logActivity($leadId, 'lead_created', 'Automation: Lead created triggers processed', $tid);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AutomationTriggerService::onLeadCreated error: ' . $e->getMessage());
         }
     }
@@ -75,7 +75,7 @@ class AutomationTriggerService
                     "INSERT INTO lead_activities (lead_id, activity_type, description, old_value, new_value, created_at{$tidSql}) VALUES (?, 'status_change', ?, ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")"
                 );
                 $stmt->execute(array_merge([$leadId, "Status changed from $oldStatus to $newStatus", $oldStatus, $newStatus], $tidParams));
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('AutomationTriggerService::onLeadStatusChange timeline error: ' . $e->getMessage());
             }
 
@@ -84,7 +84,7 @@ class AutomationTriggerService
             } elseif ($newStatus === 'closed_lost') {
                 $this->onLeadLost($leadId, $tid);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AutomationTriggerService::onLeadStatusChange error: ' . $e->getMessage());
         }
     }
@@ -107,7 +107,7 @@ class AutomationTriggerService
             $stmt->execute($params);
 
             $this->notifySalesTeam($leadId, "Payment received: ₹" . number_format($amount), $tid);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AutomationTriggerService::onPaymentReceived error: ' . $e->getMessage());
         }
     }
@@ -151,7 +151,7 @@ class AutomationTriggerService
             }
 
             return count($leads);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AutomationTriggerService::checkUncontactedLeads error: ' . $e->getMessage());
             return 0;
         }
@@ -210,7 +210,7 @@ class AutomationTriggerService
                 $map = $pdo->prepare("INSERT INTO lead_tag_mapping {$mapCols} VALUES {$mapVals}");
                 $map->execute($mapParams);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Tables may not exist — silent fail
         error_log($e->getMessage());
         }
@@ -237,7 +237,7 @@ class AutomationTriggerService
                     "New lead with budget ₹" . number_format(floatval($lead['budget'])) . ": {$lead['name']} ({$lead['phone']})"
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AutomationTriggerService::notifyHighValueLead error: ' . $e->getMessage());
         }
     }
@@ -271,7 +271,7 @@ class AutomationTriggerService
                 );
                 $ins->execute($insParams);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AutomationTriggerService::addToCampaign error: ' . $e->getMessage());
         }
     }
@@ -310,7 +310,7 @@ class AutomationTriggerService
                 "INSERT INTO notifications (user_id, title, message, type, created_at{$tidSql}) VALUES (?, ?, ?, 'alert', NOW()" . ($tid > 1 ? ", ?" : "") . ")"
             );
             $stmt->execute(array_merge([$userId, $title, $message], $tidParams));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AutomationTriggerService::sendAlert error: ' . $e->getMessage());
         }
     }
@@ -328,7 +328,7 @@ class AutomationTriggerService
                 "INSERT INTO lead_activities (lead_id, activity_type, description, created_at{$tidSql}) VALUES (?, ?, ?, NOW()" . ($tid > 1 ? ", ?" : "") . ")"
             );
             $stmt->execute(array_merge([$leadId, $type, $description], $tidParams));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AutomationTriggerService::logActivity error: ' . $e->getMessage());
         }
     }
@@ -350,7 +350,7 @@ class AutomationTriggerService
             foreach ($team as $member) {
                 $this->sendAlert($member['id'], "Lead #{$leadId} Update", $message, $tid);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AutomationTriggerService::notifySalesTeam error: ' . $e->getMessage());
         }
     }
@@ -368,7 +368,7 @@ class AutomationTriggerService
             $stmt = $this->pdo()->prepare("SELECT * FROM leads WHERE id = ?{$tidSql}");
             $stmt->execute($params);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }

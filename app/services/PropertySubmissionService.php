@@ -47,7 +47,7 @@ class PropertySubmissionService
                 'message' => 'Property submitted successfully. It will be live after admin approval.',
                 'submission_id' => $this->db->lastInsertId()
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -86,7 +86,7 @@ class PropertySubmissionService
             $this->db->query("UPDATE property_submissions SET status = 'approved' WHERE id = ?" . $this->tenantSql(), array_merge([$submissionId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
 
             return ['success' => true, 'message' => 'Property approved and live!', 'property_id' => $propertyId];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }

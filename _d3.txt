@@ -1,0 +1,5 @@
+C:\Users\abhay\.gradle\caches\8.14 = 3089.4 MB
+C:\Users\abhay\.gradle\caches\modules-2 = 1593.4 MB
+C:\Users\abhay\AppData\Local\Android\Sdk\ndk = 2172.9 MB
+C:\Users\abhay\AppData\Local\Android\Sdk\system-images = 1682.9 MB
+C:\Users\abhay\AppData\Local\Pub\Cache = 1430.4 MB

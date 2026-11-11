@@ -55,7 +55,7 @@ class CommunicationAutomationService
         }
 
         try {
-            $this->emailService = new \App\Services\EmailService();
+            $this->emailService = new \App\Services\Communication\EmailService();
         } catch (Exception $e) {
             $this->channels['email']['enabled'] = false;
         }

@@ -64,7 +64,7 @@ class WishlistService
                 'message' => 'Property added to wishlist',
                 'wishlist_id' => $this->database->lastInsertId()
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -198,7 +198,7 @@ $sql = "SELECT rv.*, p.*, pi.image_path as primary_image
                 'alert_id' => $this->database->lastInsertId(),
                 'message' => "You'll be notified when price drops to ₹" . number_format($targetPrice)
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

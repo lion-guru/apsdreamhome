@@ -66,7 +66,7 @@ class CacheService
             }
             $redis->select($_ENV['REDIS_DATABASE'] ?? 0);
             $this->redis = $redis;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->driver = 'file';
         }
     }
@@ -83,7 +83,7 @@ class CacheService
                 $_ENV['MEMCACHED_PORT'] ?? 11211
             );
             $this->memcached = $memcached;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->driver = 'file';
         }
     }
@@ -137,7 +137,7 @@ class CacheService
                 default:
                     return $this->fileGet($fullKey, $default);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $default;
         }
     }
@@ -162,7 +162,7 @@ class CacheService
                 default:
                     return $this->fileSet($fullKey, $value, $ttl);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -195,7 +195,7 @@ class CacheService
                     $file = $this->fileCachePath . md5($fullKey) . '.cache';
                     return !file_exists($file) || unlink($file);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -221,7 +221,7 @@ class CacheService
                     }
                     return true;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -267,7 +267,7 @@ class CacheService
                     $this->set($key, $new);
                     return $new;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -309,7 +309,7 @@ class CacheService
             }
             
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -413,7 +413,7 @@ class CacheService
                         'total_size_bytes' => $totalSize
                     ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'driver' => $this->driver,
                 'error' => $e->getMessage()

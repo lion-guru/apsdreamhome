@@ -107,7 +107,7 @@ class PaymentGatewayService
                 default:
                     throw new \Exception("Unsupported gateway: {$this->gateway}");
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -209,7 +209,7 @@ class PaymentGatewayService
                 'status' => 'captured'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -267,7 +267,7 @@ class PaymentGatewayService
                 'status' => $newStatus
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -303,7 +303,7 @@ class PaymentGatewayService
                     return ['success' => true, 'message' => 'Event not handled'];
             }
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -396,7 +396,7 @@ class PaymentGatewayService
             
             return ['success' => true, 'method_id' => $this->database->lastInsertId()];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

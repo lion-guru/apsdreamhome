@@ -8,6 +8,42 @@ use Exception;
 
 class EmployeeAssetService
 {
+    /**
+     * Query runner: fetch all rows.
+     *
+     * NOTE (S451): this service calls $this->fetchAll($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchAll()".
+     */
+    private function fetchAll(string $sql, array $params = []): array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchAll] ' . $e->getMessage());
+            return [];
+        }
+    }
+    /**
+     * Query runner: fetch a single row.
+     *
+     * NOTE (S451): this service calls $this->fetchOne($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchOne()".
+     */
+    private function fetchOne(string $sql, array $params = []): ?array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchOne] ' . $e->getMessage());
+            return null;
+        }
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -46,8 +82,16 @@ class EmployeeAssetService
      */
     public function assignAsset(int $employeeId, array $data): array
     {
-        // Validate employee
-        $emp = $this->fetchOne("SELECT id, name FROM employees WHERE id = ? AND status = 'active'", [$employeeId]);
+        // Validate employee — Phase 4/7: use IdentityService
+        $identity = new \App\Services\IdentityService();
+        $empUserId = $identity->resolveEmployeeUserId($employeeId);
+        $emp = null;
+        if ($empUserId > 0 && $identity->getEmployeeStatus($empUserId) === 'active') {
+            $profile = $identity->getEmployeeProfile($empUserId, true);
+            if ($profile) {
+                $emp = ['id' => $employeeId, 'name' => $profile['name'] ?? $profile['employee_code'] ?? ''];
+            }
+        }
         if (!$emp) return ['success' => false, 'message' => 'Employee not found or inactive'];
 
         // Check if asset tag already assigned
@@ -158,9 +202,10 @@ class EmployeeAssetService
     public function getAllActiveAssets(): array
     {
         return $this->db->fetchAll("
-            SELECT eaa.*, e.name as employee_name, e.employee_code, e.department
+            SELECT eaa.*, u_emp.name as employee_name, ep.employee_code, ep.department
             FROM employee_asset_assignments eaa
-            JOIN employees e ON eaa.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = eaa.employee_id OR ep.user_id = eaa.employee_id OR ep.id = eaa.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             WHERE eaa.status = 'active' AND eaa.tenant_id = 1
             ORDER BY eaa.assigned_date DESC
         ");
@@ -172,9 +217,10 @@ class EmployeeAssetService
     public function getAssetsByType(string $type): array
     {
         return $this->db->fetchAll("
-            SELECT eaa.*, e.name as employee_name, e.employee_code, e.department
+            SELECT eaa.*, u_emp.name as employee_name, ep.employee_code, ep.department
             FROM employee_asset_assignments eaa
-            JOIN employees e ON eaa.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = eaa.employee_id OR ep.user_id = eaa.employee_id OR ep.id = eaa.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             WHERE eaa.asset_type = ? AND eaa.status = 'active' AND eaa.tenant_id = 1
             ORDER BY eaa.assigned_date DESC
         ", [$type]);
@@ -186,9 +232,10 @@ class EmployeeAssetService
     public function getAssetByTag(string $tag): ?array
     {
         return $this->db->fetchOne("
-            SELECT eaa.*, e.name as employee_name, e.employee_code, e.department
+            SELECT eaa.*, u_emp.name as employee_name, ep.employee_code, ep.department
             FROM employee_asset_assignments eaa
-            JOIN employees e ON eaa.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = eaa.employee_id OR ep.user_id = eaa.employee_id OR ep.id = eaa.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             WHERE eaa.asset_tag = ? AND eaa.status = 'active' AND eaa.tenant_id = 1
         ", [$tag]);
     }
@@ -243,9 +290,10 @@ class EmployeeAssetService
     public function getAllAssignments(array $filters = []): array
     {
         $query = "
-            SELECT eaa.*, e.name as employee_name, e.employee_code, e.department, e.designation
+            SELECT eaa.*, u_emp.name as employee_name, ep.employee_code, ep.department, ep.designation
             FROM employee_asset_assignments eaa
-            JOIN employees e ON eaa.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = eaa.employee_id OR ep.user_id = eaa.employee_id OR ep.id = eaa.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             WHERE eaa.tenant_id = 1
         ";
         $params = [1];
@@ -263,7 +311,7 @@ class EmployeeAssetService
             $params[] = $filters['employee_id'];
         }
         if (!empty($filters['department'])) {
-            $query .= " AND e.department = ?";
+            $query .= " AND ep.department = ?";
             $params[] = $filters['department'];
         }
 

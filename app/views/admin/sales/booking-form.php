@@ -237,7 +237,7 @@ if ($selectedPlotId) {
                                     echo '<option value="' . $t['id'] . '">' . htmlspecialchars($t['name'] ?? '') . '</option>';
                                 }
                             }
-                        } catch (\Exception $e) {
+                        } catch (\Throwable $e) {
                             // ignore
                         }
                         ?>
@@ -257,7 +257,7 @@ if ($selectedPlotId) {
                                     echo '<option value="' . $t['id'] . '">' . htmlspecialchars($t['name'] ?? '') . '</option>';
                                 }
                             }
-                        } catch (\Exception $e) {
+                        } catch (\Throwable $e) {
                             // ignore
                         }
                         ?>

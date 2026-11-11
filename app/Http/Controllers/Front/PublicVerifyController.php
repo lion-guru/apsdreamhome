@@ -268,7 +268,7 @@ case 'transfer':
                     "SELECT sdc.*, b.booking_number, c.name AS customer_name, p.plot_number, col.name AS colony_name
                          FROM stamp_duty_calculations sdc
                          INNER JOIN bookings b ON sdc.booking_id = b.id
-                         INNER JOIN customers c ON b.customer_id = c.id
+                         INNER JOIN users c ON b.customer_id = c.id
                          LEFT JOIN plots p ON b.plot_id = p.id
                          LEFT JOIN colonies col ON p.colony_id = col.id
                          WHERE sdc.id = ? LIMIT 1",

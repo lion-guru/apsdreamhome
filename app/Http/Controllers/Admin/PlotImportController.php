@@ -22,7 +22,7 @@ class PlotImportController extends AdminController
 
         try {
             $colonies = $this->db->fetchAll("SELECT id, name FROM colonies ORDER BY name");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $colonies = [];
         }
 
@@ -129,7 +129,7 @@ class PlotImportController extends AdminController
             $history = $this->db->fetchAll(
                 "SELECT * FROM user_activity_logs_unified WHERE action = 'plots_import' ORDER BY created_at DESC LIMIT 50"
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $history = [];
         }
 

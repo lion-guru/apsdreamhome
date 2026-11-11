@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `user_branding` (
 try {
     $db->exec($sql);
     echo "✅ user_branding created\n";
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ " . $e->getMessage() . "\n";
 }
 

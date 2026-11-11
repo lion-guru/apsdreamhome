@@ -93,7 +93,7 @@ class EmployeeAuthController extends BaseController
             } else {
                 throw new \Exception('Invalid email or password');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Log failed attempt
             $this->logLoginAttempt($_POST['email'] ?? '', false, $e->getMessage());
 
@@ -273,7 +273,7 @@ class EmployeeAuthController extends BaseController
                 'success' => true,
                 'message' => 'Profile updated successfully'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -308,7 +308,7 @@ class EmployeeAuthController extends BaseController
                 'success' => true,
                 'message' => 'Password changed successfully'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()

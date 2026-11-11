@@ -36,7 +36,7 @@ class WalletService
                 'updated_at' => date('Y-m-d H:i:s')
             ], $insertData));
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WalletService::ensureWallet error: " . $e->getMessage());
             return false;
         }
@@ -47,7 +47,7 @@ class WalletService
         try {
             $w = $this->db->fetchOne("SELECT points_balance FROM wallet_points WHERE user_id = ?" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             return $w ? (float)$w['points_balance'] : 0.0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0.0;
         }
     }
@@ -106,7 +106,7 @@ class WalletService
                 throw $e;
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WalletService::credit error: " . $e->getMessage());
             return false;
         }
@@ -153,7 +153,7 @@ class WalletService
                 throw $e;
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WalletService::debit error: " . $e->getMessage());
             return false;
         }
@@ -166,7 +166,7 @@ class WalletService
                 "SELECT * FROM wallet_transactions WHERE user_id = ?" . $this->tenantSql() . " ORDER BY created_at DESC LIMIT ?",
                 array_merge([$userId, $limit], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -205,7 +205,7 @@ class WalletService
                 try { $this->db->rollBack(); } catch (\Throwable $ignored) {}
                 throw $e;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WalletService::transferToEmi error: " . $e->getMessage());
             return false;
         }

@@ -280,7 +280,7 @@ class FeatureFlagManager {
                     $this->registerFeatureFlag($key, $config);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Remote Configuration Refresh Failed', [
                 'error' => $e->getMessage()
             ]);

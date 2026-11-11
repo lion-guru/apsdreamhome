@@ -46,7 +46,7 @@ class FnfSettlementController extends AdminController
                 } else {
                     $_SESSION['error'] = $result['message'];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = $e->getMessage();
             }
         }
@@ -98,7 +98,7 @@ class FnfSettlementController extends AdminController
             } else {
                 $_SESSION['error'] = $result['message'];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
 
@@ -202,7 +202,7 @@ class FnfSettlementController extends AdminController
             ", [$_SESSION['admin_id'] ?? 0, $id, $this->tenantId()]);
             
             $_SESSION['success'] = 'Settlement approved';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         $this->redirect(BASE_URL . "/admin/fnf/view/$id");
@@ -232,7 +232,7 @@ class FnfSettlementController extends AdminController
             ", [$_SESSION['admin_id'] ?? 0, '%' . $id . '%', $this->tenantId()]);
             
             $_SESSION['success'] = 'Settlement marked as paid';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         $this->redirect(BASE_URL . "/admin/fnf/view/$id");

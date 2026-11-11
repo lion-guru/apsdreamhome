@@ -30,7 +30,7 @@ class AdvancedReportController extends \App\Http\Controllers\Admin\AdminControll
                 GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY month
             ")->fetchAll(\PDO::FETCH_ASSOC);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $funnelData = ['warm_leads' => 0, 'proposals' => 0, 'negotiations' => 0, 'closed_deals' => 0];
             $monthlyConversions = [];
         }
@@ -63,7 +63,7 @@ class AdvancedReportController extends \App\Http\Controllers\Admin\AdminControll
                 LIMIT 20
             ")->fetchAll(\PDO::FETCH_ASSOC);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $users = [];
         }
         
@@ -96,7 +96,7 @@ class AdvancedReportController extends \App\Http\Controllers\Admin\AdminControll
                 LIMIT 12
             ")->fetchAll(\PDO::FETCH_ASSOC);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $conversionData = [];
         }
         

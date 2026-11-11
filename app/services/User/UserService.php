@@ -44,7 +44,7 @@ class UserService
             if ($tid > 1) $stmt->execute([$tid]);
             else $stmt->execute();
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting all users: " . $e->getMessage());
             return [];
         }
@@ -63,7 +63,7 @@ class UserService
             if ($tid > 1) $stmt->bindParam(':tid', $tid);
             $stmt->execute();
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting user by ID: " . $e->getMessage());
             return null;
         }
@@ -82,7 +82,7 @@ class UserService
             if ($tid > 1) $stmt->bindParam(':tid', $tid);
             $stmt->execute();
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting user by email: " . $e->getMessage());
             return null;
         }
@@ -117,7 +117,7 @@ class UserService
             }
             
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error creating user: " . $e->getMessage());
             return false;
         }
@@ -157,7 +157,7 @@ class UserService
             }
             
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error updating user: " . $e->getMessage());
             return false;
         }
@@ -184,7 +184,7 @@ class UserService
             }
             
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error updating user password: " . $e->getMessage());
             return false;
         }
@@ -209,7 +209,7 @@ class UserService
             }
             
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error deleting user: " . $e->getMessage());
             return false;
         }
@@ -230,7 +230,7 @@ class UserService
             
             $this->logger->warning("Authentication failed for email: " . $email);
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error authenticating user: " . $e->getMessage());
             return false;
         }
@@ -249,7 +249,7 @@ class UserService
             if ($tid > 1) $stmt->execute([$tid]);
             else $stmt->execute();
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting active users: " . $e->getMessage());
             return [];
         }
@@ -269,7 +269,7 @@ class UserService
             if ($tid > 1) $stmt->execute([$tid]);
             else $stmt->execute();
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting users by role: " . $e->getMessage());
             return [];
         }
@@ -295,7 +295,7 @@ class UserService
             }
             
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error updating user status: " . $e->getMessage());
             return false;
         }
@@ -316,7 +316,7 @@ class UserService
             else $stmt->execute([$email]);
             $result = $stmt->fetch();
             return $result['count'] > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error checking email existence: " . $e->getMessage());
             return false;
         }
@@ -341,7 +341,7 @@ class UserService
             $stmt = $this->database->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting user statistics: " . $e->getMessage());
             return null;
         }
@@ -375,7 +375,7 @@ class UserService
             }
             
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error updating user profile: " . $e->getMessage());
             return false;
         }
@@ -397,7 +397,7 @@ class UserService
             $stmt->bindParam(':user_id', $userId);
             $stmt->execute();
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting user preferences: " . $e->getMessage());
             return [];
         }
@@ -427,7 +427,7 @@ class UserService
             
             $this->logger->info("User preferences updated successfully for ID: " . $userId);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error updating user preferences: " . $e->getMessage());
             return false;
         }

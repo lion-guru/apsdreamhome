@@ -77,7 +77,7 @@ try {
     
     echo "\n✅ Payroll periods migration completed!\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ Migration failed: " . $e->getMessage() . "\n";
     exit(1);
 }

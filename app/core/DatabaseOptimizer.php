@@ -296,7 +296,7 @@ class DatabaseOptimizer
                     ];
                 }
 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $results['failed']++;
                 $results['details'][] = [
                     'recommendation' => $rec['suggestion'],
@@ -322,7 +322,7 @@ class DatabaseOptimizer
         try {
             $this->pdo->exec($sql);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Index might already exist
             return false;
         }
@@ -348,7 +348,7 @@ class DatabaseOptimizer
         try {
             $this->pdo->exec("OPTIMIZE TABLE $safeTable");
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

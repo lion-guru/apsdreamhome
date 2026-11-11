@@ -36,7 +36,7 @@ class CustomFeaturesController extends BaseController
                 'page_description' => 'Manage custom real estate features',
                 'stats' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to load dashboard',
@@ -57,7 +57,7 @@ class CustomFeaturesController extends BaseController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to fetch features',
@@ -89,7 +89,7 @@ class CustomFeaturesController extends BaseController
                 'message' => 'Virtual tour created successfully',
                 'data' => ['tour_id' => $tourId]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to create virtual tour',
@@ -117,7 +117,7 @@ class CustomFeaturesController extends BaseController
                 'success' => true,
                 'data' => $tour
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to fetch virtual tour',
@@ -145,7 +145,7 @@ class CustomFeaturesController extends BaseController
                 'message' => 'Virtual tour updated successfully',
                 'data' => ['tour_id' => $tourId]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to update virtual tour',
@@ -165,7 +165,7 @@ class CustomFeaturesController extends BaseController
                 'success' => true,
                 'message' => 'Virtual tour deleted successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to delete virtual tour',
@@ -192,7 +192,7 @@ class CustomFeaturesController extends BaseController
                 'success' => true,
                 'data' => $categories
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to fetch categories',
@@ -216,7 +216,7 @@ class CustomFeaturesController extends BaseController
                 'success' => true,
                 'data' => $results
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to search features',
@@ -237,7 +237,7 @@ class CustomFeaturesController extends BaseController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to fetch statistics',
@@ -261,7 +261,7 @@ class CustomFeaturesController extends BaseController
                 'success' => true,
                 'data' => $comparison
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to compare properties',
@@ -280,7 +280,7 @@ class CustomFeaturesController extends BaseController
                 'page_title' => 'Neighborhood Analytics',
                 'page_description' => 'Analyze neighborhood data for properties'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to load neighborhood page',
@@ -299,7 +299,7 @@ class CustomFeaturesController extends BaseController
                 'page_title' => 'Investment Calculator',
                 'page_description' => 'Calculate property investment returns'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to load investment calculator page',
@@ -320,7 +320,7 @@ class CustomFeaturesController extends BaseController
                 'success' => true,
                 'data' => $analytics
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get neighborhood analytics',
@@ -343,7 +343,7 @@ class CustomFeaturesController extends BaseController
                 'success' => true,
                 'data' => $calculation
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to calculate investment',

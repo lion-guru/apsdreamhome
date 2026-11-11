@@ -11,7 +11,11 @@ class ApiService {
   ApiService._internal();
 
   late Dio _dio;
+  late Dio _webDio;
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+
+  /// Dio pointed at web API base (e.g. /api/ai/*) — separate from /api/v2/mobile/
+  Dio get webDio => _webDio;
 
   Future<void> initialize() async {
     _dio = Dio(
@@ -23,9 +27,26 @@ class ApiService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
         },
       ),
     );
+
+    // Web AI Dio: /api/* paths (chat, search, routing, valuation, document-ai...)
+    _webDio = Dio(
+      BaseOptions(
+        baseUrl:
+            '${AppConstants.baseUrl.endsWith('/') ? AppConstants.baseUrl : '${AppConstants.baseUrl}/'}api/',
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+        },
+      ),
+    );
+    _webDio.interceptors.add(AuthInterceptor(this));
 
     // Add auth interceptor
     _dio.interceptors.add(AuthInterceptor(this));
@@ -60,11 +81,21 @@ class ApiService {
       }
 
       String cleanEndpoint = endpoint;
+      bool useWebApi = false;
       if (cleanEndpoint.startsWith('/')) {
         cleanEndpoint = cleanEndpoint.substring(1);
       }
+      if (cleanEndpoint.startsWith('api/v2/mobile/')) {
+        cleanEndpoint = cleanEndpoint.substring('api/v2/mobile/'.length);
+      }
+      // Web API paths (/api/ai/*, /api/document-ai/*, /api/voice-agent/*) must
+      // hit the web base, not the /api/v2/mobile/ base — else 404 (double prefix).
+      if (cleanEndpoint.startsWith('api/')) {
+        useWebApi = true;
+        cleanEndpoint = cleanEndpoint.substring('api/'.length);
+      }
 
-      final response = await _dio.request(
+      final response = await (useWebApi ? _webDio : _dio).request(
         cleanEndpoint,
         data: data,
         queryParameters: queryParameters,

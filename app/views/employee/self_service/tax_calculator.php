@@ -33,7 +33,7 @@ if ($employeeId) {
                 ];
             }
         }
-    } catch (\Exception $e) {}
+    } catch (\Throwable $e) {}
 }
 ?>
 

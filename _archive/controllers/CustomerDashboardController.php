@@ -45,7 +45,7 @@ class CustomerDashboardController extends BaseController
                 'pending_emi' => count(array_filter($emi_schedule, fn($e) => ($e['status'] ?? '') === 'pending')),
                 'total_investment' => array_sum(array_column($bookings, 'amount'))
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Customer dashboard error: " . $e->getMessage());
             $bookings = [];
             $emi_schedule = [];

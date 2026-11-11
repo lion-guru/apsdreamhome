@@ -192,9 +192,9 @@ class CommissionManager
                     pb.booking_amount,
                     pb.agreement_value,
                     pb.associate_id,
-                    a.user_id as agent_user_id
+                    ap.user_id as agent_user_id
                 FROM plot_bookings pb
-                LEFT JOIN associates a ON a.id = pb.associate_id
+                LEFT JOIN associate_profiles ap ON ap.legacy_id = pb.associate_id OR ap.user_id = pb.associate_id OR ap.id = pb.associate_id
                 WHERE pb.id = ?" . $this->tenantSql() . " LIMIT 1
             ");
             $stmt->execute([$bookingId]);

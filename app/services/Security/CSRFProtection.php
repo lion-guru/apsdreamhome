@@ -28,7 +28,7 @@ class CSRFProtection {
                 } else {
                     @session_start();
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('CSRF Session Initialization Error: ' . $e->getMessage());
             }
         }

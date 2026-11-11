@@ -144,7 +144,7 @@ class InterCompanyController extends AdminController
         }
     }
 
-    public function post($id)
+    public function postTransaction($id)
     {
         $this->requireAdmin();
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return $this->jsonError('Invalid request', 400);

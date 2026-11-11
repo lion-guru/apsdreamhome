@@ -63,7 +63,7 @@ class DigitalSignatureService
                 'qr_data' => $verificationUrl,
                 'file_name' => $fileName
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("QR Code Generation Error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -96,7 +96,7 @@ class DigitalSignatureService
                 (document_id, document_type, qr_code_path, qr_code_url, verification_url, created_at)
                 VALUES (?, ?, ?, ?, ?, NOW())
             ", [$documentId, $documentType, $qrResult['file_path'], $qrResult['file_url'], $verificationUrl]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("QR Code DB Save Error: " . $e->getMessage());
         }
         
@@ -145,7 +145,7 @@ class DigitalSignatureService
                 'status' => $status,
                 'message' => $isVerified ? 'Document verified successfully' : 'Document status: ' . $status
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Document Verification Error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -193,7 +193,7 @@ class DigitalSignatureService
                 'status' => $status,
                 'message' => $isVerified ? 'Stamp paper verified' : 'Stamp paper status: ' . $status
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'verified' => false,
@@ -227,7 +227,7 @@ class DigitalSignatureService
             ";
             
             $this->db->execute($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("QR Code Table Creation Error: " . $e->getMessage());
         }
     }

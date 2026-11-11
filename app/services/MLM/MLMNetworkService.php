@@ -43,7 +43,7 @@ class MLMNetworkService
                     'snapshot_at' => date('Y-m-d H:i:s'),
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('getActivePlanSnapshot error: ' . $e->getMessage());
         }
         return ['plan_id' => null, 'plan_version' => 1, 'rates' => [], 'snapshot_at' => date('Y-m-d H:i:s')];
@@ -112,7 +112,7 @@ class MLMNetworkService
             $this->db->commit();
             return ['success' => true, 'user_id' => $userId, 'message' => 'Networker registered successfully'];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -155,7 +155,7 @@ class MLMNetworkService
             $this->db->commit();
             return ['success' => true, 'user_id' => $userId, 'message' => 'Free Consultant registered'];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }

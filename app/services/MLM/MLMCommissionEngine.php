@@ -181,9 +181,16 @@ class MLMCommissionEngine
             return $empty;
         }
         try {
-            $stmt = $this->db->prepare("SELECT id, user_id, level, status FROM associates WHERE id = ? LIMIT 1");
-            $stmt->execute([$associateId]);
-            $a = $stmt->fetch(PDO::FETCH_ASSOC);
+            // Profile-first (OR id-space) + legacy fallback (dual-read)
+            $a = null;
+            $stmt = $this->db->prepare("SELECT legacy_id AS id, user_id, level, status FROM associate_profiles WHERE legacy_id = ? OR user_id = ? OR id = ? LIMIT 1");
+            $stmt->execute([$associateId, $associateId, $associateId]);
+            $a = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+            if (!$a) {
+                $stmt = $this->db->prepare("SELECT id, user_id, level, status FROM associates WHERE id = ? LIMIT 1");
+                $stmt->execute([$associateId]);
+                $a = $stmt->fetch(PDO::FETCH_ASSOC);
+            }
             if (!$a) {
                 return $empty;
             }
@@ -340,6 +347,13 @@ class MLMCommissionEngine
             $safeOldRank = in_array($oldRank, self::RANK_ORDER, true) ? $oldRank : 'associate';
             $upd = $this->db->prepare("UPDATE associates SET level = ? WHERE id = ? AND tenant_id = ?");
             $upd->execute([$newRank, $associateId, $this->getTenantId()]);
+            // Dual-write profile (keeps profile-first reads fresh)
+            try {
+                $up = $this->db->prepare("UPDATE associate_profiles SET level = ? WHERE (legacy_id = ? OR user_id = ? OR id = ?)");
+                $up->execute([$newRank, $associateId, $associateId, $associateId]);
+            } catch (\Throwable $e) {
+                // non-blocking: legacy already updated
+            }
 
             // Sync mlm_profiles.current_level (GamificationService reads this column)
             $syncStmt = $this->db->prepare("
@@ -391,7 +405,7 @@ class MLMCommissionEngine
             return ['promoted' => 0, 'unchanged' => 0, 'errors' => ['DB unavailable']];
         }
         try {
-            $rows = $this->db->query("SELECT id FROM associates WHERE status = 'active'")->fetchAll(PDO::FETCH_ASSOC);
+            $rows = $this->db->query("SELECT legacy_id AS id FROM associate_profiles WHERE status = 'active' UNION SELECT a.id FROM associates a WHERE a.status = 'active' AND NOT EXISTS (SELECT 1 FROM associate_profiles ap WHERE ap.legacy_id = a.id)")->fetchAll(PDO::FETCH_ASSOC);
             foreach ($rows as $r) {
                 $aid = (int)$r['id'];
                 try {
@@ -504,10 +518,17 @@ class MLMCommissionEngine
             }
             if ($pdo instanceof PDO) {
                 $stmt = $pdo->prepare(
-                    "SELECT level FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1"
+                    "SELECT level FROM associate_profiles WHERE user_id = ? AND status = 'active' LIMIT 1"
                 );
                 $stmt->execute([$userId]);
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (!$row) {
+                    $stmt = $pdo->prepare(
+                        "SELECT level FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1"
+                    );
+                    $stmt->execute([$userId]);
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                }
                 if ($row && !empty($row['level'])) {
                     $rank = $row['level'];
                 }
@@ -592,9 +613,14 @@ class MLMCommissionEngine
                 // Resolve source associate's user_id
                 $qUserId = 0;
                 if (!empty($booking['associate_id'])) {
-                    $qa = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? AND status = 'active' LIMIT 1");
-                    $qa->execute([(int)$booking['associate_id']]);
+                    $qa = $this->db->prepare("SELECT user_id FROM associate_profiles WHERE (legacy_id = ? OR user_id = ? OR id = ?) AND status = 'active' LIMIT 1");
+                    $qa->execute([(int)$booking['associate_id'], (int)$booking['associate_id'], (int)$booking['associate_id']]);
                     $qr = $qa->fetch(PDO::FETCH_ASSOC);
+                    if (!$qr) {
+                        $qa = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? AND status = 'active' LIMIT 1");
+                        $qa->execute([(int)$booking['associate_id']]);
+                        $qr = $qa->fetch(PDO::FETCH_ASSOC);
+                    }
                     if ($qr) $qUserId = (int)$qr['user_id'];
                 }
                 if ($qUserId > 0) {
@@ -799,9 +825,14 @@ class MLMCommissionEngine
             return 'Ass.';
         }
         try {
-            $stmt = $this->db->prepare("SELECT level FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1");
+            $stmt = $this->db->prepare("SELECT level FROM associate_profiles WHERE user_id = ? AND status = 'active' LIMIT 1");
             $stmt->execute([$userId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row) {
+                $stmt = $this->db->prepare("SELECT level FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1");
+                $stmt->execute([$userId]);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            }
             if ($row && !empty($row['level']) && in_array($row['level'], self::RANK_ORDER, true)) {
                 return $row['level'];
             }
@@ -983,10 +1014,15 @@ class MLMCommissionEngine
         }
 
         try {
-            // Get agent's current rank
-            $stmt = $this->db->prepare("SELECT user_id, level FROM associates WHERE id = ? AND status = 'active' LIMIT 1");
-            $stmt->execute([$agentId]);
+            // Get agent's current rank (profile-first, legacy fallback)
+            $stmt = $this->db->prepare("SELECT user_id, level FROM associate_profiles WHERE (legacy_id = ? OR user_id = ? OR id = ?) AND status = 'active' LIMIT 1");
+            $stmt->execute([$agentId, $agentId, $agentId]);
             $agent = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$agent) {
+                $stmt = $this->db->prepare("SELECT user_id, level FROM associates WHERE id = ? AND status = 'active' LIMIT 1");
+                $stmt->execute([$agentId]);
+                $agent = $stmt->fetch(PDO::FETCH_ASSOC);
+            }
 
             if (!$agent) {
                 return false;
@@ -1222,10 +1258,15 @@ class MLMCommissionEngine
             return [];
         }
         try {
-            // resolve associate's user_id
-            $aStmt = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? LIMIT 1");
-            $aStmt->execute([$associateId]);
+            // resolve associate's user_id (profile-first, legacy fallback)
+            $aStmt = $this->db->prepare("SELECT user_id FROM associate_profiles WHERE legacy_id = ? OR user_id = ? OR id = ? LIMIT 1");
+            $aStmt->execute([$associateId, $associateId, $associateId]);
             $ar = $aStmt->fetch(PDO::FETCH_ASSOC);
+            if (!$ar) {
+                $aStmt = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? LIMIT 1");
+                $aStmt->execute([$associateId]);
+                $ar = $aStmt->fetch(PDO::FETCH_ASSOC);
+            }
             $userId = (int)($ar['user_id'] ?? 0);
             if ($userId <= 0) {
                 return [];
@@ -1306,7 +1347,7 @@ class MLMCommissionEngine
                     (?, ?, ?, ?, ?, ?, 0, ?, 'pending', NOW())
             ");
 
-            $resolveAssoc = $this->db->prepare("SELECT id FROM associates WHERE user_id = ? LIMIT 1");
+            $resolveAssoc = $this->db->prepare("SELECT id FROM associate_profiles WHERE user_id = ? LIMIT 1");
 
             $count = 0;
             $totalGross = 0.0;
@@ -1468,9 +1509,10 @@ class MLMCommissionEngine
                 return ['batch' => null, 'payouts' => []];
             }
             $p = $this->db->prepare("
-                SELECT p.*, u.name AS associate_name, u.email AS associate_email, a.level AS associate_rank
+                SELECT p.*, u.name AS associate_name, u.email AS associate_email, COALESCE(ap.level, a.level) AS associate_rank
                 FROM mlm_payouts p
                 LEFT JOIN users u ON u.id = p.associate_user_id AND u.tenant_id = ?
+                LEFT JOIN associate_profiles ap ON ap.legacy_id = p.associate_id OR ap.user_id = p.associate_id OR ap.id = p.associate_id
                 LEFT JOIN associates a ON a.id = p.associate_id
                 WHERE p.batch_id = ?
                 ORDER BY p.gross_amount DESC
@@ -1531,7 +1573,7 @@ class MLMCommissionEngine
         try {
             $stats = $empty;
 
-            $row = $this->db->query("SELECT COUNT(*) AS c FROM associates WHERE status = 'active'")->fetch(PDO::FETCH_ASSOC);
+            $row = $this->db->query("SELECT COUNT(*) AS c FROM associate_profiles WHERE status = 'active'")->fetch(PDO::FETCH_ASSOC);
             $stats['active_associates'] = (int)($row['c'] ?? 0);
 
             $row = $this->db->query("SELECT COALESCE(SUM(amount), 0) AS s FROM mlm_commission_ledger WHERE created_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01')")->fetch(PDO::FETCH_ASSOC);
@@ -1609,7 +1651,7 @@ class MLMCommissionEngine
             return $buckets;
         }
         try {
-            $rows = $this->db->query("SELECT COALESCE(level, 'associate') AS lvl, COUNT(*) AS c FROM associates WHERE status = 'active' GROUP BY lvl")->fetchAll(PDO::FETCH_ASSOC);
+            $rows = $this->db->query("SELECT COALESCE(level, 'associate') AS lvl, COUNT(*) AS c FROM associate_profiles WHERE status = 'active' GROUP BY lvl")->fetchAll(PDO::FETCH_ASSOC);
             foreach ($rows as $r) {
                 $lvl = $r['lvl'];
                 if (!in_array($lvl, self::RANK_ORDER, true)) {

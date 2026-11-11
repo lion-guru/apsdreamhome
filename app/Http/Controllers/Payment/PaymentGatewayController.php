@@ -180,7 +180,7 @@ class PaymentGatewayController extends BaseController
                     if ($booking) {
                         $notif->sendPaymentReceived($booking['id'], $payment_data['amount']);
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("PaymentGatewayController: notification failed: " . $e->getMessage());
                 }
 

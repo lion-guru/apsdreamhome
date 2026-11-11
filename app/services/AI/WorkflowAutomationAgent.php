@@ -72,7 +72,7 @@ class WorkflowAutomationAgent
                     $results['failed']++;
                 }
                 $results['logs'][] = "$handler: " . ($result['message'] ?? 'ok');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $results['failed']++;
                 $results['logs'][] = "$handler FAILED: " . $e->getMessage();
                 error_log("WorkflowAutomation [$handler]: " . $e->getMessage());
@@ -104,7 +104,7 @@ class WorkflowAutomationAgent
             );
 
             return ['success' => true, 'message' => "Lead scored: {$score['score']}/100 (Grade: {$score['grade']})"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -123,7 +123,7 @@ class WorkflowAutomationAgent
                 [$data['user_id'] ?? 0, "Namaste $name! Welcome to APS Dream Home.\n\nI'm your AI assistant. How can I help you today?", $tid]
             );
             return ['success' => true, 'message' => "Welcome message queued for $name"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -141,7 +141,7 @@ class WorkflowAutomationAgent
                 [$assignedTo, "A new lead has been assigned to you. Please follow up within 24 hours.", $tid]
             );
             return ['success' => true, 'message' => "Associate notified"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -155,7 +155,7 @@ class WorkflowAutomationAgent
             $scorer = new LeadScorer($this->db);
             $score = $scorer->score($leadId);
             return ['success' => true, 'message' => "Score updated: {$score['score']}"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -174,7 +174,7 @@ class WorkflowAutomationAgent
                 [$leadId, $assignedTo, $tid]
             );
             return ['success' => true, 'message' => "Follow-up scheduled"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -190,7 +190,7 @@ class WorkflowAutomationAgent
                 ["Lead #$leadId has been qualified and needs attention.", $tid]
             );
             return ['success' => true, 'message' => "Manager notified"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -213,7 +213,7 @@ class WorkflowAutomationAgent
                 [$data['user_id'] ?? 0, "Congratulations! Your booking is confirmed. Welcome to APS Dream Home family!", $tid]
             );
             return ['success' => true, 'message' => "Congrats message sent"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -230,7 +230,7 @@ class WorkflowAutomationAgent
                 [$data['amount'] ?? 0, $bookingId, $tid]
             );
             return ['success' => true, 'message' => "Balance updated"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -244,7 +244,7 @@ class WorkflowAutomationAgent
             $gen = new DocumentGeneratorAgent();
             $result = $gen->generatePaymentReceipt($paymentId);
             return ['success' => $result['success'], 'message' => $result['success'] ? 'Receipt generated' : $result['error']];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -256,7 +256,7 @@ class WorkflowAutomationAgent
 
         try {
             return ['success' => true, 'message' => 'Commission calculation triggered (handled by HybridCommissionEngine)'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => 'Commission calc skipped: ' . $e->getMessage()];
         }
     }
@@ -271,7 +271,7 @@ class WorkflowAutomationAgent
                 [$data['user_id'] ?? 0, "Your payment is overdue. Please clear the dues to avoid penalties.", $tid]
             );
             return ['success' => true, 'message' => "Reminder sent"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -295,7 +295,7 @@ class WorkflowAutomationAgent
                 ["CRITICAL: Booking #$bookingId is $daysOverdue days overdue!", $tid]
             );
             return ['success' => true, 'message' => "Escalated to management"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -309,7 +309,7 @@ class WorkflowAutomationAgent
             $gen = new DocumentGeneratorAgent();
             $result = $gen->generateBookingConfirmation($bookingId);
             return ['success' => $result['success'], 'message' => $result['success'] ? 'Contract generated' : $result['error']];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -331,7 +331,7 @@ class WorkflowAutomationAgent
                 [$plotId, $tid]
             );
             return ['success' => true, 'message' => "Plot released"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -347,7 +347,7 @@ class WorkflowAutomationAgent
                 ["Booking #$bookingId status changed.", $tid]
             );
             return ['success' => true, 'message' => "Team notified"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -361,7 +361,7 @@ class WorkflowAutomationAgent
             $gen = new DocumentGeneratorAgent();
             $result = $gen->generateDemandLetter($installmentId);
             return ['success' => $result['success'], 'message' => $result['success'] ? 'Demand letter generated' : $result['error']];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -376,7 +376,7 @@ class WorkflowAutomationAgent
                 [$data['user_id'] ?? 0, "Your EMI installment is due soon. Please ensure timely payment.", $tid]
             );
             return ['success' => true, 'message' => "Reminder scheduled"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -391,7 +391,7 @@ class WorkflowAutomationAgent
                 [$data['user_id'] ?? 0, "Your EMI payment is overdue. A penalty of Rs. " . ($data['penalty'] ?? '500') . " has been applied.", $tid]
             );
             return ['success' => true, 'message' => "Penalty notice sent"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -406,7 +406,7 @@ class WorkflowAutomationAgent
                 [$data['user_id'] ?? 0, "Your site visit has been confirmed!\nDate: " . ($data['visit_date'] ?? 'TBD'), $tid]
             );
             return ['success' => true, 'message' => "Confirmation sent"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -426,7 +426,7 @@ class WorkflowAutomationAgent
                 [$data['user_id'] ?? 0, "Thank you for visiting our project! Did you like what you saw? Any questions?", $tid]
             );
             return ['success' => true, 'message' => "Follow-up sent"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -443,7 +443,7 @@ class WorkflowAutomationAgent
                 [$leadId, $tid]
             );
             return ['success' => true, 'message' => "Lead status updated"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -461,7 +461,7 @@ class WorkflowAutomationAgent
                 [$leadId, $data['assigned_to'] ?? null, $tid]
             );
             return ['success' => true, 'message' => "Next action scheduled"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -476,7 +476,7 @@ class WorkflowAutomationAgent
                 [$data['user_id'] ?? 0, "Welcome to APS Dream Home! Here's your onboarding guide and commission structure.", $tid]
             );
             return ['success' => true, 'message' => "Welcome kit sent"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -491,7 +491,7 @@ class WorkflowAutomationAgent
                 [$data['user_id'] ?? 0, $tid]
             );
             return ['success' => true, 'message' => "Onboarding task assigned"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -508,7 +508,7 @@ class WorkflowAutomationAgent
                  VALUES (?, ?, ?, 0, 'system', NOW())",
                 ["workflow_event:$eventType", json_encode($data), $tid]
             );
-        } catch (\Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
     }
 
     /**

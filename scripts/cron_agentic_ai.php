@@ -2,7 +2,7 @@
 /**
  * Agentic AI Cron Job
  * Runs all 8 autonomous agents every 5 minutes
- * Usage: php scripts/cron_agentic_ai.php
+ * Usage: php scripts/cron_agentic_ai.php [--dry-run]
  */
 
 define('BASE_PATH', dirname(__DIR__));
@@ -10,8 +10,11 @@ require_once BASE_PATH . '/config/bootstrap.php';
 
 use App\Services\AgenticAI\AgentOrchestrator;
 use App\Core\Middleware\TenantContext;
+use App\Services\VoiceProviderManager;
 
 echo "[" . date('Y-m-d H:i:s') . "] Starting Agentic AI Orchestrator...\n";
+
+$dryRun = in_array('--dry-run', $argv);
 
 try {
     // Set tenant context (default tenant = 1)
@@ -50,6 +53,21 @@ try {
         );
     } catch (\Throwable $e) {
         // Silent fail for logging
+    }
+    
+    // Check Voice Provider status if agents need voice capabilities
+    if (!$dryRun) {
+        try {
+            $voiceManager = new VoiceProviderManager();
+            $providerStatus = $voiceManager->getProviderStatus();
+            if ($providerStatus['is_configured']) {
+                echo "  🎤 Voice Provider: {$providerStatus['active_provider']} - Ready\n";
+            } else {
+                echo "  ⚠️ Voice Provider: Not configured\n";
+            }
+        } catch (\Throwable $e) {
+            echo "  ⚠️ Voice Provider check failed: " . $e->getMessage() . "\n";
+        }
     }
     
     exit($hasErrors ? 1 : 0);

@@ -34,7 +34,7 @@ class GratuityController extends AdminController
             try {
                 $service = new \App\Services\GratuityService();
                 $result = $service->calculateGratuity($employeeId, $calculationDate);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = $e->getMessage();
             }
         }
@@ -67,7 +67,7 @@ class GratuityController extends AdminController
         try {
             $service = new \App\Services\GratuityService();
             $report = $service->getLiabilityReport();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
             $report = ['total_employees' => 0, 'eligible_employees' => 0, 'total_liability' => 0, 'details' => []];
         }
@@ -102,7 +102,7 @@ class GratuityController extends AdminController
                 WHERE e.id=?
             ", [$id]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
             $this->redirect(BASE_URL . '/admin/gratuity/calculator');
             exit;

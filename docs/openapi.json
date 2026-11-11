@@ -1,0 +1,288 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "APS Dream Home API",
+    "version": "1.0.0",
+    "description": "REST API for APS Dream Home - Real Estate ERP/CRM Platform",
+    "contact": {
+      "email": "techguruabhay@gmail.com",
+      "name": "APS Dream Home Tech Team"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://www.apsdreamhomes.co.in"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome",
+      "description": "Development server"
+    },
+    {
+      "url": "https://www.apsdreamhomes.co.in",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/v2/mobile/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Customer login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" }
+        }
+      }
+    },
+    "/api/v2/mobile/colonies": {
+      "get": {
+        "tags": ["Properties"],
+        "summary": "List all colonies",
+        "responses": {
+          "200": { "description": "Colonies list" }
+        }
+      }
+    },
+    "/api/v2/mobile/plots/all": {
+      "get": {
+        "tags": ["Properties"],
+        "summary": "List all plots",
+        "responses": {
+          "200": { "description": "Plots list" }
+        }
+      }
+    },
+    "/api/v2/mobile/user/notifications": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Get user notifications",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Notifications list" }
+        }
+      }
+    },
+    "/api/v2/mobile/user/profile": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get user profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User profile" }
+        }
+      }
+    },
+    "/api/v2/mobile/user/payment-history": {
+      "get": {
+        "tags": ["Payments"],
+        "summary": "Get payment history",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Payment history" }
+        }
+      }
+    },
+    "/api/v2/mobile/user/favorites": {
+      "get": {
+        "tags": ["Properties"],
+        "summary": "List user favorites",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Favorites list" }
+        }
+      },
+      "post": {
+        "tags": ["Properties"],
+        "summary": "Add to favorites",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "property_id": { "type": "integer" }
+                },
+                "required": ["property_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Property added to favorites" }
+        }
+      }
+    },
+    "/api/v2/mobile/dashboard": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get user dashboard",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Dashboard data" }
+        }
+      }
+    },
+    "/api/v2/mobile/properties/inquiry": {
+      "post": {
+        "tags": ["Properties"],
+        "summary": "Submit property inquiry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "property_id": { "type": "integer" },
+                  "name": { "type": "string" },
+                  "phone": { "type": "string" },
+                  "message": { "type": "string" }
+                },
+                "required": ["property_id", "name", "phone"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Inquiry submitted" }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Health check",
+        "responses": {
+          "200": { "description": "System healthy" }
+        }
+      }
+    },
+    "/api/ai/chat": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "AI Chat",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "messages": { "type": "array" },
+                  "provider": { "type": "string" },
+                  "model": { "type": "string" },
+                  "temperature": { "type": "number" },
+                  "max_tokens": { "type": "integer" },
+                  "use_rag": { "type": "boolean" }
+                },
+                "required": ["messages"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "AI response" }
+        }
+      }
+    },
+    "/api/ai/lead-score/{id}": {
+      "get": {
+        "tags": ["AI"],
+        "summary": "Get lead score",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lead score and factors" }
+        }
+      }
+    },
+    "/api/ai/deal-probability/{id}": {
+      "get": {
+        "tags": ["AI"],
+        "summary": "Get deal probability",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Deal probability with risk factors" }
+        }
+      }
+    },
+    "/associate/dashboard": {
+      "get": {
+        "tags": ["Associate"],
+        "summary": "Associate dashboard",
+        "responses": {
+          "200": { "description": "Associate dashboard page" }
+        }
+      }
+    },
+    "/associate/leads": {
+      "get": {
+        "tags": ["Associate", "CRM"],
+        "summary": "List associate leads",
+        "responses": {
+          "200": { "description": "Leads list page" }
+        }
+      }
+    },
+    "/admin/dashboard": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Admin dashboard",
+        "responses": {
+          "200": { "description": "Admin dashboard page" }
+        }
+      }
+    },
+    "/admin/leads": {
+      "get": {
+        "tags": ["Admin", "CRM"],
+        "summary": "List all leads",
+        "responses": {
+          "200": { "description": "Leads list page" }
+        }
+      }
+    },
+    "/admin/plots": {
+      "get": {
+        "tags": ["Admin", "Properties"],
+        "summary": "List all plots",
+        "responses": {
+          "200": { "description": "Plots list page" }
+        }
+      }
+    },
+    "/admin/colonies": {
+      "get": {
+        "tags": ["Admin", "Properties"],
+        "summary": "List all colonies",
+        "responses": {
+          "200": { "description": "Colonies list page" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

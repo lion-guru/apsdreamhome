@@ -80,7 +80,7 @@ class CustomFeaturesService
                     INDEX idx_created_at (created_at)
                 )
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to create feature tables: ' . $e->getMessage());
         }
     }
@@ -110,7 +110,7 @@ $sql = "INSERT INTO virtual_tours
             $this->logActivity('virtual_tour_created', 'Virtual tour created', 'virtual_tour', $tourId);
 
             return $tourId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to create virtual tour: ' . $e->getMessage());
             throw $e;
         }
@@ -130,7 +130,7 @@ $sql = "INSERT INTO virtual_tours
             }
 
             return $tour;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to get virtual tour: ' . $e->getMessage());
             return null;
         }
@@ -164,7 +164,7 @@ $sql = "INSERT INTO virtual_tours
             ]);
 
             return $comparison;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to compare properties: ' . $e->getMessage());
             throw $e;
         }
@@ -197,7 +197,7 @@ $sql = "INSERT INTO virtual_tours
             ]);
 
             return $analytics;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to get neighborhood analytics: ' . $e->getMessage());
             throw $e;
         }
@@ -230,7 +230,7 @@ $sql = "INSERT INTO virtual_tours
             $this->logFeatureUsage(self::FEATURE_INVESTMENT_CALCULATOR, $params);
 
             return $calculations;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to calculate investment: ' . $e->getMessage());
             throw $e;
         }
@@ -295,7 +295,7 @@ $sql = "INSERT INTO virtual_tours
                 'total_found' => count($results),
                 'search_criteria' => $criteria
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to perform smart search: ' . $e->getMessage());
             throw $e;
         }
@@ -319,7 +319,7 @@ $sql = "INSERT INTO virtual_tours
             $stats['recent_activities'] = $this->db->fetchAll("SELECT * FROM activity_logs_unified WHERE tenant_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY created_at DESC LIMIT 10", [$this->tenantId()]);
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to get feature stats: ' . $e->getMessage());
             return [];
         }
@@ -346,7 +346,7 @@ $sql = "INSERT INTO virtual_tours
                 'status' => $newStatus,
                 'updated_at' => date('Y-m-d H:i:s')
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to toggle feature status: ' . $e->getMessage());
             throw $e;
         }
@@ -381,13 +381,13 @@ $sql = "INSERT INTO virtual_tours
                         default:
                             $results[] = ['id' => $featureId, 'success' => false, 'error' => 'Unknown operation'];
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $results[] = ['id' => $featureId, 'success' => false, 'error' => $e->getMessage()];
                 }
             }
 
             return $results;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to perform bulk operation: ' . $e->getMessage());
             throw $e;
         }
@@ -425,7 +425,7 @@ $sql = "INSERT INTO virtual_tours
                 default:
                     throw new \Exception('Unsupported export format');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to export features: ' . $e->getMessage());
             throw $e;
         }
@@ -457,7 +457,7 @@ $sql = "INSERT INTO virtual_tours
                                 'created_by' => $item['created_by'] ?? 'system'
                             ]);
                             $imported[] = ['id' => $tourId, 'title' => $item['title']];
-                        } catch (\Exception $e) {
+                        } catch (\Throwable $e) {
                             $errors[] = ['item' => $item, 'error' => $e->getMessage()];
                         }
                     }
@@ -475,7 +475,7 @@ $sql = "INSERT INTO virtual_tours
                 'total_imported' => count($imported),
                 'total_errors' => count($errors)
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to import features: ' . $e->getMessage());
             throw $e;
         }
@@ -487,7 +487,7 @@ $sql = "INSERT INTO virtual_tours
         try {
             $sql = "INSERT INTO activity_logs_unified (action, description, entity_type, entity_id, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
             $this->db->execute($sql, [$action, $description, $entityType, $entityId, $this->tenantId()]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to log activity: ' . $e->getMessage());
         }
     }
@@ -497,7 +497,7 @@ $sql = "INSERT INTO virtual_tours
         try {
             $sql = "INSERT INTO feature_usage (feature_type, usage_data, tenant_id, created_at) VALUES (?, ?, ?, NOW())";
             $this->db->execute($sql, [$featureType, json_encode($data), $this->tenantId()]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to log feature usage: ' . $e->getMessage());
         }
     }
@@ -557,7 +557,7 @@ $sql = "INSERT INTO virtual_tours
                 "SELECT * FROM properties WHERE location = ? AND id != ? AND status = 'active' AND tenant_id = ? LIMIT 10",
                 [$property['location'], $propertyId, $this->tenantId()]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

@@ -100,6 +100,7 @@ $GLOBALS['_html_doc_started'] = true;
         .nav-pills .nav-link.active { background: var(--tenant-primary); }
     </style>
     <?php endif; ?>
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/dark-mode.css?v=1">
 </head>
 
 <body class="aps-admin-body">
@@ -285,7 +286,7 @@ $GLOBALS['_html_doc_started'] = true;
             $stmt = $db->query("SELECT COUNT(*) as cnt FROM inquiries WHERE is_read = 0 OR status IN ('new', 'pending')");
             return (int)($stmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0);
         }, 120);
-    } catch (\Exception $e) { /* silent */
+    } catch (\Throwable $e) { /* silent */
     }
     ?>
 
@@ -306,6 +307,10 @@ $GLOBALS['_html_doc_started'] = true;
             </div>
 
             <div class="nav-right">
+                <!-- Dark Mode Toggle -->
+                <button class="dark-mode-toggle me-2" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <i class="fas fa-moon" id="darkModeIcon"></i>
+                </button>
                 <!-- Notifications (Leads) — replaced by notification-system.js -->
                 <button class="nav-icon notification-bell-btn" id="notification-bell-placeholder" onclick="toggleNotifications()" title="Notifications">
                     <i class="fas fa-bell"></i>
@@ -686,7 +691,7 @@ $GLOBALS['_html_doc_started'] = true;
                 });
 
                 let html = '';
-                const categoryOrder = ['Plots', 'Bookings', 'Customers', 'Associates'];
+                const categoryOrder = ['Pages', 'Plots', 'Bookings', 'Customers', 'Associates'];
                 
                 categoryOrder.forEach(cat => {
                     if (!byCategory[cat]) return;
@@ -834,7 +839,7 @@ $GLOBALS['_html_doc_started'] = true;
                         <div class="d-flex align-items-center w-100">
                             <div class="position-relative flex-grow-1">
                                 <i class="fas fa-search position-absolute" style="left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 1.1rem;"></i>
-                                <input type="text" id="omniSearchInput" aria-label="Search plots, customers, bookings, associates" class="form-control form-control-lg ps-5 pe-5 bg-slate-800 border-0 text-white" placeholder="Search plots, customers, bookings, associates..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="background: rgba(30,41,59,0.8); color: #fff; font-size: 1.1rem; height: 3.5rem;">
+                                <input type="text" id="omniSearchInput" aria-label="Search pages, plots, customers, bookings, associates" class="form-control form-control-lg ps-5 pe-5 bg-slate-800 border-0 text-white" placeholder="Search pages, plots, customers, bookings..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="background: rgba(30,41,59,0.8); color: #fff; font-size: 1.1rem; height: 3.5rem;">
                                 <span id="omniSearchHint" class="position-absolute text-muted small" style="right: 1rem; top: 50%; transform: translateY(-50%); pointer-events: none;">
                                     <kbd style="background: #334155; color: #94a3b8; border-radius: 4px; padding: 0.15rem 0.4rem; font-size: 0.75rem;">⌘K</kbd> to open • <kbd style="background: #334155; color: #94a3b8; border-radius: 4px; padding: 0.15rem 0.4rem; font-size: 0.75rem;">Esc</kbd> to close
                                 </span>
@@ -903,7 +908,80 @@ $GLOBALS['_html_doc_started'] = true;
         </script>
         <!-- Customer & Portal Component Library JS -->
         <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
+    <?php include __DIR__ . '/../components/ai_chatbot_widget.php'; ?>
     <script defer src="<?= defined('BASE_URL') ? BASE_URL : '' ?>/assets/js/customer-pages.js"></script>
-</body>
+<script>
+function toggleDarkMode() {
+    const html = document.documentElement;
+    const icon = document.getElementById('darkModeIcon');
+    const isDark = html.classList.toggle('dark-mode');
+    localStorage.setItem('aps_theme', isDark ? 'dark' : 'light');
+    icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+}
+// Restore theme on load
+(function() {
+    const saved = localStorage.getItem('aps_theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.classList.add('dark-mode');
+        const icon = document.getElementById('darkModeIcon');
+        if (icon) icon.className = 'fas fa-sun';
+    }
+})();
 
+// WebSocket Client for Real-time HR Dashboard Updates
+<script defer src="<?= BASE_URL ?>/assets/js/websocket-client.js"></script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-initialize WebSocket for admin panel
+    if (window.HRWebSocket) {
+        HRWebSocket.init({
+            onNotification: function(notification) {
+                // Show notification toast
+                if (window.apsNotificationToast) {
+                    window.apsNotificationToast(notification.title, notification.body, notification.url);
+                } else {
+                    // Fallback: use browser notification
+                    if (Notification.permission === 'granted') {
+                        new Notification(notification.title, {
+                            body: notification.body,
+                            icon: '/apsdreamhome/assets/images/logo-192.png'
+                        });
+                    }
+                }
+                // Update notification badge
+                if (window.HRWebSocket) {
+                    HRWebSocket.getNotifications(5); // Refresh unread count
+                }
+            },
+            onUnreadCount: function(count) {
+                // Update notification badge
+                var badge = document.getElementById('notification-badge');
+                if (badge) {
+                    badge.textContent = count;
+                    badge.style.display = count > 0 ? 'inline-block' : 'none';
+                }
+                var bell = document.querySelector('.notification-bell');
+                if (bell) {
+                    bell.classList.toggle('has-unread', count > 0);
+                }
+            },
+            onConnected: function() {
+                console.log('[HRWebSocket] Connected to real-time server');
+                // Request initial unread count
+                if (window.HRWebSocket) {
+                    HRWebSocket.getNotifications(1); // Just to trigger unread count
+                }
+            },
+            onDisconnected: function() {
+                console.log('[HRWebSocket] Disconnected from real-time server');
+            },
+            onError: function(error) {
+                console.error('[HRWebSocket] Error:', error);
+            }
+        });
+    }
+});
+</script>
+</body>
 </html>

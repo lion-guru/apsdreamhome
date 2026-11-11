@@ -86,7 +86,7 @@ class PropertyInquiryAgent extends BaseAgent
             $agentId = $agent['agent_id'] ?? 'agent_11';
             $svc = new VoiceCallService();
             $svc->scheduleCall($leadId, $phone, $agentId, $followUpDate, '11:00:00', 'property_inquiry_followup', 'medium');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
                     error_log("PropertyInquiryAgent.php: " . $e->getMessage());
         }
     }
@@ -101,7 +101,7 @@ class PropertyInquiryAgent extends BaseAgent
             $agentId = $agent['agent_id'] ?? 'agent_10';
             $svc = new VoiceCallService();
             $svc->scheduleCall($leadId, $phone, $agentId, $reminderDate, '10:00:00', 'site_visit_booking', 'high');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
                     error_log("PropertyInquiryAgent.php: " . $e->getMessage());
         }
     }

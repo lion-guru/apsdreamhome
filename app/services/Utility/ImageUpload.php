@@ -72,7 +72,7 @@ class ImageUpload
                 'type' => $file['type']
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -228,7 +228,7 @@ class ImageUpload
 
             return $thumbnailPath;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Thumbnail creation failed, return null
             return null;
         }

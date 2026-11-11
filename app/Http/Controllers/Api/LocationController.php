@@ -86,7 +86,7 @@ class LocationController extends BaseApiController
             $sql .= " ORDER BY name LIMIT 100";
             
             $districts = $this->db->fetchAll($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $districts = [];
         }
         
@@ -142,7 +142,7 @@ class LocationController extends BaseApiController
             $sql .= " ORDER BY c.name LIMIT 100";
             
             $cities = $this->db->fetchAll($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $cities = [];
         }
         
@@ -173,7 +173,7 @@ class LocationController extends BaseApiController
                     LIMIT 50";
             
             $results = $this->db->fetchAll($sql, ["%$search%"]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $results = [];
         }
         
@@ -198,7 +198,7 @@ class LocationController extends BaseApiController
                     [$pincode]
                 );
             });
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result = null;
         }
         
@@ -245,7 +245,7 @@ class LocationController extends BaseApiController
                     LIMIT 50";
             
             $results = $this->db->fetchAll($sql, ["%$search%", "%$search%", "%$search%", "%$search%"]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $results = [];
         }
         
@@ -255,7 +255,7 @@ class LocationController extends BaseApiController
     /**
      * Helper: JSON response
      */
-    public function jsonResponse($data, $code = 200)
+    public function jsonResponse($data, int $code = 200): void
     {
         http_response_code($code);
         header('Content-Type: application/json');

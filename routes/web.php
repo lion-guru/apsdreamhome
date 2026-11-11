@@ -4617,39 +4617,11 @@ $router->get('/admin/ai-management/usage-analytics', 'App\\Http\\Controllers\\Ad
 // SELF-LEARNING AI (Phase 23) - No External API
 // â€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Â
 $router->get('/admin/ai-dashboard', 'Front\\AIBotController@stats');          // JSON stats endpoint
-$router->get('/admin/ai/dashboard', function() {
-    $root = dirname(__DIR__);
-    require_once $root . '/vendor/autoload.php';
-    $config = require $root . '/config/database.php';
-    try {
-        $pdo = new \PDO("mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4", $config['username'], $config['password'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
-        $ai = new \App\Services\AI\AIManager($pdo);
-        $stats = $ai->getStats();
-        $recentMessages = $pdo->query("SELECT * FROM ai_chat_messages ORDER BY created_at DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC);
-        $topIntents = $pdo->query("SELECT detected_intent, COUNT(*) as cnt FROM ai_chat_messages WHERE detected_intent IS NOT NULL GROUP BY detected_intent ORDER BY cnt DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
-        $topScores = $pdo->query("SELECT ls.*, l.name, l.phone FROM ai_lead_scores ls LEFT JOIN leads l ON l.id = ls.lead_id ORDER BY ls.score DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC);
-        $priceModels = $pdo->query("SELECT * FROM ai_price_models ORDER BY trained_at DESC LIMIT 5")->fetchAll(\PDO::FETCH_ASSOC);
-    } catch (\Throwable $e) {
-        $stats = [];
-        $recentMessages = [];
-        $topIntents = [];
-        $topScores = [];
-        $priceModels = [];
-        error_log("ai/dashboard route: " . $e->getMessage());
-    }
-    $page_title = 'AI Dashboard - APS Dream Home';
-    $page_heading = 'Self-Learning AI';
-    ob_start();
-    include $root . '/app/views/admin/ai-dashboard.php';
-    $content = ob_get_clean();
-    $GLOBALS['_admin_page_title'] = $page_title;
-    $GLOBALS['_admin_page_heading'] = $page_heading;
-    $GLOBALS['_admin_content'] = $content;
-    $GLOBALS['_admin_extra_js'] = '';
-    $GLOBALS['_admin_extra_css'] = '';
-    require $root . '/app/views/admin/layouts/admin.php';
-    exit;
-});
+// NOTE (S451): this closure required app/views/admin/layouts/admin.php,
+// which does not exist -> 500. Point it at the real controller action,
+// which renders through the standard layout.
+$router->get('/admin/ai/dashboard', 'App\\Http\\Controllers\\AIDashboardController@index');
+    
 $router->post('/api/ai/score-lead/{id}', 'Front\\AIBotController@scoreLead');
 $router->post('/api/ai/predict-price', 'Front\\AIBotController@predictPrice');
 $router->get('/api/ai/recommend', 'Front\\AIBotController@recommend');
@@ -6906,4 +6878,10 @@ $router->get('/agent/documents', 'App\\Http\\Controllers\\Agent\\AgentDocumentsC
 
 
 $router->get('/agent/tds', 'App\\Http\\Controllers\\Agent\\AgentTdsController@index');
+
+// AI Employee Desk (named AI staff + task queue)
+$router->get('/admin/ai-employee', 'App\\Http\\Controllers\\Admin\\AIEmployeeController@index');
+$router->post('/admin/ai-employee/{id}/status', 'App\\Http\\Controllers\\Admin\\AIEmployeeController@setStatus');
+$router->post('/admin/ai-employee/{id}/run', 'App\\Http\\Controllers\\Admin\\AIEmployeeController@runNow');
+$router->post('/admin/ai-employee/enqueue-lead', 'App\\Http\\Controllers\\Admin\\AIEmployeeController@enqueueLead');
 

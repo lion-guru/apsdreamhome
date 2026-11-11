@@ -36,7 +36,7 @@ class GSTFilingService
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row['credential_value'] ?? null;
-        } catch (\Exception $e) { error_log("[GSTFilingService] getCompanyGSTIN: " . $e->getMessage()); return null; }
+        } catch (\Throwable $e) { error_log("[GSTFilingService] getCompanyGSTIN: " . $e->getMessage()); return null; }
     }
 
     // ========== GSTR-1 ==========
@@ -201,7 +201,7 @@ class GSTFilingService
                     'total_tax' => $totalCGST + $totalSGST + $totalIGST,
                 ],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[GSTFilingService] generateGSTR1() exception: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -317,7 +317,7 @@ class GSTFilingService
                     'net_payable' => $netPayable,
                 ],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[GSTFilingService] generateGSTR3B() exception: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -364,7 +364,7 @@ $stmt = $pdo->prepare("SELECT
             $annual['total']['tax'] = $annual['total']['cgst'] + $annual['total']['sgst'] + $annual['total']['igst'];
 
             return ['success' => true, 'gstr9' => $annual];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[GSTFilingService] generateGSTR9() exception: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -428,7 +428,7 @@ $stmt = $pdo->prepare("SELECT
             }
 
             return ['success' => true, 'summary' => $summary];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[GSTFilingService] getGSTSummary() exception: " . $e->getMessage());
             return ['success' => false, 'summary' => []];
         }
@@ -469,7 +469,7 @@ $stmt = $pdo->prepare("SELECT
                 AND tenant_id = ?");
             $stmt->execute([$startDate, $endDate, $this->tenantId()]);
             return $stmt->rowCount();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[GSTFilingService] markTransactionsFiled() exception: " . $e->getMessage());
             return 0;
         }

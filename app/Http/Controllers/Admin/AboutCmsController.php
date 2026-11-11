@@ -16,7 +16,7 @@ class AboutCmsController extends AdminController
             foreach ($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
                 $content[$row['content_group']][$row['content_key']] = $row['content_value'];
             }
-        } catch (\Exception $e) { error_log("AboutCmsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("AboutCmsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $data = [
             'page_title' => 'About Page CMS',
@@ -69,7 +69,7 @@ class AboutCmsController extends AdminController
             }
 
             $_SESSION['success'] = "Updated $updated fields successfully!";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/about-cms');
@@ -101,7 +101,7 @@ class AboutCmsController extends AdminController
             } else {
                 $_SESSION['error'] = 'Upload failed';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/about-cms');

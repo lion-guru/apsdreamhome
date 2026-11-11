@@ -45,7 +45,7 @@ class SLATriggerService
                     }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SLATriggerService::onLeadCreated error: ' . $e->getMessage());
         }
     }
@@ -84,7 +84,7 @@ class SLATriggerService
                     }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SLATriggerService::onStatusChanged error: ' . $e->getMessage());
         }
     }
@@ -112,7 +112,7 @@ class SLATriggerService
                     $this->sla->completeSLA($sla['id'], 'met', "Follow-up ($interactionType) completed");
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SLATriggerService::onInteractionLogged error: ' . $e->getMessage());
         }
     }
@@ -126,7 +126,7 @@ class SLATriggerService
         try {
             $result = $this->sla->autoCheckBreaches();
             return $result['breached'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SLATriggerService::checkBreaches error: ' . $e->getMessage());
             return 0;
         }
@@ -192,7 +192,7 @@ class SLATriggerService
                 'pending_count' => count($pending),
                 'breached_count' => count($breached),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'stats' => [], 'pending' => [], 'breached' => [], 'rules' => [],
                 'escalating' => [], 'escalating_count' => 0, 'compliance_rate' => 0,

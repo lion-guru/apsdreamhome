@@ -86,12 +86,33 @@ class CrmController extends BaseController
             // Followups due today/overdue
             $followups = $db->fetchAll("SELECT * FROM followups WHERE assigned_to = ? AND followup_date <= CURDATE() AND status = 'pending'{$tidSql} ORDER BY followup_date ASC LIMIT 10", $params) ?: [];
 
+            // Pipeline funnel data (S348: funnel analytics gap)
+            $funnelStages = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotiation', 'closed_won'];
+            $funnel = [];
+            foreach ($funnelStages as $stage) {
+                $fParams = [$userId, $stage];
+                if ($tid > 1) $fParams[] = $tid;
+                $funnel[$stage] = (int)$db->fetchOne(
+                    "SELECT COUNT(*) as count FROM leads WHERE assigned_to = ? AND status = ? AND deleted_at IS NULL{$tidSql}",
+                    $fParams
+                )['count'] ?? 0;
+            }
+            // Conversion rates between consecutive stages
+            $funnelRates = [];
+            for ($i = 1; $i < count($funnelStages); $i++) {
+                $prev = $funnel[$funnelStages[$i - 1]];
+                $curr = $funnel[$funnelStages[$i]];
+                $funnelRates[$funnelStages[$i]] = $prev > 0 ? round(($curr / $prev) * 100, 1) : 0;
+            }
+
             $this->render('associate/crm_dashboard', [
                 'page_title' => 'CRM Dashboard - Associate Portal',
                 'page_description' => 'Manage your leads and pipeline',
                 'stats' => $stats,
                 'recent_leads' => $recentLeads,
                 'followups' => $followups,
+                'funnel' => $funnel,
+                'funnel_rates' => $funnelRates,
             ], 'layouts/associate');
         } catch (\Throwable $e) {
             error_log('AssociateCrmController error: ' . $e->getMessage());
@@ -367,6 +388,9 @@ class CrmController extends BaseController
 
         $sources = $db->fetchAll("SELECT * FROM lead_sources WHERE is_active = 1 ORDER BY name") ?: [];
 
+        // Get documents (S348 CRM gap: lead-doc linkage)
+        $documents = $db->fetchAll("SELECT * FROM lead_documents WHERE lead_id = ? ORDER BY created_at DESC", [$id]) ?: [];
+
         $this->render('associate/lead_detail', [
             'page_title' => 'Lead Detail - Associate Portal',
             'page_description' => 'View and manage lead',
@@ -375,7 +399,125 @@ class CrmController extends BaseController
             'activities' => $activities,
             'followups' => $followups,
             'sources' => $sources,
+            'documents' => $documents,
         ], 'layouts/associate');
+    }
+
+    /**
+     * Upload document to lead (S348: associate lead-doc linkage)
+     */
+    public function leadDocumentUpload($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+
+        $db = \App\Core\Database\Database::getInstance();
+
+        // Verify ownership
+        $lead = $db->fetchOne("SELECT id FROM leads WHERE id = ? AND (assigned_to = ? OR created_by = ?) AND deleted_at IS NULL LIMIT 1", [$id, $userId, $userId]);
+        if (!$lead) {
+            $_SESSION['error'] = 'Lead not found or access denied';
+            $this->redirect('/associate/leads');
+            return;
+        }
+
+        if (empty($_FILES['document'])) {
+            $_SESSION['error'] = 'No file selected';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        $file = $_FILES['document'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $_SESSION['error'] = 'Upload failed (error code ' . $file['error'] . ')';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        // Validate file type
+        $allowed = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'xls', 'xlsx'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowed)) {
+            $_SESSION['error'] = 'File type not allowed. Allowed: ' . implode(', ', $allowed);
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        // Validate size (10MB max)
+        if ($file['size'] > 10 * 1024 * 1024) {
+            $_SESSION['error'] = 'File too large (max 10MB)';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        // Upload directory
+        $uploadDir = __DIR__ . '/../../../../public/assets/uploads/lead-docs/' . $id;
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        $safeName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $file['name']);
+        $filePath = $uploadDir . '/' . $safeName;
+
+        if (!move_uploaded_file($file['tmp_name'], $filePath)) {
+            $_SESSION['error'] = 'Failed to save file';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        $docType = $_POST['document_type'] ?? 'general';
+
+        $db->execute(
+            "INSERT INTO lead_documents (lead_id, document_type, document_name, document_path, uploaded_by, tenant_id) VALUES (?, ?, ?, ?, ?, ?)",
+            [$id, $docType, $file['name'], 'assets/uploads/lead-docs/' . $id . '/' . $safeName, $userId, TenantContext::getId()]
+        );
+
+        $_SESSION['success'] = 'Document uploaded successfully';
+        $this->redirect("/associate/leads/{$id}");
+    }
+
+    /**
+     * Delete document from lead (S348)
+     */
+    public function leadDocumentDelete($id)
+    {
+        $this->requireAuth();
+        $userId = $_SESSION['user_id'];
+
+        $db = \App\Core\Database\Database::getInstance();
+
+        // Verify ownership
+        $lead = $db->fetchOne("SELECT id FROM leads WHERE id = ? AND (assigned_to = ? OR created_by = ?) AND deleted_at IS NULL LIMIT 1", [$id, $userId, $userId]);
+        if (!$lead) {
+            $_SESSION['error'] = 'Lead not found or access denied';
+            $this->redirect('/associate/leads');
+            return;
+        }
+
+        $docId = (int)($_POST['doc_id'] ?? 0);
+        if ($docId <= 0) {
+            $_SESSION['error'] = 'Document ID required';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        $doc = $db->fetchOne("SELECT * FROM lead_documents WHERE id = ? AND lead_id = ?", [$docId, $id]);
+        if (!$doc) {
+            $_SESSION['error'] = 'Document not found';
+            $this->redirect("/associate/leads/{$id}");
+            return;
+        }
+
+        // Delete file from disk
+        $filePath = __DIR__ . '/../../../../public/' . $doc['document_path'];
+        if (file_exists($filePath)) {
+            @unlink($filePath);
+        }
+
+        $db->execute("DELETE FROM lead_documents WHERE id = ? AND lead_id = ?", [$docId, $id]);
+
+        $_SESSION['success'] = 'Document deleted';
+        $this->redirect("/associate/leads/{$id}");
     }
 
     /**
@@ -1089,7 +1231,7 @@ class CrmController extends BaseController
         }
 
         // agent_id FKs agents.id — resolve via user_id, NULL when absent (column nullable).
-        $agentRow = $db->fetchOne("SELECT id FROM agents WHERE user_id = ? LIMIT 1", [$userId]);
+        $agentRow = $db->fetchOne("SELECT id FROM agent_profiles WHERE user_id = ? LIMIT 1", [$userId]);
         $db->insert('call_logs', [
             'lead_id' => $id,
             'agent_id' => $agentRow ? $agentRow['id'] : null,

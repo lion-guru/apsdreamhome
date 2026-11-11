@@ -16,15 +16,21 @@ namespace App\Services\AI;
  */
 class RAGService
 {
+    public const MODEL_GEMINI = 'gemini-embedding-001';
+    public const MODEL_HF     = 'hf-all-MiniLM-L6-v2';
+    public const MODEL_HASH   = 'hash-placeholder-v2';
+
     use \App\Traits\ServiceTenantTrait;
 
     private static ?self $instance = null;
     private \App\Core\Database\Database $db;
     private FreeAIEngines $freeEngines;
+    private string $lastProvider = '';
+    private array $logGuards = [];
 
     private function __construct()
     {
-        $this->db = Database::getInstance();
+        $this->db = \App\Core\Database\Database::getInstance();
         $this->freeEngines = FreeAIEngines::getInstance();
     }
 
@@ -34,6 +40,84 @@ class RAGService
             self::$instance = new self();
         }
         return self::$instance;
+    }
+
+    // ------------------------------------------------------- model config
+    private function settings(): array
+    {
+        try {
+            $tid = $this->tenantId();
+            $sql = "SELECT * FROM ai_settings WHERE is_active = 1";
+            $params = [];
+            if ($tid > 1) {
+                $sql .= " AND tenant_id = ?";
+                $params[] = $tid;
+            }
+            $row = $this->db->fetch($sql . " LIMIT 1", $params) ?: [];
+        } catch (\Throwable $e) {
+            return [];
+        }
+        $row['__cfg'] = json_decode((string) ($row['settings'] ?? '{}'), true) ?: [];
+        return $row;
+    }
+
+    private function cfgValue(array $settings, string $key, string $envFallback = ''): string
+    {
+        $v = trim((string) ($settings['__cfg'][$key] ?? ''));
+        if ($v !== '') {
+            return $v;
+        }
+        $env = getenv($envFallback);
+        return is_string($env) ? trim($env) : '';
+    }
+
+    public function geminiKey(): string
+    {
+        $s = $this->settings();
+        $key = trim((string) ($s['api_key'] ?? ''));
+        if ($key !== '') {
+            return $key;
+        }
+        return $this->cfgValue($s, 'gemini_api_key', 'GEMINI_API_KEY');
+    }
+
+    public function hfKey(): string
+    {
+        $s = $this->settings();
+        return $this->cfgValue($s, 'hf_api_key', 'HF_API_KEY');
+    }
+
+    public function getEmbeddingModel(): string
+    {
+        $s = $this->settings();
+        $m = trim((string) ($s['__cfg']['rag_embedding_model'] ?? ''));
+        return $m !== '' ? $m : self::MODEL_GEMINI;
+    }
+
+    public function setEmbeddingModel(string $model): bool
+    {
+        $model = trim($model);
+        if ($model === '') {
+            return false;
+        }
+        try {
+            $s = $this->settings();
+            $cfg = $s['__cfg'] ?? [];
+            $cfg['rag_embedding_model'] = $model;
+            $this->db->execute(
+                "UPDATE ai_settings SET settings = ?, updated_at = NOW() WHERE id = 1",
+                [json_encode($cfg)]
+            );
+            return true;
+        } catch (\Throwable $e) {
+            $this->logOnce('set_model_failed', 'RAGEmbeddingService: cannot persist model: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function generateEmbedding(string $text): string
+    {
+        return $this->embed($text);
     }
 
     // ========================================================================
@@ -375,7 +459,7 @@ class RAGService
      */
     private function geminiEmbed(string $text): ?array
     {
-        $key = $this->geminiKey();
+        $key = $this->freeEngines->getGeminiKey();
         if ($key === '') {
             $this->logGuards['gemini_err'] = 'no key';
             return null;
@@ -387,7 +471,7 @@ class RAGService
         $url = "https://generativelanguage.googleapis.com/v1beta/models/{$modelId}:embedContent?key=" . urlencode($key);
         $payload = json_encode([
             'model' => 'models/' . $modelId,
-            'content' => ['parts' => [['text' => mb_substr($text, 0, 8000)]],
+            'content' => ['parts' => [['text' => mb_substr($text, 0, 8000)]]],
         ]);
 
         $ch = curl_init($url);
@@ -427,7 +511,7 @@ class RAGService
      */
     private function hfEmbed(string $text): ?array
     {
-        $key = $this->hfKey();
+        $key = $this->freeEngines->getHfKey();
         if ($key === '') {
             $this->logGuards['hf_err'] = 'no key';
             return null;
@@ -502,21 +586,51 @@ class RAGService
     public function reembedAllChunks(bool $force = false): array
     {
         $chunks = $this->db->fetchAll(
-            "SELECT id, content FROM ai_knowledge_base WHERE tenant_id = " . ($tid > 1 ? $tid : 1),
-            []
+            "SELECT id, chunk_text, embedding FROM ai_knowledge_chunks ORDER BY id"
         ) ?: [];
 
-        $count = 0;
-        foreach ($docs as $doc) {
-            $this->db->execute(
-                "DELETE FROM ai_knowledge_chunks WHERE knowledge_base_id = ?",
-                [$doc['id']]
-            );
-            $this->chunkAndEmbedDocument($doc['id'], $doc['content']);
-            $count++;
+        $done = 0; $skipped = 0; $failed = 0;
+        $seenModels = [];
+
+        foreach ($chunks as $row) {
+            $existing = json_decode((string) ($row['embedding'] ?? ''), true);
+            $existingModel = (string) ($existing['model'] ?? '');
+
+            if (!$force && $existingModel !== self::MODEL_HASH && $existingModel !== '') {
+                $skipped++;
+                continue;
+            }
+
+            try {
+                $newEmbedding = $this->embed((string) ($row['chunk_text'] ?? ''));
+                $decoded = json_decode($newEmbedding, true);
+                $model = (string) ($decoded['model'] ?? self::MODEL_HASH);
+                $seenModels[$model] = ($seenModels[$model] ?? 0) + 1;
+
+                if ($model === self::MODEL_HASH) {
+                    $failed++;
+                    continue;
+                }
+
+                $this->db->execute(
+                    "UPDATE ai_knowledge_chunks SET embedding = ? WHERE id = ?",
+                    [$newEmbedding, (int) $row['id']]
+                );
+                $done++;
+            } catch (\Throwable $e) {
+                $this->logOnce('reembed_row_' . $row['id'], 'RAGEmbeddingService: re-embed failed for chunk ' . $row['id'] . ': ' . $e->getMessage());
+                $failed++;
+            }
         }
 
-        return $count;
+        return [
+            'total' => count($chunks),
+            'reembedded' => $done,
+            'skipped' => $skipped,
+            'failed' => $failed,
+            'models_written' => $seenModels,
+            'active_provider' => $this->lastProvider,
+        ];
     }
 
     // ========================================================================
@@ -555,8 +669,8 @@ class RAGService
             'probe_dimension' => $probeDim,
             'probe_provider' => $this->lastProvider,
             'degraded' => ($probeModel === self::MODEL_HASH),
-            'gemini_key_set' => ($this->geminiKey() !== ''),
-            'hf_key_set' => ($this->hfKey() !== ''),
+            'gemini_key_set' => ($this->freeEngines->getGeminiKey() !== ''),
+            'hf_key_set' => ($this->freeEngines->getHfKey() !== ''),
             'hf_last_error' => $this->logGuards['hf_err'] ?? null,
             'gemini_last_error' => $this->logGuards['gemini_err'] ?? null,
             'stored_models' => $stored,

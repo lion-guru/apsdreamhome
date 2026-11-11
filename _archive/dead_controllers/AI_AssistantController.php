@@ -232,7 +232,7 @@ class AIAssistantController extends BaseController
                 'count' => count($properties)
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'error' => 'Failed to fetch recommendations'
@@ -267,7 +267,7 @@ class AIAssistantController extends BaseController
                 'analysis' => $analysis
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'error' => 'Analysis failed'

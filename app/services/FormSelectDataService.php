@@ -50,7 +50,7 @@ class FormSelectDataService
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FormSelectDataService::getCustomers: ' . $e->getMessage());
             return [];
         }
@@ -77,7 +77,7 @@ class FormSelectDataService
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FormSelectDataService::getAssociates: ' . $e->getMessage());
             return [];
         }
@@ -104,7 +104,7 @@ class FormSelectDataService
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FormSelectDataService::getAgents: ' . $e->getMessage());
             return [];
         }
@@ -133,7 +133,7 @@ class FormSelectDataService
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FormSelectDataService::getProperties: ' . $e->getMessage());
             return [];
         }
@@ -162,7 +162,7 @@ class FormSelectDataService
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FormSelectDataService::getPlots: ' . $e->getMessage());
             return [];
         }
@@ -183,7 +183,7 @@ class FormSelectDataService
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FormSelectDataService::getColonies: ' . $e->getMessage());
             return [];
         }
@@ -200,7 +200,7 @@ class FormSelectDataService
             $sql = "SELECT id, name FROM states" . (!empty($where) ? " WHERE " . implode(' AND ', $where) : "") . " ORDER BY name ASC";
             $stmt = $conn->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FormSelectDataService::getStates: ' . $e->getMessage());
             return [];
         }
@@ -223,7 +223,7 @@ class FormSelectDataService
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FormSelectDataService::getDistricts: ' . $e->getMessage());
             return [];
         }
@@ -250,7 +250,7 @@ class FormSelectDataService
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FormSelectDataService::getEmployees: ' . $e->getMessage());
             return [];
         }
@@ -277,7 +277,7 @@ class FormSelectDataService
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FormSelectDataService::getUsersByRole: ' . $e->getMessage());
             return [];
         }

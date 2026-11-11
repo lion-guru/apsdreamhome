@@ -90,7 +90,7 @@ class EMIAutomationService
                   . $this->tenantSql();
             $this->db->exec($sql);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("updateInstallmentStatus: " . $e->getMessage());
             return false;
         }
@@ -189,7 +189,7 @@ class EMIAutomationService
                 }
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("applyDailyPenalties: " . $e->getMessage());
             return false;
         }
@@ -268,7 +268,7 @@ class EMIAutomationService
                 }
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("sendUpcomingPaymentReminders: " . $e->getMessage());
             return false;
         }
@@ -360,7 +360,7 @@ class EMIAutomationService
                 }
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("sendDunningEmails: " . $e->getMessage());
             return false;
         }
@@ -407,7 +407,7 @@ class EMIAutomationService
                 );
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("checkDefaultedBookings: " . $e->getMessage());
             return false;
         }
@@ -457,7 +457,7 @@ class EMIAutomationService
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
             return @mail($to, $subject, $html, $headers);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("sendEmail error: " . $e->getMessage());
             return false;
         }
@@ -535,7 +535,7 @@ class EMIAutomationService
             $this->db->prepare(
                 "INSERT INTO dunning_log ({$dlCols}) VALUES ({$dlVals})"
             )->execute($dlParams);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("logDunning: " . $e->getMessage());
         }
     }

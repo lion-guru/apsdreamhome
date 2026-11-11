@@ -43,7 +43,7 @@ class PropertyController extends BaseController
                 'data' => $rows,
                 'count' => count($rows),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PropertyController::index error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Internal server error']);

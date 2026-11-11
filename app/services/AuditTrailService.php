@@ -62,7 +62,7 @@ class AuditTrailService
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
             $this->database->getConnection()->exec($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AuditTrailService table creation error (non-critical): " . $e->getMessage());
         }
     }
@@ -106,7 +106,7 @@ class AuditTrailService
 
             return (int)$this->database->lastInsertId();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Audit log error: " . $e->getMessage());
             return 0;
         }
@@ -148,7 +148,7 @@ class AuditTrailService
 
             return (int)$this->database->lastInsertId();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Audit log error: " . $e->getMessage());
             return 0;
         }

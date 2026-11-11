@@ -176,7 +176,7 @@ $stmt = $this->database->prepare("
             $stmt->execute();
             return $stmt->fetchAll();
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -230,7 +230,7 @@ $stmt = $this->database->prepare("
             
             return $recommendations;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -261,7 +261,7 @@ $stmt = $this->database->prepare("
             
             return true;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

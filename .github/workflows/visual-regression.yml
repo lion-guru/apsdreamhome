@@ -17,7 +17,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      BASE_URL: http://localhost:8000/apsdreamhome
+      BASE_URL: http://localhost:8000
+
+    services:
+      mysql:
+        image: mariadb:10.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: apsdreamhome
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -25,11 +35,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql, mbstring, json, curl, openssl, zip, gd
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
+
+      - name: Import database schema
+        run: mysql -h 127.0.0.1 -u root -proot < database/schema.sql 2>/dev/null || true
 
       - name: Install dependencies
         run: npm ci
@@ -40,10 +59,24 @@ jobs:
         working-directory: ${{ github.workspace }}
 
       - name: Start PHP server
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: apsdreamhome
+          DB_USERNAME: root
+          DB_PASSWORD: root
+          BASE_URL: http://localhost:8000
         run: |
-          php -S 0.0.0.0:8000 -t public &
+          php -S 0.0.0.0:8000 -t public public/router.php &
           sleep 5
-          curl -f http://localhost:8000/apsdreamhome || exit 1
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/)
+          if echo "$HTTP_CODE" | grep -qE "200|301|302"; then
+            echo "PHP server is running (HTTP $HTTP_CODE)"
+          else
+            echo "PHP server health check failed (HTTP $HTTP_CODE)"
+            curl -v http://localhost:8000/ || true
+            exit 1
+          fi
 
       - name: Run visual regression tests
         id: visual-test

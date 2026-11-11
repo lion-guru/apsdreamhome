@@ -58,7 +58,7 @@ class LandmarksApiController extends BaseApiController
                     'count' => count($landmarks),
                     'landmarks' => $landmarks,
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[LandmarksApiController::nearby] ' . $e->getMessage());
                 return $this->jsonResponse(['success' => false, 'error' => 'Failed to fetch landmarks'], 500);
             }
@@ -110,7 +110,7 @@ class LandmarksApiController extends BaseApiController
                     'count' => count($landmarks),
                     'landmarks' => $landmarks,
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[LandmarksApiController::nearby] ' . $e->getMessage());
                 return $this->jsonResponse(['success' => false, 'error' => 'Failed to fetch landmarks'], 500);
             }
@@ -161,7 +161,7 @@ class LandmarksApiController extends BaseApiController
                 'count' => count($landmarks),
                 'landmarks' => $landmarks,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[LandmarksApiController::list] ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Failed to fetch landmarks'], 500);
         }
@@ -186,7 +186,7 @@ class LandmarksApiController extends BaseApiController
                 'success' => true,
                 'types' => $types,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[LandmarksApiController::types] ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Failed to fetch types'], 500);
         }
@@ -253,7 +253,7 @@ class LandmarksApiController extends BaseApiController
                 'by_type' => $grouped,
                 'landmarks' => $landmarks,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[LandmarksApiController::byColony] ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Failed to fetch landmarks'], 500);
         }

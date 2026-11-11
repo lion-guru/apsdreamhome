@@ -36,14 +36,13 @@ class BonanzaController extends BaseController
                 "SELECT * FROM sales_races WHERE is_active = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()" . $tSql . " ORDER BY end_date ASC",
                 $tParams
             ) ?: [];
-            // my associate_id for progress mapping
-            $assoc = $db->fetchOne("SELECT id FROM associates WHERE user_id = ? LIMIT 1", [$userId]);
-            $myAssocId = (int)($assoc['id'] ?? 0);
+            // progress mapping via plot_bookings.user_id (unified identity)
+            $myAssocId = (int)$userId;
             foreach ($races as $race) {
                 $mine = 0;
                 if ($myAssocId > 0) {
                     $mine = (int)($db->fetchOne(
-                        "SELECT COUNT(*) c FROM plot_bookings WHERE associate_id = ? AND status != 'cancelled'
+                        "SELECT COUNT(*) c FROM plot_bookings WHERE user_id = ? AND status != 'cancelled'
                          AND DATE(COALESCE(booking_date, created_at)) BETWEEN ? AND ?",
                         [$myAssocId, $race['start_date'], $race['end_date']]
                     )['c'] ?? 0);

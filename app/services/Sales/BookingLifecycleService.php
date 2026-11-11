@@ -241,9 +241,16 @@ class BookingLifecycleService
             try {
                 if (!empty($data['associate_id'])) {
                     $associateId = (int)$data['associate_id'];
-                    $stmt = $this->db->prepare("SELECT u.id, u.name, a.agent_type FROM users u JOIN associates a ON a.user_id=u.id WHERE a.id=? LIMIT 1");
-                    $stmt->execute([$associateId]);
+                    // Profile-first (OR 3-way id-space), legacy fallback for profile-less rows (dual-read)
+                    $stmt = $this->db->prepare("SELECT u.id, u.name, ap.agent_type AS agent_type FROM associate_profiles ap LEFT JOIN users u ON u.id = ap.user_id WHERE (ap.legacy_id = ? OR ap.user_id = ? OR ap.id = ?) LIMIT 1");
+                    $stmt->execute([$associateId, $associateId, $associateId]);
                     $agent = $stmt->fetch(\PDO::FETCH_ASSOC);
+                    if (!$agent) {
+                        // Fallback to legacy associates table (pending decommission)
+                        $stmt = $this->db->prepare("SELECT u.id, u.name, ap.agent_type AS agent_type FROM users u LEFT JOIN associate_profiles ap ON ap.user_id = u.id WHERE u.id = ? LIMIT 1");
+                        $stmt->execute([$associateId]);
+                        $agent = $stmt->fetch(\PDO::FETCH_ASSOC);
+                    }
                     if ($agent && ($agent['agent_type'] ?? '') === 'salaried') {
                         // Check if structure exists
                         $check = $this->db->prepare("SELECT id FROM salaried_agent_structures WHERE user_id=? AND effective_to IS NULL");
@@ -297,8 +304,9 @@ class BookingLifecycleService
                                 $default['remarks'],
                                 $this->tid() ?? 1,
                             ]);
-                            // Mark associate as salary-eligible
+                            // Mark associate as salary-eligible (dual-write: legacy + profile)
                             $pdo->prepare("UPDATE associates SET agent_type='salaried' WHERE id=?")->execute([$associateId]);
+                            try { $pdo->prepare("UPDATE associate_profiles SET agent_type='salaried' WHERE legacy_id = ? OR user_id = ? OR id = ?")->execute([$associateId, $associateId, $associateId]); } catch (\Throwable $e) {}
                             error_log('[BookingLifecycleService] Auto-created salary structure for user ' . $agent['id'] . ' on first booking');
                         }
                     }
@@ -466,13 +474,14 @@ class BookingLifecycleService
                             c.name AS colony_name, c.slug AS colony_slug,
                             u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone,
                             sm.name AS sales_manager_name,
-                            a.name AS associate_name, a.referral_code
+                            ua.name AS associate_name, ap.referral_code AS referral_code
                      FROM plot_bookings pb
                      LEFT JOIN plots p ON p.id = pb.plot_id
                      LEFT JOIN colonies c ON c.id = p.colony_id
                      LEFT JOIN users u ON u.id = pb.customer_id
                      LEFT JOIN users sm ON sm.id = pb.sales_manager_id
-                     LEFT JOIN associates a ON a.id = pb.associate_id
+                     LEFT JOIN associate_profiles ap ON ap.legacy_id = pb.associate_id OR ap.user_id = pb.associate_id OR ap.id = pb.associate_id
+                     LEFT JOIN users ua ON ua.id = ap.user_id
                      WHERE pb.id = ?";
             $params = [$id];
             if ($tid = $this->tid()) { $sql .= " AND pb.tenant_id = ?"; $params[] = $tid; }
@@ -952,7 +961,7 @@ class BookingLifecycleService
 
             // Send cancellation notification (email + SMS + push)
             try {
-                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc = new \App\Services\Communication\EmailService();
                 $emailSvc->sendBookingCancellation((int)$booking['customer_id'], [
                     'booking_number' => $booking['booking_number'] ?? '',
                     'plot_number' => $booking['plot_number'] ?? '',
@@ -1275,7 +1284,7 @@ class BookingLifecycleService
                         }
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[BookingLifecycleService::calculateCommission] DailyCappingService error: ' . $e->getMessage());
             }
 

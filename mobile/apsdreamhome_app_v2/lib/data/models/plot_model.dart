@@ -267,6 +267,32 @@ class PlotModel {
     }
   }
 
+  /// High-definition plot & township image based on colony & plot orientation
+  String get plotHeroImage {
+    final cid = int.tryParse(colonyId) ?? 1;
+    const plotPhotos = {
+      1: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80', // Suryoday plot view
+      2: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80', // Braj Radha plot view
+      3: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80', // Raghunath plot view
+      4: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80', // Budh Bihar plot view
+      5: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80', // Awadh Vihar plot view
+      6: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80', // Chandra Green plot view
+      7: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80', // Shivpuri plot view
+    };
+    return plotPhotos[cid] ?? 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80';
+  }
+
+  /// Formatted Price String (e.g. ₹14.50 L or ₹1.25 Cr)
+  String get formattedPrice {
+    final price = finalPrice ?? totalPrice;
+    if (price >= 10000000) {
+      return '₹${(price / 10000000).toStringAsFixed(2)} Cr';
+    } else if (price >= 100000) {
+      return '₹${(price / 100000).toStringAsFixed(2)} L';
+    }
+    return '₹${price.toStringAsFixed(0)}';
+  }
+
   // Compatibility getters
   List<String> get images => documents?.cast<String>() ?? const [];
 }

@@ -53,7 +53,7 @@ class CRMService
                 [$role]
             );
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->getDefaultStages();
         }
     }
@@ -168,7 +168,7 @@ class CRMService
                 'per_page' => $perPage,
                 'total_pages' => (int)ceil($total / $perPage),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::getLeads error: ' . $e->getMessage());
             return ['leads' => [], 'total' => 0, 'page' => 1, 'per_page' => 25, 'total_pages' => 0];
         }
@@ -195,7 +195,7 @@ class CRMService
             $lead['source_details'] = $this->getLeadSourceDetails($id);
             $lead['score_history'] = $this->getLeadScoreHistory($id);
             return $lead;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::getLeadById error: ' . $e->getMessage());
             return null;
         }
@@ -299,7 +299,7 @@ try {
                 try {
                     $routingService = new LeadRoutingService();
                     $routingService->routeLead($leadId);
-                } catch (\Exception $routeEx) {
+                } catch (\Throwable $routeEx) {
                     error_log('CRMService::createLead routing error: ' . $routeEx->getMessage());
                 }
             }
@@ -314,7 +314,7 @@ try {
             }
 
             return ['success' => true, 'lead_id' => $leadId, 'lead_number' => $leadNumber];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::createLead error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -343,7 +343,7 @@ try {
 
             $this->db->query("UPDATE leads SET " . implode(', ', $fields) . " WHERE $whereClause", $params);
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::updateLead error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -364,7 +364,7 @@ try {
             $params = array_merge($params, $tParams);
             $this->db->query("UPDATE leads SET deleted_at = NOW() WHERE $where", $params);
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -377,7 +377,7 @@ try {
             $params = array_merge($params, $tParams);
             $this->db->query("UPDATE leads SET deleted_at = NULL WHERE $where", $params);
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -426,7 +426,7 @@ try {
                 'per_page' => $perPage,
                 'total_pages' => $totalPages,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::getDeletedLeads error: ' . $e->getMessage());
             return ['leads' => [], 'total' => 0, 'page' => 1, 'per_page' => 25, 'total_pages' => 1];
         }
@@ -439,7 +439,7 @@ try {
             if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
             $this->db->query("DELETE FROM leads WHERE $where", $params);
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -473,7 +473,7 @@ try {
                      LEFT JOIN users u ON u.id = l.assigned_to
                      WHERE $whereClause
                      ORDER BY l.lead_score DESC, l.created_at ASC
-                     LIMIT 100",
+                     LIMIT 25",
                     $params
                 );
                 $leads = $stmt->fetchAll() ?: [];
@@ -487,7 +487,7 @@ try {
             }
 
             return $board;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::getPipelineBoard error: ' . $e->getMessage());
             return [];
         }
@@ -509,7 +509,7 @@ try {
             ]);
 
             return ['success' => true, 'old_status' => $old['status'], 'new_status' => $newStatus];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -547,7 +547,7 @@ try {
             $this->recalculateScore($leadId);
 
             return ['success' => true, 'interaction_id' => $this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::addInteraction error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -568,7 +568,7 @@ try {
                 $params
             );
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -588,7 +588,7 @@ try {
                 $params
             );
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -617,7 +617,7 @@ try {
                 $params
             );
             return ['success' => true, 'task_id' => $this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -635,7 +635,7 @@ try {
                 $params
             );
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -667,7 +667,7 @@ try {
                 $params
             );
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -682,7 +682,7 @@ try {
                 array_merge([$notes], $params)
             );
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -708,7 +708,7 @@ try {
                 $params
             );
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -732,7 +732,7 @@ try {
             ]);
 
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -750,7 +750,7 @@ try {
                 "INSERT INTO crm_assignments ($cols) VALUES ($vals)",
                 $params
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::logAssignment error: ' . $e->getMessage());
         }
     }
@@ -771,7 +771,7 @@ try {
                 $params
             );
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -818,7 +818,7 @@ try {
             }
 
             return ['success' => true, 'assigned' => $assigned];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -900,7 +900,7 @@ try {
             );
 
             return $score;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::recalculateScore error: ' . $e->getMessage());
             return 0;
         }
@@ -918,7 +918,7 @@ try {
                 $count++;
             }
             return ['success' => true, 'scored' => $count];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -932,7 +932,7 @@ try {
                 $params
             );
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -962,7 +962,7 @@ try {
                 $params
             );
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::addSourceDetail error: ' . $e->getMessage());
             return ['success' => false];
         }
@@ -979,7 +979,7 @@ try {
                 [$leadId]
             );
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -1084,7 +1084,7 @@ try {
             ) ?: [];
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::getDashboardStats error: ' . $e->getMessage());
             return [];
         }
@@ -1098,7 +1098,7 @@ try {
             if ($tid = $this->tid()) { $where = " WHERE tenant_id = ?"; $params[] = $tid; }
             $stmt = $this->db->query("SELECT * FROM crm_campaigns $where ORDER BY created_at DESC", $params);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -1126,7 +1126,7 @@ try {
                 $params
             );
             return ['success' => true, 'campaign_id' => $this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1139,7 +1139,7 @@ try {
             if ($tid = $this->tid()) { $where = " WHERE tenant_id = ?"; $params[] = $tid; }
             $stmt = $this->db->query("SELECT * FROM crm_lead_forms $where ORDER BY created_at DESC", $params);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -1219,7 +1219,7 @@ try {
                 'lead_number' => $leadResult['lead_number'],
                 'message' => $form['thank_you_message'],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::submitForm error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -1266,7 +1266,7 @@ try {
                     array_merge([$leadNum, $name, $phone, $email, $source, $budget, $userId, $userId], $tid ? [$tid] : [])
                 );
                 $imported++;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $errors[] = "Row " . ($idx + 1) . ": " . $e->getMessage();
             }
         }
@@ -1376,7 +1376,7 @@ try {
             );
             $dealId = $this->db->lastInsertId();
             return ['success' => true, 'deal_id' => (int)$dealId, 'message' => 'Deal created'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::createDeal error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -1406,7 +1406,7 @@ try {
         try {
             $this->db->query("UPDATE lead_deals SET " . implode(', ', $sets) . " WHERE id = ?", $params);
             return ['success' => true, 'message' => 'Deal updated'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1421,7 +1421,7 @@ try {
                 $this->db->query("UPDATE lead_deals SET closed_at = NOW() WHERE id = ?", [$id]);
             }
             return ['success' => true, 'message' => "Deal moved to $stage"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1433,7 +1433,7 @@ try {
             if ($tid = $this->tid()) { $where .= " AND tenant_id = ?"; $params[] = $tid; }
             $this->db->query("DELETE FROM lead_deals WHERE $where", $params);
             return ['success' => true, 'message' => 'Deal deleted'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1462,7 +1462,7 @@ try {
                 'weighted_pipeline_value' => $weightedValue,
                 'total_deals' => array_sum(array_column($stages, 'count')),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['stages' => [], 'total_pipeline_value' => 0, 'weighted_pipeline_value' => 0, 'total_deals' => 0];
         }
     }
@@ -1502,7 +1502,7 @@ try {
                 $interactionCount = (int)$this->db->query(
                     "SELECT COUNT(*) FROM crm_interactions WHERE $icWhere", $icParams
                 )->fetchColumn();
-            } catch (\Exception $e) { error_log($e->getMessage()); }
+            } catch (\Throwable $e) { error_log($e->getMessage()); }
             $engagementScore = min(25, $interactionCount * 5);
             $breakdown['engagement'] = ['score' => $engagementScore, 'max' => 25, 'label' => "Interactions: $interactionCount"];
 
@@ -1533,7 +1533,7 @@ try {
                 'breakdown' => $breakdown,
                 'grade' => $totalScore >= 80 ? 'S' : ($totalScore >= 65 ? 'A' : ($totalScore >= 50 ? 'B' : ($totalScore >= 30 ? 'C' : 'D'))),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['error' => $e->getMessage()];
         }
     }
@@ -1565,7 +1565,7 @@ try {
             );
 
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -1586,7 +1586,7 @@ try {
                 "SELECT COUNT(*) FROM crm_tasks t WHERE $where",
                 $params
             )->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -1622,7 +1622,7 @@ try {
                 array_merge($params, $leadIds, $tenantParams)
             );
             return ['success' => true, 'updated' => count($leadIds)];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1669,7 +1669,7 @@ try {
                 'budget' => $budget,
                 'commission_by_rank' => $results,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['error' => $e->getMessage()];
         }
     }
@@ -1708,7 +1708,7 @@ try {
             $this->recalculateScore($leadId);
             
             return ['success' => true, 'activity_id' => $this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::logActivity error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -1758,7 +1758,7 @@ try {
             });
 
             return array_slice($all, 0, $limit);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::getLeadTimeline error: ' . $e->getMessage());
             return [];
         }
@@ -1804,7 +1804,7 @@ try {
             }
             
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1837,7 +1837,7 @@ try {
             ) ?: [];
             
             return ['won' => $won, 'lost' => $lost];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['won' => [], 'lost' => []];
         }
     }
@@ -1911,7 +1911,7 @@ try {
                 'forecast' => $forecast,
                 'avg_monthly_close' => $avgMonthlyClose,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['weighted_pipeline' => 0, 'by_stage' => [], 'monthly_trend' => [], 'forecast' => []];
         }
     }
@@ -1939,7 +1939,7 @@ try {
                 $seg['lead_count'] = (int)$this->db->fetchOne("SELECT COUNT(*) as cnt FROM leads WHERE " . implode(' AND ', $where), $params)['cnt'] ?? 0;
             }
             return $segments;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -1956,7 +1956,7 @@ try {
                 $params
             );
             return ['success' => true, 'segment_id' => $this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1984,7 +1984,7 @@ try {
                 array_merge($params, [$limit])
             );
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -2013,7 +2013,7 @@ try {
             }
 
             return ['sources' => $sources, 'period_days' => $days];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['sources' => [], 'period_days' => $days];
         }
     }
@@ -2039,7 +2039,7 @@ try {
             }
 
             return ['funnel' => $funnel, 'total_leads' => $total];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['funnel' => [], 'total_leads' => 0];
         }
     }
@@ -2071,7 +2071,7 @@ try {
             }
 
             return $performance;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -2116,7 +2116,7 @@ try {
             }
 
             return $duplicates;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::findDuplicates error: ' . $e->getMessage());
             return [];
         }
@@ -2202,7 +2202,7 @@ try {
                 'removed' => $remove['name'] ?? "Lead #$removeId",
                 'fields_merged' => array_keys($updates),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::mergeLeads error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -2360,7 +2360,7 @@ try {
             ) ?: [];
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CRMService::getRoleDashboardData error: ' . $e->getMessage());
             return ['role' => $role, 'error' => $e->getMessage()];
         }

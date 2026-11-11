@@ -177,13 +177,13 @@ class DailyOperationsService
 
     public function getPendingLeaves()
     {
-        // employee_leave_requests.employee_id FK -> employees.id (never users.id)
-        return $this->fetchAll("SELECT lr.*,u.name AS employee_name FROM employee_leave_requests lr LEFT JOIN employees e ON lr.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id{$this->tJoin('u')} WHERE lr.status='pending' ORDER BY lr.created_at DESC", $this->tVal());
+        // employee_leave_requests.employee_id FK -> employees.id (never users.id) — profile OR covers legacy_id
+        return $this->fetchAll("SELECT lr.*,u.name AS employee_name FROM employee_leave_requests lr LEFT JOIN employee_profiles ep ON ep.legacy_id = lr.employee_id OR ep.user_id = lr.employee_id OR ep.id = lr.employee_id LEFT JOIN users u ON u.id = ep.user_id{$this->tJoin('u')} WHERE lr.status='pending' ORDER BY lr.created_at DESC", $this->tVal());
     }
 
     public function getAllLeaves($status = '')
     {
-        $sql = "SELECT lr.*,u.name AS employee_name,a.name AS approver_name FROM employee_leave_requests lr LEFT JOIN employees e ON lr.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id{$this->tJoin('u')} LEFT JOIN users a ON lr.approved_by=a.id{$this->tJoin('a')}";
+        $sql = "SELECT lr.*,u.name AS employee_name,a.name AS approver_name FROM employee_leave_requests lr LEFT JOIN employee_profiles ep ON ep.legacy_id = lr.employee_id OR ep.user_id = lr.employee_id OR ep.id = lr.employee_id LEFT JOIN users u ON u.id = ep.user_id{$this->tJoin('u')} LEFT JOIN users a ON lr.approved_by=a.id{$this->tJoin('a')}";
         $params = array_merge($this->tVal(), $this->tVal());
         if ($status) { $sql .= " WHERE lr.status=?"; $params[] = $status; }
         $sql .= " ORDER BY lr.created_at DESC";
@@ -203,10 +203,12 @@ class DailyOperationsService
         $emp = $this->fetchOne("SELECT * FROM users WHERE id=?{$this->tEnd()}", array_merge([$employeeId], $this->tVal()));
         if (!$emp) return ['error' => 'Employee not found'];
 
-        $empExt = $this->fetchOne("SELECT * FROM employees WHERE user_id=?", [$employeeId]);
-        if (!$empExt) return ['error' => 'Employee details not found in employees table'];
-
-        $empTableId = (int)$empExt['id'];
+        $empExt = $this->fetchOne("SELECT * FROM employee_profiles WHERE user_id = ?", [$employeeId]);
+        if (!$empExt) {
+            $empExt = $this->fetchOne("SELECT * FROM employees WHERE user_id = ?", [$employeeId]);
+        }
+        if (!$empExt) return ['error' => 'Employee details not found'];
+        $empTableId = (int)($empExt['legacy_id'] ?? $empExt['id'] ?? 0);
         $ctc = isset($empExt['salary']) ? (float)$empExt['salary'] : 50000.0;
 
         // Prefer the approved salary_structures row when one exists (either id
@@ -298,14 +300,18 @@ class DailyOperationsService
 
     public function getPayslipHistory($employeeId)
     {
-        $empExt = $this->fetchOne("SELECT id FROM employees WHERE user_id=?", [$employeeId]);
+        // payslips.employee_id canonical space = employees.id (legacy) — profile bridge gives legacy_id
+        $empExt = $this->fetchOne("SELECT legacy_id AS id FROM employee_profiles WHERE user_id = ?", [$employeeId]);
+        if (!$empExt) {
+            $empExt = $this->fetchOne("SELECT id FROM employees WHERE user_id = ?", [$employeeId]);
+        }
         if (!$empExt) return [];
         return $this->fetchAll("SELECT * FROM employee_payslips WHERE employee_id=?" . $this->tenantSql() . " ORDER BY period_year DESC,period_month DESC", array_merge([$empExt['id']], $this->tVal()));
     }
 
     public function getAllPayslips($month = '', $year = '')
     {
-        $sql = "SELECT ep.*,u.name AS employee_name FROM employee_payslips ep LEFT JOIN employees e ON ep.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id{$this->tJoin('u')} WHERE 1=1" . $this->tEnd();
+        $sql = "SELECT ep.*,u.name AS employee_name FROM employee_payslips ep LEFT JOIN employee_profiles epp ON epp.legacy_id = ep.employee_id OR epp.user_id = ep.employee_id OR epp.id = ep.employee_id LEFT JOIN users u ON u.id = epp.user_id{$this->tJoin('u')} WHERE 1=1" . $this->tEnd();
         $params = $this->tVal();
         if ($month && $year) { $sql .= " AND ep.period_month=? AND ep.period_year=?"; $params[] = $month; $params[] = $year; }
         $sql .= " ORDER BY ep.period_year DESC,ep.period_month DESC,u.name";
@@ -314,7 +320,7 @@ class DailyOperationsService
 
     public function getPayslipById($id)
     {
-        return $this->fetchOne("SELECT ep.*,u.name AS employee_name,u.email AS employee_email FROM employee_payslips ep LEFT JOIN employees e ON ep.employee_id=e.id LEFT JOIN users u ON e.user_id=u.id{$this->tJoin('u')} WHERE ep.id=?" . $this->tEnd(), array_merge($this->tVal(), [$id]));
+        return $this->fetchOne("SELECT ep.*,u.name AS employee_name,u.email AS employee_email FROM employee_payslips ep LEFT JOIN employee_profiles epp ON epp.legacy_id = ep.employee_id OR epp.user_id = ep.employee_id OR epp.id = ep.employee_id LEFT JOIN users u ON u.id = epp.user_id{$this->tJoin('u')} WHERE ep.id=?" . $this->tEnd(), array_merge($this->tVal(), [$id]));
     }
 
     public function payPayslip($payslipId, $paymentMode, $bankAccountId = null)

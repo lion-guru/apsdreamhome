@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../core/services/api_service.dart';
 
 /// GPS Site Visit Tracking Page
@@ -153,7 +156,7 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
 
   Future<void> _stopTracking() async {
     _locationTimer?.cancel();
-    
+
     if (_visitId != null) {
       try {
         await ApiService().completeSiteVisit(visitId: _visitId!);
@@ -166,9 +169,116 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
       _trackingActive = false;
       _statusMessage = '🏁 Visit completed';
     });
-    
+
     if (mounted) {
       Navigator.pop(context, true);
+    }
+  }
+
+  // AI visit confirmation: capture photos + optional feedback, backend
+  // analyzes photos via Gemini Vision, stores evidence, advances lead.
+  Future<void> _confirmWithPhotos() async {
+    if (_visitId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No active visit to confirm')),
+      );
+      return;
+    }
+
+    final picker = ImagePicker();
+    final images = await picker.pickMultiImage(
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 80,
+    );
+    if (images.isEmpty) return;
+    if (!mounted) return;
+
+    setState(() => _isLoading = true);
+    final feedbackController = TextEditingController();
+    try {
+      final photos = <Map<String, dynamic>>[];
+      for (final img in images.take(5)) {
+        final bytes = await File(img.path).readAsBytes();
+        photos.add({
+          'image_base64': base64Encode(bytes),
+          'mime_type': 'image/jpeg',
+        });
+      }
+
+      if (mounted) {
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: const Text('Confirm Visit'),
+            content: TextField(
+              controller: feedbackController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'Feedback',
+                hintText: 'Observations from the visit...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(dialogContext, true),
+                child: const Text('Submit with Photos'),
+              ),
+            ],
+          ),
+        );
+        if (confirmed != true) {
+          feedbackController.dispose();
+          setState(() => _isLoading = false);
+          return;
+        }
+      }
+
+      final api = ApiService();
+      final response = await api.post('/ai/visit-confirm', data: {
+        'visit_id': _visitId,
+        'photos': photos,
+        'feedback': feedbackController.text.trim(),
+      });
+      feedbackController.dispose();
+
+      if (!mounted) return;
+      if (response['success'] == true) {
+        final data = response['data'] ?? {};
+        final count = (data['photos_uploaded'] ?? 0).toString();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Visit confirmed with $count photo(s)'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _locationTimer?.cancel();
+        setState(() {
+          _trackingActive = false;
+          _statusMessage = '🏁 Visit completed with photos';
+        });
+      } else {
+        final err = response['error'] as String?;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(err ?? 'Visit confirmation failed'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -239,7 +349,7 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
               ),
             if (_isLoading)
               const CircularProgressIndicator(color: Colors.green),
-            if (_trackingActive)
+            if (_trackingActive) ...[
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -254,6 +364,24 @@ class _SiteVisitPageState extends State<SiteVisitPage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: OutlinedButton.icon(
+                  onPressed: _isLoading ? null : _confirmWithPhotos,
+                  icon: const Icon(Icons.camera_alt, color: Colors.purple),
+                  label: const Text(
+                    'Confirm with AI Photos',
+                    style: TextStyle(color: Colors.purple),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.purple),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

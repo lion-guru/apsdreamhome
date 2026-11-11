@@ -423,7 +423,7 @@ class ReportController extends AdminController
                 );
                 $stmt->execute([$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
                 $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $users = [];
             }
 
@@ -485,7 +485,7 @@ class ReportController extends AdminController
             } else {
                 $this->setFlash('error', 'Failed to unschedule report');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         header('Location: ' . BASE_URL . '/reports/scheduled');

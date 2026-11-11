@@ -210,9 +210,7 @@ class SalaryIncentiveService
 
             foreach ($grants as $grant) {
                 // Check if agent is still active
-                $stmt = $this->pdo->prepare("SELECT status FROM associates WHERE user_id = ? LIMIT 1");
-                $stmt->execute([$grant['user_id']]);
-                $status = $stmt->fetchColumn();
+                $status = (new \App\Services\IdentityService())->getAssociateStatus((int)$grant['user_id']);
 
                 if ($status !== 'active') {
                     $results['errors'][] = "User {$grant['user_id']} is not active (status: $status)";

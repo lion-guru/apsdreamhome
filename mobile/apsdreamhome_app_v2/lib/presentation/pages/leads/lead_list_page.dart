@@ -10,6 +10,7 @@ import '../../providers/lead_provider.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/status_badge.dart';
 import '../../widgets/voice_lead_dialog.dart';
+import '../../widgets/ai/ai_score_badge.dart';
 import 'lead_details_sheet.dart';
 
 class LeadListPage extends ConsumerStatefulWidget {
@@ -329,6 +330,12 @@ class LeadCard extends StatelessWidget {
                   StatusBadge(
                     status: lead.status ?? '',
                     color: _getStatusColor(lead.status ?? ''),
+                  ),
+                  const SizedBox(width: 8),
+                  AIScoreBadge(
+                    score: lead.aiScore,
+                    showLabel: true,
+                    size: AIScoreBadgeSize.small,
                   ),
                 ],
               ),

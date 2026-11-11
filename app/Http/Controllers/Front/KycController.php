@@ -111,6 +111,30 @@ class KycController extends BaseController
         } catch (\Throwable $e) {
             $this->json(['success' => false, 'error' => 'Could not save KYC: ' . $e->getMessage()], 500);
         }
+
+        // Best-effort OCR pre-check (never blocks submit): register docs + extract fields
+        try {
+            $ocr = new \App\Services\OcrService($this->db);
+            foreach (['pan_document' => 'pan', 'aadhaar_front_document' => 'aadhar'] as $field => $docType) {
+                $filePath = $documents[$field] ?? '';
+                if (!$filePath) continue;
+                $absPath = 'C:/xampp/htdocs/apsdreamhome/' . $filePath;
+                $fileSize = @filesize($absPath) ?: 0;
+                $stmt = $this->db->prepare("INSERT INTO ocr_documents (file_name, file_path, original_name, file_size, mime_type, document_type, uploaded_by, ocr_status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')");
+                $stmt->execute([
+                    basename($filePath),
+                    $filePath,
+                    basename($filePath),
+                    $fileSize,
+                    'application/octet-stream',
+                    $docType,
+                    $userId,
+                ]);
+                $ocr->processDocument((int) $this->db->lastInsertId());
+            }
+        } catch (\Throwable $e) {
+            error_log('KYC OCR pre-check skipped: ' . $e->getMessage());
+        }
     }
 
     private function fetchUser(int $userId): ?array

@@ -88,7 +88,7 @@ class ComprehensiveTestRunner
             $version = $pdo->query("SELECT VERSION()")->fetchColumn();
             echo "   ✓ MySQL Version: $version\n";
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->fail('Database Connection', $e->getMessage());
         }
     }
@@ -126,7 +126,7 @@ class ComprehensiveTestRunner
                 
                 echo "   ✓ Table '$table' exists ($count rows)\n";
                 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $corruptTables[] = "$table: " . $e->getMessage();
             }
         }
@@ -173,7 +173,7 @@ class ComprehensiveTestRunner
                 } else {
                     echo "   ✓ FK: {$constraint['table']}.{$constraint['column']} →' {$constraint['references']}\n";
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $brokenConstraints[] = "{$constraint['table']}: " . $e->getMessage();
             }
         }
@@ -255,7 +255,7 @@ class ComprehensiveTestRunner
                         echo "   ✗ {$test['service']}::{$test['method']} NOT FOUND\n";
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $failedMethods[] = "{$test['service']}: " . $e->getMessage();
             }
         }
@@ -474,7 +474,7 @@ class ComprehensiveTestRunner
                 } else {
                     echo "   ✓ $name: {$time}ms\n";
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 echo "   ✗ $name: ERROR - " . $e->getMessage() . "\n";
             }
         }
@@ -513,7 +513,7 @@ class ComprehensiveTestRunner
             // Cleanup
             $cacheService->delete($testKey);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->fail('Cache Configuration', $e->getMessage());
         }
     }
@@ -542,7 +542,7 @@ class ComprehensiveTestRunner
                 $this->warning('Payment Gateway', 'Order creation failed: ' . $result['error']);
             }
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->warning('Payment Gateway', $e->getMessage());
         }
     }
@@ -580,7 +580,7 @@ class ComprehensiveTestRunner
                 $this->warning('Notification Channels', 'Some templates missing');
             }
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->warning('Notification Channels', $e->getMessage());
         }
     }

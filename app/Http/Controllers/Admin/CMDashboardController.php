@@ -79,7 +79,7 @@ class CMDashboardController extends AdminController
             $stats['performance_score'] = $this->calculatePerformanceScore();
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CM Stats Error: " . $e->getMessage());
             return [
                 'team_size' => 0,
@@ -108,7 +108,7 @@ class CMDashboardController extends AdminController
             ");
             $stmt->execute();
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Team Performance Error: " . $e->getMessage());
             return [];
         }
@@ -129,7 +129,7 @@ class CMDashboardController extends AdminController
             ");
             $stmt->execute();
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Recent Activities Error: " . $e->getMessage());
             return [];
         }
@@ -149,7 +149,7 @@ class CMDashboardController extends AdminController
             ");
             $stmt->execute();
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Projects Overview Error: " . $e->getMessage());
             return [];
         }
@@ -185,7 +185,7 @@ class CMDashboardController extends AdminController
             $score = $salesScore + $conversionScore + $baseScore;
 
             return round($score, 1);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Performance Score Error: " . $e->getMessage());
             return 0;
         }
@@ -234,7 +234,7 @@ class CMDashboardController extends AdminController
     /**
      * JSON response helper
      */
-    public function jsonResponse($data, $status = 200)
+    public function jsonResponse($data, int $status = 200): void
     {
         header('Content-Type: application/json');
         http_response_code($status);

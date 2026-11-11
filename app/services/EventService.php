@@ -422,7 +422,7 @@ class EventService
     {
         try {
             $handler($payload, $metadata);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Event handler failed for '{$eventName}': " . $e->getMessage());
         }
     }
@@ -435,7 +435,7 @@ class EventService
         foreach ($this->eventTransformers as $transformer) {
             try {
                 $event = $transformer['transformer']($event);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Event transformer {$transformer['id']} failed: " . $e->getMessage());
             }
         }
@@ -454,7 +454,7 @@ class EventService
                 if ($result === false) {
                     return false; // Middleware stopped propagation
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Event middleware {$middleware['id']} failed: " . $e->getMessage());
             }
         }

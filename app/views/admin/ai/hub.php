@@ -729,10 +729,10 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
         if (!el) return;
         el.dataset.loaded = '';
         el.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Checking services...</p></div>';
-        fetch('<?= BASE_URL ?>/admin/ai-calling/health', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        fetch('<?= BASE_URL ?>/api/ai-calling/health', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
             .then(function(r) { return r.text(); })
             .then(function(html) { el.innerHTML = extractContent(html); el.dataset.loaded = '1'; })
-            .catch(function() { el.innerHTML = '<div class="alert alert-danger">Health check failed. <a href="<?= BASE_URL ?>/admin/ai-calling/health" target="_blank">Open directly</a></div>'; el.dataset.loaded = '1'; });
+            .catch(function() { el.innerHTML = '<div class="alert alert-danger">Health check failed. <a href="<?= BASE_URL ?>/api/ai-calling/health" target="_blank">Open directly</a></div>'; el.dataset.loaded = '1'; });
     }
 
     function extractContent(html) {

@@ -77,7 +77,7 @@ class HRManagerController extends BaseController
                 'recent_activities' => $recentActivities
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("HR Manager Controller Error: " . $e->getMessage());
             $this->render('employees/department', [
                 'page_title' => 'HR Dashboard',
@@ -377,7 +377,7 @@ class HRManagerController extends BaseController
                 'message' => "Payroll processed successfully for {$processedCount} employees"
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -491,7 +491,7 @@ class HRManagerController extends BaseController
                 'message' => "Performance review scheduled successfully for {$employee['name']}"
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -537,7 +537,7 @@ class HRManagerController extends BaseController
                 'message' => "Application status updated to {$action}"
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()

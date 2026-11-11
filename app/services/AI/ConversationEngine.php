@@ -175,7 +175,7 @@ class ConversationEngine
                 "SELECT * FROM ai_chat_conversations WHERE session_id = ?{$this->tenantSql()} AND status = 'active' ORDER BY id DESC LIMIT 1",
                 array_merge([$this->sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $active = null;
         }
 
@@ -816,7 +816,7 @@ class ConversationEngine
             $placeholders = implode(', ', array_fill(0, count($values), '?'));
             $this->db->query("INSERT INTO ai_chat_conversations ($colStr) VALUES ($placeholders)", $values);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ConversationEngine save error: " . $e->getMessage());
         }
     }
@@ -828,7 +828,7 @@ class ConversationEngine
                 "SELECT * FROM ai_chat_conversations WHERE session_id = ?{$this->tenantSql()} AND status IN ('active', 'confirm') ORDER BY id DESC LIMIT 1",
                 array_merge([$this->sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -840,7 +840,7 @@ $this->db->query(
                     "UPDATE ai_chat_conversations SET status = ?, updated_at = NOW() WHERE id = ?{$this->tenantSql()}",
                     array_merge([$status, $id], $this->tenantId() > 1 ? [$this->tenantId()] : [])
                 );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ConversationEngine update error: " . $e->getMessage());
         }
     }
@@ -852,7 +852,7 @@ $this->db->query(
                     "UPDATE ai_chat_conversations SET status = 'cancelled' WHERE session_id = ?{$this->tenantSql()} AND status IN ('active', 'confirm')",
                     array_merge([$this->sessionId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
                 );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ConversationEngine clear error: " . $e->getMessage());
         }
     }

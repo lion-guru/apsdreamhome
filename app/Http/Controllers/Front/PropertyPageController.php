@@ -56,7 +56,7 @@ class PropertyPageController extends BaseController
                     'image' => $prop['primary_image'] ?? null,
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Properties page error: " . $e->getMessage());
         }
 
@@ -163,7 +163,7 @@ class PropertyPageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM testimonials WHERE status = 'approved' ORDER BY created_at DESC LIMIT 3");
             $stmt->execute();
             $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // fallback
         }
 
@@ -211,7 +211,7 @@ class PropertyPageController extends BaseController
             $params = [];
 
             if ($filters['q']) {
-                $where .= " AND (title LIKE ? OR description LIKE ? OR location LIKE ?)";
+                $where .= " AND (name LIKE ? OR description LIKE ? OR location LIKE ?)";
                 $q = "%{$filters['q']}%";
                 $params = array_merge($params, [$q, $q, $q]);
             }
@@ -246,7 +246,7 @@ class PropertyPageController extends BaseController
 
             $statsStmt = $this->db->query("SELECT COUNT(*) as total, MIN(price) as min_price, MAX(price) as max_price, AVG(price) as avg_price FROM user_properties WHERE listing_type = 'rent' AND status IN ('verified','approved')");
             $stats = $statsStmt->fetch(\PDO::FETCH_ASSOC) ?: ['total' => 0, 'min_price' => 0, 'max_price' => 0, 'avg_price' => 0];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("rentProperty error: " . $e->getMessage());
             $total = 0;
             $properties = [];
@@ -319,7 +319,45 @@ class PropertyPageController extends BaseController
             }
         }
         if ($ownerId <= 0) {
-            $fail('Please login or register first to list your property.');
+            $rawPhone = preg_replace('/\D/', '', (string)($_POST['phone'] ?? ''));
+            if (strlen($rawPhone) === 12 && substr($rawPhone, 0, 2) === '91') $rawPhone = substr($rawPhone, 2);
+            if (strlen($rawPhone) === 11 && $rawPhone[0] === '0') $rawPhone = substr($rawPhone, 1);
+            if (preg_match('/^[6-9]\d{9}$/', $rawPhone)) {
+                $existingUser = $this->db->fetchOne("SELECT id, role, name FROM users WHERE phone = ? LIMIT 1", [$rawPhone]);
+                if ($existingUser) {
+                    $ownerId = (int)$existingUser['id'];
+                    $ownerRole = $existingUser['role'] ?? 'customer';
+                    $_SESSION['user_id'] = $ownerId;
+                    $_SESSION['user_name'] = $existingUser['name'];
+                    $_SESSION['user_phone'] = $rawPhone;
+                    $_SESSION['role'] = $ownerRole;
+                } else {
+                    $custName = trim($_POST['name'] ?? 'Property Owner');
+                    $custEmail = trim($_POST['email'] ?? ($rawPhone . '@apsdreamhome.com'));
+                    $randomPw = password_hash('Aps@' . substr($rawPhone, -4), PASSWORD_DEFAULT);
+                    $newUserId = $this->db->insert('users', [
+                        'name' => $custName,
+                        'phone' => $rawPhone,
+                        'email' => $custEmail,
+                        'password' => $randomPw,
+                        'role' => 'customer',
+                        'status' => 'active',
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                    ]);
+                    if ($newUserId) {
+                        $ownerId = (int)$newUserId;
+                        $ownerRole = 'customer';
+                        $_SESSION['user_id'] = $ownerId;
+                        $_SESSION['user_name'] = $custName;
+                        $_SESSION['user_phone'] = $rawPhone;
+                        $_SESSION['role'] = 'customer';
+                    }
+                }
+            }
+        }
+        if ($ownerId <= 0) {
+            $fail('Please enter a valid 10-digit mobile number to list your property.');
             return;
         }
 
@@ -721,7 +759,7 @@ class PropertyPageController extends BaseController
             }
             $_SESSION['flash_success'] = 'Thank you! Your interest has been recorded. ' . ($ownerId > 0 ? 'The seller has been notified.' : 'Our team will contact you shortly.');
             return $this->redirect($_SERVER['HTTP_REFERER'] ?? '/properties');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PropertyPageController::propertyInterest error: ' . $e->getMessage());
             if ($isXhr) {
                 return $this->jsonResponse(['success' => false, 'message' => 'Something went wrong. Please try again.'], 500);
@@ -772,7 +810,7 @@ class PropertyPageController extends BaseController
             $stmt->execute();
             $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             echo json_encode(['success' => true, 'data' => $properties]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
@@ -909,7 +947,7 @@ class PropertyPageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM properties WHERE status = 'active' AND featured = 1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 12");
             $stmt->execute();
             $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Featured properties error: " . $e->getMessage());
             $properties = [];
         }
@@ -951,7 +989,7 @@ class PropertyPageController extends BaseController
                     'image' => $row['image_path'] ?? $row['layout_image'] ?? null,
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Colonies page error: " . $e->getMessage());
             $colonies = [];
             $totalPlots = 0;
@@ -1023,7 +1061,7 @@ class PropertyPageController extends BaseController
                     'possession_date' => $row['possession_date'] ?? null,
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Projects page error: " . $e->getMessage());
             $projects = [];
         }

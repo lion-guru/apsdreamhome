@@ -49,6 +49,13 @@ final colonyPropertiesProvider = FutureProvider.autoDispose
   return await repository.getPropertiesByColony(colonyId);
 });
 
+/// AI-powered property recommendations based on user preferences and behavior
+final propertyRecommendationsProvider = FutureProvider.autoDispose
+    .family<List<PropertyModel>, String>((ref, userId) async {
+  final repository = ref.watch(propertyRepositoryProvider);
+  return await repository.getRecommendedProperties(userId);
+});
+
 /// Favorites State for UI
 class FavoritesUIState {
   final List<PropertyModel> favorites;

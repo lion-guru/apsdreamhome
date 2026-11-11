@@ -5,8 +5,8 @@
  */
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Services\DepartmentService;
-use \App\Traits\TenantAwareTrait;
 
 class DepartmentController extends AdminController
 {
@@ -73,7 +73,7 @@ class DepartmentController extends AdminController
                 'status'         => $_POST['status'] ?? 'active',
             ]);
             $_SESSION['success'] = "Department created successfully (ID: $id)";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/departments');
@@ -120,7 +120,7 @@ class DepartmentController extends AdminController
                 'status'         => $_POST['status'] ?? 'active',
             ]);
             $_SESSION['success'] = "Department updated successfully";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/departments');
@@ -136,7 +136,7 @@ class DepartmentController extends AdminController
         try {
             $this->deptService->delete($id);
             $_SESSION['success'] = "Department deleted";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/departments');

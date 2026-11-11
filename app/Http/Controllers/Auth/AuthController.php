@@ -222,7 +222,7 @@ class AuthController extends BaseController
             }
             $this->redirectToDashboard($user['role'] ?? 'customer');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AuthController login error: " . $e->getMessage());
             $_SESSION['login_error'] = 'Something went wrong. Please try again.';
             $_SESSION['login_old_email'] = $identity;

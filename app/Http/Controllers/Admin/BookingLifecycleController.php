@@ -43,7 +43,7 @@ class BookingLifecycleController extends AdminController
             if (method_exists($this->db, 'getPdo')) {
                 $this->db = $this->db->getPdo();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] __construct() db exception: " . $e->getMessage());
 
             $this->db = null;
@@ -52,7 +52,7 @@ class BookingLifecycleController extends AdminController
             $this->service = new BookingLifecycleService(
                 $this->db instanceof \PDO ? $this->db : null
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] __construct() service exception: " . $e->getMessage());
 
             $this->service = new BookingLifecycleService();
@@ -242,7 +242,7 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
             return [];
         }
@@ -401,7 +401,7 @@ class BookingLifecycleController extends AdminController
                 $id,
             ], $tenantParams));
             $this->setFlash('success', 'Booking updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $this->setFlash('error', 'Update failed: ' . $e->getMessage());
@@ -516,7 +516,7 @@ class BookingLifecycleController extends AdminController
             );
             $row->execute([$installmentId]);
             $letter = $row->fetch(\PDO::FETCH_ASSOC) ?: null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
 }
         $this->render('admin/sales/demand-letter', [
@@ -945,7 +945,7 @@ class BookingLifecycleController extends AdminController
                 "SELECT COUNT(*) FROM plot_bookings WHERE approval_status IS NULL OR approval_status = 'pending'"
             );
             $pendingCount = (int)$pendingStmt->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] approvalList() exception: " . $e->getMessage());
             $bookings = [];
             $pages = 1;
@@ -992,7 +992,7 @@ class BookingLifecycleController extends AdminController
             )->execute(array_merge([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes], $tenantInsert));
 
             $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' approved');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] approveBooking() exception: " . $e->getMessage());
             $this->setFlash('error', 'Approval failed: ' . $e->getMessage());
         }
@@ -1028,7 +1028,7 @@ class BookingLifecycleController extends AdminController
             )->execute(array_merge([$id, $booking['status'] ?? 'token_paid', $_SESSION['admin_id'] ?? null, $notes], $tenantInsert));
 
             $this->setFlash('success', 'Booking ' . ($booking['booking_number'] ?? "#{$id}") . ' rejected');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] rejectBooking() exception: " . $e->getMessage());
             $this->setFlash('error', 'Rejection failed: ' . $e->getMessage());
         }
@@ -1062,7 +1062,7 @@ class BookingLifecycleController extends AdminController
                     $summary['pending'] += (float)$r['amount'];
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
         }
         $this->render('admin/sales/commissions', [
@@ -1099,7 +1099,7 @@ class BookingLifecycleController extends AdminController
                     $summary['pending']++;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
 }
         $this->render('admin/sales/refunds', [
@@ -1372,7 +1372,7 @@ class BookingLifecycleController extends AdminController
             }
 
             return $rows;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] getOrCreateRegistryMilestones exception: " . $e->getMessage());
             return $this->getDefaultRegistryStages();
         }
@@ -1450,7 +1450,7 @@ class BookingLifecycleController extends AdminController
             }
 
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] updateMilestone exception: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -1495,7 +1495,7 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
@@ -1509,7 +1509,7 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
@@ -1523,7 +1523,7 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
@@ -1540,7 +1540,7 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
@@ -1557,7 +1557,7 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute([$bookingId]);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
         return []; }
     }
@@ -1569,7 +1569,7 @@ class BookingLifecycleController extends AdminController
             $s->execute([$id]);
             $row = $s->fetch(\PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return null; }
     }
@@ -1585,7 +1585,7 @@ class BookingLifecycleController extends AdminController
                     ORDER BY c.name, p.plot_number
                     LIMIT 500";
             return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
@@ -1601,7 +1601,7 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute($tidParams);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
@@ -1610,10 +1610,12 @@ class BookingLifecycleController extends AdminController
     {
         try {
             return $this->db->query(
-                "SELECT id, name, email, phone FROM associates
-                 WHERE status = 'active' ORDER BY name LIMIT 200"
+                "SELECT u.id, u.name, u.email, u.phone FROM users u
+                 JOIN associate_profiles ap ON ap.user_id = u.id
+                 WHERE u.role = 'associate' AND u.status = 'active'
+                 ORDER BY u.name LIMIT 200"
             )->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
@@ -1629,7 +1631,7 @@ class BookingLifecycleController extends AdminController
             );
             $s->execute($tidParams);
             return $s->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[BookingLifecycleController] " . __METHOD__ . "() exception: " . $e->getMessage());
  return []; }
     }
@@ -1640,7 +1642,7 @@ class BookingLifecycleController extends AdminController
             return $this->db->query(
                 "SELECT id, name FROM colonies WHERE is_active = 1 ORDER BY name"
             )->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 return $this->db->query("SELECT id, name FROM colonies ORDER BY name LIMIT 50")
                                 ->fetchAll(\PDO::FETCH_ASSOC);

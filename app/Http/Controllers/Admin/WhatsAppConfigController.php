@@ -31,7 +31,7 @@ class WhatsAppConfigController extends AdminController
 
             $row = $this->db->fetch("SELECT COUNT(*) as cnt FROM whatsapp_messages");
             $msgCount = (int)($row['cnt'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $error = $e->getMessage();
         }
 
@@ -75,7 +75,7 @@ class WhatsAppConfigController extends AdminController
                         [$key, $value]
                     );
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->setFlash('error', 'Failed to save ' . $key . ': ' . $e->getMessage());
                 $this->redirect('/admin/whatsapp/settings');
                 return;
@@ -126,7 +126,7 @@ class WhatsAppConfigController extends AdminController
             $templates = $this->db->fetchAll(
                 "SELECT * FROM whatsapp_templates ORDER BY template_name ASC"
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $error = $e->getMessage();
         }
 
@@ -197,7 +197,7 @@ class WhatsAppConfigController extends AdminController
                 }
                 $synced++;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error saving synced templates: ' . $e->getMessage());
             $this->redirect('/admin/whatsapp/templates');
             return;

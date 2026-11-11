@@ -100,10 +100,11 @@ class EmployeeWorkloadService
     public function getDepartmentWorkload($department)
     {
         $employees = $this->db->fetchAll(
-            "SELECT e.id, e.name, e.role, emp.department
+            "SELECT e.id, e.name, e.role,
+                    ep.department AS department
              FROM users e
-             JOIN employees emp ON emp.user_id = e.id
-             WHERE e.status = 'active' AND emp.status = 'active' AND emp.department = ?",
+             LEFT JOIN employee_profiles ep ON ep.legacy_id = e.id OR ep.user_id = e.id OR ep.id = e.id
+             WHERE e.status = 'active' AND ep.status = 'active' AND ep.department = ?",
             [$department]
         );
         
@@ -128,14 +129,14 @@ class EmployeeWorkloadService
     public function getOverloadedEmployees($threshold = 80)
     {
         return $this->db->fetchAll(
-            "SELECT e.id, e.name, e.role, emp.department,
+            "SELECT e.id, e.name, e.role, ep.department AS department,
                     (SELECT COUNT(*) FROM tasks WHERE assigned_to = e.id AND status IN ('pending', 'in_progress') AND due_date >= CURDATE()) as active_tasks,
                     COALESCE(ew.max_concurrent_tasks, 10) as max_tasks
              FROM users e
-             JOIN employees emp ON emp.user_id = e.id
+             LEFT JOIN employee_profiles ep ON ep.legacy_id = e.id OR ep.user_id = e.id OR ep.id = e.id
              LEFT JOIN employee_workload ew ON ew.employee_id = e.id AND ew.tenant_id = 1
-             WHERE e.status = 'active' 
-             AND emp.status = 'active'
+             WHERE e.status = 'active'
+             AND ep.status = 'active'
              AND ((SELECT COUNT(*) FROM tasks WHERE assigned_to = e.id AND status IN ('pending', 'in_progress') AND due_date >= CURDATE()) / COALESCE(ew.max_concurrent_tasks, 10)) * 100 > ?",
             [$threshold]
         );
@@ -144,14 +145,14 @@ class EmployeeWorkloadService
     public function getUnderloadedEmployees($threshold = 30)
     {
         return $this->db->fetchAll(
-            "SELECT e.id, e.name, e.role, emp.department,
+            "SELECT e.id, e.name, e.role, ep.department AS department,
                     (SELECT COUNT(*) FROM tasks WHERE assigned_to = e.id AND status IN ('pending', 'in_progress') AND due_date >= CURDATE()) as active_tasks,
                     COALESCE(ew.max_concurrent_tasks, 10) as max_tasks
              FROM users e
-             JOIN employees emp ON emp.user_id = e.id
+             LEFT JOIN employee_profiles ep ON ep.legacy_id = e.id OR ep.user_id = e.id OR ep.id = e.id
              LEFT JOIN employee_workload ew ON ew.employee_id = e.id AND ew.tenant_id = 1
-             WHERE e.status = 'active' 
-             AND emp.status = 'active'
+             WHERE e.status = 'active'
+             AND ep.status = 'active'
              AND ((SELECT COUNT(*) FROM tasks WHERE assigned_to = e.id AND status IN ('pending', 'in_progress') AND due_date >= CURDATE()) / COALESCE(ew.max_concurrent_tasks, 10)) * 100 < ?",
             [$threshold]
         );

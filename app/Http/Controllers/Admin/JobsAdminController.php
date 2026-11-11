@@ -43,7 +43,7 @@ class JobsAdminController extends AdminController
                 'page_title' => 'Job Management - HR Dashboard',
                 'jobs' => $jobs
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->view('admin/jobs/index', [
                 'page_title' => 'Job Management',
                 'jobs' => [],
@@ -107,7 +107,7 @@ class JobsAdminController extends AdminController
                 'job_id' => $jobId
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonFail('Failed to create job: ' . $e->getMessage(), 500);
         }
     }
@@ -135,7 +135,7 @@ class JobsAdminController extends AdminController
                 'departments' => $this->getDepartments(),
                 'job_types' => ['Full-time', 'Part-time', 'Contract', 'Internship']
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Location: ' . BASE_URL . '/admin/jobs');
             exit;
         }
@@ -167,7 +167,7 @@ class JobsAdminController extends AdminController
             ]);
             
             return $this->jsonRespond(['success' => true, 'message' => 'Job updated successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonFail('Failed to update job: ' . $e->getMessage(), 500);
         }
     }
@@ -184,7 +184,7 @@ class JobsAdminController extends AdminController
             $stmt->execute([$id]);
             
             return $this->jsonRespond(['success' => true, 'message' => 'Job deleted successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonFail('Failed to delete job: ' . $e->getMessage(), 500);
         }
     }
@@ -226,7 +226,7 @@ class JobsAdminController extends AdminController
                 'selected_job' => $jobId,
                 'statuses' => ['new', 'reviewed', 'shortlisted', 'interviewed', 'offered', 'hired', 'rejected']
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->view('admin/jobs/applications', [
                 'page_title' => 'Job Applications',
                 'applications' => [],
@@ -259,7 +259,7 @@ class JobsAdminController extends AdminController
                 'application' => $application,
                 'statuses' => ['new', 'reviewed', 'shortlisted', 'interviewed', 'offered', 'hired', 'rejected']
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Location: ' . BASE_URL . '/admin/jobs/applications');
             exit;
         }
@@ -282,7 +282,7 @@ class JobsAdminController extends AdminController
                 'success' => true, 
                 'message' => 'Application status noted (status tracking not available in current schema)'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonFail('Failed to update status: ' . $e->getMessage(), 500);
         }
     }

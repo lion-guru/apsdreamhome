@@ -92,7 +92,7 @@ try {
         'query' => h($query),
         'total_results' => count($results)
     ]);
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log('Global search error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([

@@ -151,9 +151,7 @@ class TrackBCommissionService
     private function checkMissedCommission(int $userId): bool
     {
         try {
-            $stmt = $this->pdo->prepare("SELECT status FROM associates WHERE user_id = ? LIMIT 1");
-            $stmt->execute([$userId]);
-            $status = $stmt->fetchColumn();
+            $status = (new \App\Services\IdentityService())->getAssociateStatus((int)$userId);
             return $status && $status !== 'active';
         } catch (\Throwable $e) {
             return false;

@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `resell_transactions` (
 try {
     $db->exec($resellTxnSql);
     echo "✅ resell_transactions table created\n";
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";
 }
 
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `property_transactions` (
 try {
     $db->exec($propTxnSql);
     echo "✅ property_transactions table created\n";
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";
 }
 
@@ -100,7 +100,7 @@ try {
     } else {
         echo "⏭️ platform_fee_pct already exists\n";
     }
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";
 }
 
@@ -123,7 +123,7 @@ foreach ($boostCols as $col => $ddl) {
         } else {
             echo "⏭️ $col already exists\n";
         }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo "❌ Error adding $col: " . $e->getMessage() . "\n";
     }
 }
@@ -137,7 +137,7 @@ try {
     } else {
         echo "⏭️ transaction_id already exists\n";
     }
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";
 }
 

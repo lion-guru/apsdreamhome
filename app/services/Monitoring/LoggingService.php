@@ -89,7 +89,7 @@ class LoggingService
                 $this->handleSecurityEvent($logEntry);
             }
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback logging if main logging fails
             error_log("Logging failed: " . $e->getMessage());
         }
@@ -263,7 +263,7 @@ class LoggingService
                 'request_id' => $logEntry['request_id'],
                 'created_at' => date('Y-m-d H:i:s')
             ], $this->tenantInsertData()));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback to file if database fails
             error_log("Failed to store log in database: " . $e->getMessage());
         }

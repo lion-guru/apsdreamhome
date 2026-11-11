@@ -116,7 +116,7 @@ class EMI extends Model
                     'link' => $notificationLink,
                     'created_at' => date('Y-m-d H:i:s')
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Ignore notification error if table/column missing
             }
 
@@ -126,7 +126,7 @@ class EMI extends Model
                 'emi_plan_id' => $emiPlanId,
                 'emi_amount' => $emiAmount
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (isset($db) && $db->inTransaction()) {
                 $db->rollBack();
             }
@@ -306,7 +306,7 @@ class EMI extends Model
 
             $db->commit();
             return $paymentId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($db->inTransaction()) {
                 $db->rollBack();
             }
@@ -587,14 +587,14 @@ class EMI extends Model
                     $notes,
                     $_SESSION['admin_id'] ?? 1
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Ignore log error if table missing, but log it
                 error_log("Foreclosure logging failed: " . $e->getMessage());
             }
 
             $db->commit();
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($db->inTransaction()) {
                 $db->rollBack();
             }
@@ -624,7 +624,7 @@ class EMI extends Model
             if ($stats) {
                 return $stats;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback to emi_plans if table doesn't exist
         }
 
@@ -668,7 +668,7 @@ class EMI extends Model
             $stmt = $db->prepare($sql);
             $stmt->execute([(int)$months]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback to emi_plans
         }
 
@@ -738,7 +738,7 @@ class EMI extends Model
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback to emi_plans
         }
 

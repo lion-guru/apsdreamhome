@@ -47,7 +47,7 @@ class MobileBookingApiController extends BaseController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'error' => 'Failed to submit inquiry']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Inquiry Submission API error');
         }
     }
@@ -66,7 +66,7 @@ class MobileBookingApiController extends BaseController
             }
             $visitId = $this->startSiteVisitSession($leadId, $agentId);
             echo json_encode(['success' => true, 'visit_id' => $visitId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Start Site Visit API error');
         }
     }
@@ -91,7 +91,7 @@ class MobileBookingApiController extends BaseController
             }
             $this->updateVisitLocation($visitId, $lat, $lng);
             echo json_encode(['success' => true, 'message' => 'Location updated']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Update Location API error');
         }
     }
@@ -111,7 +111,7 @@ class MobileBookingApiController extends BaseController
             }
             $this->completeVisitSession($visitId, $outcome, $notes);
             echo json_encode(['success' => true, 'message' => 'Site visit marked as completed']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Complete Visit API error');
         }
     }
@@ -128,7 +128,7 @@ class MobileBookingApiController extends BaseController
             }
             $status = $this->getVisitStatus($visitId);
             echo json_encode(['success' => true, 'data' => $status]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Get Visit Status API error');
         }
     }
@@ -140,7 +140,7 @@ class MobileBookingApiController extends BaseController
             $date = $_GET['date'] ?? date('Y-m-d');
             $slots = $this->getAvailableVisitSlots($date);
             echo json_encode(['success' => true, 'data' => $slots]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Get Available Slots API error');
         }
     }
@@ -163,7 +163,7 @@ class MobileBookingApiController extends BaseController
             }
             $bookingId = $this->createSiteVisitBooking($validated);
             echo json_encode(['success' => true, 'booking_id' => $bookingId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Book Site Visit API error');
         }
     }
@@ -180,7 +180,7 @@ class MobileBookingApiController extends BaseController
             }
             $visits = $this->getUserSiteVisits($userId);
             echo json_encode(['success' => true, 'data' => $visits]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'My Site Visits API error');
         }
     }
@@ -205,7 +205,7 @@ class MobileBookingApiController extends BaseController
                 $slots[] = ['time' => $time, 'available' => $count < 3, 'booked' => $count, 'capacity' => 3];
             }
             return $slots;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileBookingApiController] getAvailableVisitSlots error: " . $e->getMessage());
             return [];
         }
@@ -229,7 +229,7 @@ private function getUserSiteVisits($userId)
             ");
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MobileBookingApiController] getUserSiteVisits error: " . $e->getMessage());
             return [];
         }
@@ -267,7 +267,7 @@ private function getUserSiteVisits($userId)
             }
             $this->cancelVisitSession($visitId);
             echo json_encode(['success' => true, 'message' => 'Site visit cancelled']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Cancel Site Visit API error');
         }
     }
@@ -294,7 +294,7 @@ private function getUserSiteVisits($userId)
             $newSlot = \App\Core\Security::sanitize((string)$newSlot);
             $this->rescheduleVisitSession($visitId, $newDate, $newSlot);
             echo json_encode(['success' => true, 'message' => 'Site visit rescheduled']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Reschedule Site Visit API error');
         }
     }
@@ -311,7 +311,7 @@ private function getUserSiteVisits($userId)
         try {
             $bookings = $this->getBookingsData($userId);
             echo json_encode(['success' => true, 'data' => $bookings]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'List Bookings API error');
         }
     }
@@ -328,7 +328,7 @@ private function getUserSiteVisits($userId)
         try {
             $booking = $this->getBookingDetailData($userId, (int)$id);
             echo json_encode(['success' => true, 'data' => $booking]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Booking Detail API error');
         }
     }
@@ -353,7 +353,7 @@ private function getUserSiteVisits($userId)
             }
             $paymentId = $this->recordPayment($userId, (int)$id, $amount, $paymentMethod);
             echo json_encode(['success' => true, 'payment_id' => $paymentId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Record Payment API error');
         }
     }
@@ -378,7 +378,7 @@ private function getUserSiteVisits($userId)
             }
             $bookingId = $this->createBooking($userId, $validated);
             echo json_encode(['success' => true, 'booking_id' => $bookingId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Create Booking API error');
         }
     }
@@ -396,7 +396,7 @@ private function getUserSiteVisits($userId)
             $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
             $this->updateBookingRecord($userId, (int)$id, $input);
             echo json_encode(['success' => true, 'message' => 'Booking updated']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Update Booking API error');
         }
     }
@@ -413,7 +413,7 @@ private function getUserSiteVisits($userId)
         try {
             $this->cancelBookingRecord($userId, (int)$id);
             echo json_encode(['success' => true, 'message' => 'Booking cancelled']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Cancel Booking API error');
         }
     }
@@ -476,7 +476,7 @@ private function getUserSiteVisits($userId)
 
             $this->db->commit();
             return $paymentId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }

@@ -35,7 +35,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             
             $dailyCapData = $db->query("SELECT COALESCE(SUM(amount),0) as flushed FROM retained_earnings WHERE DATE(created_at) = CURDATE() AND retention_reason = 'daily_cap_flush'")->fetch();
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $stats = ['total_networkers'=>0,'total_consultants'=>0,'total_plots'=>0,'available_plots'=>0,'pending_rera'=>0,'active_salaries'=>0,'total_bookings'=>0];
             $recentBookings = [];
             $dailyCapData = ['flushed'=>0];
@@ -55,7 +55,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
         try {
             $db = Database::getInstance()->getConnection();
             $packages = $db->query("SELECT * FROM packages ORDER BY price ASC")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $packages = [];
         }
         $this->render('admin/mlm-realestate/packages', ['page_title' => 'Networker Packages', 'packages' => $packages]);
@@ -85,7 +85,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                     $stmt->execute([$data['name'], $data['price'], $data['direct_reward'], $data['level_reward'], $data['daily_capping'], $data['description'], $data['is_active'], $this->tenantId()]);
                 }
                 $_SESSION['success'] = 'Package saved successfully';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
@@ -106,7 +106,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                 LEFT JOIN mlm_network_tree mnt ON mnt.associate_id = u.id
                 WHERE u.onboarding_track = 'networker'
                 ORDER BY u.created_at DESC")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $networkers = [];
         }
         $this->render('admin/mlm-realestate/networkers', ['page_title' => 'Networkers', 'networkers' => $networkers]);
@@ -122,7 +122,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                 LEFT JOIN user_wallets uw ON uw.user_id = u.id AND uw.user_type = 'associate'
                 WHERE u.onboarding_track = 'free_consultant'
                 ORDER BY u.created_at DESC")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $consultants = [];
         }
         $this->render('admin/mlm-realestate/free_consultants', ['page_title' => 'Free Consultants', 'consultants' => $consultants]);
@@ -143,7 +143,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $allRequests = [];
         }
         $this->render('admin/mlm-realestate/rera_requests', ['page_title' => 'RERA Compliance', 'requests' => $allRequests]);
@@ -189,7 +189,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             
             $blocks = $db->query("SELECT DISTINCT block FROM plots ORDER BY block")->fetchAll(\PDO::FETCH_COLUMN);
             $statusSummary = $db->query("SELECT status, COUNT(*) as cnt FROM plots GROUP BY status")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $plots = []; $blocks = []; $statusSummary = [];
         }
         $this->render('admin/mlm-realestate/plots', [
@@ -211,7 +211,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                 FROM bookings b 
                 LEFT JOIN users u ON u.id = b.associate_id 
                 ORDER BY b.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $bookings = [];
         }
         $this->render('admin/mlm-realestate/bookings', ['page_title' => 'Bookings', 'bookings' => $bookings]);
@@ -223,7 +223,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
         try {
             $bookingService = new BookingComplianceService();
             $status = $bookingService->getBookingStatus($id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $status = ['error' => $e->getMessage()];
         }
         $this->render('admin/mlm-realestate/booking_detail', ['page_title' => 'Booking Details', 'status' => $status]);
@@ -264,7 +264,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             foreach ($trackers as $t) {
                 if ($t['status'] === 'active') { $activeCount++; $totalMonthly += (float)$t['monthly_payout']; }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $trackers = []; $activeCount = 0; $totalMonthly = 0;
         }
         $this->render('admin/mlm-realestate/salary_tracker', [
@@ -366,7 +366,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $salaryResult = $salaryService->processMonthlyPayouts();
             
             $_SESSION['success'] = "Token compliance: {$tokenResult['released_plots']} released. Salary: {$salaryResult['processed']} processed.";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Cron error: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/mlm-realestate');
@@ -381,7 +381,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $users = $db->query("SELECT id, name FROM users WHERE onboarding_track IN ('networker','free_consultant') AND status = 'active' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
             $plots = $db->query("SELECT id, plot_number, block, area_sqft, price_per_sqft, status FROM plots WHERE status = 'available' ORDER BY block, plot_number")->fetchAll(\PDO::FETCH_ASSOC);
             $plots2 = $db->query("SELECT id, plot_number as plot_no, block, area_sqft, total_price, status FROM plots WHERE status = 'available' AND colony_id = 2 ORDER BY block, plot_number")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $users = []; $plots = []; $plots2 = [];
         }
         $this->render('admin/mlm-realestate/create_booking', [
@@ -470,7 +470,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                 $notificationService->notifyCommissionProcessed($id, (int)$booking['associate_id'], $saleAmount);
             }
             $_SESSION['success'] = $msg;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (isset($db) && $db->inTransaction()) $db->rollBack();
             $_SESSION['error'] = 'Approval failed: ' . $e->getMessage();
         }
@@ -485,7 +485,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $salaryService = new LeadershipSalaryService();
             $result = $salaryService->processMonthlyPayouts();
             $_SESSION['success'] = 'Monthly payouts processed: ' . ($result['processed'] ?? 0) . ' entries.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MLMRealEstateController::processMonthlyPayouts] ' . $e->getMessage());
             $_SESSION['error'] = 'Error processing payouts: ' . $e->getMessage();
         }
@@ -508,7 +508,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             ];
             header('Content-Type: application/json');
             echo json_encode($result);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MLMRealEstateController::salaryDiagnostics] ' . $e->getMessage());
             header('Content-Type: application/json');
             echo json_encode(['error' => $e->getMessage()]);
@@ -530,7 +530,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                 'rejected' => $rejected,
                 'total' => $pending + $approved + $rejected,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MLMRealEstateController::reraStatus] ' . $e->getMessage());
             header('Content-Type: application/json');
             echo json_encode(['error' => $e->getMessage()]);
@@ -550,7 +550,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
                 'status' => 'ok',
                 'recent_requests' => $recentRequests,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MLMRealEstateController::reraDiagnostics] ' . $e->getMessage());
             header('Content-Type: application/json');
             echo json_encode(['error' => $e->getMessage()]);
@@ -592,7 +592,7 @@ class MLMRealEstateController extends \App\Http\Controllers\Admin\AdminControlle
             $notificationService->notifyBookingRejected($id, $booking, $reason);
 
             $_SESSION['error'] = "Booking #{$id} rejected. Plot returned to available.";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (isset($db) && $db->inTransaction()) $db->rollBack();
             $_SESSION['error'] = 'Rejection failed: ' . $e->getMessage();
         }

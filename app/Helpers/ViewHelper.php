@@ -146,7 +146,7 @@ class ViewHelper
         }
         try {
             return date($format, strtotime($date));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return '—';
         }
     }

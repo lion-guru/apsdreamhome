@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Services\CRMService;
 use App\Services\CRMGuard;
-use \App\Traits\TenantAwareTrait;
 
 /**
  * Lead Kanban Controller — Professional Pipeline Board

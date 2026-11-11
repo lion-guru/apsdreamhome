@@ -21,7 +21,7 @@ class BankingController extends AdminController
             ");
             $stmt->execute();
             $transactions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $transactions = [];
         }
         return $this->render('admin/banking/index', [
@@ -42,7 +42,7 @@ class BankingController extends AdminController
             ");
             $stmt->execute([$id]);
             $transaction = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $transaction = null;
         }
         if (!$transaction) {
@@ -69,14 +69,14 @@ class BankingController extends AdminController
             ");
             $stmt->execute();
             $transactions = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $transactions = [];
         }
         try {
             $fyStmt = $this->db->prepare("SELECT DISTINCT financial_year FROM transactions WHERE financial_year IS NOT NULL ORDER BY financial_year DESC");
             $fyStmt->execute();
             $financialYears = $fyStmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $financialYears = [];
         }
         return $this->render('admin/banking/reconciliation', [
@@ -101,7 +101,7 @@ class BankingController extends AdminController
             $params = array_merge($params, $tenantParams);
             $stmt->execute($params);
             $this->setFlash('success', 'Transaction reconciled successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to reconcile: ' . $e->getMessage());
         }
         $this->redirect('/admin/banking/reconciliation');
@@ -121,7 +121,7 @@ class BankingController extends AdminController
             ");
             $stmt->execute();
             $years = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $years = [];
         }
         return $this->render('admin/banking/financial-years', [

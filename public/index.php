@@ -97,7 +97,7 @@ $router = new Router();
 // Include routes
 try {
     require_once APS_ROOT . '/routes/web.php';
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log("Routes Error: " . $e->getMessage());
     echo "<h1>Error loading routes: " . htmlspecialchars($e->getMessage()) . "</h1>";
     exit;
@@ -107,7 +107,7 @@ try {
 // routes/web.php carries multi-lane churn). Each file registers onto $router.
 try {
     require_once APS_ROOT . '/routes/land.php';
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log("Land Routes Error: " . $e->getMessage());
     echo "<h1>Error loading land routes: " . htmlspecialchars($e->getMessage()) . "</h1>";
     exit;
@@ -116,16 +116,30 @@ try {
 // Gap-build lane routes (S325-S333): single-owner file for gap-build feature routes.
 try {
     require_once APS_ROOT . '/routes/gap_builds.php';
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log("Gap-Build Routes Error: " . $e->getMessage());
-    echo "<h1>Error loading gap-build routes: " . htmlspecialchars($e->getMessage()) . "</h1>";
+}
+
+// AI lane routes (S354): extracted from web.php for maintainability.
+try {
+    require_once APS_ROOT . '/routes/ai.php';
+} catch (\Throwable $e) {
+    error_log("AI Routes Error: " . $e->getMessage());
+}
+
+// Employee lane routes (S354): extracted from web.php for maintainability.
+try {
+    require_once APS_ROOT . '/routes/employee.php';
+} catch (\Throwable $e) {
+    error_log("Employee Routes Error: " . $e->getMessage());
+    echo "<h1>Error loading employee routes: " . htmlspecialchars($e->getMessage()) . "</h1>";
     exit;
 }
 
 // Dispatch router
 try {
     $router->dispatch();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log("Router Error: " . $e->getMessage());
     http_response_code(500);
     echo "<h1>500 - Server Error</h1>";

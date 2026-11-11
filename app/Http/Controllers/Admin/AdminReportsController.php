@@ -168,7 +168,7 @@ class AdminReportsController extends AdminController
             $stmt->execute($params);
             $result = $stmt->fetch();
             return $result['count'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -191,7 +191,7 @@ class AdminReportsController extends AdminController
             $stmt->execute($params);
             $result = $stmt->fetch();
             return $result['count'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -214,7 +214,7 @@ class AdminReportsController extends AdminController
             $stmt->execute($params);
             $result = $stmt->fetch();
             return $result['count'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -237,7 +237,7 @@ class AdminReportsController extends AdminController
             $stmt->execute($params);
             $result = $stmt->fetch();
             return $result['revenue'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -254,7 +254,7 @@ class AdminReportsController extends AdminController
             $stmt->execute(array_merge([$date], $tidParams));
             $result = $stmt->fetch();
             return $result['count'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -295,7 +295,7 @@ class AdminReportsController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute(array_merge([$startDate, $endDate], $tidParams));
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -319,7 +319,7 @@ class AdminReportsController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -341,7 +341,7 @@ class AdminReportsController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

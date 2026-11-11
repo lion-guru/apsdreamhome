@@ -8,6 +8,25 @@ use Exception;
 
 class LeaveEncashmentService
 {
+    /**
+     * Query runner: fetch a single row.
+     *
+     * NOTE (S451): this service calls $this->fetchOne($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchOne()".
+     */
+    private function fetchOne(string $sql, array $params = []): ?array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchOne] ' . $e->getMessage());
+            return null;
+        }
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -106,16 +125,16 @@ class LeaveEncashmentService
             return ['success' => false, 'message' => 'Must keep at least 5 days balance after encashment'];
         }
 
-        // Get employee salary for calculation
+        // Get employee salary for calculation (profile-first, legacy fallback; id-space compatible)
         $emp = $this->fetchOne("
-            SELECT e.*, ss.basic_salary
-            FROM employees e
-            LEFT JOIN salary_structures ss ON ss.employee_id = e.id AND ss.status = 'active'
-            WHERE e.id = ? ORDER BY ss.effective_date DESC LIMIT 1
-        ", [$employeeId]);
-
+            SELECT ep.legacy_id as id, ep.*, COALESCE(ss.basic_salary, ep.salary) as basic_salary
+            FROM employee_profiles ep
+            LEFT JOIN salary_structures ss ON (ss.employee_id = ep.legacy_id OR ss.employee_id = ep.user_id OR ss.employee_id = ep.id) AND ss.status = 'active'
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?)
+            ORDER BY ss.effective_date DESC LIMIT 1
+        ", [$employeeId, $employeeId, $employeeId]);
         if (!$emp) {
-            return ['success' => false, 'message' => 'Employee not found'];
+            throw new \Exception('Employee not found');
         }
 
         $basicSalary = (float)($emp['basic_salary'] ?? $emp['salary'] ?? 0);
@@ -168,10 +187,11 @@ class LeaveEncashmentService
     {
         return $this->db->fetchOne("
             SELECT ler.*, lt.name as leave_type_name, lt.code as leave_type_code,
-                   e.name as employee_name, e.employee_code, e.department
+                   u_emp.name as employee_name, ep.employee_code, ep.department
             FROM leave_encashment_requests ler
             JOIN leave_types lt ON ler.leave_type_id = lt.id
-            JOIN employees e ON ler.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ler.employee_id OR ep.user_id = ler.employee_id OR ep.id = ler.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             WHERE ler.id = ?{$this->tenantSql()}
         ", array_merge([$requestId], $this->tVal()));
     }
@@ -270,10 +290,11 @@ class LeaveEncashmentService
     public function getPendingRequests(): array
     {
         return $this->db->fetchAll("
-            SELECT ler.*, e.name as employee_name, e.employee_code, e.department,
+            SELECT ler.*, u_emp.name as employee_name, ep.employee_code, ep.department,
                    lt.name as leave_type_name, lt.code as leave_type_code
             FROM leave_encashment_requests ler
-            JOIN employees e ON ler.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ler.employee_id OR ep.user_id = ler.employee_id OR ep.id = ler.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             JOIN leave_types lt ON ler.leave_type_id = lt.id
             WHERE ler.status = 'pending' AND ler.tenant_id = 1
             ORDER BY ler.requested_at ASC

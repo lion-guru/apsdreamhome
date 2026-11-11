@@ -66,7 +66,7 @@ class FileService extends ServiceTenantTrait
             }
 
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error uploading file: " . $e->getMessage());
             return false;
         }
@@ -165,7 +165,7 @@ class FileService extends ServiceTenantTrait
             }
             
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error saving file record: " . $e->getMessage());
             return false;
         }
@@ -186,7 +186,7 @@ class FileService extends ServiceTenantTrait
             }
             $stmt->execute();
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting file by ID: " . $e->getMessage());
             return null;
         }
@@ -207,7 +207,7 @@ class FileService extends ServiceTenantTrait
             }
             $stmt->execute();
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting files by category: " . $e->getMessage());
             return [];
         }
@@ -246,7 +246,7 @@ class FileService extends ServiceTenantTrait
             }
 
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error deleting file: " . $e->getMessage());
             return false;
         }
@@ -272,7 +272,7 @@ class FileService extends ServiceTenantTrait
             }
             $stmt->execute();
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting file statistics: " . $e->getMessage());
             return null;
         }
@@ -304,7 +304,7 @@ class FileService extends ServiceTenantTrait
 
             $this->logger->info("Cleaned up {$deletedCount} old files");
             return $deletedCount;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error cleaning up old files: " . $e->getMessage());
             return 0;
         }
@@ -337,7 +337,7 @@ class FileService extends ServiceTenantTrait
             }
 
             return $results;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error in batch operation: " . $e->getMessage());
             return [];
         }
@@ -382,7 +382,7 @@ class FileService extends ServiceTenantTrait
             
             $stmt->execute();
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error searching files: " . $e->getMessage());
             return [];
         }
@@ -466,7 +466,7 @@ class FileService extends ServiceTenantTrait
 
             $this->logger->info("Image processed successfully: {$filepath}");
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error processing image: " . $e->getMessage());
             return false;
         }
@@ -492,7 +492,7 @@ class FileService extends ServiceTenantTrait
             }
 
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error creating thumbnail: " . $e->getMessage());
             return false;
         }

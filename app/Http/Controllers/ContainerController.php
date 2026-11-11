@@ -38,7 +38,7 @@ class ContainerController extends BaseController
                     'total_aliases' => count($aliases)
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to retrieve container information',
@@ -95,7 +95,7 @@ class ContainerController extends BaseController
                     'alias' => $validated['alias'] ?? null
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to register service',
@@ -129,7 +129,7 @@ class ContainerController extends BaseController
                     'resolvable' => true
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to check service',
@@ -166,7 +166,7 @@ class ContainerController extends BaseController
                 'message' => 'Container error',
                 'error' => $e->getMessage()
             ], 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to resolve service',
@@ -196,7 +196,7 @@ class ContainerController extends BaseController
                 'success' => true,
                 'message' => "Service '{$id}' removed successfully"
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to remove service',
@@ -217,7 +217,7 @@ class ContainerController extends BaseController
                 'success' => true,
                 'message' => 'Container cleared successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to clear container',
@@ -280,7 +280,7 @@ class ContainerController extends BaseController
                     'passed' => $allPassed
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Test execution failed',
@@ -312,7 +312,7 @@ class ContainerController extends BaseController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get container statistics',
@@ -329,7 +329,7 @@ class ContainerController extends BaseController
         try {
             $service = $this->container->resolve($id);
             echo json_encode(['success' => true, 'data' => ['id' => $id, 'service' => $service ? get_class($service) : null]]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => true, 'data' => ['id' => $id, 'error' => $e->getMessage()]]);
         }
         exit;
@@ -345,7 +345,7 @@ class ContainerController extends BaseController
                 'status' => 'operational'
             ];
             echo json_encode(['success' => true, 'data' => $results]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;

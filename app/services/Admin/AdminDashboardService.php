@@ -115,7 +115,7 @@ class AdminDashboardService
                 'data' => $stats
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get dashboard stats', [
                 'error' => $e->getMessage()
             ]);
@@ -190,7 +190,7 @@ class AdminDashboardService
                 'data' => array_slice($activities, 0, $limit)
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get recent activities', [
                 'error' => $e->getMessage()
             ]);
@@ -260,7 +260,7 @@ class AdminDashboardService
                 'data' => $analytics
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get property analytics', [
                 'error' => $e->getMessage()
             ]);
@@ -315,7 +315,7 @@ class AdminDashboardService
                 'data' => $data
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get user management data', [
                 'error' => $e->getMessage()
             ]);
@@ -369,7 +369,7 @@ class AdminDashboardService
                 'data' => $data
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get lead management data', [
                 'error' => $e->getMessage()
             ]);
@@ -425,7 +425,7 @@ class AdminDashboardService
                 'data' => $data
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get booking management data', [
                 'error' => $e->getMessage()
             ]);
@@ -456,7 +456,7 @@ class AdminDashboardService
                     'status' => 'ok',
                     'message' => 'Database connection healthy'
                 ];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $health['checks']['database'] = [
                     'status' => 'error',
                     'message' => 'Database connection failed: ' . $e->getMessage()
@@ -492,7 +492,7 @@ class AdminDashboardService
                     'status' => $recentErrors == 0 ? 'ok' : 'warning',
                     'message' => "Recent errors: $recentErrors"
                 ];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $health['checks']['errors'] = [
                     'status' => 'ok',
                     'message' => 'Error log table not found'
@@ -529,7 +529,7 @@ class AdminDashboardService
                 'data' => $health
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get system health', [
                 'error' => $e->getMessage()
             ]);
@@ -693,7 +693,7 @@ class AdminDashboardService
                 'data' => $stats
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get quick stats', [
                 'error' => $e->getMessage()
             ]);

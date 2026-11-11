@@ -13,10 +13,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\TenantAwareTrait;
 require_once __DIR__ . '/BaseController.php';
 
 use App\Core\Database\Database;
-use \App\Traits\TenantAwareTrait;
 
 class ProfilePhotoController extends BaseController
 {
@@ -148,7 +148,7 @@ class ProfilePhotoController extends BaseController
             header('Location: ' . $referer);
             exit;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ProfilePhoto upload error: " . $e->getMessage());
             parent::jsonResponse(['success' => false, 'message' => 'Upload failed'], 500);
             exit;
@@ -187,7 +187,7 @@ class ProfilePhotoController extends BaseController
             parent::jsonResponse(['success' => true, 'message' => 'Profile photo removed']);
             exit;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ProfilePhoto delete error: " . $e->getMessage());
             parent::jsonResponse(['success' => false, 'message' => 'Delete failed'], 500);
             exit;

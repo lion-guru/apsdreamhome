@@ -14,7 +14,7 @@ class PromotionalOfferController extends AdminController
         $this->requireAdmin();
         try {
             $offers = $this->db->fetchAll("SELECT * FROM promotional_offers ORDER BY valid_until DESC, id DESC LIMIT 200") ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $offers = [];
         }
         return $this->render('admin/promotional_offers/index', [
@@ -35,7 +35,7 @@ class PromotionalOfferController extends AdminController
                 [$title, trim($_POST['description'] ?? ''), (float)($_POST['discount_percentage'] ?? 0), $_POST['valid_until'] ?? date('Y-m-d')]
             );
             $this->setFlash('success', 'Promotional offer created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/promotional-offers');
@@ -49,7 +49,7 @@ class PromotionalOfferController extends AdminController
         try {
             $this->db->query("UPDATE promotional_offers SET status=? WHERE id=?", [$status, (int)($_POST['id'] ?? 0)]);
             $this->setFlash('success', 'Status updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/promotional-offers');
@@ -62,7 +62,7 @@ class PromotionalOfferController extends AdminController
         try {
             $this->db->query("DELETE FROM promotional_offers WHERE id=?", [(int)($_POST['id'] ?? 0)]);
             $this->setFlash('success', 'Offer deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/promotional-offers');

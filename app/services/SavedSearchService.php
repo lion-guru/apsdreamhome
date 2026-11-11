@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Services\EmailService;
+use App\Services\Communication\EmailService;
 
 use PDO;
 
@@ -418,7 +418,7 @@ class SavedSearchService
             ");
             $searches = $stmt->fetchAll();
 
-            $emailService = new EmailService();
+            $emailService = new \App\Services\Communication\EmailService();
 
             foreach ($searches as $search) {
                 $stats['searches_processed']++;

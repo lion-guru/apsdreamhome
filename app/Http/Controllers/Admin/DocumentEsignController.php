@@ -37,7 +37,7 @@ class DocumentEsignController extends AdminController
                 foreach ($this->db->fetchAll("SELECT id, name FROM users WHERE id IN ($in)") ?: [] as $u) {
                     $names[(int)$u['id']] = $u['name'];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[DocumentEsignController::enrichNames] ' . $e->getMessage());
             }
         }
@@ -55,7 +55,7 @@ class DocumentEsignController extends AdminController
         $tid = (int)\App\Core\Middleware\TenantContext::getId();
         try {
             $documents = $this->service->getDocumentsByTenant($tid);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DocumentEsignController::index] ' . $e->getMessage());
             $documents = [];
         }

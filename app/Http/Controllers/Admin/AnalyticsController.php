@@ -38,7 +38,7 @@ class AnalyticsController extends AdminController
             ];
 
             return $this->render('admin/analytics/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Analytics Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load analytics');
             return $this->redirect('admin/dashboard');
@@ -61,7 +61,7 @@ class AnalyticsController extends AdminController
             ];
 
             return $this->render('admin/analytics/associate_performance', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Associate Performance error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load associate performance data');
             return $this->redirect('admin/analytics');
@@ -84,7 +84,7 @@ class AnalyticsController extends AdminController
             ];
 
             return $this->render('admin/analytics/sales', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Sales Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load sales analytics');
             return $this->redirect('admin/analytics');
@@ -107,7 +107,7 @@ class AnalyticsController extends AdminController
             ];
 
             return $this->render('admin/analytics/property', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Property Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load property analytics');
             return $this->redirect('admin/analytics');
@@ -130,7 +130,7 @@ class AnalyticsController extends AdminController
             ];
 
             return $this->render('admin/analytics/financial', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Financial Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load financial analytics');
             return $this->redirect('admin/analytics');
@@ -159,7 +159,7 @@ class AnalyticsController extends AdminController
 
             $this->setFlash('error', 'Invalid export format');
             return $this->redirect('admin/analytics');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Export Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to export data');
             return $this->redirect('admin/analytics');
@@ -204,7 +204,7 @@ class AnalyticsController extends AdminController
             $stats['this_month'] = (float)($result['this_month'] ?? 0);
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Commission Stats error: " . $e->getMessage());
             return [];
         }
@@ -228,7 +228,7 @@ class AnalyticsController extends AdminController
                     LIMIT 10";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Performance Data error: " . $e->getMessage());
             return [];
         }
@@ -246,7 +246,7 @@ class AnalyticsController extends AdminController
                     GROUP BY DATE(created_at)
                     ORDER BY date DESC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Commission Trends error: " . $e->getMessage());
             return [];
         }
@@ -269,7 +269,7 @@ class AnalyticsController extends AdminController
                     ORDER BY total_commission DESC
                     LIMIT 20";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Top Performers error: " . $e->getMessage());
             return [];
         }
@@ -315,7 +315,7 @@ class AnalyticsController extends AdminController
             $metrics['growth_rate'] = $last > 0 ? round((($current - $last) / $last) * 100, 2) : 0;
 
             return $metrics;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Performance Metrics error: " . $e->getMessage());
             return [];
         }
@@ -333,7 +333,7 @@ class AnalyticsController extends AdminController
                     GROUP BY mlm_rank
                     ORDER BY count DESC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Rank Distribution error: " . $e->getMessage());
             return [];
         }
@@ -351,7 +351,7 @@ class AnalyticsController extends AdminController
                     GROUP BY DATE(created_at)
                     ORDER BY date DESC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Sales Data error: " . $e->getMessage());
             return [];
         }
@@ -385,7 +385,7 @@ class AnalyticsController extends AdminController
             $data['by_location'] = $this->db->fetchAll($sql) ?: [];
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Revenue Data error: " . $e->getMessage());
             return [];
         }
@@ -410,7 +410,7 @@ class AnalyticsController extends AdminController
                 'converted_leads' => $converted,
                 'total_leads' => $total
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Conversion Rates error: " . $e->getMessage());
             return [];
         }
@@ -442,7 +442,7 @@ class AnalyticsController extends AdminController
             $stats['avg_price'] = round((float)($result['avg_price'] ?? 0), 2);
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Property Stats error: " . $e->getMessage());
             return [];
         }
@@ -463,7 +463,7 @@ class AnalyticsController extends AdminController
                     ORDER BY booking_count DESC, total_revenue DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Popular Properties error: " . $e->getMessage());
             return [];
         }
@@ -485,7 +485,7 @@ class AnalyticsController extends AdminController
                     ORDER BY total_revenue DESC
                     LIMIT 15";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Location Analytics error: " . $e->getMessage());
             return [];
         }
@@ -521,7 +521,7 @@ class AnalyticsController extends AdminController
                 round(($summary['net_profit'] / $summary['total_revenue']) * 100, 2) : 0;
 
             return $summary;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Financial Summary error: " . $e->getMessage());
             return [];
         }
@@ -540,7 +540,7 @@ class AnalyticsController extends AdminController
                     GROUP BY payment_method
                     ORDER BY total_amount DESC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Payment Analytics error: " . $e->getMessage());
             return [];
         }
@@ -559,7 +559,7 @@ class AnalyticsController extends AdminController
                     GROUP BY status
                     ORDER BY total_amount DESC";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Payout Analytics error: " . $e->getMessage());
             return [];
         }
@@ -588,7 +588,7 @@ class AnalyticsController extends AdminController
             $bookingStatus = $this->db->query("SELECT status, COUNT(*) as cnt FROM plot_bookings GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC);
             $leadStatus = $this->db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC);
             $conversionRate = $totalLeads > 0 ? round($convertedLeads / $totalLeads * 100, 1) : 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AnalyticsController::advanced() DB error: " . $e->getMessage());
         }
 
@@ -630,7 +630,7 @@ class AnalyticsController extends AdminController
                 'bookingData' => $bookingData,
             ];
             return $this->render('admin/analytics/advanced', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Advanced Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load advanced analytics');
             return $this->redirect('admin/analytics');
@@ -674,7 +674,7 @@ class AnalyticsController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Export Data error: " . $e->getMessage());
             return [];
         }

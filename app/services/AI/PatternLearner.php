@@ -196,13 +196,13 @@ class PatternLearner
                             $placeholders = implode(', ', array_fill(0, count($values), '?'));
                             $ins = $this->db->prepare("INSERT INTO ai_intent_patterns ($colStr) VALUES ($placeholders)");
                             $ins->execute($values);
-                        } catch (\Exception $e) {
+                        } catch (\Throwable $e) {
                             error_log($e->getMessage());
                         }
                     }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log($e->getMessage());
         }
     }

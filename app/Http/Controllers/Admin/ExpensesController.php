@@ -16,7 +16,7 @@ class ExpensesController extends AdminController
                 'pending' => (int)$db->query("SELECT COUNT(*) FROM expenses WHERE status='pending'")->fetchColumn(),
                 'approved' => (int)$db->query("SELECT COUNT(*) FROM expenses WHERE status='approved'")->fetchColumn(),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $expenses = [];
             $stats = ['total' => 0, 'total_amount' => 0, 'pending' => 0, 'approved' => 0];
         }
@@ -45,7 +45,7 @@ class ExpensesController extends AdminController
                 $tid
             ]);
             $this->setFlash('success', 'Expense recorded successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to record expense: ' . $e->getMessage());
         }
         return $this->redirect('/admin/expenses');

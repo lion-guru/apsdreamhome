@@ -16,7 +16,7 @@ class BlogController extends PageController
         try {
             $stmt = $this->db->query("SELECT * FROM blog_posts WHERE status = 'published' ORDER BY created_at DESC");
             $blog_posts = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("BlogController::index error: " . $e->getMessage());
         }
 
@@ -58,7 +58,7 @@ class BlogController extends PageController
             $stmt = $this->db->prepare("SELECT * FROM blog_posts WHERE slug = ? AND status = 'published'");
             $stmt->execute([$slug]);
             $post = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("BlogController::show error: " . $e->getMessage());
         }
         if (!$post) {
@@ -78,7 +78,7 @@ class BlogController extends PageController
             $cntStmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM blog_comments WHERE post_id = ?");
             $cntStmt->execute([$post['id']]);
             $commentCount = $cntStmt->fetch(\PDO::FETCH_ASSOC)['cnt'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("BlogController::show comments error: " . $e->getMessage());
         }
 
@@ -143,7 +143,7 @@ class BlogController extends PageController
             ]);
 
             $_SESSION['comment_success'] = 'Your comment has been submitted and is awaiting moderation.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("BlogController::submitComment error: " . $e->getMessage());
             $_SESSION['comment_error'] = 'Failed to submit comment. Please try again.';
         }

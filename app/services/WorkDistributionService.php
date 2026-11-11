@@ -170,12 +170,15 @@ class WorkDistributionService
 
     private function getAvailableEmployees($department, $requiredRole = null)
     {
-        $query = "SELECT e.id, e.name, e.role, emp.department, emp.designation, emp.incentive_model
+        $query = "SELECT e.id, e.name, e.role,
+                  ep.department AS department,
+                  ep.designation AS designation,
+                  ep.incentive_model AS incentive_model
                   FROM users e
-                  JOIN employees emp ON emp.user_id = e.id
+                  LEFT JOIN employee_profiles ep ON ep.legacy_id = e.id OR ep.user_id = e.id OR ep.id = e.id
                   WHERE e.status = 'active'
-                  AND emp.status = 'active'
-                  AND emp.department = ?";
+                  AND ep.status = 'active'
+                  AND ep.department = ?";
         $params = [$department];
         
         if ($requiredRole) {

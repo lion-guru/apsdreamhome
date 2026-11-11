@@ -188,7 +188,7 @@ class ColonyDashboardController extends BaseController
                 'message' => 'Booking synced to MySQL successfully'
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Firebase sync error: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['error' => 'Server error: ' . $e->getMessage()]);

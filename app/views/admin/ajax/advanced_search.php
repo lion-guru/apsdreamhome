@@ -208,7 +208,7 @@ try {
             'sort' => h($sortBy)
         ]
     ]);
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log('Advanced search error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([

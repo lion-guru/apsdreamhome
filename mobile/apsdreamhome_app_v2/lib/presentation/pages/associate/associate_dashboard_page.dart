@@ -474,6 +474,12 @@ class AssociateDashboardPage extends ConsumerWidget {
         'route': '/associate/offers',
         'color': AppTheme.warningColor,
       },
+      {
+        'icon': Icons.psychology_outlined,
+        'label': 'AI Dashboard',
+        'route': '/ai-agent',
+        'color': const Color(0xFF9C27B0),
+      },
     ];
 
     return Padding(

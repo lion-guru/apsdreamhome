@@ -56,7 +56,7 @@ class LeadershipSalaryService
                     'snapshot_at' => date('Y-m-d H:i:s'),
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('getActivePlanSnapshot error: ' . $e->getMessage());
         }
         return ['plan_id' => null, 'plan_version' => 1, 'rates' => [], 'snapshot_at' => date('Y-m-d H:i:s')];
@@ -206,7 +206,7 @@ class LeadershipSalaryService
                 
                 error_log("LeadershipSalary: Paid user #$userId total ₹$totalMonthlyPayout for " . count($targets) . " overlapping target(s)");
                 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db->rollBack();
                 error_log("LeadershipSalary: Failed to pay user #$userId: " . $e->getMessage());
             }
@@ -232,8 +232,8 @@ class LeadershipSalaryService
         $stmt = $this->db->prepare("
             SELECT COALESCE(SUM(pb.total_plot_value), 0) as total 
             FROM plot_bookings pb
-            JOIN associates a ON a.id = pb.associate_id
-            WHERE a.user_id = ? 
+            JOIN associate_profiles ap ON ap.legacy_id = pb.associate_id OR ap.user_id = pb.associate_id OR ap.id = pb.associate_id
+            WHERE ap.user_id = ? 
               AND pb.status NOT IN ('cancelled', 'defaulted')" . ($tid > 1 ? " AND pb.tenant_id = ?" : "") . "
         ");
         $params = [$userId];

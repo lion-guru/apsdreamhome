@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 // AdminController resolved via namespace
-use App\Services\Voice\AsteriskService;
+use App\Services\AI\VoiceService;
 
 /**
  * SIM Calling Admin — Manage Asterisk + GSM Gateway voice calls
@@ -18,11 +18,15 @@ use App\Services\Voice\AsteriskService;
 class SIMCallingController extends AdminController
 {
     private $asterisk;
+  private $asteriskService;
 
     public function __construct()
     {
         parent::__construct();
-        $this->asterisk = new AsteriskService();
+        $this->asterisk = new VoiceService();
+    // NOTE (S451): generateDialplan() lives on AsteriskService, not on
+    // VoiceService -> "Call to undefined method VoiceService::generateDialplan()".
+    $this->asteriskService = new \App\Services\Voice\AsteriskService();
     }
 
     /**
@@ -51,7 +55,7 @@ class SIMCallingController extends AdminController
                 LEFT JOIN users u ON vcl.caller_id = u.id
                 WHERE vcl.call_type = 'asterisk'
                 ORDER BY vcl.created_at DESC LIMIT 15") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $stats = ['total_calls' => 0, 'completed' => 0, 'answered' => 0, 'no_answer' => 0, 'busy' => 0, 'today_calls' => 0];
             $recentCalls = [];
         }
@@ -95,7 +99,7 @@ class SIMCallingController extends AdminController
             $db = \App\Core\Database\Database::getInstance();
             $row = $db->query("SELECT settings_value FROM system_settings WHERE settings_key = 'asterisk_config' LIMIT 1")->fetch(\PDO::FETCH_ASSOC);
             $config = $row ? json_decode($row['settings_value'], true) : [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $config = [];
         }
 
@@ -143,7 +147,7 @@ class SIMCallingController extends AdminController
                     "INSERT INTO voice_call_logs (callee_phone, call_type, call_status, created_at) VALUES (?, 'asterisk', 'initiated', NOW())",
                     [$phone]
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Call log error: " . $e->getMessage());
             }
         }
@@ -196,6 +200,6 @@ class SIMCallingController extends AdminController
     {
         header('Content-Type: text/plain');
         header('Content-Disposition: attachment; filename="aps_outbound_calls.conf"');
-        echo $this->asterisk->generateDialplan();
+        echo $this->asteriskService->generateDialplan();
     }
 }

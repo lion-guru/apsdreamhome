@@ -117,7 +117,7 @@ class VirtualTourController extends BaseController
             } else {
                 $this->jsonResponse(['success' => false, 'error' => $upload_result['error']], 400);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Panorama upload error: ' . $e->getMessage());
             $this->jsonResponse(['success' => false, 'error' => 'Upload failed'], 500);
         }
@@ -273,7 +273,7 @@ class VirtualTourController extends BaseController
             } else {
                 return ['success' => false, 'error' => 'Failed to save file'];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Panorama upload error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Upload failed'];
         }
@@ -352,7 +352,7 @@ class VirtualTourController extends BaseController
             imagedestroy($thumbnail);
 
             return $thumb_path;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Thumbnail creation error: ' . $e->getMessage());
             return $source_path;
         }

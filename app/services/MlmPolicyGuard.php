@@ -153,8 +153,8 @@ class MlmPolicyGuard
                 DATE_FORMAT(pb.created_at, '%Y-%m') AS ym,
                 COALESCE(SUM(COALESCE(pb.agreement_value, pb.total_plot_value, 0)), 0) AS month_total
             FROM plot_bookings pb
-            JOIN associates a ON a.id = pb.associate_id
-            WHERE a.user_id = ?
+            JOIN associate_profiles ap ON ap.legacy_id = pb.associate_id OR ap.user_id = pb.associate_id OR ap.id = pb.associate_id
+            WHERE ap.user_id = ?
               AND pb.status NOT IN ('cancelled', 'refunded')
             " . ($tid > 1 ? " AND pb.tenant_id = ?" : "") . "
             GROUP BY ym
@@ -261,8 +261,8 @@ class MlmPolicyGuard
         $stmt = $this->pdo->prepare("
             SELECT COALESCE(SUM(COALESCE(pb.agreement_value, pb.total_plot_value, 0)), 0)
             FROM plot_bookings pb
-            JOIN associates a ON a.id = pb.associate_id
-            WHERE a.user_id = ?
+            JOIN associate_profiles ap ON ap.legacy_id = pb.associate_id OR ap.user_id = pb.associate_id OR ap.id = pb.associate_id
+            WHERE ap.user_id = ?
               AND pb.status NOT IN ('cancelled', 'refunded')"
             . ($tid > 1 ? " AND pb.tenant_id = ?" : "") . "
         ");

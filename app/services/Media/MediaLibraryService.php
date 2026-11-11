@@ -85,7 +85,7 @@ class MediaLibraryService
                 'media_id' => $mediaId,
                 'filename' => $filename
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to upload media file', [
                 'error' => $e->getMessage(),
                 'file' => $files['media_file']['name'] ?? 'unknown'
@@ -121,7 +121,7 @@ class MediaLibraryService
                 $params[] = $searchTerm;
             }
 
-            $sql .= " ORDER BY upload_date DESC LIMIT ? OFFSET ?";
+            $sql .= " ORDER BY uploaded_at DESC LIMIT ? OFFSET ?";
             $params[] = $limit;
             $params[] = $offset;
 
@@ -142,7 +142,7 @@ class MediaLibraryService
                 'success' => true,
                 'data' => $files
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get media files', [
                 'error' => $e->getMessage(),
                 'category' => $category,
@@ -187,7 +187,7 @@ class MediaLibraryService
                 'success' => true,
                 'data' => $file
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get media file', [
                 'error' => $e->getMessage(),
                 'media_id' => $id
@@ -239,7 +239,7 @@ class MediaLibraryService
                 'success' => true,
                 'message' => 'File deleted successfully'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to delete media file', [
                 'error' => $e->getMessage(),
                 'media_id' => $id
@@ -275,7 +275,7 @@ class MediaLibraryService
                 'success' => true,
                 'message' => 'File updated successfully'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to update media file', [
                 'error' => $e->getMessage(),
                 'media_id' => $id
@@ -305,10 +305,10 @@ class MediaLibraryService
             $stats['total_size'] = $result['total_size'] ?? 0;
 
             // By category
-            $results = $this->database->fetchAll("SELECT category, COUNT(*) as count FROM media_library GROUP BY category");
+            $results = $this->database->fetchAll("SELECT media_type, COUNT(*) as count FROM media_library GROUP BY media_type");
             $stats['by_category'] = [];
             foreach ($results as $row) {
-                $stats['by_category'][$row['category']] = $row['count'];
+                $stats['by_category'][$row['media_type']] = $row['count'];
             }
 
             // By type
@@ -319,7 +319,7 @@ class MediaLibraryService
             }
 
             // Recent uploads
-            $result = $this->database->fetchOne("SELECT COUNT(*) as recent FROM media_library WHERE upload_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+            $result = $this->database->fetchOne("SELECT COUNT(*) as recent FROM media_library WHERE uploaded_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
             $stats['recent_uploads'] = $result['recent'] ?? 0;
 
             // Storage usage
@@ -332,7 +332,7 @@ class MediaLibraryService
                 'success' => true,
                 'data' => $stats
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get media stats', [
                 'error' => $e->getMessage()
             ]);
@@ -351,14 +351,14 @@ class MediaLibraryService
     {
         try {
             $categories = $this->database->fetchAll(
-                "SELECT DISTINCT category FROM media_library ORDER BY category ASC"
+                "SELECT DISTINCT media_type FROM media_library ORDER BY media_type ASC"
             );
 
             return [
                 'success' => true,
                 'data' => array_column($categories, 'category')
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get categories', [
                 'error' => $e->getMessage()
             ]);
@@ -431,7 +431,7 @@ class MediaLibraryService
             'tags' => $tags,
             'mime_type' => $mimeType,
             'file_size' => $fileSize,
-            'upload_date' => date('Y-m-d H:i:s'),
+            'uploaded_at' => date('Y-m-d H:i:s'),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
         ]);
@@ -605,7 +605,7 @@ class MediaLibraryService
             imagedestroy($thumbnail);
 
             return $thumbnailFilename;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to create thumbnail', [
                 'error' => $e->getMessage(),
                 'filename' => $filename

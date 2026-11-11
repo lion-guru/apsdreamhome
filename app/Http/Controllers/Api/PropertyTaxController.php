@@ -42,7 +42,7 @@ class PropertyTaxController extends BaseApiController
             }
             
             return $this->jsonError($result['error']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyTaxController::calculate] ' . $e->getMessage());
             return $this->jsonError('Calculation failed');
         }
@@ -65,7 +65,7 @@ class PropertyTaxController extends BaseApiController
         try {
             $rates = $this->service->getRates($stateCode, $city, $propertyType);
             return $this->jsonSuccess(['rates' => $rates]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyTaxController::getRates] ' . $e->getMessage());
             return $this->jsonError('Failed to fetch rates');
         }
@@ -87,7 +87,7 @@ class PropertyTaxController extends BaseApiController
         try {
             $rates = $this->service->searchRates($stateCode, $search);
             return $this->jsonSuccess(['rates' => $rates]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyTaxController::search] ' . $e->getMessage());
             return $this->jsonError('Search failed');
         }
@@ -102,7 +102,7 @@ class PropertyTaxController extends BaseApiController
         try {
             $states = $this->service->getStates();
             return $this->jsonSuccess(['states' => $states]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyTaxController::getStates] ' . $e->getMessage());
             return $this->jsonError('Failed to fetch states');
         }
@@ -123,7 +123,7 @@ class PropertyTaxController extends BaseApiController
         try {
             $history = $this->service->getAssessmentHistory($propertyId);
             return $this->jsonSuccess(['history' => $history]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyTaxController::getAssessment] ' . $e->getMessage());
             return $this->jsonError('Failed to fetch history');
         }

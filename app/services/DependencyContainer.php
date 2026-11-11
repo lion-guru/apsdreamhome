@@ -273,35 +273,116 @@ class DependencyContainer implements ContainerInterface
         });
 
         // Logger
-        $this->singleton('logger', function() {
-            return new class {
-                public function info(string $message, array $context = []): void
+        $this->singleton('logger', function(): \Psr\Log\LoggerInterface {
+            return new class implements \Psr\Log\LoggerInterface {
+                public function emergency(\Stringable|string $message, array $context = []): void
                 {
-                    $logEntry = date('[Y-m-d H:i:s]') . ' INFO: ' . $message;
-                    if (!empty($context)) {
-                        $logEntry .= ' ' . json_encode($context);
-                    }
-                    error_log($logEntry);
+                    $this->log('emergency', (string)$message, $context);
                 }
 
-                public function error(string $message, array $context = []): void
+                public function alert(\Stringable|string $message, array $context = []): void
                 {
-                    $logEntry = date('[Y-m-d H:i:s]') . ' ERROR: ' . $message;
-                    if (!empty($context)) {
-                        $logEntry .= ' ' . json_encode($context);
-                    }
-                    error_log($logEntry);
+                    $this->log('alert', (string)$message, $context);
                 }
 
-                public function warning(string $message, array $context = []): void
+                public function critical(\Stringable|string $message, array $context = []): void
                 {
-                    $logEntry = date('[Y-m-d H:i:s]') . ' WARNING: ' . $message;
+                    $this->log('critical', (string)$message, $context);
+                }
+
+                public function error(\Stringable|string $message, array $context = []): void
+                {
+                    $this->log('error', (string)$message, $context);
+                }
+
+                public function warning(\Stringable|string $message, array $context = []): void
+                {
+                    $this->log('warning', (string)$message, $context);
+                }
+
+                public function notice(\Stringable|string $message, array $context = []): void
+                {
+                    $this->log('notice', (string)$message, $context);
+                }
+
+                public function info(\Stringable|string $message, array $context = []): void
+                {
+                    $this->log('info', (string)$message, $context);
+                }
+
+                public function debug(\Stringable|string $message, array $context = []): void
+                {
+                    $this->log('debug', (string)$message, $context);
+                }
+
+                public function log(mixed $level, \Stringable|string $message, array $context = []): void
+                {
+                    $logEntry = date('[Y-m-d H:i:s]') . ' ' . strtoupper((string)$level) . ': ' . (string)$message;
                     if (!empty($context)) {
                         $logEntry .= ' ' . json_encode($context);
                     }
                     error_log($logEntry);
                 }
             };
+        });
+
+        // Messenger Handlers
+        $this->singleton(\App\MessageHandler\SendNotificationHandler::class, function() {
+            return new \App\MessageHandler\SendNotificationHandler(
+                $this->get(\App\Services\NotificationService::class),
+                $this->get('logger')
+            );
+        });
+
+        $this->singleton(\App\MessageHandler\SendEmailHandler::class, function() {
+            return new \App\MessageHandler\SendEmailHandler(
+                $this->get(\App\Services\Communication\EmailService::class),
+                $this->get('logger')
+            );
+        });
+
+        $this->singleton(\App\MessageHandler\SendSmsHandler::class, function() {
+            return new \App\MessageHandler\SendSmsHandler(
+                $this->get(\App\Services\Communication\SmsService::class),
+                $this->get('logger')
+            );
+        });
+
+        $this->singleton(\App\MessageHandler\GeneratePdfHandler::class, function() {
+            return new \App\MessageHandler\GeneratePdfHandler(
+                $this->get(\App\Services\Document\PdfGeneratorService::class),
+                $this->get('logger')
+            );
+        });
+
+        // PdfGeneratorService
+        $this->singleton(\App\Services\Document\PdfGeneratorService::class, function() {
+            return new \App\Services\Document\PdfGeneratorService(
+                $this->get(\App\Services\Pdf\PdfService::class),
+                $this->get('logger')
+            );
+        });
+
+        // PdfService
+        $this->singleton(\App\Services\Pdf\PdfService::class, function() {
+            return new \App\Services\Pdf\PdfService();
+        });
+
+        // NotificationService
+        $this->singleton(\App\Services\NotificationService::class, function() {
+            return new \App\Services\NotificationService(
+                $this->get('db')
+            );
+        });
+
+        // EmailService
+        $this->singleton(\App\Services\Communication\EmailService::class, function() {
+            return new \App\Services\Communication\EmailService();
+        });
+
+        // SmsService
+        $this->singleton(\App\Services\Communication\SmsService::class, function() {
+            return new \App\Services\Communication\SmsService();
         });
 
         // Cache

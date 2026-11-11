@@ -130,7 +130,7 @@ try {
     
     echo "\n=== Phase 1 Migration Complete ===\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
     exit(1);
 }

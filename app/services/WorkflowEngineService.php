@@ -157,7 +157,7 @@ class WorkflowEngineService
 
             return $this->database->lastInsertId() ?: ($this->getWorkflowByCode($code)['id'] ?? null);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -183,7 +183,7 @@ class WorkflowEngineService
 
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -232,7 +232,7 @@ class WorkflowEngineService
                 'current_step' => 1
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -286,7 +286,7 @@ class WorkflowEngineService
                     return ['success' => true, 'message' => 'Action recorded'];
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }

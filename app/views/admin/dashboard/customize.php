@@ -1,292 +1,140 @@
 <?php
 /**
- * Admin Dashboard Customize - Drag-drop widget layout
+ * Dashboard Widget Customization (Drag & Drop)
+ * S354 - Suggestion #7
+ * Uses HTML5 Drag and Drop API (no external library needed)
  */
-$base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+$page_title = $page_title ?? 'Customize Dashboard';
 $widgets = $widgets ?? [];
-$layouts = $layouts ?? [];
+$savedLayout = $savedLayout ?? [];
 ?>
-<div class="container-fluid px-4 py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Customize Dashboard</h1>
-        <div>
-            <button class="btn btn-outline-secondary me-2" id="btn-reset-layout">
-                <i class="fas fa-undo me-1"></i> Reset to Default
-            </button>
-            <button class="btn btn-primary" id="btn-save-layout">
-                <i class="fas fa-save me-1"></i> Save Layout
-            </button>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="fas fa-th-large me-2 text-primary"></i>Customize Dashboard</h4>
+            <div>
+                <button class="btn btn-outline-secondary me-2" onclick="resetLayout()">
+                    <i class="fas fa-undo me-1"></i>Reset
+                </button>
+                <button class="btn btn-primary" onclick="saveLayout()">
+                    <i class="fas fa-save me-1"></i>Save Layout
+                </button>
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- Layout Selector -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="mb-0">Saved Layouts</h5>
-        </div>
-        <div class="card-body">
-            <div class="row" id="layout-selector">
-                <?php foreach ($layouts as $layout): ?>
-                    <div class="col-md-3 mb-3">
-                        <div class="card layout-card <?php echo $layout['is_default'] ? 'border-primary' : ''; ?>"
-                             data-layout-id="<?php echo $layout['id']; ?>">
-                            <div class="card-body text-center p-3">
-                                <h6 class="mb-1"><?php echo htmlspecialchars($layout['layout_name']); ?></h6>
-                                <?php if ($layout['is_default']): ?>
-                                    <span class="badge bg-primary">Default</span>
-                                <?php endif; ?>
-                                <div class="mt-2">
-                                    <button class="btn btn-sm btn-outline-primary btn-load-layout"
-                                            data-id="<?php echo $layout['id']; ?>">
-                                        <i class="fas fa-upload me-1"></i> Load
-                                    </button>
-                                    <?php if (!$layout['is_default']): ?>
-                                        <button class="btn btn-sm btn-outline-danger btn-delete-layout ms-1"
-                                                data-id="<?php echo $layout['id']; ?>">
-                                            <i class="fas fa-trash me-1"></i> Delete
-                                        </button>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-                <div class="col-md-3 mb-3">
-                    <button class="card btn btn-outline-secondary h-100 d-flex flex-column align-items-center justify-content-center"
-                            id="btn-new-layout">
-                        <i class="fas fa-plus fa-2x mb-2"></i>
-                        <span>New Layout</span>
-                    </button>
+<div class="alert alert-info">
+    <i class="fas fa-info-circle me-2"></i>
+    Drag and drop widgets to rearrange your dashboard. Click "Save Layout" to persist your arrangement.
+</div>
+
+<div class="row" id="widgetContainer">
+    <?php 
+    $widgetDefs = [
+        'stats_overview' => ['title' => 'Stats Overview', 'icon' => 'fa-chart-bar', 'color' => 'primary'],
+        'recent_leads' => ['title' => 'Recent Leads', 'icon' => 'fa-users', 'color' => 'success'],
+        'pending_tasks' => ['title' => 'Pending Tasks', 'icon' => 'fa-tasks', 'color' => 'warning'],
+        'revenue_chart' => ['title' => 'Revenue Chart', 'icon' => 'fa-chart-line', 'color' => 'info'],
+        'quick_actions' => ['title' => 'Quick Actions', 'icon' => 'fa-bolt', 'color' => 'danger'],
+        'notifications' => ['title' => 'Notifications', 'icon' => 'fa-bell', 'color' => 'secondary'],
+        'calendar' => ['title' => 'Calendar', 'icon' => 'fa-calendar', 'color' => 'primary'],
+        'team_performance' => ['title' => 'Team Performance', 'icon' => 'fa-trophy', 'color' => 'success'],
+    ];
+    
+    $layout = !empty($savedLayout) ? $savedLayout : array_keys($widgetDefs);
+    foreach ($layout as $widgetId):
+        if (!isset($widgetDefs[$widgetId])) continue;
+        $w = $widgetDefs[$widgetId];
+    ?>
+    <div class="col-md-6 col-lg-4 mb-3 widget-item" draggable="true" data-widget="<?= $widgetId ?>">
+        <div class="card h-100 widget-card" style="cursor: move;">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="fas <?= $w['icon'] ?> me-2 text-<?= $w['color'] ?>"></i><?= $w['title'] ?></h6>
+                <i class="fas fa-grip-vertical text-muted"></i>
+            </div>
+            <div class="card-body">
+                <div class="text-center text-muted py-3">
+                    <i class="fas <?= $w['icon'] ?> fa-2x mb-2 opacity-50"></i>
+                    <p class="small mb-0"><?= $w['title'] ?> widget content</p>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Available Widgets Palette -->
-    <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Available Widgets</h5>
-            <small class="text-muted">Drag to grid below</small>
-        </div>
-        <div class="card-body">
-            <div class="row" id="widget-palette">
-                <?php foreach ($widgets as $key => $widget): ?>
-                    <div class="col-md-3 mb-3 widget-item" draggable="true"
-                         data-widget-type="<?php echo $key; ?>">
-                        <div class="card widget-card h-100">
-                            <div class="card-body text-center p-3">
-                                <i class="fas fa-<?php echo $widget['icon']; ?> fa-2x text-primary mb-2"></i>
-                                <h6 class="mb-1"><?php echo $widget['name']; ?></h6>
-                                <small class="text-muted">Drag to grid</small>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </div>
-
-    <!-- Drop Grid -->
-    <div class="card">
-        <div class="card-header">
-            <h5 class="mb-0">Dashboard Grid (Drag widgets here)</h5>
-        </div>
-        <div class="card-body">
-            <div class="grid-stack" id="dashboard-grid"
-                 data-gs-animate="true"
-                 data-gs-cell-height="80"
-                 data-gs-min-row="10">
-                <!-- Widgets will be placed here by GridStack -->
-            </div>
-        </div>
-    </div>
+    <?php endforeach; ?>
 </div>
-
-<!-- Modal for New Layout Name -->
-<div class="modal fade" id="modalNewLayout" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">New Layout</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-    <div class="modal-body">
-            <div class="mb-3">
-                <label class="form-label">Layout Name</label>
-                <input type="text" class="form-control" id="newLayoutName" placeholder="My Custom Layout">
-            </div>
-    </div>
-    <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="btn-create-layout">Create</button>
-    </div>
-    </div>
-</div>
-
-<style>
-.widget-card { cursor: grab; transition: box-shadow 0.2s; }
-.widget-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-.widget-card:active { cursor: grabbing; }
-.grid-stack-item-content { background: #fff; border: 1px solid #dee2e6; border-radius: 0.375rem; }
-.grid-stack-item-resizing .grid-stack-item-content { box-shadow: 0 0 15px rgba(0,0,0,0.2); }
-.layout-card { cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
-.layout-card:hover { border-color: #0d6efd; box-shadow: 0 2px 8px rgba(13,110,253,0.15); }
-.widget-item { cursor: grab; }
-.widget-item:active { cursor: grabbing; }
-</style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack/10.0.0/gridstack-all.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const grid = GridStack.init({
-        cellHeight: 80,
-        minRow: 10,
-        animate: true,
-        acceptWidgets: '.widget-item',
-        draggable: {
-            handle: '.widget-card',
-            scroll: true,
-            appendTo: 'body'
+let draggedItem = null;
+
+document.querySelectorAll('.widget-item').forEach(item => {
+    item.addEventListener('dragstart', function(e) {
+        draggedItem = this;
+        this.style.opacity = '0.5';
+        e.dataTransfer.effectAllowed = 'move';
+    });
+    
+    item.addEventListener('dragend', function() {
+        this.style.opacity = '1';
+        draggedItem = null;
+    });
+    
+    item.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    });
+    
+    item.addEventListener('drop', function(e) {
+        e.preventDefault();
+        if (draggedItem && draggedItem !== this) {
+            const container = document.getElementById('widgetContainer');
+            const allItems = Array.from(container.children);
+            const draggedIndex = allItems.indexOf(draggedItem);
+            const targetIndex = allItems.indexOf(this);
+            
+            if (draggedIndex < targetIndex) {
+                this.parentNode.insertBefore(draggedItem, this.nextSibling);
+            } else {
+                this.parentNode.insertBefore(draggedItem, this);
+            }
         }
     });
+});
 
-    // Load existing widgets from default layout
-    loadDefaultLayout();
+function getLayout() {
+    return Array.from(document.querySelectorAll('.widget-item')).map(el => el.dataset.widget);
+}
 
-    // Widget palette drag
-    document.querySelectorAll('.widget-item').forEach(item => {
-        item.addEventListener('dragstart', function(e) {
-            e.dataTransfer.setData('widget-type', this.dataset.widgetType);
-        });
-    });
-
-    // Save layout
-    document.getElementById('btn-save-layout')?.addEventListener('click', function() {
-        const layout = grid.save();
-        const layoutName = prompt('Layout name:', 'My Layout') || 'Custom Layout';
-        saveLayout(layoutName, layout);
-    });
-
-    // Reset to default
-    document.getElementById('btn-reset-layout')?.addEventListener('click', function() {
-        if (confirm('Reset to default layout?')) {
-            loadDefaultLayout();
+function saveLayout() {
+    const layout = getLayout();
+    fetch('/admin/dashboard/customize/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<?= $_SESSION['csrf_token'] ?? '' ?>' },
+        body: JSON.stringify({ layout: layout })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert('Layout saved successfully!');
+        } else {
+            alert('Failed to save: ' + (data.message || 'Unknown error'));
         }
-    });
+    })
+    .catch(() => alert('Failed to save layout'));
+}
 
-    // Load layout from saved
-    document.querySelectorAll('.btn-load-layout').forEach(btn => {
-        btn.addEventListener('click', function() {
-            loadLayout(this.dataset.id);
-        });
-    });
-
-    // Delete layout
-    document.querySelectorAll('.btn-delete-layout').forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (confirm('Delete this layout?')) {
-                deleteLayout(this.dataset.id);
-            }
-        });
-    });
-
-    // New layout modal
-    document.getElementById('btn-new-layout')?.addEventListener('click', function() {
-        new bootstrap.Modal(document.getElementById('modalNewLayout')).show();
-    });
-
-    document.getElementById('btn-create-layout')?.addEventListener('click', function() {
-        const name = document.getElementById('newLayoutName').value.trim();
-        if (name) {
-            createLayout(name);
-        }
-    });
-
-    function loadDefaultLayout() {
-        const defaultLayout = [
-            { type: 'stats_cards', x: 0, y: 0, w: 12, h: 2 },
-            { type: 'recent_activity', x: 0, y: 2, w: 6, h: 4 },
-            { type: 'quick_actions', x: 6, y: 2, w: 6, h: 4 }
-        ];
-        grid.load(defaultLayout);
-        renderWidgets();
-    }
-
-    const widgetTemplates = <?php echo json_encode($widgets ?? []); ?>;
-    function renderWidgets() {
-        grid.engine.nodes.forEach(node => {
-            const el = node.el.querySelector('.grid-stack-item-content');
-            if (el && !el.dataset.rendered) {
-                el.dataset.rendered = 'true';
-                const widgetType = node.content;
-                const tpl = widgetTemplates[widgetType] || {};
-                const icon = (tpl.icon || 'cube').replace(/[^a-z0-9-]/gi, '');
-                const name = (tpl.name || widgetType).replace(/</g, '&lt;');
-                el.innerHTML = '<div class="text-center text-muted p-3"><i class="fas fa-' + icon + ' fa-2x mb-2"></i><div>' + name + '</div></div>';
-            }
-        });
-    }
-
-    function loadLayout(id) {
-        fetch('<?php echo $base; ?>/admin/dashboard/layout/' + id, {
-            method: 'GET',
-            headers: { 'X-CSRF-Token': '<?php echo $_SESSION['csrf_token'] ?? ''; ?>' }
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success && data.layout) {
-                grid.load(data.layout.layout_config);
-                renderWidgets();
-            }
-        });
-    }
-
-    function saveLayout(name, layout) {
-        fetch('<?php echo $base; ?>/admin/dashboard/layout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': '<?php echo $_SESSION['csrf_token'] ?? ''; ?>'
-            },
-            body: JSON.stringify({ layout_name: name, layout_config: layout, is_default: true })
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                alert('Layout saved!');
-                location.reload();
-            }
-        });
-    }
-
-    function createLayout(name) {
-        fetch('<?php echo $base; ?>/admin/dashboard/layout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': '<?php echo $_SESSION['csrf_token'] ?? ''; ?>'
-            },
-            body: JSON.stringify({ layout_name: name, layout_config: grid.save(), is_default: true })
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                bootstrap.Modal.getInstance(document.getElementById('modalNewLayout')).hide();
-                location.reload();
-            }
-        });
-    }
-
-    function deleteLayout(id) {
-        fetch('<?php echo $base; ?>/admin/dashboard/layout/' + id, {
-            method: 'DELETE',
-            headers: { 'X-CSRF-Token': '<?php echo $_SESSION['csrf_token'] ?? ''; ?>' }
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) location.reload();
-        });
-    }
+function resetLayout() {
+    if (!confirm('Reset to default layout?')) return;
+    fetch('/admin/dashboard/customize/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '<?= $_SESSION['csrf_token'] ?? '' ?>' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) location.reload();
+        else alert('Failed to reset');
+    })
+    .catch(() => alert('Failed to reset layout'));
+}
 </script>

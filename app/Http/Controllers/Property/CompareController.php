@@ -45,7 +45,7 @@ class CompareController extends BaseController
             ];
 
             return $this->render('properties/compare', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CompareController::index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load comparison page');
             return $this->redirect('/properties');
@@ -89,7 +89,7 @@ class CompareController extends BaseController
             ];
 
             return $this->render('properties/compare_results', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CompareController::compare error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to compare properties');
             return $this->redirect('/compare');
@@ -120,7 +120,7 @@ class CompareController extends BaseController
                 'message' => 'Comparison saved successfully',
                 'session_id' => $sessionId
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CompareController::save error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => 'Failed to save comparison']);
         }
@@ -150,7 +150,7 @@ class CompareController extends BaseController
             // Redirect to compare with these properties
             $params = http_build_query(['properties' => $propertyIds]);
             return $this->redirect('/compare/results?' . $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CompareController::load error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load comparison');
             return $this->redirect('/compare');
@@ -178,7 +178,7 @@ class CompareController extends BaseController
             $stmt->execute([$sessionId, $_SESSION['user_id']]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'Comparison deleted']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CompareController::delete error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => 'Failed to delete']);
         }
@@ -300,7 +300,7 @@ private function saveComparisonSession($userId, $propertyIds, $sessionName = nul
             $sessionId = $this->pdo->lastInsertId();
 
             return $sessionId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CompareController::saveComparisonSession error: " . $e->getMessage());
             return false;
         }
@@ -376,7 +376,7 @@ private function saveComparisonSession($userId, $propertyIds, $sessionName = nul
     /**
      * JSON response helper
      */
-    public function jsonResponse($data, int $status = 200)
+    public function jsonResponse($data, int $status = 200): void
     {
         header('Content-Type: application/json');
         echo json_encode($data);

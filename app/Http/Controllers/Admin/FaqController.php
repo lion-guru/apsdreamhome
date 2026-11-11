@@ -28,7 +28,7 @@ class FaqController extends AdminController
         try {
             $stmt = $this->db->query("SELECT * FROM faqs ORDER BY display_order ASC, created_at DESC");
             $faqs = $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $faqs = [];
         }
 
@@ -82,7 +82,7 @@ class FaqController extends AdminController
             $_SESSION['success'] = 'FAQ added successfully!';
             header('Location: ' . BASE_URL . '/admin/faqs');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error adding FAQ: ' . $e->getMessage();
             header('Location: ' . BASE_URL . '/admin/faqs/create');
             exit;
@@ -104,7 +104,7 @@ class FaqController extends AdminController
                 header('Location: ' . BASE_URL . '/admin/faqs');
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error loading FAQ';
             header('Location: ' . BASE_URL . '/admin/faqs');
             exit;
@@ -132,7 +132,7 @@ class FaqController extends AdminController
                 header('Location: ' . BASE_URL . '/admin/faqs');
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error loading FAQ';
             header('Location: ' . BASE_URL . '/admin/faqs');
             exit;
@@ -177,7 +177,7 @@ class FaqController extends AdminController
             $_SESSION['success'] = 'FAQ updated successfully!';
             header('Location: ' . BASE_URL . '/admin/faqs');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error updating FAQ: ' . $e->getMessage();
             header('Location: ' . BASE_URL . '/admin/faqs/' . $id . '/edit');
             exit;
@@ -195,7 +195,7 @@ class FaqController extends AdminController
             $stmt->execute([$id, ...$tp]);
 
             $_SESSION['success'] = 'FAQ deleted successfully!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error deleting FAQ: ' . $e->getMessage();
         }
 

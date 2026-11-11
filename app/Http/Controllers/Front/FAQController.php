@@ -18,7 +18,7 @@ class FAQController extends BaseController
         try {
             $stmt = $this->db->query("SELECT * FROM faqs WHERE status = 'active' ORDER BY display_order ASC, created_at DESC");
             $faqs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $faqs = [];
         }
         $this->render('pages/faq_list', [
@@ -33,7 +33,7 @@ class FAQController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM faqs WHERE id = ? AND status = 'active'");
             $stmt->execute([$id]);
             $faq = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $faq = null;
         }
         if (!$faq) {

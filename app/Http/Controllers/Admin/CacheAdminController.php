@@ -34,8 +34,24 @@ class CacheAdminController extends AdminController
     {
         $this->requireAdmin();
 
-        $stats = CacheService::getStats();
-        $test = CacheService::testConnection();
+        $cache = new CacheService();
+        $rawStats = $cache->getStats();
+        $available = $cache->isAvailable();
+        $stats = [
+            'available' => $available,
+            'host' => '127.0.0.1',
+            'port' => 6379,
+            'prefix' => 'apsdream_',
+            'hit_rate' => 0.0,
+            'redis' => is_array($rawStats) ? $rawStats : [],
+            'file' => [],
+            'session' => [],
+        ];
+        $test = [
+            'connected' => $available,
+            'driver' => $available ? 'redis' : 'file (fallback)',
+            'message' => $available ? 'Cache connection OK' : 'Redis unavailable — file fallback active',
+        ];
         $hotpath = HotPathCacheService::getStats();
 
         return $this->render('admin/cache', [
@@ -55,14 +71,14 @@ class CacheAdminController extends AdminController
     {
         $this->requireAdmin();
         try {
-            CacheService::flushAll();
+            (new CacheService())->clearAll();
             // Also drop hot-path keys (the wildcard pattern catches them).
             HotPathCacheService::invalidatePropertyList();
             HotPathCacheService::invalidateHeaderProjects();
             HotPathCacheService::invalidateHomeFeatured();
             HotPathCacheService::invalidateAdminDashboard();
             $this->setFlash('success', 'All cache layers flushed successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Flush failed: ' . $e->getMessage());
         }
         header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/cache');
@@ -82,7 +98,7 @@ class CacheAdminController extends AdminController
             } else {
                 $this->setFlash('warning', 'Redis was not available — nothing to flush.');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Redis flush failed: ' . $e->getMessage());
         }
         header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/cache');
@@ -101,7 +117,7 @@ class CacheAdminController extends AdminController
                 ? 'Redis connection OK (' . $result['latency_ms'] . 'ms).'
                 : 'Redis unavailable — using file cache fallback.';
             $this->setFlash($result['available'] ? 'success' : 'warning', $msg);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Test failed: ' . $e->getMessage());
         }
         header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/cache');
@@ -115,7 +131,10 @@ class CacheAdminController extends AdminController
     {
         $this->requireAdmin();
         header('Content-Type: application/json');
-        echo json_encode(CacheService::getStats());
+        // NOTE (S451): getStats() is not static - calling it statically
+  // was "Non-static method CacheService::getStats() cannot be called statically".
+  $cache = new CacheService();
+  echo json_encode($cache->getStats());
         exit;
     }
 
@@ -135,7 +154,7 @@ class CacheAdminController extends AdminController
             // saved-searches counts are per-user, so we pattern-drop them.
             $dropped += \App\Services\CacheService::invalidatePattern('saved_searches_count_');
             $this->setFlash('success', "Hot-path cache flushed ({$dropped} keys dropped).");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Hot-path flush failed: ' . $e->getMessage());
         }
         header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/admin/cache');

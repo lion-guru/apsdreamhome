@@ -66,7 +66,7 @@ class GeminiService {
             }
 
             return $decodedResponse;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'error' => true,
                 'message' => $e->getMessage()

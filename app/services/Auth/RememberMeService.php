@@ -76,7 +76,7 @@ class RememberMeService
             ]);
 
             return ['success' => true, 'message' => 'Remember me token created'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("RememberMeService::createToken error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to create remember token'];
         }
@@ -128,7 +128,7 @@ class RememberMeService
             $this->createToken($userId);
 
             return $userId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("RememberMeService::validateToken error: " . $e->getMessage());
             $this->clearCookie();
             return null;
@@ -151,7 +151,7 @@ class RememberMeService
                 $this->clearCookie();
             }
             return $deleted;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("RememberMeService::invalidateToken error: " . $e->getMessage());
             return false;
         }
@@ -169,7 +169,7 @@ class RememberMeService
                 $tid > 1 ? [$userId, $tid] : [$userId]
             )->rowCount() > 0;
             return $deleted;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("RememberMeService::invalidateAllUserTokens error: " . $e->getMessage());
             return false;
         }
@@ -202,7 +202,7 @@ class RememberMeService
                     $tid > 1 ? [$userId, $tid, $toDelete] : [$userId, $toDelete]
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("RememberMeService::cleanupOldTokens error: " . $e->getMessage());
         }
     }
@@ -235,7 +235,7 @@ class RememberMeService
                  ORDER BY created_at DESC",
                 $tid > 1 ? [$userId, $tid] : [$userId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("RememberMeService::getUserTokens error: " . $e->getMessage());
             return [];
         }
@@ -253,7 +253,7 @@ class RememberMeService
                 $tid > 1 ? [$userId, $selector, $tid] : [$userId, $selector]
             )->rowCount() > 0;
             return $deleted;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("RememberMeService::revokeToken error: " . $e->getMessage());
             return false;
         }

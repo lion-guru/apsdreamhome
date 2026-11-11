@@ -8,12 +8,12 @@ class QueueProcessorService
     use \App\Traits\ServiceTenantTrait;
 
     private $emailSender;
-    private $smsSender;
+    private $smsService;
 
     public function __construct()
     {
-        $this->emailSender = new EmailSenderService();
-        $this->smsSender = new SmsSenderService();
+        $this->emailSender = new EmailService();
+        $this->smsService = new SmsService();
     }
 
     public function processEmailQueue($limit = 10)
@@ -23,7 +23,7 @@ class QueueProcessorService
 
     public function processSmsQueue($limit = 10)
     {
-        return $this->smsSender->processQueue($limit);
+        return $this->smsService->processQueue($limit);
     }
 
     public function processAll($emailLimit = 10, $smsLimit = 10)
@@ -38,7 +38,7 @@ class QueueProcessorService
     {
         return [
             'email' => $this->emailSender->getQueueStats(),
-            'sms' => $this->smsSender->getQueueStats(),
+            'sms' => $this->smsService->getQueueStats(),
         ];
     }
 }

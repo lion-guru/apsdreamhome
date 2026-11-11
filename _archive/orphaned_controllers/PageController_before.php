@@ -25,7 +25,7 @@ class PageController extends BaseController
                 $pageTitle = $row['title'];
                 $pageContent = $row['content'];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PageController loadPageContent: ' . $e->getMessage());
         }
         return [$pageTitle, $pageContent];
@@ -76,7 +76,7 @@ class PageController extends BaseController
                     'description' => $project->description ?? null
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Home projects error: " . $e->getMessage());
         }
 
@@ -85,7 +85,7 @@ class PageController extends BaseController
         try {
             $stmt = $this->db->query("SELECT rank_name, min_gbv, commission_rate, reward_name, reward_value FROM mlm_rank_slabs WHERE is_active = 1 ORDER BY min_gbv ASC");
             $rank_slabs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Home rank_slabs error: " . $e->getMessage());
         }
 
@@ -109,7 +109,7 @@ class PageController extends BaseController
         $siteContent = [];
         try {
             $siteContent = \App\Services\SiteContentService::getInstance()->getSection('about');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // fallback: empty, view will use __() lang keys
         }
 
@@ -129,7 +129,7 @@ class PageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM testimonials WHERE status = 'approved' ORDER BY display_order ASC, created_at DESC LIMIT 20");
             $stmt->execute();
             $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Testimonials error: " . $e->getMessage());
         }
 
@@ -148,7 +148,7 @@ class PageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC");
             $stmt->execute();
             $team = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Team error: " . $e->getMessage());
         }
 
@@ -167,7 +167,7 @@ class PageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM career_jobs WHERE status = 'open' ORDER BY created_at DESC");
             $stmt->execute();
             $jobs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Careers error: " . $e->getMessage());
         }
 
@@ -185,7 +185,7 @@ class PageController extends BaseController
         try {
             $stmt = $this->db->query("SELECT * FROM faqs WHERE status = 'active' ORDER BY display_order ASC");
             $faqs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("FAQs error: " . $e->getMessage());
         }
 
@@ -203,7 +203,7 @@ class PageController extends BaseController
         try {
             $stmt = $this->db->query("SELECT * FROM downloads WHERE status = 'active' ORDER BY created_at DESC");
             $downloads = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Downloads error: " . $e->getMessage());
         }
 
@@ -248,7 +248,7 @@ class PageController extends BaseController
         try {
             $stmt = $this->db->query("SELECT * FROM gallery_images WHERE status = 'active' ORDER BY sort_order ASC");
             $images = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Gallery error: " . $e->getMessage());
         }
 
@@ -274,7 +274,7 @@ class PageController extends BaseController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $images = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Gallery project error: " . $e->getMessage());
         }
 
@@ -298,7 +298,7 @@ class PageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM blog_posts WHERE slug = ? AND status = 'published'");
             $stmt->execute([$slug]);
             $post = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Blog post error: " . $e->getMessage());
         }
 
@@ -345,7 +345,7 @@ class PageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM career_jobs WHERE id = ? AND status = 'open'");
             $stmt->execute([$id]);
             $job = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Job details error: " . $e->getMessage());
         }
 
@@ -784,7 +784,7 @@ public function propertyDetails($id = null)
                     $revStmt->execute([$id]);
                     $reviews = $revStmt->fetchAll(\PDO::FETCH_ASSOC);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Property fetch error: " . $e->getMessage());
             }
         }
@@ -962,7 +962,7 @@ public function handlePropertyListing()
                     ]);
                     $propertyId = $this->db->lastInsertId();
                     $savedToUserProperties = true;
-                } catch (\Exception $e1) {
+                } catch (\Throwable $e1) {
                     // Table might not exist, create it
                     if (strpos($e1->getMessage(), "doesn't exist") !== false) {
                         $this->createUserPropertiesTable();
@@ -1009,12 +1009,12 @@ public function handlePropertyListing()
                         VALUES (?, ?, ?, ?, 'property', 'pending', 'medium', ?, NOW())
                     ");
                     $inqStmt->execute([$name, $email, $phone, $message, $postedBy]);
-                } catch (\Exception $e2) {
+                } catch (\Throwable $e2) {
                     error_log("Inquiry save error: " . $e2->getMessage());
                 }
 
                 // Auto-wire to CRM lead
-                try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property','created_by'=>$postedBy]); } catch (\Exception $e3) {}
+                try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property','created_by'=>$postedBy]); } catch (\Throwable $e3) {}
 
                 // Success message with user-specific redirect
                 $_SESSION['success'] = 'Thank you! Your property listing request has been submitted. Our team will contact you within 24 hours to verify the details.';
@@ -1027,7 +1027,7 @@ public function handlePropertyListing()
                     $this->redirect('/user/properties');
                     return;
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Property listing error: " . $e->getMessage());
                 $_SESSION['error'] = 'Failed to submit. Please try again or call us directly.';
             }
@@ -1046,7 +1046,7 @@ public function userPropertyDetail($id = null)
             $stmt = $this->db->prepare("SELECT up.*, s.name as state_name, d.name as district_name FROM user_properties up LEFT JOIN states s ON up.state_id = s.id LEFT JOIN districts d ON up.district_id = d.id WHERE up.id = ? AND up.status = 'approved' LIMIT 1");
             $stmt->execute([$id]);
             $property = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $property = null;
@@ -1060,14 +1060,14 @@ public function userPropertyDetail($id = null)
         // Increment view count
         try {
             $this->db->query("UPDATE user_properties SET views = views + 1 WHERE id = ?", [$id]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("PageController.php: " . $e->getMessage());
         }
 
         // Track property view for lead generation
         try {
             $this->trackPropertyView($id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("PageController: trackPropertyView error: " . $e->getMessage());
         }
 
@@ -1111,13 +1111,13 @@ public function propertyInterest()
         try {
             $prop = $this->db->fetch("SELECT name FROM user_properties WHERE id = ?", [$propertyId]);
             $propName = $prop['name'] ?? '';
-        } catch (\Exception $e) { /* skip */ }
+        } catch (\Throwable $e) { /* skip */ }
 
         // Check if lead already exists for this phone
         $existingLead = null;
         try {
             $existingLead = $this->db->fetch("SELECT id FROM leads WHERE phone = ? AND deleted_at IS NULL ORDER BY id DESC LIMIT 1", [$phoneClean]);
-        } catch (\Exception $e) { /* skip */ }
+        } catch (\Throwable $e) { /* skip */ }
 
         $userId = $_SESSION['user_id'] ?? 0;
 
@@ -1161,7 +1161,7 @@ public function propertyInterest()
                         $leadId
                     ]
                 );
-            } catch (\Exception $e) { /* skip */ }
+            } catch (\Throwable $e) { /* skip */ }
 
             // Notify property owner
             try {
@@ -1170,10 +1170,10 @@ public function propertyInterest()
                     $ownerMsg = "New interest in your property '{$prop['name']}'!\n\nFrom: " . ($name ?: 'Unknown') . " ($phoneClean)\nBudget: $budget\n\nAPS Dream Home";
                     @mail($prop['email'], "Interest in your property: {$prop['name']}", $ownerMsg, "From: info@apsdreamhome.com\r\nReply-To: $phoneClean@aps.local");
                 }
-            } catch (\Exception $e) { /* skip */ }
+            } catch (\Throwable $e) { /* skip */ }
 
             echo json_encode(['success' => true, 'message' => 'Interest recorded! Our team will contact you shortly.', 'lead_id' => $leadId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Property interest error: " . $e->getMessage());
             echo json_encode(['success' => false, 'message' => 'Something went wrong. Please try again.']);
         }
@@ -1203,7 +1203,7 @@ public function propertyInquiry()
             $stmt->execute([$propertyId, $name, $email, $phone, $message]);
 
             // Auto-wire to CRM lead
-            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property_inquiry','property_id'=>$propertyId]); } catch (\Exception $e3) {}
+            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$message,'type'=>'property_inquiry','property_id'=>$propertyId]); } catch (\Throwable $e3) {}
 
             // Also notify property owner
             try {
@@ -1212,12 +1212,12 @@ public function propertyInquiry()
                     $ownerMsg = "New inquiry for your property '{$prop['name']}'!\n\nFrom: $name ($phone, $email)\nMessage: $message\n\nAPS Dream Home";
                     @mail($prop['email'], "Inquiry for your property: {$prop['name']}", $ownerMsg, "From: info@apsdreamhome.com\r\nReply-To: $email");
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Property owner notification error: " . $e->getMessage());
             }
 
             $_SESSION['success'] = 'Your inquiry has been sent. The property owner will contact you soon!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Property inquiry error: " . $e->getMessage());
             $_SESSION['error'] = 'Failed to send inquiry. Please call us at +91 92771 21112.';
         }
@@ -1240,7 +1240,7 @@ public function plotMap()
         try {
             $colStmt = $this->db->query("SELECT id, name FROM colonies WHERE is_active = 1 ORDER BY id");
             $colonies = $colStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PageController::plotMap colonies: ' . $e->getMessage());
         }
 
@@ -1290,7 +1290,7 @@ public function plotMap()
                     $totalStats['total']++;
                 }
                 $colony['plots'] = $plots;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('PageController::plotMap plots colony ' . $colony['id'] . ': ' . $e->getMessage());
             }
             $colonyStats[$colony['id']] = $colony['stats'];
@@ -1333,12 +1333,12 @@ public function contact()
                     try {
                         $inqStmt = $this->db->prepare("INSERT INTO inquiries (name, email, phone, message, type, status, priority, created_at) VALUES (?, ?, ?, ?, ?, 'new', 'medium', NOW())");
                         $inqStmt->execute([$name, $email, $phone, $subject . ': ' . $message, 'contact']);
-                    } catch (\Exception $e2) {
+                    } catch (\Throwable $e2) {
                         error_log("Inquiry save error: " . $e2->getMessage());
                     }
 
                     // Auto-wire to CRM lead
-                    try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$subject.': '.$message,'type'=>'contact']); } catch (\Exception $e3) {}
+                    try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$subject.': '.$message,'type'=>'contact']); } catch (\Throwable $e3) {}
 
                     // Trigger WhatsApp notification for new inquiry
                     try {
@@ -1347,11 +1347,11 @@ public function contact()
                             'customer_name' => $name ?: 'Valued Customer',
                             'property_type' => 'property',
                         ]);
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         // WhatsApp notification is best-effort
                         error_log("PageController.php: " . $e->getMessage());
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $error = 'Failed to submit. Please try again or call us directly.';
                     error_log("Contact form error: " . $e->getMessage());
                 }
@@ -1422,7 +1422,7 @@ public function serviceInterest()
                 ->execute([$leadId, $serviceId]);
 
             echo json_encode(['success' => true, 'message' => 'Thank you! We will contact you shortly.']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Table might not exist, create it
             if (strpos($e->getMessage(), "doesn't exist") !== false) {
                 $this->createServiceInterestsTable();
@@ -1518,7 +1518,7 @@ public function news()
             $news_items = $this->db->fetchAll(
                 "SELECT * FROM news WHERE status = 'published' ORDER BY created_at DESC"
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $news_items = [];
@@ -1611,18 +1611,18 @@ public function constructionInquiry()
             $stmt->execute([$name, $email, $phone, "Construction Inquiry - {$project_type}" . ($budget > 0 ? " | Budget: Γé╣{$budget}" : '') . ($location ? " | Location: {$location}" : '') . ($message ? " | Details: {$message}" : '')]);
 
             // Auto-wire to CRM lead
-            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>"Construction: {$project_type}",'type'=>'project']); } catch (\Exception $e3) {}
+            try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>"Construction: {$project_type}",'type'=>'project']); } catch (\Throwable $e3) {}
 
             // Also save to service_interests if table exists
             try {
                 $sStmt = $this->db->prepare("INSERT INTO service_interests (lead_id, service_type, status, notes, created_at) VALUES (?, 'construction', 'pending', ?, NOW())");
                 $sStmt->execute([$this->db->lastInsertId(), "Budget: Γé╣{$budget}, Location: {$location}, Type: {$project_type}"]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('PageController constructionInquiry service interests: ' . $e->getMessage());
             }
 
             $_SESSION['success'] = 'Thank you! We will contact you shortly regarding your construction project.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $_SESSION['error'] = 'Something went wrong. Please try again.';
@@ -1746,7 +1746,7 @@ public function reviewSubmit()
             $stmt->execute([$customerId, $propertyId, $rating, $reviewText]);
 
             $_SESSION['success'] = 'Thank you! Your review has been submitted and is pending approval.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Review submit error: " . $e->getMessage());
             $_SESSION['error'] = 'Something went wrong. Please try again.';
         }
@@ -1778,7 +1778,7 @@ public function projects()
                 }
                 $grouped[$state][$district][] = $project;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $projects = [];
             $grouped = [];
             error_log("Projects error: " . $e->getMessage());
@@ -1835,7 +1835,7 @@ public function projectDetails($slug = null)
                         $plotStmt = $this->db->prepare("SELECT * FROM plots WHERE site_id = ? AND status IN ('available', 'open') LIMIT 20");
                         $plotStmt->execute([$project->id]);
                         $plots = $plotStmt->fetchAll(\PDO::FETCH_OBJ);
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
                         $plots = [];
@@ -1846,13 +1846,13 @@ public function projectDetails($slug = null)
                         $relatedStmt = $this->db->prepare("SELECT * FROM sites WHERE district = ? AND id != ? AND status IN ('active', 'completed') ORDER BY site_name LIMIT 4");
                         $relatedStmt->execute([$project->district, $project->id]);
                         $related_projects = $relatedStmt->fetchAll(\PDO::FETCH_OBJ);
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
                         $related_projects = [];
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Project details error: " . $e->getMessage());
             }
         }
@@ -1873,7 +1873,7 @@ public function suyodayColony()
             $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE '%Suryoday%' LIMIT 1");
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $project = null;
@@ -1893,7 +1893,7 @@ public function raghunatNagri()
             $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE '%Raghunath%' OR site_name LIKE '%Raghunat%' LIMIT 1");
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $project = null;
@@ -1913,7 +1913,7 @@ public function brajRadhaNagri()
             $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE '%Braj Radha%' OR site_name LIKE '%Braj%' LIMIT 1");
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $project = null;
@@ -1933,7 +1933,7 @@ public function budhBiharColony()
             $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE '%Budh Bihar%' OR site_name LIKE '%Budh%' LIMIT 1");
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $project = null;
@@ -1953,7 +1953,7 @@ public function awadhpuri()
             $stmt = $this->db->prepare("SELECT * FROM sites WHERE site_name LIKE '%Awadhpuri%' LIMIT 1");
             $stmt->execute();
             $project = $stmt->fetch(\PDO::FETCH_OBJ);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $project = null;
@@ -2042,7 +2042,7 @@ public function userInvestments()
                 WHERE p.customer_id = ? AND p.is_active = 1 ORDER BY p.updated_at DESC LIMIT 20");
             $stmt->execute([$userId]);
             $investments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Investments fetch error: ' . $e->getMessage());
         }
 
@@ -2079,7 +2079,7 @@ public function valuationCalculator()
         try {
             $stmt = $this->db->query("SELECT id, name FROM districts ORDER BY name");
             $districts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('valuationCalculator districts error: ' . $e->getMessage());
         }
         $data = [
@@ -2105,7 +2105,7 @@ public function propertyValuation()
         try {
             $stmt = $this->db->query("SELECT id, name FROM districts ORDER BY name");
             $districts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('propertyValuation districts error: ' . $e->getMessage());
         }
         $data = [
@@ -2160,7 +2160,7 @@ public function projectsByLocation($location = null)
                 $stmt = $this->db->prepare("SELECT * FROM sites WHERE LOWER(district) = LOWER(?) AND status IN ('active', 'completed') ORDER BY site_name");
                 $stmt->execute([$location]);
                 $projects = $stmt->fetchAll(\PDO::FETCH_OBJ);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Projects by location error: " . $e->getMessage());
             }
         }
@@ -2207,13 +2207,13 @@ public function handleQuickInquiry()
                 $inquiryId = $this->db->lastInsertId();
 
                 // Auto-wire to CRM lead
-                try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$fullMessage,'type'=>$formType]); } catch (\Exception $e3) {}
+                try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$fullMessage,'type'=>$formType]); } catch (\Throwable $e3) {}
 
                 // Also save to contacts table
                 try {
                     $contactStmt = $this->db->prepare("INSERT INTO contacts (name, email, phone, subject, message, ip_address, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
                     $contactStmt->execute([$name, $email, $phone, 'Quick Inquiry - ' . ucfirst(str_replace('_', ' ', $requirement)), $fullMessage, $_SERVER['REMOTE_ADDR'] ?? 'unknown']);
-                } catch (\Exception $e2) {
+                } catch (\Throwable $e2) {
                     error_log('PageController handleQuickInquiry contacts: ' . $e2->getMessage());
                 }
 
@@ -2221,7 +2221,7 @@ public function handleQuickInquiry()
                 $this->trackServiceInterests($name, $phone, $email, $requirement, $inquiryId);
 
                 $_SESSION['success'] = 'Thank you! Your inquiry has been submitted. We will contact you shortly.';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Quick inquiry error: " . $e->getMessage());
                 $_SESSION['error'] = 'Failed to submit. Please call us directly at +91 92771 21112.';
             }
@@ -2236,7 +2236,7 @@ public function legal()
             $stmt = $this->db->prepare("SELECT * FROM legal_documents ORDER BY category, title");
             $stmt->execute();
             $legal_docs = $stmt->fetchAll(\PDO::FETCH_OBJ);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $legal_docs = [];
@@ -2460,7 +2460,7 @@ public function colonies()
                 'total_plots' => $totalPlots,
                 'cities_covered' => count(array_unique(array_column($colonies, 'district_name')))
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PageController] " . __METHOD__ . "() exception: " . $e->getMessage());
 
             $colonies = [];

@@ -41,7 +41,7 @@ class VirtualTourService
             $stmt = $this->database->prepare("INSERT INTO virtual_tours ($cols) VALUES ($vals)");
             $stmt->execute($params);
             return $this->database->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new Exception("Failed to create virtual tour: " . $e->getMessage());
         }
     }
@@ -64,7 +64,7 @@ class VirtualTourService
             if ($tid > 1) $params[] = $tid;
             $stmt->execute($params);
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -132,7 +132,7 @@ class VirtualTourService
             
             return true;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new Exception("Failed to create hotspots: " . $e->getMessage());
         }
     }

@@ -81,7 +81,7 @@ class DashboardAnalyticsService
                 'completed' => $byStatus['completed'] ?? 0,
                 'total_revenue' => $revenue
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in DashboardAnalyticsService::getBookingStats: ' . $e->getMessage());
             return [
                 'total' => 0,
@@ -186,7 +186,7 @@ class DashboardAnalyticsService
                 'by_type' => $byType,
                 'featured' => $featured
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in DashboardAnalyticsService::getPropertyStats: ' . $e->getMessage());
             return [
                 'total' => 0,
@@ -292,7 +292,7 @@ class DashboardAnalyticsService
                 'by_source' => $bySource,
                 'today' => $today
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in DashboardAnalyticsService::getLeadStats: ' . $e->getMessage());
             return [
                 'total' => 0,
@@ -376,7 +376,7 @@ class DashboardAnalyticsService
                 'pending' => $pendingRevenue,
                 'by_month' => $byMonth
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in DashboardAnalyticsService::getRevenueStats: ' . $e->getMessage());
             return [
                 'total' => 0,
@@ -469,7 +469,7 @@ class DashboardAnalyticsService
                 'customer' => $byRole['customer'] ?? 0,
                 'top_performers' => $topPerformers
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in DashboardAnalyticsService::getTeamPerformanceStats: ' . $e->getMessage());
             return [
                 'total' => 0,

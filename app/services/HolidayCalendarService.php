@@ -7,6 +7,25 @@ use App\Traits\ServiceTenantTrait;
 
 class HolidayCalendarService
 {
+    /**
+     * Query runner: fetch a single row.
+     *
+     * NOTE (S451): this service calls $this->fetchOne($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchOne()".
+     */
+    private function fetchOne(string $sql, array $params = []): ?array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchOne] ' . $e->getMessage());
+            return null;
+        }
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -14,6 +33,25 @@ class HolidayCalendarService
     public function __construct()
     {
         $this->db = Database::getInstance();
+    }
+
+    /**
+     * Query runner used by this service.
+     *
+     * NOTE (S451): this service calls $this->fetchAll($sql, $params)
+     * internally, but the method NEVER existed -> every caller died with
+     * "Call to undefined method <Service>::fetchAll()".
+     */
+    private function fetchAll(string $sql, array $params = []): array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchAll] ' . $e->getMessage());
+            return [];
+        }
     }
 
     public function getHolidays(array $filters = []): array
@@ -90,7 +128,7 @@ class HolidayCalendarService
                 ]);
 
             return ['success' => true, 'id' => $this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (strpos($e->getMessage(), 'Duplicate') !== false) {
                 return ['success' => false, 'message' => 'Holiday already exists for this date'];
             }

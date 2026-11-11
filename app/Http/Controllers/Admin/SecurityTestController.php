@@ -24,7 +24,7 @@ class SecurityTestController extends AdminController
                 $suite = new SecurityTestSuite();
                 $recommendations = $suite->getRecommendations($results);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SecurityTest index error: ' . $e->getMessage());
         }
 
@@ -55,7 +55,7 @@ class SecurityTestController extends AdminController
                 "INSERT INTO security_test_runs (results, overall_score, created_by, created_at) VALUES (?, ?, ?, NOW())",
                 [json_encode($results), $overallScore, $_SESSION['admin_id'] ?? null]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $this->db->execute("CREATE TABLE IF NOT EXISTS security_test_runs (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -68,7 +68,7 @@ class SecurityTestController extends AdminController
                     "INSERT INTO security_test_runs (results, overall_score, created_by, created_at) VALUES (?, ?, ?, NOW())",
                     [json_encode($results), $overallScore, $_SESSION['admin_id'] ?? null]
                 );
-            } catch (\Exception $e2) {
+            } catch (\Throwable $e2) {
                 error_log('SecurityTest runTests DB error: ' . $e2->getMessage());
             }
         }
@@ -90,7 +90,7 @@ class SecurityTestController extends AdminController
                 $results = json_decode($row['results'], true);
                 $overallScore = (int) ($row['overall_score'] ?? 0);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SecurityTest report error: ' . $e->getMessage());
         }
 

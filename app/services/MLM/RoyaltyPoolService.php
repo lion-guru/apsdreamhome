@@ -119,8 +119,8 @@ class RoyaltyPoolService
                     u.id AS user_id,
                     COALESCE(SUM(COALESCE(pb.agreement_value, pb.total_plot_value, 0)), 0) AS monthly_gbv
                 FROM plot_bookings pb
-                JOIN associates a ON a.id = pb.associate_id
-                JOIN users u ON u.id = a.user_id
+                JOIN associate_profiles ap ON ap.legacy_id = pb.associate_id OR ap.user_id = pb.associate_id OR ap.id = pb.associate_id
+                JOIN users u ON u.id = ap.user_id
                 WHERE YEAR(pb.created_at) = YEAR(CONCAT(?, '-01'))
                   AND MONTH(pb.created_at) = MONTH(CONCAT(?, '-01'))
                   AND pb.status NOT IN ('cancelled', 'refunded')

@@ -259,7 +259,7 @@ class IoTController extends AdminController
             $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :id AND status = 'available'");
             $stmt->execute(['id' => $property_id]);
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Property fetch error: ' . $e->getMessage()); }
             return null;
         }
@@ -289,7 +289,7 @@ class IoTController extends AdminController
             $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('IoT devices fetch error: ' . $e->getMessage()); }
             return [];
         }
@@ -343,7 +343,7 @@ class IoTController extends AdminController
             } else {
                 $this->setFlash('error', 'Failed to add IoT device');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('IoT device add error: ' . $e->getMessage()); }
             $this->setFlash('error', 'Failed to add IoT device');
         }
@@ -372,7 +372,7 @@ class IoTController extends AdminController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('All IoT devices fetch error: ' . $e->getMessage()); }
             return [];
         }
@@ -418,7 +418,7 @@ class IoTController extends AdminController
             $stmt->execute(['id' => $device_id]);
 
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('IoT device fetch error: ' . $e->getMessage()); }
             return null;
         }
@@ -451,7 +451,7 @@ class IoTController extends AdminController
             ];
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('IoT device control error: ' . $e->getMessage()); }
             return false;
         }
@@ -520,7 +520,7 @@ class IoTController extends AdminController
                 'response' => json_encode($this->getSimulatedDeviceResponse(null, $command_data)),
                 'userId' => $_SESSION['user_id'] ?? null
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Device control log error: ' . $e->getMessage()); }
             return false;
         }
@@ -550,7 +550,7 @@ class IoTController extends AdminController
             $stmt->execute(['deviceId' => $device_id, 'limit' => (int)$limit]);
 
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Device history fetch error: ' . $e->getMessage()); }
             return [];
         }
@@ -585,7 +585,7 @@ class IoTController extends AdminController
             } else {
                 $this->setFlash('error', 'Failed to create automation rule');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Automation rule creation error: ' . $e->getMessage()); }
             $this->setFlash('error', 'Failed to create automation rule');
         }
@@ -609,7 +609,7 @@ class IoTController extends AdminController
             $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Automation rules fetch error: ' . $e->getMessage()); }
             return [];
         }
@@ -707,7 +707,7 @@ class IoTController extends AdminController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -1024,7 +1024,7 @@ class IoTController extends AdminController
             $sql = "UPDATE iot_devices SET status = :status, last_seen = NOW() WHERE device_id = :deviceId";
             $stmt = $this->db->prepare($sql);
             return $stmt->execute(['status' => $status, 'deviceId' => $device_id]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (defined('DEBUG_MODE') && DEBUG_MODE) { error_log('Device status update error: ' . $e->getMessage()); }
             return false;
         }

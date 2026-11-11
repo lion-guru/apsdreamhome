@@ -213,7 +213,7 @@ class FinancialReportController extends AdminController
 
         try {
             $base = $this->reportService->getProfitLoss($startDate, $endDate);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FinancialReportController::profitAndLossStatement base: ' . $e->getMessage());
             $base = ['revenue' => ['total' => 0], 'expenses' => ['total' => 0], 'net_profit' => 0, 'profit_margin' => 0];
         }
@@ -222,7 +222,7 @@ class FinancialReportController extends AdminController
             try {
                 $row = $this->db->fetch($sql, $params);
                 return (float)($row['total'] ?? 0);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('FinancialReportController::profitAndLossStatement line: ' . $e->getMessage());
                 return 0.0;
             }
@@ -288,7 +288,7 @@ class FinancialReportController extends AdminController
 
         try {
             $tdsSvc = new \App\Services\MLM\TdsConfigService();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FinancialReportController TdsConfigService: ' . $e->getMessage());
             $tdsSvc = null;
         }
@@ -296,7 +296,7 @@ class FinancialReportController extends AdminController
         try {
             $sections = $tdsSvc ? $tdsSvc->getSections() : [];
             if (isset($sections['194H']['threshold'])) $threshold = (float)$sections['194H']['threshold'];
-        } catch (\Exception $e) { $threshold = 30000; }
+        } catch (\Throwable $e) { $threshold = 30000; }
         $thresholdLabel = '₹' . number_format($threshold, 0);
 
         [$tSql, $tParams] = $this->tenantWhere();
@@ -309,7 +309,7 @@ class FinancialReportController extends AdminController
                 GROUP BY beneficiary_user_id
                 ORDER BY gross DESC
             ", array_merge([$start, $end], $tParams)) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FinancialReportController::buildTdsData ledger: ' . $e->getMessage());
             $groups = [];
         }
@@ -321,13 +321,13 @@ class FinancialReportController extends AdminController
             if ($uid <= 0) continue;
             try {
                 $who = $this->db->fetch("SELECT u.name, u.referral_code, e.pan_number FROM users u LEFT JOIN employees e ON e.user_id = u.id WHERE u.id = ?", [$uid]);
-            } catch (\Exception $e) { $who = null; }
+            } catch (\Throwable $e) { $who = null; }
             $pan = strtoupper(trim((string)($who['pan_number'] ?? '')));
             $gross = (float)($g['gross'] ?? 0);
             $calc = null;
             try {
                 if ($tdsSvc) $calc = $tdsSvc->calculateForCommission($gross, $pan !== '' ? $pan : null);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('FinancialReportController::buildTdsData calc: ' . $e->getMessage());
                 $calc = null;
             }
@@ -344,7 +344,7 @@ class FinancialReportController extends AdminController
                     if ($ref !== '') $refs[] = $ref;
                     if (($p['status'] ?? '') === 'paid') $netPaid += (float)($p['net_amount'] ?? 0);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('FinancialReportController::buildTdsData payouts: ' . $e->getMessage());
             }
             $rows[] = [

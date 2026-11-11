@@ -104,7 +104,7 @@ class RazorpayService
                 'key_id' => $this->keyId
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Razorpay order creation failed: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -154,7 +154,7 @@ class RazorpayService
             
             return ['success' => true, 'booking_id' => $order['booking_id']];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Payment success handling failed: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -217,7 +217,7 @@ class RazorpayService
                 }
             }
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Commission distribution failed: " . $e->getMessage());
         }
     }
@@ -285,7 +285,7 @@ class RazorpayService
                 throw $e;
             }
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Wallet credit failed: " . $e->getMessage());
         }
     }

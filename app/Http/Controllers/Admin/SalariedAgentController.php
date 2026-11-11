@@ -50,7 +50,7 @@ class SalariedAgentController extends AdminController
             ");
             $stmt->execute();
             $allAssociates = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[SalariedAgentController] create: ' . $e->getMessage());
             $allAssociates = [];
         }
@@ -122,7 +122,7 @@ class SalariedAgentController extends AdminController
             ");
             $stmt->execute([$userId]);
             $agent = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[SalariedAgentController] show: ' . $e->getMessage());
             $agent = [];
         }

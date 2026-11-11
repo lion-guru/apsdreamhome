@@ -238,6 +238,6 @@ class RecurringTransactionService
     public function getVendors(): array
     {
         $tid = $this->tenantId();
-        return $this->db->fetchAll("SELECT id, name FROM vendors WHERE status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY name LIMIT 100", $tid > 1 ? [$tid] : []) ?: [];
+        return $this->db->fetchAll("SELECT id, vendor_name, contact_person, phone, email FROM vendors WHERE status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY vendor_name LIMIT 100", $tid > 1 ? [$tid] : []) ?: [];
     }
 }

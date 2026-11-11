@@ -17,7 +17,7 @@ class BlogController extends AdminController
         try {
             $stmt = $this->db->query("SELECT * FROM blog_posts ORDER BY created_at DESC");
             $blogs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $blogs = [];
         }
         $this->render("admin/blogs/index", ['page_title' => 'Blog Management', 'blogs' => $blogs]);
@@ -41,7 +41,7 @@ class BlogController extends AdminController
             $stmt = $this->db->prepare("INSERT INTO blog_posts (title, slug, content, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
             $stmt->execute([$title, $slug, $content, $status, $this->tenantId()]);
             $_SESSION['success'] = 'Blog post created successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/blogs');
@@ -54,7 +54,7 @@ class BlogController extends AdminController
             $stmt = $this->db->prepare("SELECT * FROM blog_posts WHERE id = ?");
             $stmt->execute([$id]);
             $blog = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $blog = null;
         }
         if (!$blog) {
@@ -76,7 +76,7 @@ class BlogController extends AdminController
             $stmt = $this->db->prepare("UPDATE blog_posts SET title = ?, content = ?, status = ? WHERE id = ? $tenantSql");
             $stmt->execute(array_merge([$title, $content, $status, $id], $tenantParams));
             $_SESSION['success'] = 'Blog post updated successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/blogs');
@@ -90,7 +90,7 @@ class BlogController extends AdminController
             $stmt = $this->db->prepare("DELETE FROM blog_posts WHERE id = ? $tenantSql");
             $stmt->execute(array_merge([$id], $tenantParams));
             $_SESSION['success'] = 'Blog post deleted successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/blogs');
@@ -159,7 +159,7 @@ class BlogController extends AdminController
                 'status' => $status,
                 'search' => $search,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/blogs');
         }
@@ -172,7 +172,7 @@ class BlogController extends AdminController
             $stmt = $this->db->prepare("UPDATE blog_comments SET status = 'approved' WHERE id = ?");
             $stmt->execute([$id]);
             $_SESSION['success'] = 'Comment approved.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/blogs/comments');
@@ -185,7 +185,7 @@ class BlogController extends AdminController
             $stmt = $this->db->prepare("UPDATE blog_comments SET status = 'spam' WHERE id = ?");
             $stmt->execute([$id]);
             $_SESSION['success'] = 'Comment marked as spam.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/blogs/comments');
@@ -198,7 +198,7 @@ class BlogController extends AdminController
             $stmt = $this->db->prepare("DELETE FROM blog_comments WHERE id = ?");
             $stmt->execute([$id]);
             $_SESSION['success'] = 'Comment deleted.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/blogs/comments');

@@ -77,7 +77,7 @@ class AdvanceRecoveryService
             $this->pdo->commit();
             return ['success' => true, 'advance_id' => $advanceId, 'advance_no' => $advanceNo, 'emi' => $emi];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }

@@ -69,7 +69,7 @@ class FarmerController extends BaseController
                 'success' => true,
                 'data' => $farmer
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to retrieve farmer',
@@ -103,7 +103,7 @@ class FarmerController extends BaseController
                 'message' => 'Farmer created successfully',
                 'data' => $farmer
             ], 201);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to create farmer',
@@ -144,7 +144,7 @@ class FarmerController extends BaseController
                 'message' => 'Farmer updated successfully',
                 'data' => $farmer
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to update farmer',
@@ -172,7 +172,7 @@ class FarmerController extends BaseController
                 'success' => true,
                 'message' => 'Farmer deleted successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to delete farmer',
@@ -193,7 +193,7 @@ class FarmerController extends BaseController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to retrieve statistics',
@@ -252,7 +252,7 @@ class FarmerController extends BaseController
                 'message' => 'Bulk operation completed',
                 'data' => $results
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to perform bulk operation',
@@ -270,7 +270,7 @@ class FarmerController extends BaseController
             $db = \App\Core\Database\Database::getInstance();
             $holdings = $db->fetchAll("SELECT * FROM farmer_land_holdings WHERE farmer_id = ?", [$farmerId]);
             echo json_encode(['success' => true, 'data' => $holdings ?? []]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => true, 'data' => [], 'message' => $e->getMessage()]);
         }
         exit;
@@ -284,7 +284,7 @@ class FarmerController extends BaseController
             $db = \App\Core\Database\Database::getInstance();
             $db->insert('farmer_land_holdings', $data);
             echo json_encode(['success' => true, 'message' => 'Land holding added', 'id' => $db->lastInsertId()]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -297,7 +297,7 @@ class FarmerController extends BaseController
             $db = \App\Core\Database\Database::getInstance();
             $txns = $db->fetchAll("SELECT * FROM transactions WHERE user_id = ? OR customer_id = ? ORDER BY created_at DESC LIMIT 50", [$farmerId, $farmerId]);
             echo json_encode(['success' => true, 'data' => $txns ?? []]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => true, 'data' => [], 'message' => $e->getMessage()]);
         }
         exit;
@@ -311,7 +311,7 @@ class FarmerController extends BaseController
             $db = \App\Core\Database\Database::getInstance();
             $db->insert('transactions', $data);
             echo json_encode(['success' => true, 'message' => 'Transaction added', 'id' => $db->lastInsertId()]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -324,7 +324,7 @@ class FarmerController extends BaseController
             $db = \App\Core\Database\Database::getInstance();
             $loans = $db->fetchAll("SELECT * FROM farmer_loans WHERE farmer_id = ? ORDER BY created_at DESC", [$farmerId]);
             echo json_encode(['success' => true, 'data' => $loans ?? []]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => true, 'data' => [], 'message' => $e->getMessage()]);
         }
         exit;
@@ -337,7 +337,7 @@ class FarmerController extends BaseController
             $db = \App\Core\Database\Database::getInstance();
             $requests = $db->fetchAll("SELECT * FROM farmer_support_requests WHERE farmer_id = ? ORDER BY created_at DESC", [$farmerId]);
             echo json_encode(['success' => true, 'data' => $requests ?? []]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => true, 'data' => [], 'message' => $e->getMessage()]);
         }
         exit;
@@ -351,7 +351,7 @@ class FarmerController extends BaseController
             $db = \App\Core\Database\Database::getInstance();
             $db->insert('farmer_support_requests', $data);
             echo json_encode(['success' => true, 'message' => 'Support request created', 'id' => $db->lastInsertId()]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -372,7 +372,7 @@ class FarmerController extends BaseController
                 'total_loans' => $loanCount,
                 'total_support_requests' => $supportCount
             ]]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -393,7 +393,7 @@ class FarmerController extends BaseController
                 'total_land_holdings' => $totalLand,
                 'total_acquisitions' => $totalAcquisitions
             ]]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -410,7 +410,7 @@ class FarmerController extends BaseController
                 'recent_farmers' => $farmers ?? [],
                 'recent_acquisitions' => $recentAcquisitions ?? []
             ]]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -430,7 +430,7 @@ class FarmerController extends BaseController
             $db = \App\Core\Database\Database::getInstance();
             $db->update('farmer_land_holdings', ['acquisition_status' => $status], 'id = ?', [$holdingId]);
             echo json_encode(['success' => true, 'message' => 'Acquisition status updated']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;

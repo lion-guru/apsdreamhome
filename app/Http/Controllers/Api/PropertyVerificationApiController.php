@@ -28,7 +28,7 @@ class PropertyVerificationApiController extends BaseApiController
                 }
             }
             echo json_encode(['success' => true, 'data' => $levels]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Get Levels API error');
         }
     }
@@ -47,7 +47,7 @@ class PropertyVerificationApiController extends BaseApiController
                 $level['features'] = json_decode($level['features'], true) ?: [];
             }
             echo json_encode(['success' => true, 'data' => $level]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Get Level API error');
         }
     }
@@ -97,7 +97,7 @@ class PropertyVerificationApiController extends BaseApiController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'error' => $result['error']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Create Request API error');
         }
     }
@@ -115,7 +115,7 @@ class PropertyVerificationApiController extends BaseApiController
                 return;
             }
             echo json_encode(['success' => true, 'data' => $request]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Get Request API error');
         }
     }
@@ -135,7 +135,7 @@ class PropertyVerificationApiController extends BaseApiController
 
             $requests = $this->service->getRequestsByUser($userId, $status);
             echo json_encode(['success' => true, 'data' => $requests]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Get My Requests API error');
         }
     }
@@ -146,7 +146,7 @@ class PropertyVerificationApiController extends BaseApiController
         try {
             $requests = $this->service->getRequestsByProperty((int)$propertyId);
             echo json_encode(['success' => true, 'data' => $requests]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Get Property Requests API error');
         }
     }
@@ -171,7 +171,7 @@ class PropertyVerificationApiController extends BaseApiController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'error' => $result['error']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Update Request API error');
         }
     }
@@ -194,7 +194,7 @@ class PropertyVerificationApiController extends BaseApiController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'error' => $result['error']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Submit Request API error');
         }
     }
@@ -217,7 +217,7 @@ class PropertyVerificationApiController extends BaseApiController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'error' => $result['error']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Approve Request API error');
         }
     }
@@ -243,7 +243,7 @@ class PropertyVerificationApiController extends BaseApiController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'error' => $result['error']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Reject Request API error');
         }
     }
@@ -285,7 +285,7 @@ class PropertyVerificationApiController extends BaseApiController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'error' => $result['error']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Upload Document API error');
         }
     }
@@ -296,7 +296,7 @@ class PropertyVerificationApiController extends BaseApiController
         try {
             $documents = $this->service->getDocuments((int)$requestId);
             echo json_encode(['success' => true, 'data' => $documents]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Get Documents API error');
         }
     }
@@ -323,7 +323,7 @@ class PropertyVerificationApiController extends BaseApiController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'error' => $result['error']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Verify Document API error');
         }
     }
@@ -359,7 +359,7 @@ class PropertyVerificationApiController extends BaseApiController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'error' => $result['error']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Issue Badge API error');
         }
     }
@@ -375,7 +375,7 @@ class PropertyVerificationApiController extends BaseApiController
                 return;
             }
             echo json_encode(['success' => true, 'data' => $badge]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Verify Badge API error');
         }
     }
@@ -401,7 +401,7 @@ class PropertyVerificationApiController extends BaseApiController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'error' => $result['error']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Revoke Badge API error');
         }
     }
@@ -415,7 +415,7 @@ class PropertyVerificationApiController extends BaseApiController
             $stats = $this->service->getStats();
             $levelStats = $this->service->getLevelStats();
             echo json_encode(['success' => true, 'data' => ['overview' => $stats, 'levels' => $levelStats]]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Get Stats API error');
         }
     }

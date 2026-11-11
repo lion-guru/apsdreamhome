@@ -445,7 +445,7 @@ class QueueService
             $this->complete($job['id']);
             return true;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Check if should retry
             if ($job['attempts'] < $job['max_attempts']) {
                 $this->release($job['id'], 60); // Retry after 60 seconds

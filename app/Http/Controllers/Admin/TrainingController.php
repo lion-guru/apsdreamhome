@@ -14,7 +14,7 @@ class TrainingController extends AdminController
             $totalCourses = count($courses);
             $activeCourses = count(array_filter($courses, fn($c) => ($c['is_active'] ?? 0) == 1));
             $mandatoryCourses = count(array_filter($courses, fn($c) => ($c['is_mandatory'] ?? 0) == 1));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $courses = [];
             $totalCourses = 0;
             $activeCourses = 0;
@@ -59,7 +59,7 @@ class TrainingController extends AdminController
                 $_SESSION['admin_id'] ?? null
             ]);
             $this->setFlash('success', 'Course created successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to create course: ' . $e->getMessage());
         }
         $this->redirect('/admin/training/courses');
@@ -74,7 +74,7 @@ class TrainingController extends AdminController
                 $this->setFlash('error', 'Course not found');
                 $this->redirect('/admin/training/courses');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load course');
             $this->redirect('/admin/training/courses');
         }
@@ -106,7 +106,7 @@ class TrainingController extends AdminController
                 (int)$id
             ], $tenantParams));
             $this->setFlash('success', 'Course updated successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to update course: ' . $e->getMessage());
         }
         $this->redirect('/admin/training/courses');
@@ -121,7 +121,7 @@ class TrainingController extends AdminController
             $activeEnrollments = count(array_filter($enrollments, fn($e) => ($e['status'] ?? '') == 'active'));
             $completedEnrollments = count(array_filter($enrollments, fn($e) => ($e['status'] ?? '') == 'completed'));
             $droppedEnrollments = count(array_filter($enrollments, fn($e) => ($e['status'] ?? '') == 'dropped'));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $enrollments = [];
             $totalEnrollments = 0;
             $activeEnrollments = 0;
@@ -147,7 +147,7 @@ class TrainingController extends AdminController
                 $this->setFlash('error', 'Enrollment not found');
                 $this->redirect('/admin/training/enrollments');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load enrollment');
             $this->redirect('/admin/training/enrollments');
         }
@@ -162,7 +162,7 @@ class TrainingController extends AdminController
         $this->requireAdmin();
         try {
             $certificates = $this->db->fetchAll("SELECT tc.*, u.name as associate_name FROM training_certificates tc LEFT JOIN users u ON tc.associate_id = u.id ORDER BY tc.issued_date DESC") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $certificates = [];
         }
         return $this->render('admin/training/certificates', [
@@ -209,7 +209,7 @@ class TrainingController extends AdminController
             header('Content-Disposition: attachment; filename="certificate-' . $cert['certificate_number'] . '.html"');
             echo $html;
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to download: ' . $e->getMessage());
             $this->redirect('/admin/training/certificates');
         }
@@ -221,7 +221,7 @@ class TrainingController extends AdminController
         try {
             $modules = $this->db->fetchAll("SELECT tm.*, tc.course_title FROM training_modules tm LEFT JOIN training_courses tc ON tm.course_id = tc.id ORDER BY tm.course_id, tm.order_index") ?: [];
             $courses = $this->db->fetchAll("SELECT id, course_title FROM training_courses WHERE is_active = 1 ORDER BY course_title") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $modules = [];
             $courses = [];
         }
@@ -248,7 +248,7 @@ class TrainingController extends AdminController
                 isset($_POST['is_required']) ? 1 : 0
             ]);
             $this->setFlash('success', 'Module added successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to add module: ' . $e->getMessage());
         }
         $this->redirect('/admin/training/modules');

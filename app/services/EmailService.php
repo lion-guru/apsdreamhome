@@ -2,90 +2,53 @@
 
 namespace App\Services;
 
+use App\Services\Communication\EmailService as CanonicalEmailService;
+use App\Core\Database\Database;
 use Exception;
-use PHPMailer\PHPMailer\PHPMailer;
+
 use \App\Traits\ServiceTenantTrait;
 
+/**
+ * EmailService - Legacy wrapper for backward compatibility
+ * 
+ * @deprecated Use App\Services\Communication\EmailService instead
+ * This class delegates to the canonical EmailService
+ */
 class EmailService
 {
     use \App\Traits\ServiceTenantTrait;
 
-    private $config;
+    private $unifiedService;
 
     public function __construct()
     {
-        $this->config = [
-            'host' => getenv('MAIL_HOST') ?: ($_ENV['MAIL_HOST'] ?? 'smtp.gmail.com'),
-            'port' => getenv('MAIL_PORT') ?: ($_ENV['MAIL_PORT'] ?? 587),
-            'username' => getenv('MAIL_USERNAME') ?: ($_ENV['MAIL_USERNAME'] ?? ''),
-            'password' => getenv('MAIL_PASSWORD') ?: ($_ENV['MAIL_PASSWORD'] ?? ''),
-            'encryption' => getenv('MAIL_ENCRYPTION') ?: ($_ENV['MAIL_ENCRYPTION'] ?? 'tls'),
-            'from_address' => getenv('MAIL_FROM_ADDRESS') ?: ($_ENV['MAIL_FROM_ADDRESS'] ?? 'no-reply@apsdreamhome.com'),
-            'from_name' => getenv('MAIL_FROM_NAME') ?: ($_ENV['MAIL_FROM_NAME'] ?? 'APS Dream Home')
-        ];
+        $this->unifiedService = new \App\Services\Communication\EmailService();
     }
 
     /**
-     * Create and configure a PHPMailer instance
+     * Create and configure a PHPMailer instance - delegates to unified service
      */
-    private function createMailer(): PHPMailer
+    private function createMailer()
     {
-        $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host = $this->config['host'];
-            $mail->SMTPAuth = true;
-            $mail->Username = $this->config['username'];
-            $mail->Password = $this->config['password'];
-            $mail->SMTPSecure = $this->config['encryption'];
-            $mail->Port = $this->config['port'];
-            $mail->CharSet = 'UTF-8';
-            $mail->setFrom($this->config['from_address'], $this->config['from_name']);
-        } catch (Exception $e) {
-            error_log("PHPMailer init failed: " . $e->getMessage());
-        }
-        return $mail;
+        // Delegate to unified service's internal mailer
+        return $this->unifiedService->createMailerForLegacy();
     }
 
     /**
-     * General email sending method
+     * General email sending method - delegates to unified service
      */
     public function send($to, $subject, $body, $fromName = null)
     {
         try {
-            $mail = $this->createMailer();
-            if ($fromName) {
-                $mail->setFrom($this->config['from_address'], $fromName);
-            }
-            $mail->addAddress($to);
-            $mail->isHTML(true);
-            $mail->Subject = $subject;
-            $mail->Body = $body;
-            $mail->AltBody = strip_tags($body);
-            $result = $mail->send();
-
-            // Track email usage for tenant
-            if ($result && class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
-                try {
-                    $tenantId = \App\Core\Middleware\TenantContext::getId();
-                    if ($tenantId > 1) {
-                        \App\Services\TenantService::getInstance()->incrementUsage($tenantId, 'emails');
-                    }
-                } catch (\Throwable $e) {
-                // usage tracking should never break email sending
-                error_log($e->getMessage());
-                }
-            }
-
-            return $result;
+            return $this->unifiedService->send($to, $subject, $bodyHtml, '');
         } catch (Exception $e) {
-            error_log("Email sending failed: " . $e->getMessage());
+            error_log("Email sending failed (legacy): " . $e->getMessage());
             return false;
         }
     }
 
     /**
-     * Send verification email
+     * Send verification email - delegates to unified service
      */
     public function sendVerificationEmail($to, $name, $token)
     {
@@ -93,15 +56,12 @@ class EmailService
             $subject = 'Verify Your Email Address';
             $appUrl = rtrim(BASE_URL, '/');
             $verificationUrl = $appUrl . "/verify-email?token=" . $token;
-            $message = file_get_contents(__DIR__ . '/../../resources/emails/verification.html');
-            if ($message) {
-                $message = str_replace(['{{name}}', '{{verification_url}}'], [$name, $verificationUrl], $message);
-            } else {
-                $message = "<h2>Hello {$name}!</h2><p>Please verify your email: <a href='{$verificationUrl}'>Verify</a></p>";
-            }
-            return $this->send($to, $subject, $message);
+            
+            $message = $this->getVerificationEmailTemplate($name, $verificationUrl);
+            
+            return $this->unifiedService->send($to, $subject, $message, '');
         } catch (Exception $e) {
-            error_log("Email sending failed: " . $e->getMessage());
+            error_log("Email sending failed (legacy): " . $e->getMessage());
             return false;
         }
     }
@@ -114,7 +74,7 @@ class EmailService
         try {
             $subject = 'Welcome to APS Dream Home - Your Account is Ready!';
             $message = $this->getWelcomeEmailTemplate($name);
-            $result = $this->send($to, $subject, $message);
+            $result = $this->unifiedService->send($to, $subject, $message, '');
             return ['success' => $result, 'message' => $result ? 'Welcome email sent successfully' : 'Email sending failed'];
         } catch (Exception $e) {
             error_log("Welcome email failed: " . $e->getMessage());
@@ -131,7 +91,7 @@ class EmailService
             $adminEmail = getenv('ADMIN_EMAIL') ?: 'admin@apsdreamhome.com';
             $subject = 'New Property Inquiry - ' . $inquiryData['property_title'];
             $message = $this->getInquiryNotificationTemplate($inquiryData);
-            $result = $this->send($adminEmail, $subject, $message);
+            $result = $this->unifiedService->send($adminEmail, $subject, $message, '');
             return ['success' => $result, 'message' => $result ? 'Inquiry notification sent to admin' : 'Email sending failed'];
         } catch (Exception $e) {
             error_log("Inquiry notification failed: " . $e->getMessage());
@@ -147,7 +107,7 @@ class EmailService
         try {
             $subject = 'Response to Your Property Inquiry - ' . $propertyTitle;
             $message = $this->getInquiryResponseTemplate($userName, $propertyTitle, $response);
-            $result = $this->send($userEmail, $subject, $message);
+            $result = $this->unifiedService->send($userEmail, $subject, $message, '');
             return ['success' => $result, 'message' => $result ? 'Inquiry response sent to user' : 'Email sending failed'];
         } catch (Exception $e) {
             error_log("Inquiry response failed: " . $e->getMessage());
@@ -163,7 +123,7 @@ class EmailService
         try {
             $subject = 'Welcome to APS Dream Home Newsletter';
             $message = $this->getNewsletterConfirmationTemplate($userName);
-            $result = $this->send($userEmail, $subject, $message);
+            $result = $this->unifiedService->send($userEmail, $subject, $message, '');
             return ['success' => $result, 'message' => $result ? 'Newsletter confirmation sent' : 'Email sending failed'];
         } catch (Exception $e) {
             error_log("Newsletter confirmation failed: " . $e->getMessage());
@@ -172,8 +132,48 @@ class EmailService
     }
 
     /**
-     * Get welcome email template
+     * Legacy template methods for backward compatibility
      */
+    private function getVerificationEmailTemplate($name, $verificationUrl)
+    {
+        return "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Verify Your Email Address</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #0d6efd, #6610f2); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 8px 8px; }
+                .button { display: inline-block; background: #0d6efd; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+                .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1>Verify Your Email Address</h1>
+                </div>
+                <div class='content'>
+                    <h2>Hello {$name}!</h2>
+                    <p>Thank you for registering with APS Dream Home. Please click the button below to verify your email address:</p>
+                    <p style='text-align: center;'>
+                        <a href='{$verificationUrl}' class='button'>Verify Email Address</a>
+                    </p>
+                    <p>If you didn't create an account, please ignore this email.</p>
+                    <p>The link will expire in 24 hours.</p>
+                </div>
+                <div class='footer'>
+                    <p>APS Dream Home - Your Dream Home Partner</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+    }
+
     private function getWelcomeEmailTemplate($userName)
     {
         $baseUrl = rtrim(BASE_URL, '/');
@@ -181,7 +181,6 @@ class EmailService
         <!DOCTYPE html>
         <html>
         <head>
-    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
             <meta charset='UTF-8'>
             <title>Welcome to APS Dream Home</title>
             <style>
@@ -400,7 +399,7 @@ class EmailService
     }
 
     /**
-     * Send welcome email to new lead
+     * Send lead welcome email
      */
     public function sendLeadWelcomeEmail($to, $name)
     {
@@ -414,27 +413,21 @@ class EmailService
                 <p>Best regards,<br>Modern Real Estate Team</p>
             ";
 
-            return $this->send($to, $subject, $message);
+            return $this->unifiedService->send($to, $subject, $message, '');
         } catch (Exception $e) {
             error_log("Lead welcome email failed: " . $e->getMessage());
             return false;
         }
     }
 
+    /**
+     * Send email with attachment
+     */
     public function sendWithAttachment($to, $subject, $body, $attachmentPath, $attachmentName)
     {
         try {
-            $mail = $this->createMailer();
-            $mail->addAddress($to);
-            $mail->isHTML(true);
-            $mail->Subject = $subject;
-            $mail->Body = $body;
-            $mail->AltBody = strip_tags($body);
-            if (is_file($attachmentPath)) {
-                $mail->addAttachment($attachmentPath, $attachmentName);
-            }
-            return $mail->send();
-        } catch (\Exception $e) {
+            return $this->unifiedService->sendWithAttachment($to, $subject, $body, $attachmentPath, $attachmentName);
+        } catch (\Throwable $e) {
             error_log("Email with attachment failed: " . $e->getMessage());
             return false;
         }

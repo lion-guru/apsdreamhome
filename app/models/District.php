@@ -29,7 +29,7 @@ class District extends Model
 
             $db = \App\Core\Database::getInstance();
             return $db->fetchAll($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in District::getActive: ' . $e->getMessage());
             return [];
         }
@@ -51,7 +51,7 @@ class District extends Model
 
             $db = \App\Core\Database::getInstance();
             return $db->fetchAll($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in District::getForSelect: ' . $e->getMessage());
             return [];
         }
@@ -77,7 +77,7 @@ class District extends Model
 
             $db = \App\Core\Database::getInstance();
             return $db->fetchAll($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in District::getWithStateName: ' . $e->getMessage());
             return [];
         }
@@ -111,7 +111,7 @@ class District extends Model
             $stmt->execute();
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in District::getByState: ' . $e->getMessage());
             return [];
         }
@@ -132,7 +132,7 @@ class District extends Model
 
             $db = \App\Core\Database::getInstance();
             return $db->fetchAll($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in District::getAll: ' . $e->getMessage());
             return [];
         }

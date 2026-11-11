@@ -21,7 +21,7 @@ class AdminDeveloperController extends AdminController
             $recentCalls = $this->db->query("SELECT k.key_name, k.service_name, k.usage_count, k.last_used_at FROM api_keys k WHERE k.last_used_at IS NOT NULL ORDER BY k.last_used_at DESC LIMIT 15")->fetchAll(\PDO::FETCH_ASSOC);
             $apps = $this->db->query("SELECT * FROM api_developers ORDER BY created_at DESC")->fetchAll(\PDO::FETCH_ASSOC);
             $webhooks = $this->db->query("SELECT * FROM webhook_endpoints ORDER BY created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AdminDeveloperController::index error: ' . $e->getMessage());
         }
 

@@ -44,10 +44,10 @@ class PayrollBatchService
         }
 
         $tid = $this->tenantId();
-        $cols = "employee_id, salary_structure_id, payment_month, payment_year, payment_date,
+        $cols = "employee_id, user_id, salary_structure_id, payment_month, payment_year, payment_date,
                  basic_amount, allowance_amount, gross_amount, deduction_amount, net_amount,
                  payment_status, created_by";
-        $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?";
+        $vals = "?, (SELECT user_id FROM employee_profiles WHERE legacy_id = ? OR user_id = ? OR id = ? LIMIT 1), ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?";
         $stmt = $this->pdo->prepare("
             INSERT INTO salary_payments
             ($cols" . ($tid > 1 ? ", tenant_id" : "") . ")
@@ -68,7 +68,8 @@ class PayrollBatchService
                 $adjustedDeductions = $breakdown['total_deductions'] + $advanceRecovery;
 
                 $params = [
-                    $s['employee_id'], $s['id'], $month, $year, $paymentDate,
+                    $s['employee_id'], $s['employee_id'], $s['employee_id'], $s['employee_id'],
+                    $s['id'], $month, $year, $paymentDate,
                     $breakdown['basic_salary'], $allowances, $breakdown['gross_salary'],
                     $adjustedDeductions, $adjustedNet, $processedBy,
                 ];
@@ -76,7 +77,7 @@ class PayrollBatchService
                 $stmt->execute($params);
                 $generated++;
                 $totalNet += $adjustedNet;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $errors[] = "Employee #{$s['employee_id']}: " . $e->getMessage();
                 $skipped++;
             }
@@ -87,7 +88,7 @@ class PayrollBatchService
             $monthStr = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT);
             $pfService = new \App\Services\PfEsiService();
             $pfEsiSynced = $pfService->processMonth($monthStr, $processedBy);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $errors[] = 'PF/ESI sync: ' . $e->getMessage();
         }
 
@@ -126,7 +127,7 @@ class PayrollBatchService
                             ->execute(array_merge([$reference, $monthStr], $empIds));
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // non-blocking: PF/ESI sync failure should not fail the payment
             }
         }
@@ -163,11 +164,11 @@ class PayrollBatchService
                    u.name as employee_name
             FROM salary_payments sp
             LEFT JOIN salary_structures ss ON sp.salary_structure_id = ss.id {$this->tenantSqlForAlias('ss')}
-            LEFT JOIN users u ON sp.employee_id = u.id {$this->tenantSqlForAlias('u')}
-            WHERE sp.employee_id = ? {$this->tenantSqlForAlias('sp')}
+            LEFT JOIN users u ON u.id = COALESCE(sp.user_id, sp.employee_id) {$this->tenantSqlForAlias('u')}
+            WHERE (sp.employee_id = ? OR sp.user_id = ?) {$this->tenantSqlForAlias('sp')}
             ORDER BY sp.payment_year DESC, sp.payment_month DESC
             LIMIT ?
-        ", [$employeeId, $limit]);
+        ", [$employeeId, $employeeId, $limit]);
     }
 
     /**

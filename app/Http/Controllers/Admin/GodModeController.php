@@ -53,7 +53,7 @@ class GodModeController extends AdminController
                 'roles' => $roles,
                 'current_admin' => $this->getCurrentAdmin()
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("GodMode dashboard error: " . $e->getMessage());
             echo "<h2>God Mode Dashboard</h2><p>An error occurred loading the dashboard. Check error log for details.</p>";
         }
@@ -368,7 +368,7 @@ class GodModeController extends AdminController
             try {
                 $r = $this->db->fetch("SELECT COUNT(*) as count FROM {$table} WHERE {$where}", $params);
                 return $r ? (int)$r['count'] : 0;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("GodMode stat [{$table}]: " . $e->getMessage());
                 return 0;
             }
@@ -567,7 +567,7 @@ class GodModeController extends AdminController
         try {
             $this->db->fetch("SELECT 1");
             return ['status' => 'healthy', 'message' => 'Database connection OK'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
@@ -669,7 +669,7 @@ class GodModeController extends AdminController
     /**
      * Redirect helper
      */
-    protected function redirect($url, $flash = [])
+    protected function redirect(string $url, array $flash = []): void
     {
         foreach ($flash as $key => $value) {
             $_SESSION['flash_' . $key] = $value;
@@ -684,7 +684,7 @@ class GodModeController extends AdminController
     /**
      * JSON response helper
      */
-    public function json($data, $status = 200)
+    public function json($data, int $status = 200): void
     {
         http_response_code($status);
         header('Content-Type: application/json');

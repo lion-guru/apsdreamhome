@@ -8,6 +8,42 @@ use Exception;
 
 class OvertimeService
 {
+    /**
+     * Query runner: fetch all rows.
+     *
+     * NOTE (S451): this service calls $this->fetchAll($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchAll()".
+     */
+    private function fetchAll(string $sql, array $params = []): array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchAll] ' . $e->getMessage());
+            return [];
+        }
+    }
+    /**
+     * Query runner: fetch a single row.
+     *
+     * NOTE (S451): this service calls $this->fetchOne($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchOne()".
+     */
+    private function fetchOne(string $sql, array $params = []): ?array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchOne] ' . $e->getMessage());
+            return null;
+        }
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -22,8 +58,8 @@ class OvertimeService
      */
     public function getPolicy($department = null, $role = null): array
     {
-        $query = "SELECT * FROM overtime_policies WHERE tenant_id = 1 AND is_active = 1";
-        $params = [1];
+        $query = "SELECT * FROM overtime_policies WHERE is_active = 1" . $this->tenantSql();
+        $params = $this->tenantId() > 1 ? [$this->tenantId()] : [];
 
         if ($department) {
             $query .= " AND (JSON_CONTAINS(applicable_departments, ?) OR applicable_departments IS NULL)";
@@ -47,12 +83,22 @@ class OvertimeService
      */
     public function requestOvertime(int $employeeId, array $data): array
     {
-        // Validate employee
-        $emp = $this->db->fetchOne("
-            SELECT e.id, e.user_id, e.name, e.department, e.designation
-            FROM employees e
-            WHERE e.id = ? AND e.status = 'active'{$this->tenantSql()}
-        ", array_merge([$employeeId], $this->tVal()));
+        // Validate employee — Phase 4/7: use IdentityService
+        $identity = new \App\Services\IdentityService();
+        $empUserId = $identity->resolveEmployeeUserId($employeeId);
+        $emp = null;
+        if ($empUserId > 0 && $identity->getEmployeeStatus($empUserId) === 'active') {
+            $profile = $identity->getEmployeeProfile($empUserId, true);
+            if ($profile) {
+                $emp = [
+                    'id' => $employeeId,
+                    'user_id' => $empUserId,
+                    'name' => $profile['name'] ?? $profile['employee_code'] ?? '',
+                    'department' => $profile['department'] ?? '',
+                    'designation' => $profile['designation'] ?? '',
+                ];
+            }
+        }
 
         if (!$emp) {
             return ['success' => false, 'message' => 'Employee not found or inactive'];
@@ -104,13 +150,13 @@ class OvertimeService
 
         $multiplier = $isHoliday ? $policy['holiday_multiplier'] : ($isWeekend ? $policy['weekend_multiplier'] : $policy['weekday_multiplier']);
 
-        // Calculate hourly rate (basic / 30 / 8)
+        // Calculate hourly rate (basic / 30 / 8) — via profile (legacy-id compatible)
         $basicSalary = $this->db->fetchOne("
-            SELECT COALESCE(ss.basic_salary, e.salary, 0) as basic
-            FROM employees e
-            LEFT JOIN salary_structures ss ON ss.employee_id = e.id AND ss.status = 'active'
-            WHERE e.id = ? ORDER BY ss.effective_date DESC LIMIT 1
-        ", [$employeeId]);
+            SELECT COALESCE(ss.basic_salary, ep.salary, 0) as basic
+            FROM employee_profiles ep
+            LEFT JOIN salary_structures ss ON (ss.employee_id = ep.legacy_id OR ss.employee_id = ep.user_id OR ss.employee_id = ep.id) AND ss.status = 'active'
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) ORDER BY ss.effective_date DESC LIMIT 1
+        ", [$employeeId, $employeeId, $employeeId]);
 
         $basicSalary = (float)($basicSalary['basic'] ?? 0);
         $hourlyRate = $basicSalary > 0 ? round($basicSalary / 30 / 8, 2) : 0;
@@ -179,7 +225,7 @@ class OvertimeService
         return $this->db->fetchAll("
             SELECT * FROM overtime_requests
             WHERE employee_id = ?{$this->tenantSql()}
-            ORDER BY overtime_date DESC, requested_at DESC
+            ORDER BY overtime_date DESC, created_at DESC
         ", array_merge([$employeeId], $this->tVal()));
     }
 
@@ -189,15 +235,16 @@ class OvertimeService
     public function getPendingRequests($department = null): array
     {
         $query = "
-            SELECT orr.*, e.name as employee_name, e.employee_code, e.department, e.designation
+            SELECT orr.*, u_emp.name as employee_name, ep.employee_code, ep.department, ep.designation
             FROM overtime_requests orr
-            JOIN employees e ON orr.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = orr.employee_id OR ep.user_id = orr.employee_id OR ep.id = orr.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             WHERE orr.status = 'pending' AND orr.tenant_id = 1
         ";
         $params = [1];
 
         if ($department) {
-            $query .= " AND e.department = ?";
+            $query .= " AND ep.department = ?";
             $params[] = $department;
         }
 
@@ -281,17 +328,18 @@ class OvertimeService
         $end = date('Y-m-t', strtotime($start));
 
         return $this->db->fetchAll("
-            SELECT e.name, e.employee_code,
+            SELECT u_emp.name as name, ep.employee_code as employee_code,
                    SUM(CASE WHEN orr.status = 'approved' THEN orr.hours ELSE 0 END) as approved_hours,
                    SUM(CASE WHEN orr.status = 'paid' THEN orr.hours ELSE 0 END) as paid_hours,
                    SUM(CASE WHEN orr.status = 'pending' THEN orr.hours ELSE 0 END) as pending_hours,
                    SUM(CASE WHEN orr.status = 'approved' THEN orr.amount ELSE 0 END) as approved_amount,
                    SUM(CASE WHEN orr.status = 'paid' THEN orr.amount ELSE 0 END) as paid_amount
             FROM overtime_requests orr
-            JOIN employees e ON orr.employee_id = e.id
-            WHERE e.department = ? AND orr.date BETWEEN ? AND ? AND orr.tenant_id = 1
-            GROUP BY e.id, e.name, e.employee_code
-            ORDER BY e.name
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = orr.employee_id OR ep.user_id = orr.employee_id OR ep.id = orr.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
+            WHERE ep.department = ? AND orr.date BETWEEN ? AND ? AND orr.tenant_id = 1
+            GROUP BY ep.id, u_emp.name, ep.employee_code
+            ORDER BY u_emp.name
         ", [$department, $start, $end]);
     }
 
@@ -300,7 +348,7 @@ class OvertimeService
      */
     public function getEmployeePolicy(int $employeeId): array
     {
-        $emp = $this->db->fetchOne("SELECT department FROM employees WHERE id = ?", [$employeeId]);
+        $emp = $this->db->fetchOne("SELECT department FROM employee_profiles WHERE legacy_id = ? OR user_id = ? OR id = ? LIMIT 1", [$employeeId, $employeeId, $employeeId]);
         return $this->getPolicy($emp['department'] ?? null);
     }
 }

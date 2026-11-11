@@ -11,12 +11,13 @@
 
 namespace App\Http\Controllers\Agent;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\BaseController;
 use App\Core\Database;
 use App\Core\Security;
+use App\Services\Cache\CacheService;
 use Exception;
 
-use \App\Traits\TenantAwareTrait;
 
 class AgentDashboardController extends BaseController
 {
@@ -26,6 +27,7 @@ class AgentDashboardController extends BaseController
     protected $agentType;
     protected $associateId;
     protected $userId;
+    private $cacheService;
 
     public function __construct()
     {
@@ -34,6 +36,7 @@ class AgentDashboardController extends BaseController
         $this->layout = 'layouts/agent';
         $this->userId = $_SESSION['user_id'] ?? 0;
         $this->associateId = $_SESSION['associate_id'] ?? 0;
+        $this->cacheService = new CacheService();
     }
 
     /**
@@ -68,6 +71,14 @@ class AgentDashboardController extends BaseController
             $this->agentType = $_SESSION['agent_type'] ?? 'mlm_company';
         }
 
+        // ── Dashboard cache (5 min TTL) ──
+        $cacheKey = 'agent_dashboard:' . $this->userId . ':' . $this->associateId . ':' . ($this->agentType ?? 'mlm_company');
+        $cached = $this->cacheService->get($cacheKey);
+        if ($cached !== false && $cached !== null) {
+            $this->render('agent/dashboard', $cached);
+            return;
+        }
+
         try {
             // Get data based on agent type
             if ($this->agentType === 'freelancer' || $this->agentType === 'independent') {
@@ -98,7 +109,9 @@ class AgentDashboardController extends BaseController
                 error_log('Agent dashboard gamification: ' . $e->getMessage());
             }
 
-            $this->render('agent/dashboard', array_merge([
+            $referralEarningsBreakdown = $dashboardData['referral_earnings_breakdown'] ?? [];
+
+            $finalData = array_merge([
                 'page_title' => 'Agent Dashboard - APS Dream Home',
                 'page_description' => $this->agentType === 'freelancer' ? 'Freelancer Agent Dashboard' : 'MLM Company Agent Dashboard',
                 'agent_type' => $this->agentType,
@@ -109,7 +122,12 @@ class AgentDashboardController extends BaseController
                 'user_points' => $userPoints,
                 'user_level' => $userLevel,
                 'referral_earnings_breakdown' => $referralEarningsBreakdown,
-            ], $dashboardData));
+            ], $dashboardData);
+
+            // Cache dashboard data for 5 minutes (300 seconds)
+            $this->cacheService->set($cacheKey, $finalData, 300);
+
+            $this->render('agent/dashboard', $finalData);
 
         } catch (Exception $e) {
             error_log("Agent Dashboard Error: " . $e->getMessage());
@@ -389,7 +407,7 @@ return [
         try {
             // Get brokerage rate from associate
             $associate = $this->db->fetchOne(
-                "SELECT brokerage_model, brokerage_rate, brokerage_flat_fee FROM associates WHERE id = ?",
+                "SELECT brokerage_model, brokerage_rate FROM associates WHERE id = ?",
                 [$associateId]
             );
 
@@ -815,7 +833,7 @@ return [
                  FROM plot_bookings pb
                  LEFT JOIN plots p ON pb.plot_id = p.id
                  LEFT JOIN users u ON pb.customer_id = u.id
-                 WHERE pb.associate_id = (SELECT id FROM associates WHERE user_id = ? LIMIT 1)
+                 WHERE pb.user_id = ?
                  ORDER BY pb.created_at DESC LIMIT 50",
                 [$userId]
             ) ?: [];

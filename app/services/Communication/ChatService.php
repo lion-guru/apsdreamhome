@@ -105,7 +105,7 @@ class ChatService
                 'is_new' => true
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -167,7 +167,7 @@ class ChatService
                 'timestamp' => date('Y-m-d H:i:s')
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -226,7 +226,7 @@ class ChatService
                 'has_more' => count($messages) >= $limit
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

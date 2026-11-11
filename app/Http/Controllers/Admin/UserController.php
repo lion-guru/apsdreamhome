@@ -163,7 +163,7 @@ class UserController extends AdminController
             ];
 
             return $this->render('admin/users/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("User Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load users');
             return $this->redirect('admin/dashboard');
@@ -228,7 +228,7 @@ class UserController extends AdminController
             ];
 
             return $this->render('admin/users/create', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("User Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load user form');
             return $this->redirect('admin/users');
@@ -350,7 +350,7 @@ class UserController extends AdminController
             $this->setFlash('success', ucfirst($data['role']) . ' created successfully. Customer ID: ' . ($user['customer_id'] ?? $userId));
             return $this->redirect('admin/users');
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("User Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create user: ' . $e->getMessage(), 500);
         }
@@ -419,7 +419,7 @@ class UserController extends AdminController
             ];
 
             return $this->render('admin/users/show', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("User Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load user details');
             return $this->redirect('admin/users');
@@ -453,15 +453,21 @@ class UserController extends AdminController
                 return $this->redirect('admin/users');
             }
 
+            $associate = null;
+            if ($user['role'] === 'associate') {
+                $associate = $this->db->fetchOne("SELECT * FROM associates WHERE user_id = ?", [$userId]);
+            }
+
             $data = [
                 'page_title' => 'Edit User - APS Dream Home',
                 'active_page' => 'users',
                 'user' => $user,
+                'associate' => $associate,
                 'roles' => self::assignableRoles()
             ];
 
             return $this->render('admin/users/edit', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("User Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load user form');
             return $this->redirect('admin/users');
@@ -606,6 +612,37 @@ class UserController extends AdminController
             $result = $stmt->execute($updateValues);
 
             if ($result) {
+                // Sync associate offline booking & cash permissions
+                $targetRole = $data['role'] ?? $user['role'] ?? '';
+                if ($targetRole === 'associate' || isset($data['can_offline_book']) || isset($data['can_collect_cash']) || isset($data['daily_cash_limit'])) {
+                    try {
+                        $canOffline = isset($data['can_offline_book']) ? (int)$data['can_offline_book'] : 0;
+                        $canCash = isset($data['can_collect_cash']) ? (int)$data['can_collect_cash'] : 0;
+                        $dailyLimit = isset($data['daily_cash_limit']) ? (float)$data['daily_cash_limit'] : 0.00;
+                        $existingAssoc = $this->db->fetchOne("SELECT id FROM associates WHERE user_id = ?", [$userId]);
+                        if ($existingAssoc) {
+                            $this->db->update('associates', [
+                                'can_offline_book' => $canOffline,
+                                'can_collect_cash' => $canCash,
+                                'daily_cash_limit' => $dailyLimit,
+                                'updated_at' => date('Y-m-d H:i:s'),
+                            ], ['user_id' => $userId]);
+                        } else if ($targetRole === 'associate') {
+                            $this->db->insert('associates', [
+                                'user_id' => $userId,
+                                'can_offline_book' => $canOffline,
+                                'can_collect_cash' => $canCash,
+                                'daily_cash_limit' => $dailyLimit,
+                                'status' => 'active',
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'updated_at' => date('Y-m-d H:i:s'),
+                            ]);
+                        }
+                    } catch (\Throwable $assocErr) {
+                        error_log('UserController::update associate permissions sync: ' . $assocErr->getMessage());
+                    }
+                }
+
                 // Log activity
                 $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'user_updated', [
                     'user_id' => $userId,
@@ -619,7 +656,7 @@ class UserController extends AdminController
             }
 
             return $this->jsonError('Failed to update user', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("User Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update user', 500);
         }
@@ -681,7 +718,7 @@ class UserController extends AdminController
                 'message' => ucfirst($field) . ' updated',
                 'value' => $value
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -743,7 +780,7 @@ class UserController extends AdminController
             }
 
             return $this->jsonError('Failed to delete user', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("User Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete user', 500);
         }
@@ -790,7 +827,7 @@ class UserController extends AdminController
             ];
 
             return $this->render('admin/users/pending', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Pending Users error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load pending registrations');
             return $this->redirect('admin/users');
@@ -841,7 +878,7 @@ class UserController extends AdminController
                 'success' => true,
                 'message' => 'User approved successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Approve User error: " . $e->getMessage());
             return $this->jsonError('Failed to approve user', 500);
         }
@@ -892,7 +929,7 @@ class UserController extends AdminController
                 'success' => true,
                 'message' => 'User rejected'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Reject User error: " . $e->getMessage());
             return $this->jsonError('Failed to reject user', 500);
         }
@@ -931,7 +968,7 @@ class UserController extends AdminController
                 'success' => true,
                 'message' => count($userIds) . ' users approved'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Bulk Approve error: " . $e->getMessage());
             return $this->jsonError('Failed to bulk approve', 500);
         }
@@ -977,7 +1014,7 @@ class UserController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get User Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
@@ -1024,7 +1061,7 @@ class UserController extends AdminController
                 'by_role' => $byRole ?: [],
                 'by_status' => $byStatus ?: []
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'total' => 0, 'active' => 0, 'new_this_month' => 0, 'pending' => 0,
                 'by_role' => [], 'by_status' => []
@@ -1073,7 +1110,7 @@ class UserController extends AdminController
             ];
 
             return $this->render('admin/users/wallet', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("View Wallet error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load wallet');
             return $this->redirect('admin/users');
@@ -1138,7 +1175,7 @@ class UserController extends AdminController
 
             $this->loggingService->logUserActivity($adminId, 'wallet_credit', ['user_id' => $userId, 'amount' => $amount, 'reason' => $reason]);
             return $this->jsonResponse(['success' => true, 'message' => "₹" . number_format($amount) . " credited"]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $postedKey = trim((string)($_POST['idem_key'] ?? ''));
             if ($postedKey !== '' && stripos($e->getMessage(), 'uniq_wallet_idem') !== false) {
                 return $this->jsonResponse(['success' => true, 'message' => 'Already processed (duplicate ignored)']);
@@ -1203,7 +1240,7 @@ class UserController extends AdminController
 
             $this->loggingService->logUserActivity($adminId, 'wallet_debit', ['user_id' => $userId, 'amount' => $amount, 'reason' => $reason]);
             return $this->jsonResponse(['success' => true, 'message' => "₹" . number_format($amount) . " debited"]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $postedKey = trim((string)($_POST['idem_key'] ?? ''));
             if ($postedKey !== '' && stripos($e->getMessage(), 'uniq_wallet_idem') !== false) {
                 return $this->jsonResponse(['success' => true, 'message' => 'Already processed (duplicate ignored)']);
@@ -1256,14 +1293,14 @@ class UserController extends AdminController
                 $this->db->execute("UPDATE network_tree SET parent_id = ? WHERE associate_id = ? AND tenant_id = ?", [$newSponsorId, $userId, $tid]);
 
                 $this->db->commit();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db->rollBack();
                 throw $e;
             }
 
             $this->loggingService->logUserActivity($adminId, 'sponsor_changed', ['user_id' => $userId, 'new_sponsor_id' => $newSponsorId]);
             return $this->jsonResponse(['success' => true, 'message' => "Sponsor changed to {$newSponsor['name']}"]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -1296,7 +1333,7 @@ class UserController extends AdminController
 
             $this->loggingService->logUserActivity($adminId, 'referral_code_changed', ['user_id' => $userId, 'new_code' => $newCode]);
             return $this->jsonResponse(['success' => true, 'message' => "Referral code changed to {$newCode}"]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -1362,7 +1399,7 @@ class UserController extends AdminController
             ];
 
             return $this->render('admin/users/team', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("View Team error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load team');
             return $this->redirect('admin/users');
@@ -1392,7 +1429,7 @@ class UserController extends AdminController
 
             $this->loggingService->logUserActivity($adminId, 'user_soft_deleted', ['user_id' => $userId, 'name' => $user['name'], 'email' => $user['email']]);
             return $this->jsonResponse(['success' => true, 'message' => 'User deactivated (soft deleted)']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -1440,7 +1477,7 @@ class UserController extends AdminController
 
             $this->loggingService->logUserActivity($adminId, 'bulk_' . $action, ['user_ids' => $userIds, 'count' => count($userIds)]);
             return $this->jsonResponse(['success' => true, 'message' => $msg]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -1490,7 +1527,7 @@ class UserController extends AdminController
             ];
 
             return $this->render('admin/users/activity_log', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("View Activity Log error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load activity log');
             return $this->redirect('admin/users');
@@ -1536,7 +1573,7 @@ class UserController extends AdminController
             ];
 
             return $this->render('admin/users/commissions', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("View Commissions error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load commissions');
             return $this->redirect('admin/users');
@@ -1624,7 +1661,7 @@ class UserController extends AdminController
             }
             fclose($output);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('UserController::export error: ' . $e->getMessage());
             $this->setFlash('error', 'Export failed');
             return $this->redirect('admin/users');
@@ -1696,7 +1733,7 @@ class UserController extends AdminController
             }
             fclose($output);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('UserController::exportSelected error: ' . $e->getMessage());
             $this->setFlash('error', 'Export failed');
             return $this->redirect('admin/users');
@@ -1769,7 +1806,7 @@ class UserController extends AdminController
             $redirect = $dashboards[$user['role']] ?? 'user/dashboard';
 
             return $this->redirect($redirect);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Impersonate error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to impersonate user');
             return $this->redirect('admin/users');
@@ -1843,7 +1880,7 @@ class UserController extends AdminController
                 'success' => true,
                 'message' => "Password reset. Temporary password: {$tempPass} (user must change on next login)"
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -1861,7 +1898,7 @@ class UserController extends AdminController
                 'roles' => ['customer', 'associate', 'agent', 'employee', 'telecaller', 'user']
             ];
             return $this->render('admin/users/import', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Import page error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load import page');
             return $this->redirect('admin/users');
@@ -1951,7 +1988,7 @@ class UserController extends AdminController
                 'imported' => $imported,
                 'errors' => $errors
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Import failed: ' . $e->getMessage(), 500);
         }
     }
@@ -1980,7 +2017,7 @@ class UserController extends AdminController
                 'sessions' => $sessions ?? []
             ];
             return $this->render('admin/users/sessions', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("View Sessions error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load sessions');
             return $this->redirect('admin/users');
@@ -2009,7 +2046,7 @@ class UserController extends AdminController
             ]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'Session revoked']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -2032,7 +2069,7 @@ class UserController extends AdminController
             ]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'All sessions revoked']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -2055,7 +2092,7 @@ class UserController extends AdminController
                 'user' => $user
             ];
             return $this->render('admin/users/two_factor', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("View 2FA error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load 2FA');
             return $this->redirect('admin/users');
@@ -2100,7 +2137,7 @@ class UserController extends AdminController
             }
 
             return $this->jsonError('Invalid action', 400);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -2143,7 +2180,7 @@ class UserController extends AdminController
                 'notes' => $notes ?? []
             ];
             return $this->render('admin/users/notes', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("View Notes error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load notes');
             return $this->redirect('admin/users');
@@ -2186,7 +2223,7 @@ class UserController extends AdminController
             $this->loggingService->logUserActivity($adminId, 'user_note_added', ['user_id' => $userId, 'note_id' => $noteId]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'Note added', 'note' => $newNote]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -2222,7 +2259,7 @@ class UserController extends AdminController
             $this->loggingService->logUserActivity($adminId, 'user_note_updated', ['note_id' => $noteId]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'Note updated', 'note' => $updatedNote]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -2243,7 +2280,7 @@ class UserController extends AdminController
             $this->loggingService->logUserActivity($adminId, 'user_note_deleted', ['note_id' => $noteId]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'Note deleted']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -2273,7 +2310,7 @@ class UserController extends AdminController
                 'success' => true,
                 'activities' => $activities ?? []
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Activity Feed error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
@@ -2343,7 +2380,7 @@ class UserController extends AdminController
                 'message' => 'Avatar uploaded successfully',
                 'avatar_url' => BASE_URL . $relativePath
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -2371,7 +2408,7 @@ class UserController extends AdminController
             $this->loggingService->logUserActivity($adminId, 'avatar_deleted', ['user_id' => $userId]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'Avatar deleted']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
 }
@@ -2411,7 +2448,7 @@ class UserController extends AdminController
                 'by_status' => $byStatus ?: [],
                 'trend' => $trend ?: []
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get User Analytics error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,

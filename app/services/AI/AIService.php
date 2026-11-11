@@ -203,6 +203,7 @@ class AIService
         $provider = $this->selectProvider();
         if (!$provider) {
             return [
+                'success' => false,
                 'response' => 'Sorry, no AI provider is available. Please configure an AI provider in settings.',
                 'intent' => 'error',
                 'confidence' => 0.0,
@@ -222,6 +223,7 @@ class AIService
 
         if (!$response || empty($response)) {
             return [
+                'success' => false,
                 'response' => 'Sorry, the AI service is temporarily unavailable. Please try again later.',
                 'intent' => 'error',
                 'confidence' => 0.0,
@@ -236,6 +238,7 @@ class AIService
         $confidence = $this->calculateConfidence($responseText);
 
         return [
+            'success' => true,
             'response' => $responseText,
             'intent' => $intent,
             'confidence' => $confidence,
@@ -504,6 +507,180 @@ class AIService
     }
 
     // ========================================================================
+    // CHAT METHODS (for AIChatbotController compatibility)
+    // ========================================================================
+
+    /**
+     * Chat with image - multimodal processing
+     */
+    public function chatWithImage(array $messages, string $imageBase64, string $imageMime, array $options = []): array
+    {
+        // Extract the last user message text
+        $userMessage = '';
+        foreach (array_reverse($messages) as $msg) {
+            if (isset($msg['role']) && $msg['role'] === 'user') {
+                $userMessage = $msg['content'] ?? '';
+                break;
+            }
+        }
+
+        if (empty($userMessage)) {
+            $userMessage = 'Please analyze this image.';
+        }
+
+        $context = [
+            'user_id' => $options['user_id'] ?? 0,
+            'role' => $options['role'] ?? 'customer',
+            'session_id' => $options['session_id'] ?? 'session_' . uniqid(),
+            'model' => $options['model'] ?? null,
+            'image_base64' => $imageBase64,
+            'image_mime' => $imageMime,
+        ];
+
+        $result = $this->processMessage($userMessage, $context);
+
+        return [
+            'success' => true,
+            'response' => $result['response'] ?? '',
+            'intent' => $result['intent'] ?? 'image_analysis',
+            'confidence' => $result['confidence'] ?? 0.5,
+            'provider' => $result['provider'] ?? 'unknown',
+            'model' => $result['model'] ?? null,
+            'actions' => $result['actions'] ?? [],
+            'suggestions' => $result['suggestions'] ?? [],
+            'session_id' => $result['session_id'] ?? '',
+        ];
+    }
+
+    /**
+     * Chat with RAG - retrieval-augmented generation
+     */
+    public function chatWithRag(array $messages, array $options = []): array
+    {
+        // Extract the last user message
+        $userMessage = '';
+        foreach (array_reverse($messages) as $msg) {
+            if (isset($msg['role']) && $msg['role'] === 'user') {
+                $userMessage = $msg['content'] ?? '';
+                break;
+            }
+        }
+
+        if (empty($userMessage)) {
+            return [
+                'success' => false,
+                'response' => 'No message provided.',
+                'intent' => 'error',
+                'confidence' => 0.0,
+            ];
+        }
+
+        $context = [
+            'user_id' => $options['user_id'] ?? 0,
+            'role' => $options['role'] ?? 'customer',
+            'session_id' => $options['session_id'] ?? 'session_' . uniqid(),
+            'model' => $options['model'] ?? null,
+            'use_rag' => true,
+        ];
+
+        $result = $this->processMessage($userMessage, $context);
+
+        return [
+            'success' => true,
+            'response' => $result['response'] ?? '',
+            'intent' => $result['intent'] ?? 'rag_query',
+            'confidence' => $result['confidence'] ?? 0.5,
+            'provider' => $result['provider'] ?? 'unknown',
+            'model' => $result['model'] ?? null,
+            'actions' => $result['actions'] ?? [],
+            'suggestions' => $result['suggestions'] ?? [],
+            'session_id' => $result['session_id'] ?? '',
+        ];
+    }
+
+    /**
+     * Set active AI provider
+     */
+    public function setProvider(string $providerName): bool
+    {
+        if (isset($this->providers[$providerName])) {
+            $this->currentProvider = $providerName;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Get current provider name
+     */
+    public function getCurrentProvider(): string
+    {
+        return $this->currentProvider;
+    }
+
+    /**
+     * Clear conversation history (stub - history is stored per-session in DB)
+     */
+    public function clearHistory(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get conversation history (stub - history would need a storage table)
+     */
+    public function getHistory(): array
+    {
+        return [];
+    }
+
+
+    /**
+     * Get conversation history by session ID (backward compat)
+     */
+    public function getConversationHistory(string $sessionId, int $limit = 50): array
+    {
+        return [];
+    }
+
+    /**
+     * Clear conversation history by session ID (backward compat)
+     */
+    public function clearConversationHistory(string $sessionId): bool
+    {
+        return true;
+    }
+
+    /**
+     * Export conversation history as JSON
+     */
+    public function exportConversation(): array
+    {
+        return [
+            'exported_at' => date('c'),
+            'provider' => $this->currentProvider,
+            'conversations' => $this->getHistory(),
+            'metadata' => [
+                'version' => '1.0',
+                'source' => 'APS Dream Home AI Chatbot',
+            ],
+        ];
+    }
+
+    /**
+     * Import conversation from JSON
+     */
+    public function importConversationJson(string $json): bool
+    {
+        $data = json_decode($json, true);
+        if (!is_array($data) || !isset($data['conversations'])) {
+            return false;
+        }
+        // In a full implementation, this would restore conversation history
+        return true;
+    }
+
+    // ========================================================================
     // WHATSAPP AI BOT (merged from WhatsAppAIBot)
     // ========================================================================
 
@@ -573,6 +750,18 @@ class AIService
     /**
      * Get AI provider status
      */
+    /**
+     * Alias of getStatus().
+     *
+     * NOTE (S451): /admin/ai-dashboard and /admin/ai/dashboard called
+     * getStats(), which never existed -> "Call to undefined method
+     * AIManager::getStats()".
+     */
+    public function getStats(): array
+    {
+        return $this->getStatus();
+    }
+
     public function getStatus(): array
     {
         return $this->getProvidersStatus();

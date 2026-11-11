@@ -79,7 +79,7 @@ class SupportController extends BaseController
             } else {
                 $this->setFlash('error', 'System error. Please try again later.');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'An error occurred while submitting your ticket: ' . $e->getMessage());
         }
 

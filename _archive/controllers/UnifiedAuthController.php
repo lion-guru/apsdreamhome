@@ -87,7 +87,7 @@ class UnifiedAuthController extends BaseController
                 header('Location: ' . BASE_URL . '/login');
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Login error: " . $e->getMessage());
             $_SESSION['errors'] = ["Login failed. Please try again."];
             header('Location: ' . BASE_URL . '/login');
@@ -227,7 +227,7 @@ class UnifiedAuthController extends BaseController
             }
             header('Location: ' . BASE_URL . '/login');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Registration error: " . $e->getMessage());
             $_SESSION['errors'] = ["Registration failed: " . $e->getMessage()];
             header('Location: ' . BASE_URL . '/register');

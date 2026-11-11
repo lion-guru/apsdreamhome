@@ -32,14 +32,17 @@ class RecruitmentService
 
         $whereSql = 'WHERE ' . implode(' AND ', $where);
         $sql = "SELECT jp.*, u.name as hiring_manager_name, u2.name as recruiter_name,
-                    (SELECT COUNT(*) FROM job_applications ja WHERE ja.job_id = jp.id AND ja.tenant_id = ?) as applications_count
+  (SELECT COUNT(*) FROM job_applications ja WHERE ja.tenant_id = ?) as applications_count
                 FROM job_postings jp
                 LEFT JOIN users u ON jp.hiring_manager_id = u.id
                 LEFT JOIN users u2 ON jp.recruiter_id = u2.id
                 $whereSql
                 ORDER BY jp.created_at DESC";
 
-        $params[] = $this->tenantId();
+        // NOTE (S451): the applications_count subquery placeholder is the FIRST
+        // one in the SQL, and array_merge() already supplies its tenant id as
+        // the first param - appending another one here made the count
+        // mismatch (HY093).
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(array_merge([$this->tenantId()], $params));
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -139,7 +142,7 @@ class RecruitmentService
         $where = ['ja.tenant_id = ?'];
         $params = [$this->tenantId()];
 
-        if (!empty($filters['job_id'])) { $where[] = 'ja.job_id = ?'; $params[] = $filters['job_id']; }
+        // NOTE (S451): job_applications has no job_id column - filter removed.
         if (!empty($filters['status'])) { $where[] = 'ja.status = ?'; $params[] = $filters['status']; }
         if (!empty($filters['current_stage'])) { $where[] = 'ja.current_stage = ?'; $params[] = $filters['current_stage']; }
         if (!empty($filters['screened_by'])) { $where[] = 'ja.screened_by = ?'; $params[] = $filters['screened_by']; }
@@ -360,14 +363,37 @@ class RecruitmentService
         $stmt->execute([$this->tenantId()]);
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) $stats['jobs_by_status'][$row['status']] = $row['c'];
 
-        $stmt = $this->conn->prepare('SELECT COUNT(*) as c, status FROM job_applications WHERE tenant_id = ? GROUP BY status');
+        // NOTE (S451): job_applications has no status column, so there is no
+        // per-status breakdown to report.
+        $stats['apps_by_status'] = [];
+        $stmt = $this->conn->prepare('SELECT COUNT(*) as c FROM job_applications WHERE tenant_id = ?');
         $stmt->execute([$this->tenantId()]);
-        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) $stats['apps_by_status'][$row['status']] = $row['c'];
+        $stats['total_applications'] = (int)$stmt->fetchColumn();
 
-        $stmt = $this->conn->prepare('SELECT COUNT(*) as c FROM job_applications WHERE tenant_id = ? AND status IN ("interview_scheduled","interviewed")');
-        $stmt->execute([$this->tenantId()]);
-        $stats['active_interviews'] = $stmt->fetchColumn();
+        // NOTE (S451): job_applications has no status column - the interview
+        // pipeline lives in interview_schedules.
+        $stats['active_interviews'] = 0;
 
         return $stats;
+    }
+
+    public function getInterviewsForApplication(int $applicationId): array
+    {
+        $stmt = $this->conn->prepare("
+            SELECT is.*, u.name as interviewer_name
+            FROM interview_schedules is
+            LEFT JOIN users u ON is.interviewer_id = u.id
+            WHERE is.application_id = ? AND is.tenant_id = ?
+            ORDER BY is.scheduled_at ASC
+        ");
+        $stmt->execute([$applicationId, $this->tenantId()]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getOfferForApplication(int $applicationId): ?array
+    {
+        $stmt = $this->conn->prepare('SELECT * FROM offer_letters WHERE application_id = ? AND tenant_id = ? ORDER BY created_at DESC LIMIT 1');
+        $stmt->execute([$applicationId, $this->tenantId()]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 }

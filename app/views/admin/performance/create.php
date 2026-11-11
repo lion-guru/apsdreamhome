@@ -5,7 +5,7 @@ $page_title = $page_title ?? ($mode === 'edit' ? 'Edit Goal' : 'Create Goal');
 $mode = $mode ?? 'create';
 $goal = $goal ?? ['employee_id' => '', 'goal_type' => 'okr', 'title' => '', 'description' => '', 'target_value' => '', 'target_unit' => '', 'weightage' => 100, 'start_date' => date('Y-m-d'), 'end_date' => date('Y-m-d', strtotime('+3 months')), 'status' => 'active', 'parent_goal_id' => '', 'assigned_by' => '', 'review_frequency' => 'monthly', 'next_review_date' => ''];
 $employees = $employees ?? [];
-$managers = $managers ?? [];
+$db = $db ?? \App\Core\Database\Database::getInstance();
 ?>
 
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>"></style>

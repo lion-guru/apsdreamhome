@@ -171,13 +171,13 @@ class GoogleAuthController extends BaseController
             try {
                 $visitorTracking = new \App\Services\VisitorTrackingService();
                 $visitorTracking->markAsConverted($newUserId);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Visitor conversion tracking failed: " . $e->getMessage());
             }
 
             echo json_encode(['success' => true, 'redirect' => $this->getRedirectUrl($role)]);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Registration failed: ' . $e->getMessage()]);
             exit;
         }

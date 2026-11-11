@@ -19,6 +19,9 @@ Property _$PropertyFromJson(Map<String, dynamic> json) => Property(
   createdAt: json['createdAt'] as String,
   updatedAt: json['updatedAt'] as String,
   lastSyncedAt: json['lastSyncedAt'] as String?,
+  matchScore: (json['matchScore'] as num?)?.toDouble(),
+  aiRecommendation: json['aiRecommendation'] as String?,
+  aiMetadata: json['aiMetadata'] as Map<String, dynamic>?,
 );
 
 Map<String, dynamic> _$PropertyToJson(Property instance) => <String, dynamic>{
@@ -34,4 +37,7 @@ Map<String, dynamic> _$PropertyToJson(Property instance) => <String, dynamic>{
   'createdAt': instance.createdAt,
   'updatedAt': instance.updatedAt,
   'lastSyncedAt': instance.lastSyncedAt,
+  'matchScore': instance.matchScore,
+  'aiRecommendation': instance.aiRecommendation,
+  'aiMetadata': instance.aiMetadata,
 };

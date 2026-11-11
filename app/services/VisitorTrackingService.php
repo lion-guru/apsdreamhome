@@ -100,7 +100,7 @@ class VisitorTrackingService
             $this->trackPageView($landingPage);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Visitor tracking error: " . $e->getMessage());
             return false;
         }
@@ -120,7 +120,7 @@ class VisitorTrackingService
             ]);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Page view tracking error: " . $e->getMessage());
             return false;
         }
@@ -195,7 +195,7 @@ class VisitorTrackingService
             }
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Incomplete registration tracking error: " . $e->getMessage());
             return false;
         }
@@ -244,7 +244,7 @@ class VisitorTrackingService
             }
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Mark as converted error: " . $e->getMessage());
             return false;
         }
@@ -265,7 +265,7 @@ class VisitorTrackingService
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -331,7 +331,7 @@ class VisitorTrackingService
                 $data['page_url'] ?? ($_SERVER['REQUEST_URI'] ?? '/'),
                 "Interest: {$interestType}"
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Interest tracking error: " . $e->getMessage());
             return false;
         }

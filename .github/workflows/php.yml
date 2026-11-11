@@ -52,7 +52,16 @@ jobs:
           done
           mysqladmin ping -h127.0.0.1 -P3306 -utestuser -ptestpass --silent
 
+      - name: Import test schema
+        run: |
+          sed '/CREATE DATABASE/d; /USE apsdreamhome/d' database/schema.sql | mysql -h 127.0.0.1 -u root -prootroot apsdreamhome_test
+
       - name: Run database migrations
+        # Migration scripts have hardcoded Windows paths (C:/xampp/...) which
+        # don't resolve on Linux CI runners. continue-on-error ensures this
+        # doesn't block the workflow; the schema import above covers
+        # the test database shape.
+        continue-on-error: true
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306

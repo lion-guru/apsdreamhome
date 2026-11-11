@@ -59,7 +59,7 @@ class TestApiController extends BaseApiController
                 'data' => $users,
                 'count' => count($users)
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->json([
                 'status' => 'error',
                 'message' => 'Failed to retrieve users',

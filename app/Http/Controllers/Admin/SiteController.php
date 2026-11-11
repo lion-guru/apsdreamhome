@@ -118,7 +118,7 @@ class SiteController extends AdminController
             ];
 
             return $this->render('admin/sites/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Site Index error: " . $e->getMessage());
             $data = [
                 'page_title' => 'Site Management - APS Dream Home',
@@ -147,7 +147,7 @@ class SiteController extends AdminController
             ];
 
             return $this->render('admin/sites/create', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Site Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load site form');
             return $this->redirect('admin/sites');
@@ -250,7 +250,7 @@ class SiteController extends AdminController
             }
 
             return $this->jsonError('Failed to create site', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Site Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create site', 500);
         }
@@ -315,7 +315,7 @@ class SiteController extends AdminController
             ];
 
             return $this->render('admin/sites/show', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Site Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load site details');
             return $this->redirect('admin/sites');
@@ -352,7 +352,7 @@ class SiteController extends AdminController
             ];
 
             return $this->render('admin/sites/edit', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Site Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load site form');
             return $this->redirect('admin/sites');
@@ -559,7 +559,7 @@ class SiteController extends AdminController
             }
 
             return $this->jsonError('Failed to update site', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Site Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update site', 500);
         }
@@ -636,7 +636,7 @@ class SiteController extends AdminController
             }
 
             return $this->jsonError('Failed to delete site', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Site Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete site', 500);
         }
@@ -685,7 +685,7 @@ class SiteController extends AdminController
 
             $this->loggingService->error("Failed to move uploaded file: " . $result['error']);
             return null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Upload image error: " . $e->getMessage());
             return null;
         }
@@ -737,7 +737,7 @@ class SiteController extends AdminController
                 try {
                     $stmt = $this->db->query($sql);
                     $stats['by_type'] = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->loggingService->error("Get Site Stats error: " . $e->getMessage());
                     return $this->jsonResponse([
                         'success' => false,
@@ -750,7 +750,7 @@ class SiteController extends AdminController
                 'success' => true,
                 'message' => 'Site deleted successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Delete site error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
@@ -796,7 +796,7 @@ class SiteController extends AdminController
                 'totalSold' => $totalSold,
                 'page_title' => 'Plot Inventory Overview'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Inventory error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load inventory data');
             return $this->redirect('admin/dashboard');

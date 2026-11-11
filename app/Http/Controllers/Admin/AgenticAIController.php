@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 // AdminController resolved via namespace
 
 /**
@@ -23,7 +24,6 @@ namespace App\Http\Controllers\Admin;
  * - Full audit trail in agent_logs table
  * - RBAC-aware responses
  */
-use \App\Traits\TenantAwareTrait;
 
 class AgenticAIController extends AdminController
 {
@@ -67,7 +67,7 @@ class AgenticAIController extends AdminController
                     MAX(created_at) as last_run
                 FROM agent_task_logs WHERE agent_type = ?", [$key]) ?: [];
                 $agentStats[$key] = $stat;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $agentStats[$key] = ['total_tasks' => 0, 'completed' => 0, 'running' => 0, 'failed' => 0, 'last_run' => null];
             }
         }
@@ -82,7 +82,7 @@ class AgenticAIController extends AdminController
                 (SELECT COUNT(*) FROM whatsapp_click_log WHERE DATE(clicked_at) = CURDATE()) as wa_clicks,
                 (SELECT COUNT(*) FROM leads WHERE DATE(created_at) = CURDATE()) as new_leads
             ") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $sysStats = [];
         }
 
@@ -92,7 +92,7 @@ class AgenticAIController extends AdminController
                 FROM agent_task_logs atl
                 LEFT JOIN users u ON atl.triggered_by = u.id
                 ORDER BY atl.created_at DESC LIMIT 20") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $recentActivity = [];
         }
 
@@ -100,7 +100,7 @@ class AgenticAIController extends AdminController
         try {
             $row = $db->query("SELECT settings_value FROM system_settings WHERE settings_key = 'agent_auto_reply' LIMIT 1")->fetch(\PDO::FETCH_ASSOC);
             $autoReply = $row ? json_decode($row['settings_value'], true) : [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $autoReply = [];
         }
 
@@ -133,21 +133,21 @@ class AgenticAIController extends AdminController
         // Get agent's tasks
         try {
             $tasks = $db->fetchAll("SELECT * FROM agent_task_logs WHERE agent_type = ? ORDER BY created_at DESC LIMIT 50", [$agentType]) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tasks = [];
         }
 
         // Get agent's insights (AI-generated summaries)
         try {
             $insights = $db->fetchAll("SELECT * FROM agent_insights WHERE agent_type = ? ORDER BY created_at DESC LIMIT 10", [$agentType]) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $insights = [];
         }
 
         // Get pending escalations for this agent
         try {
             $escalations = $db->fetchAll("SELECT * FROM agent_escalations WHERE agent_type = ? AND status = 'pending' ORDER BY created_at DESC LIMIT 10", [$agentType]) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $escalations = [];
         }
 
@@ -188,7 +188,7 @@ class AgenticAIController extends AdminController
                     $db->execute("INSERT INTO system_settings (settings_key, settings_value, created_at) VALUES ('agent_auto_reply', ?, NOW())", [$json]);
                 }
                 $_SESSION['success'] = 'Auto-reply settings saved!';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
             header('Location: /admin/agentic-ai/auto-reply');
@@ -199,7 +199,7 @@ class AgenticAIController extends AdminController
             $db = \App\Core\Database\Database::getInstance();
             $row = $db->query("SELECT settings_value FROM system_settings WHERE settings_key = 'agent_auto_reply' LIMIT 1")->fetch(\PDO::FETCH_ASSOC);
             $settings = $row ? json_decode($row['settings_value'], true) : [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $settings = [];
         }
 
@@ -221,7 +221,7 @@ class AgenticAIController extends AdminController
                 LEFT JOIN leads l ON ac.lead_id = l.id
                 LEFT JOIN users u ON ac.agent_id = u.id
                 ORDER BY ac.last_message_at DESC LIMIT 100") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $conversations = [];
         }
 
@@ -242,7 +242,7 @@ class AgenticAIController extends AdminController
             $messages = $db->fetchAll("SELECT am.*, u.name as sender_name
                 FROM agent_messages am LEFT JOIN users u ON am.sender_id = u.id
                 WHERE am.conversation_id = ? ORDER BY am.created_at ASC", [$id]) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $conv = null;
             $messages = [];
         }
@@ -274,7 +274,7 @@ class AgenticAIController extends AdminController
                 LEFT JOIN users u ON atl.triggered_by = u.id
                 WHERE {$where}
                 ORDER BY atl.created_at DESC LIMIT 200", $params) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $logs = [];
         }
 
@@ -310,7 +310,7 @@ class AgenticAIController extends AdminController
                 'message' => implode(' | ', $summary),
                 'results' => $results
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500);
             echo json_encode([
                 'success' => false,
@@ -346,7 +346,7 @@ class AgenticAIController extends AdminController
             $this->db->execute("UPDATE agent_conversations SET last_message_at = NOW(), last_message = ? WHERE id = ? AND tenant_id = ?",
                 [mb_substr($message, 0, 200), $convId, $tid]);
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
         }
@@ -365,7 +365,7 @@ class AgenticAIController extends AdminController
             $this->db->execute("UPDATE agent_conversations SET agent_id = ?, claimed_at = NOW() WHERE id = ? AND agent_id IS NULL AND tenant_id = ?",
                 [$agentId, $convId, $tid]);
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
         }
@@ -382,7 +382,7 @@ class AgenticAIController extends AdminController
         try {
             $this->db->execute("UPDATE agent_conversations SET status = 'resolved', resolved_at = NOW() WHERE id = ? AND tenant_id = ?", [$convId, $tid]);
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
         }
@@ -401,7 +401,7 @@ class AgenticAIController extends AdminController
                 WHERE am.conversation_id = ? AND am.created_at > ? ORDER BY am.created_at ASC",
                 [$convId, $after]) ?: [];
             echo json_encode(['success' => true, 'messages' => $messages]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'messages' => []]);
         }
     }
@@ -485,7 +485,7 @@ class AgenticAIController extends AdminController
                 INDEX idx_conv (conversation_id)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AgenticAI table creation error: " . $e->getMessage());
         }
     }

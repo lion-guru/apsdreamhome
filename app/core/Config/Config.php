@@ -138,7 +138,7 @@ class Config
                 if (is_array($envConfig)) {
                     self::$config = array_merge(self::$config, $envConfig);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Skip if env file has issues
             }
         }

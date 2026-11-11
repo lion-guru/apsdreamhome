@@ -35,7 +35,7 @@ class CommunicationAdminController extends AdminController
                 'automated_messages' => (int)($db->query("SELECT COUNT(*) FROM automated_messages_log WHERE DATE(sent_at)=CURDATE()")->fetchColumn() ?? 0),
                 'newsletter_subscribers' => (int)($db->query("SELECT COUNT(*) FROM newsletter_subscribers WHERE status='active'")->fetchColumn() ?? 0),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $stats = ['total_logs' => 0, 'inbound_today' => 0, 'outbound_today' => 0, 'leads_created_today' => 0, 'automated_messages' => 0, 'newsletter_subscribers' => 0];
         }
 
@@ -161,7 +161,7 @@ class CommunicationAdminController extends AdminController
         $db = Database::getInstance();
         try {
             $templates = $db->fetchAll("SELECT * FROM email_templates ORDER BY created_at DESC");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $templates = [];
         }
         
@@ -202,7 +202,7 @@ class CommunicationAdminController extends AdminController
             }
 
             $this->setFlash('success', 'Email template saved successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to save template: ' . $e->getMessage());
         }
 
@@ -261,7 +261,7 @@ class CommunicationAdminController extends AdminController
             $logs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
             $channels = $db->query("SELECT DISTINCT channel FROM communication_logs")->fetchAll(\PDO::FETCH_COLUMN);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $logs = [];
             $channels = [];
             $totalRows = 0;
@@ -305,7 +305,7 @@ class CommunicationAdminController extends AdminController
                 echo json_encode(['success' => false, 'message' => 'Failed to send: ' . ($result['error'] ?? 'Unknown error')]);
             }
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
             exit;
@@ -324,7 +324,7 @@ class CommunicationAdminController extends AdminController
             $stmt = $db->prepare("SELECT content_key, content_value FROM site_content WHERE section='settings' AND content_key IN ($placeholders)");
             $stmt->execute($keys);
             $results = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $results = [];
         }
         
@@ -357,7 +357,7 @@ class CommunicationAdminController extends AdminController
                         'updated_at' => date('Y-m-d H:i:s')
                     ]);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Failed to save setting $key: " . $e->getMessage());
             }
         }

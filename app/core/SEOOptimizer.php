@@ -278,7 +278,7 @@ class SEOOptimizer
             }
 
             return $properties_xml;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return '';
         }
     }
@@ -468,7 +468,7 @@ class SEOOptimizer
 
             return (int)($result['count'] ?? 0) + 10; // +10 for static pages
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 10; // Default count
         }
     }

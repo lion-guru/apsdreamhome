@@ -17,7 +17,7 @@ class CampaignTemplateApiController extends BaseController
         $this->skipCsrfProtection();
     }
 
-    protected function requireAdmin(): int
+    protected function requireAdmin(): void
     {
         $userId = (int)($GLOBALS['api_user_id'] ?? 0);
         if (!$userId) {
@@ -31,7 +31,6 @@ class CampaignTemplateApiController extends BaseController
             echo json_encode(['success' => false, 'error' => 'Admin access required']);
             exit;
         }
-        return $userId;
     }
 
     public function index()

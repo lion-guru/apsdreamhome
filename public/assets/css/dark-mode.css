@@ -1,1 +1,144 @@
-﻿/* Dark mode removed 2026-09-03 — light mode is single source of truth (style.css + premium-theme.css) */
+﻿/* Dark Mode Theme — APS Dream Home
+   Toggled via: document.documentElement.classList.toggle('dark-mode')
+   Persisted in: localStorage('aps_theme') = 'dark' | 'light'
+   Default: light (system preference respected on first visit)
+*/
+
+:root {
+    --dm-bg: #ffffff;
+    --dm-bg-secondary: #f8fafc;
+    --dm-bg-tertiary: #f1f5f9;
+    --dm-text: #1e293b;
+    --dm-text-muted: #64748b;
+    --dm-border: #e2e8f0;
+    --dm-card-bg: #ffffff;
+    --dm-card-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    --dm-sidebar-bg: #1e293b;
+    --dm-sidebar-text: #cbd5e1;
+    --dm-header-bg: #ffffff;
+    --dm-input-bg: #ffffff;
+    --dm-input-border: #cbd5e1;
+    --dm-table-stripe: #f8fafc;
+    --dm-badge-bg: #e2e8f0;
+    --dm-accent: #3b82f6;
+    --dm-success: #10b981;
+    --dm-warning: #f59e0b;
+    --dm-danger: #ef4444;
+}
+
+html.dark-mode {
+    --dm-bg: #0f172a;
+    --dm-bg-secondary: #1e293b;
+    --dm-bg-tertiary: #334155;
+    --dm-text: #e2e8f0;
+    --dm-text-muted: #94a3b8;
+    --dm-border: #334155;
+    --dm-card-bg: #1e293b;
+    --dm-card-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --dm-sidebar-bg: #0f172a;
+    --dm-sidebar-text: #cbd5e1;
+    --dm-header-bg: #1e293b;
+    --dm-input-bg: #334155;
+    --dm-input-border: #475569;
+    --dm-table-stripe: #1e293b;
+    --dm-badge-bg: #334155;
+    --dm-accent: #60a5fa;
+    --dm-success: #34d399;
+    --dm-warning: #fbbf24;
+    --dm-danger: #f87171;
+}
+
+/* Apply dark mode variables */
+html.dark-mode body {
+    background-color: var(--dm-bg);
+    color: var(--dm-text);
+}
+
+html.dark-mode .card {
+    background-color: var(--dm-card-bg);
+    border-color: var(--dm-border);
+    box-shadow: var(--dm-card-shadow);
+}
+
+html.dark-mode .card-header {
+    background-color: var(--dm-bg-secondary);
+    border-color: var(--dm-border);
+    color: var(--dm-text);
+}
+
+html.dark-mode .table {
+    color: var(--dm-text);
+}
+
+html.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--dm-table-stripe);
+}
+
+html.dark-mode .table th,
+html.dark-mode .table td {
+    border-color: var(--dm-border);
+}
+
+html.dark-mode .form-control,
+html.dark-mode .form-select {
+    background-color: var(--dm-input-bg);
+    border-color: var(--dm-input-border);
+    color: var(--dm-text);
+}
+
+html.dark-mode .modal-content {
+    background-color: var(--dm-card-bg);
+    color: var(--dm-text);
+}
+
+html.dark-mode .modal-header,
+html.dark-mode .modal-footer {
+    border-color: var(--dm-border);
+}
+
+html.dark-mode .dropdown-menu {
+    background-color: var(--dm-card-bg);
+    border-color: var(--dm-border);
+}
+
+html.dark-mode .dropdown-item {
+    color: var(--dm-text);
+}
+
+html.dark-mode .dropdown-item:hover {
+    background-color: var(--dm-bg-tertiary);
+}
+
+html.dark-mode .text-muted {
+    color: var(--dm-text-muted) !important;
+}
+
+html.dark-mode .bg-light {
+    background-color: var(--dm-bg-secondary) !important;
+}
+
+html.dark-mode .border {
+    border-color: var(--dm-border) !important;
+}
+
+/* Dark mode toggle button */
+.dark-mode-toggle {
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--dm-border);
+    background: var(--dm-bg-secondary);
+    color: var(--dm-text);
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.dark-mode-toggle:hover {
+    background: var(--dm-bg-tertiary);
+    transform: scale(1.05);
+}
+
+/* Smooth transition for theme switch */
+body, .card, .modal-content, .form-control, .form-select, .dropdown-menu, .table {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

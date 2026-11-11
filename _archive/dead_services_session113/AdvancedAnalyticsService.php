@@ -81,7 +81,7 @@ class AdvancedAnalyticsService
 
             $stmt = $this->database->prepare($sql);
             return $stmt->execute($vals);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -101,7 +101,7 @@ class AdvancedAnalyticsService
             
             $stmt = $this->database->prepare($sql);
             return $stmt->execute($vals);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

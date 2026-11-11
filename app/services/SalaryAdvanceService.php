@@ -8,6 +8,25 @@ use Exception;
 
 class SalaryAdvanceService
 {
+    /**
+     * Query runner: fetch a single row.
+     *
+     * NOTE (S451): this service calls $this->fetchOne($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchOne()".
+     */
+    private function fetchOne(string $sql, array $params = []): ?array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchOne] ' . $e->getMessage());
+            return null;
+        }
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -35,12 +54,14 @@ class SalaryAdvanceService
             return ['success' => false, 'message' => 'Amount must be greater than zero'];
         }
 
-        // Check employee exists and is active
+        // Check employee exists and is active (via profile, legacy-id compatible)
         $emp = $this->fetchOne("
-            SELECT e.id, e.user_id, e.name, e.department, e.designation, e.salary, e.status
-            FROM employees e
-            WHERE e.id = ? AND e.status = 'active'{$this->tenantSql()}
-        ", array_merge([$employeeId], $this->tVal()));
+            SELECT ep.legacy_id as id, u.id as user_id, u.name as name, ep.department, ep.designation,
+                   CAST(ep.salary AS DECIMAL(12,2)) as salary, ep.status as status
+            FROM employee_profiles ep
+            JOIN users u ON u.id = ep.user_id
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.status = 'active'{$this->tenantSql()}
+        ", array_merge([$employeeId, $employeeId, $employeeId], $this->tVal()));
 
         if (!$emp) {
             return ['success' => false, 'message' => 'Employee not found or inactive'];
@@ -101,7 +122,7 @@ class SalaryAdvanceService
                 'advance_id' => $advanceId,
                 'emi_amount' => $emiAmount
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -150,10 +171,11 @@ class SalaryAdvanceService
     public function getAdvance(int $advanceId): ?array
     {
         return $this->fetchOne("
-            SELECT sa.*, e.name as employee_name, e.employee_code, e.department, u.email
+            SELECT sa.*, u_emp.name as employee_name, ep.employee_code, ep.department, u.email
             FROM salary_advances sa
-            JOIN employees e ON sa.employee_id = e.id
-            LEFT JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = sa.employee_id OR ep.user_id = sa.employee_id OR ep.id = sa.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
+            LEFT JOIN users u ON u.id = ep.user_id
             WHERE sa.id = ?{$this->tenantSql()}
         ", array_merge([$advanceId], $this->tVal()));
     }
@@ -228,7 +250,7 @@ class SalaryAdvanceService
 
             $this->db->commit();
             return ['success' => true, 'message' => 'Amount disbursed successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -295,9 +317,9 @@ class SalaryAdvanceService
     private function creditWallet(int $employeeId, float $amount, string $description, string $reference): void
     {
         try {
-            // Get wallet
-            $wallet = $this->fetchOne("SELECT * FROM user_wallets WHERE user_id = (SELECT user_id FROM employees WHERE id = ?)", [(int)$employeeId]);
-            if (!$wallet) return;
+            // Get wallet (user_id via profile legacy bridge — handles legacy/user/profile PK spaces)
+            $wallet = $this->fetchOne("SELECT * FROM user_wallets WHERE user_id = (SELECT user_id FROM employee_profiles WHERE legacy_id = ? OR user_id = ? OR id = ? LIMIT 1)", [(int)$employeeId, (int)$employeeId, (int)$employeeId]);
+            if (!$wallet) return; 
 
             $newBalance = (float)$wallet['balance'] + $amount;
             $this->execute("UPDATE user_wallets SET balance = ?, total_earned = total_earned + ? WHERE id = ?", [$newBalance, $amount, $wallet['id']]);
@@ -307,7 +329,7 @@ class SalaryAdvanceService
                 INSERT INTO wallet_transactions (wallet_id, type, amount, balance_after, description, reference, status, tenant_id, created_at)
                 VALUES (?, 'credit', ?, ?, ?, ?, 'completed', 1, NOW())
             ", [$wallet['id'], $amount, $newBalance, $description, 'advance_' . $reference]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Wallet credit failed: " . $e->getMessage());
         }
     }

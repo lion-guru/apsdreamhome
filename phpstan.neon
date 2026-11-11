@@ -4,8 +4,7 @@ parameters:
         - app
     excludePaths:
         - app/views
-        - app/Services/Legacy
-        - app/Services/Custom
+        - app/assets
     ignoreErrors:
         - '#Call to an undefined method#'
         - '#Call to an undefined function#'

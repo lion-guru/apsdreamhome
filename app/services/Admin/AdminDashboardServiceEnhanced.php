@@ -290,7 +290,7 @@ class AdminDashboardService
         try {
             $this->db->query("SELECT 1");
             $health['checks']['database'] = ['status' => 'ok', 'message' => 'Database connection healthy'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $health['checks']['database'] = ['status' => 'error', 'message' => 'Database connection failed'];
             $health['status'] = 'unhealthy';
         }

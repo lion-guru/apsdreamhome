@@ -30,7 +30,7 @@ class ShiftRosterController extends AdminController
         try {
             $service = new \App\Services\ShiftRosterService();
             $shiftTypes = $service->getShiftTypes();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
             $shiftTypes = [];
         }
@@ -50,7 +50,7 @@ class ShiftRosterController extends AdminController
                 $service = new \App\Services\ShiftRosterService();
                 $result = $service->createShiftType($_POST);
                 $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = $e->getMessage();
             }
             $this->redirect(BASE_URL . '/admin/shift-roster/shift-types');
@@ -79,7 +79,7 @@ class ShiftRosterController extends AdminController
             $roster = $service->getRoster($startDate, $endDate, $employeeId);
             $employees = $this->getActiveEmployees();
             $shiftTypes = $service->getShiftTypes();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
             $roster = [];
             $employees = [];
@@ -106,7 +106,7 @@ class ShiftRosterController extends AdminController
                 $service = new \App\Services\ShiftRosterService();
                 $result = $service->assignShift($_POST);
                 $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = $e->getMessage();
             }
             $this->redirect(BASE_URL . '/admin/shift-roster/roster');
@@ -138,7 +138,7 @@ class ShiftRosterController extends AdminController
                     (int)($_POST['weeks'] ?? 4)
                 );
                 $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = $e->getMessage();
             }
             $this->redirect(BASE_URL . '/admin/shift-roster/roster');
@@ -195,7 +195,7 @@ class ShiftRosterController extends AdminController
 
             $total = count($requests); // Simplified
             $totalPages = max(1, ceil($total / $perPage));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $requests = [];
             $totalPages = 1;
         }
@@ -224,7 +224,7 @@ class ShiftRosterController extends AdminController
             $remarks = $_POST['remarks'] ?? '';
             $result = $service->processOvertime($id, $action, $_SESSION['admin_id'] ?? 0, $remarks);
             $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         $this->redirect(BASE_URL . '/admin/shift-roster/overtime-requests');
@@ -241,7 +241,7 @@ class ShiftRosterController extends AdminController
         try {
             $service = new \App\Services\ShiftRosterService();
             $summary = $service->getOvertimeSummaryReport($startDate, $endDate);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $summary = ['total_requests' => 0, 'total_hours' => 0, 'by_status' => [], 'by_department' => [], 'details' => []];
         }
 
@@ -263,7 +263,7 @@ class ShiftRosterController extends AdminController
         try {
             $service = new \App\Services\ShiftRosterService();
             $coverage = $service->getShiftCoverageReport($startDate, $endDate);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $coverage = [];
         }
 

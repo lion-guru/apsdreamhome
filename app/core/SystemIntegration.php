@@ -85,7 +85,7 @@ class SystemIntegration {
         if (!$pdo) {
             try {
                 $pdo = \App\Core\Database\Database::getInstance()->getConnection();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('Database connection failed: ' . $e->getMessage());
             }
         }
@@ -389,7 +389,7 @@ class SystemIntegration {
                 $health['critical_issues'][] = 'Database connection failed';
                 $health['status'] = 'unhealthy';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $health['critical_issues'][] = 'Database query failed: ' . $e->getMessage();
             $health['status'] = 'unhealthy';
         }

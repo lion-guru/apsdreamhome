@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Core\Database\Database;
 use App\Services\Land\LegalColonyDevelopmentService;
 use App\Services\Land\PipelineWorkflowService;
@@ -9,7 +10,6 @@ use App\Services\Land\ColonyAnalyticsService;
 use App\Services\Land\ColonyFeasibilityService;
 use App\Services\Land\LandAcquisitionService;
 use App\Services\Land\ColonyHealthService;
-use \App\Traits\TenantAwareTrait;
 use Exception;
 
 /**

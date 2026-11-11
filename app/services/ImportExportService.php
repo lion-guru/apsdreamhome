@@ -106,7 +106,7 @@ class ImportExportService
             
             fclose($handle);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result['errors'][] = $e->getMessage();
         }
         
@@ -238,7 +238,7 @@ class ImportExportService
             
             fclose($handle);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result['errors'][] = $e->getMessage();
         }
         
@@ -545,7 +545,7 @@ class ImportExportService
 
             fclose($handle);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result['errors'][] = $e->getMessage();
         }
 

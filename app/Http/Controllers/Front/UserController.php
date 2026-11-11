@@ -5,14 +5,18 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\BaseController;
 use App\Services\Communication\NotificationService;
 use App\Services\Sales\BookingLifecycleService;
+use App\Services\Cache\CacheService;
 
 class UserController extends BaseController
 {
     use \App\Traits\TenantAwareTrait;
 
+    private $cacheService;
+
     public function __construct()
     {
         parent::__construct();
+        $this->cacheService = new CacheService();
     }
 
     private function requireCustomerLogin()
@@ -51,6 +55,16 @@ class UserController extends BaseController
     {
         $this->requireCustomerLogin();
         $user = $this->getUser();
+        $uid = (int)$user['id'];
+
+        // ── Dashboard cache (5 min TTL) ──
+        $cacheKey = 'customer_dashboard:' . $uid;
+        $cached = $this->cacheService->get($cacheKey);
+        if ($cached !== false && $cached !== null) {
+            $this->layout = 'layouts/customer';
+            $this->render('pages/user_dashboard', $cached);
+            return;
+        }
 
         // Owner match by account id OR contact email: listings saved under the
         // logged-in account always surface here even if a different contact
@@ -103,7 +117,7 @@ class UserController extends BaseController
             $stmt = $db->prepare("SELECT * FROM payment_transactions WHERE user_id = ? AND user_type = 'customer' ORDER BY created_at DESC LIMIT 5");
             $stmt->execute([$_SESSION['user_id'] ?? 0]);
             $recentPayments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $recentPayments = [];
         }
 
@@ -112,7 +126,7 @@ class UserController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM documents WHERE entity_type = 'user' AND entity_id = ? ORDER BY uploaded_on DESC");
             $stmt->execute([$user['id']]);
             $userDocuments = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $userDocuments = [];
         }
 
@@ -127,7 +141,7 @@ class UserController extends BaseController
             $stmt->execute([$user['id']]);
             $openTicketsRow = $stmt->fetch(\PDO::FETCH_ASSOC);
             $openTickets = (int)($openTicketsRow['cnt'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $totalTickets = 0;
             $openTickets = 0;
         }
@@ -178,7 +192,7 @@ class UserController extends BaseController
                 $stmt->execute([$user['id']]);
                 $kycRow = $stmt->fetch(\PDO::FETCH_ASSOC);
                 $kycStatus = $kycRow['status'] ?? 'not_started';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $kycStatus = 'not_started';
             }
 
@@ -190,7 +204,7 @@ class UserController extends BaseController
             } catch (\Throwable $e) {
                 error_log("UserController::dashboard - referralEarningsBreakdown: " . $e->getMessage());
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("UserController.php: " . $e->getMessage());
         }
 
@@ -235,6 +249,9 @@ class UserController extends BaseController
             'kycStatus' => $kycStatus ?? 'not_started',
             'paymentSummary' => $paymentSummary,
         ];
+
+        // Cache dashboard data for 5 minutes (300 seconds)
+        $this->cacheService->set($cacheKey, $data, 300);
 
         $this->layout = 'layouts/customer';
         $this->render('pages/user_dashboard', $data);
@@ -750,7 +767,7 @@ class UserController extends BaseController
                 WHERE (b.user_id = ? OR b.customer_id = ?) AND b.status NOT IN ('cancelled')
                 ORDER BY b.created_at DESC
             ", [$user['id'], $user['id']]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tickets = [];
             $bookings = [];
         }
@@ -801,7 +818,7 @@ class UserController extends BaseController
 
             // Send confirmation email
             try {
-                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc = new \App\Services\Communication\EmailService();
                 $emailSvc->sendSupportTicketCreated((int)$user['id'], [
                     'ticket_number' => 'TKT-' . str_pad($ticketId, 6, '0', STR_PAD_LEFT),
                     'subject' => $subject,
@@ -813,7 +830,7 @@ class UserController extends BaseController
             }
 
             $_SESSION['success'] = 'Support ticket created successfully!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Failed to create ticket. Please try again.';
         }
 
@@ -894,7 +911,7 @@ class UserController extends BaseController
 
             // Send confirmation email
             try {
-                $emailSvc = new \App\Services\EmailTemplateService();
+                $emailSvc = new \App\Services\Communication\EmailService();
                 $emailSvc->sendSupportTicketCreated((int)$user['id'], [
                     'ticket_number' => $ticket['ticket_number'],
                     'subject' => $subject,
@@ -908,7 +925,7 @@ class UserController extends BaseController
             $_SESSION['success'] = 'Ticket ' . $ticket['ticket_number'] . ' created successfully!';
             header('Location: ' . BASE_URL . '/user/support/' . $ticket['id']);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("storeSupportTicket: " . $e->getMessage());
             $_SESSION['error'] = 'Failed to create ticket. Please try again.';
             header('Location: ' . BASE_URL . '/user/support/create');
@@ -978,7 +995,7 @@ class UserController extends BaseController
         try {
             $service->addReply((int)$id, (int)$user['id'], $message, false);
             $_SESSION['success'] = 'Reply sent successfully!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ticketReply: " . $e->getMessage());
             $_SESSION['error'] = 'Failed to send reply.';
         }
@@ -1250,7 +1267,7 @@ class UserController extends BaseController
             $props->execute([$_SESSION['user_id']]);
             $properties = $props->fetchAll(\PDO::FETCH_ASSOC);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $message = $message ?? 'An error occurred. Please try again.';
             $message_type = $message_type ?? 'danger';
             $properties = $properties ?? [];
@@ -1416,7 +1433,7 @@ class UserController extends BaseController
             try {
                 $notifService = new NotificationService();
                 $count = $notifService->getUnreadCount($_SESSION['user_id']);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("UserController::apiUnreadCount: " . $e->getMessage());
             }
         }
@@ -1438,7 +1455,7 @@ class UserController extends BaseController
                  ORDER BY f.created_at DESC",
                 [$userId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $favorites = [];
         }
         $this->render('pages/user_favorites', [

@@ -32,7 +32,7 @@ echo "Mode: " . ($statusOnly ? 'STATUS ONLY' : ($dryRun ? 'DRY RUN (no emails)' 
 try {
     $db = \App\Core\Database\Database::getInstance();
     $pdo = $db->getConnection();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "ERROR: DB connection failed: " . $e->getMessage() . "\n";
     exit(1);
 }

@@ -47,7 +47,7 @@ class SharingController extends BaseApiController
 
             return $this->jsonSuccess($shareData);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -92,7 +92,7 @@ class SharingController extends BaseApiController
 
             return $this->jsonError('Failed to track click', 500);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }

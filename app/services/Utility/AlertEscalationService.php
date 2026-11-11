@@ -71,7 +71,7 @@ class AlertEscalationService
                 'escalation' => $escalationResult
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to create alert", [
                 'type' => $type,
                 'error' => $e->getMessage()
@@ -111,7 +111,7 @@ class AlertEscalationService
                     
                     $processed++;
                     
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $errors[] = "Escalation ID {$escalation['id']}: {$e->getMessage()}";
                     $this->logger->error("Failed to process escalation", [
                         'escalation_id' => $escalation['id'],
@@ -128,7 +128,7 @@ class AlertEscalationService
                 'errors' => $errors
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to process escalations", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -158,7 +158,7 @@ class AlertEscalationService
             
             return $alert;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get alert", ['id' => $id, 'error' => $e->getMessage()]);
             return null;
         }
@@ -219,7 +219,7 @@ class AlertEscalationService
             
             return $alerts;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get alerts", ['error' => $e->getMessage()]);
             return [];
         }
@@ -250,7 +250,7 @@ class AlertEscalationService
                 'message' => 'Alert resolved successfully'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to resolve alert", [
                 'alert_id' => $alertId,
                 'error' => $e->getMessage()
@@ -288,7 +288,7 @@ class AlertEscalationService
                 'message' => 'Alert dismissed successfully'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to dismiss alert", [
                 'alert_id' => $alertId,
                 'error' => $e->getMessage()
@@ -377,7 +377,7 @@ class AlertEscalationService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get escalation stats", ['error' => $e->getMessage()]);
             return [];
         }
@@ -412,7 +412,7 @@ class AlertEscalationService
                 'rule_id' => $ruleId
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to add escalation rule", [
                 'name' => $name,
                 'error' => $e->getMessage()

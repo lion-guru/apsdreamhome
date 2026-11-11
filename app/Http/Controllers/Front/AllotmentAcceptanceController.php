@@ -278,7 +278,7 @@ class AllotmentAcceptanceController extends BaseController
                     'sent_at' => date('Y-m-d H:i:s'),
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('AllotmentAcceptanceController::accept log failed: ' . $e->getMessage());
             }
 

@@ -683,7 +683,7 @@ class PushNotificationService
                 'today_sent' => (int)$todaySent,
                 'success_rate' => ($totalSent + $totalFailed) > 0 ? round(($totalSent / ($totalSent + $totalFailed)) * 100, 1) : 0,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['total_sent' => 0, 'total_failed' => 0, 'total_tokens' => 0, 'today_sent' => 0, 'success_rate' => 0];
         }
     }
@@ -703,7 +703,7 @@ class PushNotificationService
                  ORDER BY pl.created_at DESC LIMIT ?",
                 $tid > 1 ? [$tid, $limit] : [$limit]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

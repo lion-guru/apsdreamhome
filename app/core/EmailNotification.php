@@ -3,8 +3,8 @@
 namespace App\Core;
 
 // NOTE (S449): this file is namespaced, so a bare PDO:: resolves to
-// <this-namespace>\PDO -> "Class App\...\PDO not found" fatal. The
-// custom autoloader does not fall back to the global PDO class.
+// App\Services\PDO / App\Core\PDO -> "Class not found" fatal.
+// The custom autoloader does not fall back to the global class.
 use PDO;
 /**
  * Enhanced Email Notification System (PHP mail() fallback)
@@ -48,7 +48,7 @@ class EmailNotification {
 
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Email notification error: ' . $e->getMessage());
             return false;
         }
@@ -74,7 +74,7 @@ class EmailNotification {
 
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Registration email error: ' . $e->getMessage());
             return false;
         }
@@ -101,7 +101,7 @@ class EmailNotification {
 
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Inquiry response email error: ' . $e->getMessage());
             return false;
         }
@@ -126,7 +126,7 @@ class EmailNotification {
 
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Send email error: ' . $e->getMessage());
             throw $e;
         }
@@ -166,7 +166,7 @@ class EmailNotification {
 
             return $this->sendEmail($test_email, $subject, $body);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Email test error: ' . $e->getMessage());
             return false;
         }
@@ -201,7 +201,7 @@ class EmailNotification {
             $stmt->execute([$inquiry_id]);
             return $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Get inquiry details error: ' . $e->getMessage());
             return null;
         }
@@ -607,7 +607,7 @@ class EmailNotification {
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $result['count'] ?? 0;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }

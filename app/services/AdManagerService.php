@@ -41,7 +41,7 @@ class AdManagerService
                 INDEX idx_tenant (tenant_id),
                 UNIQUE KEY uk_slot_tenant (slot_key, tenant_id)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-        } catch (\Exception $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
     }
 
     public function getSlot(string $slotKey): ?array
@@ -55,7 +55,7 @@ class AdManagerService
                 $this->incrementViews($ad['id']);
                 return $ad;
             }
-        } catch (\Exception $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
         return null;
     }
 
@@ -66,7 +66,7 @@ class AdManagerService
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$type]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -78,7 +78,7 @@ class AdManagerService
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -105,7 +105,7 @@ class AdManagerService
                 if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
                 return $this->db->prepare($sql)->execute($params);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -117,7 +117,7 @@ class AdManagerService
             $params = [$id];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             return $this->db->prepare($sql)->execute($params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -129,7 +129,7 @@ class AdManagerService
             $params = [$id];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $this->db->prepare($sql)->execute($params);
-        } catch (\Exception $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
     }
 
     public function incrementClicks(int $id): void
@@ -139,7 +139,7 @@ class AdManagerService
             $params = [$id];
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $this->db->prepare($sql)->execute($params);
-        } catch (\Exception $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('AdManagerService exception: ' . $e->getMessage()); }
     }
 
     public function renderSlot(string $slotKey): string

@@ -52,7 +52,7 @@ class FollowupController extends BaseApiController
                 'feedback_requests' => $feedbackRequestsSent,
                 'lead_followups' => $leadFollowupsSent
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }

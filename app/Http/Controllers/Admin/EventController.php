@@ -18,7 +18,7 @@ class EventController extends AdminController
         try {
             $stmt = $this->db->query("SELECT * FROM events ORDER BY event_date DESC");
             $events = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $events = [];
         }
         $this->render('admin/events/index', [
@@ -47,7 +47,7 @@ class EventController extends AdminController
             $stmt = $this->db->prepare("INSERT INTO events (title, description, event_date, location, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
             $stmt->execute([$title, $description, $event_date, $location, $status, $this->tenantId()]);
             $_SESSION['success'] = 'Event created successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/events/list');
@@ -60,7 +60,7 @@ class EventController extends AdminController
             $stmt = $this->db->prepare("SELECT * FROM events WHERE id = ?");
             $stmt->execute([$id]);
             $event = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $event = null;
         }
         if (!$event) {
@@ -80,7 +80,7 @@ class EventController extends AdminController
             $stmt = $this->db->prepare("SELECT * FROM events WHERE id = ?");
             $stmt->execute([$id]);
             $event = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $event = null;
         }
         if (!$event) {
@@ -106,7 +106,7 @@ class EventController extends AdminController
             $stmt = $this->db->prepare("UPDATE events SET title = ?, description = ?, event_date = ?, location = ?, status = ? WHERE id = ?" . $tw);
             $stmt->execute([$title, $description, $event_date, $location, $status, $id, ...$tp]);
             $_SESSION['success'] = 'Event updated successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/events/list');
@@ -120,7 +120,7 @@ class EventController extends AdminController
             $stmt = $this->db->prepare("DELETE FROM events WHERE id = ?" . $tw);
             $stmt->execute([$id, ...$tp]);
             $_SESSION['success'] = 'Event deleted successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/events/list');

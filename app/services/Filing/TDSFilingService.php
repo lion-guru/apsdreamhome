@@ -36,7 +36,7 @@ class TDSFilingService
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row['credential_value'] ?? null;
-        } catch (\Exception $e) { error_log("[TDSFilingService] getCompanyTAN: " . $e->getMessage()); return null; }
+        } catch (\Throwable $e) { error_log("[TDSFilingService] getCompanyTAN: " . $e->getMessage()); return null; }
     }
 
     private function getCompanyPAN(): ?string
@@ -47,7 +47,7 @@ class TDSFilingService
             $stmt->execute();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row['credential_value'] ?? null;
-        } catch (\Exception $e) { error_log("[TDSFilingService] getCompanyPAN: " . $e->getMessage()); return null; }
+        } catch (\Throwable $e) { error_log("[TDSFilingService] getCompanyPAN: " . $e->getMessage()); return null; }
     }
 
     // ========== Form 26Q Generation ==========
@@ -152,7 +152,7 @@ class TDSFilingService
                     'sections' => count($bySection),
                 ],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[TDSFilingService] generateForm26Q() exception: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -231,7 +231,7 @@ class TDSFilingService
             $stmt = $this->getPdo()->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[TDSFilingService] listChallans() exception: " . $e->getMessage());
             return [];
         }
@@ -248,7 +248,7 @@ class TDSFilingService
             $params[] = $challanId;
             $stmt = $this->getPdo()->prepare("UPDATE tds_challans SET " . implode(', ', $sets) . " WHERE id = ?");
             return $stmt->execute($params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[TDSFilingService] updateChallanStatus() exception: " . $e->getMessage());
             return false;
         }
@@ -314,7 +314,7 @@ class TDSFilingService
                 ->execute([$pdfFile, $certificateId]);
 
             return ['success' => true, 'form_16a' => $form16a, 'file_path' => $pdfFile, 'json_path' => $jsonFile];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[TDSFilingService] generateForm16A() exception: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -484,7 +484,7 @@ class TDSFilingService
             ];
 
             return ['by_section' => $bySection, 'totals' => $totals];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[TDSFilingService] getTDSSummary() exception: " . $e->getMessage());
             return ['by_section' => [], 'totals' => []];
         }

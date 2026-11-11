@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/services/colony_service.dart';
 import '../../../data/models/plot_model.dart';
@@ -406,32 +408,99 @@ class PlotDetailBottomSheet extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // Action button
-              if (plot.status == 'available')
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      // TODO: Navigate to booking flow
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+              // Deal & Booking Actions
+              if (plot.status == 'available') ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          final msg = Uri.encodeComponent(
+                            'Namaste APS Dream Home! I am interested in Plot #${plot.plotNumber} in ${plot.colonyName} (${plot.formattedPrice}). Please share deal details.',
+                          );
+                          launchUrl(
+                            Uri.parse('https://wa.me/917007444842?text=$msg'),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                        icon: const Icon(Icons.chat, color: Color(0xFF25D366), size: 18),
+                        label: const Text('WhatsApp Deal', style: TextStyle(color: Color(0xFF0B194C))),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFF25D366), width: 1.5),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
                       ),
                     ),
-                    child: Text(
-                      'Book This Plot',
-                      style: GoogleFonts.outfit(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          context.push(
+                            '/booking',
+                            extra: {
+                              'plotId': plot.id,
+                              'colonyId': plot.colonyId,
+                              'plotNumber': plot.plotNumber,
+                              'amount': plot.totalPrice,
+                            },
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          'Book Plot',
+                          style: GoogleFonts.outfit(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      context.push('/plot-detail/${plot.id}');
+                    },
+                    icon: const Icon(Icons.info_outline, size: 16),
+                    label: const Text('View Full Specifications & EMI Plan'),
+                  ),
+                ),
+              ] else ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      final msg = Uri.encodeComponent(
+                        'Hi APS Dream Home! Is Plot #${plot.plotNumber} in ${plot.colonyName} opening for re-booking or transfer?',
+                      );
+                      launchUrl(
+                        Uri.parse('https://wa.me/917007444842?text=$msg'),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    icon: const Icon(Icons.phone_outlined, size: 18),
+                    label: const Text('Enquire for Waiting List / Similar Plots'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
                 ),
+              ],
             ],
           ),
         );

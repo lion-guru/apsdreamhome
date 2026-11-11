@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Core\Database\Database;
-use \App\Traits\TenantAwareTrait;
 
 class VoiceUploadController extends AdminController
 {
@@ -76,7 +76,7 @@ protected function pdo(): \PDO
             $stmt->execute($params);
             $uploads = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("VoiceUploadController::index error: " . $e->getMessage());
         }
 
@@ -109,7 +109,7 @@ protected function pdo(): \PDO
             $stmt = $pdo->prepare("SELECT v.*, u.name as processed_by_name FROM customer_voice_upload v LEFT JOIN users u ON v.processed_by = u.id WHERE v.id = ?");
             $stmt->execute([(int)$id]);
             $upload = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("VoiceUploadController::show error: " . $e->getMessage());
         }
 
@@ -148,7 +148,7 @@ protected function pdo(): \PDO
             } else {
                 $this->setFlash('error', 'Upload not found or already deleted');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("VoiceUploadController::process error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to process voice upload');
         }
@@ -181,7 +181,7 @@ protected function pdo(): \PDO
             } else {
                 $this->setFlash('error', 'Upload not found or already deleted');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("VoiceUploadController::delete error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to delete voice upload');
         }

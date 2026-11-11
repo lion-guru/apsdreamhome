@@ -169,7 +169,7 @@ class Security
                 $stmt = $db->prepare("INSERT INTO blocked_ips (ip_address, reason, blocked_at) VALUES (?, ?, NOW())");
                 $stmt->execute([$ip, $reason]);
                 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Database not available, just log it
             }
         }
@@ -414,7 +414,7 @@ class Security
             $stmt = $db->prepare("INSERT INTO security_logs (action, ip_address, user_agent, details, created_at) VALUES (?, ?, ?, ?, NOW())");
             $stmt->execute([$event, $logEntry['ip'], $logEntry['user_agent'], json_encode($details)]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Database not available, just log to error log
         }
     }

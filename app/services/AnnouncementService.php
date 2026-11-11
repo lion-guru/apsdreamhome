@@ -22,7 +22,16 @@ class AnnouncementService
      */
     public function getEmployeeAnnouncements(int $employeeId): array
     {
-        $emp = $this->db->fetchOne("SELECT department, role FROM employees WHERE id = ? AND status = 'active' LIMIT 1", [$employeeId]);
+        // Phase 4/7: resolve legacy employee id → user_id, then use IdentityService
+        $identity = new \App\Services\IdentityService();
+        $userId = $identity->resolveEmployeeUserId($employeeId);
+        $emp = null;
+        if ($userId > 0) {
+            $profile = $identity->getEmployeeProfile($userId);
+            if ($profile && ($profile['department'] ?? '') !== '') {
+                $emp = ['department' => $profile['department'], 'role' => $profile['employee_role'] ?? $profile['role'] ?? ''];
+            }
+        }
         if (!$emp) return [];
 
         $query = "
@@ -68,7 +77,16 @@ class AnnouncementService
      */
     public function getUnreadCount(int $employeeId): int
     {
-        $emp = $this->db->fetchOne("SELECT department, role FROM employees WHERE id = ? AND status = 'active' LIMIT 1", [$employeeId]);
+        // Phase 4/7: resolve legacy employee id → user_id, then use IdentityService
+        $identity = new \App\Services\IdentityService();
+        $userId = $identity->resolveEmployeeUserId($employeeId);
+        $emp = null;
+        if ($userId > 0) {
+            $profile = $identity->getEmployeeProfile($userId);
+            if ($profile && ($profile['department'] ?? '') !== '') {
+                $emp = ['department' => $profile['department'], 'role' => $profile['employee_role'] ?? $profile['role'] ?? ''];
+            }
+        }
         if (!$emp) return 0;
 
         $result = $this->db->fetchOne("

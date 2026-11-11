@@ -246,7 +246,7 @@ $currentColony = $current_colony ?? null;
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="<?= BASE_URL ?>/admin/township-stp/store" method="POST">
-                <?= \App\Core\Security\CSRF::createTokenField() ?>
+                <?= \App\Core\Security\CSRF::generateTokenField() ?>
                 <div class="modal-body p-4">
                     <div class="row g-3">
                         <div class="col-md-6">

@@ -136,7 +136,7 @@ class TestFramework
                 $tests['failed']++;
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tests['tests'][] = [
                 'name' => 'Database Exception',
                 'status' => 'error',
@@ -208,7 +208,7 @@ class TestFramework
                     $tests['failed']++;
                 }
 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $tests['tests'][] = [
                     'name' => $endpoint,
                     'status' => 'error',
@@ -262,7 +262,7 @@ class TestFramework
                             ];
                             $tests['failed']++;
                         }
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $tests['tests'][] = [
                             'name' => $modelName,
                             'status' => 'error',
@@ -273,7 +273,7 @@ class TestFramework
                 }
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tests['tests'][] = [
                 'name' => 'Model Loading',
                 'status' => 'error',
@@ -326,7 +326,7 @@ class TestFramework
                             ];
                             $tests['failed']++;
                         }
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $tests['tests'][] = [
                             'name' => $controllerName,
                             'status' => 'error',
@@ -337,7 +337,7 @@ class TestFramework
                 }
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tests['tests'][] = [
                 'name' => 'Controller Loading',
                 'status' => 'error',
@@ -400,7 +400,7 @@ class TestFramework
                 $tests['failed']++;
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tests['tests'][] = [
                 'name' => 'Security Configuration',
                 'status' => 'error',

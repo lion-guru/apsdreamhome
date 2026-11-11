@@ -145,6 +145,49 @@ $today = date('Y-m-d');
         </div>
     </div>
 
+    <!-- Pipeline Funnel (S348: funnel analytics) -->
+    <?php if (!empty($funnel)): ?>
+    <div class="card border-0 shadow-sm mb-4">
+        <h6><i class="fas fa-funnel-dollar text-primary me-2"></i><?= __('assoc_crm_funnel_title', [], 'Conversion Funnel') ?></h6>
+        <?php
+        $funnelLabels = [
+            'new' => ['New', 'bg-primary'],
+            'contacted' => ['Contacted', 'bg-info'],
+            'qualified' => ['Qualified', 'bg-warning'],
+            'site_visit' => ['Site Visit', 'bg-info'],
+            'proposal' => ['Proposal', 'bg-danger'],
+            'negotiation' => ['Negotiation', 'bg-warning'],
+            'closed_won' => ['Closed Won', 'bg-success'],
+        ];
+        $maxFunnel = max(array_values($funnel));
+        $maxFunnel = max($maxFunnel, 1);
+        ?>
+        <div class="funnel-container">
+            <?php foreach ($funnel as $stage => $count):
+                $label = $funnelLabels[$stage] ?? [$stage, 'bg-secondary'];
+                $width = max(($count / $maxFunnel) * 100, 2);
+                $rate = $funnel_rates[$stage] ?? null;
+            ?>
+            <div class="funnel-stage mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <small class="fw-semibold"><?= e($label[0]) ?></small>
+                    <small class="text-muted">
+                        <?= e($count) ?> leads
+                        <?php if ($rate !== null): ?>
+                            <span class="badge bg-<?= $rate >= 50 ? 'success' : ($rate >= 25 ? 'warning' : 'danger') ?> ms-1"><?= e($rate) ?>%</span>
+                        <?php endif; ?>
+                    </small>
+                </div>
+                <div style="height: 24px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                    <div class="<?= e($label[1]) ?>" style="height: 100%; width: <?= e($width) ?>%; border-radius: 4px; transition: width 0.5s; min-width: 4px;"></div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Percentage shows conversion from previous stage.</small>
+    </div>
+    <?php endif; ?>
+
     <div class="row g-4">
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm">

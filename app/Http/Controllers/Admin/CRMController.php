@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Services\CRMService;
 
-use \App\Traits\TenantAwareTrait;
 
 class CRMController extends AdminController
 {
@@ -35,7 +35,7 @@ class CRMController extends AdminController
             // Pipeline + status distribution for view (avoids DB queries in view)
             $pipeline = $db->query("SELECT status, COUNT(*) as cnt, SUM(COALESCE(budget, 0)) as total_val FROM leads WHERE deleted_at IS NULL AND status NOT IN ('converted','closed','dead'){$leadWhere} GROUP BY status ORDER BY FIELD(status, 'new','contacted','qualified','site_visit','proposal','negotiation','booking','won')")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $statusDist = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL{$leadWhere} GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $stats = ['total_customers'=>0,'active_leads'=>0,'open_tickets'=>0,'total_inquiries'=>0,'converted_this_month'=>0,'pending_followups'=>0];
             $recent_tickets = [];
             $recent_leads = [];
@@ -51,7 +51,7 @@ class CRMController extends AdminController
         try {
             [$tidSql, $tidParams] = $this->tenantWhere();
             $customers = $this->db->fetchAll("SELECT u.*, (SELECT COUNT(*) FROM leads WHERE email=u.email AND deleted_at IS NULL) as lead_count, (SELECT COUNT(*) FROM inquiries WHERE user_id=u.id) as inquiry_count FROM users u WHERE u.role='customer'{$tidSql} ORDER BY u.created_at DESC", $tidParams) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $customers = [];
         }
         return $this->render('admin/crm/customers', ['customers' => $customers]);
@@ -125,7 +125,7 @@ class CRMController extends AdminController
             }
 
             $this->setFlash('success', 'Customer created successfully. ID: ' . $userId);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CRMController::storeCustomer] ' . $e->getMessage());
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
@@ -142,7 +142,7 @@ class CRMController extends AdminController
             $leads = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL{$leadWhere} ORDER BY l.created_at DESC LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $statuses = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL{$where} GROUP BY status ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $sources = $db->query("SELECT source, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL{$where} GROUP BY source ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $leads = [];
             $statuses = [];
             $sources = [];
@@ -158,7 +158,7 @@ class CRMController extends AdminController
             $tid = (int)$this->tenantId(); $actWhere = $tid > 1 ? " AND la.tenant_id = $tid" : ""; $leadWhere = $tid > 1 ? " AND l.tenant_id = $tid" : "";
             $followups = $db->query("SELECT la.*, l.name as lead_name, l.phone as lead_phone, u.name as assignee_name FROM lead_activities la LEFT JOIN leads l ON la.lead_id=l.id LEFT JOIN users u ON la.created_by=u.id WHERE la.activity_type IN ('call','email','sms','meeting','follow_up'){$actWhere} ORDER BY la.activity_date DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $pending = $db->query("SELECT l.*, l.next_activity_date, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.next_activity_date IS NOT NULL AND l.next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) AND l.status NOT IN ('converted','closed','dead') AND l.deleted_at IS NULL{$leadWhere} ORDER BY l.next_activity_date ASC")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $followups = [];
             $pending = [];
         }
@@ -173,7 +173,7 @@ class CRMController extends AdminController
             $tid = (int)$this->tenantId(); $ticketWhere = $tid > 1 ? " AND st.tenant_id = $tid" : ""; $where = $tid > 1 ? " AND tenant_id = $tid" : "";
             $tickets = $db->query("SELECT st.*, u.name as user_name, a.name as assignee_name FROM support_tickets st LEFT JOIN users u ON st.user_id=u.id LEFT JOIN users a ON st.assigned_to=a.id WHERE st.satisfaction_rating IS NOT NULL{$ticketWhere} ORDER BY st.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $avg = $db->query("SELECT AVG(satisfaction_rating) as avg_rating, COUNT(*) as rated FROM support_tickets WHERE satisfaction_rating IS NOT NULL{$where}")->fetch(\PDO::FETCH_ASSOC) ?: ['avg_rating' => 0, 'rated' => 0];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tickets = [];
             $avg = ['avg_rating' => 0, 'rated' => 0];
         }
@@ -193,7 +193,7 @@ class CRMController extends AdminController
                 'in_progress' => (int)$db->query("SELECT COUNT(*) FROM support_tickets WHERE status='in_progress'{$andWhere}")->fetchColumn(),
                 'resolved' => (int)$db->query("SELECT COUNT(*) FROM support_tickets WHERE status='resolved'{$andWhere}")->fetchColumn(),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tickets = [];
             $stats = ['total' => 0, 'open' => 0, 'in_progress' => 0, 'resolved' => 0];
         }

@@ -30,7 +30,7 @@ class ChatAnalytics
                 "INSERT INTO chat_analytics (event_type, action, session_id, user_id, meta, created_at" . ( $this->tenantId() > 1 ? ', tenant_id' : '' ) . ") VALUES (?, ?, ?, ?, ?, NOW()" . ( $this->tenantId() > 1 ? ', ' . $this->tenantId() : '' ) . ")",
                 array_merge([$event, $action, $sessionId, $userId, json_encode($meta)], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ChatAnalytics log error: " . $e->getMessage());
         }
     }

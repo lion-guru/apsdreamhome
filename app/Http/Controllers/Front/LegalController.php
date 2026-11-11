@@ -161,7 +161,7 @@ class LegalController extends PageController
                 SELECT * FROM legal_services WHERE status = 'active' ORDER BY sort_order, title
             ");
             $services = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Legal services fetch error: " . $e->getMessage());
         }
 
@@ -191,7 +191,7 @@ class LegalController extends PageController
         try {
             $stmt = $this->db->query("SELECT * FROM legal_documents WHERE status = 'active' ORDER BY created_at DESC");
             $legal_docs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Legal index error: " . $e->getMessage());
         }
 

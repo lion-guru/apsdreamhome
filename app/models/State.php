@@ -29,7 +29,7 @@ class State extends Model
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $stmt = $db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in State::getActive: ' . $e->getMessage());
             return [];
         }
@@ -52,7 +52,7 @@ class State extends Model
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $stmt = $db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in State::getForSelect: ' . $e->getMessage());
             return [];
         }
@@ -74,7 +74,7 @@ class State extends Model
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $stmt = $db->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in State::getAll: ' . $e->getMessage());
             return [];
         }

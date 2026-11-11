@@ -8,6 +8,25 @@ use Exception;
 
 class OnboardingService
 {
+    /**
+     * Query runner: fetch a single row.
+     *
+     * NOTE (S451): this service calls $this->fetchOne($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchOne()".
+     */
+    private function fetchOne(string $sql, array $params = []): ?array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchOne] ' . $e->getMessage());
+            return null;
+        }
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -20,6 +39,25 @@ class OnboardingService
     /**
      * Get onboarding checklist for an employee
      */
+    /**
+     * Query runner used by this service.
+     *
+     * NOTE (S451): this service calls $this->fetchAll($sql, $params)
+     * internally, but the method NEVER existed -> every caller died with
+     * "Call to undefined method <Service>::fetchAll()".
+     */
+    private function fetchAll(string $sql, array $params = []): array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchAll] ' . $e->getMessage());
+            return [];
+        }
+    }
+
     public function getOnboardingChecklist(int $employeeId): array
     {
         return $this->fetchAll("
@@ -87,7 +125,7 @@ class OnboardingService
 
             $this->db->commit();
             return ['success' => true, 'message' => 'Onboarding template assigned'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -173,7 +211,7 @@ class OnboardingService
 
             $this->db->commit();
             return ['success' => true, 'message' => 'Template created'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }

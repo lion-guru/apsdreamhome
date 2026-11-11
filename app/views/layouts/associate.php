@@ -48,9 +48,12 @@ $GLOBALS['_html_doc_started'] = true;
             left: 0;
             width: 260px;
             height: 100vh;
+            height: 100dvh;
             background: linear-gradient(180deg, #0f172a 0%, #134e4a 100%);
             z-index: 1000;
             overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
             transition: transform 0.3s ease;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
@@ -623,11 +626,23 @@ $GLOBALS['_html_doc_started'] = true;
 
     <!-- Sidebar Toggle Script -->
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
-        function toggleSidebar() {
+        function toggleSidebar(forceState) {
             const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            sidebar.classList.toggle('show');
-            overlay.classList.toggle('show');
+            const overlay = document.getElementById('sidebarOverlay');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            if (!sidebar) return;
+            const willOpen = (typeof forceState === 'boolean') ? forceState : !sidebar.classList.contains('show');
+            if (willOpen) {
+                sidebar.classList.add('show');
+                if (overlay) overlay.classList.add('show');
+                if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+            } else {
+                sidebar.classList.remove('show');
+                if (overlay) overlay.classList.remove('show');
+                if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
         }
 
         function toggleSection(el) {
@@ -635,8 +650,21 @@ $GLOBALS['_html_doc_started'] = true;
             try { sessionStorage.setItem('sidebar_section_' + el.querySelector('span').textContent, el.classList.contains('collapsed') ? '1' : '0'); } catch (e) { /* ignore */ }
         }
 
-        // Restore section states from sessionStorage (per-tab isolation)
+        // Restore section states and sidebar scroll from sessionStorage
         document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                try {
+                    const savedScroll = sessionStorage.getItem('assoc_sidebar_scroll');
+                    if (savedScroll !== null) {
+                        sidebar.scrollTop = parseInt(savedScroll, 10);
+                    }
+                    sidebar.addEventListener('scroll', function() {
+                        sessionStorage.setItem('assoc_sidebar_scroll', String(sidebar.scrollTop));
+                    }, { passive: true });
+                } catch (e) { /* ignore */ }
+            }
+
             document.querySelectorAll('.sidebar-section').forEach(function(sec) {
                 try {
                     var key = 'sidebar_section_' + sec.querySelector('span').textContent;
@@ -646,10 +674,19 @@ $GLOBALS['_html_doc_started'] = true;
             });
             var toggleBtn = document.getElementById('sidebarToggle');
             var overlay = document.getElementById('sidebarOverlay');
-            if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
-            if (overlay) overlay.addEventListener('click', toggleSidebar);
+            if (toggleBtn) toggleBtn.addEventListener('click', function() { toggleSidebar(); });
+            if (overlay) overlay.addEventListener('click', function() { toggleSidebar(false); });
             document.querySelectorAll('.sidebar-section').forEach(function(sec) {
                 sec.addEventListener('click', function() { toggleSection(sec); });
+            });
+
+            // On mobile / tablet screens, auto-close sidebar when tapping navigation links
+            document.querySelectorAll('.sidebar-link').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 1024) {
+                        toggleSidebar(false);
+                    }
+                });
             });
 
             // AI chat widget bindings (CSP-safe, no inline onclick)
@@ -670,10 +707,7 @@ $GLOBALS['_html_doc_started'] = true;
         // Close sidebar on window resize if open
         window.addEventListener('resize', function() {
             if (window.innerWidth > 1024) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
-                sidebar.classList.remove('show');
-                overlay.classList.remove('show');
+                toggleSidebar(false);
             }
         });
     </script>
@@ -879,5 +913,6 @@ $GLOBALS['_html_doc_started'] = true;
     <script defer src="<?= BASE_URL ?>/assets/js/notification-system.js?v=5"></script>
     
     <?php include_once __DIR__ . '/../components/smart_chatbot.php'; ?>
+    <?php include_once __DIR__ . '/../components/ai_chatbot_widget.php'; ?>
 </body>
 </html>

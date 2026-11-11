@@ -21,7 +21,7 @@ class ReportService
         try {
             $tid = TenantContext::getId();
             return $tid > 0 ? $tid : 1;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 1;
         }
     }
@@ -81,7 +81,7 @@ class ReportService
             ];
             
             return $this->formatReport($report, $format);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error generating sales report: " . $e->getMessage());
             return false;
         }
@@ -142,7 +142,7 @@ class ReportService
             ];
             
             return $this->formatReport($report, $format);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error generating property report: " . $e->getMessage());
             return false;
         }
@@ -201,7 +201,7 @@ class ReportService
             ];
             
             return $this->formatReport($report, $format);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error generating associate report: " . $e->getMessage());
             return false;
         }
@@ -260,7 +260,7 @@ class ReportService
             ];
             
             return $this->formatReport($report, $format);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error generating customer report: " . $e->getMessage());
             return false;
         }
@@ -354,7 +354,7 @@ class ReportService
             ];
             
             return $this->formatReport($report, $format);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error generating financial report: " . $e->getMessage());
             return false;
         }
@@ -508,7 +508,7 @@ class ReportService
             }
 
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error scheduling report: " . $e->getMessage());
             return false;
         }
@@ -521,7 +521,7 @@ class ReportService
             $stmt = $this->database->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error getting scheduled reports: " . $e->getMessage());
             return [];
         }
@@ -532,7 +532,7 @@ class ReportService
         try {
             $stmt = $this->database->prepare("UPDATE scheduled_reports SET status = 'inactive', updated_at = NOW() WHERE id = ?");
             return $stmt->execute([(int)$id]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Error unscheduling report: " . $e->getMessage());
             return false;
         }

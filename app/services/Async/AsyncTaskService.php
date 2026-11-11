@@ -66,7 +66,7 @@ class AsyncTaskService
                 $this->database->query($sql);
             }
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Error creating task tables', [
                 'error' => $e->getMessage()
             ]);
@@ -110,7 +110,7 @@ class AsyncTaskService
                 'task_id' => $taskId
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to create task', [
                 'error' => $e->getMessage(),
                 'task_name' => $taskName,
@@ -172,7 +172,7 @@ class AsyncTaskService
                 'data' => $task
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get next task', [
                 'error' => $e->getMessage(),
                 'worker' => $workerName,
@@ -228,7 +228,7 @@ class AsyncTaskService
                 'message' => 'Task status updated successfully'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to update task status', [
                 'error' => $e->getMessage(),
                 'task_id' => $taskId,
@@ -268,7 +268,7 @@ class AsyncTaskService
                 'message' => 'Task progress updated successfully'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to update task progress', [
                 'error' => $e->getMessage(),
                 'task_id' => $taskId,
@@ -309,7 +309,7 @@ class AsyncTaskService
                 'message' => 'Task completed successfully'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to complete task', [
                 'error' => $e->getMessage(),
                 'task_id' => $taskId
@@ -348,7 +348,7 @@ class AsyncTaskService
                 'message' => 'Task marked as failed'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to mark task as failed', [
                 'error' => $e->getMessage(),
                 'task_id' => $taskId
@@ -395,7 +395,7 @@ class AsyncTaskService
                 'data' => $task
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get task status', [
                 'error' => $e->getMessage(),
                 'task_id' => $taskId
@@ -464,7 +464,7 @@ class AsyncTaskService
                 'data' => $tasks
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get tasks', [
                 'error' => $e->getMessage(),
                 'filters' => $filters
@@ -515,7 +515,7 @@ class AsyncTaskService
             
             return $this->completeTask($task['id'], $result);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to process email task', [
                 'error' => $e->getMessage(),
                 'task_id' => $task['id']
@@ -569,7 +569,7 @@ class AsyncTaskService
             
             return $this->completeTask($task['id'], $result);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to process image task', [
                 'error' => $e->getMessage(),
                 'task_id' => $task['id']
@@ -623,7 +623,7 @@ class AsyncTaskService
             
             return $this->completeTask($task['id'], $result);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to process report task', [
                 'error' => $e->getMessage(),
                 'task_id' => $task['id']
@@ -686,7 +686,7 @@ class AsyncTaskService
                 'data' => $stats
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get task statistics', [
                 'error' => $e->getMessage()
             ]);
@@ -729,7 +729,7 @@ class AsyncTaskService
                 'deleted_count' => $deletedCount
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to cleanup old tasks', [
                 'error' => $e->getMessage(),
                 'days_old' => $daysOld
@@ -767,7 +767,7 @@ class AsyncTaskService
                 'message' => 'Task cancelled successfully'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to cancel task', [
                 'error' => $e->getMessage(),
                 'task_id' => $taskId
@@ -806,7 +806,7 @@ class AsyncTaskService
                 'message' => 'Task retry initiated successfully'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to retry task', [
                 'error' => $e->getMessage(),
                 'task_id' => $taskId

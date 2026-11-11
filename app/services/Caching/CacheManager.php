@@ -174,7 +174,7 @@ class CacheManager
 
                 $this->redis->select($this->config['redis_db']);
                 $this->layers[self::LAYER_REDIS] = new RedisCacheLayer($this->redis);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->log("Redis connection failed: " . $e->getMessage());
             }
         }

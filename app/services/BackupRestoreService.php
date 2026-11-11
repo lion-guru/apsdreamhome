@@ -108,7 +108,7 @@ class BackupRestoreService
                 'checksum' => $checksum
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logBackupFailed($backupId ?? 0, $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -239,7 +239,7 @@ class BackupRestoreService
                 'restored_at' => date('Y-m-d H:i:s')
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

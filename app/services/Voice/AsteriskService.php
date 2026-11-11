@@ -51,7 +51,7 @@ class AsteriskService
             $db = \App\Core\Database\Database::getInstance();
             $row = $db->query("SELECT settings_value FROM system_settings WHERE settings_key = 'asterisk_config' LIMIT 1")->fetch(\PDO::FETCH_ASSOC);
             return $row ? json_decode($row['settings_value'], true) ?: [] : [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -71,7 +71,7 @@ class AsteriskService
                 $db->execute("INSERT INTO system_settings (settings_key, settings_value, created_at) VALUES ('asterisk_config', ?, NOW())", [$json]);
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Asterisk config save error: " . $e->getMessage());
             return false;
         }

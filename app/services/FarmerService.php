@@ -227,7 +227,7 @@ class FarmerService
             error_log('Farmer created successfully: id=' . $farmerId . ' number=' . $data['farmer_number']);
 
             return $farmerId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db()->rollBack();
             error_log('Error creating farmer: ' . $e->getMessage());
             throw $e;
@@ -298,7 +298,7 @@ class FarmerService
             error_log('Farmer updated successfully: id=' . $id);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db()->rollBack();
             error_log('Error updating farmer: id=' . $id . ' error=' . $e->getMessage());
             throw $e;
@@ -364,7 +364,7 @@ class FarmerService
             error_log('Land holding added: farmer=' . $farmerId . ' holding=' . $holdingId);
 
             return $holdingId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error adding land holding: ' . $e->getMessage());
             throw $e;
         }
@@ -405,7 +405,7 @@ class FarmerService
             }
 
             return $result > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error updating acquisition status: ' . $e->getMessage());
             throw $e;
         }
@@ -466,7 +466,7 @@ class FarmerService
             error_log('Transaction added: farmer=' . $farmerId . ' txn=' . $transactionId);
 
             return $transactionId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error adding transaction: ' . $e->getMessage());
             throw $e;
         }
@@ -533,7 +533,7 @@ class FarmerService
             error_log('Support request created: farmer=' . $farmerId . ' request=' . $requestId);
 
             return $requestId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error creating support request: ' . $e->getMessage());
             throw $e;
         }
@@ -784,7 +784,7 @@ class FarmerService
             $sql .= " ORDER BY fp.full_name LIMIT 50";
             $rows = $db->fetchAll($sql, $params);
             return $rows ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('FarmerService::searchFarmers error: ' . $e->getMessage());
             return [];
         }
@@ -805,7 +805,7 @@ class FarmerService
             }
 
             return $deleted > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to delete farmer: id=' . $id . ' error=' . $e->getMessage());
             return false;
         }
@@ -853,7 +853,7 @@ class FarmerService
                     default:
                         $results[] = ['id' => $farmerId, 'success' => false, 'error' => 'Unknown operation'];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $results[] = ['id' => $farmerId, 'success' => false, 'error' => $e->getMessage()];
             }
         }

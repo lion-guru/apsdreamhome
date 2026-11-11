@@ -56,9 +56,9 @@ class BaseApiController extends BaseController
     /**
      * Success JSON response
      */
-    protected function jsonSuccess($data = [], $message = 'Success', $statusCode = 200)
+    protected function jsonSuccess($data = [], string $message = 'Success', int $statusCode = 200): void
     {
-        return $this->jsonResponse([
+        $this->jsonResponse([
             'success' => true,
             'message' => $message,
             'data' => $data
@@ -68,9 +68,9 @@ class BaseApiController extends BaseController
     /**
      * Error JSON response
      */
-    protected function jsonError($message = 'Error occurred', $statusCode = 400, $data = [])
+    protected function jsonError(string $message = 'Error occurred', int $statusCode = 400, array $data = []): void
     {
-        return $this->jsonResponse([
+        $this->jsonResponse([
             'success' => false,
             'error' => $message,
             'data' => $data
@@ -80,34 +80,34 @@ class BaseApiController extends BaseController
     /**
      * Require admin for API requests
      */
-    public function requireAdmin()
+    public function requireAdmin(): void
     {
         if (!$this->isAdmin()) {
-            return $this->jsonError('Unauthorized access. Admin privileges required.', 401);
+            $this->jsonError('Unauthorized access. Admin privileges required.', 401);
+            return;
         }
-        return null;
     }
 
     /**
      * Require login for API requests
      */
-    public function requireLogin($redirectTo = '/auth/login')
+    public function requireLogin(): void
     {
         if (!$this->isLoggedIn()) {
-            return $this->jsonError('Authentication required.', 401);
+            $this->jsonError('Authentication required.', 401);
+            return;
         }
-        return null;
     }
 
     /**
      * Require associate for API requests
      */
-    public function requireAssociate()
+    public function requireAssociate(): void
     {
         if (!$this->isAssociate()) {
-            return $this->jsonError('Unauthorized access. Associate privileges required.', 401);
+            $this->jsonError('Unauthorized access. Associate privileges required.', 401);
+            return;
         }
-        return null;
     }
 
     /**
@@ -140,7 +140,7 @@ class BaseApiController extends BaseController
             $this->request()->set('api_key_data', $keyData);
 
             return null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             logger()->error("API Key Validation Error: " . $e->getMessage());
             return $this->jsonError('Internal server error during API key validation', 500);
         }
@@ -163,7 +163,7 @@ class BaseApiController extends BaseController
      * The framework's createFromGlobals() may fail to parse the JSON body
      * when php://input is consumed upstream, so fall back to decoding it directly.
      */
-    protected function getJsonInput()
+    protected function getJsonInput(): array
     {
         $input = $this->request()->request->all();
         $raw = file_get_contents('php://input');
@@ -185,7 +185,7 @@ class BaseApiController extends BaseController
         return $all[$key] ?? $default;
     }
 
-    public function render($view, $data = [], $layout = null, $echo = true)
+    public function render(string $view, array $data = [], ?string $layout = null, bool $echo = true): void
     {
         // Define BASE_URL if not defined — auto-detect from request
         if (!defined('BASE_URL')) {
@@ -231,7 +231,6 @@ class BaseApiController extends BaseController
                 if ($echo) {
                     echo $output;
                 }
-                return $output;
             }
         }
 
@@ -241,13 +240,12 @@ class BaseApiController extends BaseController
         if ($echo) {
             echo $content;
         }
-        return $content;
     }
 
-    public function renderError($title, $message = null, $code = 500)
+    public function renderError(string $title, string $message, int $code = 500): void
     {
         $msg = $message ?? $title;
-        return $this->notFound($msg);
+        $this->notFound($msg);
     }
 
     public function getBaseUrl()
@@ -268,9 +266,9 @@ class BaseApiController extends BaseController
         return $_SESSION['associate_id'] ?? null;
     }
 
-    public function forbidden($message = 'Forbidden')
+    protected function forbidden(string $message = 'Forbidden'): void
     {
-        return parent::forbidden($message);
+        parent::forbidden($message);
     }
 
     public function isAjaxRequest()

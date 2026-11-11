@@ -362,7 +362,7 @@ class BlockchainController extends AdminController
             }
 
             return ['success' => false, 'error' => 'Failed to save verification record'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Property verification error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Verification failed'];
         }
@@ -419,7 +419,7 @@ class BlockchainController extends AdminController
                 'gas_used' => rand(100000, 500000),
                 'confirmation_time' => rand(10, 60) // seconds
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Blockchain transaction error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Transaction failed'];
         }
@@ -508,7 +508,7 @@ class BlockchainController extends AdminController
                 'transaction_hash' => $blockchain_verification['tx_hash'] ?? null,
                 'is_authentic' => $blockchain_verification['exists']
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Document verification error: ' . $e->getMessage());
             return ['exists_on_blockchain' => false, 'is_authentic' => false];
         }
@@ -751,7 +751,7 @@ class BlockchainController extends AdminController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -815,7 +815,7 @@ class BlockchainController extends AdminController
             $this->logOwnershipTransfer($property_id, $new_owner_address, $transfer_tx['tx_hash'], $reason);
 
             return $transfer_tx;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Ownership transfer error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Transfer failed'];
         }
@@ -842,7 +842,7 @@ class BlockchainController extends AdminController
                 'reason' => $reason,
                 'txHash' => $tx_hash
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Ownership transfer log error: ' . $e->getMessage());
             return false;
         }
@@ -889,7 +889,7 @@ class BlockchainController extends AdminController
             $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -914,7 +914,7 @@ class BlockchainController extends AdminController
             $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -1007,7 +1007,7 @@ class BlockchainController extends AdminController
                 'properties_verified' => 8934,
                 'avg_property_value' => 'â‚¹1.4 crores'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['total_value' => 0, 'properties_verified' => 0];
         }
     }
@@ -1077,7 +1077,7 @@ class BlockchainController extends AdminController
             }
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Document hash storage error: ' . $e->getMessage());
             return false;
         }
@@ -1145,7 +1145,7 @@ class BlockchainController extends AdminController
             ]);
 
             return ['success' => $success];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Digital signature error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Signature processing failed'];
         }

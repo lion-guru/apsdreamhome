@@ -274,7 +274,7 @@ try {
 
     dialerLog("=== Summary: {$callsInitiated} initiated, {$callsSkipped} skipped, {$emiCount} EMI reminders ===");
 
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     $errMsg = $e->getMessage();
     dialerLog("FATAL ERROR: {$errMsg}");
     exit(1);

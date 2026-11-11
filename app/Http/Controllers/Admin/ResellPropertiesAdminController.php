@@ -216,7 +216,7 @@ class ResellPropertiesAdminController extends AdminController
 
                 $db->update('user_properties', ['image' => json_encode($existingImages)], 'id = ?', [$id]);
                 $this->setFlash('success', 'Image uploaded successfully.');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->setFlash('error', 'Upload failed: ' . $e->getMessage());
             }
             return $this->redirect("/admin/resell-properties/images/$id");
@@ -259,7 +259,7 @@ class ResellPropertiesAdminController extends AdminController
                 $db->update('user_properties', ['image' => json_encode($images)], 'id = ?', [$id]);
                 $this->setFlash('success', 'Image removed.');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Delete failed: ' . $e->getMessage());
         }
         return $this->redirect("/admin/resell-properties/images/$id");

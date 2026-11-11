@@ -85,7 +85,7 @@ class TwoFactorService
             }
 
             return ['success' => false, 'message' => 'Invalid or expired code'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("TwoFactorService::verifyCode error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Verification failed'];
         }
@@ -122,7 +122,7 @@ class TwoFactorService
             }
 
             return ['success' => false, 'message' => 'Failed to enable 2FA'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("TwoFactorService::enable2FA error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to enable 2FA'];
         }
@@ -157,7 +157,7 @@ class TwoFactorService
             }
 
             return ['success' => false, 'message' => 'Failed to disable 2FA'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("TwoFactorService::disable2FA error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to disable 2FA'];
         }
@@ -192,7 +192,7 @@ class TwoFactorService
             }
 
             return ['success' => false, 'message' => 'Failed to regenerate backup codes'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("TwoFactorService::regenerateBackupCodes error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to regenerate backup codes'];
         }
@@ -210,7 +210,7 @@ class TwoFactorService
                 $tid > 1 ? [$userId, $tid] : [$userId]
             );
             return !empty($user['two_factor_enabled']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -227,7 +227,7 @@ class TwoFactorService
                 $tid > 1 ? [$userId, $tid] : [$userId]
             );
             return $user['email'] ?? 'user@example.com';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 'user@example.com';
         }
     }
@@ -383,7 +383,7 @@ class TwoFactorService
             }
 
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

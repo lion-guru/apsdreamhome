@@ -61,7 +61,7 @@ class PossessionController extends AdminController
                 'defect_stats' => $defectStats,
                 'recent' => $recent
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/possession/index', [
                 'page_title' => 'Possession Handover Dashboard',
                 'stats' => [], 'defect_stats' => [], 'recent' => [],
@@ -123,7 +123,7 @@ class PossessionController extends AdminController
                 'filters' => ['status' => $status, 'search' => $search],
                 'status_counts' => $statusCounts
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/possession/index', [
                 'page_title' => 'Possession Handover',
                 'bookings' => [], 'total' => 0,
@@ -183,7 +183,7 @@ class PossessionController extends AdminController
                 'defects' => $defects,
                 'pending_handovers' => $pendingHandovers
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/possession');
         }
@@ -211,7 +211,7 @@ class PossessionController extends AdminController
                 'booking' => $booking,
                 'checklist_items' => $checklist
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/possession');
         }
@@ -233,7 +233,7 @@ class PossessionController extends AdminController
 
             $this->setFlash('success', 'Checklist item added successfully');
             $this->redirect('/admin/possession/checklist/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/possession/checklist/' . $id);
         }
@@ -263,7 +263,7 @@ class PossessionController extends AdminController
 
             $this->setFlash('success', 'Checklist item updated successfully');
             $this->redirect('/admin/possession/checklist/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/possession/checklist/' . $id);
         }
@@ -289,13 +289,13 @@ class PossessionController extends AdminController
 
             try {
                 $this->notificationService->sendPossessionScheduled($id, $possessionDate);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("PossessionController: notification failed: " . $e->getMessage());
             }
 
             $this->setFlash('success', 'Handover scheduled successfully');
             $this->redirect('/admin/possession/show/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/possession/show/' . $id);
         }
@@ -349,13 +349,13 @@ class PossessionController extends AdminController
                     $u = ['id' => (int)$bk['customer_id'], 'name' => $bk['customer_name'] ?? 'Customer', 'email' => $bk['customer_email'] ?? '', 'phone' => $bk['customer_phone'] ?? ''];
                     $bns->sendPossessionHandedOverNotification($bk, $u, $letterNumber, $possessionDate);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("PossessionController: notification failed: " . $e->getMessage());
             }
 
             $this->setFlash('success', 'Possession marked as handed over. Letter #' . $letterNumber . ' generated.');
             $this->redirect('/admin/possession/show/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/possession/show/' . $id);
         }
@@ -404,7 +404,7 @@ class PossessionController extends AdminController
 
             $pdf->Output('Possession_Letter_' . ($booking['booking_number'] ?? $id) . '.pdf', 'D');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error generating letter: ' . $e->getMessage());
             $this->redirect('/admin/possession/show/' . $id);
         }
@@ -438,7 +438,7 @@ public function defectReports($id)
                 'pending_handovers' => 0,
                 'focus_section' => 'defects'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/possession');
         }
@@ -468,7 +468,7 @@ public function defectReports($id)
 
             $this->setFlash('success', 'Defect reported successfully');
             $this->redirect('/admin/possession/show/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/possession/show/' . $id);
         }
@@ -504,7 +504,7 @@ public function defectReports($id)
 
             $this->setFlash('success', 'Defect marked as resolved');
             $this->redirect('/admin/possession/show/' . $defect['booking_id']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/possession');
         }
@@ -526,7 +526,7 @@ public function defectReports($id)
             $tagged = $registryId ? (string)$details : '[booking #' . (int)$bookingId . '] ' . $details;
             $tid = (int)$this->tenantId();
             $this->db->query("INSERT INTO registry_activity_log (registry_id, action, details, user_id, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())", [$registryId, 'possession_' . $action, $tagged, $_SESSION['admin_id'] ?? null, $tid > 0 ? $tid : 1]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
                     error_log("PossessionController.php: " . $e->getMessage());
         }
     }

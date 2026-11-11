@@ -28,7 +28,7 @@ class AdminAIController extends AdminController
             $topIntents = $this->db->query("SELECT intent_name, hit_count, success_count, pattern_type, language FROM ai_intent_patterns ORDER BY hit_count DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
             $models = $this->db->query("SELECT * FROM ai_price_models ORDER BY trained_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
             $recentLearning = $this->db->query("SELECT action_type, COUNT(*) as cnt, AVG(feedback_score) as avg_score FROM ai_learning_data GROUP BY action_type ORDER BY cnt DESC")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AdminAIController::training() DB error: " . $e->getMessage());
         }
 
@@ -46,7 +46,7 @@ class AdminAIController extends AdminController
             $knowledgeBase = $this->db->fetchAll(
                 "SELECT * FROM ai_knowledge_base ORDER BY category, usage_count DESC, created_at DESC"
             ) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Table might not exist
         error_log($e->getMessage());
         }
@@ -65,7 +65,7 @@ class AdminAIController extends AdminController
             $analytics['conversations_today'] = $today['count'] ?? 0;
             $total = $this->db->fetch("SELECT COUNT(*) as count FROM ai_conversations");
             $analytics['total_conversations'] = $total['count'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Ignore errors
         error_log($e->getMessage());
         }

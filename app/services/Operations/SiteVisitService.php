@@ -105,7 +105,7 @@ class SiteVisitService
                 'message' => 'Visit scheduled successfully'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

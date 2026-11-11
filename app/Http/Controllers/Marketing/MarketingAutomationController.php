@@ -412,7 +412,16 @@ class MarketingAutomationController extends AdminController
         // Check authentication
         $this->requireAdmin();
 
-        return $this->marketingService->getLeadStats();
+        // NOTE (S451): the service name for this stat differs between the
+        // two shapes of MarketingAutomationService:
+        //   - HEAD's standalone class  -> getLeadStats()
+        //   - the merged CampaignService -> getDashboardStats()
+        // Call whichever exists, so the endpoint works in both trees.
+        $svc = $this->marketingService;
+        if (method_exists($svc, 'getLeadStats')) {
+            return $svc->getLeadStats();
+        }
+        return $svc->getDashboardStats();
     }
 
     /**

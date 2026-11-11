@@ -111,7 +111,7 @@ class AIWebController extends BaseController
             }
             $sql .= " ORDER BY featured DESC, created_at DESC LIMIT 5";
             $matches = $this->db->fetchAll($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("generateSuggestions inventory query failed: " . $e->getMessage());
         }
 
@@ -132,7 +132,7 @@ class AIWebController extends BaseController
             $gateway = \App\Services\AI\AIGateway::getInstance();
             $result = $gateway->process($prompt, [], ['type' => 'ad_copy']);
             $text = trim((string)($result['response'] ?? ''));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("generateSuggestions AI failed: " . $e->getMessage());
         }
 
@@ -175,7 +175,7 @@ class AIWebController extends BaseController
         try {
             $query = "SELECT * FROM property_types ORDER BY `type`";
             return $this->db->fetchAll($query);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [['id' => 0, 'type' => 'Residential'], ['id' => 1, 'type' => 'Commercial'], ['id' => 2, 'type' => 'Plot']];
         }
     }

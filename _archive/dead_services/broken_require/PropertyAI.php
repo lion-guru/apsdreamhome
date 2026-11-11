@@ -67,7 +67,7 @@ class PropertyAI {
         $sql = "INSERT INTO ai_chat_history (conversation_id, message, ai_response, context) VALUES (?, ?, ?, ?)";
         try {
             $this->db->execute($sql, [$userId, $message, $response, $intent]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Log Chat History Error: " . $e->getMessage());
         }
     }
@@ -82,7 +82,7 @@ class PropertyAI {
 
             $this->db->execute($sql, [$conversationId, $message, $context, $ipAddress]);
             return $this->db->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Store Chat Error: " . $e->getMessage());
         }
         return \App\Helpers\SecurityHelper::secureRandomInt(1000, 9999);
@@ -95,7 +95,7 @@ class PropertyAI {
         try {
             $sql = "UPDATE ai_chat_history SET ai_response = ?, confidence_score = ? WHERE id = ?";
             $this->db->execute($sql, [$response, $confidence, $chatId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Store AI Response Error: " . $e->getMessage());
         }
     }

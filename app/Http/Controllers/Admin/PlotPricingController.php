@@ -243,7 +243,7 @@ class PlotPricingController extends AdminController
                 'data' => $result,
                 'combined' => $combined,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PlotPricingController::previewPlc error: ' . $e->getMessage());
             $this->jsonResponse(['success' => false, 'error' => 'Failed to calculate PLC'], 500);
         }

@@ -24,7 +24,7 @@ class DifferentialCommissionCalculator
             $stmt->execute([$level]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ? (int)$row['direct_commission'] : 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -39,7 +39,7 @@ class DifferentialCommissionCalculator
             $stmt->execute([$level]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ? $row['level_name'] : 'Associate';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 'Associate';
         }
     }

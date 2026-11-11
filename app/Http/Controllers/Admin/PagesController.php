@@ -13,7 +13,7 @@ class PagesController extends AdminController
         try {
             $stmt = $this->db->query("SELECT id, title, slug, status, updated_at FROM pages ORDER BY id");
             $pages = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) { error_log('PagesController::index error: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('PagesController::index error: ' . $e->getMessage()); }
         $this->render('admin/pages/index', ['pages' => $pages, 'page_title' => 'CMS Pages']);
     }
 
@@ -54,7 +54,7 @@ class PagesController extends AdminController
             $this->saveVersion($pageId, 1, $title, $slug, $content, $meta_description, $meta_keywords, $status, 'Initial version');
 
             $this->setFlash('success', "Page \"{$title}\" created successfully.");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PagesController::store error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to create page.');
         }
@@ -80,7 +80,7 @@ class PagesController extends AdminController
                 $vstmt->execute([$id]);
                 $versions = $vstmt->fetchAll(\PDO::FETCH_ASSOC);
             }
-        } catch (\Exception $e) { error_log('PagesController::edit error: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('PagesController::edit error: ' . $e->getMessage()); }
 
         if (!$page) {
             $this->setFlash('error', 'Page not found.');
@@ -134,7 +134,7 @@ class PagesController extends AdminController
             $this->saveVersion($id, $nextVersion, $title, $slug, $content, $meta_description, $meta_keywords, $status, $change_summary ?: "Updated via admin panel");
 
             $this->setFlash('success', "Page \"{$title}\" updated. Version #{$nextVersion} saved.");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PagesController::update error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to update page.');
         }
@@ -183,7 +183,7 @@ class PagesController extends AdminController
             );
 
             $this->setFlash('success', "Page restored to version #{$version['version_number']}. New version #{$nextVersion} created.");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PagesController::restore error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to restore version.');
         }
@@ -202,7 +202,7 @@ class PagesController extends AdminController
             $stmt = $this->db->prepare("SELECT * FROM pages WHERE id = ?");
             $stmt->execute([$id]);
             $page = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) { $page = null; }
+        } catch (\Throwable $e) { $page = null; }
 
         if (!$page) {
             http_response_code(404);
@@ -257,7 +257,7 @@ class PagesController extends AdminController
                 $pageId, $version, $title, $slug, $content, $metaDesc, $metaKw, $status,
                 $summary, $_SESSION['admin_id'] ?? null, $adminName, $this->tenantId()
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PagesController::saveVersion error: ' . $e->getMessage());
         }
     }

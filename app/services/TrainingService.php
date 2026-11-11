@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Traits\ServiceTenantTrait;
-use PDO;
 use Exception;
 use InvalidArgumentException;
 
@@ -12,12 +11,11 @@ class TrainingService
 {
     use ServiceTenantTrait;
 
-    private $conn;
+    private $db;
 
     public function __construct()
     {
-        $db = Database::getInstance();
-        $this->conn = method_exists($db, 'getConnection') ? $db->getConnection() : $db;
+        $this->db = Database::getInstance();
     }
 
     // ==================== TRAINING COURSES ====================
@@ -25,474 +23,416 @@ class TrainingService
     public function getCourses(array $filters = []): array
     {
         $where = [];
-        $params = [$this->tenantId()];
+        $params = [];
 
         if (!empty($filters['category'])) {
-            $where[] = 'tc.category = ?';
+            $where[] = 'tc.course_category = ?';
             $params[] = $filters['category'];
         }
-        if (!empty($filters['is_active'])) {
+
+        if (isset($filters['is_active']) && $filters['is_active'] !== '' && $filters['is_active'] !== null) {
             $where[] = 'tc.is_active = ?';
             $params[] = (int)$filters['is_active'];
         }
+
         if (!empty($filters['search'])) {
-            $where[] = '(tc.title LIKE ? OR tc.code LIKE ? OR tc.description LIKE ?)';
+            $where[] = '(tc.course_title LIKE ? OR tc.course_description LIKE ?)';
             $search = '%' . $filters['search'] . '%';
             $params[] = $search;
             $params[] = $search;
-            $params[] = $search;
         }
 
-        $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+        $isActive = (isset($filters['is_active']) && $filters['is_active'] !== '' && $filters['is_active'] !== null) ? (int)$filters['is_active'] : 1;
+        $whereSql = $where ? ' (' . implode(' AND ', $where) . ')' : ' (1 = 1)';
 
-        $sql = "SELECT tc.*, 
+        $sql = "SELECT tc.*,
+                    CONCAT('CRS-', tc.id) AS code,
+                    tc.course_title AS title,
+                    tc.course_description AS description,
+                    tc.course_category AS category,
+                    'offline' AS format,
+                    tc.course_duration_hours AS duration_hours,
                     (SELECT COUNT(*) FROM course_assignments ca WHERE ca.course_id = tc.id AND ca.tenant_id = ?) as total_assigned,
                     (SELECT COUNT(*) FROM course_assignments ca WHERE ca.course_id = tc.id AND ca.tenant_id = ? AND ca.status = 'completed') as total_completed
                 FROM training_courses tc
-                $whereSql
+                WHERE tc.is_active = $isActive AND $whereSql
                 ORDER BY tc.created_at DESC";
 
-        $params[] = $this->tenantId();
-        $params[] = $this->tenantId();
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        array_unshift($params, $this->tenantId(), $this->tenantId());
+        return $this->db->fetchAll($sql, $params) ?: [];
     }
 
-    public function getCourse(int $courseId): ?array
+    public function getStats(): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM training_courses WHERE id = ? AND tenant_id = ?');
-        $stmt->execute([$courseId, $this->tenantId()]);
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-    }
-
-    public function createCourse(array $data): array
-    {
-        $required = ['code', 'title'];
-        foreach ($required as $field) {
-            if (empty($data[$field])) {
-                throw new InvalidArgumentException("$field is required");
-            }
-        }
-
-        $columns = array_merge(
-            ['code', 'title', 'description', 'category', 'duration_hours', 'format', 'max_participants', 'prerequisites', 'instructor_name', 'instructor_email', 'material_url', 'assessment_required', 'passing_score', 'valid_for_months', 'certificate_template', 'is_active', 'created_by', 'created_at'],
-            array_keys($this->tenantInsertData())
-        );
-
-        $values = array_merge([
-            $data['code'],
-            $data['title'],
-            $data['description'] ?? null,
-            $data['category'] ?? 'other',
-            $data['duration_hours'] ?? 0,
-            $data['format'] ?? 'online',
-            $data['max_participants'] ?? null,
-            $data['prerequisites'] ?? null,
-            $data['instructor_name'] ?? null,
-            $data['instructor_email'] ?? null,
-            $data['material_url'] ?? null,
-            $data['assessment_required'] ?? false,
-            $data['passing_score'] ?? 70,
-            $data['valid_for_months'] ?? 12,
-            $data['certificate_template'] ?? null,
-            $data['is_active'] ?? true,
-            $data['created_by'] ?? 1,
-            date('Y-m-d H:i:s')
-        ], array_values($this->tenantInsertData()));
-
-        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
-        $sql = "INSERT INTO training_courses (" . implode(', ', $columns) . ") VALUES ($placeholders)";
-
-        try {
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute($values);
-            return ['success' => true, 'id' => (int)$this->conn->lastInsertId(), 'message' => 'Course created successfully'];
-        } catch (Exception $e) {
-            if (strpos($e->getMessage(), 'Duplicate') !== false) {
-                return ['success' => false, 'message' => 'Course code already exists'];
-            }
-            throw $e;
-        }
-    }
-
-    public function updateCourse(int $courseId, array $data): array
-    {
-        $allowed = ['title', 'description', 'category', 'duration_hours', 'format', 'max_participants', 'prerequisites', 'instructor_name', 'instructor_email', 'material_url', 'assessment_required', 'passing_score', 'valid_for_months', 'certificate_template', 'is_active'];
-        $fields = [];
-        $params = [];
-
-        foreach ($allowed as $field) {
-            if (array_key_exists($field, $data)) {
-                $fields[] = "$field = ?";
-                $params[] = $data[$field];
-            }
-        }
-
-        if (empty($fields)) {
-            return ['success' => false, 'message' => 'No valid fields to update'];
-        }
-
-        $params[] = $courseId;
-        $params[] = $this->tenantId();
-
-        $sql = "UPDATE training_courses SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ? AND tenant_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-
-        return ['success' => $stmt->rowCount() > 0, 'message' => $stmt->rowCount() > 0 ? 'Course updated' : 'Course not found'];
-    }
-
-    public function deleteCourse(int $courseId): array
-    {
-        // Check if course has assignments
-        $stmt = $this->conn->prepare('SELECT COUNT(*) as c FROM course_assignments WHERE course_id = ? AND tenant_id = ?');
-        $stmt->execute([$courseId, $this->tenantId()]);
-        $count = $stmt->fetchColumn();
-
-        if ($count > 0) {
-            return ['success' => false, 'message' => "Cannot delete: $count assignments exist for this course"];
-        }
-
-        $stmt = $this->conn->prepare('DELETE FROM training_courses WHERE id = ? AND tenant_id = ?');
-        $stmt->execute([$courseId, $this->tenantId()]);
-
-        return ['success' => $stmt->rowCount() > 0, 'message' => $stmt->rowCount() > 0 ? 'Course deleted' : 'Course not found'];
+        $total = (int) ($this->db->fetchOne("SELECT COUNT(*) FROM training_courses WHERE is_active = 1") ?: 0);
+        $assigned = (int) ($this->db->fetchOne("SELECT COUNT(*) FROM course_assignments") ?: 0);
+        $completed = (int) ($this->db->fetchOne("SELECT COUNT(*) FROM course_assignments WHERE status = 'completed'") ?: 0);
+        return [
+            'total_courses' => $total,
+            'total_assignments' => $assigned,
+            'total_assigned' => $assigned,
+            'completed_assignments' => $completed,
+            'total_completed' => $completed,
+            'completion_rate' => $assigned > 0 ? round($completed / $assigned * 100, 1) : 0,
+        ];
     }
 
     public function getCategories(): array
     {
-        return [
-            'technical' => 'Technical',
-            'soft_skills' => 'Soft Skills',
+        $map = [
+            'sales' => 'Sales',
+            'product' => 'Product',
             'compliance' => 'Compliance',
             'leadership' => 'Leadership',
-            'safety' => 'Safety',
-            'onboarding' => 'Onboarding',
-            'other' => 'Other'
+            'technical' => 'Technical',
+            'business' => 'Business',
         ];
+        try {
+            $rows = $this->db->fetchAll(
+                "SELECT DISTINCT course_category FROM training_courses WHERE course_category IS NOT NULL AND course_category != '' ORDER BY course_category"
+            ) ?: [];
+            foreach ($rows as $r) {
+                $v = $r['course_category'] ?? null;
+                if ($v !== null) $map[$v] = ucwords(str_replace('_', ' ', $v));
+            }
+        } catch (\Throwable $e) {
+        }
+        return $map;
+    }
+
+    public function createCourse(array $data): int
+    {
+        $tid = $this->tenantId();
+        $data['tenant_id'] = $tid;
+        return $this->db->insert('training_courses', $data);
+    }
+
+    public function updateCourse(int $id, array $data): bool
+    {
+        $this->db->update('training_courses', $data, ['id' => $id, 'tenant_id' => $this->tenantId()]);
+        return true;
+    }
+
+    public function deleteCourse(int $id): bool
+    {
+        $this->db->delete('training_courses', ['id' => $id, 'tenant_id' => $this->tenantId()]);
+        return true;
+    }
+
+    public function getCourse(int $id): ?array
+    {
+        return $this->db->fetchOne(
+            "SELECT * FROM training_courses WHERE id = ? AND tenant_id = ?",
+            [$id, $this->tenantId()]
+        );
     }
 
     // ==================== COURSE ASSIGNMENTS ====================
 
-    public function getAssignments(array $filters = []): array
+    /**
+     * Certifications held by an employee (training_certifications).
+     *
+     * NOTE (S451): employee/self-service/certifications and
+     * admin/employee-certifications called methods that never existed ->
+     * "Call to undefined method TrainingService::getEmployeeCertifications()".
+     */
+    public function getEmployeeCertifications(int $employeeId): array
     {
-        $where = ['ca.tenant_id = ?'];
-        $params = [$this->tenantId()];
-
-        if (!empty($filters['course_id'])) {
-            $where[] = 'ca.course_id = ?';
-            $params[] = $filters['course_id'];
+        try {
+            $tid = $this->tenantId();
+            $stmt = $this->db->prepare(
+                "SELECT tc.*, tc.course_id, c.title as course_title
+                 FROM training_certifications tc
+                 LEFT JOIN training_courses c ON c.id = tc.course_id
+                 WHERE tc.employee_id = ?" . ($tid > 1 ? " AND tc.tenant_id = ?" : "") . "
+                 ORDER BY tc.issued_at DESC"
+            );
+            $stmt->execute($tid > 1 ? [$employeeId, $tid] : [$employeeId]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[TrainingService::getEmployeeCertifications] ' . $e->getMessage());
+            return [];
         }
-        if (!empty($filters['employee_id'])) {
-            $where[] = 'ca.employee_id = ?';
-            $params[] = $filters['employee_id'];
-        }
-        if (!empty($filters['status'])) {
-            $where[] = 'ca.status = ?';
-            $params[] = $filters['status'];
-        }
-        if (!empty($filters['assigned_by'])) {
-            $where[] = 'ca.assigned_by = ?';
-            $params[] = $filters['assigned_by'];
-        }
+    }
 
-        $whereSql = 'WHERE ' . implode(' AND ', $where);
+    /**
+     * Course assignments (course_assignments), optionally for one employee.
+     *
+     * NOTE (S451): admin/training/assignments called getAssignments(), which
+     * never existed.
+     */
+    public function getAssignments($filters = [], int $limit = 100): array
+    {
+        try {
+            // NOTE (S451): callers pass a FILTER ARRAY here (admin/training/
+            // assignments), not an employee id. Accept both.
+            $employeeId = is_array($filters) ? (int)($filters['employee_id'] ?? 0) : (int)$filters;
+            $tid = $this->tenantId();
+            $where = ['1=1'];
+            $params = [];
+            if ($employeeId > 0) { $where[] = 'ca.employee_id = ?'; $params[] = $employeeId; }
+            if (is_array($filters)) {
+                if (!empty($filters['status'])) { $where[] = 'ca.status = ?'; $params[] = $filters['status']; }
+                if (!empty($filters['course_id'])) { $where[] = 'ca.course_id = ?'; $params[] = (int)$filters['course_id']; }
+            }
+            if ($tid > 1) { $where[] = 'ca.tenant_id = ?'; $params[] = $tid; }
+            $stmt = $this->db->prepare(
+                "SELECT ca.*, c.title as course_title, e.name as employee_name
+                 FROM course_assignments ca
+                 LEFT JOIN training_courses c ON c.id = ca.course_id
+                 LEFT JOIN employees e ON e.id = ca.employee_id
+                 WHERE " . implode(' AND ', $where) . "
+                 ORDER BY ca.assigned_at DESC LIMIT " . (int)$limit
+            );
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[TrainingService::getAssignments] ' . $e->getMessage());
+            return [];
+        }
+    }
 
-        $sql = "SELECT ca.*, tc.title as course_title, tc.code as course_code, tc.category as course_category,
-                    u.name as employee_name, u.email as employee_email,
-                    a.name as assigned_by_name
-                FROM course_assignments ca
-                JOIN training_courses tc ON ca.course_id = tc.id
-                JOIN employees e ON ca.employee_id = e.id
-                JOIN users u ON e.user_id = u.id
-                LEFT JOIN users a ON ca.assigned_by = a.id
-                $whereSql
-                ORDER BY ca.assigned_at DESC";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    /**
+     * Certifications expiring within N days (training_certifications).
+     *
+     * NOTE (S451): admin/training/certifications called
+     * getExpiringCertifications(), which never existed.
+     */
+    public function getExpiringCertifications(int $days = 30, int $limit = 100): array
+    {
+        try {
+            $tid = $this->tenantId();
+            $stmt = $this->db->prepare(
+                "SELECT tc.*, tc.course_id, c.title as course_title, e.name as employee_name
+                 FROM training_certifications tc
+                 LEFT JOIN training_courses c ON c.id = tc.course_id
+                 LEFT JOIN employees e ON e.id = tc.employee_id
+                 WHERE tc.expires_at IS NOT NULL
+                   AND tc.expires_at <= DATE_ADD(NOW(), INTERVAL " . (int)$days . " DAY)
+                   AND (tc.status IS NULL OR tc.status <> 'expired')"
+                . ($tid > 1 ? " AND tc.tenant_id = ?" : "") . "
+                 ORDER BY tc.expires_at ASC LIMIT " . (int)$limit
+            );
+            $stmt->execute($tid > 1 ? [$tid] : []);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[TrainingService::getExpiringCertifications] ' . $e->getMessage());
+            return [];
+        }
     }
 
     public function getEmployeeAssignments(int $employeeId): array
     {
-        $stmt = $this->conn->prepare("
-            SELECT ca.*, tc.title as course_title, tc.code as course_code, tc.category, tc.duration_hours, tc.format,
-                   tc.material_url, tc.assessment_required, tc.passing_score
+        return $this->db->fetchAll("
+            SELECT ca.*, tc.course_title as course_title, tc.course_category as course_category, tc.course_duration_hours as duration_hours
             FROM course_assignments ca
             JOIN training_courses tc ON ca.course_id = tc.id
             WHERE ca.employee_id = ? AND ca.tenant_id = ?
             ORDER BY ca.assigned_at DESC
-        ");
-        $stmt->execute([$employeeId, $this->tenantId()]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        ", [$employeeId, $this->tenantId()]) ?: [];
     }
 
-    public function getAssignment(int $assignmentId): ?array
+        public function assignCourse(int $employeeId, int $courseId, array $data = []): int
     {
-        $stmt = $this->conn->prepare("
-            SELECT ca.*, tc.title as course_title, tc.code as course_code
+        $tid = $this->tenantId();
+        $data['tenant_id'] = $tid;
+        $data['employee_id'] = $employeeId;
+        $data['course_id'] = $courseId;
+        $data['assigned_at'] = date('Y-m-d H:i:s');
+        $data['status'] = $data['status'] ?? 'assigned';
+        return (int)$this->db->insert('course_assignments', $data);
+    }
+
+    public function updateAssignmentProgress(int $assignmentId, array $data): bool
+    {
+        $this->db->update('course_assignments', $data, ['id' => $assignmentId, 'tenant_id' => $this->tenantId()]);
+        return true;
+    }
+
+    // ==================== COURSE CONTENT ====================
+
+    public function addCourseContent(int $courseId, array $data): int
+    {
+        $data['tenant_id'] = $this->tenantId();
+        $data['course_id'] = $courseId;
+        return (int)$this->db->insert('training_course_content', $data);
+    }
+
+    public function getCourseContent(int $courseId): array
+    {
+        return $this->db->fetchAll(
+            "SELECT * FROM training_course_content WHERE course_id = ? AND tenant_id = ? ORDER BY module_order, content_order",
+            [$courseId, $this->tenantId()]
+        ) ?: [];
+    }
+
+    public function updateContent(int $contentId, array $data): bool
+    {
+        $this->db->update('training_course_content', $data, ['id' => $contentId, 'tenant_id' => $this->tenantId()]);
+        return true;
+    }
+
+    public function deleteContent(int $contentId): bool
+    {
+        $this->db->delete('training_course_content', ['id' => $contentId, 'tenant_id' => $this->tenantId()]);
+        return true;
+    }
+
+    // ==================== ASSESSMENTS ====================
+
+    public function addAssessment(int $courseId, array $data): int
+    {
+        $data['tenant_id'] = $this->tenantId();
+        $data['course_id'] = $courseId;
+        return (int)$this->db->insert('training_assessments', $data);
+    }
+
+    public function getAssessments(int $courseId): array
+    {
+        return $this->db->fetchAll(
+            "SELECT * FROM training_assessments WHERE course_id = ? AND tenant_id = ? ORDER BY order_index",
+            [$courseId, $this->tenantId()]
+        ) ?: [];
+    }
+
+    // ==================== EMPLOYEE ASSIGNMENTS ====================
+
+        public function getAssignment(int $assignmentId): ?array
+    {
+        return $this->db->fetchOne("
+            SELECT ca.*, tc.course_title as course_title, tc.course_category as course_category
             FROM course_assignments ca
             JOIN training_courses tc ON ca.course_id = tc.id
             WHERE ca.id = ? AND ca.tenant_id = ?
-        ");
-        $stmt->execute([$assignmentId, $this->tenantId()]);
-        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        ", [$assignmentId, $this->tenantId()]);
     }
 
-    public function assignCourse(array $data): array
+    public function getCourseEnrollments(int $courseId): array
     {
-        $required = ['course_id', 'employee_id'];
-        foreach ($required as $field) {
-            if (empty($data[$field])) {
-                throw new InvalidArgumentException("$field is required");
-            }
-        }
+        return $this->db->fetchAll(
+            "SELECT ca.*, u.name as employee_name, ep.employee_code
+             FROM course_assignments ca
+             LEFT JOIN employee_profiles ep ON ep.legacy_id = ca.employee_id OR ep.user_id = ca.employee_id OR ep.id = ca.employee_id
+             LEFT JOIN users u ON u.id = ep.user_id
+             WHERE ca.course_id = ? AND ca.tenant_id = ?
+             ORDER BY ca.assigned_at DESC",
+            [$courseId, $this->tenantId()]
+        ) ?: [];
+    }
 
-        // Check if already assigned
-        $stmt = $this->conn->prepare('SELECT id FROM course_assignments WHERE course_id = ? AND employee_id = ? AND tenant_id = ?');
-        $stmt->execute([$data['course_id'], $data['employee_id'], $this->tenantId()]);
-        if ($stmt->fetch()) {
-            return ['success' => false, 'message' => 'Employee already assigned to this course'];
-        }
+    public function getCourseStats(int $courseId): array
+    {
+        return $this->db->fetchOne("
+            SELECT 
+                COUNT(ca.id) as total_assigned,
+                SUM(CASE WHEN ca.status = 'completed' THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN ca.status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
+                SUM(CASE WHEN ca.status = 'failed' THEN 1 ELSE 0 END) as failed,
+                AVG(ca.progress_percentage) as avg_progress,
+                AVG(ca.score) as avg_score
+            FROM course_assignments ca
+            WHERE ca.course_id = ? AND ca.tenant_id = ?
+        ", [$courseId, $this->tenantId()]) ?: [
+            'total_assigned' => 0,
+            'completed' => 0,
+            'in_progress' => 0,
+            'failed' => 0,
+            'avg_progress' => 0,
+            'avg_score' => 0
+        ];
+    }
 
-        $columns = array_merge(
-            ['course_id', 'employee_id', 'assigned_by', 'due_date', 'assigned_at'],
-            array_keys($this->tenantInsertData())
+    // ==================== COURSE CONTENT PROGRESS ====================
+
+    public function getContentProgress(int $employeeId, int $courseId): array
+    {
+        return $this->db->fetchAll("
+            SELECT ccc.*, 
+                   CASE WHEN ecp.completed_at IS NOT NULL THEN 1 ELSE 0 END as completed,
+                   ecp.completed_at
+            FROM training_course_content ccc
+            LEFT JOIN employee_content_progress ecp 
+                ON ecp.content_id = ccc.id AND ecp.employee_id = ? AND ecp.tenant_id = ?
+            WHERE ccc.course_id = ? AND ccc.tenant_id = ?
+            ORDER BY ccc.module_order, ccc.content_order
+        ", [$employeeId, $this->tenantId(), $courseId, $this->tenantId()]) ?: [];
+    }
+
+    public function markContentComplete(int $employeeId, int $contentId, array $data = []): array
+    {
+        $tid = $this->tenantId();
+        $existing = $this->db->fetchOne(
+            "SELECT id FROM employee_content_progress WHERE employee_id = ? AND content_id = ? AND tenant_id = ?",
+            [$employeeId, $contentId, $tid]
         );
 
-        $values = array_merge([
-            $data['course_id'],
-            $data['employee_id'],
-            $data['assigned_by'] ?? 1,
-            $data['due_date'] ?? null,
-            date('Y-m-d H:i:s')
-        ], array_values($this->tenantInsertData()));
+        $data['tenant_id'] = $tid;
+        $data['employee_id'] = $employeeId;
+        $data['content_id'] = $contentId;
 
-        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
-        $sql = "INSERT INTO course_assignments (" . implode(', ', $columns) . ") VALUES ($placeholders)";
-
-        try {
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute($values);
-            return ['success' => true, 'id' => (int)$this->conn->lastInsertId(), 'message' => 'Course assigned successfully'];
-        } catch (Exception $e) {
-            if (strpos($e->getMessage(), 'Duplicate') !== false) {
-                return ['success' => false, 'message' => 'Employee already assigned to this course'];
-            }
-            throw $e;
+        if ($existing) {
+            $this->db->update('employee_content_progress', $data, ['id' => $existing['id']]);
+            return ['success' => true, 'message' => 'Progress updated'];
         }
+
+        $data['tenant_id'] = $tid;
+        $id = $this->db->insert('employee_content_progress', $data);
+        return ['success' => true, 'id' => $id, 'message' => 'Progress recorded'];
     }
 
-    public function updateAssignmentProgress(int $assignmentId, array $data): array
+    public function getAssessmentResults(int $assessmentId): array
     {
-        $allowed = ['progress', 'score', 'status', 'started_at', 'completed_at', 'feedback', 'rating'];
-        $fields = [];
-        $params = [];
-
-        foreach ($allowed as $field) {
-            if (array_key_exists($field, $data)) {
-                $fields[] = "$field = ?";
-                $params[] = $data[$field];
-            }
-        }
-
-        if (empty($fields)) {
-            return ['success' => false, 'message' => 'No valid fields to update'];
-        }
-
-        // Auto-update status based on progress
-        if (isset($data['progress'])) {
-            if ($data['progress'] >= 100) {
-                $fields[] = "status = 'completed'";
-                $fields[] = "completed_at = NOW()";
-            } elseif ($data['progress'] > 0) {
-                $fields[] = "status = 'in_progress'";
-                $fields[] = "started_at = COALESCE(started_at, NOW())";
-            }
-        }
-
-        $params[] = $assignmentId;
-        $params[] = $this->tenantId();
-
-        $sql = "UPDATE course_assignments SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ? AND tenant_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-
-        return ['success' => $stmt->rowCount() > 0, 'message' => $stmt->rowCount() > 0 ? 'Progress updated' : 'Assignment not found'];
+        return $this->db->fetchAll(
+            "SELECT * FROM training_assessment_results WHERE assessment_id = ? AND tenant_id = ? ORDER BY created_at DESC",
+            [$assessmentId, $this->tenantId()]
+        ) ?: [];
     }
 
-    public function issueCertificate(int $assignmentId, array $data): array
+    public function submitAssessment(int $employeeId, int $assessmentId, array $answers): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM course_assignments WHERE id = ? AND tenant_id = ?');
-        $stmt->execute([$assignmentId, $this->tenantId()]);
-        $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$assignment) {
-            return ['success' => false, 'message' => 'Assignment not found'];
-        }
-
-        if ($assignment['status'] !== 'completed') {
-            return ['success' => false, 'message' => 'Cannot issue certificate: course not completed'];
-        }
-
-        $certNumber = 'CERT-' . date('Y') . '-' . str_pad($assignmentId, 6, '0', STR_PAD_LEFT);
-
-        $fields = ['certificate_issued = 1', 'certificate_number = ?', 'certificate_issued_at = NOW()'];
-        $params = [$certNumber];
-
-        if (!empty($data['certificate_number'])) {
-            $certNumber = $data['certificate_number'];
-            $params[0] = $certNumber;
-        }
-
-        $params[] = $assignmentId;
-        $params[] = $this->tenantId();
-
-        $sql = "UPDATE course_assignments SET " . implode(', ', $fields) . " WHERE id = ? AND tenant_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-
-        return ['success' => $stmt->rowCount() > 0, 'certificate_number' => $certNumber, 'message' => 'Certificate issued'];
-    }
-
-    // ==================== CERTIFICATIONS ====================
-
-    public function getEmployeeCertifications(int $employeeId): array
-    {
-        $stmt = $this->conn->prepare("
-            SELECT ec.*, tc.title as course_title
-            FROM employee_certifications ec
-            LEFT JOIN training_courses tc ON ec.course_id = tc.id
-            WHERE ec.employee_id = ? AND ec.tenant_id = ?
-            ORDER BY ec.issue_date DESC
-        ");
-        $stmt->execute([$employeeId, $this->tenantId()]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function addCertification(array $data): array
-    {
-        $required = ['employee_id', 'certification_name', 'issue_date'];
-        foreach ($required as $field) {
-            if (empty($data[$field])) {
-                throw new InvalidArgumentException("$field is required");
-            }
-        }
-
-        $columns = array_merge(
-            ['employee_id', 'course_id', 'certification_name', 'issuing_body', 'issue_date', 'expiry_date', 'credential_id', 'credential_url', 'status', 'attachment_path', 'created_at'],
-            array_keys($this->tenantInsertData())
+        $assessment = $this->db->fetchOne(
+            "SELECT * FROM training_assessments WHERE id = ? AND tenant_id = ?",
+            [$assessmentId, $this->tenantId()]
         );
+        if (!$assessment) {
+            return ['success' => false, 'message' => 'Assessment not found'];
+        }
 
-        $values = array_merge([
-            $data['employee_id'],
-            $data['course_id'] ?? null,
-            $data['certification_name'],
-            $data['issuing_body'] ?? null,
-            $data['issue_date'],
-            $data['expiry_date'] ?? null,
-            $data['credential_id'] ?? null,
-            $data['credential_url'] ?? null,
-            $data['status'] ?? 'active',
-            $data['attachment_path'] ?? null,
-            date('Y-m-d H:i:s')
-        ], array_values($this->tenantInsertData()));
+        $correct = 0;
+        $total = count($answers);
 
-        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
-        $sql = "INSERT INTO employee_certifications (" . implode(', ', $columns) . ") VALUES ($placeholders)";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($values);
-
-        return ['success' => true, 'id' => (int)$this->conn->lastInsertId(), 'message' => 'Certification added'];
-    }
-
-    public function updateCertification(int $certId, array $data): array
-    {
-        $allowed = ['certification_name', 'issuing_body', 'expiry_date', 'credential_id', 'credential_url', 'status', 'attachment_path'];
-        $fields = [];
-        $params = [];
-
-        foreach ($allowed as $field) {
-            if (array_key_exists($field, $data)) {
-                $fields[] = "$field = ?";
-                $params[] = $data[$field];
+        foreach ($answers as $qId => $answer) {
+            $question = $this->db->fetchOne(
+                "SELECT * FROM training_assessment_questions WHERE id = ? AND assessment_id = ?",
+                [$qId, $assessmentId]
+            );
+            if ($question && isset($question['correct_answer'])) {
+                if (is_array($question['correct_answer'])) {
+                    if (is_array($answer) && array_diff($question['correct_answer'], $answer) === [] && array_diff($answer, $question['correct_answer']) === []) {
+                        $correct++;
+                    }
+                } else {
+                    if ((string)$question['correct_answer'] === (string)$answer) {
+                        $correct++;
+                    }
+                }
             }
         }
 
-        if (empty($fields)) {
-            return ['success' => false, 'message' => 'No valid fields to update'];
-        }
+        $score = $total > 0 ? round(($correct / $total) * 100, 2) : 0;
+        $passed = $score >= ($assessment['passing_score'] ?? 70);
 
-        $params[] = $certId;
-        $params[] = $this->tenantId();
+        $tid = $this->tenantId();
+        $this->db->insert('training_assessment_results', [
+            'tenant_id' => $tid,
+            'assessment_id' => $assessmentId,
+            'employee_id' => $employeeId,
+            'score' => $score,
+            'passed' => $passed,
+            'answers' => json_encode($answers),
+            'completed_at' => date('Y-m-d H:i:s'),
+        ]);
 
-        $sql = "UPDATE employee_certifications SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ? AND tenant_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-
-        return ['success' => $stmt->rowCount() > 0, 'message' => $stmt->rowCount() > 0 ? 'Certification updated' : 'Not found'];
-    }
-
-    public function getExpiringCertifications(int $days = 30): array
-    {
-        $stmt = $this->conn->prepare("
-            SELECT ec.*, u.name as employee_name, u.email as employee_email
-            FROM employee_certifications ec
-            JOIN employees e ON ec.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
-            WHERE ec.tenant_id = ? 
-            AND ec.expiry_date IS NOT NULL 
-            AND ec.expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)
-            AND ec.status = 'active'
-            ORDER BY ec.expiry_date ASC
-        ");
-        $stmt->execute([$this->tenantId(), $days]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // ==================== STATS ====================
-
-    public function getStats(): array
-    {
-        $stats = [];
-
-        $stmt = $this->conn->prepare('SELECT COUNT(*) as c FROM training_courses WHERE tenant_id = ? AND is_active = 1');
-        $stmt->execute([$this->tenantId()]);
-        $stats['total_courses'] = $stmt->fetchColumn();
-
-        $stmt = $this->conn->prepare('SELECT COUNT(*) as c FROM course_assignments WHERE tenant_id = ?');
-        $stmt->execute([$this->tenantId()]);
-        $stats['total_assignments'] = $stmt->fetchColumn();
-
-        $stmt = $this->conn->prepare('SELECT COUNT(*) as c FROM course_assignments WHERE tenant_id = ? AND status = "completed"');
-        $stmt->execute([$this->tenantId()]);
-        $stats['completed_assignments'] = $stmt->fetchColumn();
-
-        $stmt = $this->conn->prepare('SELECT COUNT(*) as c FROM course_assignments WHERE tenant_id = ? AND status = "in_progress"');
-        $stmt->execute([$this->tenantId()]);
-        $stats['in_progress_assignments'] = $stmt->fetchColumn();
-
-        $stmt = $this->conn->prepare('SELECT COUNT(*) as c FROM course_assignments WHERE tenant_id = ? AND status = "overdue"');
-        $stmt->execute([$this->tenantId()]);
-        $stats['overdue_assignments'] = $stmt->fetchColumn();
-
-        $stmt = $this->conn->prepare('SELECT COUNT(*) as c FROM employee_certifications WHERE tenant_id = ? AND status = "active"');
-        $stmt->execute([$this->tenantId()]);
-        $stats['active_certifications'] = $stmt->fetchColumn();
-
-        $stmt = $this->conn->prepare('SELECT COUNT(*) as c FROM employee_certifications WHERE tenant_id = ? AND status = "expired"');
-        $stmt->execute([$this->tenantId()]);
-        $stats['expired_certifications'] = $stmt->fetchColumn();
-
-        $completionRate = $stats['total_assignments'] > 0 
-            ? round(($stats['completed_assignments'] / $stats['total_assignments']) * 100, 1) 
-            : 0;
-        $stats['completion_rate'] = $completionRate;
-
-        return $stats;
+        return ['success' => true, 'score' => $score, 'passed' => $passed, 'correct' => $correct, 'total' => $total];
     }
 }

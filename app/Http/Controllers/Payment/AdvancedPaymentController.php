@@ -271,7 +271,7 @@ class AdvancedPaymentController extends AdminController
             $this->data['order_id'] = $order_id;
 
             $this->render('payment/success');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Payment success handling error: ' . $e->getMessage());
             $this->data['error'] = $e->getMessage();
             $this->render('payment/error');
@@ -299,7 +299,7 @@ class AdvancedPaymentController extends AdminController
             $this->data['error_message'] = 'Payment was cancelled or failed';
 
             $this->render('payment/failed');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Payment failure handling error: ' . $e->getMessage());
             $this->render('payment/error');
         }
@@ -379,7 +379,7 @@ class AdvancedPaymentController extends AdminController
                 default:
                     throw new \Exception('Unsupported gateway for verification');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Payment verification error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -420,7 +420,7 @@ class AdvancedPaymentController extends AdminController
             $emailNotification->sendPaymentConfirmation($order_id);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Payment confirmation email error: ' . $e->getMessage());
             return false;
         }

@@ -90,11 +90,11 @@ class EmployeeGrievanceService
     public function getGrievance(int $grievanceId): ?array
     {
         return $this->fetchOne("
-            SELECT eg.*, COALESCE(u.name, 'Employee #' || eg.employee_id) as employee_name, e.employee_code, e.department,
+            SELECT eg.*, COALESCE(u.name, 'Employee #' || eg.employee_id) as employee_name, ep.employee_code, ep.department,
                    a.name as assignee_name
             FROM employee_grievances eg
-            LEFT JOIN employees e ON eg.employee_id = e.id
-            LEFT JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = eg.employee_id OR ep.user_id = eg.employee_id OR ep.id = eg.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             LEFT JOIN users a ON eg.assigned_to = a.id
             WHERE eg.id = ? AND eg.tenant_id = 1", [$grievanceId]);
     }
@@ -114,11 +114,11 @@ class EmployeeGrievanceService
     public function getAllGrievances(array $filters = []): array
     {
         $query = "
-            SELECT eg.*, COALESCE(u.name, 'Employee #' || eg.employee_id) as employee_name, e.employee_code, e.department,
+            SELECT eg.*, COALESCE(u.name, 'Employee #' || eg.employee_id) as employee_name, ep.employee_code, ep.department,
                    a.name as assignee_name
             FROM employee_grievances eg
-            LEFT JOIN employees e ON eg.employee_id = e.id
-            LEFT JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = eg.employee_id OR ep.user_id = eg.employee_id OR ep.id = eg.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             LEFT JOIN users a ON eg.assigned_to = a.id
             WHERE eg.tenant_id = 1";
         $params = [];
@@ -199,9 +199,9 @@ class EmployeeGrievanceService
     public function getStaffList(): array
     {
         return $this->fetchAll("
-            SELECT u.id, u.name, u.role, u.email, COALESCE(e.id, u.id) as employee_id, e.employee_code, e.department, e.designation
+            SELECT u.id, u.name, u.role, u.email, COALESCE(ep.legacy_id, u.id) as employee_id, ep.employee_code, ep.department, ep.designation
             FROM users u
-            LEFT JOIN employees e ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.user_id = u.id
             WHERE u.status = 'active'
               AND u.role IN ('admin', 'super_admin', 'manager', 'employee', 'hr_manager', 'director', 'operations_manager', 'ceo', 'coo')
             ORDER BY u.name ASC
@@ -275,8 +275,8 @@ class EmployeeGrievanceService
         return $this->fetchAll("
             SELECT eg.*, u.name as employee_name
             FROM employee_grievances eg
-            JOIN employees e ON eg.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = eg.employee_id OR ep.user_id = eg.employee_id OR ep.id = eg.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             WHERE eg.tenant_id = 1
               AND eg.status IN ('open','under_review','investigation','mediation')
               AND eg.sla_breached = 0

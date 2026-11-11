@@ -67,7 +67,7 @@ class WorkDistributionController extends BaseController
                 'message' => 'Task assigned successfully'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -413,7 +413,7 @@ class WorkDistributionController extends BaseController
                 'actions' => $rebalancingActions
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()

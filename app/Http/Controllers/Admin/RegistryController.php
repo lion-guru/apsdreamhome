@@ -68,7 +68,7 @@ class RegistryController extends AdminController
                 'filters' => ['status' => $status, 'search' => $search],
                 'status_counts' => $counts
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/registry/index', [
                 'page_title' => 'Registry Management',
                 'bookings' => [],
@@ -112,7 +112,7 @@ class RegistryController extends AdminController
                 'booking' => $booking,
                 'activities' => $activities
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry');
         }
@@ -134,13 +134,13 @@ class RegistryController extends AdminController
 
             try {
                 $this->notificationService->sendRegistryUpdate($id, $status);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("RegistryController: notification failed: " . $e->getMessage());
             }
 
             $this->setFlash('success', 'Documents status updated successfully');
             $this->redirect('/admin/registry/show/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -162,7 +162,7 @@ class RegistryController extends AdminController
 
             $this->setFlash('success', 'Stamp duty details recorded successfully');
             $this->redirect('/admin/registry/show/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -189,13 +189,13 @@ class RegistryController extends AdminController
 
             try {
                 $this->notificationService->sendRegistryUpdate($id, 'appointment_scheduled');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("RegistryController: notification failed: " . $e->getMessage());
             }
 
             $this->setFlash('success', 'Appointment scheduled successfully');
             $this->redirect('/admin/registry/show/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -222,13 +222,13 @@ class RegistryController extends AdminController
 
             try {
                 $this->notificationService->sendRegistryUpdate($id, 'registered');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("RegistryController: notification failed: " . $e->getMessage());
             }
 
             $this->setFlash('success', 'Property marked as registered successfully');
             $this->redirect('/admin/registry/show/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -271,14 +271,14 @@ class RegistryController extends AdminController
             if ($mutationStatus === 'completed') {
                 try {
                     $this->notificationService->sendRegistryUpdate($id, 'completed');
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("RegistryController: notification failed: " . $e->getMessage());
                 }
             }
 
             $this->setFlash('success', 'Mutation status updated successfully');
             $this->redirect('/admin/registry/show/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -325,7 +325,7 @@ class RegistryController extends AdminController
 
             $pdf->Output('Registry_Certificate_' . ($booking['booking_number'] ?? $id) . '.pdf', 'D');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error generating certificate: ' . $e->getMessage());
             $this->redirect('/admin/registry/show/' . $id);
         }
@@ -354,7 +354,7 @@ class RegistryController extends AdminController
                 'booking' => $booking,
                 'booking_id' => $bookingId
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/registry/history', [
                 'page_title' => 'Registry History',
                 'activities' => [],
@@ -384,7 +384,7 @@ class RegistryController extends AdminController
             $tagged = $registryId ? (string)$details : '[booking #' . (int)$bookingId . '] ' . $details;
             $stmt = $this->db->prepare("INSERT INTO registry_activity_log (registry_id, action, details, user_id, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
             $stmt->execute([$registryId, $action, $tagged, $_SESSION['admin_id'] ?? null, $tid > 0 ? $tid : 1]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
                     error_log("RegistryController.php: " . $e->getMessage());
         }
     }

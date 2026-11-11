@@ -122,7 +122,7 @@ class KYCService
             ");
             $stmt->execute([$userId]);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -153,7 +153,7 @@ class KYCService
                 $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
                 $this->getTenantId(),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Log failure shouldn't break verification flow
             error_log("[KYCService] log failed: " . $e->getMessage());
         }
@@ -178,13 +178,149 @@ class KYCService
     }
 
     /**
+     * Cross-check OCR-extracted document fields against user-submitted KYC data.
+     * Flags mismatches for manual review.
+     *
+     * @param int $kycRequestId
+     * @return array {match: bool, mismatches: array, matches: array, ocr_docs: array, has_ocr: bool}
+     */
+    public function crossCheckOcr(int $kycRequestId): array
+    {
+        $kyc = $this->db->fetchOne(
+            "SELECT * FROM kyc_requests WHERE id = ? {$this->tenantSql()}",
+            array_merge([$kycRequestId], $this->tVal())
+        );
+
+        if (!$kyc) {
+            return ['match' => false, 'error' => 'KYC request not found', 'mismatches' => [], 'matches' => [], 'ocr_docs' => []];
+        }
+
+        $userId = (int)$kyc['user_id'];
+
+        $ocrDocs = $this->db->fetchAll(
+            "SELECT * FROM ocr_documents WHERE uploaded_by = ? {$this->tenantSql()} ORDER BY created_at DESC",
+            array_merge([$userId], $this->tVal())
+        );
+
+        if (empty($ocrDocs)) {
+            return [
+                'match' => true,
+                'mismatches' => [],
+                'matches' => [],
+                'ocr_docs' => [],
+                'has_ocr' => false,
+                'message' => 'No OCR documents found for this user - skipping OCR cross-check'
+            ];
+        }
+
+        $mismatches = [];
+        $matches = [];
+        $ocrDetails = [];
+
+        foreach ($ocrDocs as $doc) {
+            $docType = $doc['document_type'] ?? 'unknown';
+            $extractedFields = $this->db->fetchAll(
+                "SELECT * FROM ocr_extracted_fields WHERE ocr_document_id = :id",
+                [':id' => $doc['id']]
+            );
+
+            $fields = [];
+            foreach ($extractedFields as $f) {
+                $fields[$f['field_name']] = $f['field_value'];
+            }
+
+            $ocrDetails[] = [
+                'id' => $doc['id'],
+                'document_type' => $docType,
+                'file_name' => $doc['file_name'],
+                'extracted_fields' => $fields,
+                'confidence_score' => $doc['confidence_score'],
+            ];
+
+            if ($docType === 'pan' && !empty($fields['pan_number'])) {
+                $ocrPan = strtoupper(preg_replace('/\s/', '', $fields['pan_number']));
+                $submittedPan = strtoupper(trim($kyc['pan_number'] ?? ''));
+                if ($ocrPan !== $submittedPan) {
+                    $mismatches[] = [
+                        'field' => 'pan_number',
+                        'document' => $doc['file_name'],
+                        'document_type' => $docType,
+                        'submitted' => $submittedPan,
+                        'ocr_extracted' => $ocrPan,
+                    ];
+                } else {
+                    $matches[] = 'pan_number';
+                }
+            }
+
+            if ($docType === 'aadhaar' && !empty($fields['aadhaar_number'])) {
+                $ocrAadhaar = preg_replace('/\D/', '', $fields['aadhaar_number']);
+                $submittedAadhaar = preg_replace('/\D/', '', $kyc['aadhaar_number'] ?? '');
+                if ($ocrAadhaar !== $submittedAadhaar) {
+                    $mismatches[] = [
+                        'field' => 'aadhaar_number',
+                        'document' => $doc['file_name'],
+                        'document_type' => $docType,
+                        'submitted' => $submittedAadhaar,
+                        'ocr_extracted' => $ocrAadhaar,
+                    ];
+                } else {
+                    $matches[] = 'aadhaar_number';
+                }
+            }
+
+            if (!empty($fields['name']) && !empty($kyc['legal_name'])) {
+                $ocrName = strtoupper(trim($fields['name']));
+                $submittedName = strtoupper(trim($kyc['legal_name'] ?? ''));
+                if ($ocrName !== $submittedName) {
+                    $mismatches[] = [
+                        'field' => 'legal_name',
+                        'document' => $doc['file_name'],
+                        'document_type' => $docType,
+                        'submitted' => $submittedName,
+                        'ocr_extracted' => $ocrName,
+                    ];
+                } else {
+                    $matches[] = 'legal_name';
+                }
+            }
+
+            if (!empty($fields['dob']) && !empty($kyc['dob'])) {
+                $ocrDob = $fields['dob'];
+                $submittedDob = $kyc['dob'];
+                if ($ocrDob !== $submittedDob) {
+                    $mismatches[] = [
+                        'field' => 'dob',
+                        'document' => $doc['file_name'],
+                        'document_type' => $docType,
+                        'submitted' => $submittedDob,
+                        'ocr_extracted' => $ocrDob,
+                    ];
+                } else {
+                    $matches[] = 'dob';
+                }
+            }
+        }
+
+        $hasMismatches = count($mismatches) > 0;
+
+        return [
+            'match' => !$hasMismatches && count($ocrDocs) > 0,
+            'mismatches' => $mismatches,
+            'matches' => $matches,
+            'ocr_docs' => $ocrDetails,
+            'has_ocr' => count($ocrDocs) > 0,
+        ];
+    }
+
+    /**
      * Get PDO connection (lazy-loads from config)
      */
     private function getPdo()
     {
         try {
             return \App\Core\Database\Database::getInstance()->getConnection();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[KYCService] DB connection failed: " . $e->getMessage());
             return null;
         }

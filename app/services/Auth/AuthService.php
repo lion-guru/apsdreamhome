@@ -111,7 +111,7 @@ class AuthService
                 'user' => $this->sanitizeUserData($user)
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Login failed', ['email' => $email, 'error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -150,7 +150,7 @@ class AuthService
             
             return false;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Logout failed', ['error' => $e->getMessage()]);
             return false;
         }
@@ -233,7 +233,7 @@ class AuthService
                 'user' => $this->sanitizeUserData($user)
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Registration failed', ['email' => $userData['email'] ?? 'unknown', 'error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -374,7 +374,7 @@ class AuthService
                 'message' => 'Password changed successfully'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Password change failed', ['user_id' => $_SESSION['user_id'] ?? null, 'error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -424,7 +424,7 @@ class AuthService
             try {
                 $emailService = new \App\Services\Communication\EmailService();
                 $emailService->sendPasswordResetEmail($email, $token);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logger->error('Failed to send password reset email', ['email' => $email, 'error' => $e->getMessage()]);
             }
 
@@ -435,7 +435,7 @@ class AuthService
                 'message' => 'Password reset link sent to your email'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Password reset request failed', ['email' => $email, 'error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -494,7 +494,7 @@ class AuthService
                 'message' => 'Password reset successful'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Password reset failed', ['token' => $token, 'error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -543,7 +543,7 @@ class AuthService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get auth stats', ['error' => $e->getMessage()]);
             return [];
         }

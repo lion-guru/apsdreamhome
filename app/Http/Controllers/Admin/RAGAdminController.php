@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Services\AI\RAGEmbeddingService;
+use App\Services\AI\RAGService;
 
 /**
  * RAGAdminController (Session 341)
@@ -19,7 +19,7 @@ class RAGAdminController extends \App\Http\Controllers\Admin\AdminController
     {
         $this->requireAdmin();
 
-        $svc = RAGEmbeddingService::getInstance();
+        $svc = RAGService::getInstance();
         $health = $svc->getHealth();
         $documents = [];
 
@@ -37,7 +37,7 @@ class RAGAdminController extends \App\Http\Controllers\Admin\AdminController
                  ORDER BY kb.id DESC"
             ) ?: [];
         } catch (\Throwable $e) {
-            $this->loggingService->error('RAG admin list failed: ' . $e->getMessage());
+            error_log('RAG admin list failed: ' . $e->getMessage());
             $documents = [];
         }
 
@@ -65,7 +65,7 @@ class RAGAdminController extends \App\Http\Controllers\Admin\AdminController
         }
 
         $model = trim((string) ($_POST['model'] ?? ''));
-        $svc = RAGEmbeddingService::getInstance();
+        $svc = RAGService::getInstance();
 
         if (!$svc->setEmbeddingModel($model)) {
             $this->jsonResponse(['success' => false, 'message' => 'Could not persist model'], 500);
@@ -100,7 +100,7 @@ class RAGAdminController extends \App\Http\Controllers\Admin\AdminController
         }
 
         $force = ($_POST['mode'] ?? '') === 'force';
-        $svc = RAGEmbeddingService::getInstance();
+        $svc = RAGService::getInstance();
         $result = $svc->reembedAllChunks($force);
 
         $this->jsonResponse([

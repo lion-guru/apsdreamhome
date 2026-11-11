@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Services\MarketingCampaignService;
+use App\Services\Campaign\CampaignService;
 use App\Services\AuditService;
 
 /**

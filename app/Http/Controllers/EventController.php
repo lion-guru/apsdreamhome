@@ -44,7 +44,7 @@ class EventController extends AdminController
                 'stats' => $stats,
                 'recent_events' => $recentEvents
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to load event dashboard',
@@ -88,7 +88,7 @@ class EventController extends AdminController
                     'priority' => $priority
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to publish event',
@@ -143,7 +143,7 @@ class EventController extends AdminController
                     'priority' => $priority
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to create event subscription',
@@ -175,7 +175,7 @@ class EventController extends AdminController
                 'success' => $success,
                 'message' => $success ? 'Unsubscribed successfully' : 'Failed to unsubscribe'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to unsubscribe',
@@ -199,7 +199,7 @@ class EventController extends AdminController
                 'success' => true,
                 'data' => $subscriptions
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get subscriptions',
@@ -219,7 +219,7 @@ class EventController extends AdminController
                 'success' => true,
                 'message' => 'All subscriptions cleared successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to clear subscriptions',
@@ -243,7 +243,7 @@ class EventController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get event statistics',
@@ -270,7 +270,7 @@ class EventController extends AdminController
                 'success' => true,
                 'data' => $events
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get recent events',
@@ -308,7 +308,7 @@ class EventController extends AdminController
                         (int)($event['priority'] ?? 1)
                     );
                     $results[] = ['success' => true, 'event_id' => $eventId];
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $results[] = ['success' => false, 'error' => $e->getMessage()];
                 }
             }
@@ -318,7 +318,7 @@ class EventController extends AdminController
                 'message' => 'Bulk publish completed',
                 'data' => $results
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to bulk publish events',
@@ -400,7 +400,7 @@ class EventController extends AdminController
         try {
             $events = $this->eventService ? $this->eventService->getEventHistory([], 50) : [];
             return $this->jsonResponse(['success' => true, 'data' => $events]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => true, 'data' => [], 'message' => $e->getMessage()]);
         }
     }
@@ -415,7 +415,7 @@ class EventController extends AdminController
         try {
             $stats = $this->eventService ? $this->eventService->generateReport() : [];
             return $this->jsonResponse(['success' => true, 'data' => $stats]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => true, 'data' => [], 'message' => $e->getMessage()]);
         }
     }
@@ -430,7 +430,7 @@ class EventController extends AdminController
         try {
             $stats = $this->eventService ? $this->eventService->generateReport() : [];
             return $this->jsonResponse(['success' => true, 'data' => $stats]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => true, 'data' => [], 'message' => $e->getMessage()]);
         }
     }

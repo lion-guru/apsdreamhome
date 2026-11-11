@@ -91,7 +91,7 @@ class WalletController extends BaseController
         try {
             $userData = $this->db->fetchOne("SELECT referral_code FROM users WHERE id = ?", [$userId]);
             $userReferralCode = $userData['referral_code'] ?? '';
-        } catch (\Exception $e) { error_log('WalletController exception: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('WalletController exception: ' . $e->getMessage()); }
 
         $data = [
             'wallet' => $wallet,
@@ -192,7 +192,7 @@ class WalletController extends BaseController
                 "SELECT * FROM emi_schedule WHERE customer_id = ? AND status = 'pending' ORDER BY due_date ASC",
                 [$userId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WalletController emi fetch: ' . $e->getMessage());
         }
 
@@ -273,7 +273,7 @@ class WalletController extends BaseController
 
             echo json_encode(['success' => true, 'message' => 'EMI transfer successful']);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Transfer failed: ' . $e->getMessage()]);
             exit;
         }
@@ -308,7 +308,7 @@ class WalletController extends BaseController
                 "SELECT * FROM user_bank_accounts WHERE user_id = ? AND status = 'active' ORDER BY is_primary DESC",
                 [$userId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WalletController bank accounts: ' . $e->getMessage());
         }
 
@@ -323,7 +323,7 @@ class WalletController extends BaseController
                 "SELECT * FROM withdrawal_requests WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
                 [$userId, $perPage, $offset]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WalletController withdrawals: ' . $e->getMessage());
         }
 
@@ -432,7 +432,7 @@ class WalletController extends BaseController
             $this->db->commit();
             echo json_encode(['success' => true, 'message' => 'Withdrawal request submitted successfully']);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try { $this->db->rollBack(); } catch (\Throwable $ignored) {}
             echo json_encode(['success' => false, 'message' => 'Withdrawal failed: ' . $e->getMessage()]);
             exit;
@@ -460,7 +460,7 @@ class WalletController extends BaseController
                 "SELECT * FROM user_bank_accounts WHERE user_id = ? ORDER BY is_primary DESC, created_at DESC",
                 [$userId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WalletController bank accounts list: ' . $e->getMessage());
         }
 
@@ -537,7 +537,7 @@ class WalletController extends BaseController
 
             echo json_encode(['success' => true, 'message' => 'Bank account added successfully']);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Failed to add bank account: ' . $e->getMessage()]);
             exit;
         }
@@ -569,7 +569,7 @@ class WalletController extends BaseController
             $this->db->query("UPDATE user_bank_accounts SET is_primary = 0 WHERE user_id = ? AND tenant_id = ?", [$userId, $tid]);
             $this->db->query("UPDATE user_bank_accounts SET is_primary = 1 WHERE id = ? AND user_id = ? AND tenant_id = ?", [$accountId, $userId, $tid]);
             echo json_encode(['success' => true, 'message' => 'Primary account updated']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Failed: ' . $e->getMessage()]);
         }
         exit;
@@ -600,7 +600,7 @@ class WalletController extends BaseController
             $tid = (int)$this->tenantId();
             $this->db->query("DELETE FROM user_bank_accounts WHERE id = ? AND user_id = ? AND tenant_id = ?", [$accountId, $userId, $tid]);
             echo json_encode(['success' => true, 'message' => 'Bank account deleted']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Failed: ' . $e->getMessage()]);
         }
         exit;
@@ -662,7 +662,7 @@ class WalletController extends BaseController
             }
 
             echo json_encode(['success' => true, 'message' => 'Bank account updated successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Failed to update: ' . $e->getMessage()]);
         }
         exit;
@@ -849,7 +849,7 @@ class WalletController extends BaseController
         try {
             $userData = $this->db->fetchOne("SELECT referral_code FROM users WHERE id = ?", [$associateId]);
             $userReferralCode = $userData['referral_code'] ?? '';
-        } catch (\Exception $e) { error_log('WalletController exception: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('WalletController exception: ' . $e->getMessage()); }
 
         $data = [
             'wallet' => $wallet,

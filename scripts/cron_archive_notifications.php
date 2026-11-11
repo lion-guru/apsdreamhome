@@ -1,46 +1,35 @@
 <?php
 /**
- * Automated Notification Archiving Cron Script
- * 
- * Archives read notifications older than 90 days from `notifications` to `notifications_archive`.
- * Keeps active notifications table lean and high-speed.
- *
- * Usage:
- *   php scripts/cron_archive_notifications.php
- *   php scripts/cron_archive_notifications.php --days=60 --limit=500
+ * Notification Archiving Cron
+ * Runs daily at 01:00
+ * Archives read notifications older than 90 days
  */
 
-define('APS_ROOT', dirname(__DIR__));
-require_once APS_ROOT . '/config/bootstrap.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
-$days = 90;
-$limit = 1000;
+use App\Services\NotificationArchiveService;
 
-foreach ($argv as $arg) {
-    if (strpos($arg, '--days=') === 0) {
-        $days = max(7, (int)substr($arg, 7));
-    } elseif (strpos($arg, '--limit=') === 0) {
-        $limit = max(50, (int)substr($arg, 8));
-    }
-}
-
-echo "[" . date('Y-m-d H:i:s') . "] Starting Automated Notification Archiving (Older than {$days} days, limit {$limit})...\n";
+echo "=== Notification Archiving Cron ===\n";
+echo "Time: " . date('Y-m-d H:i:s') . "\n";
 
 try {
-    $archiveService = new \App\Services\NotificationArchiveService();
-    $statsBefore = $archiveService->getArchiveStats();
-    echo "  Active Total: {$statsBefore['active_total']} (Read: {$statsBefore['active_read']}, Unread: {$statsBefore['active_unread']})\n";
-    echo "  Eligible for 90d archive: {$statsBefore['eligible_for_archive']}\n";
-    echo "  Existing Archived: {$statsBefore['archive_total']}\n";
-
-    $result = $archiveService->archiveOldNotifications($days, $limit);
-    echo "  Result: {$result['message']}\n";
-
-    $statsAfter = $archiveService->getArchiveStats();
-    echo "  New Active Total: {$statsAfter['active_total']}, New Archive Total: {$statsAfter['archive_total']}\n";
-    echo "[" . date('Y-m-d H:i:s') . "] Notification Archiving Completed Successfully.\n";
-    exit(0);
+    $service = new NotificationArchiveService();
+    
+    // Archive notifications older than 90 days
+    $days = 90;
+    $limit = 1000; // Process in batches
+    
+    echo "Archiving read notifications older than $days days...\n";
+    
+    $result = $service->archiveOldNotifications($days, $limit);
+    
+    echo "Result: " . json_encode($result) . "\n";
+    echo "✅ Notification archiving completed\n";
+    
 } catch (\Throwable $e) {
-    echo "[ERROR] Notification Archiving failed: " . $e->getMessage() . "\n";
+    echo "❌ ERROR: " . $e->getMessage() . "\n";
+    echo $e->getTraceAsString() . "\n";
     exit(1);
 }
+
+echo "=== Notification Archiving Completed ===\n";

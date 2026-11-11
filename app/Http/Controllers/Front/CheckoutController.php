@@ -23,7 +23,7 @@ class CheckoutController extends BaseController
 {
     use \App\Traits\TenantAwareTrait;
 
-    protected $layout = 'layouts/base';
+    protected string $layout = 'layouts/base';
 
     /** GET /checkout/{bookingId} */
     public function checkout($bookingId)

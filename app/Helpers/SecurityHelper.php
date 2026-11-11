@@ -92,7 +92,7 @@ class SecurityHelper
         $csp .= "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com; ";
         $csp .= "img-src 'self' data: blob: https:; ";
         $csp .= "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; ";
-        $csp .= "frame-src 'self' https://www.google.com; ";
+        $csp .= "frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; ";
         $csp .= "connect-src 'self' https: ws: wss:;";
         $csp .= "report-uri " . (defined('BASE_URL') ? BASE_URL : '') . "/csp-report";
         $csp .= "report-to csp-endpoint";
@@ -166,7 +166,7 @@ class SecurityHelper
     {
         try {
             return \random_bytes($length);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // We don't fallback to openssl_random_pseudo_bytes as random_bytes is preferred in PHP 7+
             // and the polyfill should handle older versions securely.
             throw new \Exception('Cryptographically secure random bytes generator failed: ' . $e->getMessage());
@@ -290,7 +290,7 @@ class SecurityHelper
             $stmt = $db->prepare("SELECT 1 FROM blocked_ips WHERE ip_address = ? AND (expires_at IS NULL OR expires_at > NOW())");
             $stmt->execute([$ip]);
             return $stmt->fetch() !== false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -310,7 +310,7 @@ class SecurityHelper
             );
             $stmt->execute([$ip, $reason, $expiresAt, $reason, $expiresAt]);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SecurityHelper::blockIp error: ' . $e->getMessage());
             return false;
         }

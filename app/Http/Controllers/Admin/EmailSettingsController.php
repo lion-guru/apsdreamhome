@@ -96,7 +96,7 @@ class EmailSettingsController extends AdminController
                 $settings[$row['setting_key']] = $row['setting_value'];
             }
             return $settings;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -189,7 +189,7 @@ class EmailSettingsController extends AdminController
             
             echo json_encode(['success' => $result]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;

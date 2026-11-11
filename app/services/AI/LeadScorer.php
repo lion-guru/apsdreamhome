@@ -115,7 +115,7 @@ class LeadScorer
             $stmt->execute([$leadId]);
             $activityCount = (int)$stmt->fetchColumn();
             $score += min(15, $activityCount * 3);
-        } catch (\Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         // Count notes
         try {
@@ -123,7 +123,7 @@ class LeadScorer
             $stmt->execute([$leadId]);
             $noteCount = (int)$stmt->fetchColumn();
             $score += min(10, $noteCount * 2);
-        } catch (\Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         // Has phone/email
         if (!empty($lead['phone'])) $score += 5;
@@ -171,7 +171,7 @@ class LeadScorer
                 if ($daysSince < 3) $score += 10;
                 elseif ($daysSince < 14) $score += 5;
             }
-        } catch (\Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         return min(20, $score);
     }

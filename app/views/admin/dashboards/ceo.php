@@ -76,6 +76,36 @@
         </div>
     </div>
 
+    <!-- AI Strategic Insights -->
+    <?php if (!empty($ai_insights)): ?>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-brain me-2"></i>AI Strategic Insights</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <?php foreach ($ai_insights as $insight): ?>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100 border-start border-4 <?php echo ($insight['priority'] ?? 'medium') === 'high' ? 'border-danger' : (($insight['priority'] ?? 'medium') === 'low' ? 'border-info' : 'border-warning'); ?>">
+                                <div class="card-body">
+                                    <h6 class="card-title"><?php echo htmlspecialchars($insight['title'] ?? 'Insight'); ?></h6>
+                                    <p class="card-text small text-muted"><?php echo htmlspecialchars($insight['description'] ?? ''); ?></p>
+                                    <?php if (!empty($insight['action'])): ?>
+                                    <small class="text-primary"><i class="fas fa-arrow-right me-1"></i><?php echo htmlspecialchars($insight['action']); ?></small>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- Revenue Chart -->
     <div class="row mb-4">
         <div class="col-md-8">

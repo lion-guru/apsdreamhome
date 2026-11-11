@@ -18,7 +18,7 @@ class BankImportController extends AdminController
             $this->service = new BankImportService(
                 $this->db instanceof \PDO ? $this->db : null
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             try {
                 $this->service = new BankImportService();
             } catch (Exception $e2) {
@@ -31,7 +31,7 @@ class BankImportController extends AdminController
     {
         try {
             return $fn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('BankImportController error: ' . $e->getMessage());
             return $fallback;
         }
@@ -126,7 +126,7 @@ class BankImportController extends AdminController
                 // Also set on individual transactions
                 $stmt2 = $pdo->prepare("UPDATE bank_transactions SET bank_account_id = ? WHERE import_id = ? {$tenantSql}");
                 $stmt2->execute(array_merge([$bankAccountId, $result['import_id']], $tenantParams));
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
             // non-fatal
             error_log($e->getMessage());
             }

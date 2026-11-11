@@ -53,7 +53,7 @@ foreach ($rows as $row) {
     try {
         $pdo->prepare("
             INSERT IGNORE INTO associate_profiles (
-                user_id, level, status, referral_code, sponsor_id, agent_track, agent_type,
+                user_id, tenant_id, legacy_id, level, status, referral_code, sponsor_id, agent_track, agent_type,
                 brokerage_model, brokerage_rate, telecaller_salary, telecaller_incentive_rate,
                 telecaller_sqft_rate, telecaller_parent_id, total_sales, commission_earned,
                 registration_count, required_registrations, salary_eligible, salary_amount,
@@ -65,7 +65,7 @@ foreach ($rows as $row) {
                 legal_consent_accepted, created_at, updated_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ")->execute([
-            $row['user_id'], $row['level'], $row['status'], $row['referral_code'], $row['sponsor_id'],
+            $row['user_id'], $row['tenant_id'] ?? 1, $row['associate_id'] ?? null, $row['level'], $row['status'], $row['referral_code'], $row['sponsor_id'],
             $row['agent_track'], $row['agent_type'], $row['brokerage_model'], $row['brokerage_rate'],
             $row['telecaller_salary'], $row['telecaller_incentive_rate'], $row['telecaller_sqft_rate'],
             $row['telecaller_parent_id'], $row['total_sales'], $row['commission_earned'],
@@ -111,11 +111,11 @@ foreach ($rows as $row) {
     try {
         $pdo->prepare("
             INSERT IGNORE INTO agent_profiles (
-                user_id, license_number, experience_years, bank_name,
+                user_id, tenant_id, legacy_id, license_number, experience_years, bank_name,
                 account_number, ifsc_code, created_at, updated_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ")->execute([
-            $row['user_id'], $row['license_number'], $row['experience_years'],
+            $row['user_id'], $row['tenant_id'] ?? 1, $row['agent_id'] ?? null, $row['license_number'], $row['experience_years'],
             $row['bank_name'], $row['account_number'], $row['ifsc_code'],
             $row['created_at'], $row['updated_at']
         ]);
@@ -148,7 +148,7 @@ foreach ($rows as $row) {
     try {
         $pdo->prepare("
             INSERT IGNORE INTO employee_profiles (
-                user_id, tenant_id, employee_code, role, department, designation,
+                user_id, tenant_id, legacy_id, employee_code, role, department, designation,
                 joining_date, salary, incentive_model, commission_rate,
                 commission_type, offboarded_at, offboard_reason, address,
                 emergency_contact, date_of_birth, pan_number, aadhaar_number,
@@ -157,6 +157,7 @@ foreach ($rows as $row) {
         ")->execute([
             $row['user_id'],
             $row['tenant_id'] ?? 1,
+            $row['employee_id'] ?? $row['id'] ?? null,
             $row['employee_code'], $row['role'], $row['department'],
             $row['designation'], $row['joining_date'], $row['salary'], $row['incentive_model'],
             $row['commission_rate'], $row['commission_type'], $row['offboarded_at'],
@@ -193,12 +194,12 @@ foreach ($rows as $row) {
     try {
         $pdo->prepare("
             INSERT IGNORE INTO customer_profiles (
-                user_id, preferred_location, budget_min, budget_max, property_type,
+                user_id, tenant_id, preferred_location, budget_min, budget_max, property_type,
                 occupation, annual_income, kyc_status, preferred_contact_method,
                 marketing_consent, created_at, updated_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ")->execute([
-            $row['id'],
+            $row['id'], $row['tenant_id'] ?? 1,
             $row['city'] ?? null,
             null, null,
             null,

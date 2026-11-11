@@ -23,6 +23,9 @@ class LeadModel {
   final String? voiceNoteUrl;
   final String? voiceTranscript;
   final bool? isOfflineCreated;
+  final double? aiScore;
+  final double? dealProbability;
+  final Map<String, dynamic>? dealProbabilityFactors;
 
   const LeadModel({
     required this.id,
@@ -47,6 +50,9 @@ class LeadModel {
     this.voiceNoteUrl,
     this.voiceTranscript,
     this.isOfflineCreated,
+    this.aiScore,
+    this.dealProbability,
+    this.dealProbabilityFactors,
   });
 
   factory LeadModel.fromJson(Map<String, dynamic> json) {
@@ -71,6 +77,9 @@ class LeadModel {
       voiceNoteUrl: json['voiceNoteUrl'] as String?,
       voiceTranscript: json['voiceTranscript'] as String?,
       isOfflineCreated: json['isOfflineCreated'] as bool?,
+      aiScore: (json['aiScore'] as num?)?.toDouble(),
+      dealProbability: (json['dealProbability'] as num?)?.toDouble(),
+      dealProbabilityFactors: json['dealProbabilityFactors'] as Map<String, dynamic>?,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : null,
@@ -102,6 +111,9 @@ class LeadModel {
       'voiceNoteUrl': voiceNoteUrl,
       'voiceTranscript': voiceTranscript,
       'isOfflineCreated': isOfflineCreated,
+      'aiScore': aiScore,
+      'dealProbability': dealProbability,
+      'dealProbabilityFactors': dealProbabilityFactors,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
     };
@@ -130,6 +142,9 @@ class LeadModel {
     String? voiceNoteUrl,
     String? voiceTranscript,
     bool? isOfflineCreated,
+    double? aiScore,
+    double? dealProbability,
+    Map<String, dynamic>? dealProbabilityFactors,
   }) {
     return LeadModel(
       id: id ?? this.id,
@@ -154,6 +169,9 @@ class LeadModel {
       voiceNoteUrl: voiceNoteUrl ?? this.voiceNoteUrl,
       voiceTranscript: voiceTranscript ?? this.voiceTranscript,
       isOfflineCreated: isOfflineCreated ?? this.isOfflineCreated,
+      aiScore: aiScore ?? this.aiScore,
+      dealProbability: dealProbability ?? this.dealProbability,
+      dealProbabilityFactors: dealProbabilityFactors ?? this.dealProbabilityFactors,
     );
   }
 

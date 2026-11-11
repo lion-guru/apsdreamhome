@@ -2,9 +2,9 @@
 
 namespace App\Services\Legacy;
 
+use App\Http\Middleware\AdminLogger;
 // NOTE (S448): without this import AdminLogger:: resolved to
 // App\Services\Legacy\AdminLogger -> class not found -> fatal.
-use App\Http\Middleware\AdminLogger;
 /**
  * Advanced Password Management Utility
  * Provides secure password handling, hashing, and validation

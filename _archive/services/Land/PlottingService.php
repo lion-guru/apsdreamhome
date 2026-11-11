@@ -79,7 +79,7 @@ class PlottingService
                 'acquisition_id' => $acquisitionId,
                 'acquisition_number' => $acquisitionNumber
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to add land acquisition', [
                 'error' => $e->getMessage(),
                 'data' => $data
@@ -129,7 +129,7 @@ class PlottingService
                 'success' => true,
                 'data' => $acquisitions
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get land acquisitions', [
                 'error' => $e->getMessage(),
                 'filters' => $filters
@@ -197,7 +197,7 @@ class PlottingService
                 'plot_id' => $plotId,
                 'plot_number' => $plotNumber
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to add plot', [
                 'error' => $e->getMessage(),
                 'data' => $data
@@ -258,7 +258,7 @@ class PlottingService
                 'success' => true,
                 'data' => $plots
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get plots', [
                 'error' => $e->getMessage(),
                 'filters' => $filters
@@ -335,7 +335,7 @@ class PlottingService
                 'booking_id' => $bookingId,
                 'booking_number' => $bookingNumber
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to book plot', [
                 'error' => $e->getMessage(),
                 'data' => $data
@@ -397,7 +397,7 @@ class PlottingService
                 'success' => true,
                 'data' => $bookings
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get plot bookings', [
                 'error' => $e->getMessage(),
                 'filters' => $filters
@@ -451,7 +451,7 @@ class PlottingService
                 'payment_id' => $paymentId,
                 'transaction_id' => $transactionId
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to add booking payment', [
                 'error' => $e->getMessage(),
                 'data' => $data
@@ -506,7 +506,7 @@ class PlottingService
                 'success' => true,
                 'data' => $stats
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get plotting statistics', [
                 'error' => $e->getMessage()
             ]);
@@ -634,7 +634,7 @@ class PlottingService
                 'project_id' => $projectId,
                 'message' => 'Project created successfully'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to create project', [
                 'error' => $e->getMessage(),
                 'data' => $data
@@ -670,7 +670,7 @@ class PlottingService
             ]);
 
             return $this->database->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to subdivide land', [
                 'error' => $e->getMessage()
             ]);
@@ -689,7 +689,7 @@ class PlottingService
             $result = $this->database->fetchOne($sql, [$projectId]);
 
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get project', [
                 'error' => $e->getMessage(),
                 'project_id' => $projectId
@@ -713,7 +713,7 @@ class PlottingService
             $result = $this->database->fetchOne($sql, [$plotId]);
 
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get plot', [
                 'error' => $e->getMessage(),
                 'plot_id' => $plotId
@@ -762,7 +762,7 @@ class PlottingService
             $results = $this->database->fetchAll($sql, $params);
 
             return $results;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get available plots', [
                 'error' => $e->getMessage()
             ]);
@@ -798,7 +798,7 @@ class PlottingService
                         ) VALUES (?, ?, 'mlm_differential', 1, ?, ?, 'pending', 'Distributed via MLM Differential Logic')",
                         [$bookingId, $associateId, $totalAmount * ($result['total_distributed'] / 100), $result['total_distributed']]
                     );
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->logger->debug('commission_tracking insert skipped (table dropped)', ['error' => $e->getMessage()]);
                 }
             } else {
@@ -807,7 +807,7 @@ class PlottingService
                     'message' => $result['message'] ?? 'Unknown error'
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to calculate commissions', [
                 'error' => $e->getMessage(),
                 'booking_id' => $bookingId,
@@ -849,7 +849,7 @@ class PlottingService
                  WHERE id = ?",
                 [$bookingId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to update booking payment status', [
                 'error' => $e->getMessage(),
                 'booking_id' => $bookingId

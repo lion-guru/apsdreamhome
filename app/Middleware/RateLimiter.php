@@ -58,8 +58,26 @@ class RateLimiter
         self::saveWindow($key, $window);
 
         if ($window['count'] > $maxRequests) {
+            $retryAfter = max(1, $windowSeconds - ($now - $window['window_start']));
             header('HTTP/1.1 429 Too Many Requests');
-            header('Retry-After: ' . ($windowSeconds - ($now - $window['window_start'])));
+            header('Retry-After: ' . $retryAfter);
+
+            $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+            if (stripos($accept, 'text/html') !== false && stripos($accept, 'application/json') === false) {
+                header('Content-Type: text/html; charset=utf-8');
+                echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Rate Limit Exceeded - APS Dream Home</title>' .
+                     '<meta name="viewport" content="width=device-width, initial-scale=1">' .
+                     '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">' .
+                     '</head><body class="bg-light d-flex align-items-center justify-content-center min-vh-100">' .
+                     '<div class="card shadow-sm p-4 text-center" style="max-width: 440px; border-radius: 16px;">' .
+                     '<div class="mb-3 text-warning"><i class="fas fa-hourglass-half fa-3x"></i></div>' .
+                     '<h4 class="fw-bold mb-2">Too Many Requests</h4>' .
+                     '<p class="text-muted small mb-3">Please wait ' . (int)$retryAfter . ' seconds before trying again.</p>' .
+                     '<a href="javascript:history.back()" class="btn btn-outline-primary btn-sm px-4">Go Back</a>' .
+                     '</div></body></html>';
+                exit;
+            }
+
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'error' => 'Too many requests. Please try again later.']);
             exit;

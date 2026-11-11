@@ -13,7 +13,7 @@ class MarketingController extends AdminController
         try {
             $stmt = $this->db->query("SELECT * FROM marketing_strategies ORDER BY created_at DESC");
             $strategies = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $strategies = [];
         }
         $total = count($strategies);
@@ -47,7 +47,7 @@ class MarketingController extends AdminController
             $stmt = $this->db->prepare("INSERT INTO marketing_strategies (title, description, image_url, active, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())");
             $stmt->execute([$title, $description, $image_url, $active, $this->tenantId()]);
             $this->setFlash('success', 'Strategy created successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to create strategy: ' . $e->getMessage());
         }
         $this->redirect('/admin/marketing/strategies');
@@ -60,7 +60,7 @@ class MarketingController extends AdminController
             $stmt = $this->db->prepare("SELECT * FROM marketing_strategies WHERE id = ?");
             $stmt->execute([$id]);
             $strategy = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $strategy = null;
         }
         if (!$strategy) {
@@ -84,7 +84,7 @@ class MarketingController extends AdminController
             $stmt = $this->db->prepare("UPDATE marketing_strategies SET title = ?, description = ?, image_url = ?, active = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$title, $description, $image_url, $active, $id, $this->tenantId()]);
             $this->setFlash('success', 'Strategy updated successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to update strategy: ' . $e->getMessage());
         }
         $this->redirect('/admin/marketing/strategies');
@@ -105,7 +105,7 @@ class MarketingController extends AdminController
             } else {
                 $this->setFlash('error', 'Strategy not found');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to toggle strategy: ' . $e->getMessage());
         }
         $this->redirect('/admin/marketing/strategies');
@@ -117,7 +117,7 @@ class MarketingController extends AdminController
         try {
             $stmt = $this->db->query("SELECT * FROM marketplace_apps ORDER BY created_at DESC");
             $apps = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $apps = [];
         }
         return $this->render('admin/marketing/marketplace', [
@@ -136,7 +136,7 @@ class MarketingController extends AdminController
             $stmt = $this->db->prepare("INSERT INTO marketplace_apps (app_name, provider, app_url, tenant_id, created_at) VALUES (?, ?, ?, ?, NOW())");
             $stmt->execute([$app_name, $provider, $app_url, $this->tenantId()]);
             $this->setFlash('success', 'Marketplace app added successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to add marketplace app: ' . $e->getMessage());
         }
         $this->redirect('/admin/marketing/marketplace');

@@ -48,7 +48,7 @@ class ChatbotAPIController extends BaseController
                 'quick_replies' => $response['quick_replies'],
                 'intent' => $response['intent']
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Chatbot error: " . $e->getMessage());
             echo json_encode([
                 'success' => false,
@@ -74,7 +74,7 @@ class ChatbotAPIController extends BaseController
             $history = $db->fetchAll($sql, [$userId]);
             
             return $history;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Chatbot history error: " . $e->getMessage());
             return [];
         }

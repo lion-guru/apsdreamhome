@@ -75,7 +75,7 @@ class PlcRuleService
             ]);
 
             return ['success' => true, 'id' => $this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PlcRuleService::createRule error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Database error: ' . $e->getMessage()];
         }
@@ -122,7 +122,7 @@ class PlcRuleService
             ]);
 
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PlcRuleService::updateRule error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Database error: ' . $e->getMessage()];
         }
@@ -137,7 +137,7 @@ class PlcRuleService
             $stmt = $this->db->prepare("UPDATE plot_plc_rules SET is_active = 0 WHERE id = ?");
             $stmt->execute([$id]);
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PlcRuleService::deleteRule error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Database error: ' . $e->getMessage()];
         }

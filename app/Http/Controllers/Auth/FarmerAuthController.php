@@ -111,7 +111,7 @@ class FarmerAuthController extends BaseController
                 header('Location: ' . BASE_URL . '/farmer/login');
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Farmer login error: " . $e->getMessage());
             $_SESSION['flash_error'] = 'Login failed. Please try again.';
             header('Location: ' . BASE_URL . '/farmer/login');

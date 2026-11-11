@@ -84,7 +84,7 @@ class AuthManager
             }
 
             return ['success' => true, 'message' => 'Registration successful', 'user_id' => $userId];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Registration failed: " . $e->getMessage(), 'error', 'auth');
             }
@@ -120,7 +120,7 @@ class AuthManager
             }
 
             return ['success' => false, 'message' => 'Invalid credentials'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Login failed: " . $e->getMessage(), 'error', 'auth');
             }
@@ -170,7 +170,7 @@ class AuthManager
         try {
             $user = $this->db->fetch($sql, [$email, $name]);
             return !empty($user);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -217,7 +217,7 @@ class AuthManager
 
         try {
             return $this->db->fetch($sql, [$_SESSION['user_id']]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -238,7 +238,7 @@ class AuthManager
                 $this->logger->log("User profile updated: ID $userId", 'info', 'auth');
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -274,7 +274,7 @@ class AuthManager
             }
 
             return ['success' => true, 'message' => 'Password changed successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => 'Failed to change password: ' . $e->getMessage()];
         }
     }
@@ -289,7 +289,7 @@ class AuthManager
 
         try {
             return $this->db->fetch($sql, [$userId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -303,7 +303,7 @@ class AuthManager
 
         try {
             return $this->db->fetch($sql, [$email]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -344,7 +344,7 @@ class AuthManager
 
         try {
             return $this->db->fetchAll($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

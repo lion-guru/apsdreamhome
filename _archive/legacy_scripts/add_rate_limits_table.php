@@ -68,7 +68,7 @@ try {
 
     echo "\nAll tables created successfully.\n";
     echo "Tables now ready for Mobile API V2 (JWT auth).\n";
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
     exit(1);
 }?>

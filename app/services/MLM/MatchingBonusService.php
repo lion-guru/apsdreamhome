@@ -254,11 +254,11 @@ class MatchingBonusService
             for ($gen = 1; $gen <= $generation; $gen++) {
                 $placeholders = implode(',', array_fill(0, count($currentParentUserIds), '?'));
                 $stmt = $this->db->prepare("
-                    SELECT nt.associate_id, a.user_id, a.level
+                    SELECT nt.associate_id, ap.user_id, ap.level
                     FROM mlm_network_tree nt
-                    INNER JOIN associates a ON a.id = nt.associate_id
+                    INNER JOIN associate_profiles ap ON ap.legacy_id = nt.associate_id OR ap.user_id = nt.associate_id OR ap.id = nt.associate_id
                     WHERE nt.parent_id IN ({$placeholders})
-                      AND a.status = 'active'
+                      AND ap.status = 'active'
                 ");
                 $stmt->execute($currentParentUserIds);
                 $children = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -327,11 +327,11 @@ class MatchingBonusService
             $tid = $this->getTenantId();
             $tenantSql = $tid > 1 ? " AND u.tenant_id = ?" : "";
             $stmt = $this->db->prepare("
-                SELECT u.id AS user_id, a.level AS rank
+                SELECT u.id AS user_id, ap.level AS rank
                 FROM users u
-                INNER JOIN associates a ON a.user_id = u.id
-                WHERE a.status = 'active'
-                  AND a.level IN ({$placeholders}){$tenantSql}
+                INNER JOIN associate_profiles ap ON ap.user_id = u.id
+                WHERE ap.status = 'active'
+                  AND ap.level IN ({$placeholders}){$tenantSql}
             ");
             $params = self::QUALIFYING_RANKS;
             if ($tid > 1) $params[] = $tid;
@@ -346,7 +346,7 @@ class MatchingBonusService
     {
         if (!$this->db) return null;
         try {
-            $stmt = $this->db->prepare("SELECT id FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1");
+            $stmt = $this->db->prepare("SELECT ap.id FROM associate_profiles ap JOIN users u ON u.id = ap.user_id WHERE ap.user_id = ? AND u.status = 'active' LIMIT 1");
             $stmt->execute([$userId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ? (int)$row['id'] : null;

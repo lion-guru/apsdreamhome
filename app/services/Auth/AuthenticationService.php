@@ -135,7 +135,7 @@ class AuthenticationService
                 'message' => 'Login successful',
                 'redirect' => $this->getRedirectUrl($user['role'])
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Login failed: ' . $e->getMessage()
@@ -205,7 +205,7 @@ class AuthenticationService
                 'success' => false,
                 'message' => 'Registration failed'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Registration failed: ' . $e->getMessage()
@@ -260,7 +260,7 @@ class AuthenticationService
                 try {
                     $emailService = new \App\Services\Communication\EmailService();
                     $emailService->sendPasswordResetEmail($email, $token);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("Failed to send password reset email: " . $e->getMessage());
                 }
 
@@ -274,7 +274,7 @@ class AuthenticationService
                 'success' => false,
                 'message' => 'Failed to generate reset link'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Password reset failed: ' . $e->getMessage()
@@ -337,7 +337,7 @@ class AuthenticationService
                 'success' => false,
                 'message' => 'Failed to change password'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Password change failed: ' . $e->getMessage()

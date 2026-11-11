@@ -86,7 +86,7 @@ class AdminLoyaltyController extends AdminController
             $member['name'] = $member['name'] ?? 'User #' . $userId;
             $member['tier'] = $member['current_tier'] ?? 'bronze';
             $member['total_redeemed'] = $member['total_redeemed'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $member = ['id' => $userId, 'name' => 'User #' . $userId, 'email' => '', 'phone' => '', 'points' => 0, 'tier' => 'bronze', 'status' => 'active', 'join_date' => '', 'total_redeemed' => 0];
         }
         
@@ -100,7 +100,7 @@ class AdminLoyaltyController extends AdminController
             $stmt = $db->prepare($sql);
             $stmt->execute([$userId]);
             $points_history = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) { error_log('AdminLoyaltyController member details: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('AdminLoyaltyController member details: ' . $e->getMessage()); }
         
         $this->render('admin/loyalty/member_details', [
             'member' => $member,

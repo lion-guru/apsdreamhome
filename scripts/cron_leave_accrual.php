@@ -133,7 +133,7 @@ if (php_sapi_name() === 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') ===
         $result = cron_leave_accrual(null, $cliTenant);
         echo "Leave accrual completed: {$result['accrued']} balances updated\n";
         if ($result['errors']) echo "Errors: {$result['errors']}\n";
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo "Failed: " . $e->getMessage() . "\n";
         exit(1);
     }

@@ -66,7 +66,7 @@ class PayrollBatchService
                 $stmt->execute($params);
                 $generated++;
                 $totalNet += $breakdown['net_salary'];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $errors[] = "Employee #{$s['employee_id']}: " . $e->getMessage();
                 $skipped++;
             }

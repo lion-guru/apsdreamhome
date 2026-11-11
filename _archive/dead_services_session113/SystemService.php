@@ -39,7 +39,7 @@ class HybridRealEstateCommission
             if (!$this->current_plan) {
                 $this->current_plan = $this->getDefaultPlan();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // If table doesn't exist, use default plan
             $this->current_plan = $this->getDefaultPlan();
         }
@@ -230,7 +230,7 @@ $query = "INSERT INTO property_development_costs
             }
 
             return ['success' => true, 'message' => 'Development costs saved successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => 'Error saving development costs: ' . $e->getMessage()];
         }
     }
@@ -243,7 +243,7 @@ $query = "INSERT INTO property_development_costs
         try {
             $query = "SELECT * FROM real_estate_properties WHERE id = ? AND tenant_id = " . $this->tenantId();
             return $this->db->fetch($query, [$property_id]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -273,7 +273,7 @@ $query = "INSERT INTO property_development_costs
             $level_details = $this->db->fetch($query, [$this->current_plan['id'], $level_name]);
 
             return $level_details ?: $this->getDefaultLevelDetails($level_name);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->getDefaultLevelDetails($level_name);
         }
     }
@@ -329,7 +329,7 @@ $query = "INSERT INTO property_development_costs
             $structure = $this->db->fetch($query, [$this->current_plan['id'], $property_category, $sale_amount]);
 
             return $structure ?: $this->getDefaultResellStructure($property_category, $sale_amount);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->getDefaultResellStructure($property_category, $sale_amount);
         }
     }
@@ -372,7 +372,7 @@ $query = "INSERT INTO property_development_costs
                 $commission_data['level_achieved'],
                 $payout_status
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // If there's an error saving, just continue - the commission calculation is still valid
             return;
         }
@@ -406,7 +406,7 @@ $query = "INSERT INTO property_development_costs
                      GROUP BY commission_type";
 
             return $this->db->fetchAll($query, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -439,7 +439,7 @@ $query = "INSERT INTO property_development_costs
                 'total_cost' => $total_cost,
                 'analysis' => $this->analyzeCosts($costs)
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'costs' => [],
                 'total_cost' => 0,

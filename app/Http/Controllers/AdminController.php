@@ -86,7 +86,7 @@ class AdminController extends BaseController
     /**
      * Check if admin is logged in
      */
-    public function isLoggedIn()
+    public function isLoggedIn(): bool
     {
         return $this->get('admin_id') !== null;
     }

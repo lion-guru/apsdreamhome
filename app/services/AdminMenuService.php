@@ -127,11 +127,7 @@ class AdminMenuService
         $cacheKey = 'employee_dashboard_view_' . $userId;
         return Cache::remember($cacheKey, function () use ($userId) {
             try {
-                $emp = $this->db->fetchOne(
-                    "SELECT e.designation, e.department
-                     FROM employees e WHERE e.user_id = ? LIMIT 1",
-                    [$userId]
-                );
+                $emp = (new \App\Services\IdentityService())->getEmployeeProfile((int)$userId);
                 if (!$emp || empty($emp['designation'])) {
                     return 'employee/dashboard';
                 }
@@ -146,7 +142,7 @@ class AdminMenuService
                 return ($mapping && !empty($mapping['dashboard_view']))
                     ? $mapping['dashboard_view']
                     : 'employee/dashboard';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 return 'employee/dashboard';
             }
         }, 3600);
@@ -231,14 +227,8 @@ class AdminMenuService
         $cacheKey = 'employee_sub_role_' . $userId;
         return Cache::remember($cacheKey, function () use ($userId) {
             try {
-                // Look up employee designation + department
-                $emp = $this->db->fetchOne(
-                    "SELECT e.designation, e.department
-                     FROM employees e
-                     WHERE e.user_id = ?
-                     LIMIT 1",
-                    [$userId]
-                );
+                // Look up employee designation + department via IdentityService
+                $emp = (new \App\Services\IdentityService())->getEmployeeProfile((int)$userId);
 
                 if (!$emp || empty($emp['designation'])) {
                     return 'employee_general';
@@ -271,7 +261,7 @@ class AdminMenuService
                 // Default fallback
                 return 'employee_general';
 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('AdminMenuService::resolveEmployeeSubRole error: ' . $e->getMessage());
                 return 'employee_general';
             }
@@ -518,7 +508,7 @@ class AdminMenuService
             Cache::delete("admin_menu_perms_{$userId}");
             $this->clearMenuCache();
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AdminMenuService::grantUserPermission error: " . $e->getMessage());
             return false;
         }
@@ -536,7 +526,7 @@ class AdminMenuService
             Cache::delete("admin_menu_perms_{$userId}");
             $this->clearMenuCache();
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AdminMenuService::revokeUserPermission error: " . $e->getMessage());
             return false;
         }
@@ -569,7 +559,7 @@ class AdminMenuService
             ]);
             $this->clearMenuCache();
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AdminMenuService::grantRolePermission error: " . $e->getMessage());
             return false;
         }

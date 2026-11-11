@@ -161,7 +161,7 @@ class FileManagerService
                 'url' => $this->getFileUrl($uuid)
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -269,7 +269,7 @@ class FileManagerService
             
             return ['success' => true];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

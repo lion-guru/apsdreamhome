@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Services\DripCampaignService;
+use App\Services\Campaign\CampaignService;
 use App\Services\AuditService;
 
 class DripCampaignController extends AdminController
@@ -14,7 +14,7 @@ class DripCampaignController extends AdminController
     public function __construct($db = null, $auth = null, array $config = [])
     {
         parent::__construct($db, $auth, $config);
-        try { $this->service = new DripCampaignService($this->db); } catch (\Throwable $e) { $this->service = null; }
+        try { $this->service = new \App\Services\Campaign\CampaignService($this->db); } catch (\Throwable $e) { $this->service = null; }
         try { $this->audit = new AuditService($this->db); } catch (\Throwable $e) { $this->audit = null; }
     }
 
@@ -33,8 +33,8 @@ class DripCampaignController extends AdminController
         $this->requireAdmin();
         // S284: no queue processing on GET — page views must never mutate
         // enrollments or log sends. Explicit runs go through process().
-        $stats = $this->service ? $this->service->getStats() : [];
-        $campaigns = $this->service ? $this->service->getAllCampaigns(20) : [];
+        $stats = $this->service ? $this->service->getDripStats() : [];
+        $campaigns = $this->service ? $this->service->getAllDripCampaigns(20) : [];
         return $this->render('admin.drip_campaigns.index', [
             'page_title' => 'Drip Campaigns',
             'page_heading' => 'Lead Nurturing Drip Campaigns',
@@ -51,13 +51,13 @@ class DripCampaignController extends AdminController
         if (!$this->service || !$id) {
             return $this->redirect(BASE_URL . '/admin/drip-campaigns');
         }
-        $campaign = $this->service->getCampaignById($id);
+        $campaign = $this->service->getDripCampaignById($id);
         if (!$campaign) {
             $this->setFlash('error', 'Campaign not found');
             return $this->redirect(BASE_URL . '/admin/drip-campaigns');
         }
-        $emails = $this->service->getEmails($id);
-        $enrollments = $this->service->getEnrollments($id, 30);
+        $emails = $this->service->getDripEmails($id);
+        $enrollments = $this->service->getDripEnrollments($id, 30);
         return $this->render('admin.drip_campaigns.show', [
             'page_title' => $campaign['name'],
             'page_heading' => $campaign['name'],
@@ -91,7 +91,7 @@ class DripCampaignController extends AdminController
             $this->setFlash('error', 'Name is required');
             return $this->redirect(BASE_URL . '/admin/drip-campaigns/create');
         }
-        $campaignId = $this->service->createCampaign([
+        $campaignId = $this->service->createDripCampaign([
             'name' => $name,
             'description' => $description,
             'trigger_event' => $trigger,
@@ -124,7 +124,7 @@ class DripCampaignController extends AdminController
     {
         $this->requireAdmin();
         if ($this->service) {
-            $result = $this->service->processQueue(200);
+            $result = $this->service->processDripQueue(200);
             $this->setFlash('success', "Processed {$result['processed']} enrollments, sent {$result['sent']} emails, completed {$result['completed']}");
         }
         return $this->redirect(BASE_URL . '/admin/drip-campaigns');
@@ -135,7 +135,7 @@ class DripCampaignController extends AdminController
         $this->requireAdmin();
         $id = (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
-            $campaign = $this->service->getCampaignById($id);
+            $campaign = $this->service->getDripCampaignById($id);
             if ($campaign) {
                 $newStatus = $campaign['status'] === 'active' ? 'paused' : 'active';
                 $this->pdo()->prepare("UPDATE drip_campaigns SET status = ? WHERE id = ? AND tenant_id = ?")->execute([$newStatus, $id, $this->tenantId()]);

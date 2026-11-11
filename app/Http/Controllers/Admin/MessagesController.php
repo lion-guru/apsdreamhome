@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use \App\Traits\TenantAwareTrait;
+use App\Traits\TenantAwareTrait;
 
 class MessagesController extends \App\Http\Controllers\Admin\AdminController
 {

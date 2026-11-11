@@ -104,32 +104,35 @@ class AdminAuthController extends BaseController
             // For employee/telecaller: also set employee_id (employees.id) and employee_user_id (users.id)
             if (in_array($admin['role'], ['employee', 'telecaller'])) {
                 try {
-                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? $tSql", array_merge([$admin['id']], $tParams));
+                    $emp = $db->fetchOne("SELECT id FROM employee_profiles WHERE user_id = ? $tSql", array_merge([$admin['id']], $tParams));
                     if ($emp) {
-                        $_SESSION['employee_id'] = (int)$emp['id'];        // PK of employees table
+                        $_SESSION['employee_id'] = (int)$emp['id'];        // PK of employee_profiles table
                         $_SESSION['employee_user_id'] = (int)$admin['id']; // FK to users table
                     } else {
-                        // No employees row yet
+                        // No employee_profiles row yet
                         $_SESSION['employee_id'] = (int)$admin['id'];
                         $_SESSION['employee_user_id'] = (int)$admin['id'];
                         $_SESSION['employee_needs_resolution'] = true;
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $_SESSION['employee_id'] = (int)$admin['id'];
                     $_SESSION['employee_user_id'] = (int)$admin['id'];
                 }
             }
 
-            error_log("test_login: redirecting to " . BASE_URL . "/admin/dashboard");
+            // S409 Role-wise landing: executive roles apne dashboard par land karen
+            $roleLanding = ['ceo'=>'/admin/dashboard/ceo','cfo'=>'/admin/dashboard/cfo','cto'=>'/admin/dashboard/cto','coo'=>'/admin/dashboard/coo','cmo'=>'/admin/dashboard/cmo','chro'=>'/admin/dashboard/hr','sales_director'=>'/admin/dashboard/sales','finance_director'=>'/admin/dashboard/finance','hr_director'=>'/admin/dashboard/hr','it_manager'=>'/admin/dashboard/it','sales_manager'=>'/admin/dashboard/sales','hr_manager'=>'/admin/dashboard/hr','marketing_director'=>'/admin/dashboard/marketing','marketing_manager'=>'/admin/dashboard/marketing','finance_manager'=>'/admin/dashboard/finance'];
+            $landing = $roleLanding[$admin['role'] ?? 'admin'] ?? '/admin/erp';
+            error_log("test_login: role=" . ($admin['role'] ?? 'admin') . " redirecting to " . BASE_URL . $landing);
             session_write_close();
-            header('Location: ' . BASE_URL . '/admin/dashboard');
+            header('Location: ' . BASE_URL . $landing);
             error_log("test_login: after header call");
             exit;
         }
 
         // Redirect if already logged in
         if (isset($_SESSION['admin_id'])) {
-            header('Location: ' . BASE_URL . '/admin/dashboard');
+            header('Location: ' . BASE_URL . '/admin/erp');
             exit;
         }
 
@@ -273,7 +276,7 @@ class AdminAuthController extends BaseController
                 if (in_array($user['role'], ['employee', 'telecaller'])) {
                     try {
                         [$tSql2, $tParams2] = $this->getTenantSql();
-                        $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ? $tSql2", array_merge([$user['id']], $tParams2));
+                        $emp = $db->fetchOne("SELECT id FROM employee_profiles WHERE user_id = ? $tSql2", array_merge([$user['id']], $tParams2));
                         if ($emp) {
                             $_SESSION['employee_id'] = (int)$emp['id'];
                             $_SESSION['employee_user_id'] = (int)$user['id'];
@@ -282,8 +285,8 @@ class AdminAuthController extends BaseController
                             $_SESSION['employee_user_id'] = (int)$user['id'];
                             $_SESSION['employee_needs_resolution'] = true;
                         }
-                    } catch (\Exception $e) {
-                        // employees table may not exist; skip
+                    } catch (\Throwable $e) {
+                        // employee_profiles table may not exist; skip
                         error_log($e->getMessage());
                         $_SESSION['employee_id'] = (int)$user['id'];
                         $_SESSION['employee_user_id'] = (int)$user['id'];
@@ -307,7 +310,7 @@ class AdminAuthController extends BaseController
             }
 
             throw new \Exception('Invalid username or password.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
             header('Location: ' . BASE_URL . '/admin/login');
             exit;

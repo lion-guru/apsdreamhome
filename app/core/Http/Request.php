@@ -418,7 +418,7 @@ class Request implements Countable
             }
 
             return $xml;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new \RuntimeException('Unable to parse XML: ' . $e->getMessage(), 0, $e);
         } finally {
             libxml_use_internal_errors($internalErrors);
@@ -1397,7 +1397,7 @@ class Request implements Countable
         try {
             $date = new \DateTime($value);
             return $format ? $date->format($format) : $date;
-        } catch (\Exception) {
+        } catch (\Throwable) {
             return $default;
         }
     }

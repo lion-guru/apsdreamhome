@@ -26,7 +26,7 @@ class DepartmentService
         $tfilter = $tid > 1 ? " AND tenant_id = ?" : "";
         $sql = "SELECT d.*, u.name AS head_name,
                        (SELECT COUNT(*) FROM designations des WHERE des.department_id = d.id" . ($tid > 1 ? " AND des.tenant_id = ?" : "") . ") AS designation_count,
-                       (SELECT COUNT(*) FROM employees e WHERE e.department COLLATE utf8mb4_unicode_ci = d.code" . ($tid > 1 ? " AND e.tenant_id = ?" : "") . ") AS employee_count
+                       (SELECT COUNT(*) FROM employee_profiles ep WHERE ep.department COLLATE utf8mb4_unicode_ci = d.code" . ($tid > 1 ? " AND ep.tenant_id = ?" : "") . ") AS employee_count
                 FROM departments d
                 LEFT JOIN users u ON d.head_user_id = u.id WHERE 1=1" . $this->tenantSql();
         $params = [];
@@ -152,7 +152,7 @@ class DepartmentService
             'total'        => $this->fetchColumn("SELECT COUNT(*) FROM departments$tfilter", $tp) ?? 0,
             'active'       => $this->fetchColumn("SELECT COUNT(*) FROM departments WHERE status='active'" . $this->tenantSql(), $tp) ?? 0,
             'total_desig'  => $this->fetchColumn("SELECT COUNT(*) FROM designations$tfilter", $tp) ?? 0,
-            'total_emp'    => $this->fetchColumn("SELECT COUNT(*) FROM employees" . $this->tenantSql(), $tp) ?? 0,
+            'total_emp'    => $this->fetchColumn("SELECT COUNT(*) FROM employee_profiles" . $this->tenantSql(), $tp) ?? 0,
         ];
     }
 

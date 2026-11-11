@@ -47,7 +47,7 @@ class SearchController extends BaseController {
                 'params' => $validatedParams
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SearchController::searchProperties error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
@@ -80,7 +80,7 @@ class SearchController extends BaseController {
                 'suggestions' => $suggestions
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SearchController::getSuggestions error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
@@ -102,7 +102,7 @@ class SearchController extends BaseController {
                 'facets' => $facets
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SearchController::getFacets error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
@@ -133,7 +133,7 @@ class SearchController extends BaseController {
                 'recent_searches' => $recentSearches
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SearchController::getRecentSearches error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
@@ -156,7 +156,7 @@ class SearchController extends BaseController {
                 'popular_searches' => $popularSearches
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SearchController::getPopularSearches error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
@@ -187,7 +187,7 @@ class SearchController extends BaseController {
                 'message' => 'Search cache cleared successfully'
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SearchController::clearCache error: ' . $e->getMessage());
             $this->json([
                 'success' => false,
@@ -241,7 +241,7 @@ class SearchController extends BaseController {
     /**
      * Return JSON response
      */
-    public function json($data, $statusCode = 200) {
+    public function json($data, int $statusCode = 200): void {
         http_response_code($statusCode);
         header('Content-Type: application/json');
         echo json_encode($data);

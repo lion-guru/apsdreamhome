@@ -198,7 +198,7 @@ class AdvancedAIController extends BaseController
                 'accuracy' => 87.5, // Based on historical performance
                 'next_update' => date('Y-m-d H:i:s', strtotime('+24 hours'))
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Price prediction error: ' . $e->getMessage());
             return ['error' => 'Prediction failed'];
         }
@@ -370,7 +370,7 @@ class AdvancedAIController extends BaseController
                 ],
                 'last_updated' => date('Y-m-d H:i:s')
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Automated valuation error: ' . $e->getMessage());
             return ['error' => 'Valuation calculation failed'];
         }
@@ -462,7 +462,7 @@ class AdvancedAIController extends BaseController
                 'user_preferences' => $user_preferences,
                 'confidence_scores' => $this->calculateRecommendationConfidence($scored_recommendations)
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Smart recommendations error: ' . $e->getMessage());
             return [];
         }
@@ -810,7 +810,7 @@ class AdvancedAIController extends BaseController
                 'training_time' => rand(30, 120) . ' seconds',
                 'models' => $models
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ML model training error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Training failed'];
         }

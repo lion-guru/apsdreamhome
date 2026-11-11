@@ -69,7 +69,7 @@ class GeminiChatbotController extends BaseApiController
                 'source' => $response['source'],
                 'actions' => $response['actions'] ?? []
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('GeminiChatbotController::chat error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode([
@@ -116,7 +116,7 @@ class GeminiChatbotController extends BaseApiController
                 'success' => true,
                 'history' => $conversations
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('GeminiChatbotController::history error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode([
@@ -155,7 +155,7 @@ class GeminiChatbotController extends BaseApiController
                 'language' => $response['language'],
                 'confidence' => $response['confidence']
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('GeminiChatbotController::detectIntent error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode([

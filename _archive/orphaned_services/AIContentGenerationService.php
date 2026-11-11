@@ -130,7 +130,7 @@ class AIContentGenerationService
                 'key_phrases' => $this->extractKeyPhrases($description)
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -171,7 +171,7 @@ class AIContentGenerationService
                 'alternatives' => $this->generateTitleAlternatives($propertyData, 3)
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -260,7 +260,7 @@ class AIContentGenerationService
                 'best_posting_time' => $this->suggestPostingTime($platform)
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -310,7 +310,7 @@ class AIContentGenerationService
                 'spam_score' => $this->calculateSpamScore($template['subject'], $template['body'])
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -537,7 +537,7 @@ class AIContentGenerationService
             
             return $db->lastInsertId();
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }

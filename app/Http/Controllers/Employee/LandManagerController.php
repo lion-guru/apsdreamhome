@@ -73,7 +73,7 @@ class LandManagerController extends BaseController
                 'recent_activities' => $recentActivities,
                 'documentation_status' => $documentationStatus
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Land Manager Controller Error: " . $e->getMessage());
             $this->render('employees/department', [
                 'page_title' => 'Land Dashboard',
@@ -321,7 +321,7 @@ class LandManagerController extends BaseController
                 'visit_id' => $visitId,
                 'message' => "Site visit scheduled successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -388,7 +388,7 @@ class LandManagerController extends BaseController
                 'success' => true,
                 'message' => "Land acquisition updated successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -457,7 +457,7 @@ class LandManagerController extends BaseController
                 'success' => true,
                 'message' => "Site visit completed successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -548,7 +548,7 @@ class LandManagerController extends BaseController
                 'success' => true,
                 'message' => "Property documentation updated successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -578,7 +578,7 @@ class LandManagerController extends BaseController
                 default:
                     throw new Exception("Invalid report type");
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()

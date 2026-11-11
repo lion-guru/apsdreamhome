@@ -38,7 +38,7 @@ class GSTNApiService
 
         try {
             $this->pdo = \App\Core\Database\Database::getInstance()->getConnection();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[GSTNApiService] DB connection failed: " . $e->getMessage());
         }
     }
@@ -258,7 +258,7 @@ class GSTNApiService
                 ($response['error'] ?? null) ? substr($response['error'], 0, 1000) : null,
                 $this->tenantId(),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[GSTNApiService] logApiCall() failed: " . $e->getMessage());
         }
     }

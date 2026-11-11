@@ -5,7 +5,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Services\VoiceAssistantService;
+use App\Services\AI\VoiceService;
 use App\Http\Controllers\BaseController;
 use App\Traits\TenantAwareTrait;
 
@@ -13,17 +13,17 @@ class VoiceAssistantController extends BaseController
 {
     use TenantAwareTrait;
     
-    private $assistant;
-
+    private $voiceService;
+    
     public function skipCsrfProtection(): bool
     {
         return true;
     }
-
+    
     public function __construct()
     {
         parent::__construct();
-        $this->assistant = new VoiceAssistantService();
+        $this->voiceService = new VoiceService();
     }
 
     /**
@@ -41,7 +41,7 @@ class VoiceAssistantController extends BaseController
             return;
         }
 
-        $response = $this->assistant->processQuery($query);
+        $response = $this->voiceService->processQuery($query);
         echo json_encode($response);
     }
 

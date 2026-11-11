@@ -67,7 +67,7 @@ class AIRecommendationService
                 'algorithm' => 'collaborative_filtering_hybrid'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -479,7 +479,7 @@ class AIRecommendationService
                 $data['device_type'] ?? null
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Silently fail for tracking
                     error_log("AIRecommendationService.php: " . $e->getMessage());
         }
@@ -561,7 +561,7 @@ class AIRecommendationService
             
             return ['success' => true];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -595,7 +595,7 @@ class AIRecommendationService
             
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

@@ -179,7 +179,7 @@ class Customer extends Model
             $stmt->bindValue(':offset', (int)(($filters['page'] - 1) * $filters['per_page']), \PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Admin users query error: ' . $e->getMessage());
             return [];
         }
@@ -220,7 +220,7 @@ class Customer extends Model
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return (int)($result['total'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Admin total users query error: ' . $e->getMessage());
             return 0;
         }
@@ -301,7 +301,7 @@ class Customer extends Model
             $this->db->commit();
 
             return $customerId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Rollback transaction
             $this->db->rollBack();
             throw $e;
@@ -349,7 +349,7 @@ class Customer extends Model
             $this->db->commit();
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Rollback transaction
             $this->db->rollBack();
             throw $e;
@@ -1260,7 +1260,7 @@ class Customer extends Model
                 'associate_code' => $associateCode,
                 'message' => 'Customer successfully converted to associate'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Rollback transaction
             $this->db->rollBack();
             return [
@@ -1611,7 +1611,7 @@ class Customer extends Model
                     ]
                 ]
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[Customer] getEmiSchedule exception: " . $e->getMessage());
             return [
                 'success' => false,

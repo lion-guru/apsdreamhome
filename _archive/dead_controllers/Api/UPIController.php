@@ -57,7 +57,7 @@ class UPIController extends BaseApiController
             }
 
             return $this->jsonError($result['error'] ?? 'Failed to generate QR');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[UPIController::generate] ' . $e->getMessage());
             return $this->jsonError('Generation failed: ' . $e->getMessage());
         }
@@ -84,7 +84,7 @@ class UPIController extends BaseApiController
             }
 
             return $this->jsonError('No pending payment found', 404);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[UPIController::getByBooking] ' . $e->getMessage());
             return $this->jsonError('Failed to fetch payment');
         }
@@ -118,7 +118,7 @@ class UPIController extends BaseApiController
             }
 
             return $this->jsonError($result['error'] ?? 'Verification failed');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[UPIController::verify] ' . $e->getMessage());
             return $this->jsonError('Verification failed: ' . $e->getMessage());
         }
@@ -139,7 +139,7 @@ class UPIController extends BaseApiController
         try {
             $payments = $this->service->getPendingForBooking($bookingId);
             return $this->jsonSuccess($payments);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[UPIController::getPending] ' . $e->getMessage());
             return $this->jsonError('Failed to fetch pending payments');
         }
@@ -158,7 +158,7 @@ class UPIController extends BaseApiController
                 'upi_id' => 'apsdreamhome@upi',
                 'merchant_code' => 'APS001',
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to get config');
         }
     }

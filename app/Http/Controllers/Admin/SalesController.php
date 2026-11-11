@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\CoreFunctionsServiceCustom;
 use App\Services\LoggingService;
 use App\Core\Database;
 use Exception;
-use \App\Traits\TenantAwareTrait;
 
 /**
  * Sales Controller - Custom MVC Implementation
@@ -138,7 +138,7 @@ class SalesController extends AdminController
             ];
 
             return $this->render('admin/sales/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Sales Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load sales');
             return $this->redirect('admin/dashboard');
@@ -171,7 +171,7 @@ class SalesController extends AdminController
             ];
 
             return $this->render('admin/sales/create', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Sales Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load sales form');
             return $this->redirect('admin/sales');
@@ -268,7 +268,7 @@ class SalesController extends AdminController
             }
 
             return $this->jsonError('Failed to create sale', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Sales Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create sale', 500);
         }
@@ -328,7 +328,7 @@ class SalesController extends AdminController
             ];
 
             return $this->render('admin/sales/show', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Sales Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load sale details');
             return $this->redirect('admin/sales');
@@ -374,7 +374,7 @@ class SalesController extends AdminController
             ];
 
             return $this->render('admin/sales/edit', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Sales Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load sales form');
             return $this->redirect('admin/sales');
@@ -489,7 +489,7 @@ class SalesController extends AdminController
             }
 
             return $this->jsonError('Failed to update sale', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Sales Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update sale', 500);
         }
@@ -550,11 +550,11 @@ class SalesController extends AdminController
                     'success' => true,
                     'message' => 'Sale deleted successfully'
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Sales Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete sale', 500);
         }
@@ -573,7 +573,7 @@ class SalesController extends AdminController
             ];
 
             return $this->render('admin/sales/analytics', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Sales Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load sales analytics');
             return $this->redirect('admin/sales');
@@ -625,7 +625,7 @@ class SalesController extends AdminController
             $analytics['commission_analytics'] = $this->db->fetchAll($sql) ?: [];
 
             return $analytics;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Sales Analytics error: " . $e->getMessage());
             return [];
         }
@@ -668,7 +668,7 @@ class SalesController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Sales Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,

@@ -77,7 +77,7 @@ try {
         'lead_name' => h($lead_data['name'])
     ]);
 
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo json_encode(['success' => false, 'error' => h($e->getMessage())]);
 }
 ?>

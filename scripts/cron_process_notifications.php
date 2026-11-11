@@ -112,7 +112,7 @@ try {
                 $failed++;
                 echo "  FAIL [$id]: $error\n";
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $db->query(
                 "UPDATE notification_queue SET status = 'failed', error_message = ?, updated_at = NOW() WHERE id = ?",
                 [$e->getMessage(), $id]
@@ -125,7 +125,7 @@ try {
     echo "\n--- Push Queue Summary ---\n";
     echo "Processed: " . count($queued) . " | Sent: $sent | Failed: $failed\n";
 
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "ERROR processing push queue: " . $e->getMessage() . "\n";
 }
 
@@ -162,7 +162,7 @@ try {
     } else {
         echo "No email notifications in queue.\n";
     }
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "ERROR processing email queue: " . $e->getMessage() . "\n";
 }
 
@@ -195,7 +195,7 @@ try {
     } else {
         echo "No SMS notifications in queue.\n";
     }
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "ERROR processing SMS queue: " . $e->getMessage() . "\n";
 }
 

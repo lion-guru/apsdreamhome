@@ -51,7 +51,7 @@ class UserService
                 'message' => 'User registered successfully',
                 'user_id' => $userId
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Registration failed: ' . $e->getMessage()
@@ -84,7 +84,7 @@ class UserService
                 'success' => $result,
                 'message' => $result ? 'Profile updated successfully' : 'Profile update failed'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Profile update failed: ' . $e->getMessage()
@@ -122,7 +122,7 @@ class UserService
                 'message' => 'Password reset link sent to your email',
                 'token' => $token
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Password reset request failed: ' . $e->getMessage()

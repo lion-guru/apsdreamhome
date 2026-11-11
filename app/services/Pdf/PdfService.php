@@ -663,11 +663,14 @@ class PdfService
             $db = $this->db instanceof \PDO ? $this->db : $this->resolveDb();
             if (!$db instanceof \PDO) return null;
             $stmt = $db->prepare("SELECT ep.*, u.name AS employee_name, u.email AS employee_email,
-                    e.employee_code, e.department, e.designation, e.pan_number,
-                    e.bank_account, e.bank_ifsc
+                    COALESCE(epp.employee_code, e.employee_code) AS employee_code,
+                    COALESCE(epp.department, e.department) AS department,
+                    COALESCE(epp.designation, e.designation) AS designation,
+                    epp.pan_number, epp.bank_account, epp.bank_ifsc
                 FROM employee_payslips ep
-                LEFT JOIN employees e ON ep.employee_id = e.id
-                LEFT JOIN users u ON e.user_id = u.id
+                LEFT JOIN employee_profiles epp ON epp.legacy_id = ep.employee_id OR epp.user_id = ep.employee_id OR epp.id = ep.employee_id
+                LEFT JOIN employees e ON e.id = epp.legacy_id
+                LEFT JOIN users u ON u.id = epp.user_id
                 WHERE ep.id = ?");
             $stmt->execute([(int)$payslipId]);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;

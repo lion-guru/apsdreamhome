@@ -166,7 +166,7 @@ class AgentOrchestrator
         $totalPlots = $this->pdo->query("SELECT COUNT(*) FROM plots{$tenantSql}")->fetchColumn();
         $availPlots = $this->pdo->query("SELECT COUNT(*) FROM plots WHERE status='available'{$tenantSql}")->fetchColumn();
         $totalBookings = $this->pdo->query("SELECT COUNT(*) FROM bookings{$tenantSql}")->fetchColumn();
-        $activeAssociates = $this->pdo->query("SELECT COUNT(*) FROM associates WHERE status='active'{$tenantSql}")->fetchColumn();
+        $activeAssociates = (new \App\Services\IdentityService())->getActiveAssociatesCount();
 
         $insights = [];
         $leadConvPct = $totalLeads > 0 ? round(($totalLeads - $newLeads) / $totalLeads * 100, 1) : 0;
@@ -201,7 +201,7 @@ class AgentOrchestrator
         $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $activeEmployees = 0;
         $pendingLeave = 0;
-        try { $activeEmployees = $this->pdo->query("SELECT COUNT(*) FROM employees WHERE status='active'{$tenantSql}")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
+        try { $activeEmployees = (new \App\Services\IdentityService())->getActiveEmployeesCount(); } catch (Exception $e) { error_log($e->getMessage()); }
         try { $pendingLeave = $this->pdo->query("SELECT COUNT(*) FROM employee_leave_requests WHERE status='pending'{$tenantSql}")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
         $activeAssociates = $this->pdo->query("SELECT COUNT(*) FROM associates WHERE status='active'{$tenantSql}")->fetchColumn();
 

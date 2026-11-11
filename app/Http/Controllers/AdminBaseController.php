@@ -97,7 +97,7 @@ class AdminBaseController extends BaseController
             }
             
             return $user ?: null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error getting current user: " . $e->getMessage());
             return null;
         }
@@ -179,7 +179,7 @@ class AdminBaseController extends BaseController
     /**
      * Render admin view with layout
      */
-    protected function render($view, $data = [], $layout = null)
+    protected function render(string $view, array $data = [], ?string $layout = null): void
     {
         // Add common data
         $data['currentUser'] = $this->currentUser;
@@ -474,7 +474,7 @@ class AdminBaseController extends BaseController
                 "SELECT COUNT(*) as count FROM bookings WHERE status = 'pending'"
             )['count'] ?? 0;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error getting dashboard stats: " . $e->getMessage());
         }
         
@@ -491,7 +491,7 @@ class AdminBaseController extends BaseController
                 "SELECT * FROM activity_logs_unified ORDER BY created_at DESC LIMIT ?",
                 [$limit]
             ) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -499,7 +499,7 @@ class AdminBaseController extends BaseController
     /**
      * JSON response for API
      */
-    public function jsonResponse($data, int $status = 200)
+    public function jsonResponse($data, int $status = 200): void
     {
         http_response_code($status);
         header('Content-Type: application/json');

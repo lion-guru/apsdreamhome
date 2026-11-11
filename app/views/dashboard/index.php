@@ -18,11 +18,11 @@ try {
     $stats['revenue_month'] = $db->fetch("SELECT COALESCE(SUM(amount),0) as c FROM payments WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)")['c'] ?? 0;
     $stats['total_employees'] = $db->fetch("SELECT COUNT(*) as c FROM users")['c'] ?? 0;
     $stats['pending_bookings'] = $db->fetch("SELECT COUNT(*) as c FROM bookings WHERE status='pending'")['c'] ?? 0;
-} catch (\Exception $e) { error_log('dashboard stats: ' . $e->getMessage()); }
+} catch (\Throwable $e) { error_log('dashboard stats: ' . $e->getMessage()); }
 
 // Recent leads
 $recentLeads = [];
-try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?? []; } catch (\Exception $e) { error_log('dashboard/index recentLeads: ' . $e->getMessage()); }
+try { $recentLeads = $db->fetchAll("SELECT * FROM leads ORDER BY created_at DESC LIMIT 5") ?? []; } catch (\Throwable $e) { error_log('dashboard/index recentLeads: ' . $e->getMessage()); }
 ?>
 
 <!-- Dashboard Header -->

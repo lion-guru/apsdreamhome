@@ -133,7 +133,7 @@ class PropertyManagementController extends AdminController
             ];
 
             return $this->render('admin/properties/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Property Management Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load property management data');
             return $this->redirect('admin/dashboard');
@@ -156,7 +156,7 @@ class PropertyManagementController extends AdminController
             ];
 
             return $this->render('admin/properties/create', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Property Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load property creation form');
             return $this->redirect('admin/properties');
@@ -222,7 +222,7 @@ class PropertyManagementController extends AdminController
 
             $this->setFlash('error', 'Failed to create property');
             return $this->redirect('/admin/properties/create');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Property Store error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to create property: ' . $e->getMessage());
             return $this->redirect('/admin/properties/create');
@@ -245,7 +245,7 @@ class PropertyManagementController extends AdminController
             ];
 
             return $this->render('admin/properties/dashboard', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Property Management Dashboard error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load dashboard');
             return $this->redirect('admin/property_management');
@@ -324,7 +324,7 @@ class PropertyManagementController extends AdminController
             ];
 
             return $this->render('admin/properties/allocation', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Property Allocation error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load allocation data');
             return $this->redirect('admin/property_management');
@@ -406,11 +406,11 @@ class PropertyManagementController extends AdminController
                     'success' => true,
                     'message' => "Allocation {$action}d successfully"
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db->rollBack();
                 throw $e;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Process Property Allocation error: " . $e->getMessage());
             return $this->jsonError('Failed to process allocation', 500);
         }
@@ -488,7 +488,7 @@ class PropertyManagementController extends AdminController
             ];
 
             return $this->render('admin/properties/maintenance', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Property Maintenance error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load maintenance data');
             return $this->redirect('admin/property_management');
@@ -541,7 +541,7 @@ class PropertyManagementController extends AdminController
                     } else {
                         $failed++;
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $failed++;
                 }
             }
@@ -552,7 +552,7 @@ class PropertyManagementController extends AdminController
                 'updated' => $updated,
                 'failed' => $failed
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Bulk Update error: " . $e->getMessage());
             return $this->jsonError('Failed to perform bulk update', 500);
         }
@@ -594,7 +594,7 @@ class PropertyManagementController extends AdminController
             $stats['pending_maintenance'] = (int)($result['total'] ?? 0);
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Dashboard Stats error: " . $e->getMessage());
             return [];
         }
@@ -616,7 +616,7 @@ class PropertyManagementController extends AdminController
                     ORDER BY property_count DESC
                     LIMIT 10";
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Site Summary error: " . $e->getMessage());
             return [];
         }
@@ -655,7 +655,7 @@ class PropertyManagementController extends AdminController
             });
 
             return array_slice($activities, 0, 10);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Recent Activity error: " . $e->getMessage());
             return [];
         }
@@ -695,7 +695,7 @@ class PropertyManagementController extends AdminController
 
             $this->setFlash('error', 'Invalid export format');
             return $this->redirect('admin/property_management');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Property Management Export error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to export data');
             return $this->redirect('admin/property_management');
@@ -720,7 +720,7 @@ class PropertyManagementController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Properties Export error: " . $e->getMessage());
             return [];
         }
@@ -742,7 +742,7 @@ class PropertyManagementController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Allocations Export error: " . $e->getMessage());
             return [];
         }
@@ -764,7 +764,7 @@ class PropertyManagementController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$startDate, $endDate]);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Maintenance Export error: " . $e->getMessage());
             return [];
         }
@@ -825,7 +825,7 @@ class PropertyManagementController extends AdminController
             $stmt = $this->db->prepare("SELECT p.*, s.site_name FROM properties p LEFT JOIN sites s ON p.site_id = s.id WHERE p.id = ?");
             $stmt->execute([$id]);
             $data['property'] = $stmt->fetch() ?: [];
-        } catch (\Exception $e) { error_log('PropertyManagementController exception: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('PropertyManagementController exception: ' . $e->getMessage()); }
         $data['sites'] = [];
         $data['property_types'] = [];
         $data['property_statuses'] = [];
@@ -844,7 +844,7 @@ class PropertyManagementController extends AdminController
             $stmt = $this->db->prepare("SELECT p.*, s.site_name FROM properties p LEFT JOIN sites s ON p.site_id = s.id WHERE p.id = ?");
             $stmt->execute([$id]);
             $data['property'] = $stmt->fetch() ?: [];
-        } catch (\Exception $e) { error_log('PropertyManagementController exception: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('PropertyManagementController exception: ' . $e->getMessage()); }
         $this->data = array_merge($this->data, $data);
         $this->data['page_title'] = 'Edit Property';
         $this->render('admin/properties/create');

@@ -26,6 +26,21 @@ $colonies = $colonies ?? [];
         <h5 class="mb-0"><i class="fas fa-file-signature me-2"></i><?= __('assoc_bp_title', [], 'Book Plot for Customer') ?></h5>
     </div>
     <div class="card-body">
+        <?php if (empty($can_offline_book)): ?>
+        <div class="alert alert-warning border-2 border-warning p-3 mb-4 shadow-sm" style="border-left: 5px solid #f59e0b !important;">
+            <div class="d-flex align-items-start">
+                <i class="fas fa-lock fa-2x text-warning me-3 mt-1"></i>
+                <div>
+                    <h5 class="fw-bold text-dark mb-1">ऑफलाइन बुकिंग अधिकार प्रतिबंधित (Offline Booking Disabled)</h5>
+                    <p class="text-muted mb-2">आपके एसोसिएट खाते पर वर्तमान में सीधे ऑफलाइन प्लॉट बुक करने की अनुमति सक्रिय नहीं है। कृपया ग्राहक को ऑनलाइन लीड के रूप में दर्ज करें ताकि मुख्य कार्यालय द्वारा इसे सत्यापित व बुक किया जा सके।</p>
+                    <a href="<?= BASE_URL ?>/associate/leads/create" class="btn btn-sm btn-primary">
+                        <i class="fas fa-user-plus me-1"></i> नई लीड जोड़ें (Add Customer as Online Lead)
+                    </a>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <form action="<?= BASE_URL ?>/associate/book-plot/submit" method="POST" enctype="multipart/form-data" id="bookingForm">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <?php if (!empty($prefill_lead_id)): ?>
@@ -106,12 +121,25 @@ $colonies = $colonies ?? [];
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_payment_mode', [], 'Payment Mode') ?> *</label>
                     <select name="payment_mode" class="form-select" required>
-                        <option value="cash"><?= __('assoc_bp_mode_cash', [], 'Cash') ?></option>
-                        <option value="upi">UPI</option>
-                        <option value="bank_transfer"><?= __('assoc_bp_mode_bank', [], 'Bank Transfer') ?></option>
-                        <option value="cheque"><?= __('assoc_bp_mode_cheque', [], 'Cheque') ?></option>
+                        <?php if (!empty($can_collect_cash)): ?>
+                            <option value="cash"><?= __('assoc_bp_mode_cash', [], 'Cash') ?> (अधिकृत दैनिक सीमा: ₹<?= number_format($daily_cash_limit ?? 0, 2) ?>)</option>
+                        <?php else: ?>
+                            <option value="cash" disabled><?= __('assoc_bp_mode_cash', [], 'Cash') ?> (प्रतिबंधित / Disabled - कंपनी खाते में ऑनलाइन जमा कराएं)</option>
+                        <?php endif; ?>
+                        <option value="upi" selected>UPI (Google Pay / PhonePe / Paytm to Company QR)</option>
+                        <option value="bank_transfer"><?= __('assoc_bp_mode_bank', [], 'Bank Transfer (NEFT / RTGS / IMPS)') ?></option>
+                        <option value="cheque"><?= __('assoc_bp_mode_cheque', [], 'Cheque / DD (Favoring APS Dream Home Pvt Ltd)') ?></option>
                         <option value="online"><?= __('assoc_bp_mode_online', [], 'Online Payment') ?></option>
                     </select>
+                    <?php if (empty($can_collect_cash)): ?>
+                        <div class="alert alert-danger py-2 px-3 small mt-2 mb-0 border-0" style="background:#fee2e2; color:#991b1b;">
+                            <i class="fas fa-shield-alt me-1"></i> <strong>सुरक्षा निर्देश (Anti-Fraud Policy):</strong> ग्राहक से नकद (Cash) लेना वर्जित है। केवल कंपनी के आधिकारिक बैंक खाते या कंपनी UPI QR कोड पर ही ऑनलाइन भुगतान करवाएं।
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-info py-2 px-3 small mt-2 mb-0 border-0" style="background:#e0f2fe; color:#0369a1;">
+                            <i class="fas fa-info-circle me-1"></i> अधिकृत दैनिक नकद सीमा: <strong>₹<?= number_format($daily_cash_limit ?? 0, 2) ?></strong>। कैश प्राप्त होते ही तुरंत आधिकारिक रसीद जारी करें।
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -186,7 +214,7 @@ $colonies = $colonies ?? [];
             </div>
 
             <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary btn-lg">
+                <button type="submit" class="btn btn-primary btn-lg" <?= empty($can_offline_book) ? 'disabled title="ऑफ़लाइन बुकिंग अधिकार अक्षम है"' : '' ?>>
                     <i class="fas fa-paper-plane me-2"></i><?= __('assoc_bp_submit', [], 'Submit Booking') ?>
                 </button>
                 <a href="<?= BASE_URL ?>/associate/dashboard" class="btn btn-outline-secondary btn-lg">

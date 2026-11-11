@@ -52,8 +52,8 @@ class OrgChartService
         $sql = "SELECT ocn.*, u.name as employee_name, u.email as employee_email, u.phone as employee_phone,
                     p.position_title as parent_position
                 FROM org_chart_nodes ocn
-                JOIN employees e ON ocn.employee_id = e.id
-                JOIN users u ON e.user_id = u.id
+                LEFT JOIN employee_profiles ep ON ep.legacy_id = ocn.employee_id OR ep.user_id = ocn.employee_id OR ep.id = ocn.employee_id
+                JOIN users u ON u.id = ep.user_id
                 LEFT JOIN org_chart_nodes p ON ocn.parent_id = p.id
                 $whereSql
                 ORDER BY ocn.level ASC, ocn.sort_order ASC, u.name ASC";
@@ -69,8 +69,8 @@ class OrgChartService
             SELECT ocn.*, u.name as employee_name, u.email as employee_email, u.phone as employee_phone,
                    p.position_title as parent_position
             FROM org_chart_nodes ocn
-            JOIN employees e ON ocn.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ocn.employee_id OR ep.user_id = ocn.employee_id OR ep.id = ocn.employee_id
+            JOIN users u ON u.id = ep.user_id
             LEFT JOIN org_chart_nodes p ON ocn.parent_id = p.id
             WHERE ocn.id = ? AND ocn.tenant_id = ?
         ");
@@ -136,8 +136,8 @@ class OrgChartService
         $stmt = $this->conn->prepare("
             SELECT ocn.*, u.name as employee_name, u.email as employee_email, u.phone as employee_phone
             FROM org_chart_nodes ocn
-            JOIN employees e ON ocn.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ocn.employee_id OR ep.user_id = ocn.employee_id OR ep.id = ocn.employee_id
+            JOIN users u ON u.id = ep.user_id
             WHERE ocn.parent_id = ? AND ocn.tenant_id = ? AND ocn.is_active = 1
             ORDER BY ocn.sort_order ASC, u.name ASC
         ");
@@ -385,12 +385,13 @@ class OrgChartService
 
     public function syncFromEmployees(): array
     {
-        // Sync employees table to org_chart_nodes
+        // Sync employee_profiles to org_chart_nodes (legacy_id preserved as employee_id)
         $employees = $this->conn->fetchAll("
-            SELECT e.id as employee_id, u.name, e.designation, e.department, e.manager_id
-            FROM employees e
-            JOIN users u ON e.user_id = u.id
-            WHERE e.status = 'active' AND u.status = 'active'
+            SELECT ep.legacy_id as employee_id, u.name, ep.designation, ep.department,
+                    NULL as manager_id
+            FROM employee_profiles ep
+            JOIN users u ON u.id = ep.user_id
+            WHERE ep.status = 'active' AND u.status = 'active'
         ");
 
         $created = 0;

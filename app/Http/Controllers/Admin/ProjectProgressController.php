@@ -21,7 +21,7 @@ class ProjectProgressController extends AdminController
             ");
             $stmt->execute();
             $projects = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $projects = [];
         }
         return $this->render('admin/projects/progress/index', [
@@ -45,7 +45,7 @@ class ProjectProgressController extends AdminController
             ");
             $stmt->execute([$id]);
             $project = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $project = null;
         }
         if (!$project) {
@@ -89,7 +89,7 @@ class ProjectProgressController extends AdminController
             $updateStmt = $this->db->prepare("UPDATE projects SET progress_pct = ?, milestone_json = ?, progress_last_updated = NOW() WHERE id = ?" . $tenantSql);
             $updateStmt->execute(array_merge([$progress_pct, $milestone_json, $id], $tenantParams));
             $this->setFlash('success', 'Project progress updated successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to update progress: ' . $e->getMessage());
         }
         $this->redirect('/admin/projects/progress/show/' . $id);
@@ -108,7 +108,7 @@ class ProjectProgressController extends AdminController
             $stmt = $this->db->prepare("UPDATE projects SET project_budget = ?, amount_spent = ?, project_manager = ?, site_supervisor = ?, contractor_name = ? WHERE id = ?" . $tenantSql);
             $stmt->execute(array_merge([$project_budget, $amount_spent, $project_manager, $site_supervisor, $contractor_name, $id], $tenantParams));
             $this->setFlash('success', 'Project budget & team updated successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to update budget: ' . $e->getMessage());
         }
         $this->redirect('/admin/projects/progress/show/' . $id);
@@ -161,7 +161,7 @@ class ProjectProgressController extends AdminController
                 $stmt->execute(array_merge([$colonyId], $tenantParams));
                 $milestones = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ProjectProgressController::colonyProgress error: ' . $e->getMessage());
             $colonies = [];
             $milestones = [];
@@ -256,7 +256,7 @@ class ProjectProgressController extends AdminController
                 $stmt->execute([$tid, $colonyId, $milestoneName, $category, $status, $progressPct, $startDate, $expectedCompletion, $actualCompletion, $contractorName, $contractorContact, $estimatedCost, $actualCost, $notes, $remarks, $sitePhotoPath]);
                 $this->setFlash('success', 'Milestone created successfully' . ($hasNewPhoto ? ' with site photo' : ''));
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ProjectProgressController::updateColonyProgress error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to save milestone: ' . $e->getMessage());
         }
@@ -305,7 +305,7 @@ class ProjectProgressController extends AdminController
             ");
             $stmt->execute($tenantParams);
             $usageLogs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ProjectProgressController::materialInventory error: ' . $e->getMessage());
             $colonies = [];
             $materials = [];
@@ -370,7 +370,7 @@ class ProjectProgressController extends AdminController
             $stmt->execute(array_merge([$newStock, $totalValue, $newStatus, $materialId], $tenantParams));
             $this->db->commit();
             $this->setFlash('success', 'Material usage logged successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->db->inTransaction()) {
                 $this->db->rollBack();
             }
@@ -409,7 +409,7 @@ class ProjectProgressController extends AdminController
             );
             $mStmt->execute($tenantParams);
             $totalMonth = (float)($mStmt->fetch(\PDO::FETCH_ASSOC)['t'] ?? 0);
-        } catch (\Exception $e) { error_log('ProjectProgressController::civilWorkLog: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('ProjectProgressController::civilWorkLog: ' . $e->getMessage()); }
         return $this->render('admin/construction/civil_work_log', [
             'page_title' => 'Civil Work Log',
             'colonies' => $colonies,
@@ -453,7 +453,7 @@ class ProjectProgressController extends AdminController
                 trim((string)($_POST['notes'] ?? '')),
             ]);
             $this->setFlash('success', 'Civil work logged: ₹' . number_format($amount, 0));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ProjectProgressController::civilWorkStore: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to log civil work.');
         }
@@ -498,7 +498,7 @@ class ProjectProgressController extends AdminController
                     $dayTotal += (float)($l['daily_wage'] ?? 0);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ProjectProgressController::musterRoll: ' . $e->getMessage());
             $workDate = date('Y-m-d');
             $colonyId = 0;
@@ -548,7 +548,7 @@ class ProjectProgressController extends AdminController
                 mb_substr(trim((string)($_POST['notes'] ?? '')), 0, 500) ?: null,
             ]);
             $this->setFlash('success', 'Muster entry added: ' . $name . ' (₹' . number_format($wage, 0) . ')');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ProjectProgressController::musterStore: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to save muster entry.');
         }
@@ -567,7 +567,7 @@ class ProjectProgressController extends AdminController
             $params = array_merge([(int)$id], $tenantParams);
             $st->execute($params);
             $this->setFlash('success', $st->rowCount() > 0 ? 'Muster entry deleted.' : 'Entry not found.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ProjectProgressController::musterDelete: ' . $e->getMessage());
             $this->setFlash('error', 'Delete failed.');
         }
@@ -593,7 +593,7 @@ class ProjectProgressController extends AdminController
                  WHERE 1=1" . $tenantSql . " ORDER BY mb.id DESC LIMIT 20",
                 $tenantParams
             ) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ProjectProgressController::broadcastForm: ' . $e->getMessage());
             $colonies = [];
             $history = [];
@@ -786,7 +786,7 @@ class ProjectProgressController extends AdminController
                 $grand['civil'] += $civil; $grand['material'] += $material;
                 $grand['contracted'] += $contracted; $grand['collected'] += $collected;
             }
-        } catch (\Exception $e) { error_log('ProjectProgressController::colonyCostProfit: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('ProjectProgressController::colonyCostProfit: ' . $e->getMessage()); }
         return $this->render('admin/construction/colony_cost_profit', [
             'page_title' => 'Colony Cost vs Profit',
             'rows' => $rows,

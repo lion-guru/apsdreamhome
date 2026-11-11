@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\BaseController;
-use \App\Traits\TenantAwareTrait;
 
 class AnalyticsController extends BaseController
 {

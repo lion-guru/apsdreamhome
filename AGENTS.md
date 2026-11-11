@@ -13,9 +13,83 @@
 > 4. **Session-number check** — AGENTS.md entry chipkane se PEHLE header dobara padho; parallel actor ne beech me number le liya ho to next free number lo, overwrite/clobber kabhi nahi (S219, S223).
 > 5. **Probe hygiene** — temp scripts sirf `C:\Users\abhay\AppData\Local\Temp\opencode\` me, write+execute **same turn** me (temp purge hota hai), `php -r` one-liners banned, probe ke end me cleanup + counts-verify lazmi (lessons _445, _456, _490).
 
-> **🧹 DISK RULE (new, since S445):** C: drive 0 bytes free = MariaDB ALTER fails with Errcode 28 (looks like a schema bug, isn't). Run `powershell -ExecutionPolicy Bypass -File scripts\cleanup_disk.ps1` BEFORE any heavy build/migration. `-Aggressive` adds the Gradle cache (~3 GB, slows next build).
+> **🧹 DISK RULE (new, since S445; extended S451):** C: drive 0 bytes free = MariaDB ALTER fails with Errcode 28 (looks like a schema bug, isn't). Run `powershell -ExecutionPolicy Bypass -File scripts\cleanup_disk.ps1` BEFORE any heavy build/migration. `-Aggressive` adds the Gradle cache (~3 GB, slows next build). **`-HostCaches` adds host-level junk (~25 GB: npm/puppeteer/playwright/dartServer/uv/pip caches, emulator snapshot, `$GetCurrent` setup leftovers, stale MySQL datadir copies - the LIVE datadir is read from `my.ini` and excluded). `-DryRun` previews without deleting.** The OpenCode session DB has its own script: `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED; reclaims ~32 GB of dead space; `-Execute` to apply). See S451.
 
 > **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
+
+## Session 451: C: Disk Forensics - 32 GB Dead Space in OpenCode DB, 2 Safe Cleanup Scripts, 1165 Uncommitted Files Found (2026-11-11)
+
+### Trigger
+Owner: "c drive me space kya liya hai faltu ka dekhna" -> then "tum batao kya kiya jaye, project me kaam chal raha, kuch gadbad to nhi hoga, ya kuch kaam abhi complete nhi hua hai, opencode kaam kar raha hai wo bhi pending na reh jaye".
+
+### Disk state (measured, not estimated)
+C: total **237.34 GB**, used **235.81 GB**, free **1.52 GB (0.6%)** -> the Errcode 28 ("No space left on device") condition that silently breaks MariaDB `ALTER TABLE`.
+
+| Bucket | GB |
+|---|---|
+| `C:\Users` | 122.88 |
+| `C:\Windows` | 42.24 |
+| `C:\Program Files` | 29.38 |
+| `C:\xampp` | 6.35 |
+| `C:\$GetCurrent` | 5.67 |
+
+### The #1 finding - `opencode.db` is 42.25 GB and 32.16 GB of it is DEAD SPACE
+`C:\Users\abhay\.local\share\opencode\opencode.db` is the OpenCode session store (SQLite, `journal_mode=wal`, `auto_vacuum=NONE`).
+
+```
+page_count      = 11,076,001 x 4096 = 42.25 GB
+freelist_count  =  8,429,624         = 32.16 GB   <- deleted, never reclaimed
+live data       =               10.10 GB   <- message 148,550 / part 658,263 / session_message 169,488
+```
+
+`auto_vacuum=NONE` means every deleted session/message leaves its pages behind permanently. **VACUUM shrinks the file 42.25 GB -> ~10.10 GB with ZERO row loss.** `dbstat` was unavailable in this PHP SQLite build, so the sizing was done from `page_count - freelist_count` x `page_size` (exact, not estimated).
+
+### Project health - GREEN (proven before touching anything)
+- `php testing/master_test_runner.php` -> **10/10 PASSED (35.24s)**
+- Apache 200, `/api/health` 200, mysqld up (MariaDB 10.4.32), redis-server up
+- DB counts exactly at the S450 baseline: users 75 / plots 756 / leads 994 / properties 627 / bookings 20
+- `logs/php_error.log` -> **0 hits** for `Errcode 28` / `No space left` / `disk full` (the disk is full but nothing has hit it yet)
+
+### Live-MySQL-dir proof (this is what makes the datadir cleanup safe)
+`my.ini` (`datadir=c:/xampp/mysql/data`) **and** `SELECT @@datadir` (`C:\xampp\mysql\data\`) agree. The server therefore does NOT use the 4 sibling copies: `data_corrupted` (0.71 GB), `data_corrupt_20260906` (0.55 GB), `mysql_corrupt_20260915` (0.04 GB), `data_test` (0.12 GB) - all crash-recovery leftovers from Sept 2026. `data_backup_20260915` (0.62 GB) is a REAL backup and was deliberately left untouched.
+
+### The pending work the owner asked about - YES, it exists
+`HEAD == origin/main == 88fc61800`, but the worktree holds **835 tracked files with REAL content changes (0 whitespace-only) + 330 untracked = 1165 uncommitted files**.
+
+| Diff size | Files | What it is |
+|---|---|---|
+| 1-2 lines | 194 | the parallel actor's `catch (\Exception)` -> `catch (\Throwable)` sweep (verified by diff sample) |
+| 3-30 lines | 456 | mixed fixes |
+| 30+ lines | **186** | substantive feature work |
+
+Substantive examples: `config/admin_menu_manifest.php` +2954/-1070, `composer.lock` +2395/-575, `CampaignService.php` +1247/-135, `EmailService.php` +543/-712, `BaseController.php` +63/-991, `AIVoicePipeline.php` +11/-977, `PropertyChatbotService.php` +9/-842, `MarketingAutomationService.php` +788, `TrainingService.php` +689, `PayrollService.php` +409/-145, `ai_chat_page.dart` -604, `api_service.dart` +32/-1.
+
+**This is the real risk of a full disk**: that work exists only in the worktree. It is not in git, so a crash or a restore loses it. Committing it costs 0 bytes of disk and is the cheapest possible insurance.
+
+### Work done (2 scripts, ZERO deletions performed this session)
+1. **`scripts/cleanup_disk.ps1` EXTENDED** (not duplicated - S221 discipline): new `-HostCaches` switch adds the host-level regenerable caches, new `-DryRun` switch previews without deleting. Safety: parses `datadir` out of `my.ini` and refuses any target that IS or is INSIDE the live datadir, and skips all mysql-dir cleanup entirely if `my.ini` cannot be read. `data_backup_*` is never matched.
+2. **`scripts/vacuum_opencode_db.ps1` NEW**: refuses to run while any OpenCode process is alive (exit 2, no changes), requires `live_size + 2 GB` free, snapshots every table's row count, runs `PRAGMA auto_vacuum=INCREMENTAL` + `VACUUM` + `wal_checkpoint(TRUNCATE)`, then re-reads and ASSERTS every row count is identical (mismatch -> exit 3, DB left untouched), runs `PRAGMA integrity_check` (not OK -> exit 4). Enabling `auto_vacuum=INCREMENTAL` is the part that stops the file ballooning back to 42 GB on its own.
+
+### Verification
+- Both scripts: PowerShell parser **PARSE OK**
+- `cleanup_disk.ps1 -HostCaches -MinFreeGB 5 -DryRun` -> lists **24.8 GB reclaimable**, prints `live MySQL datadir (protected): C:\xampp\mysql\data`, and correctly omits `data_backup_20260915`
+- `vacuum_opencode_db.ps1` (no `-Execute`) -> **exit 2**, "OpenCode is RUNNING (OpenCode(1652), ... opencode-cli(11348))", "No changes were made" - the guard is proven live, not asserted
+- Repo intact after all test runs: 862 tracked-modified + 331 untracked, HEAD unchanged, MySQL up, users 75
+- Master suite **10/10 PASSED** on the same tree
+
+### Owner actions (agent cannot take these)
+1. Close OpenCode fully, then `powershell -ExecutionPolicy Bypass -File scripts\vacuum_opencode_db.ps1 -Execute` -> ~32 GB back
+2. `powershell -ExecutionPolicy Bypass -File scripts\cleanup_disk.ps1 -HostCaches -MinFreeGB 5` -> ~25 GB back
+3. Decide the fate of the 1165 uncommitted files (commit them; they are the only thing not backed up)
+4. Admin PowerShell: `DISM /Online /Cleanup-Image /StartComponentCleanup /ResetBase` and `vssadmin list shadowstorage` - both need elevation, both could hold GBs more
+5. Still open from S449/S450: Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13), voice/S3/scheduler/Redis credentials, `api_tokens` 30-day-TTL prune cron, 53 duplicate route registrations in `routes/web.php` (19 pairs where the handler changed), `bohisawagar-banner.jpg` owner asset drop
+
+### Key Lessons (carried, continued)
+_801. **A 42 GB SQLite file whose freelist is 32 GB is not "data" - it is an unreclaimed ledger of deletions.** `auto_vacuum=NONE` + `journal_mode=wal` = every delete leaves its pages behind forever. Size the reclaim with `page_count - freelist_count` x `page_size`, not with the file size.
+_802. **Never delete a directory that sits next to a database until the SERVER tells you which one it uses.** `my.ini` + `SELECT @@datadir` agreeing is what turned 4 sibling dirs from "dangerous" into "provably dead".
+_803. **Uncommitted work is the thing most at risk from a full disk.** 1165 files lived only in the worktree; no amount of disk cleanup protects them, but a commit does, and a commit is free.
+_804. **A cleanup script must REFUSE to run while the target app is alive.** The vacuum checks for a live OpenCode process and exits 2 rather than trying and hoping - "try and hope" on a 42 GB live database is how you lose the session history.
+_805. **Extend the existing script instead of writing a parallel one.** `cleanup_disk.ps1` already existed; a second `cleanup_disk2.ps1` would have been the same S221 duplication trap that cost a DMS build.
 
 ## Session 450: Full Web-Route Sweep — 1989 GET Routes → 0 × 500, 6 Orphan Marketing Pages Wired, Fraud + Localization Fixed (2026-11-11)
 

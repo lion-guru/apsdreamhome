@@ -96,7 +96,7 @@ class NewsController extends AdminController
             ];
 
             return $this->render('admin/news/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("News Index error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
             $this->loggingService->error("News Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load news: ' . $e->getMessage());
@@ -117,7 +117,7 @@ class NewsController extends AdminController
             ];
 
             return $this->render('admin/news/create', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("News Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load news form');
             return $this->redirect(BASE_URL . '/admin/news');
@@ -197,7 +197,7 @@ class NewsController extends AdminController
             }
 
             return $this->jsonError('Failed to create news article', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("News Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create news article', 500);
         }
@@ -237,7 +237,7 @@ class NewsController extends AdminController
             ];
 
             return $this->render('admin/news/show', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("News Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load news article');
             return $this->redirect(BASE_URL . '/admin/news');
@@ -275,7 +275,7 @@ class NewsController extends AdminController
             ];
 
             return $this->render('admin/news/edit', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("News Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load news form');
             return $this->redirect(BASE_URL . '/admin/news');
@@ -388,7 +388,7 @@ class NewsController extends AdminController
             }
 
             return $this->jsonError('Failed to update news article', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("News Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update news article', 500);
         }
@@ -444,7 +444,7 @@ class NewsController extends AdminController
             }
 
             return $this->jsonError('Failed to delete news article', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("News Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete news article', 500);
         }
@@ -497,7 +497,7 @@ class NewsController extends AdminController
             }
 
             return null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Upload Image error: " . $e->getMessage());
             return null;
         }
@@ -569,7 +569,7 @@ class NewsController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get News Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,

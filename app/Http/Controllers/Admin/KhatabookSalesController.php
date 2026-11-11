@@ -54,7 +54,7 @@ class KhatabookSalesController extends AdminController
 
             $sumStmt = $db->query("SELECT COUNT(*) as total_records, SUM(amount) as total_amount FROM khatabook_sales");
             $summary = $sumStmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $sales = [];
             $batches = [];
             $summary = ['total_records' => 0, 'total_amount' => 0];
@@ -84,7 +84,7 @@ class KhatabookSalesController extends AdminController
             $stmt = $db->prepare("SELECT * FROM khatabook_sales WHERE id = ?");
             $stmt->execute([$id]);
             $sale = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $sale = null;
         }
 
@@ -136,7 +136,7 @@ class KhatabookSalesController extends AdminController
                 }
             }
             fclose($output);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->flashMessage('Export failed: ' . $e->getMessage(), 'error');
             header('Location: ' . BASE_URL . '/admin/khatabook-sales');
         }
@@ -153,7 +153,7 @@ class KhatabookSalesController extends AdminController
             $stmt = $db->prepare("DELETE FROM khatabook_sales WHERE id = ? {$tenantSql}");
             $stmt->execute(array_merge([$id], $tenantParams));
             $this->flashMessage('Sale record deleted', 'success');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->flashMessage('Delete failed: ' . $e->getMessage(), 'error');
         }
 

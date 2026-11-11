@@ -60,7 +60,7 @@ class SecurityPolicyService
                 'policy_id' => $policyId
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Failed to create policy: ' . $e->getMessage()
@@ -95,7 +95,7 @@ class SecurityPolicyService
                 'violations' => $violations
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Policy enforcement failed: ' . $e->getMessage()
@@ -141,7 +141,7 @@ class SecurityPolicyService
 
             return $report;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Failed to generate compliance report: ' . $e->getMessage()
@@ -236,7 +236,7 @@ class SecurityPolicyService
                 'violations' => $violations
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }

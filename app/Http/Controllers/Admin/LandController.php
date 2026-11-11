@@ -97,7 +97,7 @@ class LandController extends AdminController
             ];
 
             return $this->render('admin/land/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Land Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load land records');
             return $this->redirect('admin/dashboard');
@@ -117,7 +117,7 @@ class LandController extends AdminController
             ];
 
             return $this->render('admin/land/create', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Land Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load land form');
             return $this->redirect('admin/land');
@@ -201,7 +201,7 @@ class LandController extends AdminController
             }
 
             return $this->jsonError('Failed to create land record', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Land Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create land record', 500);
         }
@@ -257,7 +257,7 @@ class LandController extends AdminController
             ];
 
             return $this->render('admin/land/show', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Land Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load land record details');
             return $this->redirect('admin/land');
@@ -295,7 +295,7 @@ class LandController extends AdminController
             ];
 
             return $this->render('admin/land/edit', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Land Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load land form');
             return $this->redirect('admin/land');
@@ -415,7 +415,7 @@ class LandController extends AdminController
             }
 
             return $this->jsonError('Failed to update land record', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Land Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update land record', 500);
         }
@@ -477,7 +477,7 @@ class LandController extends AdminController
             }
 
             return $this->jsonError('Failed to delete land record', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Land Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete land record', 500);
         }
@@ -556,7 +556,7 @@ class LandController extends AdminController
             }
 
             return $this->jsonError('Failed to record land transaction', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Store Land Transaction error: " . $e->getMessage());
             return $this->jsonError('Failed to record land transaction', 500);
         }
@@ -593,7 +593,7 @@ class LandController extends AdminController
                 $totalArea += (float)($a['total_area_sqft'] ?? 0);
                 $totalCost += (float)($a['acquisition_cost'] ?? $a['total_consideration'] ?? 0);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Land Acquisitions error: " . $e->getMessage());
             $acquisitions = [];
             $totalAcq = 0;
@@ -620,7 +620,7 @@ class LandController extends AdminController
             $stmt = $this->db->prepare("SELECT a.* FROM land_acquisitions a WHERE a.id = ?");
             $stmt->execute([(int)$id]);
             $acquisition = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $acquisition = null;
         }
         if (!$acquisition) {
@@ -670,7 +670,7 @@ class LandController extends AdminController
             $stmt = $this->db->prepare("INSERT INTO land_acquisitions (land_lead_id, colony_id, total_area_sqft, acquired_area_sqft, acquisition_cost, total_consideration, advance_paid, balance_amount, sale_agreement_date, sale_agreement_number, registration_date, registration_number, sub_registrar_office, stamp_duty_amount, registration_fee, mutation_status, mutation_number, mutation_date, status, tenant_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
             $stmt->execute([$land_lead_id, $colony_id, $total_area_sqft, $acquired_area_sqft, $acquisition_cost, $total_consideration, $advance_paid, $balance_amount, $sale_agreement_date, $sale_agreement_number, $registration_date, $registration_number, $sub_registrar_office, $stamp_duty_amount, $registration_fee, $mutStatus, $mutation_number, $mutation_date, $dealStatus, $tid]);
             $this->setFlash('success', 'Land acquisition recorded successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to record acquisition: ' . $e->getMessage());
         }
         $this->redirect('/admin/land/acquisitions');
@@ -688,7 +688,7 @@ class LandController extends AdminController
             $offset = ($page - 1) * $perPage;
             $stmt = $this->db->query("SELECT * FROM land_records ORDER BY created_at DESC LIMIT $perPage OFFSET $offset");
             $landRecords = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Land Records error: " . $e->getMessage());
             $landRecords = [];
         }
@@ -719,7 +719,7 @@ class LandController extends AdminController
             $stmt = $this->db->prepare("INSERT INTO land_records (survey_number, land_area, land_type, location, owner_name, owner_contact, acquisition_status, acquisition_cost, colony_id, created_at, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)");
             $stmt->execute([$survey_number, $land_area, $land_type, $location, $owner_name, $owner_contact, $acquisition_status, $acquisition_cost, $colony_id, $tid]);
             $this->setFlash('success', 'Land record added successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to add land record: ' . $e->getMessage());
         }
         $this->redirect('/admin/land/records');
@@ -756,7 +756,7 @@ class LandController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Land Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,

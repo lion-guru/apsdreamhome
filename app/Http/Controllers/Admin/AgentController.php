@@ -23,7 +23,7 @@ class AgentController extends AdminController
             ) ?: [];
             $this->data['totalAgents'] = count($this->data['agents']);
             $this->data['activeAgents'] = count(array_filter($this->data['agents'], fn($a) => ($a['status'] ?? 'active') === 'active'));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['agents'] = [];
             $this->data['totalAgents'] = 0;
             $this->data['activeAgents'] = 0;

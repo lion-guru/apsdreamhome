@@ -47,7 +47,7 @@ class BrokerCommissionService
     }
 
     /**
-     * Get the broker's own commission rate (from associates table).
+     * Get the broker's own commission rate (from associate_profiles table).
      *
      * @return array|null  ['commission_type'=>..., 'commission_value'=>float, 'agent_type'=>...]
      */
@@ -56,7 +56,7 @@ class BrokerCommissionService
         try {
             $stmt = $this->pdo->prepare("
                 SELECT commission_type, commission_value, agent_type
-                FROM associates
+                FROM associate_profiles
                 WHERE user_id = ?
                 LIMIT 1
             ");

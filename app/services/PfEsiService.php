@@ -55,8 +55,12 @@ class PfEsiService
         $esiWageLimit = (float)($config['esi_wage_limit'] ?? 21000);
 
         $employees = $this->db->fetchAll(
-            "SELECT e.id, e.name, e.department, e.designation, e.basic_salary, e.gross_salary, e.status as emp_status
-             FROM employees e WHERE e.status = 'active'" . ($tid > 1 ? " AND e.tenant_id = ?" : ""),
+            "SELECT ep.legacy_id AS id, u.name, ep.department, ep.designation,
+                    COALESCE(ep.salary, 0) AS basic_salary,
+                    ep.salary AS gross_salary
+             FROM employee_profiles ep
+             JOIN users u ON u.id = ep.user_id
+             WHERE ep.status = 'active'" . ($tid > 1 ? " AND ep.tenant_id = ?" : ""),
             $tid > 1 ? [$tid] : []
         );
 
@@ -238,7 +242,18 @@ class PfEsiService
     public function getLedger(int $employeeId): array
     {
         $tid = $this->tenantId();
-        $employee = $this->db->fetchOne("SELECT * FROM employees WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$employeeId, $tid] : [$employeeId]);
+        // Phase 4/7: resolve legacy employee id → user_id, then use IdentityService
+        $identity = new \App\Services\IdentityService();
+        $userId = $identity->resolveEmployeeUserId($employeeId);
+        $employee = null;
+        if ($userId > 0) {
+            $profile = $identity->getEmployeeProfile($userId, true);
+            if ($profile) {
+                $employee = $profile;
+                $employee['id'] = $employeeId;
+                $employee['tenant_id'] = $tid;
+            }
+        }
         if (!$employee) {
             return ['employee' => null, 'ledger' => []];
         }

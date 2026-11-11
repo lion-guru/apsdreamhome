@@ -17,7 +17,7 @@ class AIManagementController extends AdminController
                 'active' => count(array_filter($integrations, fn($r) => ($r['status'] ?? '') === 'active')),
                 'inactive' => count(array_filter($integrations, fn($r) => ($r['status'] ?? '') === 'inactive')),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $integrations = [];
             $stats = ['total' => 0, 'active' => 0, 'inactive' => 0];
         }
@@ -40,7 +40,7 @@ class AIManagementController extends AdminController
             [$tw, $tp] = $this->tenantWhere();
             $this->db->query("UPDATE ai_integrations SET status = ? WHERE id = ?" . $tw, array_merge([$newStatus, (int)$id], $tp));
             return $this->jsonResponse(['success' => true, 'status' => $newStatus]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -59,7 +59,7 @@ class AIManagementController extends AdminController
                 ORDER BY s.created_at DESC
                 LIMIT 100
             ") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $suggestions = [];
         }
         return $this->render('admin/ai-management/suggestions', [
@@ -84,7 +84,7 @@ class AIManagementController extends AdminController
                 'avg_satisfaction' => $this->db->fetch("SELECT COALESCE(AVG(satisfaction_score), 0) as avg FROM ai_chatbot_interactions WHERE satisfaction_score IS NOT NULL")['avg'] ?? 0,
                 'avg_response_time' => $this->db->fetch("SELECT COALESCE(AVG(response_time), 0) as avg FROM ai_chatbot_interactions WHERE response_time IS NOT NULL")['avg'] ?? 0,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $logs = [];
             $stats = ['total' => 0, 'avg_satisfaction' => 0, 'avg_response_time' => 0];
         }
@@ -106,7 +106,7 @@ class AIManagementController extends AdminController
                 ORDER BY ls.scored_at DESC
                 LIMIT 100
             ") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $scores = [];
         }
         return $this->render('admin/ai-management/lead-scores', [
@@ -130,7 +130,7 @@ class AIManagementController extends AdminController
                 'published' => count(array_filter($contents, fn($r) => ($r['is_published'] ?? 0) == 1)),
                 'draft' => count(array_filter($contents, fn($r) => ($r['is_published'] ?? 0) == 0)),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $contents = [];
             $stats = ['total' => 0, 'published' => 0, 'draft' => 0];
         }
@@ -153,7 +153,7 @@ class AIManagementController extends AdminController
             [$tw, $tp] = $this->tenantWhere();
             $this->db->query("UPDATE ai_generated_content SET is_published = ? WHERE id = ?" . $tw, array_merge([$newStatus, (int)$id], $tp));
             return $this->jsonResponse(['success' => true, 'is_published' => $newStatus]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -175,7 +175,7 @@ class AIManagementController extends AdminController
                 GROUP BY feature_name
                 ORDER BY count DESC
             ") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $usage = [];
             $byFeature = [];
         }
@@ -202,7 +202,7 @@ class AIManagementController extends AdminController
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $entries = [];
         }
         return $this->render('admin/ai-management/context', [

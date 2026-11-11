@@ -1,7 +1,7 @@
 <?php
 /**
  * Admin menu manifest — future-proof static snapshot of admin_menu_items.
- * Generated: 2026-09-29 18:30:43 | items: 289
+ * Generated: 2026-10-12 14:30:45 | items: 322
  *
  * Used for: (1) sidebar fallback when DB menu is unreachable/empty,
  * (2) self-heal re-seeding of missing menu rows + role permissions.
@@ -608,7 +608,7 @@ return array (
   array (
     'name' => 'Plots Inventory',
     'icon' => 'fas fa-th-large',
-    'section' => 'land',
+    'section' => 'plots',
     'parent_url' => NULL,
     'order' => 1,
     'perm' => 'plots.view',
@@ -763,21 +763,14 @@ return array (
   ),
   '/admin/colonies' => 
   array (
-    'name' => 'Colonies Board',
-    'icon' => 'fa-city',
-    'section' => 'locations',
+    'name' => 'Colony Management',
+    'icon' => 'fas fa-building',
+    'section' => 'colonies',
     'parent_url' => NULL,
-    'order' => 3,
-    'perm' => 'locations.colonies',
+    'order' => 1,
+    'perm' => 'colonies.view',
     'roles' => 
     array (
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
       'admin' => 
       array (
         'view' => 1,
@@ -785,18 +778,53 @@ return array (
         'edit' => 1,
         'delete' => 1,
       ),
-      'manager' => 
+      'super_admin' => 
       array (
         'view' => 1,
-        'create' => 0,
-        'edit' => 0,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'project_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'property_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'operations_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'franchise_owner' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
         'delete' => 0,
       ),
     ),
   ),
   '/admin/projects' => 
   array (
-    'name' => 'Projects List',
+    'name' => 'Projects Manager',
     'icon' => 'fas fa-city',
     'section' => 'projects',
     'parent_url' => NULL,
@@ -1195,7 +1223,7 @@ return array (
   ),
   '/admin/users' => 
   array (
-    'name' => 'All Users List',
+    'name' => 'Users Manager',
     'icon' => 'fas fa-users',
     'section' => 'users',
     'parent_url' => NULL,
@@ -2429,79 +2457,11 @@ return array (
       ),
     ),
   ),
-  '/admin/site-visits' => 
-  array (
-    'name' => 'Site Visits',
-    'icon' => 'fas fa-calendar-alt',
-    'section' => 'crm',
-    'parent_url' => NULL,
-    'order' => 5,
-    'perm' => 'visits.view',
-    'roles' => 
-    array (
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'sales_director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'sales_manager' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'property_manager' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'sales_team_lead' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'senior_agent' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'franchise_owner' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
   '/admin/locations/states' => 
   array (
     'name' => 'States Management',
-    'icon' => 'fa-map',
-    'section' => 'locations',
+    'icon' => 'fas fa-map-marked-alt',
+    'section' => 'colonies',
     'parent_url' => NULL,
     'order' => 1,
     'perm' => 'locations.states',
@@ -2548,6 +2508,46 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/township-water-supply' => 
+  array (
+    'name' => 'Borewell Water Supply',
+    'icon' => 'fas fa-faucet-drip',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 1,
+    'perm' => 'township.water',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
       ),
     ),
   ),
@@ -2671,7 +2671,7 @@ return array (
   '/admin/colony-pipeline' => 
   array (
     'name' => 'Colony Pipeline',
-    'icon' => 'fas fa-stream',
+    'icon' => 'fas fa-project-diagram',
     'section' => 'colonies',
     'parent_url' => NULL,
     'order' => 2,
@@ -2747,7 +2747,7 @@ return array (
   array (
     'name' => 'Plot Categories',
     'icon' => 'fas fa-tags',
-    'section' => 'land',
+    'section' => 'plots',
     'parent_url' => NULL,
     'order' => 2,
     'perm' => 'plots.view',
@@ -2814,7 +2814,7 @@ return array (
   '/admin/land/records' => 
   array (
     'name' => 'Land Records',
-    'icon' => 'fas fa-file-invoice',
+    'icon' => 'fas fa-file-contract',
     'section' => 'land',
     'parent_url' => NULL,
     'order' => 2,
@@ -3191,555 +3191,6 @@ return array (
       ),
     ),
   ),
-  '/admin/salary/advances' =>
-  array (
-    'name' => 'Salary Advances',
-    'icon' => 'fas fa-hand-holding-usd',
-    'section' => 'hrm',
-    'parent_url' => NULL,
-    'order' => 12,
-    'perm' => 'payroll.view',
-    'roles' =>
-    array (
-      'admin' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'ceo' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chro' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_director' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_manager' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
-  '/admin/salary/reimbursements' =>
-  array (
-    'name' => 'Reimbursements',
-    'icon' => 'fas fa-receipt',
-    'section' => 'hrm',
-    'parent_url' => NULL,
-    'order' => 13,
-    'perm' => 'payroll.view',
-    'roles' =>
-    array (
-      'admin' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'ceo' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chro' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_director' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_manager' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
-  '/admin/salary/arrears/history' =>
-  array (
-    'name' => 'Salary Arrears',
-    'icon' => 'fas fa-history',
-    'section' => 'hrm',
-    'parent_url' => NULL,
-    'order' => 14,
-    'perm' => 'payroll.view',
-    'roles' => 
-    array (
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'ceo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chro' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_manager' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
-  '/admin/fnf/history' => 
-  array (
-    'name' => 'F&F Settlements',
-    'icon' => 'fas fa-file-invoice-dollar',
-    'section' => 'hrm',
-    'parent_url' => NULL,
-    'order' => 15,
-    'perm' => 'payroll.view',
-    'roles' => 
-    array (
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'ceo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chro' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_manager' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
-  '/admin/fnf/calculator' => 
-  array (
-    'name' => 'F&F Calculator',
-    'icon' => 'fas fa-calculator',
-    'section' => 'hrm',
-    'parent_url' => NULL,
-    'order' => 16,
-    'perm' => 'payroll.view',
-    'roles' => 
-    array (
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'ceo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chro' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_manager' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
-  '/admin/fnf/assets' => 
-  array (
-    'name' => 'Employee Assets',
-    'icon' => 'fas fa-laptop',
-    'section' => 'hrm',
-    'parent_url' => NULL,
-    'order' => 17,
-    'perm' => 'payroll.view',
-    'roles' => 
-    array (
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'ceo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chro' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_manager' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
-  '/admin/gratuity/report' => 
-  array (
-    'name' => 'Gratuity',
-    'icon' => 'fas fa-award',
-    'section' => 'hrm',
-    'parent_url' => NULL,
-    'order' => 18,
-    'perm' => 'payroll.view',
-    'roles' => 
-    array (
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'ceo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chro' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_manager' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
-  '/admin/shift-roster/roster' => 
-  array (
-    'name' => 'Shift Roster',
-    'icon' => 'fas fa-calendar-alt',
-    'section' => 'hrm',
-    'parent_url' => NULL,
-    'order' => 19,
-    'perm' => 'hrm.view',
-    'roles' => 
-    array (
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'ceo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chro' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_manager' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
-  '/admin/shift-roster/overtime-requests' => 
-  array (
-    'name' => 'Overtime Requests',
-    'icon' => 'fas fa-clock',
-    'section' => 'hrm',
-    'parent_url' => NULL,
-    'order' => 20,
-    'perm' => 'hrm.view',
-    'roles' => 
-    array (
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'ceo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chro' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_manager' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
   '/admin/legal/deadlines' => 
   array (
     'name' => 'Legal Deadlines',
@@ -3789,7 +3240,7 @@ return array (
   ),
   '/admin/marketing/marketplace' => 
   array (
-    'name' => 'Marketplace Listings',
+    'name' => 'Marketplace Manager',
     'icon' => 'fas fa-store',
     'section' => 'marketing',
     'parent_url' => NULL,
@@ -4758,8 +4209,8 @@ return array (
   '/admin/locations/districts' => 
   array (
     'name' => 'Districts Board',
-    'icon' => 'fa-map-marked-alt',
-    'section' => 'locations',
+    'icon' => 'fas fa-map-marked-alt',
+    'section' => 'colonies',
     'parent_url' => NULL,
     'order' => 2,
     'perm' => 'locations.districts',
@@ -4785,6 +4236,65 @@ return array (
         'create' => 0,
         'edit' => 0,
         'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/2fa' => 
+  array (
+    'name' => '2FA Security',
+    'icon' => 'fas fa-shield-alt',
+    'section' => 'security',
+    'parent_url' => NULL,
+    'order' => 2,
+    'perm' => 'system.settings',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/township-genset' => 
+  array (
+    'name' => 'DG Power Backup',
+    'icon' => 'fas fa-bolt',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 2,
+    'perm' => 'township.genset',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
       ),
     ),
   ),
@@ -4962,7 +4472,7 @@ return array (
   '/admin/colony-feasibility' => 
   array (
     'name' => 'Colony Feasibility',
-    'icon' => 'fas fa-chart-pie',
+    'icon' => 'fas fa-chart-line',
     'section' => 'colonies',
     'parent_url' => NULL,
     'order' => 3,
@@ -5037,7 +4547,7 @@ return array (
   '/admin/land-inventory/leads' => 
   array (
     'name' => 'Land Leads',
-    'icon' => 'fas fa-bullseye',
+    'icon' => 'fas fa-user-plus',
     'section' => 'land',
     'parent_url' => NULL,
     'order' => 3,
@@ -5221,7 +4731,7 @@ return array (
   array (
     'name' => 'Bulk Property Import',
     'icon' => 'fas fa-file-import',
-    'section' => 'land',
+    'section' => 'plots',
     'parent_url' => NULL,
     'order' => 3,
     'perm' => 'property.import',
@@ -5957,7 +5467,7 @@ return array (
   ),
   '/admin/directory/listings' => 
   array (
-    'name' => 'Manage Listings',
+    'name' => 'Listings Manager',
     'icon' => 'fas fa-clipboard-list',
     'section' => 'services',
     'parent_url' => NULL,
@@ -6192,6 +5702,46 @@ return array (
       ),
     ),
   ),
+  '/admin/township-security' => 
+  array (
+    'name' => 'Security & Rosters',
+    'icon' => 'fas fa-shield-alt',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 3,
+    'perm' => 'township.security',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
   '/admin/dashboard/cfo' => 
   array (
     'name' => 'CFO Dashboard',
@@ -6380,7 +5930,7 @@ return array (
   '/admin/land-inventory/brokers' => 
   array (
     'name' => 'Land Brokers',
-    'icon' => 'fas fa-user-friends',
+    'icon' => 'fas fa-user-tie',
     'section' => 'land',
     'parent_url' => NULL,
     'order' => 4,
@@ -6629,6 +6179,102 @@ return array (
         'delete' => 0,
       ),
     ),
+  '/admin/chart-of-accounts' =>
+  array (
+    'name' => 'Chart of Accounts',
+    'icon' => 'fas fa-sitemap',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 5,
+    'perm' => 'financial.view',
+    'roles' =>
+    array (
+      'admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'franchise_owner' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
   ),
   '/admin/telecaller' => 
   array (
@@ -6681,6 +6327,102 @@ return array (
         'create' => 0,
         'edit' => 1,
         'delete' => 0,
+  '/admin/journal-entries' =>
+  array (
+    'name' => 'Journal Entries',
+    'icon' => 'fas fa-book',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 6,
+    'perm' => 'financial.view',
+    'roles' =>
+    array (
+      'admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'franchise_owner' =>
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
       ),
     ),
   ),
@@ -7636,8 +7378,8 @@ return array (
   '/admin/tools/landmarks' => 
   array (
     'name' => 'Landmarks & Distances',
-    'icon' => 'fa-map-marker-alt',
-    'section' => 'locations',
+    'icon' => 'fas fa-map-marked-alt',
+    'section' => 'colonies',
     'parent_url' => NULL,
     'order' => 4,
     'perm' => 'tools.landmarks',
@@ -7663,6 +7405,46 @@ return array (
         'create' => 0,
         'edit' => 0,
         'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/township-cctv' => 
+  array (
+    'name' => 'CCTV Surveillance',
+    'icon' => 'fas fa-video',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 4,
+    'perm' => 'township.cctv',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
       ),
     ),
   ),
@@ -7754,6 +7536,74 @@ return array (
         'delete' => 0,
       ),
       'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/site-visits' => 
+  array (
+    'name' => 'Site Visits',
+    'icon' => 'fas fa-calendar-alt',
+    'section' => 'crm',
+    'parent_url' => NULL,
+    'order' => 5,
+    'perm' => 'visits.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'sales_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'sales_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'property_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'sales_team_lead' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_agent' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'franchise_owner' => 
       array (
         'view' => 1,
         'create' => 1,
@@ -8484,6 +8334,65 @@ return array (
     'roles' => 
     array (
       'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/advanced-analytics' => 
+  array (
+    'name' => 'Advanced Analytics',
+    'icon' => 'fas fa-chart-line',
+    'section' => 'reports',
+    'parent_url' => NULL,
+    'order' => 5,
+    'perm' => 'reports.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/township-waste' => 
+  array (
+    'name' => 'Waste & Sanitation',
+    'icon' => 'fas fa-recycle',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 5,
+    'perm' => 'township.waste',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
       array (
         'view' => 1,
         'create' => 1,
@@ -9290,7 +9199,7 @@ return array (
   '/admin/legal-colony-pipeline/analytics-all' => 
   array (
     'name' => 'Colony Analytics',
-    'icon' => 'fas fa-chart-line',
+    'icon' => 'fas fa-chart-pie',
     'section' => 'colonies',
     'parent_url' => '/admin/legal-colony-pipeline',
     'order' => 6,
@@ -9317,6 +9226,46 @@ return array (
     'roles' => 
     array (
       'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/township-horticulture' => 
+  array (
+    'name' => 'Park Horticulture',
+    'icon' => 'fas fa-tree',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 6,
+    'perm' => 'township.horticulture',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
       array (
         'view' => 1,
         'create' => 1,
@@ -9689,10 +9638,10 @@ return array (
       ),
     ),
   ),
-  '/admin/legal-colony-pipeline/milestones/2' => 
+  '/admin/legal-colony-pipeline/milestones-list' => 
   array (
     'name' => 'RERA Milestone Tracker',
-    'icon' => 'fas fa-landmark',
+    'icon' => 'fas fa-tasks',
     'section' => 'colonies',
     'parent_url' => '/admin/legal-colony-pipeline',
     'order' => 7,
@@ -9700,6 +9649,46 @@ return array (
     'roles' => 
     array (
       'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/township-grievances' => 
+  array (
+    'name' => 'Resident Grievances',
+    'icon' => 'fas fa-headset',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 7,
+    'perm' => 'township.grievances',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
       array (
         'view' => 1,
         'create' => 1,
@@ -10176,6 +10165,46 @@ return array (
         'delete' => 1,
       ),
       'senior_developer' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/work-orders' => 
+  array (
+    'name' => 'Civil Work Orders',
+    'icon' => 'fas fa-hard-hat',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 8,
+    'perm' => 'township.work_orders',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
       array (
         'view' => 1,
         'create' => 1,
@@ -10666,6 +10695,46 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/plots/demarcation' => 
+  array (
+    'name' => 'Plot Demarcations',
+    'icon' => 'fas fa-draw-polygon',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 9,
+    'perm' => 'plots.demarcation',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
       ),
     ),
   ),
@@ -11225,9 +11294,101 @@ return array (
       ),
     ),
   ),
+  '/admin/system-config' => 
+  array (
+    'name' => 'System Configuration',
+    'icon' => 'fas fa-cogs',
+    'section' => 'settings',
+    'parent_url' => NULL,
+    'order' => 10,
+    'perm' => 'system.config',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/plots/development' => 
+  array (
+    'name' => 'Plot Development',
+    'icon' => 'fa-hard-hat',
+    'section' => 'plots',
+    'parent_url' => '/admin/plots',
+    'order' => 10,
+    'perm' => 'plots.development',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/commercial-leases' => 
+  array (
+    'name' => 'Commercial Leases',
+    'icon' => 'fas fa-store',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 10,
+    'perm' => 'commercial.leases',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
   '/admin/bookings' => 
   array (
-    'name' => 'Bookings List',
+    'name' => 'Bookings Manager',
     'icon' => 'fas fa-calendar-check',
     'section' => 'sales',
     'parent_url' => NULL,
@@ -11415,6 +11576,65 @@ return array (
     'roles' => 
     array (
       'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/plots/pricing-rules' => 
+  array (
+    'name' => 'PLC Pricing Rules',
+    'icon' => 'fas fa-tags',
+    'section' => 'plots',
+    'parent_url' => '/admin/plots',
+    'order' => 11,
+    'perm' => 'plots.development',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/township-lighting' => 
+  array (
+    'name' => 'Street Lighting & Poles',
+    'icon' => 'fas fa-lightbulb',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 11,
+    'perm' => 'township.lighting',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
       array (
         'view' => 1,
         'create' => 1,
@@ -11682,6 +11902,107 @@ return array (
     array (
     ),
   ),
+  '/admin/salary/advances' => 
+  array (
+    'name' => 'Salary Advances',
+    'icon' => 'fas fa-hand-holding-usd',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 12,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/township-rwh' => 
+  array (
+    'name' => 'Rainwater Recharge (RWH)',
+    'icon' => 'fas fa-cloud-showers-heavy',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 12,
+    'perm' => 'township.rwh',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
   '/admin/registry' => 
   array (
     'name' => 'Registry Management',
@@ -11943,6 +12264,107 @@ return array (
       ),
     ),
   ),
+  '/admin/salary/reimbursements' => 
+  array (
+    'name' => 'Reimbursements',
+    'icon' => 'fas fa-receipt',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 13,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/township-stp' => 
+  array (
+    'name' => 'STP Effluent & UPPCB Desk',
+    'icon' => 'fas fa-vial',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 13,
+    'perm' => 'township.stp',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
   '/admin/possession' => 
   array (
     'name' => 'Possession Handover',
@@ -12189,6 +12611,107 @@ return array (
     'roles' => 
     array (
       'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/salary/arrears/history' => 
+  array (
+    'name' => 'Salary Arrears',
+    'icon' => 'fas fa-history',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 14,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/township-fire-safety' => 
+  array (
+    'name' => 'Fire Hydrant & UP Fire NOC',
+    'icon' => 'fas fa-fire-extinguisher',
+    'section' => 'township_ops',
+    'parent_url' => NULL,
+    'order' => 14,
+    'perm' => 'township.fire_safety',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
       array (
         'view' => 1,
         'create' => 1,
@@ -12538,6 +13061,67 @@ return array (
     array (
     ),
   ),
+  '/admin/fnf/history' => 
+  array (
+    'name' => 'F&F Settlements',
+    'icon' => 'fas fa-file-invoice-dollar',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 15,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
   '/admin/plot-costs' => 
   array (
     'name' => 'Plot Costs',
@@ -12594,14 +13178,42 @@ return array (
   ),
   '/admin/whatsapp/settings' => 
   array (
-    'name' => 'WhatsApp Config',
+    'name' => 'WhatsApp Configuration',
     'icon' => 'fab fa-whatsapp',
-    'section' => 'communication',
+    'section' => 'settings',
     'parent_url' => NULL,
-    'order' => 104,
-    'perm' => NULL,
+    'order' => 16,
+    'perm' => 'system.settings',
     'roles' => 
     array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'cto' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'it_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
     ),
   ),
   '/employee/deals' => 
@@ -12661,6 +13273,67 @@ return array (
     'perm' => 'mlm_rewards_rank_criteria',
     'roles' => 
     array (
+    ),
+  ),
+  '/admin/fnf/calculator' => 
+  array (
+    'name' => 'F&F Calculator',
+    'icon' => 'fas fa-calculator',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 16,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
     ),
   ),
   '/admin/banking' => 
@@ -12842,6 +13515,67 @@ return array (
     'perm' => 'mlm_rewards_rewards',
     'roles' => 
     array (
+    ),
+  ),
+  '/admin/fnf/assets' => 
+  array (
+    'name' => 'Employee Assets',
+    'icon' => 'fas fa-laptop',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 17,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
     ),
   ),
   '/admin/bank-import' => 
@@ -13032,6 +13766,67 @@ return array (
     array (
     ),
   ),
+  '/admin/gratuity/report' => 
+  array (
+    'name' => 'Gratuity',
+    'icon' => 'fas fa-award',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 18,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
   '/admin/finance/collections' => 
   array (
     'name' => 'Cash Collections',
@@ -13211,6 +14006,67 @@ return array (
     'perm' => 'mlm_rewards_withdrawals',
     'roles' => 
     array (
+    ),
+  ),
+  '/admin/shift-roster/roster' => 
+  array (
+    'name' => 'Shift Roster',
+    'icon' => 'fas fa-calendar-alt',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 19,
+    'perm' => 'hrm.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
     ),
   ),
   '/admin/menu-permissions' => 
@@ -13833,6 +14689,107 @@ return array (
       ),
     ),
   ),
+  '/admin/shift-roster/overtime-requests' => 
+  array (
+    'name' => 'Overtime Requests',
+    'icon' => 'fas fa-clock',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 20,
+    'perm' => 'hrm.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/farmer-acquisitions' => 
+  array (
+    'name' => 'Land Acquisitions',
+    'icon' => 'fas fa-tractor',
+    'section' => 'land',
+    'parent_url' => NULL,
+    'order' => 20,
+    'perm' => 'land.acquisitions',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'construction_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
   '/employee/infrastructure' => 
   array (
     'name' => 'Infrastructure',
@@ -13896,6 +14853,25 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/sales/nri-desk' => 
+  array (
+    'name' => 'NRI FIRC Desk',
+    'icon' => 'fas fa-globe',
+    'section' => 'sales',
+    'parent_url' => '/admin/bookings',
+    'order' => 21,
+    'perm' => 'bookings.nri',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
       ),
     ),
   ),
@@ -13986,6 +14962,25 @@ return array (
       ),
     ),
   ),
+  '/admin/accounting' => 
+  array (
+    'name' => 'Accounting',
+    'icon' => 'fas fa-calculator',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 23,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
   '/employee/land-dashboard' => 
   array (
     'name' => 'Land Dashboard',
@@ -14065,6 +15060,25 @@ return array (
         'delete' => 1,
       ),
       'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/agentic-ai' => 
+  array (
+    'name' => 'Agentic AI',
+    'icon' => 'fas fa-robot',
+    'section' => 'ai_tech',
+    'parent_url' => NULL,
+    'order' => 25,
+    'perm' => 'system.settings',
+    'roles' => 
+    array (
+      'admin' => 
       array (
         'view' => 1,
         'create' => 1,
@@ -15573,14 +16587,42 @@ return array (
   ),
   '/admin/ocr' => 
   array (
-    'name' => 'Document OCR',
-    'icon' => 'fas fa-file-pdf',
-    'section' => 'ai_tech',
+    'name' => 'OCR Documents',
+    'icon' => 'fas fa-file-alt',
+    'section' => 'operations',
     'parent_url' => NULL,
-    'order' => 103,
+    'order' => 55,
     'perm' => NULL,
     'roles' => 
     array (
+      'department_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'operations_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'backoffice_staff' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
     ),
   ),
   '/admin/crm/bulk-send' => 
@@ -16402,6 +17444,18 @@ return array (
         'edit' => 1,
         'delete' => 0,
       ),
+    ),
+  ),
+  '/admin/plots/import' => 
+  array (
+    'name' => 'Bulk Import/Export',
+    'icon' => 'fas fa-file-csv',
+    'section' => 'plots',
+    'parent_url' => NULL,
+    'order' => 60,
+    'perm' => NULL,
+    'roles' => 
+    array (
     ),
   ),
   '/employee/documents' => 
@@ -19472,7 +20526,7 @@ return array (
   ),
   '/admin/leads/telecaller-performance' => 
   array (
-    'name' => 'Telecoder Performance',
+    'name' => 'Telecaller Performance',
     'icon' => 'fas fa-phone-alt',
     'section' => 'sales',
     'parent_url' => NULL,

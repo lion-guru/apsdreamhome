@@ -51,7 +51,7 @@ class DashboardService
             );
 
             return $user && in_array($user['role'], self::ADMIN_ROLES, true);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to check admin status", [
                 'user_id' => $userId,
                 'error' => $e->getMessage()
@@ -79,7 +79,7 @@ class DashboardService
             $this->logger->info("Dashboard statistics retrieved successfully");
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get dashboard stats", ['error' => $e->getMessage()]);
             return $this->getDefaultStats();
         }
@@ -257,7 +257,7 @@ class DashboardService
         try {
             $result = $this->db->fetchOne("SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size_mb FROM information_schema.tables WHERE table_schema = DATABASE()");
             $stats['database_size_mb'] = (float)($result['size_mb'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $stats['database_size_mb'] = 0;
         }
 
@@ -265,7 +265,7 @@ class DashboardService
         try {
             $result = $this->db->fetchOne("SELECT COUNT(*) as tables FROM information_schema.tables WHERE table_schema = DATABASE()");
             $stats['total_tables'] = (int)($result['tables'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $stats['total_tables'] = 0;
         }
 
@@ -323,7 +323,7 @@ class DashboardService
                 ];
             }, $activities);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get recent activities", ['error' => $e->getMessage()]);
             return [];
         }
@@ -346,7 +346,7 @@ class DashboardService
         try {
             $this->db->fetchOne("SELECT 1");
             $health['database'] = 'healthy';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $health['database'] = 'unhealthy';
             $health['overall'] = 'unhealthy';
         }
@@ -385,7 +385,7 @@ class DashboardService
                 try {
                     $this->db->fetchOne("SELECT 1");
                     return 'healthy';
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     return 'unhealthy';
                 }
             
@@ -519,7 +519,7 @@ class DashboardService
             ]);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to log admin activity", [
                 'user_id' => $userId,
                 'action' => $action,
@@ -573,7 +573,7 @@ class DashboardService
                 ];
             }, $logs);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get admin activity logs", ['error' => $e->getMessage()]);
             return [];
         }

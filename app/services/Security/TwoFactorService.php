@@ -2,9 +2,9 @@
 
 namespace App\Services\Legacy;
 
+use App\Http\Middleware\AdminLogger;
 // NOTE (S448): without this import AdminLogger:: resolved to
 // App\Services\Legacy\AdminLogger -> class not found -> fatal.
-use App\Http\Middleware\AdminLogger;
 // Two-Factor Authentication Management System
 
 class TwoFactorManager
@@ -65,9 +65,9 @@ class TwoFactorManager
             $this->sendToken($user_id, $token, $method, $user_type);
 
             return $token;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (\class_exists('AdminLogger')) {
-                AdminLogger::logAction("2FA token generation error: " . $e->getMessage(), ['user_id' => $user_id] + ['level' => 'security']);
+                AdminLogger::logAction("2FA token generation error: " . $e->getMessage(), ['user_id' => $user_id] + ['level' => 'security']);;
             } else {
                 \error_log("2FA token generation error: " . $e->getMessage());
             }
@@ -94,7 +94,7 @@ class TwoFactorManager
             // Token not found or expired
             if (!$token_data) {
                 if (\class_exists('AdminLogger')) {
-                    AdminLogger::logAction("Invalid 2FA token attempt", ['user_id' => $user_id] + ['level' => 'security']);
+                    AdminLogger::logAction("Invalid 2FA token attempt", ['user_id' => $user_id] + ['level' => 'security']);;
                 }
                 return false;
             }
@@ -104,9 +104,9 @@ class TwoFactorManager
             $this->db->execute($sql, [$token_data['id']]);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (\class_exists('AdminLogger')) {
-                AdminLogger::logAction("2FA token validation error: " . $e->getMessage(), ['user_id' => $user_id] + ['level' => 'security']);
+                AdminLogger::logAction("2FA token validation error: " . $e->getMessage(), ['user_id' => $user_id] + ['level' => 'security']);;
             } else {
                 \error_log("2FA token validation error: " . $e->getMessage());
             }
@@ -160,7 +160,7 @@ class TwoFactorManager
     {
         if (!$this->email_service) {
             if (\class_exists('AdminLogger')) {
-                AdminLogger::logAction("Email service not configured for 2FA", ['email' => $email] + ['level' => 'security']);
+                AdminLogger::logAction("Email service not configured for 2FA", ['email' => $email] + ['level' => 'security']);;
             }
             return;
         }
@@ -180,7 +180,7 @@ class TwoFactorManager
     {
         if (!$this->sms_service) {
             if (\class_exists('AdminLogger')) {
-                AdminLogger::logAction("SMS service not configured for 2FA", ['phone' => $phone] + ['level' => 'security']);
+                AdminLogger::logAction("SMS service not configured for 2FA", ['phone' => $phone] + ['level' => 'security']);;
             }
             return;
         }
@@ -234,11 +234,11 @@ class TwoFactorManager
             $this->db->execute($sql);
 
             if (\class_exists('AdminLogger')) {
-                AdminLogger::logAction("Cleaned up expired 2FA tokens", [] + ['level' => 'info']);
+                AdminLogger::logAction("Cleaned up expired 2FA tokens", [] + ['level' => 'info']);;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (\class_exists('AdminLogger')) {
-                AdminLogger::logAction("Error cleaning up 2FA tokens: " . $e->getMessage(), [] + ['level' => 'error']);
+                AdminLogger::logAction("Error cleaning up 2FA tokens: " . $e->getMessage(), [] + ['level' => 'error']);;
             }
         }
     }

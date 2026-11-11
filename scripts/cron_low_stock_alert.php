@@ -1,48 +1,94 @@
 <?php
 /**
- * Cron: Low Stock Alert
- * Checks material_inventory where status in (low_stock, out_of_stock) per tenant
- * Creates in-app notification for admin/operations roles (if notifications table exists) and logs
- * Run hourly: 0 * * * * php scripts/cron_low_stock_alert.php
+ * Low Stock Alert Cron
+ * Runs daily at 06:00
  */
+
 require_once __DIR__ . '/../config/bootstrap.php';
 
 use App\Core\Database\Database;
-use App\Core\Middleware\TenantContext;
-use App\Core\Cron\CronDb;
+use App\Services\Inventory\InventoryService;
+use App\Services\NotificationService;
+
+echo "=== Low Stock Alert Cron ===\n";
+echo "Time: " . date('Y-m-d H:i:s') . "\n";
 
 try {
-    // Outage-aware connect: retries blips, suppresses hourly spam while down.
-    $db = CronDb::connection('low_stock');
-    if ($db === null) { echo "DB unreachable, alert suppressed until recovery\n"; exit(0); }
-    $tenants = [1];
-    try {
-        $st = $db->query("SELECT id FROM tenants WHERE status='active' LIMIT 20");
-        $rows = $st->fetchAll(PDO::FETCH_COLUMN);
-        if (!empty($rows)) $tenants = array_map('intval', $rows);
-    } catch (Exception $e) { $tenants = [1]; }
-
-    foreach ($tenants as $tid) {
-        TenantContext::setById((int)$tid);
-        $st = $db->prepare("SELECT material_name, material_category, current_stock, minimum_stock, status FROM material_inventory WHERE tenant_id=? AND status IN ('low_stock','out_of_stock') LIMIT 20");
-        $st->execute([$tid]);
-        $lows = $st->fetchAll(PDO::FETCH_ASSOC);
-        if (empty($lows)) { echo "Tenant $tid: no low stock\n"; continue; }
-        $names = implode(', ', array_map(fn($r) => $r['material_name'] . ' (' . $r['status'] . ')', $lows));
-        $msg = count($lows) . " material(s) low/out of stock: $names";
-        echo "Tenant $tid: $msg\n";
-        // Try to insert notification for admins (best-effort, ignore if table missing)
-        try {
-            $admins = $db->prepare("SELECT id FROM users WHERE tenant_id=? AND role IN ('admin','super_admin','operations_manager','construction_director','project_manager') AND status='active' LIMIT 10");
-            $admins->execute([$tid]);
-            $aids = $admins->fetchAll(PDO::FETCH_COLUMN);
-            foreach ($aids as $aid) {
-                $db->prepare("INSERT INTO notifications (tenant_id, user_id, title, message, type, is_read, created_at) VALUES (?, ?, 'Low Stock Alert', ?, 'warning', 0, NOW())")->execute([$tid, $aid, $msg]);
-            }
-        } catch (Exception $e) { error_log("cron_low_stock notification error: " . $e->getMessage()); }
+    $db = Database::getInstance()->getConnection();
+    $inventory = new InventoryService();
+    $notifications = new NotificationService();
+    
+    // Get low stock items (quantity <= reorder_level)
+    $stmt = $db->prepare("
+        SELECT i.*, p.name as product_name, p.reorder_level
+        FROM inventory i
+        JOIN products p ON p.id = i.product_id
+        WHERE i.quantity <= p.reorder_level
+        AND p.status = 'active'
+        AND i.quantity > 0
+    ");
+    $stmt->execute();
+    $lowStock = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    if (empty($lowStock)) {
+        echo "No low stock items found.\n";
+        exit(0);
     }
-    echo "Low stock check done\n";
-} catch (Exception $e) {
-    error_log("cron_low_stock fatal: " . $e->getMessage());
-    echo "Error: " . $e->getMessage() . "\n";
+    
+    echo "Found " . count($lowStock) . " low stock items\n";
+    
+    $alerted = 0;
+    foreach ($lowStock as $item) {
+        // Check if alert already sent recently (last 7 days)
+        $check = $db->prepare("
+            SELECT COUNT(*) FROM notifications 
+            WHERE type = 'low_stock' 
+            AND related_id = ? 
+            AND created_at > DATE_SUB(NOW(), INTERVAL 7 DAY)
+        ");
+        $check->execute([$item['product_id']]);
+        
+        if ($check->fetchColumn() > 0) {
+            continue; // Already alerted recently
+        }
+        
+        // Send notification to inventory managers
+        $managers = $db->prepare("
+            SELECT u.id, u.email, u.name 
+            FROM users u 
+            JOIN user_roles ur ON ur.user_id = u.id 
+            WHERE ur.role IN ('admin', 'manager', 'inventory_manager')
+            AND u.status = 'active'
+        ");
+        $managers->execute();
+        $managerList = $managers->fetchAll(PDO::FETCH_ASSOC);
+        
+        foreach ($managerList as $manager) {
+            $notifications->notify([
+                'user_id' => $manager['id'],
+                'title' => 'Low Stock Alert',
+                'message' => "Product {$item['product_name']} is low on stock. Current: {$item['quantity']}, Reorder level: {$item['reorder_level']}",
+                'type' => 'low_stock',
+                'data' => [
+                    'product_id' => $item['product_id'],
+                    'current_quantity' => $item['quantity'],
+                    'reorder_level' => $item['reorder_level'],
+                ],
+                'channels' => ['in_app', 'email'],
+                'priority' => 'high',
+            ]);
+        }
+        
+        $alerted++;
+    }
+    
+    echo "Alerts sent: $alerted\n";
+    echo "✅ Low stock alert completed\n";
+    
+} catch (\Throwable $e) {
+    echo "❌ ERROR: " . $e->getMessage() . "\n";
+    echo $e->getTraceAsString() . "\n";
+    exit(1);
 }
+
+echo "=== Low Stock Alert Completed ===\n";

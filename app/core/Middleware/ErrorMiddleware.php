@@ -56,7 +56,7 @@ class ErrorMiddleware extends Middleware
             // Continue with request processing
             return $next($request);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->handleException($e);
         } catch (\Error $e) {
             return $this->handleException($e);
@@ -174,7 +174,7 @@ class ErrorMiddleware extends Middleware
             // Also log to database if available
             $this->logErrorToDatabase($errorData);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // If logging fails, try to log to PHP error log
             error_log("Failed to log error: " . $e->getMessage());
         }
@@ -205,7 +205,7 @@ class ErrorMiddleware extends Middleware
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Database logging is optional, don't throw if it fails
         }
     }

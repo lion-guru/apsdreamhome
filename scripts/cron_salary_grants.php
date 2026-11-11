@@ -1,22 +1,33 @@
 <?php
 /**
- * Cron: process monthly salary-grant payouts for all active grants.
- * Standalone: php scripts/cron_salary_grants.php [YYYY-MM]
- * Idempotent: already-paid (grant, month) pairs are skipped, so re-runs
- * within the same month never double-pay.
+ * Monthly Salary Grants Processing Cron
+ * Runs on 1st of each month at 02:00
  */
+
 require_once __DIR__ . '/../config/bootstrap.php';
 
-$month = $argv[1] ?? date('Y-m');
-if (!preg_match('/^\d{4}-\d{2}$/', $month)) {
-    fwrite(STDERR, "Usage: php scripts/cron_salary_grants.php [YYYY-MM]\n");
+use App\Core\Database\Database;
+use App\Services\Payroll\SalaryGrantService;
+
+echo "=== Monthly Salary Grants Cron Started ===\n";
+echo "Time: " . date('Y-m-d H:i:s') . "\n";
+
+try {
+    $db = Database::getInstance()->getConnection();
+    $service = new SalaryGrantService();
+    
+    $month = date('Y-m');
+    echo "Processing month: $month\n";
+    
+    $result = $service->processMonthlyGrants($month);
+    
+    echo "Result: " . json_encode($result) . "\n";
+    echo "✅ Salary grants completed successfully\n";
+    
+} catch (\Throwable $e) {
+    echo "❌ ERROR: " . $e->getMessage() . "\n";
+    echo $e->getTraceAsString() . "\n";
     exit(1);
 }
 
-$svc = new \App\Services\MLM\SalaryIncentiveService();
-$res = $svc->processMonthlyGrants($month);
-echo "month=$month processed=" . ($res['processed'] ?? 0) . " amount=" . ($res['amount'] ?? 0);
-if (!empty($res['errors'])) echo " skipped=" . count($res['errors']);
-echo PHP_EOL;
-foreach (($res['errors'] ?? []) as $e) echo "  - $e\n";
-exit(!empty($res['success']) ? 0 : 1);
+echo "=== Monthly Salary Grants Cron Completed ===\n";

@@ -38,7 +38,7 @@ class OLNService
             $sql .= " ORDER BY l.next_activity_date ASC, l.priority DESC LIMIT 100";
 
             return $this->db->fetchAll($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OLNService::getDueFollowUps error: " . $e->getMessage());
             return [];
         }
@@ -111,7 +111,7 @@ class OLNService
             }
 
             return ['assigned' => $assigned, 'total' => count($unassigned)];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OLNService::autoAssignLeads error: " . $e->getMessage());
             return ['assigned' => 0, 'error' => $e->getMessage()];
         }
@@ -161,7 +161,7 @@ class OLNService
                 'scheduled_calls' => $schedule,
                 'activities' => $activities
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OLNService::getLeadJourney error: " . $e->getMessage());
             return null;
         }
@@ -226,7 +226,7 @@ class OLNService
             }
 
             return ['success' => true, 'stage' => $newStage];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OLNService::advanceStage error: " . $e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -279,7 +279,7 @@ class OLNService
             elseif ($score >= 40) $category = 'warm';
 
             return ['score' => $score, 'category' => $category, 'answered_calls' => $answeredCalls, 'total_duration' => $totalDuration];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OLNService::calculateLeadScore error: " . $e->getMessage());
             return ['score' => 0, 'category' => 'cold'];
         }
@@ -343,7 +343,7 @@ class OLNService
                 'best_calling_times' => $bestCallingTimes,
                 'agent_performance' => $agentPerformance
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OLNService::getNurturingAnalytics error: " . $e->getMessage());
             return [];
         }
@@ -378,7 +378,7 @@ class OLNService
             }
 
             return ['success' => true, 'scheduled' => $scheduled];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OLNService::bulkScheduleFollowUps error: " . $e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
         }

@@ -55,7 +55,7 @@ class ESignController extends BaseApiController
             }
 
             return $this->jsonError($result['error']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignController::initiate] ' . $e->getMessage());
             return $this->jsonError('Failed to initiate eSign');
         }
@@ -85,7 +85,7 @@ class ESignController extends BaseApiController
             }
 
             return $this->jsonError($result['error']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignController::verifyOtp] ' . $e->getMessage());
             return $this->jsonError('OTP verification failed');
         }
@@ -105,7 +105,7 @@ class ESignController extends BaseApiController
             }
 
             return $this->jsonError($result['error'], 404);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignController::getStatus] ' . $e->getMessage());
             return $this->jsonError('Failed to get status');
         }
@@ -128,7 +128,7 @@ class ESignController extends BaseApiController
             }
 
             return $this->jsonError($result['error'], 404);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignController::getDocument] ' . $e->getMessage());
             return $this->jsonError('Failed to get document');
         }
@@ -149,7 +149,7 @@ class ESignController extends BaseApiController
         try {
             $result = $this->service->getByBooking($bookingId);
             return $this->jsonSuccess($result);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignController::getByBooking] ' . $e->getMessage());
             return $this->jsonError('Failed to fetch transactions');
         }

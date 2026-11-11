@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Services\Voice\VoiceCallService;
+use App\Services\AI\VoiceService;
 
 class VoiceCallSchedulerController extends AdminController
 {
@@ -11,7 +11,7 @@ class VoiceCallSchedulerController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        $this->voiceCallService = new VoiceCallService();
+        $this->voiceCallService = new VoiceService();
     }
 
     public function index()
@@ -80,7 +80,7 @@ class VoiceCallSchedulerController extends AdminController
             } else {
                 $_SESSION['error'] = $result['message'] ?? 'Failed to schedule call';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error scheduling call: ' . $e->getMessage();
         }
 
@@ -138,7 +138,7 @@ class VoiceCallSchedulerController extends AdminController
                  LIMIT $perPage OFFSET $offset",
                 $params
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $total = 0;
             $allCalls = [];
         }
@@ -233,7 +233,7 @@ class VoiceCallSchedulerController extends AdminController
             $leadSources = $this->db->fetchAll(
                 "SELECT interest_level, COUNT(*) as count FROM ai_call_extracted_leads GROUP BY interest_level"
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
                     error_log("VoiceCallSchedulerController.php: " . $e->getMessage());
         }
 

@@ -39,7 +39,7 @@ class AdminProfileController extends AdminController
                     "SELECT * FROM users WHERE id = ? AND status = 'active'",
                     [$userId]
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Error getting user: " . $e->getMessage());
             }
         }
@@ -110,7 +110,7 @@ class AdminProfileController extends AdminController
             $_SESSION['success'] = 'Profile updated successfully.';
             header('Location: ' . BASE_URL . '/admin/profile');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Profile update error: " . $e->getMessage());
             $_SESSION['error'] = 'Failed to update profile. Please try again.';
             header('Location: ' . BASE_URL . '/admin/profile');
@@ -189,7 +189,7 @@ class AdminProfileController extends AdminController
             $_SESSION['success'] = 'Password changed successfully.';
             header('Location: ' . BASE_URL . '/admin/profile/security');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Password change error: " . $e->getMessage());
             $_SESSION['error'] = 'Failed to change password. Please try again.';
             header('Location: ' . BASE_URL . '/admin/profile/security');

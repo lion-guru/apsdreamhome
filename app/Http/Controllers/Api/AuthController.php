@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\BaseController;
 use App\Services\Auth\ApiAuthService;
 use App\Services\Auth\JWTAuthService;
-use \App\Traits\TenantAwareTrait;
 
 class AuthController extends BaseController
 {

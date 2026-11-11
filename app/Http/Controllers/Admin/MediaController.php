@@ -96,7 +96,7 @@ class MediaController extends AdminController
             ];
 
             return $this->render('admin/media/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Media Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load media library');
             return $this->redirect('admin/dashboard');
@@ -116,7 +116,7 @@ class MediaController extends AdminController
             ];
 
             return $this->render('admin/media/create', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Media Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load upload form');
             return $this->redirect('admin/media');
@@ -206,7 +206,7 @@ class MediaController extends AdminController
             unlink($filePath);
 
             return $this->jsonError('Failed to save media record', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Media Store error: " . $e->getMessage());
             return $this->jsonError('Failed to upload media', 500);
         }
@@ -246,7 +246,7 @@ class MediaController extends AdminController
             ];
 
             return $this->render('admin/media/show', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Media Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load media details');
             return $this->redirect('admin/media');
@@ -284,7 +284,7 @@ class MediaController extends AdminController
             ];
 
             return $this->render('admin/media/edit', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Media Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load media form');
             return $this->redirect('admin/media');
@@ -358,7 +358,7 @@ class MediaController extends AdminController
             }
 
             return $this->jsonError('Failed to update media', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Media Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update media', 500);
         }
@@ -414,7 +414,7 @@ class MediaController extends AdminController
             }
 
             return $this->jsonError('Failed to delete media', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Media Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete media', 500);
         }
@@ -507,7 +507,7 @@ class MediaController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Media Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,

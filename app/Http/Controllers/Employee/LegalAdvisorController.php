@@ -76,7 +76,7 @@ class LegalAdvisorController extends BaseController
                 'contract_status' => $contractStatus,
                 'quickActionCounts' => $quickActionCounts
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Legal Advisor Controller Error: " . $e->getMessage());
             $this->render('employees/department', [
                 'page_title' => 'Legal Dashboard',
@@ -281,7 +281,7 @@ class LegalAdvisorController extends BaseController
                 'success' => true,
                 'message' => "Document reviewed successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -342,7 +342,7 @@ class LegalAdvisorController extends BaseController
                 'success' => true,
                 'message' => "Compliance task updated successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -406,7 +406,7 @@ class LegalAdvisorController extends BaseController
                 'success' => true,
                 'message' => "Dispute updated successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -476,7 +476,7 @@ class LegalAdvisorController extends BaseController
                 'template_id' => $templateId,
                 'message' => "Document template created successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -506,7 +506,7 @@ class LegalAdvisorController extends BaseController
                 default:
                     throw new Exception("Invalid report type");
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -819,7 +819,7 @@ class LegalAdvisorController extends BaseController
                     rd.status as registry_doc_status
                 FROM booking_registry_milestones brm
                 INNER JOIN bookings b ON brm.booking_id = b.id
-                INNER JOIN customers c ON b.customer_id = c.id
+                INNER JOIN users c ON b.customer_id = c.id
                 INNER JOIN plots p ON b.plot_id = p.id
                 INNER JOIN colonies col ON p.colony_id = col.id
                 LEFT JOIN registry_documents rd ON rd.booking_id = b.id
@@ -830,7 +830,7 @@ class LegalAdvisorController extends BaseController
                 LIMIT 20";
 
             return $this->db->fetchAll($query);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("getPendingDeedExecutions Error: " . $e->getMessage());
             return [];
         }
@@ -858,13 +858,13 @@ class LegalAdvisorController extends BaseController
                     sdc.created_at as calc_created
                 FROM stamp_duty_calculations sdc
                 INNER JOIN bookings b ON sdc.booking_id = b.id
-                INNER JOIN customers c ON b.customer_id = c.id
+                INNER JOIN users c ON b.customer_id = c.id
                 WHERE sdc.status = 'pending_verification'
                 ORDER BY sdc.created_at ASC
                 LIMIT 20";
 
             return $this->db->fetchAll($query);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("getStampPaperVerification Error: " . $e->getMessage());
             return [];
         }
@@ -896,14 +896,14 @@ class LegalAdvisorController extends BaseController
                     br.processed_by
                 FROM booking_refunds br
                 INNER JOIN bookings b ON br.booking_id = b.id
-                INNER JOIN customers c ON b.customer_id = c.id
+                INNER JOIN users c ON b.customer_id = c.id
                 WHERE br.status IN ('pending', 'approved')
                 AND (br.processed_by IS NULL OR br.processed_by = 0)
                 ORDER BY br.created_at ASC
                 LIMIT 20";
 
             return $this->db->fetchAll($query);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("getCancellationSettlements Error: " . $e->getMessage());
             return [];
         }
@@ -944,7 +944,7 @@ class LegalAdvisorController extends BaseController
                 'pending_stamps' => $pendingStamps,
                 'pending_cancellations' => $pendingCancellations
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage());
         }
     }
@@ -986,7 +986,7 @@ class LegalAdvisorController extends BaseController
                 'success' => true,
                 'message' => "Stamp paper verification updated successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -1043,7 +1043,7 @@ class LegalAdvisorController extends BaseController
                 'success' => true,
                 'message' => "Cancellation settlement processed successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -1060,7 +1060,7 @@ class LegalAdvisorController extends BaseController
             // Get booking customer
             $query = "SELECT b.customer_id, c.name, c.email, c.phone
                       FROM bookings b
-                      INNER JOIN customers c ON b.customer_id = c.id
+                      INNER JOIN users c ON b.customer_id = c.id
                       WHERE b.id = ?";
             $booking = $this->db->fetchOne($query, [$bookingId]);
 
@@ -1071,7 +1071,7 @@ class LegalAdvisorController extends BaseController
                 }
                 $this->createNotification($booking['customer_id'], 'cancellation_update', $message, $bookingId);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("notifyCancellationUpdate Error: " . $e->getMessage());
         }
     }

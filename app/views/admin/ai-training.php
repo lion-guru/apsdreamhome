@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     'time' => date('Y-m-d H:i:s'),
                     'link' => '/admin/ai-training'
                 ];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $error = 'Error adding Q&A: ' . $e->getMessage();
             }
         } else {
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 [$category, $questionPattern, $answer, $id]
             );
             $success = 'Q&A updated successfully!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $error = 'Error updating Q&A: ' . $e->getMessage();
         }
     }
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         try {
             $db->execute("DELETE FROM ai_knowledge_base WHERE id = ?", [$id]);
             $success = 'Q&A deleted successfully!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $error = 'Error deleting Q&A: ' . $e->getMessage();
         }
     }
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         [$category, $question, $answer]
                     );
                     $added++;
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     // Skip duplicates or errors
                 }
             }

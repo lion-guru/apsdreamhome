@@ -31,7 +31,7 @@ class WhatsAppSenderService
 
         try {
             $rows = $this->db->fetchAll("SELECT setting_key, setting_value FROM site_settings WHERE setting_key LIKE 'whatsapp_%'");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $rows = [];
         }
         foreach ($rows as $row) {
@@ -69,7 +69,7 @@ class WhatsAppSenderService
                 "INSERT INTO whatsapp_messages ($columns) VALUES ($values)",
                 $params
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WhatsAppSenderService: insert failed: " . $e->getMessage());
         }
 
@@ -84,7 +84,7 @@ class WhatsAppSenderService
                 "UPDATE whatsapp_messages SET status = ?, whatsapp_message_id = COALESCE(?, whatsapp_message_id), updated_at = NOW() WHERE phone_number = ? AND created_at >= NOW() - INTERVAL 5 SECOND" . $this->tenantSql(),
                 [$statusCol, $apiResult['meta_message_id'] ?? null, $phone]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WhatsAppSenderService: update failed: " . $e->getMessage());
         }
 
@@ -116,7 +116,7 @@ class WhatsAppSenderService
                 "INSERT INTO whatsapp_messages ($columns) VALUES ($values)",
                 $params
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WhatsAppSenderService: insert failed: " . $e->getMessage());
         }
 
@@ -129,7 +129,7 @@ class WhatsAppSenderService
                 "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE phone_number = ? AND created_at >= NOW() - INTERVAL 5 SECOND" . $this->tenantSql(),
                 [$status === 'sent' ? 'sent' : 'failed', $phone]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WhatsAppSenderService: update template status failed: " . $e->getMessage());
         }
 
@@ -149,7 +149,7 @@ class WhatsAppSenderService
                 "SELECT * FROM whatsapp_messages WHERE status = 'pending' AND direction = 'outbound' ORDER BY created_at ASC LIMIT ?" . $this->tenantSql(),
                 [$limit]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WhatsAppSenderService: processQueue fetch failed: " . $e->getMessage());
             return ['processed' => 0, 'errors' => [$e->getMessage()]];
         }
@@ -169,7 +169,7 @@ class WhatsAppSenderService
                     [$newStatus, $row['id']]
                 );
                 $processed++;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $errors[] = $e->getMessage();
             }
         }
@@ -201,7 +201,7 @@ class WhatsAppSenderService
                     "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE whatsapp_message_id = ?" . $this->tenantSql(),
                     [$status, $messageId]
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("WhatsAppSenderService: status update failed: " . $e->getMessage());
             }
 
@@ -211,7 +211,7 @@ class WhatsAppSenderService
         try {
             $row = $this->db->fetch("SELECT status FROM whatsapp_messages WHERE whatsapp_message_id = ?" . $this->tenantSql(), [$messageId]);
             return ['status' => $row['status'] ?? 'unknown', 'http_code' => $httpCode];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['status' => 'unknown', 'http_code' => $httpCode];
         }
     }
@@ -252,7 +252,7 @@ class WhatsAppSenderService
                     "UPDATE whatsapp_messages SET status = ?, updated_at = NOW() WHERE whatsapp_message_id = ?" . $this->tenantSql(),
                                     [$statusUpdate['status'] ?? 'unknown', $statusUpdate['id'] ?? '']
                                 );
-                            } catch (\Exception $e) {
+                            } catch (\Throwable $e) {
                                 error_log("WhatsAppSenderService: webhook status update failed: " . $e->getMessage());
                             }
                         }
@@ -307,7 +307,7 @@ class WhatsAppSenderService
             error_log("WhatsAppSenderService: Meta API error ($httpCode): $errorMsg");
             return ['status' => 'failed', 'meta_message_id' => null, 'error' => $errorMsg];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             curl_close($ch);
             error_log("WhatsAppSenderService: Meta API exception: " . $e->getMessage());
             return ['status' => 'failed', 'meta_message_id' => null, 'error' => $e->getMessage()];
@@ -370,7 +370,7 @@ class WhatsAppSenderService
             error_log("WhatsAppSenderService: Meta API template error ($httpCode): $errorMsg");
             return ['status' => 'failed', 'meta_message_id' => null, 'error' => $errorMsg];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             curl_close($ch);
             error_log("WhatsAppSenderService: Meta API template exception: " . $e->getMessage());
             return ['status' => 'failed', 'meta_message_id' => null, 'error' => $e->getMessage()];

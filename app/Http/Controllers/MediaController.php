@@ -35,7 +35,7 @@ class MediaController extends BaseController
             $media = $this->mediaService->getAllMedia($filters, $page, $limit);
 
             return $this->render('media/index', compact('media', 'filters', 'page', 'limit'));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('media/index', compact('media', 'filters', 'page', 'limit'));
         }
     }
@@ -51,7 +51,7 @@ class MediaController extends BaseController
 
             $media = $this->mediaService->getMediaForTemplates($category, $limit);
             return $this->jsonResponse(['success' => true, 'data' => $media]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
@@ -65,7 +65,7 @@ class MediaController extends BaseController
             $limit = (int)($_REQUEST['limit'] ?? 10);
             $images = $this->mediaService->getHeaderImages($limit);
             return $this->jsonResponse(['success' => true, 'data' => $images]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
@@ -79,7 +79,7 @@ class MediaController extends BaseController
             $limit = (int)($_REQUEST['limit'] ?? 10);
             $photos = $this->mediaService->getTeamPhotos($limit);
             return $this->jsonResponse(['success' => true, 'data' => $photos]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
@@ -93,7 +93,7 @@ class MediaController extends BaseController
             $limit = (int)($_REQUEST['limit'] ?? 10);
             $images = $this->mediaService->getPropertyImages($limit);
             return $this->jsonResponse(['success' => true, 'data' => $images]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
@@ -107,7 +107,7 @@ class MediaController extends BaseController
             $limit = (int)($_REQUEST['limit'] ?? 10);
             $images = $this->mediaService->getProjectImages($limit);
             return $this->jsonResponse(['success' => true, 'data' => $images]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
@@ -122,7 +122,7 @@ class MediaController extends BaseController
             $limit = (int)($_REQUEST['limit'] ?? 10);
             $documents = $this->mediaService->getDocuments($category, $limit);
             return $this->jsonResponse(['success' => true, 'data' => $documents]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
@@ -136,7 +136,7 @@ class MediaController extends BaseController
             $limit = (int)($_REQUEST['limit'] ?? 5);
             $images = $this->mediaService->getCarouselImages($limit);
             return $this->jsonResponse(['success' => true, 'data' => $images]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
@@ -161,7 +161,7 @@ class MediaController extends BaseController
             } else {
                 return $this->jsonResponse(['success' => false, 'message' => 'Failed to upload file']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }
@@ -179,7 +179,7 @@ class MediaController extends BaseController
             } else {
                 return $this->jsonResponse(['success' => false, 'message' => 'Media not found']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }

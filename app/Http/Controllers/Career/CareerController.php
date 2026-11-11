@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Career;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\BaseController;
 use App\Services\HR\CareerService;
 use App\Services\Auth\AuthenticationService;
@@ -12,7 +13,6 @@ use App\Core\ViewRenderer;
  * Custom MVC implementation without Laravel dependencies
  * IDE Cache Refresh: Methods added to CareerService
  */
-use \App\Traits\TenantAwareTrait;
 
 class CareerController extends BaseController
 {
@@ -565,7 +565,7 @@ class CareerController extends BaseController
     /**
      * Redirect helper
      */
-    public function redirect($url)
+    public function redirect(string $url): void
     {
         if (!headers_sent()) {
             if (defined('BASE_URL') && strpos($url, 'http') !== 0) {

@@ -73,7 +73,7 @@ class CommissionAdminController extends AdminController
             $this->data['page_title'] = 'Commission Management System';
             $this->data['stats'] = $stats;
             return $this->render('admin/commission/index', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error loading dashboard: ' . $e->getMessage());
             return $this->render('admin/commission/index', ['page_title'=>'Commission System', 'stats'=>[]]);
         }
@@ -91,7 +91,7 @@ class CommissionAdminController extends AdminController
             );
             $this->data['page_title'] = 'Agent Commission Rates';
             return $this->render('admin/commission/agent_rates', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -109,7 +109,7 @@ class CommissionAdminController extends AdminController
                 $_POST['effective_from'] ?? date('Y-m-d'), $_POST['effective_to'] ?? null, $tid
             ]);
             $this->setFlash('success', 'Agent rate created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/agent-rates');
@@ -121,7 +121,7 @@ class CommissionAdminController extends AdminController
         try {
             $this->db->query("DELETE FROM agent_commission_rates WHERE id = ? AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Rate deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/agent-rates');
@@ -135,7 +135,7 @@ class CommissionAdminController extends AdminController
             $this->data['levels'] = $this->db->fetchAll("SELECT id, rank_name, direct_sale_pct as commission_percentage, l1_pct as gen1_override_pct, l2_pct as gen2_override_pct, l3_pct as gen3_override_pct FROM mlm_rank_benefits ORDER BY FIELD(rank_name, 'associate','bronze','silver','gold','platinum','diamond')");
             $this->data['page_title'] = 'Rank Commission Benefits';
             return $this->render('admin/commission/associate_structure', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -157,7 +157,7 @@ class CommissionAdminController extends AdminController
                 ...$tenantParams
             ]);
             $this->setFlash('success', "Rank benefits updated for {$rankName}");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/associate/structure');
@@ -183,7 +183,7 @@ class CommissionAdminController extends AdminController
             );
             $this->data['page_title'] = 'Commission Calculations';
             return $this->render('admin/commission/associate_calculations', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -198,7 +198,7 @@ class CommissionAdminController extends AdminController
             $dbStatus = ($status === 'confirmed') ? 'approved' : 'paid';
             $this->db->query("UPDATE mlm_commission_ledger SET status = ? WHERE id = ? AND tenant_id = ?", [$dbStatus, (int)$id, $this->tenantId()]);
             $this->setFlash('success', "Record #{$id} marked as {$status}");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/associate/calculations');
@@ -218,7 +218,7 @@ class CommissionAdminController extends AdminController
             $this->data['users'] = $this->db->fetchAll("SELECT id, name, email FROM users WHERE role IN ('associate','agent','employee') ORDER BY name");
             $this->data['page_title'] = 'Performance Bonuses';
             return $this->render('admin/commission/bonuses', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -238,7 +238,7 @@ class CommissionAdminController extends AdminController
                 [$beneficiaryId, $beneficiaryId, $bonusAmount, $reason, $tid]
             );
             $this->setFlash('success', 'Bonus recorded in commission ledger');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/bonuses');
@@ -250,7 +250,7 @@ class CommissionAdminController extends AdminController
         try {
             $this->db->query("UPDATE mlm_commission_ledger SET status = 'reversed' WHERE id = ? AND commission_type = 'performance_bonus' AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Bonus reversed');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/bonuses');
@@ -268,7 +268,7 @@ class CommissionAdminController extends AdminController
             );
             $this->data['page_title'] = 'Commission Calculations';
             return $this->render('admin/commission/commission_calculations', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -282,7 +282,7 @@ class CommissionAdminController extends AdminController
             $this->data['levels'] = $this->db->fetchAll("SELECT id, rank_name as name, min_leg_count as min_associates, min_qualifying_volume as min_business, direct_sale_pct as commission_rate, direct_sale_pct as direct_percentage FROM mlm_rank_benefits ORDER BY id");
             $this->data['page_title'] = 'MLM Commission Levels';
             return $this->render('admin/commission/mlm_levels', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -303,7 +303,7 @@ public function mlmLevelStore()
                 $this->tenantId()
             ]);
             $this->setFlash('success', 'MLM level created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/mlm/levels');
@@ -316,7 +316,7 @@ public function mlmLevelStore()
             list($tSql, $tParams) = $this->tenantWhere();
             $this->db->query("DELETE FROM mlm_rank_benefits WHERE id = ?" . $tSql, [(int)$id, ...$tParams]);
             $this->setFlash('success', 'Level deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/mlm/levels');
@@ -333,7 +333,7 @@ public function mlmLevelStore()
             );
             $this->data['page_title'] = 'MLM Commission Ledger';
             return $this->render('admin/commission/mlm_records', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -347,7 +347,7 @@ public function mlmLevelStore()
         try {
             $this->db->query("UPDATE mlm_commission_ledger SET status = ? WHERE id = ? AND tenant_id = ?", [$status, (int)$id, $this->tenantId()]);
             $this->setFlash('success', "Record #{$id} marked as {$status}");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/mlm/records');
@@ -378,7 +378,7 @@ public function mlmLevelStore()
             $this->data['summary'] = $r[0] ?? ['earned'=>0,'paid'=>0,'pending'=>0,'direct'=>0,'team'=>0,'bonus'=>0];
             $this->data['page_title'] = 'MLM Commission Analytics';
             return $this->render('admin/commission/mlm_analytics', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -397,7 +397,7 @@ public function mlmLevelStore()
             );
             $this->data['page_title'] = 'MLM Commission Ledger (Audit)';
             return $this->render('admin/commission/commission_audit_log', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -424,7 +424,7 @@ public function mlmLevelStore()
             $this->data['users'] = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('agent','associate') ORDER BY name");
             $this->data['page_title'] = 'Daily Revenue Commission';
             return $this->render('admin/commission/revenue_daily', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -453,7 +453,7 @@ public function mlmLevelStore()
             $this->data['rules'] = $this->db->fetchAll("SELECT * FROM telecaller_commission_rules ORDER BY commission_type");
             $this->data['page_title'] = 'Telecaller Commission Rules';
             return $this->render('admin/commission/telecaller_rules', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -472,7 +472,7 @@ public function mlmLevelStore()
                 isset($_POST['is_active']) ? 1 : 0, $tid
             ]);
             $this->setFlash('success', 'Rule created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/telecaller/rules');
@@ -486,7 +486,7 @@ public function mlmLevelStore()
             $new = $r ? ($r['is_active'] ? 0 : 1) : 0;
             $this->db->query("UPDATE telecaller_commission_rules SET is_active = ? WHERE id = ? AND tenant_id = ?", [$new, (int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Rule status toggled');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/telecaller/rules');
@@ -498,7 +498,7 @@ public function mlmLevelStore()
         try {
             $this->db->query("DELETE FROM telecaller_commission_rules WHERE id = ? AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Rule deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/telecaller/rules');
@@ -521,7 +521,7 @@ public function mlmLevelStore()
             $this->data['summary'] = $r[0] ?? ['total'=>0,'pending'=>0];
             $this->data['page_title'] = 'Telecaller Commissions';
             return $this->render('admin/commission/telecaller_commissions', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }
@@ -535,7 +535,7 @@ public function mlmLevelStore()
                 (int)($_SESSION['admin_id'] ?? 0), (int)$id, $this->tenantId()
             ]);
             $this->setFlash('success', 'Commission approved');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/telecaller/commissions');
@@ -547,7 +547,7 @@ public function mlmLevelStore()
         try {
             $this->db->query("UPDATE telecaller_commissions SET status = 'paid', approved_at = NOW() WHERE id = ? AND status = 'approved' AND tenant_id = ?", [(int)$id, $this->tenantId()]);
             $this->setFlash('success', 'Commission marked as paid');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         return $this->redirect('admin/commission/telecaller/commissions');
@@ -561,7 +561,7 @@ public function mlmLevelStore()
         try {
             $this->data['rules'] = $this->db->fetchAll("SELECT * FROM telecaller_commission_rules ORDER BY commission_type");
             $this->data['mlm_levels'] = $this->db->fetchAll("SELECT * FROM mlm_rank_benefits ORDER BY id");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['rules'] = [];
             $this->data['mlm_levels'] = [];
         }
@@ -581,7 +581,7 @@ public function mlmLevelStore()
         try {
             $this->data['rule'] = $this->db->fetch("SELECT * FROM telecaller_commission_rules WHERE id=?", [(int)$id]);
             $this->data['rule_types'] = ['direct_sale','mlm_level_1','mlm_level_2','mlm_level_3','performance_bonus','team_bonus','royalty_pool'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['rule'] = null;
         }
         return $this->render('admin/commission/edit_rule', $this->data);
@@ -596,7 +596,7 @@ public function mlmLevelStore()
                  LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
                  ORDER BY mcl.created_at DESC LIMIT 100"
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['calculations'] = [];
         }
         return $this->render('admin/commission/calculations', $this->data);
@@ -611,7 +611,7 @@ public function mlmLevelStore()
                  LEFT JOIN users u ON mcl.beneficiary_user_id = u.id
                  WHERE mcl.status='paid' ORDER BY mcl.paid_at DESC LIMIT 100"
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['payouts'] = [];
         }
         return $this->render('admin/commission/payments', $this->data);
@@ -634,7 +634,7 @@ public function mlmLevelStore()
                 SELECT commission_type, COUNT(*) as count, COALESCE(SUM(amount),0) as total
                 FROM mlm_commission_ledger GROUP BY commission_type ORDER BY total DESC
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['summary'] = ['total_earned'=>0,'total_paid'=>0,'total_pending'=>0,'direct'=>0,'team'=>0,'bonus'=>0];
             $this->data['by_type'] = [];
         }
@@ -714,7 +714,7 @@ public function mlmLevelStore()
             $this->data['data'] = $service->reconcile();
             $this->data['page_title'] = 'Commission Reconciliation';
             return $this->render('admin/commission/reconciliation', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
             return $this->redirect('admin/commission');
         }

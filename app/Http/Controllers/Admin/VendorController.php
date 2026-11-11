@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\Admin\AdminController;
-use \App\Traits\TenantAwareTrait;
 
 class VendorController extends AdminController
 {
@@ -52,7 +52,7 @@ class VendorController extends AdminController
                 'inactive' => $this->db->fetch("SELECT COUNT(*) as count FROM vendors WHERE status = 'inactive'")['count'] ?? 0,
                 'blacklisted' => $this->db->fetch("SELECT COUNT(*) as count FROM vendors WHERE status = 'blacklisted'")['count'] ?? 0,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $vendors = [];
             $stats = ['total' => 0, 'active' => 0, 'inactive' => 0, 'blacklisted' => 0];
             $this->setFlash('error', 'Error loading vendors: ' . $e->getMessage());
@@ -125,7 +125,7 @@ class VendorController extends AdminController
             }
 
             $this->setFlash('success', 'Vendor created successfully (TDS: ' . ($data['tds_section'] ?? '194C') . ')');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error creating vendor: ' . $e->getMessage());
         }
 
@@ -145,7 +145,7 @@ class VendorController extends AdminController
             }
 
             $contracts = $this->db->fetchAll("SELECT * FROM purchase_orders WHERE vendor_id = ? ORDER BY created_at DESC LIMIT 20", [$id]) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $vendor = null;
             $contracts = [];
             $this->setFlash('error', 'Error loading vendor: ' . $e->getMessage());
@@ -169,7 +169,7 @@ class VendorController extends AdminController
                 $this->setFlash('error', 'Vendor not found');
                 $this->redirect('/admin/vendors');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error loading vendor: ' . $e->getMessage());
             $this->redirect('/admin/vendors');
         }
@@ -229,7 +229,7 @@ class VendorController extends AdminController
             $tid = (int)$this->tenantId();
             $this->db->update('vendors', $data, ['id' => $id, 'tenant_id' => $tid]);
             $this->setFlash('success', 'Vendor updated successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error updating vendor: ' . $e->getMessage());
         }
 
@@ -244,7 +244,7 @@ class VendorController extends AdminController
         try {
             $this->db->update('vendors', ['status' => 'inactive'], ['id' => $id, 'tenant_id' => $tid]);
             $this->setFlash('success', 'Vendor deactivated successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error deactivating vendor: ' . $e->getMessage());
         }
 
@@ -258,7 +258,7 @@ class VendorController extends AdminController
         try {
             $vendor = $this->db->fetch("SELECT id, vendor_name, vendor_type FROM vendors WHERE id = ?", [$id]);
             $contracts = $this->db->fetchAll("SELECT * FROM purchase_orders WHERE vendor_id = ? ORDER BY created_at DESC", [$id]) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $vendor = null;
             $contracts = [];
             $this->setFlash('error', 'Error loading contracts: ' . $e->getMessage());

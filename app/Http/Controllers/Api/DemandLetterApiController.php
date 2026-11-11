@@ -21,7 +21,7 @@ class DemandLetterApiController extends BaseApiController
                 $st->execute([$uid]);
                 $role = $st->fetchColumn();
                 $isStaff = in_array($role, ['admin','super_admin','manager','ceo','cfo','coo','finance_manager','finance_director','chartered_accountant','senior_accountant','franchise_owner'], true);
-            } catch (\Exception $e) { $isStaff = false; }
+            } catch (\Throwable $e) { $isStaff = false; }
 
             $filters = [
                 'status' => trim((string)($_GET['status'] ?? '')),
@@ -76,7 +76,7 @@ class DemandLetterApiController extends BaseApiController
                 $r['pay_url'] = $base . '/user/installments/' . (int)($r['installment_id'] ?? 0) . '/pay';
             }
             return $this->jsonSuccess(['letters' => $rows, 'total' => $total, 'page' => $page, 'per_page' => $perPage, 'filters' => $filters]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DemandLetterApiController::list error: ' . $e->getMessage());
             return $this->jsonError('Failed to load demand letters', 500);
         }
@@ -104,7 +104,7 @@ class DemandLetterApiController extends BaseApiController
             $base = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
             $row['pdf_url'] = $base . '/admin/finance/demand-letters/' . $id . '/pdf';
             return $this->jsonSuccess($row);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed', 500);
         }
     }

@@ -44,7 +44,7 @@ class AdminNotificationController extends AdminController
         $totalPages = max(1, (int)ceil($totalItems / $perPage));
 
         // Fetch paginated rows
-        $dataSql = "SELECT id, user_id, type, title, message, status, is_read, priority, action_url, created_at
+        $dataSql = "SELECT id, user_id, type, title, message, is_read, created_at
                     FROM notifications
                     WHERE $baseWhere $filterSql
                     ORDER BY created_at DESC

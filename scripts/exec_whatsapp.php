@@ -6,7 +6,7 @@ $statements = explode(';', $sql);
 foreach ($statements as $stmt) {
     $stmt = trim($stmt);
     if ($stmt && !str_starts_with($stmt, 'SELECT')) {
-        try { $db->exec($stmt); echo "OK: " . substr($stmt, 0, 50) . "..." . PHP_EOL; } catch (\Exception $e) { echo 'Error: ' . $e->getMessage() . PHP_EOL; }
+        try { $db->exec($stmt); echo "OK: " . substr($stmt, 0, 50) . "..." . PHP_EOL; } catch (\Throwable $e) { echo 'Error: ' . $e->getMessage() . PHP_EOL; }
     }
 }
 $count = $db->query('SELECT COUNT(*) c FROM whatsapp_templates')->fetch(\PDO::FETCH_ASSOC)['c'];

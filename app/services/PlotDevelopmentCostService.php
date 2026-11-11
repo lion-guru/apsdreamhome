@@ -153,7 +153,7 @@ class PlotDevelopmentCostService
                 'reference_id'      => $colonyId,
                 'created_at'        => date('Y-m-d H:i:s'),
             ], $insertData));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Price history insert failed: " . $e->getMessage());
         }
     }

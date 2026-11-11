@@ -1,54 +1,230 @@
 <?php
-/**
- * SMS Service
- * MSG91 Integration for OTP, Notifications, and Alerts
- */
 
 namespace App\Services\Communication;
 
 use App\Core\Database\Database;
+use App\Core\Middleware\TenantContext;
 use \App\Traits\ServiceTenantTrait;
 
-class SMSService
+/**
+ * Unified SMS Service
+ * Merges SMSService (MSG91, OTP, templates) + SmsSenderService (multi-provider, queue)
+ * Single entry point for all SMS operations with multi-provider and queue support.
+ */
+class SmsService
 {
     use \App\Traits\ServiceTenantTrait;
 
     private $db;
-    private $authKey;
+    private $provider;
+    private $apiKey;
     private $senderId;
     private $templateId;
     private $apiUrl = 'https://api.msg91.com/api/v5/flow/';
     private $otpApiUrl = 'https://control.msg91.com/api/v5/otp/';
-    
+
+    // Provider constants
+    const PROVIDER_LOG = 'log';
+    const PROVIDER_TWILIO = 'twilio';
+    const PROVIDER_MSG91 = 'msg91';
+
     public function __construct()
     {
         $this->db = Database::getInstance();
-        $this->authKey = $_ENV['MSG91_AUTH_KEY'] ?? '';
-        $this->senderId = $_ENV['MSG91_SENDER_ID'] ?? 'APSDHM';
-        $this->templateId = $_ENV['MSG91_TEMPLATE_ID'] ?? '';
+        $this->provider = $_ENV['SMS_PROVIDER'] ?? $_ENV['MSG91_PROVIDER'] ?? 'log';
+        $this->apiKey = $_ENV['SMS_API_KEY'] ?? $_ENV['MSG91_AUTH_KEY'] ?? '';
+        $this->senderId = $_ENV['SMS_SENDER_ID'] ?? $_ENV['MSG91_SENDER_ID'] ?? 'APSDHM';
+        $this->templateId = $_ENV['SMS_TEMPLATE_ID'] ?? $_ENV['MSG91_TEMPLATE_ID'] ?? '';
     }
-    
+
+    // ==================== CORE SEND METHODS ====================
+
     /**
-     * Send OTP to mobile number
+     * Send SMS using configured provider (supports queue)
+     * Alias for sendSMS() to maintain backward compatibility
      */
-    public function sendOTP($mobile, $otp = null, $templateId = null)
+    public function sendSMS($phone, $message, $useQueue = false)
+    {
+        return $this->send($phone, $message, $useQueue);
+    }
+
+    /**
+     * Send SMS using configured provider (supports queue)
+     */
+    public function send($phone, $message, $useQueue = false)
+    {
+        $phone = $this->cleanPhone($phone);
+
+        try {
+            if ($useQueue) {
+                return $this->queue($phone, $message);
+            }
+
+            $result = match ($this->provider) {
+                self::PROVIDER_TWILIO => $this->sendViaTwilio($phone, $message),
+                self::PROVIDER_MSG91 => $this->sendViaMsg91($phone, $message),
+                default => $this->sendViaLog($phone, $message),
+            };
+
+            $this->logToQueue($phone, $message, $result['status'] ?? 'sent', $result['error'] ?? null);
+            return $result;
+        } catch (\Throwable $e) {
+            error_log("SmsService: Send failed: " . $e->getMessage());
+            $this->logToQueue($phone, $message, 'failed', $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Queue SMS for async processing
+     */
+    public function queue($phone, $message, $priority = 'normal'): array
     {
         try {
-            // Generate OTP if not provided
+            $tid = $this->tenantId();
+            $this->db->insert('sms_queue', [
+                'tenant_id' => $tid,
+                'recipient' => $phone,
+                'message' => substr($message, 0, 500),
+                'priority' => $priority,
+                'status' => 'pending',
+                'attempts' => 0,
+                'provider' => $this->provider,
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            return ['success' => true, 'queued' => true];
+        } catch (\Throwable $e) {
+            error_log("SmsService: Queue failed: " . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    // ==================== PROVIDER IMPLEMENTATIONS ====================
+
+    private function sendViaLog($phone, $message): array
+    {
+        $logFile = defined('STORAGE_PATH') ? STORAGE_PATH . '/logs/sms.log' : __DIR__ . '/../../../storage/logs/sms.log';
+        $dir = dirname($logFile);
+        if (!is_dir($dir)) @mkdir($dir, 0775, true);
+        $line = date('Y-m-d H:i:s') . " | TO: $phone | MSG: " . substr($message, 0, 100) . "\n";
+        @file_put_contents($logFile, $line, FILE_APPEND | LOCK_EX);
+        return ['success' => true, 'status' => 'sent', 'provider' => 'log'];
+    }
+
+    private function sendViaTwilio($phone, $message): array
+    {
+        try {
+            $twilio = new \App\Services\Gateway\TwilioService();
+            $result = $twilio->sendSms($phone, $message);
+            if (!empty($result['success'])) {
+                return ['success' => true, 'status' => 'sent', 'provider' => 'twilio', 'sid' => $result['sid'] ?? null];
+            }
+            return ['success' => false, 'status' => 'failed', 'error' => $result['error'] ?? 'Twilio send failed', 'provider' => 'twilio'];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'status' => 'failed', 'error' => 'TwilioService unavailable: ' . $e->getMessage(), 'provider' => 'twilio'];
+        }
+    }
+
+    private function sendViaMsg91($phone, $message): array
+    {
+        if (!$this->apiKey) return ['success' => false, 'status' => 'failed', 'error' => 'MSG91 not configured'];
+        $flowId = $_ENV['MSG91_FLOW_ID'] ?? '';
+        $payload = [
+            'sender' => $this->senderId,
+            'route' => '4',
+            'country' => '91',
+            'sms' => [['message' => $message, 'to' => [$phone]]],
+        ];
+        $url = 'https://api.msg91.com/api/v5/flow/';
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'authkey: ' . $this->apiKey,
+            'Content-Type: application/json',
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $resp = curl_exec($ch);
+        $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if ($http === 200) return ['success' => true, 'status' => 'sent', 'provider' => 'msg91'];
+        return ['success' => false, 'status' => 'failed', 'error' => "MSG91 HTTP $http: $resp"];
+    }
+
+    // ==================== QUEUE PROCESSING ====================
+
+    public function processQueue($limit = 10): array
+    {
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+        $sql = "SELECT * FROM sms_queue
+                WHERE status = 'pending' AND attempts < 3" . $tenantFilter . "
+                ORDER BY
+                    CASE priority WHEN 'high' THEN 1 WHEN 'normal' THEN 2 ELSE 3 END,
+                    created_at ASC
+                LIMIT ?";
+        $params = [$limit];
+        if ($tid > 1) $params[] = $tid;
+        $items = $this->db->fetchAll($sql, $params);
+        $results = ['processed' => 0, 'sent' => 0, 'failed' => 0];
+        foreach ($items as $item) {
+            $ok = $this->sendFromQueue($item['id']);
+            $results['processed']++;
+            if ($ok) $results['sent']++; else $results['failed']++;
+        }
+        return $results;
+    }
+
+    public function sendFromQueue(int $queueId): bool
+    {
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+        $sql = "SELECT * FROM sms_queue WHERE id = ? AND status = 'pending'" . $tenantFilter;
+        $params = [$queueId];
+        if ($tid > 1) $params[] = $tid;
+        $sms = $this->db->fetchOne($sql, $params);
+        if (!$sms) return false;
+
+        $updParams = [$queueId];
+        if ($tid > 1) $updParams[] = $tid;
+        $this->db->query("UPDATE sms_queue SET attempts = attempts + 1 WHERE id = ?" . $tenantFilter, $updParams);
+
+        try {
+            $result = $this->send($sms['recipient'], $sms['message']);
+            $status = ($result['success'] ?? false) ? 'sent' : 'failed';
+            $updParams2 = [$status, $result['error'] ?? null, $queueId];
+            if ($tid > 1) $updParams2[] = $tid;
+            $this->db->query(
+                "UPDATE sms_queue SET status = ?, sent_at = NOW() WHERE id = ?" . $tenantFilter,
+                [$updParams2[0], $updParams2[2]]
+            );
+            return $result['success'] ?? false;
+        } catch (\Throwable $e) {
+            $updParams3 = [$e->getMessage(), $queueId];
+            if ($tid > 1) $updParams3[] = $tid;
+            $this->db->query(
+                "UPDATE sms_queue SET status = 'failed' WHERE id = ?" . $tenantFilter,
+                [$updParams3[1]]
+            );
+            return false;
+        }
+    }
+
+    // ==================== OTP MANAGEMENT (from SMSService) ====================
+
+    public function sendOTP($mobile, $otp = null, $templateId = null): array
+    {
+        try {
             if (!$otp) {
                 $otp = $this->generateOTP();
             }
-            
-            // Clean mobile number
-            $mobile = $this->cleanMobileNumber($mobile);
-            
-            // Save OTP to database for verification
+
+            $mobile = $this->cleanPhone($mobile);
             $this->saveOTP($mobile, $otp);
-            
+
             $effectiveTemplateId = $templateId ?? $this->templateId;
-            
-            // MSG91 requires a DLT-registered template ID (TRAI compliance).
-            // Skip the API call when unset instead of guaranteed-failing remotely.
+
             if (empty($effectiveTemplateId)) {
                 error_log("SMS OTP skipped for {$mobile}: MSG91_TEMPLATE_ID not configured (DLT template required). OTP generated locally: valid in DB.");
                 return [
@@ -58,7 +234,7 @@ class SMSService
                     'skipped' => true
                 ];
             }
-            
+
             $payload = [
                 'template_id' => $effectiveTemplateId,
                 'short_url' => '0',
@@ -70,257 +246,169 @@ class SMSService
                     ]
                 ]
             ];
-            
-            $result = $this->callAPI($this->apiUrl, $payload);
-            
-            // Log the SMS
+
+            $result = $this->callAPI($this->otpApiUrl, $payload);
+
             $this->logSMS($mobile, 'OTP', "Your OTP is: {$otp}", $result['type'] ?? 'unknown');
-            
+
             return [
                 'success' => true,
                 'otp' => $otp,
                 'message_id' => $result['message_id'] ?? null
             ];
-            
-        } catch (\Exception $e) {
+
+        } catch (\Throwable $e) {
             error_log("SMS OTP send failed: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
-    
-    /**
-     * Verify OTP
-     */
-    public function verifyOTP($mobile, $otp)
+
+    public function verifyOTP($mobile, $otp): array
     {
         try {
-            $mobile = $this->cleanMobileNumber($mobile);
-            
-            // Get stored OTP from otp_verifications table
+            $mobile = $this->cleanPhone($mobile);
+
             $record = $this->db->fetchOne(
-                "SELECT * FROM otp_verifications 
-                 WHERE identifier = ? AND otp_code = ? AND used_at IS NULL 
+                "SELECT * FROM otp_verifications
+                 WHERE identifier = ? AND otp_code = ? AND used_at IS NULL
                  AND expires_at > NOW()
                  ORDER BY created_at DESC LIMIT 1",
                 [$mobile, $otp]
             );
-            
+
             if (!$record) {
                 return ['success' => false, 'error' => 'OTP expired, invalid, or already used'];
             }
-            
-            // Mark as used
+
             $this->db->query(
                 "UPDATE otp_verifications SET used_at = NOW() WHERE id = ?",
                 [$record['id']]
             );
-            
+
             return ['success' => true];
-            
-        } catch (\Exception $e) {
+
+        } catch (\Throwable $e) {
             error_log("OTP verification failed: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
-    
-    /**
-     * Send welcome SMS to new user
-     */
-    public function sendWelcomeSMS($mobile, $name, $userType = 'customer')
+
+    // ==================== HIGH-LEVEL SMS METHODS (from SMSService) ====================
+
+    public function sendWelcomeSMS($mobile, $name, $userType = 'customer'): array
     {
-        $message = $userType === 'associate' 
+        $message = $userType === 'associate'
             ? "Hi {$name}, Welcome to APS Dream Home Associate Program! Your referral journey starts now. Login: " . BASE_URL . "/associate/login"
             : "Hi {$name}, Welcome to APS Dream Home! Your dream property awaits. Start browsing: " . BASE_URL . "/properties";
-        
-        return $this->sendSMS($mobile, $message, 'WELCOME');
+
+        return $this->send($mobile, $message, 'WELCOME');
     }
-    
-    /**
-     * Send payment confirmation SMS
-     */
-    public function sendPaymentConfirmationSMS($mobile, $amount, $bookingId)
+
+    public function sendPaymentConfirmationSMS($mobile, $amount, $bookingId): array
     {
         $message = "Payment Successful! Amount: Rs.{$amount} received for Booking #{$bookingId}. Thank you for choosing APS Dream Home.";
-        
-        return $this->sendSMS($mobile, $message, 'PAYMENT');
+        return $this->send($mobile, $message, 'PAYMENT');
     }
-    
-    /**
-     * Send commission credit SMS
-     */
-    public function sendCommissionSMS($mobile, $amount, $walletBalance)
+
+    public function sendCommissionSMS($mobile, $amount, $walletBalance): array
     {
         $message = "Commission Credited! Rs.{$amount} added to your wallet. Current Balance: Rs.{$walletBalance}. Keep referring!";
-        
-        return $this->sendSMS($mobile, $message, 'COMMISSION');
+        return $this->send($mobile, $message, 'COMMISSION');
     }
-    
-    /**
-     * Send property approval SMS
-     */
-    public function sendPropertyApprovalSMS($mobile, $propertyTitle)
+
+    public function sendPropertyApprovalSMS($mobile, $propertyTitle): array
     {
         $message = "Your property listing '{$propertyTitle}' has been approved and is now live on APS Dream Home!";
-        
-        return $this->sendSMS($mobile, $message, 'PROPERTY');
+        return $this->send($mobile, $message, 'PROPERTY');
     }
-    
-    /**
-     * Send site visit reminder
-     */
-    public function sendVisitReminderSMS($mobile, $propertyTitle, $visitDate, $visitTime)
+
+    public function sendVisitReminderSMS($mobile, $propertyTitle, $visitDate, $visitTime): array
     {
         $formattedDate = date('d M Y', strtotime($visitDate));
         $message = "Reminder: Site visit scheduled for {$propertyTitle} on {$formattedDate} at {$visitTime}. Our executive will meet you there.";
-        
-        return $this->sendSMS($mobile, $message, 'VISIT_REMINDER');
+        return $this->send($mobile, $message, 'VISIT_REMINDER');
     }
-    
-    /**
-     * Send payout confirmation
-     */
-    public function sendPayoutSMS($mobile, $amount, $transactionId)
+
+    public function sendPayoutSMS($mobile, $amount, $transactionId): array
     {
         $message = "Payout Processed! Rs.{$amount} has been transferred to your bank account. Transaction ID: {$transactionId}";
-        
-        return $this->sendSMS($mobile, $message, 'PAYOUT');
+        return $this->send($mobile, $message, 'PAYOUT');
     }
-    
-    /**
-     * Send login alert SMS
-     */
-    public function sendLoginAlertSMS($mobile, $name, $ip, $device, $time)
+
+    public function sendLoginAlertSMS($mobile, $name, $ip, $device, $time): array
     {
         $message = "APS Dream Home: New login to your account at {$time} from {$device}. ";
         $message .= "If this wasn't you, change your password immediately. ";
         $message .= "Contact support: " . BASE_URL . "/support";
-        
-        return $this->sendSMS($mobile, $message, 'LOGIN_ALERT');
+        return $this->send($mobile, $message, 'LOGIN_ALERT');
     }
-    
-    /**
-     * Generic SMS send method
-     */
-    public function sendSMS($mobile, $message, $type = 'GENERAL')
-    {
-        try {
-            $mobile = $this->cleanMobileNumber($mobile);
-            
-            // MSG91 requires a DLT-registered template ID (TRAI compliance).
-            if (empty($this->templateId)) {
-                error_log("SMS [{$type}] skipped for {$mobile}: MSG91_TEMPLATE_ID not configured.");
-                return ['success' => false, 'error' => 'SMS template not configured', 'skipped' => true];
-            }
-            
-            $payload = [
-                'template_id' => $this->templateId,
-                'short_url' => '0',
-                'realTimeResponse' => 'true',
-                'recipients' => [
-                    [
-                        'mobiles' => $mobile,
-                        'message' => $message
-                    ]
-                ]
-            ];
-            
-            $result = $this->callAPI($this->apiUrl, $payload);
-            
-            $this->logSMS($mobile, $type, $message, $result['type'] ?? 'unknown');
 
-            // Track SMS usage for tenant
-            if (class_exists('\App\Core\Middleware\TenantContext') && class_exists('\App\Services\TenantService')) {
-                try {
-                    $tenantId = \App\Core\Middleware\TenantContext::getId();
-                    if ($tenantId > 1) {
-                        \App\Services\TenantService::getInstance()->incrementUsage($tenantId, 'sms');
-                    }
-                } catch (\Throwable $e) {
-                // usage tracking should never break SMS sending
-                error_log($e->getMessage());
-                }
-            }
-            
-            return ['success' => true, 'message_id' => $result['message_id'] ?? null];
-            
-        } catch (\Exception $e) {
-            error_log("SMS send failed: " . $e->getMessage());
-            return ['success' => false, 'error' => $e->getMessage()];
-        }
+    public function sendLowStockAlert($mobile, $productName, $quantity, $reorderLevel): array
+    {
+        $message = "Low Stock Alert: {$productName} is low on stock. Current: {$quantity}, Reorder level: {$reorderLevel}. Please reorder.";
+        return $this->send($mobile, $message, 'LOW_STOCK');
     }
-    
-    /**
-     * Make API call to MSG91
-     */
-    private function callAPI($url, $payload)
+
+    public function sendOverdueReminderSMS($mobile, $plotNumber, $colonyName, $amount): array
+    {
+        $message = "Payment Reminder: Maintenance due for plot {$plotNumber} in {$colonyName} is overdue. Outstanding: ₹" . number_format($amount, 2) . ". Please pay to avoid penalties.";
+        return $this->send($mobile, $message, 'OVERDUE');
+    }
+
+    // ==================== OTP MANAGEMENT ====================
+
+    private function callAPI($url, $payload): array
     {
         $ch = curl_init();
-        
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'authkey: ' . $this->authKey,
+            'authkey: ' . $this->apiKey,
             'accept: application/json',
             'content-type: application/json'
         ]);
-        
         $response = curl_exec($ch);
         $error = curl_error($ch);
         curl_close($ch);
-        
+
         if ($error) {
             throw new \Exception("CURL Error: " . $error);
         }
-        
+
         $result = json_decode($response, true);
-        
+
         if (isset($result['type']) && $result['type'] === 'error') {
             throw new \Exception("MSG91 Error: " . ($result['message'] ?? 'Unknown error'));
         }
-        
+
         return $result;
     }
-    
-    /**
-     * Generate random OTP
-     */
-    private function generateOTP($length = 6)
+
+    private function generateOTP($length = 6): string
     {
         return str_pad(mt_rand(0, pow(10, $length) - 1), $length, '0', STR_PAD_LEFT);
     }
-    
-    /**
-     * Clean and format mobile number
-     */
-    private function cleanMobileNumber($mobile)
+
+    private function cleanPhone($phone): string
     {
-        // Remove all non-numeric characters
-        $mobile = preg_replace('/[^0-9]/', '', $mobile);
-        
-        // Add country code if not present
-        if (strlen($mobile) === 10) {
-            $mobile = '91' . $mobile;
-        }
-        
-        return $mobile;
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($phone) === 10) $phone = '91' . $phone;
+        return $phone;
     }
-    
-    /**
-     * Save OTP to database
-     */
-    private function saveOTP($mobile, $otp)
+
+    private function saveOTP($mobile, $otp): void
     {
-        // Invalidate old OTPs (expire pending codes for this mobile)
         try {
             $this->db->query(
                 "UPDATE otp_verifications SET expires_at = NOW() WHERE identifier = ? AND used_at IS NULL AND expires_at > NOW()",
                 [$mobile]
             );
-        } catch (\Throwable $e) { error_log("SmsService saveOTP invalidate failed: ".$e->getMessage()); }
-        
-        // Save new OTP (real table: otp_verifications, cols: identifier/otp_code/type/purpose/expires_at)
+        } catch (\Throwable $e) {
+            error_log("SmsService saveOTP invalidate failed: " . $e->getMessage());
+        }
+
         try {
             $tid = method_exists($this, 'tenantId') ? $this->tenantId() : 1;
             $this->db->insert('otp_verifications', [
@@ -332,13 +420,12 @@ class SMSService
                 'expires_at' => date('Y-m-d H:i:s', strtotime('+10 minutes')),
                 'created_at' => date('Y-m-d H:i:s')
             ]);
-        } catch (\Throwable $e) { error_log("SmsService saveOTP insert failed: ".$e->getMessage()); }
+        } catch (\Throwable $e) {
+            error_log("SmsService saveOTP insert failed: " . $e->getMessage());
+        }
     }
-    
-    /**
-     * Log SMS to database
-     */
-    private function logSMS($mobile, $type, $message, $status)
+
+    private function logSMS($mobile, $type, $message, $status): void
     {
         try {
             $tid = method_exists($this, 'tenantId') ? $this->tenantId() : 1;
@@ -351,29 +438,86 @@ class SMSService
                 'status' => $status,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("SMS logging failed: " . $e->getMessage());
         }
     }
-    
-    /**
-     * Get SMS statistics
-     */
-    public function getStats($days = 30)
+
+    // ==================== LOGGING & QUEUE HELPERS ====================
+
+    private function logToQueue($phone, $message, $status, $error = null): void
+    {
+        try {
+            $this->db->insert('sms_queue', [
+                'tenant_id' => $this->tenantId(),
+                'recipient' => $phone,
+                'message' => substr($message, 0, 500),
+                'status' => $status,
+                'provider' => $this->provider,
+                'attempts' => $status === 'sent' ? 1 : 0,
+                'created_at' => date('Y-m-d H:i:s'),
+                'sent_at' => $status === 'sent' ? date('Y-m-d H:i:s') : null,
+            ]);
+        } catch (\Throwable $e) {
+            error_log("SmsService: Queue log failed: " . $e->getMessage());
+        }
+    }
+
+    public function getStats(int $days = 30): array
     {
         return [
             'total_sent' => $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM notifications_unified WHERE status = 'success' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
+                "SELECT COUNT(*) as count FROM notifications_unified WHERE status = 'sent' AND notification_type = 'sms' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
                 [$days]
             )['count'] ?? 0,
             'total_failed' => $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM notifications_unified WHERE status = 'error' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
+                "SELECT COUNT(*) as count FROM notifications_unified WHERE status = 'failed' AND notification_type = 'sms' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
                 [$days]
             )['count'] ?? 0,
             'otp_sent' => $this->db->fetchOne(
-                "SELECT COUNT(*) as count FROM notifications_unified WHERE type = 'OTP' AND created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
+                "SELECT COUNT(*) as count FROM otp_verifications WHERE created_at > DATE_SUB(NOW(), INTERVAL ? DAY)",
                 [$days]
             )['count'] ?? 0
         ];
+    }
+
+    public function getQueueStats(): array
+    {
+        $stats = ['pending' => 0, 'sent' => 0, 'failed' => 0];
+        try {
+            $tid = $this->tenantId();
+            $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+            $rows = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM sms_queue WHERE 1=1" . $tenantFilter . " GROUP BY status", $tid > 1 ? [$tid] : []);
+            foreach ($rows as $r) $stats[$r['status']] = (int)$r['cnt'];
+        } catch (\Throwable $e) {
+            error_log("SmsService.php: " . $e->getMessage());
+        }
+        return $stats;
+    }
+
+    public function getQueueItems($status = null, $limit = 50, $offset = 0): array
+    {
+        $tid = $this->tenantId();
+        $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
+        $where = $status ? "WHERE status = ?" : "";
+        $params = $status ? [$status] : [];
+        if ($tid > 1) $params[] = $tid;
+        try {
+            return $this->db->fetchAll(
+                "SELECT * FROM sms_queue $where" . $tenantFilter . " ORDER BY created_at DESC LIMIT ? OFFSET ?",
+                array_merge($params, [$limit, $offset])
+            );
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    private function tenantId(): int
+    {
+        try {
+            return TenantContext::getId();
+        } catch (\Throwable) {
+            return 1;
+        }
     }
 }

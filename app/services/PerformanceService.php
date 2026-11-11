@@ -37,10 +37,10 @@ class PerformanceService
         $sql = "SELECT eg.*, u.name as employee_name, u.email as employee_email,
                     p.title as parent_goal_title
                 FROM employee_goals eg
-                JOIN employees e ON eg.employee_id = e.id
-                JOIN users u ON e.user_id = u.id
+                LEFT JOIN employee_profiles ep ON ep.legacy_id = eg.employee_id OR ep.user_id = eg.employee_id OR ep.id = eg.employee_id
+                LEFT JOIN users u ON u.id = ep.user_id
                 LEFT JOIN employee_goals p ON eg.parent_goal_id = p.id
-                WHERE $whereSql
+                $whereSql
                 ORDER BY eg.created_at DESC LIMIT ? OFFSET ?";
         $params[] = $limit; $params[] = $offset;
 
@@ -55,8 +55,8 @@ class PerformanceService
             SELECT eg.*, u.name as employee_name, u.email as employee_email,
                    p.title as parent_goal_title
             FROM employee_goals eg
-            JOIN employees e ON eg.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = eg.employee_id OR ep.user_id = eg.employee_id OR ep.id = eg.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             LEFT JOIN employee_goals p ON eg.parent_goal_id = p.id
             WHERE eg.id = ? AND eg.tenant_id = ?
         ");
@@ -193,8 +193,8 @@ class PerformanceService
         $sql = "SELECT pr.*, u.name as employee_name, u.email as employee_email,
                     r.name as reviewer_name
                 FROM performance_reviews pr
-                JOIN employees e ON pr.employee_id = e.id
-                JOIN users u ON e.user_id = u.id
+                LEFT JOIN employee_profiles ep ON ep.legacy_id = pr.employee_id OR ep.user_id = pr.employee_id OR ep.id = pr.employee_id
+                LEFT JOIN users u ON u.id = ep.user_id
                 JOIN users r ON pr.reviewer_id = r.id
                 $whereSql
                 ORDER BY pr.created_at DESC LIMIT ? OFFSET ?";
@@ -212,8 +212,8 @@ class PerformanceService
             SELECT pr.*, u.name as employee_name, u.email as employee_email,
                    r.name as reviewer_name, r.email as reviewer_email
             FROM performance_reviews pr
-            JOIN employees e ON pr.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = pr.employee_id OR ep.user_id = pr.employee_id OR ep.id = pr.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             JOIN users r ON pr.reviewer_id = r.id
             WHERE pr.id = ? AND pr.tenant_id = ?
         ");

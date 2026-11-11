@@ -85,7 +85,7 @@ class MLController extends BaseController
                     "count" => count($recommendations)
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 "success" => false,
                 "error" => $e->getMessage()
@@ -199,7 +199,7 @@ class MLController extends BaseController
                     "behavior_pattern" => $this->analyzeBehaviorPattern($activity)
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 "success" => false,
                 "error" => $e->getMessage()
@@ -273,7 +273,7 @@ class MLController extends BaseController
                  ORDER BY created_at DESC 
                  LIMIT 10"
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $recentAlerts = [];
         }
 

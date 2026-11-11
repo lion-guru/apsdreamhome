@@ -180,6 +180,18 @@ if (file_exists(APP_PATH . '/helpers.php')) {
     require_once APP_PATH . '/helpers.php';
 }
 
+// NOTE (S451): app/Helpers/env.php defines the global config() and route()
+// helpers (app/helpers.php has env(), asset(), csrf_token() ... but NOT
+// config()). It was only ever required from app/Core/Config.php, which is
+// never loaded, so `config('app.name')` was an UNDEFINED FUNCTION - a fatal
+// in Core\SEOOptimizer and Models\Pivot.
+// It is loaded AFTER app/helpers.php on purpose: app/helpers.php owns the
+// richer env() (boolean/null casting, quote stripping) and every function in
+// env.php is function_exists-guarded, so only config() + route() are added.
+if (file_exists(APP_PATH . '/Helpers/env.php')) {
+    require_once APP_PATH . '/Helpers/env.php';
+}
+
 // Validate critical configuration after autoloader is ready
 if (class_exists('App\Core\ConfigService')) {
     try {
@@ -247,9 +259,7 @@ if (!function_exists('esc_html')) {
         return e($string, ENT_QUOTES);
     }
 }
-?>
 
-<?php
 // OPcache preload configuration for production
 if (APP_ENV === 'production' && function_exists('opcache_compile_file')) {
     $preloadFiles = [

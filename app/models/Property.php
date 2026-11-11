@@ -48,7 +48,7 @@ class Property extends Model
                 return array_map(fn($result) => new static($result), $results);
             }
             return [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getFeaturedProperties: " . $e->getMessage());
             return [];
         }
@@ -65,7 +65,7 @@ class Property extends Model
             }
 
             return $db->fetchAll($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getAllProperties: " . $e->getMessage());
             return [];
         }
@@ -75,7 +75,7 @@ class Property extends Model
     {
         try {
             return static::find($id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getPropertyById: " . $e->getMessage());
             return null;
         }
@@ -96,7 +96,7 @@ class Property extends Model
             $stmt->execute([$this->id]);
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getImages: " . $e->getMessage());
             return [];
         }
@@ -188,7 +188,7 @@ class Property extends Model
             $stmt->execute($params);
             $results = $stmt->fetchAll();
             return array_map(fn($result) => new static($result), $results);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in searchProperties: " . $e->getMessage());
             return [];
         }
@@ -262,7 +262,7 @@ class Property extends Model
             $stmt->bindValue(':offset', (int)(($filters['page'] - 1) * $filters['per_page']), \PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Admin properties query error: ' . $e->getMessage());
             return [];
         }
@@ -318,7 +318,7 @@ class Property extends Model
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             return (int)($result['total'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Admin total properties query error: ' . $e->getMessage());
             return 0;
         }
@@ -354,7 +354,7 @@ class Property extends Model
             $stmt->execute();
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in Property::getForSelect: ' . $e->getMessage());
             return [];
         }
@@ -378,7 +378,7 @@ class Property extends Model
             }
 
             return $db->fetchAll($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in Property::getActive: ' . $e->getMessage());
             return [];
         }
@@ -418,7 +418,7 @@ class Property extends Model
             $stmt->execute();
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in Property::getByType: ' . $e->getMessage());
             return [];
         }
@@ -448,7 +448,7 @@ class Property extends Model
             $stmt->execute();
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in Property::getByLocation: ' . $e->getMessage());
             return [];
         }
@@ -494,7 +494,7 @@ class Property extends Model
             $stmt->execute();
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in Property::getByPriceRange: ' . $e->getMessage());
             return [];
         }

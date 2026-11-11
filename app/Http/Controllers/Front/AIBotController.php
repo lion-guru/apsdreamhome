@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\BaseController;
 use App\Services\AI\AIManager;
-use App\Services\Voice\AIVoicePipeline;
+use App\Services\AI\RecommendationEngine;
+use App\Services\AI\VoiceService;
 use App\Services\Communication\WhatsAppWebService;
 use App\Traits\TenantAwareTrait;
 
@@ -45,8 +46,8 @@ class AIBotController extends BaseController
         // as the automatic fallback if the LLM is unavailable. Buy/rent property
         // suggestions below still run independently.
         try {
-            $pipeline = new AIVoicePipeline();
-            $llmReply = $pipeline->generateChatReply($message);
+            $voiceService = new VoiceService();
+            $llmReply = $voiceService->processQuery($message);
             if (!empty($llmReply)) {
                 $aiResponse['text'] = $llmReply;
                 $aiResponse['engine'] = 'llm';
@@ -62,7 +63,7 @@ class AIBotController extends BaseController
         // Track behavior
         try {
             $this->ai()->track($userId, 'chat_message', null, 'chat', null, ['message' => $message], $sessionId);
-        } catch (\Exception $e) { error_log("AIBotController::" . __FUNCTION__ . " tracking failed: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("AIBotController::" . __FUNCTION__ . " tracking failed: " . $e->getMessage()); }
 
         // If intent is buy/rent and user is logged in, suggest properties
         $suggestions = [];
@@ -77,7 +78,7 @@ class AIBotController extends BaseController
                         'reason' => $r['reason']
                     ];
                 }
-            } catch (\Exception $e) { error_log("AIBotController::" . __FUNCTION__ . " tracking failed: " . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log("AIBotController::" . __FUNCTION__ . " tracking failed: " . $e->getMessage()); }
         }
 
         echo json_encode([
@@ -113,7 +114,7 @@ class AIBotController extends BaseController
             }
             $stmt = $this->db->prepare("INSERT INTO ai_conversations ($cols) VALUES ($vals)");
             $stmt->execute($params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // table may not exist; ignore
         error_log($e->getMessage());
         }
@@ -191,10 +192,10 @@ class AIBotController extends BaseController
 
                 $leadId = (int)$this->db->lastInsertId();
                 if ($leadId) {
-                    try { $this->ai()->scoreLead($leadId); } catch (\Exception $e) { error_log("AIBotController::" . __FUNCTION__ . " tracking failed: " . $e->getMessage()); }
+                    try { $this->ai()->scoreLead($leadId); } catch (\Throwable $e) { error_log("AIBotController::" . __FUNCTION__ . " tracking failed: " . $e->getMessage()); }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WhatsApp lead creation error: " . $e->getMessage());
         }
     }
@@ -235,7 +236,10 @@ class AIBotController extends BaseController
 
         if (!$userId) { echo json_encode(['error' => 'login required']); exit; }
 
-        $result = $this->ai()->getRecommendations($userId, $limit);
+        // NOTE (S451): AIManager/AIService has no getRecommendations(); the
+  // real implementation lives on RecommendationEngine::recommend().
+  $engine = new RecommendationEngine($this->db);
+  $result = $engine->recommend($userId, $limit);
         echo json_encode(['success' => true, 'recommendations' => $result]);
         exit;
     }

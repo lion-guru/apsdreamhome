@@ -156,7 +156,7 @@ class ContractsAmcController extends BaseController
             ]);
 
             $this->setFlash('success', 'Contract/AMC created successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/contracts-amc');
@@ -270,7 +270,7 @@ class ContractsAmcController extends BaseController
             $this->db->execute($sql, $params);
 
             $this->setFlash('success', 'Contract updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/contracts-amc/' . $id);
@@ -312,7 +312,7 @@ class ContractsAmcController extends BaseController
             ", [$id, "Contract renewed to {$newEndStr} (billing: {$cycle})", $_SESSION['admin_id'] ?? 0]);
 
             $this->setFlash('success', 'Contract renewed to ' . $newEndStr);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Renew failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/contracts-amc/' . $id);
@@ -329,7 +329,7 @@ class ContractsAmcController extends BaseController
         try {
             $this->db->execute("UPDATE contracts_amc SET status = 'cancelled', updated_at = NOW() WHERE id = ?{$tSql}", array_merge([$id], $tParams));
             $this->setFlash('success', 'Contract cancelled');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/contracts-amc');

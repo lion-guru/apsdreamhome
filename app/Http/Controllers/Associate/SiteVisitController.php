@@ -258,6 +258,21 @@ class SiteVisitController extends BaseController
                     }
                     $db->execute("UPDATE leads SET first_response_at = NOW() WHERE id = ? AND first_response_at IS NULL", [$visit['lead_id']]);
                 }
+
+                // Visit loop: thank-you draft + NOC hint for Sahil (AI employee)
+                if (!empty($visit['lead_id'])) {
+                    try {
+                        $sahil = $db->fetchOne("SELECT id FROM ai_employees WHERE name = 'Sahil' AND status = 'active' LIMIT 1");
+                        if ($sahil) {
+                            $db->execute(
+                                "INSERT INTO ai_employee_tasks (employee_id, type, lead_id, payload, status) VALUES (?, 'followup_draft', ?, ?, 'pending')",
+                                [(int) $sahil['id'], (int) $visit['lead_id'], json_encode(['visit_id' => (int) $id, 'reason' => 'visit_completed', 'noc_hint' => true])]
+                            );
+                        }
+                    } catch (\Throwable $e) {
+                        error_log('Visit loop enqueue skipped: ' . $e->getMessage());
+                    }
+                }
                 $this->logActivity('site_visit_completed', json_encode(['visit_id' => $id]));
                 $_SESSION['success'] = 'Site visit marked as completed!';
             } else {

@@ -88,7 +88,7 @@ class DealService
                 'per_page' => $perPage,
                 'total_pages' => (int)ceil($total / $perPage),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DealService::getDeals error: ' . $e->getMessage());
             return ['deals' => [], 'total' => 0, 'page' => 1, 'per_page' => 25, 'total_pages' => 0];
         }
@@ -114,7 +114,7 @@ class DealService
 
             $deal['activities'] = $this->getDealActivities($id);
             return $deal;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -141,7 +141,7 @@ class DealService
             $stmt = $this->db->prepare("INSERT INTO lead_deals ({$columns}) VALUES ({$placeholders})");
             $stmt->execute($values);
             return $this->db->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DealService::createDeal error: ' . $e->getMessage());
             return false;
         }
@@ -168,7 +168,7 @@ class DealService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -186,7 +186,7 @@ class DealService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -202,7 +202,7 @@ class DealService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -222,7 +222,7 @@ $sql = "SELECT a.*, u.name as user_name FROM crm_interactions a
             $params[] = $limit;
             $stmt = $this->db->query($sql, $params);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -240,7 +240,7 @@ $sql = "SELECT stage, COUNT(*) as count, SUM(deal_value) as total_value
             $sql .= " GROUP BY stage ORDER BY FIELD(stage, 'qualification', 'proposal', 'negotiation', 'closing')";
             $stmt = $this->db->query($sql, $params);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -257,7 +257,7 @@ $sql = "SELECT SUM(deal_value * probability / 100) as weighted_value
             }
             $stmt = $this->db->query($sql, $params);
             return (float)($stmt->fetch()['weighted_value'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -287,7 +287,7 @@ $sql = "SELECT SUM(deal_value * probability / 100) as forecast
                 ];
             }
             return $forecast;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -333,7 +333,7 @@ $sql3 = "SELECT COUNT(*) as lost_count, SUM(deal_value) as lost_value
                 'lost' => $lost,
                 'loss_reasons' => $lossReasons,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['won' => ['won_count' => 0, 'won_value' => 0], 'lost' => ['lost_count' => 0, 'lost_value' => 0], 'loss_reasons' => []];
         }
     }

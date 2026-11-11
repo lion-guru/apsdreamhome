@@ -249,10 +249,8 @@ class RankPromotionNotificationService
     private function logRankHistory(int $userId, string $oldRank, string $newRank, array $metadata): void
     {
         try {
-        $assocStmt = $this->db->prepare(
-                "SELECT id FROM associates WHERE user_id = ?" . $this->tenantSql() . " LIMIT 1"
-            );
-            $assocStmt->execute([$userId]);
+        $assocStmt = $this->db->prepare("SELECT id FROM associate_profiles WHERE user_id = ?" . $this->tenantSql() . " LIMIT 1");
+$assocStmt->execute([$userId]);
             $assoc = $assocStmt->fetch(PDO::FETCH_ASSOC);
             $associateId = $assoc ? (int)$assoc['id'] : 0;
 

@@ -84,7 +84,7 @@ class App
             // Route the request
             return $this->route($uri, $method);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->handleError($e);
         }
     }
@@ -167,7 +167,7 @@ class App
                         ]
                     ];
                     echo json_encode(['success' => true, 'data' => $properties]);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     http_response_code(500);
                     echo json_encode(['success' => false, 'error' => 'Database error']);
                 }
@@ -272,7 +272,7 @@ class App
                         ]
                     ];
                     echo json_encode(['success' => true, 'data' => $leads]);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     http_response_code(500);
                     echo json_encode(['success' => false, 'error' => 'Database error']);
                 }
@@ -322,7 +322,7 @@ class App
                         ]
                     ];
                     echo json_encode(['success' => true, 'data' => $analytics]);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     http_response_code(500);
                     echo json_encode(['success' => false, 'error' => 'Analytics error']);
                 }
@@ -585,7 +585,7 @@ class App
                 $db = new \stdClass();
                 $db->connected = true;
                 $db->connection = "database_connection";
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $db = new \stdClass();
                 $db->connected = false;
                 $db->error = $e->getMessage();

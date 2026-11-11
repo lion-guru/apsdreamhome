@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+
 // NOTE (S449): this file is namespaced, so a bare PDO:: resolves to
 // <this-namespace>\PDO -> "Class App\...\PDO not found" fatal. The
 // custom autoloader does not fall back to the global PDO class.
 use PDO;
-
 use App\Http\Controllers\BaseController;
 use App\Core\Security;
 use App\Traits\TenantAwareTrait;
@@ -237,7 +237,7 @@ class MobileAuthApiController extends BaseController
                 'token' => $token,
             ], 'Google login successful', 200);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('MobileAuthApiController::googleLogin failed: ' . $e->getMessage());
             return $this->jsonError('Google login failed: ' . $e->getMessage(), 500);
         }
@@ -321,7 +321,7 @@ class MobileAuthApiController extends BaseController
                     'expires_in' => 300
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('MobileAuthApiController::requestAirLoginOtp error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Failed to send OTP']);
@@ -432,7 +432,7 @@ class MobileAuthApiController extends BaseController
                     'expires_in' => $remember ? 2592000 : 86400
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('MobileAuthApiController::verifyAirLoginOtp error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'OTP verification failed']);
@@ -473,7 +473,7 @@ class MobileAuthApiController extends BaseController
                 'message' => 'Password reset instructions sent to your email',
                 'reset_token' => $resetToken
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Forgot Password API error');
         }
     }
@@ -498,7 +498,7 @@ class MobileAuthApiController extends BaseController
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'Invalid OTP']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Verify OTP API error');
         }
     }
@@ -518,7 +518,7 @@ class MobileAuthApiController extends BaseController
 
             $this->apiAuthService->sendOtp($email);
             echo json_encode(['success' => true, 'message' => 'OTP resent successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Resend OTP API error');
         }
     }
@@ -557,7 +557,7 @@ class MobileAuthApiController extends BaseController
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'Invalid OTP or email']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Reset Password API error');
         }
     }
@@ -589,7 +589,7 @@ class MobileAuthApiController extends BaseController
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'Current password is incorrect']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Change Password API error');
         }
     }
@@ -669,7 +669,7 @@ class MobileAuthApiController extends BaseController
 
             $result = $this->apiAuthService->firebaseLogin($idToken);
             echo json_encode($result);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Firebase Login API error');
         }
     }

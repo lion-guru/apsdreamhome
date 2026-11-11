@@ -78,7 +78,7 @@ class LoggingController extends BaseController
         // Get logs from database
         $logs = Database::getInstance()->fetchAll(
             "SELECT * FROM system_logs 
-             WHERE category = ? 
+             WHERE action = ? 
              ORDER BY created_at DESC 
              LIMIT ? OFFSET ?",
             [$category, $limit, $offset]
@@ -86,7 +86,7 @@ class LoggingController extends BaseController
 
         // Get total count
         $total = Database::getInstance()->fetchOne(
-            "SELECT COUNT(*) as count FROM system_logs WHERE category = ?",
+            "SELECT COUNT(*) as count FROM system_logs WHERE action = ?",
             [$category]
         )['count'];
 
@@ -178,7 +178,7 @@ class LoggingController extends BaseController
                 'file' => basename($csvFile),
                 'path' => $csvFile
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Export failed: ' . $e->getMessage()
@@ -215,7 +215,7 @@ class LoggingController extends BaseController
                 'success' => true,
                 'message' => 'Cleanup completed'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Cleanup failed: ' . $e->getMessage()
@@ -269,7 +269,7 @@ class LoggingController extends BaseController
         // Search logs
         $logs = Database::getInstance()->fetchAll(
             "SELECT * FROM system_logs 
-             WHERE category = ? AND (message LIKE ? OR context LIKE ?)
+             WHERE action = ? AND (action LIKE ? OR old_values LIKE ? OR new_values LIKE ?)
              ORDER BY created_at DESC 
              LIMIT ? OFFSET ?",
             [$category, "%$search%", "%$search%", $limit, $offset]
@@ -278,7 +278,7 @@ class LoggingController extends BaseController
         // Get total count
         $total = Database::getInstance()->fetchOne(
             "SELECT COUNT(*) as count FROM system_logs 
-             WHERE category = ? AND (message LIKE ? OR context LIKE ?)",
+             WHERE action = ? AND (action LIKE ? OR old_values LIKE ? OR new_values LIKE ?)",
             [$category, "%$search%", "%$search%"]
         )['count'];
 
@@ -389,7 +389,7 @@ class LoggingController extends BaseController
                     'message' => 'Failed to dismiss alert'
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
@@ -415,7 +415,7 @@ class LoggingController extends BaseController
         $database = \App\Core\Database::getInstance();
         $logs = Database::getInstance()->fetchAll(
             "SELECT * FROM system_logs 
-             WHERE category = ? AND id > ? 
+             WHERE action = ? AND id > ? 
              ORDER BY created_at DESC 
              LIMIT 10",
             [$category, $lastId]

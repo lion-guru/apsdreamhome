@@ -388,7 +388,7 @@ try {
     echo "   - UI Tables: 2 (theme_prefs, quick_actions)\n";
     echo "\n🎉 Total: 19 new tables created!\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "\n❌ Error: " . $e->getMessage() . "\n";
     exit(1);
 }

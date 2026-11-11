@@ -34,7 +34,7 @@ class WorkflowController extends BaseApiController
                 'data' => $workflows,
                 'count' => count($workflows)
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WorkflowController::index error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -70,7 +70,7 @@ class WorkflowController extends BaseApiController
                 'success' => true,
                 'data' => $wf
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WorkflowController::show error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -109,7 +109,7 @@ class WorkflowController extends BaseApiController
             }
 
             return $this->jsonResponse($result, 422);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WorkflowController::store error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -151,7 +151,7 @@ class WorkflowController extends BaseApiController
             }
 
             return $this->jsonResponse($result, 422);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WorkflowController::update error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -189,7 +189,7 @@ class WorkflowController extends BaseApiController
             $stmt->execute([(int)$id]);
 
             return $this->jsonResponse(['success' => true, 'message' => 'Workflow instance cancelled']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WorkflowController::destroy error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }

@@ -95,7 +95,7 @@ class BookingController extends AdminController
                 'total_pages'  => $totalPages,
                 'current_page' => $page
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/bookings/index', [
                 'bookings' => [], 'total' => 0, 'filters' => [],
                 'associates' => [], 'colonies' => [], 'statuses' => [],
@@ -118,7 +118,7 @@ class BookingController extends AdminController
                 } catch (\Throwable $e) { error_log('BookingController::create lead lookup failed: ' . $e->getMessage()); }
             }
             return $this->render('admin/bookings/create', ['users' => $users, 'properties' => $properties, 'lead' => $lead]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/bookings/create', ['users' => [], 'properties' => [], 'lead' => null, 'error' => $e->getMessage()]);
         }
     }
@@ -234,7 +234,7 @@ class BookingController extends AdminController
             } catch (\Throwable $e) { error_log('BookingController::store department request error: ' . $e->getMessage()); }
 
             $this->redirect('/admin/bookings');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/bookings/create');
         }
@@ -271,7 +271,7 @@ public function show($id)
                         $total_paid += floatval($pmt['paid_amount'] ?? $pmt['amount'] ?? 0);
                     }
                 }
-            } catch (\Exception $e) { error_log('BookingController::show payment error: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('BookingController::show payment error: ' . $e->getMessage()); }
             try {
                 $cStmt = $this->db->prepare("SELECT mcl.*, u.name as associate_name FROM mlm_commission_ledger mcl LEFT JOIN users u ON mcl.beneficiary_user_id = u.id WHERE mcl.booking_id = ? ORDER BY mcl.created_at DESC");
                 $cStmt->execute([$id]);
@@ -279,14 +279,14 @@ public function show($id)
                 foreach ($commissions as $cm) {
                     $total_commission += floatval($cm['amount'] ?? 0);
                 }
-            } catch (\Exception $e) { error_log('BookingController::show commission error: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('BookingController::show commission error: ' . $e->getMessage()); }
 
             $documents = [];
             try {
                 $dStmt = $this->db->prepare("SELECT * FROM booking_documents WHERE booking_id = ? ORDER BY id DESC");
                 $dStmt->execute([$id]);
                 $documents = $dStmt->fetchAll(\PDO::FETCH_ASSOC);
-            } catch (\Exception $e) { error_log('BookingController::show documents error: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('BookingController::show documents error: ' . $e->getMessage()); }
 
             return $this->render('admin/bookings/show', [
                 'booking'          => $booking,
@@ -296,7 +296,7 @@ public function show($id)
                 'commissions'      => $commissions,
                 'total_commission' => $total_commission
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/bookings/show', [
                 'booking' => null, 'payments' => [], 'total_paid' => 0,
                 'commissions' => [], 'total_commission' => 0,
@@ -482,7 +482,7 @@ $file = $_FILES['document_file'];
 
             $_SESSION['flash_message'] = 'Executed physical document / scan uploaded and archived successfully.';
             $_SESSION['flash_type'] = 'success';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['flash_message'] = 'Upload Error: ' . $e->getMessage();
             $_SESSION['flash_type'] = 'danger';
         }
@@ -517,7 +517,7 @@ $file = $_FILES['document_file'];
             header('Content-Length: ' . filesize($doc['file_path']));
             readfile($doc['file_path']);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['flash_message'] = 'Error downloading: ' . $e->getMessage();
             $_SESSION['flash_type'] = 'danger';
             $this->redirect('/admin/bookings');
@@ -534,7 +534,7 @@ $file = $_FILES['document_file'];
             $customers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('customer','user'){$tidSql} ORDER BY name", $tidParams) ?: [];
             $plots = $this->db->query("SELECT pl.id, pl.plot_number, c.name as colony_name FROM plots pl LEFT JOIN colonies c ON pl.colony_id = c.id WHERE pl.status IN ('available','booked') ORDER BY c.name, pl.plot_number")->fetchAll(\PDO::FETCH_ASSOC);
             return $this->render('admin/bookings/edit', ['booking' => $booking, 'customers' => $customers, 'plots' => $plots]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/bookings/edit', ['booking' => null, 'customers' => [], 'plots' => [], 'error' => $e->getMessage()]);
         }
     }
@@ -559,7 +559,7 @@ $file = $_FILES['document_file'];
             // Hot-path: booking status/amount changes affect the admin dashboard KPI bundle.
             \App\Services\Cache\HotPathCacheService::invalidateAdminDashboard();
             $this->redirect('/admin/bookings');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/bookings/' . $id . '/edit');
         }
@@ -578,7 +578,7 @@ $file = $_FILES['document_file'];
             } else {
                 $_SESSION['error'] = $res['message'] ?? 'Delete not permitted';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/bookings');
@@ -627,7 +627,7 @@ $file = $_FILES['document_file'];
                     }
                 }
             } catch (\Throwable $e) { error_log('BookingController::processPayment department request error: ' . $e->getMessage()); }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/bookings/' . $id);
@@ -648,7 +648,7 @@ $file = $_FILES['document_file'];
             $availableDates = \array_column($result, 'visit_date');
 
             return $this->jsonSuccess($availableDates);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonErrorLocal($e->getMessage(), 500);
         }
     }
@@ -671,7 +671,7 @@ $file = $_FILES['document_file'];
             $bookings = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonSuccess($bookings);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonErrorLocal($e->getMessage(), 500);
         }
     }
@@ -814,7 +814,7 @@ $file = $_FILES['document_file'];
                 fclose($output);
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('BookingController::export error: ' . $e->getMessage());
             showToast(['type' => 'error', 'body' => 'Export failed: ' . $e->getMessage()]);
         }

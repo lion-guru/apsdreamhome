@@ -176,7 +176,7 @@ class LocationAdminController extends AdminController
         fputcsv($output, ['ID', 'Name', 'Code', 'Is Active', 'Created At']);
 
         // Fetch all states
-        $sql = "SELECT id, name, code, is_active, created_at FROM states ORDER BY name";
+        $sql = "SELECT id, name, code, is_active FROM states ORDER BY name";
         $stmt = $this->db->query($sql);
         $states = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 

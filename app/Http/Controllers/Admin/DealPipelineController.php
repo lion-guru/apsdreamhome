@@ -81,7 +81,7 @@ class DealPipelineController extends AdminController
             
             return $this->render('admin/deal-pipeline/index', $data);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/deal-pipeline/index', [
                 'page_title' => 'Deal Pipeline - Kanban Board',
                 'deals' => [],
@@ -118,7 +118,7 @@ class DealPipelineController extends AdminController
             
             return $this->render('admin/deal-pipeline/create', $data);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/deal-pipeline/create', [
                 'page_title' => 'Create New Deal',
                 'error' => $e->getMessage()
@@ -158,7 +158,7 @@ class DealPipelineController extends AdminController
             redirect('/admin/deal-pipeline?success=Deal created successfully');
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/deal-pipeline/create?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -217,7 +217,7 @@ class DealPipelineController extends AdminController
             
             return $this->render('admin/deal-pipeline/show', $data);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -264,7 +264,7 @@ class DealPipelineController extends AdminController
             redirect('/admin/deal-pipeline?success=Deal stage updated');
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -294,7 +294,7 @@ class DealPipelineController extends AdminController
             redirect('/admin/deal-pipeline?success=Deal probability updated');
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -327,7 +327,7 @@ class DealPipelineController extends AdminController
             redirect('/admin/deal-pipeline?success=Deal marked as won');
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -360,7 +360,7 @@ class DealPipelineController extends AdminController
             redirect('/admin/deal-pipeline?success=Deal marked as lost');
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -399,7 +399,7 @@ class DealPipelineController extends AdminController
             
             return $this->render('admin/deal-pipeline/timeline', $data);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/deal-pipeline?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -430,7 +430,7 @@ class DealPipelineController extends AdminController
             
             return $stats;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

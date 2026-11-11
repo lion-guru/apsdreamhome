@@ -206,6 +206,19 @@
                                         <input type="number" class="form-control" name="negotiated_price" step="0.01" placeholder="Only if different from total">
                                     </div>
                                 </div>
+                                <div class="card border-0 bg-light mt-3">
+                                    <div class="card-body py-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="fw-bold"><i class="fas fa-robot text-primary me-2"></i>AI Price Suggestion</span>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="aiValBtn" onclick="getAIValuation()">
+                                                <i class="fas fa-wand-magic-sparkles me-1"></i> Suggest Price
+                                            </button>
+                                        </div>
+                                        <div id="aiValResult" class="text-muted">
+                                            Uses colony demand, facing, road width & PLC to suggest a fair price. Click "Suggest Price" — nothing is applied until you click it.
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Features -->
@@ -225,8 +238,15 @@
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Description</label>
-                                    <textarea class="form-control" name="description" rows="3" placeholder="Optional plot description, features, or notes"></textarea>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="form-label mb-0">Description</label>
+                                        <button type="button" class="btn btn-sm btn-purple" id="aiDescBtn"
+                                                onclick="generateAIDescription()">
+                                            <i class="fas fa-wand-magic-sparkles me-1"></i> AI Generate
+                                        </button>
+                                    </div>
+                                    <textarea class="form-control" id="plotDescription" name="description" rows="3" placeholder="Optional plot description, features, or notes"></textarea>
+                                    <small class="text-muted"><i class="fas fa-robot me-1"></i>AI generates SEO description from colony, area, facing & price. You can edit before saving.</small>
                                 </div>
                             </div>
                         </div>
@@ -282,5 +302,134 @@ function setCreateDims(w, l) {
     document.getElementById('width_ft').value = w;
     document.getElementById('length_ft').value = l;
     calcCreateDim();
+}
+
+// AI Description Generator — calls POST /ai/content/description
+function generateAIDescription() {
+    const btn = document.getElementById('aiDescBtn');
+    const descBox = document.getElementById('plotDescription');
+    if (!descBox || !btn) return;
+    const colonySel = document.getElementById('colony_id');
+    const colonyName = colonySel && colonySel.selectedIndex > 0 ? colonySel.options[colonySel.selectedIndex].text : '';
+    const area = document.getElementById('area_sqft') ? document.getElementById('area_sqft').value : '';
+    const price = document.getElementById('total_price') ? document.getElementById('total_price').value : '';
+    const typeSel = document.querySelector('[name="plot_type"]');
+    const plotType = typeSel ? typeSel.value : 'plot';
+
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Generating...';
+
+    fetch('/apsdreamhome/ai/content/description', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            title: 'Plot ' + (document.querySelector('[name="plot_number"]') || {}).value,
+            location: colonyName,
+            colony: colonyName,
+            area_sqft: area,
+            price: price,
+            type: plotType,
+        }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success && data.description) {
+            descBox.value = data.description;
+            btn.innerHTML = '<i class="fas fa-check me-1"></i> Generated!';
+            setTimeout(() => { btn.disabled = false; btn.innerHTML = orig; }, 2000);
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = orig;
+            alert('AI generation failed: ' + (data.error || 'unknown error'));
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+        alert('AI generation failed (network error)');
+    });
+}
+
+// AI Price Suggestion — calls POST /api/ai-valuation/calculator
+function getAIValuation() {
+    const btn = document.getElementById('aiValBtn');
+    const box = document.getElementById('aiValResult');
+    if (!btn || !box) return;
+
+    const colonySel = document.getElementById('colony_id');
+    const colonyId = colonySel ? colonySel.value : '';
+    const area = document.getElementById('area_sqft') ? document.getElementById('area_sqft').value : '';
+    const facingEl = document.querySelector('[name="facing"]');
+    const facing = facingEl ? facingEl.value : '';
+    const road = document.getElementById('road_width_ft') ? document.getElementById('road_width_ft').value : '';
+    const corner = document.getElementById('corner_plot') ? document.getElementById('corner_plot').value : '';
+    const park = document.getElementById('park_facing') ? document.getElementById('park_facing').value : '';
+    const colonyName = colonySel && colonySel.selectedIndex > 0 ? colonySel.options[colonySel.selectedIndex].text : '';
+
+    if (!colonyId || !area || parseFloat(area) <= 0) {
+        box.innerHTML = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Select colony and enter area first.</span>';
+        return;
+    }
+
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Valuing...';
+
+    const payload = new URLSearchParams({
+        colony_id: colonyId,
+        area: area,
+        location: colonyName,
+        facing: facing,
+        road_width: road,
+        corner_plot: corner || '',
+        park_facing: park || '',
+    });
+
+    fetch('/apsdreamhome/api/ai-valuation/calculator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: payload.toString(),
+    })
+    .then(r => r.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+        const v = data.valuation || {};
+        if (data.success && v.estimated_value) {
+            const inr = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+            const range = v.price_range || {};
+            let factorsHtml = '';
+            if (Array.isArray(v.factors) && v.factors.length) {
+                factorsHtml = '<div class="mt-2 small">' + v.factors.map(f =>
+                    '<div class="d-flex justify-content-between border-top pt-1"><span>' + (f.name || '') + '</span><span class="' + (parseFloat(f.impact) >= 0 ? 'text-success' : 'text-danger') + '">' + (parseFloat(f.impact) >= 0 ? '+' : '') + (parseFloat(f.impact) * 100).toFixed(1) + '%</span></div>'
+                ).join('') + '</div>';
+            }
+            box.innerHTML =
+                '<div class="d-flex flex-wrap gap-4">' +
+                '<div><div class="small text-muted">Suggested value</div><div class="fs-5 fw-bold text-dark">' + inr(v.estimated_value) + '</div></div>' +
+                '<div><div class="small text-muted">Per sqft</div><div class="fs-5 fw-bold text-primary">' + inr(v.price_per_sqft) + '</div></div>' +
+                '<div><div class="small text-muted">Confidence</div><div class="fs-5">' + (v.confidence_level || '') + ' <small class="text-muted">(' + Math.round((v.confidence || 0) * 100) + '%)</small></div></div>' +
+                '</div>' +
+                (range.low && range.high ? '<div class="small text-muted mt-1">Fair range: ' + inr(range.low) + ' – ' + inr(range.high) + '</div>' : '') +
+                '<button type="button" class="btn btn-sm btn-primary mt-2" onclick="applyAIValuation(' + v.price_per_sqft + ')"><i class="fas fa-check me-1"></i>Use this price per sqft</button>' +
+                factorsHtml;
+        } else {
+            box.innerHTML = '<span class="text-danger">AI valuation failed: ' + (data.error || 'unknown error') + '</span>';
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = orig;
+        box.innerHTML = '<span class="text-danger">AI valuation failed (network error)</span>';
+    });
+}
+
+function applyAIValuation(pps) {
+    const el = document.getElementById('price_per_sqft');
+    if (el && pps > 0) {
+        el.value = parseFloat(pps).toFixed(2);
+        calcCreatePps();
+    }
 }
 </script>

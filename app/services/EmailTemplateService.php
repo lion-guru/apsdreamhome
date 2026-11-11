@@ -231,9 +231,9 @@ class EmailTemplateService
         $html = $this->render($templateCode, $data);
         if (!$html) return false;
 
-        // Try EmailSenderService first
+        // Try EmailService first
         try {
-            $sender = new \App\Services\Communication\EmailSenderService();
+            $sender = new \App\Services\Communication\EmailService();
             $result = $sender->send($email, $subject, $html);
         } catch (\Throwable $e) {
             error_log("[EmailTemplateService] EmailSender failed: " . $e->getMessage());

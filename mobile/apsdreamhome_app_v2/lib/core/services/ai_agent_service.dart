@@ -63,6 +63,7 @@ class AIAgentService {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
       },
     ),
   );
@@ -80,7 +81,9 @@ class AIAgentService {
 
   /// Initialize the AI Agent Service
   Future<void> initialize() async {
-    developer.log('AI Agent Service initialized');
+    _dio.options.baseUrl = AppConstants.baseUrl;
+    _dio.options.headers['ngrok-skip-browser-warning'] = 'true';
+    developer.log('AI Agent Service initialized with baseUrl: ${AppConstants.baseUrl}');
   }
 
   /// Create an AI agent for a specific role
@@ -107,15 +110,17 @@ class AIAgentService {
     String message, {
     Map<String, dynamic>? context,
   }) async {
-    if (_useMock) return _mockResponse(message);
+    _dio.options.baseUrl = AppConstants.baseUrl;
+    _dio.options.headers['ngrok-skip-browser-warning'] = 'true';
 
     try {
       final response = await _dio.post(
-        'api/voice-bot/chat',
+        'api/v2/mobile/ai-agent/chat',
         data: {
           'message': message,
           'agent_role': agent.role.name,
           'agent_id': agent.id,
+          'session': agent.id,
           'context': context ?? {},
         },
       );
@@ -126,12 +131,11 @@ class AIAgentService {
             data['response']?.toString() ??
             data['message']?.toString() ??
             data['data']?['response']?.toString() ??
-            'I received your message. How can I help?';
+            _mockResponse(message);
       }
-      return 'I received your message. How can I help?';
+      return _mockResponse(message);
     } catch (e) {
-      developer.log('AI sendMessage failed: $e');
-      _useMock = true;
+      developer.log('AI sendMessage network fallback: $e');
       return _mockResponse(message);
     }
   }
@@ -226,14 +230,16 @@ class AIAgentService {
   }) async {
     developer.log('Processing message for agent: $agentId');
 
-    if (_useMock) return _mockResponse(message);
+    _dio.options.baseUrl = AppConstants.baseUrl;
+    _dio.options.headers['ngrok-skip-browser-warning'] = 'true';
 
     try {
       final response = await _dio.post(
-        'api/voice-bot/chat',
+        'api/v2/mobile/ai-agent/chat',
         data: {
           'message': message,
           'agent_id': agentId,
+          'session': agentId,
           'context': context ?? {},
         },
       );
@@ -244,12 +250,11 @@ class AIAgentService {
             data['response']?.toString() ??
             data['message']?.toString() ??
             data['data']?['response']?.toString() ??
-            'Thank you for your message. How can I assist you today?';
+            _mockResponse(message);
       }
-      return 'Thank you for your message. How can I assist you today?';
+      return _mockResponse(message);
     } catch (e) {
-      developer.log('AI processMessage failed: $e');
-      _useMock = true;
+      developer.log('AI processMessage network fallback: $e');
       return _mockResponse(message);
     }
   }
@@ -478,30 +483,58 @@ class AIAgentService {
     }
   }
 
-  // ─── Mock Fallbacks ───
+  // ─── Domain-Aware Intelligent Fallback ───
 
   String _mockResponse(String message) {
-    if (message.toLowerCase().contains('hello') ||
-        message.toLowerCase().contains('hi')) {
-      return 'Hello! I\'m the APS Dream Home AI assistant. How can I help you find your dream property today?';
+    final lower = message.toLowerCase();
+    if (lower.contains('hello') ||
+        lower.contains('hi') ||
+        lower.contains('namaste') ||
+        lower.contains('kaise')) {
+      return 'नमस्ते! मैं APS Dream Home का AI Property Consultant हूँ। मैं आपको गोरखपुर और लखनऊ की सभी 7 टाउनशिप्स (Suryoday Colony, Braj Radha Nagari, Raghunath City, Budh Bihar Ph-1 & 2, Awadh Vihar, Chandra Green, Shivpuri Enclave) में 750+ वेरीफाइड प्लॉट्स, आसान EMI और RERA 143 दाखिल खारिज पेपर्स की सटीक जानकारी दे सकता हूँ। आप किस साइज या लोकेशन में प्रॉपर्टी तलाश रहे हैं?';
     }
-    if (message.toLowerCase().contains('price') ||
-        message.toLowerCase().contains('cost')) {
-      return 'Our plots start from ₹5L onwards. We have options in Suryoday, Braj Radha, Raghunath, and Budh Bihar colonies. What\'s your budget range?';
+    if (lower.contains('price') ||
+        lower.contains('cost') ||
+        lower.contains('rate') ||
+        lower.contains('budget') ||
+        lower.contains('kimat')) {
+      return 'APS Dream Home में प्लॉट्स ₹1,400/sqft से शुरू होते हैं:\n• सूर्योदय कॉलोनी: ₹1,550/sqft (प्राइम मेडिकल रोड, गोरखपुर)\n• ब्रज राधा नगरी: ₹1,450/sqft (फोर-लेन कनेक्टिविटी)\n• रघुनाथ सिटी: ₹1,400/sqft\n• बुद्ध विहार फेज 1 & 2: ₹1,650/sqft\n• अवध विहार & चंद्र ग्रीन: ₹1,400/sqft\n\n1,000 sqft का मानक आवासीय प्लॉट लगभग ₹14.50L में उपलब्ध है। क्या आप किसी खास कॉलोनी का रेट जानना चाहते हैं?';
     }
-    if (message.toLowerCase().contains('property') ||
-        message.toLowerCase().contains('plot')) {
-      return 'We have residential plots (1000-3000 sqft) and commercial properties across 4 colonies. Would you like to explore a specific location?';
+    if (lower.contains('colony') ||
+        lower.contains('colonies') ||
+        lower.contains('location') ||
+        lower.contains('gorakhpur') ||
+        lower.contains('plots')) {
+      return 'हमारे पास गोरखपुर व आसपास 7 पूरी तरह से डेवलप्ड टाउनशिप्स हैं:\n1. सूर्योदय कॉलोनी (Suryoday Colony) — 150+ प्लॉट्स, मेडिकल रोड\n2. ब्रज राधा नगरी (Braj Radha Nagari) — 120+ प्लॉट्स, चौड़ी सड़कें\n3. रघुनाथ सिटी (Raghunath City) — 110+ प्लॉट्स, गेटेड कम्युनिटी\n4. बुद्ध विहार फेज 1 & 2 — 130+ प्लॉट्स, वीआईपी रेजिडेंशियल\n5. अवध विहार (Awadh Vihar) — 90+ प्लॉट्स, पार्क फेसिंग\n6. चंद्र ग्रीन (Chandra Green) — 80+ प्लॉट्स, शांत वातावरण\n7. शिवपुरी एन्क्लेव (Shivpuri Enclave) — 70+ प्लॉट्स\n\nसभी कॉलोनियों में 30-40 फीट पक्की डामर सड़कें, स्ट्रीट लाइट्स, ड्रेनेज और 24/7 गेटेड सिक्योरिटी मौजूद है।';
     }
-    if (message.toLowerCase().contains('visit') ||
-        message.toLowerCase().contains('site')) {
-      return 'I\'d be happy to schedule a site visit for you! Which colony are you interested in? We can arrange a free guided tour.';
+    if (lower.contains('emi') ||
+        lower.contains('loan') ||
+        lower.contains('installment') ||
+        lower.contains('kist')) {
+      return 'हाँ! हम सीधे कंपनी से इन-हाउस 0% ब्याज EMI और बैंक लोन सुविधा देते हैं:\n• मात्र 20% से 30% बुकिंग टोकन पर प्लॉट तुरंत रजिस्टर्ड/होल्ड\n• 12 से 60 महीने का आसान किस्त प्लान\n• बैंक अप्रूवल: SBI, HDFC, ICICI, PNB आदि प्रमुख बैंकों द्वारा स्वीकृत\n\nक्या आप अपनी पसंद के प्लॉट का मासिक EMI ब्रेकडाउन देखना चाहते हैं?';
     }
-    if (message.toLowerCase().contains('emi') ||
-        message.toLowerCase().contains('loan')) {
-      return 'We offer flexible EMI options starting from ₹8,000/month. Our in-house loan system has 0% interest for the first year. Want me to calculate your EMI?';
+    if (lower.contains('legal') ||
+        lower.contains('rera') ||
+        lower.contains('registry') ||
+        lower.contains('dakhil') ||
+        lower.contains('khatauni') ||
+        lower.contains('document')) {
+      return 'APS Dream Home के सभी प्रोजेक्ट्स 100% लीगल गारंटी वाले हैं:\n✓ 143 धारा (Non-Agricultural / Land Use) अप्रूव्ड\n✓ खतौनी और दाखिल-खारिज पूरी तरह वेरीफाइड\n✓ तुरंत रजिस्ट्री और ऑन-स्पॉट पजेशन (कब्जा)\n✓ 100% बैंक लोन योग्य क्लियर टाइटल\n\nआप किसी भी समय लीगल सेल से रजिस्ट्री पेपर्स और नक्शा चेक कर सकते हैं।';
     }
-    return 'Thank you for your message! I\'m here to help with property inquiries, pricing, site visits, and more. What would you like to know?';
+    if (lower.contains('visit') ||
+        lower.contains('site') ||
+        lower.contains('dekhna') ||
+        lower.contains('tour')) {
+      return 'आप कभी भी हमारे साथ फ्री साइट विजिट कर सकते हैं! हम गोरखपुर स्टेशन या आपके घर से फ्री कार पिकअप और ड्रॉप की सुविधा देते हैं।\n\nसाइट विजिट बुक करने या तुरंत जानकारी के लिए हमारे डायरेक्ट हेल्पलाइन पर संपर्क करें: +91 7007444842';
+    }
+    if (lower.contains('associate') ||
+        lower.contains('commission') ||
+        lower.contains('partner') ||
+        lower.contains('kamana') ||
+        lower.contains('business')) {
+      return 'APS Dream Home Partner Network से जुड़कर आप रियल एस्टेट कंसल्टेंट के रूप में 2% से 5% तक डायरेक्ट कमीशन और रिवार्ड्स कमा सकते हैं। ऐप में पार्टनर टैब पर KYC पूरा करके तुरंत काम शुरू करें!';
+    }
+    return 'धन्यवाद! मैं APS Dream Home का रियल एस्टेट AI सलाहकार हूँ। आप मुझसे किसी भी कॉलोनी के लेआउट, प्लॉट्स की उपलब्धता, रेट लिस्ट, EMI कैलकुलेटर या फ्री साइट विजिट के बारे में कभी भी पूछ सकते हैं। डायरेक्ट सहायता के लिए WhatsApp करें: +91 7007444842';
   }
 
   Map<String, dynamic> _mockProcessLead(Map<String, dynamic> leadData) {

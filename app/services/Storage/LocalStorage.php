@@ -18,7 +18,10 @@ use App\Core\Database\Database;
 use App\Services\ServiceConfigService;
 use Exception;
 
-class LocalStorage
+// NOTE (S451): LocalStorage did NOT implement StorageInterface, so
+// StorageManager::makeLocal() (declared to return StorageInterface)
+// blew up with "Return value must be of type StorageInterface".
+class LocalStorage implements StorageInterface
 {
     private string $rootPath;
     private ?string $baseUrl;
@@ -130,6 +133,31 @@ class LocalStorage
         return filesize($fullPath);
     }
 
+    /**
+     * Copy a file (part of StorageInterface).
+     *
+     * NOTE (S451): LocalStorage did not implement StorageInterface because
+     * copy()/move() were missing -> StorageManager::makeLocal() (declared to
+     * return StorageInterface) blew up on every storage page.
+     */
+    public function copy(string $from, string $to): array
+    {
+        $contents = $this->get($from);
+        if ($contents === null) {
+            return ['success' => false, 'message' => 'Source file not found: ' . $from];
+        }
+        $result = $this->put($to, $contents);
+        return is_array($result) ? $result : ['success' => true];
+    }
+
+    public function move(string $from, string $to): array
+    {
+        $result = $this->copy($from, $to);
+        if (!empty($result['success'])) {
+            $this->delete($from);
+        }
+        return $result;
+    }
     public function mimeType(string $path): ?string
     {
         $fullPath = $this->resolvePath($path);

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\Admin\AdminController;
-use \App\Traits\TenantAwareTrait;
 use Exception;
 
 class AppFeedbackController extends AdminController

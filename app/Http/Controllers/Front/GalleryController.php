@@ -18,7 +18,7 @@ class GalleryController extends BaseController
         try {
             $stmt = $this->db->query("SELECT * FROM gallery_images WHERE status = 'active' ORDER BY created_at DESC");
             $images = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $images = [];
         }
         $this->render('pages/photo_gallery', [
@@ -33,7 +33,7 @@ class GalleryController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM gallery_images WHERE id = ? AND status = 'active'");
             $stmt->execute([$id]);
             $image = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $image = null;
         }
         if (!$image) {

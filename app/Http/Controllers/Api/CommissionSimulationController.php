@@ -200,7 +200,7 @@ class CommissionSimulationController extends BaseApiController
                 'total_tds' => round(array_sum(array_column($tdsResults, 'tds')), 2),
                 'total_net' => round(array_sum(array_column($tdsResults, 'net')), 2),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CommissionSimulationController::calculateTds error: ' . $e->getMessage());
             return $this->json(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -293,7 +293,7 @@ class CommissionSimulationController extends BaseApiController
                 'amount'     => (float)($row['amount'] ?? $row['booking_amount'] ?? 0),
                 'agent_id'   => (int)$row['agent_id'],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionSimulationController] resolveBookingContext failed: ' . $e->getMessage());
             return null;
         }

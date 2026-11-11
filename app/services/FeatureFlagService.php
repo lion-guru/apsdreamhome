@@ -91,7 +91,7 @@ class FeatureFlagService
 
             self::$cache["feature_flag_{$key}"] = $result;
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("FeatureFlagService::getFlag error: " . $e->getMessage());
             return null;
         }
@@ -125,7 +125,7 @@ class FeatureFlagService
                     'updated_at' => $row['updated_at'],
                 ];
             }, $rows);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("FeatureFlagService::getAllFlags error: " . $e->getMessage());
             return [];
         }
@@ -172,7 +172,7 @@ class FeatureFlagService
 
             unset(self::$cache["feature_flag_{$key}"]);
             return ['success' => true, 'message' => 'Feature flag updated'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("FeatureFlagService::setFlag error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to update feature flag'];
         }
@@ -195,7 +195,7 @@ class FeatureFlagService
                 return ['success' => true, 'message' => 'Feature flag deleted'];
             }
             return ['success' => false, 'message' => 'Feature flag not found'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("FeatureFlagService::deleteFlag error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to delete feature flag'];
         }

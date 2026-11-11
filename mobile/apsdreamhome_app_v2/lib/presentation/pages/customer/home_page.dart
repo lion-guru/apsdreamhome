@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/api_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/services/colony_service.dart';
 import '../../../data/services/property_listing_service.dart';
@@ -1908,11 +1908,9 @@ class _HomePageState extends ConsumerState<HomePage>
 
   Future<List<PropertyListing>> _fetchPremiumProperties() async {
     try {
-      final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-      final response = await dio.get(
-        '/api/v2/mobile/properties/browse?limit=5&featured=true',
-      );
-      final data = response.data;
+      final api = ApiService();
+      final response = await api.get('/api/v2/mobile/properties/browse', queryParameters: {'limit': 5, 'featured': true});
+      final data = response;
       if (data['success'] == true) {
         final inner = data['data'];
         final List<dynamic> properties;

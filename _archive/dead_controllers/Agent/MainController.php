@@ -61,7 +61,7 @@ class AgentController extends BaseController
                 $agent_level = $agent_data['current_level'];
                 $_SESSION['level'] = $agent_level;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             logger()->error("Error fetching agent data: " . $e->getMessage());
             $agent_data = [];
         }

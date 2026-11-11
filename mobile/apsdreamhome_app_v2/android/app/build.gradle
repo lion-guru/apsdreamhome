@@ -54,9 +54,24 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+        release {
+            def keyPropsFile = rootProject.file('key.properties')
+            if (keyPropsFile.exists()) {
+                def keyProps = new Properties()
+                keyProps.load(new FileInputStream(keyPropsFile))
+                def keystoreFile = rootProject.file(keyProps['storeFile'])
+                storeFile keystoreFile.exists() ? keystoreFile : file(keyProps['storeFile'])
+                storePassword keyProps['storePassword']
+                keyAlias keyProps['keyAlias']
+                keyPassword keyProps['keyPassword']
+            }
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

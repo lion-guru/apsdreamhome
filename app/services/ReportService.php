@@ -158,7 +158,7 @@ class ReportService {
                 default:
                     return [];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -216,7 +216,7 @@ class ReportService {
             $data['total_users'] = $stmt->fetch()['total'];
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -254,7 +254,7 @@ class ReportService {
 
             $stmt = $this->db->query($query, $params);
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

@@ -2,11 +2,11 @@
 
 namespace App\Services\Lead;
 
+
 // NOTE (S449): this file is namespaced, so a bare PDO:: resolves to
 // <this-namespace>\PDO -> "Class App\...\PDO not found" fatal. The
 // custom autoloader does not fall back to the global PDO class.
 use PDO;
-
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
 use App\Traits\ServiceTenantTrait;
@@ -467,10 +467,10 @@ class LeadService
     {
         $score = 0;
 
-        $calls = $this->db->fetchColumn("SELECT COUNT(*) FROM lead_activities WHERE lead_id = ? AND type = 'call'", [$lead['id']]) ?? 0;
+        $calls = $this->db->fetchColumn("SELECT COUNT(*) FROM lead_activities WHERE lead_id = ? AND activity_type = 'call'", [$lead['id']]) ?? 0;
         $score += min(25, $calls * 5);
 
-        $messages = $this->db->fetchColumn("SELECT COUNT(*) FROM lead_activities WHERE lead_id = ? AND type IN ('email','sms','whatsapp')", [$lead['id']]) ?? 0;
+        $messages = $this->db->fetchColumn("SELECT COUNT(*) FROM lead_activities WHERE lead_id = ? AND activity_type IN ('email','sms','whatsapp')", [$lead['id']]) ?? 0;
         $score += min(20, $messages * 3);
 
         $notes = $this->db->fetchColumn("SELECT COUNT(*) FROM lead_notes WHERE lead_id = ?", [$lead['id']]) ?? 0;
@@ -544,7 +544,10 @@ class LeadService
 
     private function scoreBudgetMatch(array $lead): float
     {
-        $budget = $lead['budget'] ?? $lead['budget_max'] ?? 0;
+        $budget = $lead['budget'] ?? 0;
+        if (!$budget && !empty($lead['budget_range'])) {
+            $budget = (float) preg_replace('/[^0-9.]/', '', $lead['budget_range']);
+        }
         if (!$budget) return 50;
 
         $range = $budget * 0.3;
@@ -555,7 +558,7 @@ class LeadService
             SELECT COUNT(*) FROM plots p
             LEFT JOIN colonies c ON p.colony_id = c.id
             WHERE p.status = 'available'
-            AND p.base_price BETWEEN ? AND ?
+            AND p.base_price_per_sqft BETWEEN ? AND ?
         ", [$minBudget, $maxBudget]);
 
         if ($count >= 10) return 95;
@@ -568,7 +571,7 @@ class LeadService
     private function scoreInteractionVelocity(array $lead): float
     {
         $activities = $this->db->fetchAll("
-            SELECT type, created_at FROM lead_activities
+            SELECT activity_type, created_at FROM lead_activities
             WHERE lead_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             ORDER BY created_at ASC
         ", [$lead['id']]);
@@ -622,15 +625,11 @@ class LeadService
 
     private function saveScore(int $leadId, int $score, array $factors, string $tier): void
     {
+        // lead_scores has no UNIQUE(lead_id) — each calculation is a history row
         $this->db->execute("
-            INSERT INTO lead_scores (lead_id, score, tier, factors, created_at, updated_at)
-            VALUES (?, ?, ?, ?, NOW(), NOW())
-            ON DUPLICATE KEY UPDATE
-                score = VALUES(score),
-                tier = VALUES(tier),
-                factors = VALUES(factors),
-                updated_at = NOW()
-        ", [$leadId, $score, $tier, json_encode($factors)]);
+            INSERT INTO lead_scores (lead_id, score, score_details, calculated_at)
+            VALUES (?, ?, ?, NOW())
+        ", [$leadId, $score, json_encode($factors)]);
     }
 
     public function getDealProbability(int $leadId): array
@@ -732,7 +731,7 @@ class LeadService
 
         $sql = "
             SELECT l.id, l.name, l.phone, l.email, l.status, l.source, l.budget,
-                   ls.score, ls.tier, ls.factors,
+                   ls.score, ls.score_details as factors,
                    MAX(la.created_at) as last_activity
             FROM leads l
             JOIN lead_scores ls ON ls.lead_id = l.id
@@ -1084,7 +1083,9 @@ class LeadService
                 try {
                     $cols = "lead_id, assigned_from, assigned_to, assigned_by, reason, is_active, tenant_id";
                     $vals = "?, ?, ?, ?, 'auto_assign', 1, ?";
-                    $logParams = [$leadId, $fromUserId, $assignedUserId, $fromUserId, $tid > 1 ? $tid : 1];
+                    $assignedBy = $fromUserId ?? $assignedUserId;
+                    if (empty($assignedBy)) $assignedBy = $assignedUserId ?: 1;
+                    $logParams = [$leadId, $fromUserId, $assignedUserId, $assignedBy, $tid > 1 ? $tid : 1];
                     $this->db->query("INSERT INTO crm_assignments ($cols) VALUES ($vals)", $logParams);
                 } catch (\Throwable $e) {
                     error_log("Failed to log lead assignment: " . $e->getMessage());

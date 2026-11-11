@@ -7,7 +7,7 @@
 try {
     $services = $services ?? [];
     $faqs = $faqs ?? [];
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log('Financial contact page database error: ' . $e->getMessage());
     $services = [];
     $faqs = [];

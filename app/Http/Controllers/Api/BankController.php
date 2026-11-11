@@ -76,7 +76,7 @@ class BankController extends BaseApiController
             $sql .= " ORDER BY branch_name LIMIT 50";
             
             $branches = $this->db->fetchAll($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $branches = [];
         }
         
@@ -109,7 +109,7 @@ class BankController extends BaseApiController
                      WHERE bb.ifsc_code = ? AND bb.is_active = 1{$tidSql}";
                 return $this->db->fetch($sql, $params);
             });
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result = null;
         }
         
@@ -135,7 +135,7 @@ class BankController extends BaseApiController
                 $sql2 = "SELECT b.name as bank_name FROM banks b 
                          WHERE b.is_active = 1 AND b.short_name = ?{$tidSql}";
                 $bank = $this->db->fetch($sql2, $params);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $bank = null;
             }
             
@@ -180,7 +180,7 @@ class BankController extends BaseApiController
             $params = [$searchParam, $searchParam, $searchParam, $searchParam];
             if ($tid > 1) $params[] = $tid;
             $branches = $this->db->fetchAll($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $branches = [];
         }
         
@@ -219,7 +219,7 @@ class BankController extends BaseApiController
     /**
      * Helper: JSON response
      */
-    public function jsonResponse($data, $code = 200)
+    public function jsonResponse($data, int $code = 200): void
     {
         http_response_code($code);
         header('Content-Type: application/json');

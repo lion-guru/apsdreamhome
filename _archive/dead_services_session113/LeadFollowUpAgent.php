@@ -248,7 +248,7 @@ class LeadFollowUpAgent extends BaseAgent
                 $script = $this->getScriptTemplateForStatus($lead['status'] ?? 'new');
                 $priority = in_array($lead['status'] ?? '', ['qualified', 'negotiation']) ? 'high' : 'medium';
                 $voiceSvc->scheduleCall($leadId, $phone, $agentId, $recommendedDate, '10:00:00', $script, $priority);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('LeadFollowUpAgent::scheduleNextFollowUp VoiceCallService error: ' . $e->getMessage());
                 $this->db->insert('ai_calling_schedule',
                     array_merge([

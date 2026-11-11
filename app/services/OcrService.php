@@ -401,6 +401,77 @@ class OcrService
         }
     }
 
+    /**
+     * OCR documents, newest first.
+     *
+     * NOTE (S451): admin/features/ocr called listOcrDocuments(), which never
+     * existed -> "Call to undefined method OcrService::listOcrDocuments()".
+     * The view reads `status`, but the column is `ocr_status` -> aliased.
+     */
+    public function listOcrDocuments(int $limit = 50): array
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT id, original_document_id, file_name, document_type, ocr_status AS status,
+                        confidence_score, extracted_text, error_message, processed_at, created_at
+                 FROM ocr_documents ORDER BY created_at DESC LIMIT " . (int)$limit
+            );
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[OcrService::listOcrDocuments] ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Document classifications (document_classification).
+     *
+     * NOTE (S451): admin/features/ocr called listClassifications(), which
+     * never existed. The view reads `category`; the column is
+     * `classified_category` -> aliased.
+     */
+    public function listClassifications(int $limit = 100): array
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT id, document_id, classified_category AS category, classified_type,
+                        confidence, classified_by, classified_at
+                 FROM document_classification ORDER BY classified_at DESC LIMIT " . (int)$limit
+            );
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[OcrService::listClassifications] ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Recent report executions (report_executions + scheduled_reports).
+     *
+     * NOTE (S451): admin/features/ocr called listExecutions(), which never
+     * existed. The view reads report_type / duration_ms / started_at.
+     */
+    public function listExecutions(int $offset = 0, int $limit = 30): array
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT re.id, COALESCE(sr.report_type, 'report') AS report_type, re.status,
+                        TIMESTAMPDIFF(MICROSECOND, re.created_at, re.end_time) / 1000 AS duration_ms,
+                        re.created_at AS started_at, re.row_count, re.error_message
+                 FROM report_executions re
+                 LEFT JOIN scheduled_reports sr ON sr.id = re.report_id
+                 ORDER BY re.created_at DESC LIMIT " . (int)$limit . " OFFSET " . (int)$offset
+            );
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[OcrService::listExecutions] ' . $e->getMessage());
+            return [];
+        }
+    }
+
     public function listDocuments(int $page = 1, int $perPage = 20, string $status = '', string $doctype = '', string $search = ''): array
     {
         $tid = $this->getTenantId();

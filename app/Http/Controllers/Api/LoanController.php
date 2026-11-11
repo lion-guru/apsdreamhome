@@ -19,7 +19,7 @@ class LoanController extends BaseApiController
             $db = Database::getInstance();
             $pdo = method_exists($db, 'getConnection') ? $db->getConnection() : $db;
             $this->loanService = new CompanyLoanService($pdo);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loanService = null;
         }
     }
@@ -35,7 +35,7 @@ class LoanController extends BaseApiController
             }
             $loans = $this->loanService ? $this->loanService->getLoansForUser($userId) : [];
             $this->jsonResponse(['success' => true, 'data' => $loans]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch loans: ' . $e->getMessage(), 500);
         }
     }
@@ -55,7 +55,7 @@ class LoanController extends BaseApiController
                 return;
             }
             $this->jsonResponse(['success' => true, 'data' => $loan]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch loan detail: ' . $e->getMessage(), 500);
         }
     }
@@ -71,7 +71,7 @@ class LoanController extends BaseApiController
             }
             $installments = $this->loanService ? $this->loanService->getInstallments((int)$id, $userId) : [];
             $this->jsonResponse(['success' => true, 'data' => $installments]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch installments: ' . $e->getMessage(), 500);
         }
     }
@@ -93,7 +93,7 @@ class LoanController extends BaseApiController
             } else {
                 $this->jsonError($result['message'] ?? 'Failed to apply for loan', 400);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to apply for loan: ' . $e->getMessage(), 500);
         }
     }
@@ -104,7 +104,7 @@ class LoanController extends BaseApiController
         try {
             $offers = $this->loanService ? $this->loanService->getOffers() : [];
             $this->jsonResponse(['success' => true, 'data' => $offers]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch offers: ' . $e->getMessage(), 500);
         }
     }
@@ -120,7 +120,7 @@ class LoanController extends BaseApiController
             } else {
                 $this->jsonError($result['message'] ?? 'Failed to calculate eligibility', 400);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to calculate eligibility: ' . $e->getMessage(), 500);
         }
     }
@@ -140,7 +140,7 @@ class LoanController extends BaseApiController
             } else {
                 $this->jsonError('Loan not found', 404);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch early settlement: ' . $e->getMessage(), 500);
         }
     }

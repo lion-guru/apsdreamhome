@@ -74,7 +74,7 @@ class ProjectController extends PageController
                 'milestones' => $milestones,
                 'related_projects' => $related_projects,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ProjectController::projectDetails: " . $e->getMessage());
             http_response_code(500);
             $this->render('errors/500', ['page_title' => 'Error']);
@@ -105,7 +105,7 @@ class ProjectController extends PageController
             $availablePlots = $stmt2->fetchAll(\PDO::FETCH_ASSOC);
             $mapData = ['type' => 'FeatureCollection', 'features' => []];
             $this->render('pages/colony_detail', ['page_title' => $colony['name'] . ' - APS Dream Home', 'colony' => $colony, 'availablePlots' => $availablePlots, 'mapData' => $mapData]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ProjectController::colonyDetail: " . $e->getMessage());
             http_response_code(500);
             $this->render('errors/500', ['page_title' => 'Error']);
@@ -231,7 +231,7 @@ class ProjectController extends PageController
                 'projects' => $projects,
                 'location' => $location,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ProjectController::projectsByLocation: " . $e->getMessage());
             http_response_code(500);
             $this->render('errors/500', ['page_title' => 'Error']);

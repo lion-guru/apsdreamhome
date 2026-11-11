@@ -91,7 +91,7 @@ foreach ($rules as $rule) {
             $rule['priority'],
         ]);
         echo "Created: {$rule['name']}\n";
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo "ERR: {$rule['name']} - " . $e->getMessage() . "\n";
     }
 }

@@ -58,7 +58,7 @@ class VisitorTrackingController extends AdminController
         try {
             $this->getTrackingService()->trackPageView($pageUrl, $pageTitle);
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Page view tracking error: " . $e->getMessage());
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -80,7 +80,7 @@ class VisitorTrackingController extends AdminController
         try {
             $this->getTrackingService()->trackIncompleteRegistration($data);
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Incomplete registration tracking error: " . $e->getMessage());
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -99,7 +99,7 @@ class VisitorTrackingController extends AdminController
             // This will create a lead in visitor_leads table
             $this->getTrackingService()->trackInterest($data);
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Interest tracking error: " . $e->getMessage());
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -156,7 +156,7 @@ class VisitorTrackingController extends AdminController
                 ]
             ]);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
             exit;
         }

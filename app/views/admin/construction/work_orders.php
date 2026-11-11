@@ -205,7 +205,7 @@ $current_status = $current_status ?? 'all';
 <div class="modal fade" id="newOrderModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <form method="POST" action="/admin/work-orders/store" class="modal-content">
-            <?= \App\Core\Security::csrfField() ?>
+            <?= \App\Core\Security\CSRF::generateTokenField() ?>
             <div class="modal-header">
                 <h5 class="modal-title fw-bold"><i class="fas fa-file-contract text-primary me-2"></i>Issue Civil Construction Work Order</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

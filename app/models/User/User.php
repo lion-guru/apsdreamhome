@@ -165,7 +165,7 @@ class User extends Model
             $stmt->bindValue(':offset', (int)(($filters['page'] - 1) * $filters['per_page']), \PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Admin users query error: ' . $e->getMessage());
             return [];
         }
@@ -211,7 +211,7 @@ class User extends Model
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             return (int)($result['total'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Admin total users query error: ' . $e->getMessage());
             return 0;
         }
@@ -227,7 +227,7 @@ class User extends Model
             $pdo = $db->getConnection();
             $stmt = $pdo->query("SELECT id, name, email FROM users WHERE status = 'active' ORDER BY name");
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Active users query error: ' . $e->getMessage());
             return [];
         }

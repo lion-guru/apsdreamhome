@@ -250,7 +250,7 @@ try {
     echo "âœ… Admin menu structure fix COMPLETE!\n";
     echo "â†’ Next: Reload admin panel at http://localhost/apsdreamhome/admin/dashboard\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "â�Œ ERROR: " . $e->getMessage() . "\n";
     echo $e->getTraceAsString() . "\n";
 }?>

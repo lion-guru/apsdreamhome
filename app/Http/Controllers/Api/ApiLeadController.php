@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\BaseController;
 use App\Models\Lead\Lead;
 use App\Models\Lead\LeadActivity;
@@ -13,7 +14,6 @@ use App\Models\LeadSource;
 use App\Models\User\User;
 use App\Core\Security;
 use UploadValidator;
-use \App\Traits\TenantAwareTrait;
 
 /**
  * API Lead Controller - Custom Framework Version
@@ -772,7 +772,7 @@ class ApiLeadController extends BaseController
     /**
      * Send JSON response
      */
-    public function jsonResponse($data, $statusCode = 200)
+    public function jsonResponse($data, int $statusCode = 200): void
     {
         http_response_code($statusCode);
         header('Content-Type: application/json');
@@ -783,7 +783,7 @@ class ApiLeadController extends BaseController
     /**
      * Send JSON error response
      */
-    protected function jsonError($message, $statusCode = 400)
+    protected function jsonError($message, int $statusCode = 400): void
     {
         $this->jsonResponse([
             'success' => false,

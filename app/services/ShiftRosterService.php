@@ -60,7 +60,7 @@ class ShiftRosterService
             $shiftTypeId = (int)$this->pdo->lastInsertId();
             $this->pdo->commit();
             return ['success' => true, 'shift_type_id' => $shiftTypeId, 'message' => 'Shift type created'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -88,11 +88,11 @@ class ShiftRosterService
     {
         $sql = "
             SELECT es.*, st.name as shift_name, st.color, st.start_time, st.end_time, st.duration_hours,
-                   u.name as employee_name, e.employee_code, e.designation, e.department
+                   u.name as employee_name, ep.employee_code, ep.designation, ep.department
             FROM employee_shifts es
             LEFT JOIN shift_types st ON es.shift_type_id = st.id
-            LEFT JOIN employees e ON es.employee_id = e.id
-            LEFT JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = es.employee_id OR ep.user_id = es.employee_id OR ep.id = es.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             WHERE es.shift_date BETWEEN ? AND ? AND es.tenant_id = ?
         ";
         $params = [$startDate, $endDate, $this->tenantId()];
@@ -156,7 +156,7 @@ class ShiftRosterService
 
             $this->pdo->commit();
             return ['success' => true, 'message' => 'Shift assigned successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -204,7 +204,7 @@ class ShiftRosterService
 
             $this->pdo->commit();
             return ['success' => true, 'assigned' => $assigned, 'skipped' => $skipped];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -247,7 +247,7 @@ class ShiftRosterService
             $requestId = (int)$this->pdo->lastInsertId();
             $this->pdo->commit();
             return ['success' => true, 'request_id' => $requestId, 'message' => 'Overtime request submitted'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -259,19 +259,19 @@ class ShiftRosterService
     public function getPendingOvertime(int $approverId = 0): array
     {
         $sql = "
-            SELECT otr.*, u.name as employee_name, e.employee_code, e.designation, e.department,
+            SELECT otr.*, u.name as employee_name, ep.employee_code, ep.designation, ep.department,
                    a.name as approver_name
             FROM overtime_requests otr
-            LEFT JOIN employees e ON otr.employee_id = e.id
-            LEFT JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = otr.employee_id OR ep.user_id = otr.employee_id OR ep.id = otr.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             LEFT JOIN users a ON otr.approved_by = a.id
             WHERE otr.status = 'pending' AND otr.tenant_id = ?
         ";
         $params = [$this->tenantId()];
 
         if ($approverId) {
-            $sql .= " AND (e.department = (SELECT department FROM employees WHERE id = ?) OR otr.approved_by = ?)";
-            $params[] = $approverId; $params[] = $approverId;
+            $sql .= " AND (ep.department = (SELECT department FROM employee_profiles WHERE (legacy_id = ? OR user_id = ? OR id = ?) LIMIT 1) OR otr.approved_by = ?)";
+            $params[] = $approverId; $params[] = $approverId; $params[] = $approverId; $params[] = $approverId;
         }
 
         $sql .= " ORDER BY otr.created_at";
@@ -302,7 +302,7 @@ class ShiftRosterService
             }
 
             return ['success' => true, 'message' => "Overtime request {$action}d"];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -339,14 +339,15 @@ class ShiftRosterService
 
         $totalHours = (float)($requests[0]['total_hours'] ?? 0);
 
-        // Get basic salary for OT rate calculation
+        // Get basic salary for OT rate calculation via employee_profiles (handles legacy_id/user_id/id)
         $emp = $this->fetchOne("
             SELECT ss.basic_salary FROM salary_structures ss
-            WHERE ss.employee_id = ? AND ss.status = 'active'
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ss.employee_id OR ep.user_id = ss.employee_id OR ep.id = ss.employee_id
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ss.status = 'active'
             ORDER BY ss.effective_date DESC LIMIT 1
-        ", [$employeeId]);
+        ", [$employeeId, $employeeId, $employeeId]);
 
-        $basicSalary = (float)($basicSalary ?? 0);
+        $basicSalary = (float)($emp['basic_salary'] ?? 0);
         $hourlyRate = $basicSalary > 0 ? $basicSalary / 26 / 8 : 0; // Daily / 8 hours
         $otRate = $hourlyRate * 2; // Double rate for overtime
         $otAmount = round($totalHours * $otRate, 2);
@@ -375,8 +376,8 @@ class ShiftRosterService
                    GROUP_CONCAT(u.name SEPARATOR ', ') as employee_names
             FROM employee_shifts es
             LEFT JOIN shift_types st ON es.shift_type_id = st.id
-            LEFT JOIN employees e ON es.employee_id = e.id
-            LEFT JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = es.employee_id OR ep.user_id = es.employee_id OR ep.id = es.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             WHERE es.shift_date BETWEEN ? AND ? AND es.tenant_id = ?
             GROUP BY st.id, es.shift_date
             ORDER BY es.shift_date, st.start_time
@@ -389,10 +390,10 @@ class ShiftRosterService
     public function getOvertimeSummaryReport(string $startDate, string $endDate): array
     {
         $requests = $this->fetchAll("
-            SELECT otr.*, u.name as employee_name, e.department
+            SELECT otr.*, u.name as employee_name, ep.department
             FROM overtime_requests otr
-            LEFT JOIN employees e ON otr.employee_id = e.id
-            LEFT JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = otr.employee_id OR ep.user_id = otr.employee_id OR ep.id = otr.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             WHERE otr.overtime_date BETWEEN ? AND ? AND otr.tenant_id = ?
             ORDER BY otr.overtime_date, u.name
         ", [$startDate, $endDate, $this->tenantId()]);

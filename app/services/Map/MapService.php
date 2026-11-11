@@ -83,7 +83,7 @@ class MapService
             
             return $result;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -127,7 +127,7 @@ class MapService
             $this->saveToCache($cacheKey, $result, 86400);
             return $result;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -182,7 +182,7 @@ class MapService
                 'longitude' => $lng
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()

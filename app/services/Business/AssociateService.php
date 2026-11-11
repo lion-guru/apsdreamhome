@@ -89,7 +89,7 @@ class AssociateService
                 'current_page' => $page,
                 'last_page' => ceil($total / $limit)
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get users', [
                 'error' => $e->getMessage(),
                 'page' => $page,
@@ -144,7 +144,7 @@ class AssociateService
                 'data' => ['id' => $userId, 'name' => $data['name'], 'email' => $data['email']],
                 'message' => 'Associate created successfully'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to create associate', ['error' => $e->getMessage(), 'data' => $data]);
             return ['success' => false, 'message' => 'Failed to create associate: ' . $e->getMessage()];
         }
@@ -192,7 +192,7 @@ class AssociateService
 
             $this->logger->info('Associate updated', ['associate_id' => $id, 'updated_fields' => array_keys($data)]);
             return ['success' => true, 'message' => 'Associate updated successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to update associate', ['error' => $e->getMessage(), 'associate_id' => $id]);
             return ['success' => false, 'message' => 'Failed to update associate: ' . $e->getMessage()];
         }
@@ -228,7 +228,7 @@ class AssociateService
 
             $this->logger->info('Associate deleted', ['associate_id' => $id, 'name' => $user['name']]);
             return ['success' => true, 'message' => 'Associate deleted successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to delete associate', ['error' => $e->getMessage(), 'associate_id' => $id]);
             return ['success' => false, 'message' => 'Failed to delete associate: ' . $e->getMessage()];
         }
@@ -242,9 +242,9 @@ class AssociateService
         try {
             $tid = $this->getTenantId();
             $user = $this->database->fetchOne(
-                "SELECT u.*, a.joining_date, a.brokerage_rate as commission_rate 
-                 FROM users u 
-                 LEFT JOIN associates a ON a.user_id = u.id 
+                "SELECT u.*, ap.joining_date as joining_date, ap.brokerage_rate as commission_rate
+                 FROM users u
+                 LEFT JOIN associate_profiles ap ON ap.user_id = u.id
                  WHERE u.id = ?" . ($tid > 1 ? " AND u.tenant_id = ?" : ""),
                 $tid > 1 ? [$id, $tid] : [$id]
             );
@@ -292,7 +292,7 @@ class AssociateService
                     'monthly_performance' => $monthlyPerformance
                 ]
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get associate details', ['error' => $e->getMessage(), 'associate_id' => $id]);
             return ['success' => false, 'message' => 'Failed to get associate details'];
         }
@@ -359,7 +359,7 @@ class AssociateService
                     'summary' => $summary
                 ]
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get performance report', [
                 'error' => $e->getMessage(),
                 'filters' => $filters
@@ -398,7 +398,7 @@ class AssociateService
 
             $this->logger->info('Commission rate updated', ['associate_id' => $id, 'new_rate' => $rate]);
             return ['success' => true, 'message' => 'Commission rate updated successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to update commission rate', ['error' => $e->getMessage(), 'associate_id' => $id, 'rate' => $rate]);
             return ['success' => false, 'message' => 'Failed to update commission rate'];
         }
@@ -441,7 +441,7 @@ class AssociateService
                 'success' => true,
                 'data' => $performers
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get top performers', [
                 'error' => $e->getMessage(),
                 'limit' => $limit,
@@ -476,13 +476,13 @@ class AssociateService
             $whereClause = implode(' AND ', $where);
 
             $users = $this->database->fetchAll(
-                "SELECT a.*, 
-                        a2.joining_date,
-                        a2.brokerage_rate as commission_rate,
+                "SELECT a.*,
+                        ap2.joining_date as joining_date,
+                         ap2.brokerage_rate as commission_rate,
                         COUNT(s.id) as sales_count,
                         SUM(s.sale_amount) as total_sales_amount
                  FROM users a
-                 LEFT JOIN associates a2 ON a2.user_id = a.id
+                 LEFT JOIN associate_profiles ap2 ON ap2.user_id = a.id
                  LEFT JOIN sales s ON a.id = s.associate_id AND s.status = 'completed'
                  WHERE $whereClause
                  GROUP BY a.id
@@ -548,7 +548,7 @@ class AssociateService
                 'success' => false,
                 'message' => 'Unsupported format'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to export users', [
                 'error' => $e->getMessage(),
                 'format' => $format

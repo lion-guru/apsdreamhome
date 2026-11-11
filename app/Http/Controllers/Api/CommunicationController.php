@@ -56,7 +56,7 @@ class CommunicationController extends BaseApiController
             } else {
                 return $this->jsonError('Failed to send email: ' . ($result['error'] ?? 'Unknown error'), 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -93,7 +93,7 @@ class CommunicationController extends BaseApiController
             } else {
                 return $this->jsonError('Failed to send WhatsApp message: ' . ($result['error'] ?? 'Unknown error'), 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -123,7 +123,7 @@ class CommunicationController extends BaseApiController
             } else {
                 return $this->jsonError('Failed to send Telegram message: ' . ($result['error'] ?? 'Unknown error'), 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -153,7 +153,7 @@ class CommunicationController extends BaseApiController
             } else {
                 return $this->jsonError('Failed to send SMS: ' . ($result['error'] ?? 'Unknown error'), 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -216,7 +216,7 @@ class CommunicationController extends BaseApiController
                 "INSERT INTO security_logs (action, details, ip_address, created_at) VALUES (?, ?, ?, NOW())",
                 [$event, \json_encode($context), $this->request()->getClientIp()]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CommunicationController.php: " . $e->getMessage());
         }
     }
@@ -269,7 +269,7 @@ class CommunicationController extends BaseApiController
                     return $this->jsonError('Failed to process webhook: ' . ($result['error'] ?? 'Unknown error'), 500);
                 }
 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 logger('WhatsApp webhook error: ' . $e->getMessage());
                 return $this->jsonError('Internal server error', 500);
             }
@@ -312,7 +312,7 @@ class CommunicationController extends BaseApiController
                     return $this->jsonError('Failed to process webhook: ' . ($result['error'] ?? 'Unknown error'), 500);
                 }
 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 logger('Telegram webhook error: ' . $e->getMessage());
                 return $this->jsonError('Internal server error', 500);
             }
@@ -351,7 +351,7 @@ class CommunicationController extends BaseApiController
                 return $this->jsonError('Failed to process SMS webhook: ' . ($result['error'] ?? 'Unknown error'), 500);
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             logger('SMS webhook error: ' . $e->getMessage());
             return $this->jsonError('Internal server error', 500);
         }
@@ -371,7 +371,7 @@ class CommunicationController extends BaseApiController
             ];
 
             return $this->jsonSuccess($channels, 'Channel status retrieved');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }

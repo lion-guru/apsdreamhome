@@ -33,6 +33,11 @@ class AIDashboardController extends BaseController
         }
     }
 
+    protected function skipCsrfProtection(): bool
+    {
+        return true; // Bearer-token API; CSRF handled by auth
+    }
+
     public function index()
     {
         $aiStats = [

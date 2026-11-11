@@ -8,6 +8,25 @@ use Exception;
 
 class OffboardingService
 {
+    /**
+     * Query runner: fetch a single row.
+     *
+     * NOTE (S451): this service calls $this->fetchOne($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchOne()".
+     */
+    private function fetchOne(string $sql, array $params = []): ?array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchOne] ' . $e->getMessage());
+            return null;
+        }
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -155,7 +174,7 @@ class OffboardingService
 
     public function initiateOffboarding(int $employeeId, int $initiatedBy, array $data = []): array
     {
-        $employee = $this->fetchOne("SELECT * FROM employees WHERE id = ?", [$employeeId]);
+        $employee = $this->fetchOne("SELECT ep.legacy_id AS id, ep.*, u.name FROM employee_profiles ep LEFT JOIN users u ON u.id = ep.user_id WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.tenant_id = ? LIMIT 1", array_merge([$employeeId, $employeeId, $employeeId, $this->tenantId()], $this->tVal()));
         if (!$employee) return ['success' => false, 'message' => 'Employee not found'];
         $existing = $this->fetchOne("SELECT id FROM offboarding_checklists WHERE employee_id = ? AND status != 'completed'", [$employeeId]);
         if ($existing) return ['success' => false, 'message' => 'Offboarding already in progress'];
@@ -164,14 +183,14 @@ class OffboardingService
             $result = $this->assignTemplate($employeeId, $template['id'], $_SESSION['admin_id'] ?? 1);
             if (!$result['success']) return $result;
         }
-        $this->execute("UPDATE employees SET status = 'terminated', offboarded_at = NOW() WHERE id = ?", [$employeeId]);
+        $this->execute("UPDATE employee_profiles SET status = 'terminated', updated_at = NOW() WHERE (legacy_id = ? OR user_id = ? OR id = ?) AND tenant_id = ?", array_merge([$employeeId, $employeeId, $employeeId, $this->tenantId()], $this->tVal()));
         $this->revokeAccess($employeeId);
         return ['success' => true, 'message' => 'Offboarding initiated'];
     }
 
     private function revokeAccess(int $employeeId): void
     {
-        $this->execute("UPDATE users SET status = 'inactive' WHERE id = (SELECT user_id FROM employees WHERE id = ?)", [$employeeId]);
+        $this->execute("UPDATE users SET status = 'inactive' WHERE id = (SELECT user_id FROM employee_profiles WHERE (legacy_id = ? OR user_id = ? OR id = ?) LIMIT 1)", array_merge([$employeeId, $employeeId, $employeeId], $this->tVal()));
     }
 
     public function completeOffboarding(int $employeeId, array $data = []): array
@@ -193,21 +212,44 @@ class OffboardingService
         }
     }
 
+    /**
+     * Query runner used by this service.
+     *
+     * NOTE (S451): this service calls $this->fetchAll($sql, $params)
+     * internally, but the method NEVER existed -> every caller died with
+     * "Call to undefined method <Service>::fetchAll()".
+     */
+    private function fetchAll(string $sql, array $params = []): array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchAll] ' . $e->getMessage());
+            return [];
+        }
+    }
+
     public function getAllOffboardingStatus(): array
     {
         return $this->fetchAll("
-            SELECT e.id, e.name, e.employee_code, e.department, e.designation, e.status,
-                   CASE 
-                       WHEN oc.employee_id IS NOT NULL THEN 'in_progress'
-                       WHEN e.status = 'terminated' THEN 'completed'
-                       ELSE 'not_started'
-                   END as offboarding_status,
-                   COUNT(oc.id) as total_items,
-                   SUM(CASE WHEN oc.status = 'completed' THEN 1 ELSE 0 END) as completed_items
-            FROM employees e
-            LEFT JOIN offboarding_checklists oc ON oc.employee_id = e.id
-            WHERE e.status IN ('active', 'terminated', 'offboarded')
-            GROUP BY e.id
-            ORDER BY e.name");
+            SELECT ep.legacy_id AS id, u.name, ep.employee_code,
+                    ep.department AS department,
+                    ep.designation AS designation,
+                    ep.status AS status,
+                    CASE 
+                        WHEN oc.employee_id IS NOT NULL THEN 'in_progress'
+                        WHEN ep.status = 'terminated' THEN 'completed'
+                        ELSE 'not_started'
+                    END as offboarding_status,
+                    COUNT(oc.id) as total_items,
+                    SUM(CASE WHEN oc.status = 'completed' THEN 1 ELSE 0 END) as completed_items
+            FROM employee_profiles ep
+            LEFT JOIN users u ON u.id = ep.user_id
+            LEFT JOIN offboarding_checklists oc ON oc.employee_id = ep.legacy_id
+            WHERE ep.status IN ('active', 'terminated', 'offboarded')
+            GROUP BY ep.legacy_id, u.name, ep.employee_code, ep.department, ep.designation, ep.status
+            ORDER BY u.name");
     }
 }

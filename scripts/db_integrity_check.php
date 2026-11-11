@@ -60,7 +60,7 @@ foreach ($checks as [$label, $sql]) {
         $count = $stmt->fetchColumn();
         $status = $count == 0 ? "OK" : "WARNING";
         echo "   $status: $label ($count orphaned)\n";
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo "   SKIP: $label (table/column not found)\n";
     }
 }

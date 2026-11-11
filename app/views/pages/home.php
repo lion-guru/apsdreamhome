@@ -77,6 +77,13 @@ document.addEventListener('DOMContentLoaded', function(){
                             class="btn btn-outline-premium hover-lift">
                             <i class="fas fa-plus-circle me-2"></i><?= __('nav_post_property') ?>
                         </a>
+                        <button type="button" class="btn btn-outline-premium hover-lift d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#apsCorporateVideoModal" id="hero-watch-video">
+                            <i class="fas fa-play-circle text-warning fs-5"></i><span>Watch Video</span>
+                        </button>
+
+
+
+
                     </div>
                     <!-- Trust Badges -->
                     <div class="d-flex gap-4 mt-4 flex-wrap premium-reveal">
@@ -2255,6 +2262,65 @@ window.addEventListener('scroll', function() {
   var textSteps = document.querySelectorAll('.journey-step');
   backgrounds.forEach((bg, idx) => { bg.classList.toggle('active', idx === step - 1); });
   textSteps.forEach((txt, idx) => { txt.classList.toggle('active', idx === step - 1); });
+});
+</script>
+
+<!-- Corporate Video Presentation Modal -->
+<div class="modal fade" id="apsCorporateVideoModal" tabindex="-1" aria-labelledby="apsCorporateVideoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="background: #0f172a; border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 px-4 pt-4 pb-2">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="<?= BASE_URL ?>/assets/images/logo/apslogo.svg" alt="APS Dream Home" style="height: 38px;">
+                    <div>
+                        <h5 class="modal-title text-white fw-bold mb-0" id="apsCorporateVideoModalLabel">APS Dream Homes Pvt. Ltd.</h5>
+                        <small class="text-white-50">Corporate Presentation & Project Highlights</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" id="closeCorporateVideoBtn"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow">
+                    <video id="apsBrandVideoPlayer" controls playsinline preload="metadata" poster="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+                        <source src="<?= BASE_URL ?>/assets/images/logo/apslogovideo.mp4" type="video/mp4">
+                        Your browser does not support HTML5 video.
+                    </video>
+                </div>
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3 pt-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fas fa-shield-alt me-1"></i> RERA & 100% Legal</span>
+                        <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="fas fa-check-circle me-1"></i> Verified Registry</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="https://www.youtube.com/watch?v=uB63fG1n5sY" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-sm rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2">
+                            <i class="fab fa-youtube"></i><span>YouTube Full Video</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/company/projects" class="btn btn-outline-light btn-sm rounded-pill px-3 py-2">
+                            <span>Explore Colonies</span> <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+document.addEventListener('DOMContentLoaded', function() {
+    var videoModal = document.getElementById('apsCorporateVideoModal');
+    if (videoModal) {
+        var videoPlayer = document.getElementById('apsBrandVideoPlayer');
+        videoModal.addEventListener('hidden.bs.modal', function () {
+            if (videoPlayer) {
+                videoPlayer.pause();
+                videoPlayer.currentTime = 0;
+            }
+        });
+        videoModal.addEventListener('shown.bs.modal', function () {
+            if (videoPlayer) {
+                videoPlayer.play().catch(function(){ /* autoplay policies */ });
+            }
+        });
+    }
 });
 </script>
 

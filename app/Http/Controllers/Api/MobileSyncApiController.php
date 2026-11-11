@@ -53,7 +53,7 @@ class MobileSyncApiController extends BaseController
                 'data' => $properties,
                 'last_sync' => date('Y-m-d H:i:s')
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Sync Properties API error');
         }
     }
@@ -104,7 +104,7 @@ class MobileSyncApiController extends BaseController
                 'message' => 'Leads synced successfully',
                 'processed' => $processed
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             $this->handleApiError($e, 'Batch Sync Leads API error');
         }
@@ -123,7 +123,7 @@ class MobileSyncApiController extends BaseController
                 'success' => true,
                 'data' => $syncPackage
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Sync Updates API error');
         }
     }
@@ -153,7 +153,7 @@ class MobileSyncApiController extends BaseController
                 'upload' => $uploadResults,
                 'download' => $downloadPackage
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleApiError($e, 'Sync API error');
         }
     }
@@ -177,7 +177,7 @@ class MobileSyncApiController extends BaseController
                 } else {
                     $results[] = ['type' => $type, 'status' => 'error', 'message' => 'Unknown upload type'];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("MobileSyncApiController::processUploads type={$type} error: " . $e->getMessage());
                 $results[] = ['type' => $type, 'status' => 'error', 'message' => 'Internal server error'];
             }

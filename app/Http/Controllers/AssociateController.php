@@ -448,6 +448,13 @@ class AssociateController extends BaseController
             $params = $tid > 1 ? [$tid] : [];
             $colonies = $db->fetchAll("SELECT * FROM colonies WHERE is_active = 1{$tidSql} ORDER BY name", $params);
             $plots = $db->fetchAll("SELECT p.*, c.name as colony_name FROM plots p JOIN colonies c ON p.colony_id = c.id WHERE p.is_active = 1{$tidSql} ORDER BY p.plot_number", $params);
+
+            // Fetch associate offline booking & cash permissions
+            $assocPerm = $db->fetchRow("SELECT can_offline_book, can_collect_cash, daily_cash_limit FROM associates WHERE user_id = ? LIMIT 1", [$userId]);
+            $canOfflineBook = !empty($assocPerm['can_offline_book']);
+            $canCollectCash = !empty($assocPerm['can_collect_cash']);
+            $dailyCashLimit = (float)($assocPerm['daily_cash_limit'] ?? 0);
+
             // Convert-a-lead: prefill customer fields from an own-scope lead (?lead_id=).
             $prefill = ['name' => '', 'phone' => '', 'email' => ''];
             $leadId = (int)($_GET['lead_id'] ?? 0);
@@ -465,6 +472,9 @@ class AssociateController extends BaseController
                 'plots' => $plots,
                 'prefill' => $prefill,
                 'prefill_lead_id' => $leadId,
+                'can_offline_book' => $canOfflineBook,
+                'can_collect_cash' => $canCollectCash,
+                'daily_cash_limit' => $dailyCashLimit,
             ], 'layouts/associate');
             return;
         }
@@ -551,6 +561,30 @@ class AssociateController extends BaseController
                 $_SESSION['flash_error'] = 'Payment mode is required.';
                 $this->redirect('/associate/book-plot');
                 return;
+            }
+
+            // Verify associate offline booking & cash permissions
+            $assocPerm = $db->fetchRow("SELECT can_offline_book, can_collect_cash, daily_cash_limit FROM associates WHERE user_id = ? LIMIT 1", [$userId]);
+            $canOfflineBook = !empty($assocPerm['can_offline_book']);
+            if (!$canOfflineBook) {
+                $_SESSION['flash_error'] = 'Offline booking is disabled for your associate account. Please create an Online Lead or contact admin.';
+                $this->redirect('/associate/book-plot');
+                return;
+            }
+
+            if ($paymentMode === 'cash') {
+                $canCollectCash = !empty($assocPerm['can_collect_cash']);
+                if (!$canCollectCash) {
+                    $_SESSION['flash_error'] = 'Cash collection is strictly restricted for your account. Please guide the customer to pay directly via UPI QR or Bank Transfer to official APS Dream Home accounts.';
+                    $this->redirect('/associate/book-plot');
+                    return;
+                }
+                $dailyCashLimit = (float)($assocPerm['daily_cash_limit'] ?? 0);
+                if ($dailyCashLimit > 0 && $bookingAmount > $dailyCashLimit) {
+                    $_SESSION['flash_error'] = 'Booking cash amount (₹' . number_format($bookingAmount, 2) . ') exceeds your authorized daily limit of ₹' . number_format($dailyCashLimit, 2) . '. Please collect payment via UPI or Bank Transfer.';
+                    $this->redirect('/associate/book-plot');
+                    return;
+                }
             }
 
             // Check plot availability

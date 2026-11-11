@@ -78,7 +78,7 @@ class HomeController extends BaseController
                     $inquiryId = $db->lastInsertId();
 
                     // Auto-wire to CRM lead
-                    try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$subject.': '.$message,'type'=>'contact']); } catch (\Exception $e3) {}
+                    try { \App\Services\InquiryToLeadService::wireFromInquiry(['name'=>$name,'phone'=>$phone,'email'=>$email,'message'=>$subject.': '.$message,'type'=>'contact']); } catch (\Throwable $e3) {}
 
                     // Notify admins
                     $notifService = new \App\Services\AdminNotificationService();
@@ -90,7 +90,7 @@ class HomeController extends BaseController
                     );
 
                     $_SESSION['success'] = 'Thank you for your message! We will get back to you within 24 hours.';
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("Contact form submission error: " . $e->getMessage());
                     $_SESSION['error'] = 'Sorry, there was an error sending your message. Please try again later.';
                 }

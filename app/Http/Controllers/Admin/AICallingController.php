@@ -31,7 +31,7 @@ class AICallingController extends AdminController
             $this->data['activeCampaigns'] = count(array_filter($this->data['campaigns'], fn($c) => $c['status'] === 'active'));
             $this->data['totalScheduled'] = (int)($db->query("SELECT COUNT(*) FROM ai_calling_schedule")->fetchColumn());
             $this->data['totalCompleted'] = (int)($db->query("SELECT COUNT(*) FROM ai_calling_schedule WHERE status='completed'")->fetchColumn());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['campaigns'] = [];
             $this->data['totalCampaigns'] = $this->data['activeCampaigns'] = $this->data['totalScheduled'] = $this->data['totalCompleted'] = 0;
         }
@@ -80,7 +80,7 @@ class AICallingController extends AdminController
             $this->data['interestedCount'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE customer_response='interested'")->fetchColumn());
             $this->data['pagination'] = ['page' => $page, 'total_pages' => $totalPages, 'total' => $totalRows, 'per_page' => $perPage];
             $this->data['filters'] = ['status' => $filterStatus, 'from' => $filterFrom, 'to' => $filterTo, 'q' => $filterSearch];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['calls'] = [];
             $this->data['pagination'] = ['page' => 1, 'total_pages' => 1, 'total' => 0, 'per_page' => 25];
             $this->data['filters'] = [];
@@ -121,7 +121,7 @@ class AICallingController extends AdminController
             $this->data['byAgent'] = $db->fetchAll(
                 "SELECT ai_agent_id, COUNT(*) total, SUM(CASE WHEN status='completed' THEN 1 ELSE 0 END) completed, SUM(CASE WHEN customer_response='interested' THEN 1 ELSE 0 END) interested FROM ai_call_sessions WHERE created_at >= ? AND ai_agent_id IS NOT NULL GROUP BY ai_agent_id ORDER BY total DESC", [$since]
             ) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['totals'] = ['total'=>0,'completed'=>0,'failed'=>0,'interested'=>0,'not_interested'=>0,'avg_duration'=>0];
             $this->data['daily'] = $this->data['byAgent'] = [];
             $this->data['day_labels'] = $this->data['day_totals'] = $this->data['day_completed'] = $this->data['day_interested'] = [];
@@ -150,7 +150,7 @@ class AICallingController extends AdminController
             $this->data['weekLabels'] = array_map(function($d) { return date('d M', strtotime($d['day'])); }, $weeklyData);
             $this->data['weekData'] = array_column($weeklyData, 'cnt');
             $this->data['recentCalls'] = $db->query("SELECT acs.*, l.name as lead_name FROM ai_call_sessions acs LEFT JOIN leads l ON acs.lead_id = l.id ORDER BY acs.created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['totalCalls'] = $this->data['completedCalls'] = $this->data['failedCalls'] = $this->data['totalExtracted'] = 0;
             $this->data['callsToday'] = $this->data['callsThisWeek'] = $this->data['interestedCount'] = $this->data['hotLeads'] = 0;
             $this->data['successRate'] = $this->data['avgDuration'] = 0;
@@ -173,7 +173,7 @@ class AICallingController extends AdminController
             $this->data['recentCompleted'] = $db->query("SELECT acs.*, l.name as lead_name, acs2.status as call_status, acs2.customer_response, acs2.duration_seconds FROM ai_calling_schedule acs LEFT JOIN leads l ON acs.lead_id = l.id LEFT JOIN ai_call_sessions acs2 ON acs.call_session_id = acs2.id WHERE acs.status = 'completed' ORDER BY acs.updated_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
             $this->data['totalScheduled'] = (int)($db->query("SELECT COUNT(*) FROM ai_calling_schedule")->fetchColumn());
             $this->data['totalPending'] = (int)($db->query("SELECT COUNT(*) FROM ai_calling_schedule WHERE status = 'pending'")->fetchColumn());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['todayScheduled'] = $this->data['upcoming'] = $this->data['recentCompleted'] = [];
             $this->data['todayCount'] = $this->data['pendingToday'] = $this->data['completedToday'] = $this->data['totalScheduled'] = $this->data['totalPending'] = 0;
         }
@@ -205,7 +205,7 @@ class AICallingController extends AdminController
             $this->data['totalFailed'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_sessions WHERE status = 'failed'")->fetchColumn());
             $this->data['avgDuration'] = (float)($db->query("SELECT COALESCE(AVG(duration_seconds),0) FROM ai_call_sessions WHERE duration_seconds > 0")->fetchColumn());
             $this->data['agents'] = $db->query("SELECT DISTINCT ai_agent_id FROM ai_call_sessions WHERE ai_agent_id IS NOT NULL ORDER BY ai_agent_id")->fetchAll(\PDO::FETCH_COLUMN);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['sessions'] = $this->data['agents'] = [];
             $this->data['totalSessions'] = $this->data['totalCompleted'] = $this->data['totalFailed'] = 0;
             $this->data['avgDuration'] = 0;
@@ -225,7 +225,7 @@ class AICallingController extends AdminController
             $this->data['hotCount'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_extracted_leads WHERE interest_level = 'hot'")->fetchColumn());
             $this->data['convertedCount'] = (int)($db->query("SELECT COUNT(*) FROM ai_call_extracted_leads WHERE auto_created_lead_id IS NOT NULL")->fetchColumn());
             $this->data['extracted'] = $db->query("SELECT aec.*, acs.phone as call_phone, acs.customer_response, acs.duration_seconds, l.name as linked_lead_name FROM ai_call_extracted_leads aec LEFT JOIN ai_call_sessions acs ON aec.call_session_id = acs.id LEFT JOIN leads l ON aec.auto_created_lead_id = l.id ORDER BY aec.created_at DESC LIMIT 30")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['extracted'] = [];
             $this->data['totalExtracted'] = $this->data['verifiedCount'] = $this->data['pendingVerify'] = $this->data['hotCount'] = $this->data['convertedCount'] = 0;
         }
@@ -258,7 +258,7 @@ class AICallingController extends AdminController
             // Per-script performance
             $scriptPerf = $db->fetchAll("SELECT s.id, s.script_name, s.total_calls_made, s.total_calls_connected, s.total_interested, s.conversion_rate FROM ai_calling_scripts s ORDER BY s.conversion_rate DESC") ?: [];
             $this->data['scriptPerformance'] = $scriptPerf;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['voiceModels'] = $this->data['scripts'] = $this->data['intents'] = $this->data['scriptPerformance'] = [];
             $this->data['totalVoiceModels'] = $this->data['activeVoiceModels'] = $this->data['totalScripts'] = $this->data['activeScripts'] = 0;
             $this->data['totalIntents'] = $this->data['activeIntents'] = $this->data['perfTotalCalls'] = $this->data['perfCompletedCalls'] = 0;
@@ -407,7 +407,7 @@ class AICallingController extends AdminController
             ) ?: [];
 
             $this->data['total_logs'] = (int)($db->fetch("SELECT COUNT(*) c FROM calls_log")['c'] ?? 0);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['today_queue'] = $this->data['upcoming'] = $this->data['recent_logs'] = [];
             $this->data['total_scheduled'] = $this->data['pending_total'] = $this->data['completed_total'] = 0;
             $this->data['pending_today'] = $this->data['completed_today'] = $this->data['total_logs'] = 0;
@@ -458,7 +458,7 @@ class AICallingController extends AdminController
             $this->data['day_labels'] = array_map(fn($d) => date('d M', strtotime($d['day'])), $daily);
             $this->data['day_totals'] = array_column($daily, 'total');
             $this->data['day_connected'] = array_column($daily, 'connected');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['days'] = $days;
             $this->data['outcomes'] = $this->data['methods'] = $this->data['daily'] = [];
             $this->data['day_labels'] = $this->data['day_totals'] = $this->data['day_connected'] = [];
@@ -476,7 +476,7 @@ class AICallingController extends AdminController
             if (is_array($result)) {
                 echo json_encode($result);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
@@ -494,7 +494,7 @@ class AICallingController extends AdminController
             if (is_array($result)) {
                 echo json_encode($result);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
@@ -510,7 +510,7 @@ class AICallingController extends AdminController
         try {
             $this->db->query("SELECT 1");
             $results['database'] = ['status' => 'ok', 'message' => 'Connected'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $results['database'] = ['status' => 'error', 'message' => $e->getMessage()];
         }
 
@@ -521,7 +521,7 @@ class AICallingController extends AdminController
             $results['asterisk'] = $connected
                 ? ['status' => 'ok', 'message' => 'AMI connected']
                 : ['status' => 'error', 'message' => 'AMI unreachable'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $results['asterisk'] = ['status' => 'error', 'message' => $e->getMessage()];
         }
 
@@ -560,7 +560,7 @@ class AICallingController extends AdminController
             $results['whatsapp'] = $waConnected
                 ? ['status' => 'ok', 'message' => 'WhatsApp connected']
                 : ['status' => 'error', 'message' => 'WhatsApp not connected — scan QR first'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $results['whatsapp'] = ['status' => 'error', 'message' => $e->getMessage()];
         }
 
@@ -628,7 +628,7 @@ class AICallingController extends AdminController
 
             $this->data['pagination'] = ['page' => $page, 'total_pages' => $totalPages, 'total' => $totalRows, 'per_page' => $perPage, 'offset' => $offset];
             $this->data['filters'] = ['status' => $filterStatus, 'agent' => $filterAgent, 'from' => $filterFrom, 'to' => $filterTo, 'q' => $filterSearch, 'sentiment' => $filterSentiment, 'response' => $filterResponse];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['calls'] = $this->data['agents'] = $this->data['filters'] = [];
             $this->data['pagination'] = ['page' => 1, 'total_pages' => 1, 'total' => 0, 'per_page' => 25, 'offset' => 0];
             $this->data['totalCalls'] = $this->data['completedCalls'] = $this->data['failedCalls'] = $this->data['noAnswerCalls'] = 0;
@@ -666,7 +666,7 @@ class AICallingController extends AdminController
             $call['extracted'] = $extracted;
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'call' => $call]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Content-Type: application/json');
             echo json_encode(['error' => $e->getMessage()]);
         }

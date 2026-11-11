@@ -58,6 +58,70 @@ class DashboardWidgetController extends AdminController
         return $this->jsonResponse(['success' => true, 'widgets' => $widgets]);
     }
 
+
+    /**
+     * Save layout from JSON (drag-drop customize page)
+     */
+    public function saveLayoutJson()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $userId = $this->currentUserId();
+        $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+
+        $layout = $data['layout'] ?? [];
+        if (empty($layout)) {
+            return $this->jsonError('No layout provided', 400);
+        }
+
+        try {
+            $existing = $this->db->fetchOne(
+                "SELECT id FROM user_dashboard_layouts WHERE user_id = ? AND layout_name = 'Default' LIMIT 1",
+                [$userId]
+            );
+            $row = [
+                'layout_config' => json_encode(['widgets' => $layout]),
+                'widgets_order' => json_encode($layout),
+                'is_default' => 1,
+            ];
+            if ($existing) {
+                $row['updated_at'] = date('Y-m-d H:i:s');
+                $this->db->update('user_dashboard_layouts', $row, 'id = :wid', ['wid' => $existing['id']]);
+            } else {
+                $row['user_id'] = $userId;
+                $row['layout_name'] = 'Default';
+                $row['created_at'] = date('Y-m-d H:i:s');
+                $row['updated_at'] = date('Y-m-d H:i:s');
+                $this->db->insert('user_dashboard_layouts', $row);
+            }
+        } catch (\Throwable $e) {
+            return $this->jsonError('Server error: ' . $e->getMessage(), 500);
+        }
+
+        return $this->jsonResponse(['success' => true, 'message' => 'Layout saved successfully']);
+    }
+
+    /**
+     * Reset layout to default
+     */
+    public function resetLayout()
+    {
+        $this->requireAdmin();
+        $this->validateCsrfOrFail();
+        $userId = $this->currentUserId();
+
+        try {
+            $this->db->execute(
+                "DELETE FROM user_dashboard_layouts WHERE user_id = ?",
+                [$userId]
+            );
+        } catch (\Throwable $e) {
+            return $this->jsonError('Server error: ' . $e->getMessage(), 500);
+        }
+
+        return $this->jsonResponse(['success' => true, 'message' => 'Layout reset successfully']);
+    }
+
     public function getLayout($id)
     {
         $this->requireAdmin();

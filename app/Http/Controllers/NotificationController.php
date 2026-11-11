@@ -306,7 +306,7 @@ class NotificationController extends AdminController
                 'unread_count'  => $unreadCount,
                 'role'          => $role
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -334,7 +334,7 @@ class NotificationController extends AdminController
             $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, status = 'read', read_at = NOW() WHERE id = ? AND (user_id = ? OR user_id IS NULL)");
             $stmt->execute([$id, $userId]);
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -353,7 +353,7 @@ class NotificationController extends AdminController
             $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, status = 'read', read_at = NOW() WHERE is_read = 0 AND (user_id = ? OR user_id IS NULL)");
             $stmt->execute([$userId]);
             echo json_encode(['success' => true, 'message' => 'All notifications marked as read']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -420,7 +420,7 @@ class NotificationController extends AdminController
             $stmt->execute($params);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'count' => (int)($row['count'] ?? 0), 'role' => $role]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -440,7 +440,7 @@ class NotificationController extends AdminController
             $stmt->execute([$userId]);
             $popups = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             echo json_encode(['success' => true, 'popups' => $popups]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -465,7 +465,7 @@ class NotificationController extends AdminController
             $stmt = $this->db->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND (user_id = ? OR user_id IS NULL) AND tenant_id = ?");
             $stmt->execute([$id, $userId, $tid]);
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -503,7 +503,7 @@ class NotificationController extends AdminController
             }
 
             echo json_encode(['success' => true, 'message' => 'Notification created']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -541,7 +541,7 @@ class NotificationController extends AdminController
             }
 
             echo json_encode(['success' => true, 'message' => 'Popup created']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;

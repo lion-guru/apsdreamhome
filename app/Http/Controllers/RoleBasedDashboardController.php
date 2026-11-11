@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Middleware\RBACManager;
 use App\Core\Database\Database;
 use App\Http\Controllers\Admin\AdminController;
-use \App\Traits\TenantAwareTrait;
 use Exception;
 
 /**
@@ -234,7 +234,7 @@ class RoleBasedDashboardController extends AdminController
                 $stats['pending_legal'] = $safeQuery("SELECT COUNT(*) as c FROM legal_documents WHERE status='draft'");
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('loadRoleStats error: ' . $e->getMessage());
         }
         return $stats;
@@ -297,7 +297,7 @@ class RoleBasedDashboardController extends AdminController
                     $items[] = ['title' => $r['title'] ?? 'Task', 'description' => '', 'status' => $r['status'] ?? 'pending', 'badge_color' => ($r['status'] ?? '') === 'completed' ? 'success' : 'warning', 'created_at' => $r['created_at'] ?? ''];
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('loadRoleRecentItems error: ' . $e->getMessage());
         }
         return $items;
@@ -374,7 +374,7 @@ class RoleBasedDashboardController extends AdminController
             try { $data['active_users'] = (int)$db->query("SELECT COUNT(*) as c FROM users WHERE last_login_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) { $data['active_users'] = 0; }
             try { $data['api_calls'] = (int)$db->query("SELECT COUNT(*) as c FROM ai_api_logs WHERE DATE(created_at) = CURDATE()")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) { $data['api_calls'] = 0; }
             try { $data['open_tickets'] = (int)$db->query("SELECT COUNT(*) as c FROM support_tickets WHERE status != 'closed'")->fetch(\PDO::FETCH_ASSOC)['c']; } catch (\Throwable $e) { $data['open_tickets'] = 0; }
-        } catch (\Exception $e) { error_log('CTO Dashboard error: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('CTO Dashboard error: ' . $e->getMessage()); }
         return $data;
     }
 
@@ -403,7 +403,7 @@ class RoleBasedDashboardController extends AdminController
                 $analytics['data'] = array_column($rows, 'cnt');
             } catch (\Throwable $e) { $analytics = ['labels' => [], 'data' => []]; }
             $data['analytics'] = $analytics;
-        } catch (\Exception $e) { error_log('COO Dashboard error: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('COO Dashboard error: ' . $e->getMessage()); }
         return $data;
     }
 
@@ -427,7 +427,7 @@ class RoleBasedDashboardController extends AdminController
             try { $data['teamPerformance'] = $db->query("SELECT u.name, u.email, u.role, COUNT(p.id) as properties_managed, SUM(CASE WHEN p.status='sold' THEN 1 ELSE 0 END) as sales_count FROM users u LEFT JOIN properties p ON u.id=p.created_by WHERE u.role IN ('employee','associate') AND u.status='active' GROUP BY u.id,u.name,u.email,u.role ORDER BY sales_count DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC); } catch (\Throwable $e) { $data['teamPerformance'] = []; }
             try { $data['recentActivities'] = $db->query("SELECT action as activity_type, description, created_at FROM activity_logs_unified WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) ORDER BY created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC); } catch (\Throwable $e) { $data['recentActivities'] = []; }
             try { $data['projectsOverview'] = $db->query("SELECT status, COUNT(*) as count FROM properties GROUP BY status ORDER BY count DESC")->fetchAll(\PDO::FETCH_ASSOC); } catch (\Throwable $e) { $data['projectsOverview'] = []; }
-        } catch (\Exception $e) { error_log('CM Dashboard error: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('CM Dashboard error: ' . $e->getMessage()); }
         return $data;
     }
 
@@ -456,7 +456,7 @@ class RoleBasedDashboardController extends AdminController
                 $analytics['data'] = array_column($rows, 'cnt');
             } catch (\Throwable $e) { $analytics = ['labels' => [], 'data' => []]; }
             $data['analytics'] = $analytics;
-        } catch (\Exception $e) { error_log('HR Dashboard error: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('HR Dashboard error: ' . $e->getMessage()); }
         return $data;
     }
 
@@ -910,62 +910,62 @@ class RoleBasedDashboardController extends AdminController
 
     private function getTeamMemberCount()
     {
-        try { return (int)$this->db->fetch("SELECT COUNT(*) c FROM users WHERE role IN ('associate','agent','employee')")['c']; } catch (\Exception $e) { return 0; }
+        try { return (int)$this->db->fetch("SELECT COUNT(*) c FROM users WHERE role IN ('associate','agent','employee')")['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getManagerProperties()
     {
-        try { return (int)$this->db->fetch("SELECT COUNT(*) c FROM properties WHERE status='active'")['c']; } catch (\Exception $e) { return 0; }
+        try { return (int)$this->db->fetch("SELECT COUNT(*) c FROM properties WHERE status='active'")['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getManagerReports()
     {
-        try { return (int)$this->db->fetch("SELECT COUNT(*) c FROM reports WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)")['c']; } catch (\Exception $e) { return 0; }
+        try { return (int)$this->db->fetch("SELECT COUNT(*) c FROM reports WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)")['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getAssociateProperties()
     {
-        try { $uid = $_SESSION['user_id'] ?? 0; return (int)$this->db->fetch("SELECT COUNT(*) c FROM user_properties WHERE user_id=?", [$uid])['c']; } catch (\Exception $e) { return 0; }
+        try { $uid = $_SESSION['user_id'] ?? 0; return (int)$this->db->fetch("SELECT COUNT(*) c FROM user_properties WHERE user_id=?", [$uid])['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getAssociateClients()
     {
-        try { $uid = $_SESSION['user_id'] ?? 0; $tid = (int)$this->tenantId(); $tidSql = $tid > 1 ? ' AND tenant_id = ?' : ''; $tidP = $tid > 1 ? [$tid] : []; return (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=?{$tidSql}", array_merge([$uid], $tidP))['c']; } catch (\Exception $e) { return 0; }
+        try { $uid = $_SESSION['user_id'] ?? 0; $tid = (int)$this->tenantId(); $tidSql = $tid > 1 ? ' AND tenant_id = ?' : ''; $tidP = $tid > 1 ? [$tid] : []; return (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=?{$tidSql}", array_merge([$uid], $tidP))['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getAssociateCommissions()
     {
-        try { $uid = $_SESSION['user_id'] ?? 0; return (float)($this->db->fetch("SELECT COALESCE(SUM(amount),0) c FROM mlm_commission_ledger WHERE beneficiary_user_id=?", [$uid])['c'] ?? 0); } catch (\Exception $e) { return 0; }
+        try { $uid = $_SESSION['user_id'] ?? 0; return (float)($this->db->fetch("SELECT COALESCE(SUM(amount),0) c FROM mlm_commission_ledger WHERE beneficiary_user_id=?", [$uid])['c'] ?? 0); } catch (\Throwable $e) { return 0; }
     }
     private function getAssociateLeads()
     {
-        try { $uid = $_SESSION['user_id'] ?? 0; $tid = (int)$this->tenantId(); $tidSql = $tid > 1 ? ' AND tenant_id = ?' : ''; $tidP = $tid > 1 ? [$tid] : []; return (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=?{$tidSql}", array_merge([$uid], $tidP))['c']; } catch (\Exception $e) { return 0; }
+        try { $uid = $_SESSION['user_id'] ?? 0; $tid = (int)$this->tenantId(); $tidSql = $tid > 1 ? ' AND tenant_id = ?' : ''; $tidP = $tid > 1 ? [$tid] : []; return (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=?{$tidSql}", array_merge([$uid], $tidP))['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getUserSavedProperties()
     {
-        try { $uid = $_SESSION['user_id'] ?? 0; return (int)$this->db->fetch("SELECT COUNT(*) c FROM saved_searches WHERE user_id=?", [$uid])['c']; } catch (\Exception $e) { return 0; }
+        try { $uid = $_SESSION['user_id'] ?? 0; return (int)$this->db->fetch("SELECT COUNT(*) c FROM saved_searches WHERE user_id=?", [$uid])['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getUserSearchHistory()
     {
-        try { $uid = $_SESSION['user_id'] ?? 0; return (int)$this->db->fetch("SELECT COUNT(*) c FROM saved_searches WHERE user_id=?", [$uid])['c']; } catch (\Exception $e) { return 0; }
+        try { $uid = $_SESSION['user_id'] ?? 0; return (int)$this->db->fetch("SELECT COUNT(*) c FROM saved_searches WHERE user_id=?", [$uid])['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getUserBookings()
     {
-        try { $uid = $_SESSION['user_id'] ?? 0; return (int)$this->db->fetch("SELECT COUNT(*) c FROM plot_bookings WHERE customer_id=?", [$uid])['c']; } catch (\Exception $e) { return 0; }
+        try { $uid = $_SESSION['user_id'] ?? 0; return (int)$this->db->fetch("SELECT COUNT(*) c FROM plot_bookings WHERE customer_id=?", [$uid])['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getFeaturedProperties()
     {
-        try { return (int)$this->db->fetch("SELECT COUNT(*) c FROM properties WHERE status='active' AND is_featured=1")['c']; } catch (\Exception $e) { return 0; }
+        try { return (int)$this->db->fetch("SELECT COUNT(*) c FROM properties WHERE status='active' AND is_featured=1")['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getRecentProperties()
     {
-        try { return (int)$this->db->fetch("SELECT COUNT(*) c FROM properties WHERE status='active' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")['c']; } catch (\Exception $e) { return 0; }
+        try { return (int)$this->db->fetch("SELECT COUNT(*) c FROM properties WHERE status='active' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getPopularLocations()
     {
-        try { return (int)$this->db->fetch("SELECT COUNT(DISTINCT location) c FROM properties WHERE status='active' AND location IS NOT NULL AND location != ''")['c']; } catch (\Exception $e) { return 0; }
+        try { return (int)$this->db->fetch("SELECT COUNT(DISTINCT location) c FROM properties WHERE status='active' AND location IS NOT NULL AND location != ''")['c']; } catch (\Throwable $e) { return 0; }
     }
     private function getUserGrowthData()
     {
         try {
             $rows = $this->db->fetchAll("SELECT DATE(created_at) as day, COUNT(*) as cnt FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY day ORDER BY day ASC");
             return ['labels' => array_map(fn($d) => date('d M', strtotime($d['day'])), $rows), 'data' => array_column($rows, 'cnt')];
-        } catch (\Exception $e) { return ['labels' => [], 'data' => []]; }
+        } catch (\Throwable $e) { return ['labels' => [], 'data' => []]; }
     }
     private function getPropertyStats()
     {
@@ -974,14 +974,14 @@ class RoleBasedDashboardController extends AdminController
             $active = (int)$this->db->fetch("SELECT COUNT(*) c FROM properties WHERE status='active'")['c'];
             $sold = (int)$this->db->fetch("SELECT COUNT(*) c FROM properties WHERE status='sold'")['c'];
             return ['total' => $total, 'active' => $active, 'sold' => $sold, 'inactive' => $total - $active - $sold];
-        } catch (\Exception $e) { return ['total' => 0, 'active' => 0, 'sold' => 0, 'inactive' => 0]; }
+        } catch (\Throwable $e) { return ['total' => 0, 'active' => 0, 'sold' => 0, 'inactive' => 0]; }
     }
     private function getRevenueData()
     {
         try {
             $rows = $this->db->fetchAll("SELECT DATE(created_at) as day, COALESCE(SUM(amount),0) as total FROM payment_transactions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY day ORDER BY day ASC");
             return ['labels' => array_map(fn($d) => date('d M', strtotime($d['day'])), $rows), 'data' => array_column($rows, 'total')];
-        } catch (\Exception $e) { return ['labels' => [], 'data' => []]; }
+        } catch (\Throwable $e) { return ['labels' => [], 'data' => []]; }
     }
     private function getSystemHealth()
     {
@@ -995,18 +995,18 @@ class RoleBasedDashboardController extends AdminController
             $tidParam = $tid > 1 ? [$tid] : [];
             $rows = $this->db->fetchAll("SELECT u.name, COUNT(l.id) as leads, SUM(CASE WHEN l.status='converted' THEN 1 ELSE 0 END) as conversions FROM users u LEFT JOIN leads l ON l.assigned_to=u.id WHERE u.role IN ('associate','agent'){$tidSql} GROUP BY u.id ORDER BY leads DESC LIMIT 10", $tidParam);
             return ['members' => $rows];
-        } catch (\Exception $e) { return ['members' => []]; }
+        } catch (\Throwable $e) { return ['members' => []]; }
     }
     private function getPropertySalesData()
     {
         try {
             $rows = $this->db->fetchAll("SELECT DATE(created_at) as day, COUNT(*) as cnt FROM plot_bookings WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY day ORDER BY day ASC");
             return ['labels' => array_map(fn($d) => date('d M', strtotime($d['day'])), $rows), 'data' => array_column($rows, 'cnt')];
-        } catch (\Exception $e) { return ['labels' => [], 'data' => []]; }
+        } catch (\Throwable $e) { return ['labels' => [], 'data' => []]; }
     }
     private function getClientSatisfactionData()
     {
-        try { $nps = (int)($this->db->fetch("SELECT COALESCE(AVG(rating),0) c FROM testimonials WHERE status='approved'")['c'] ?? 0); return ['nps' => $nps, 'total_reviews' => (int)$this->db->fetch("SELECT COUNT(*) c FROM testimonials WHERE status='approved'")['c']]; } catch (\Exception $e) { return ['nps' => 0, 'total_reviews' => 0]; }
+        try { $nps = (int)($this->db->fetch("SELECT COALESCE(AVG(rating),0) c FROM testimonials WHERE status='approved'")['c'] ?? 0); return ['nps' => $nps, 'total_reviews' => (int)$this->db->fetch("SELECT COUNT(*) c FROM testimonials WHERE status='approved'")['c']]; } catch (\Throwable $e) { return ['nps' => 0, 'total_reviews' => 0]; }
     }
     private function getTargetAchievementData()
     {
@@ -1014,7 +1014,7 @@ class RoleBasedDashboardController extends AdminController
             $target = (float)($this->db->fetch("SELECT COALESCE(SUM(target_amount),0) c FROM sales_targets WHERE MONTH(target_date)=MONTH(NOW()) AND YEAR(target_date)=YEAR(NOW())")['c'] ?? 0);
             $actual = (float)($this->db->fetch("SELECT COALESCE(SUM(amount),0) c FROM payment_transactions WHERE MONTH(created_at)=MONTH(NOW()) AND YEAR(created_at)=YEAR(NOW())")['c'] ?? 0);
             return ['target' => $target, 'actual' => $actual, 'percentage' => $target > 0 ? round(($actual / $target) * 100) : 0];
-        } catch (\Exception $e) { return ['target' => 0, 'actual' => 0, 'percentage' => 0]; }
+        } catch (\Throwable $e) { return ['target' => 0, 'actual' => 0, 'percentage' => 0]; }
     }
     private function getSalesPerformanceData()
     {
@@ -1023,7 +1023,7 @@ class RoleBasedDashboardController extends AdminController
             $total = (float)($this->db->fetch("SELECT COALESCE(SUM(amount),0) c FROM mlm_commission_ledger WHERE beneficiary_user_id=?", [$uid])['c'] ?? 0);
             $month = (float)($this->db->fetch("SELECT COALESCE(SUM(amount),0) c FROM mlm_commission_ledger WHERE beneficiary_user_id=? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)", [$uid])['c'] ?? 0);
             return ['total_earned' => $total, 'month_earned' => $month];
-        } catch (\Exception $e) { return ['total_earned' => 0, 'month_earned' => 0]; }
+        } catch (\Throwable $e) { return ['total_earned' => 0, 'month_earned' => 0]; }
     }
     private function getClientConversionData()
     {
@@ -1035,7 +1035,7 @@ class RoleBasedDashboardController extends AdminController
             $total = (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=?{$tidSql}", array_merge([$uid], $tidParam))['c'];
             $converted = (int)$this->db->fetch("SELECT COUNT(*) c FROM leads WHERE assigned_to=? AND status='converted'{$tidSql}", array_merge([$uid], $tidParam))['c'];
             return ['total' => $total, 'converted' => $converted, 'rate' => $total > 0 ? round(($converted / $total) * 100) : 0];
-        } catch (\Exception $e) { return ['total' => 0, 'converted' => 0, 'rate' => 0]; }
+        } catch (\Throwable $e) { return ['total' => 0, 'converted' => 0, 'rate' => 0]; }
     }
     private function getCommissionEarnedData()
     {
@@ -1043,7 +1043,7 @@ class RoleBasedDashboardController extends AdminController
             $uid = $_SESSION['user_id'] ?? 0;
             $rows = $this->db->fetchAll("SELECT DATE(created_at) as day, SUM(amount) as total FROM mlm_commission_ledger WHERE beneficiary_user_id=? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY day ORDER BY day ASC", [$uid]);
             return ['labels' => array_map(fn($d) => date('d M', strtotime($d['day'])), $rows), 'data' => array_column($rows, 'total')];
-        } catch (\Exception $e) { return ['labels' => [], 'data' => []]; }
+        } catch (\Throwable $e) { return ['labels' => [], 'data' => []]; }
     }
     private function getLeadConversionData()
     {
@@ -1053,21 +1053,21 @@ class RoleBasedDashboardController extends AdminController
             $tidParam = $tid > 1 ? [$tid] : [];
             $rows = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM leads{$tidSql} GROUP BY status ORDER BY cnt DESC", $tidParam);
             return ['labels' => array_column($rows, 'status'), 'data' => array_column($rows, 'cnt')];
-        } catch (\Exception $e) { return ['labels' => [], 'data' => []]; }
+        } catch (\Throwable $e) { return ['labels' => [], 'data' => []]; }
     }
     private function getPropertyViewsData()
     {
         try {
             $rows = $this->db->fetchAll("SELECT DATE(created_at) as day, COUNT(*) as cnt FROM property_views WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY day ORDER BY day ASC");
             return ['labels' => array_map(fn($d) => date('d M', strtotime($d['day'])), $rows), 'data' => array_column($rows, 'cnt')];
-        } catch (\Exception $e) { return ['labels' => [], 'data' => []]; }
+        } catch (\Throwable $e) { return ['labels' => [], 'data' => []]; }
     }
     private function getSearchPatternsData()
     {
         try {
             $rows = $this->db->fetchAll("SELECT search_term, COUNT(*) as cnt FROM saved_searches WHERE search_term IS NOT NULL GROUP BY search_term ORDER BY cnt DESC LIMIT 10");
             return ['terms' => array_column($rows, 'search_term'), 'counts' => array_column($rows, 'cnt')];
-        } catch (\Exception $e) { return ['terms' => [], 'counts' => []]; }
+        } catch (\Throwable $e) { return ['terms' => [], 'counts' => []]; }
     }
     private function getBookingHistoryData()
     {
@@ -1075,7 +1075,7 @@ class RoleBasedDashboardController extends AdminController
             $uid = $_SESSION['user_id'] ?? 0;
             $rows = $this->db->fetchAll("SELECT DATE(created_at) as day, COUNT(*) as cnt FROM plot_bookings WHERE customer_id=? AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY day ORDER BY day ASC", [$uid]);
             return ['labels' => array_map(fn($d) => date('d M', strtotime($d['day'])), $rows), 'data' => array_column($rows, 'cnt')];
-        } catch (\Exception $e) { return ['labels' => [], 'data' => []]; }
+        } catch (\Throwable $e) { return ['labels' => [], 'data' => []]; }
     }
     private function getPreferencesData()
     {
@@ -1086,14 +1086,14 @@ class RoleBasedDashboardController extends AdminController
         try {
             $rows = $this->db->fetchAll("SELECT title, price, location FROM properties WHERE status='active' ORDER BY views DESC LIMIT 5");
             return $rows;
-        } catch (\Exception $e) { return []; }
+        } catch (\Throwable $e) { return []; }
     }
     private function getTrendingLocationsData()
     {
         try {
             $rows = $this->db->fetchAll("SELECT location, COUNT(*) as cnt FROM properties WHERE status='active' AND location IS NOT NULL GROUP BY location ORDER BY cnt DESC LIMIT 5");
             return $rows;
-        } catch (\Exception $e) { return []; }
+        } catch (\Throwable $e) { return []; }
     }
     private function getMarketInsightsData()
     {
@@ -1101,14 +1101,14 @@ class RoleBasedDashboardController extends AdminController
             $avgPrice = (float)($this->db->fetch("SELECT COALESCE(AVG(price),0) c FROM properties WHERE status='active'")['c'] ?? 0);
             $totalProperties = (int)$this->db->fetch("SELECT COUNT(*) c FROM properties WHERE status='active'")['c'];
             return ['avg_price' => $avgPrice, 'total_properties' => $totalProperties, 'market_trend' => 'stable'];
-        } catch (\Exception $e) { return ['avg_price' => 0, 'total_properties' => 0, 'market_trend' => 'unknown']; }
+        } catch (\Throwable $e) { return ['avg_price' => 0, 'total_properties' => 0, 'market_trend' => 'unknown']; }
     }
     private function getFeaturedListingsData()
     {
         try {
             $rows = $this->db->fetchAll("SELECT p.id, p.title, p.price, p.location, (SELECT image_path FROM property_images WHERE property_id = p.id ORDER BY is_primary DESC, id ASC LIMIT 1) AS image FROM properties p WHERE p.status='active' AND p.featured=1 LIMIT 5");
             return $rows;
-        } catch (\Exception $e) { return []; }
+        } catch (\Throwable $e) { return []; }
     }
 
     public function getPerformanceData($role = null)

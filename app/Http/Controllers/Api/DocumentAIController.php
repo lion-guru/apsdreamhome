@@ -52,7 +52,7 @@ class DocumentAIController extends BaseApiController
             }
             
             return $this->jsonError($result['error']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DocumentAIController::processJob] ' . $e->getMessage());
             return $this->jsonError('Processing failed');
         }
@@ -78,7 +78,7 @@ class DocumentAIController extends BaseApiController
             }
             
             return $this->jsonSuccess($job);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DocumentAIController::getJob] ' . $e->getMessage());
             return $this->jsonError('Failed to get job');
         }
@@ -102,7 +102,7 @@ class DocumentAIController extends BaseApiController
         try {
             $jobs = $this->service->listJobs($filters, $limit, $offset);
             return $this->jsonSuccess(['jobs' => $jobs, 'limit' => $limit, 'offset' => $offset]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DocumentAIController::listJobs] ' . $e->getMessage());
             return $this->jsonError('Failed to list jobs');
         }
@@ -143,7 +143,7 @@ class DocumentAIController extends BaseApiController
             }
             
             return $this->jsonError($result['error']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DocumentAIController::reviewJob] ' . $e->getMessage());
             return $this->jsonError('Review failed');
         }
@@ -158,7 +158,7 @@ class DocumentAIController extends BaseApiController
         try {
             $template = $this->service->getTemplate($documentType);
             return $this->jsonSuccess(['template' => $template, 'document_type' => $documentType]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DocumentAIController::getTemplate] ' . $e->getMessage());
             return $this->jsonError('Failed to get template');
         }
@@ -173,7 +173,7 @@ class DocumentAIController extends BaseApiController
         try {
             $engines = $this->service->getEngines();
             return $this->jsonSuccess(['engines' => $engines]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to get engines');
         }
     }
@@ -187,7 +187,7 @@ class DocumentAIController extends BaseApiController
         try {
             $types = $this->service->getDocumentTypes();
             return $this->jsonSuccess(['document_types' => $types]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to get document types');
         }
     }

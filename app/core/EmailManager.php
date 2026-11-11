@@ -61,7 +61,7 @@ class EmailManager
                 'success' => true,
                 'message_id' => $this->mailer->getLastMessageID()
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Log failed email
             $this->logEmail($to, $template, 'failed', $data, $e->getMessage());
 
@@ -130,7 +130,7 @@ class EmailManager
                 $log_data['error_message'],
                 $log_data['created_at']
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Email logging failed: ' . $e->getMessage());
         }
     }
@@ -224,7 +224,7 @@ class EmailManager
                     round(($totals['sent'] / ($totals['sent'] + $totals['failed'])) * 100, 2) : 0,
                 'daily_stats' => $stats
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'error' => $e->getMessage(),
                 'total_sent' => 0,
@@ -272,7 +272,7 @@ class EmailManager
             $this->mailer->SMTPSecure = $this->config['encryption'];
             $this->mailer->Port       = $this->config['port'];
             $this->mailer->setFrom($this->config['from_email'], $this->config['from_name']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Mailer initialization failed: " . $e->getMessage());
         }
     }

@@ -164,7 +164,7 @@ try {
     echo "   - analytics_funnels\n";
     echo "\n🎉 Total: 5 new tables!\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "\n❌ Error: " . $e->getMessage() . "\n";
     exit(1);
 }

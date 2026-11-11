@@ -22,7 +22,7 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name FROM documents d LEFT JOIN users u ON d.user_id = u.id ORDER BY d.uploaded_on DESC LIMIT 50");
             $documents = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $documents = [];
         }
         $this->render('admin/documents/index', ['page_title' => 'Documents', 'documents' => $documents]);
@@ -35,7 +35,7 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $cats = $db->query("SELECT id, name FROM document_categories WHERE is_active = 1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
             $types = $db->query("SELECT id, name FROM document_types WHERE is_active = 1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $cats = [];
             $types = [];
         }
@@ -50,7 +50,7 @@ class DocumentController extends AdminController
             $stmt = $db->prepare("SELECT d.*, u.name as uploaded_by_name FROM documents d LEFT JOIN users u ON d.user_id = u.id WHERE d.id = ?");
             $stmt->execute([$id]);
             $document = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $document = null;
         }
         $this->render('admin/documents/show', ['page_title' => 'Document Details', 'document' => $document]);
@@ -97,7 +97,7 @@ class DocumentController extends AdminController
                 } else {
                     throw new \Exception('File upload failed');
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Upload failed: ' . $e->getMessage();
             }
         }
@@ -120,7 +120,7 @@ class DocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM documents WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$id, $this->tenantId()]);
             $_SESSION['success'] = 'Document deleted successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Delete failed: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/documents');
@@ -143,7 +143,7 @@ class DocumentController extends AdminController
                 readfile($doc['file_path']);
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // fall through
                     error_log("DocumentController.php: " . $e->getMessage());
         }
@@ -164,7 +164,7 @@ class DocumentController extends AdminController
             $stmt = $db->query("SELECT c.*, p.name as parent_name FROM document_categories c LEFT JOIN document_categories p ON c.parent_id = p.id ORDER BY c.name");
             $categories = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $parents = $db->query("SELECT id, name FROM document_categories WHERE is_active = 1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $categories = [];
             $parents = [];
         }
@@ -186,7 +186,7 @@ class DocumentController extends AdminController
                 $stmt = $db->prepare("INSERT INTO document_categories (name, description, parent_id, is_active, created_at) VALUES (?, ?, ?, ?, NOW())");
                 $stmt->execute([$name, $description, $parentId, $isActive]);
                 $_SESSION['success'] = 'Category created successfully';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
@@ -209,7 +209,7 @@ class DocumentController extends AdminController
                 $stmt = $db->prepare("UPDATE document_categories SET name = ?, description = ?, parent_id = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
                 $stmt->execute([$name, $description, $parentId, $isActive, $id, $this->tenantId()]);
                 $_SESSION['success'] = 'Category updated successfully';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
@@ -225,7 +225,7 @@ class DocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM document_categories WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$id, $this->tenantId()]);
             $_SESSION['success'] = 'Category deleted successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/documents/categories');
@@ -244,7 +244,7 @@ class DocumentController extends AdminController
             $stmt = $db->query("SELECT t.*, c.name as category_name FROM document_types t LEFT JOIN document_categories c ON t.category_id = c.id ORDER BY t.name");
             $types = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $categories = $db->query("SELECT id, name FROM document_categories WHERE is_active = 1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $types = [];
             $categories = [];
         }
@@ -265,7 +265,7 @@ class DocumentController extends AdminController
                 $stmt = $db->prepare("INSERT INTO document_types (name, category_id, description, is_active, created_at) VALUES (?, ?, ?, 1, NOW())");
                 $stmt->execute([$name, $categoryId, $description]);
                 $_SESSION['success'] = 'Document type created successfully';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
@@ -288,7 +288,7 @@ class DocumentController extends AdminController
                 $stmt = $db->prepare("UPDATE document_types SET name = ?, category_id = ?, description = ?, is_active = ? WHERE id = ? AND tenant_id = ?");
                 $stmt->execute([$name, $categoryId, $description, $isActive, $id, $this->tenantId()]);
                 $_SESSION['success'] = 'Document type updated successfully';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
@@ -304,7 +304,7 @@ class DocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM document_types WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$id, $this->tenantId()]);
             $_SESSION['success'] = 'Document type deleted successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/documents/types');
@@ -323,7 +323,7 @@ class DocumentController extends AdminController
             $stmt = $db->query("SELECT t.*, c.name as category_name FROM document_templates t LEFT JOIN document_categories c ON t.category = c.name ORDER BY t.template_name");
             $templates = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $categories = $db->query("SELECT id, name FROM document_categories WHERE is_active = 1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $templates = [];
             $categories = [];
         }
@@ -345,7 +345,7 @@ class DocumentController extends AdminController
                 $stmt = $db->prepare("INSERT INTO document_templates (template_name, category, content_html, description, is_active, created_at, updated_at, tenant_id) VALUES (?, ?, ?, ?, 1, NOW(), NOW(), ?)");
                 $stmt->execute([$name, $type, $content, $description, $this->tenantId()]);
                 $_SESSION['success'] = 'Template created successfully';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
@@ -362,7 +362,7 @@ class DocumentController extends AdminController
             $stmt->execute([$id]);
             $template = $stmt->fetch(\PDO::FETCH_ASSOC);
             $categories = $db->query("SELECT id, name FROM document_categories WHERE is_active = 1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $template = null;
             $categories = [];
         }
@@ -385,7 +385,7 @@ class DocumentController extends AdminController
                 $stmt = $db->prepare("UPDATE document_templates SET template_name = ?, category = ?, content_html = ?, description = ?, is_active = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?");
                 $stmt->execute([$name, $type, $content, $description, $isActive, $id, $this->tenantId()]);
                 $_SESSION['success'] = 'Template updated successfully';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
@@ -401,7 +401,7 @@ class DocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM document_templates WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$id, $this->tenantId()]);
             $_SESSION['success'] = 'Template deleted successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/documents/templates');
@@ -434,7 +434,7 @@ class DocumentController extends AdminController
             $stmt->execute($params);
             $reviews = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $docs = $db->query("SELECT id, title FROM documents ORDER BY title")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $reviews = [];
             $docs = [];
         }
@@ -462,7 +462,7 @@ class DocumentController extends AdminController
                     $tid
                 ]);
                 $_SESSION['success'] = 'Review submitted successfully';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Error: ' . $e->getMessage();
             }
         }
@@ -481,7 +481,7 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->query("SELECT cl.*, d.document_type as document_title, u.name as classified_by_name FROM document_classification cl LEFT JOIN documents d ON cl.document_id = d.id LEFT JOIN users u ON cl.classified_by = u.id ORDER BY cl.classified_at DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $records = [];
         }
         $this->render('admin/documents/classification', ['page_title' => 'Document Classification', 'records' => $records]);
@@ -498,7 +498,7 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name FROM documents d LEFT JOIN users u ON d.user_id = u.id WHERE d.entity_type = 'business' ORDER BY d.uploaded_on DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $records = [];
         }
         $this->render('admin/documents/business_documents', ['page_title' => 'Business Documents', 'records' => $records]);
@@ -515,7 +515,7 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name, c.name as customer_name FROM documents d LEFT JOIN users u ON d.user_id = u.id LEFT JOIN users c ON d.entity_id = c.id WHERE d.entity_type = 'customer' ORDER BY d.uploaded_on DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $records = [];
         }
         $this->render('admin/documents/customer_documents', ['page_title' => 'Customer Documents', 'records' => $records]);
@@ -532,7 +532,7 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name, u2.name as user_name FROM documents d LEFT JOIN users u ON d.user_id = u.id LEFT JOIN users u2 ON d.entity_id = u2.id WHERE d.entity_type = 'user' ORDER BY d.uploaded_on DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $records = [];
         }
         $this->render('admin/documents/user_documents', ['page_title' => 'User Documents', 'records' => $records]);
@@ -549,7 +549,7 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->query("SELECT d.*, u.name as uploaded_by_name FROM documents d LEFT JOIN users u ON d.user_id = u.id WHERE d.entity_type = 'property' ORDER BY d.uploaded_on DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $records = [];
         }
         $this->render('admin/documents/property_documents', ['page_title' => 'Property Documents', 'records' => $records]);
@@ -566,7 +566,7 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->query("SELECT gd.*, t.template_name as template_name, u.name as generated_by_name FROM generated_documents gd LEFT JOIN document_templates t ON gd.template_id = t.id LEFT JOIN users u ON gd.generated_by = u.id ORDER BY gd.created_at DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $records = [];
         }
         $this->render('admin/documents/generated_documents', ['page_title' => 'Generated Documents', 'records' => $records]);
@@ -583,7 +583,7 @@ class DocumentController extends AdminController
             $db = $this->getDb();
             $stmt = $db->query("SELECT o.*, o.original_name as original_document_title FROM ocr_documents o LEFT JOIN documents d ON o.original_document_id = d.id ORDER BY o.created_at DESC LIMIT 50");
             $records = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $records = [];
         }
         $this->render('admin/documents/ocr_documents', ['page_title' => 'OCR Documents', 'records' => $records]);
@@ -627,7 +627,7 @@ class DocumentController extends AdminController
                     }
                     $results = array_merge($results, $rows);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $results = [];
             }
         }

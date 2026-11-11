@@ -7,7 +7,7 @@
 try {
     $db = \App\Core\Database\Database::getInstance();
     $conn = $db->getConnection();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log("Database connection failed: " . $e->getMessage());
     die("Database connection failed. Please check system logs.");
 }

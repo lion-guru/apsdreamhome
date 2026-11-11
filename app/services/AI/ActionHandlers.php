@@ -43,7 +43,7 @@ class ActionHandlers
                 default:
                     return ['success' => false, 'message' => "Unknown action: {$action}"];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ActionHandler error ({$action}): " . $e->getMessage());
             return [
                 'success' => false,
@@ -89,7 +89,7 @@ class ActionHandlers
                 "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (0, 'property_submission', 'Property submitted via AI chatbot: {$data['name']} (PS-{$submissionId})', ?, NOW())",
                 [$userId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Graceful — table might not exist
         error_log($e->getMessage());
         }
@@ -142,7 +142,7 @@ class ActionHandlers
                 "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, tenant_id, created_at) VALUES (?, 'auto_response', 'Lead created via AI chatbot. Auto-welcome message queued.', ?, ?, NOW())",
                 [$leadId, $userId, $tid]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Graceful — table might not exist
         error_log($e->getMessage());
         }
@@ -153,7 +153,7 @@ class ActionHandlers
                 $sms = new \App\Services\SMSService();
                 $welcomeMsg = "Namaste {$data['name']}! APS Dream Homes mein aapka swagat hai. Aapka lead #{$leadNumber} create ho gaya hai. Hamari team jald hi aapko contact karegi. Dhanyavaad!";
                 $sms->sendSMS($data['phone'], $welcomeMsg);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
             // Graceful — SMS service might not be configured
             error_log($e->getMessage());
             }
@@ -192,7 +192,7 @@ class ActionHandlers
                         "message" => "🎉 Site visit book ho gayi!\n\n🏢 Property: {$data['property']}\n📅 Date: {$visitDate}\n👤 Name: {$data['name']}\n📱 Phone: {$data['phone']}\n\nAapko confirmation milega. Hamari team aapko call karegi!"
                     ];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("ActionHandlers::bookSiteVisit VisitService error: " . $e->getMessage());
             }
         }
@@ -211,7 +211,7 @@ class ActionHandlers
                     "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, tenant_id, created_at) VALUES (0, 'site_visit_booked', 'Site visit booked via AI chatbot: {$data['property']} on {$visitDate}', ?, ?, NOW())",
                     [$userId, $tid]
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
             // Graceful
             error_log($e->getMessage());
             }
@@ -220,7 +220,7 @@ class ActionHandlers
                 'success' => true,
                 "message" => "🎉 Site visit book ho gayi!\n\n🏢 Property: {$data['property']}\n📅 Date: {$visitDate}\n👤 Name: {$data['name']}\n📱 Phone: {$data['phone']}\n\nConfirmation aapko milega!"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("ActionHandlers::bookSiteVisit direct insert error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -265,7 +265,7 @@ class ActionHandlers
 
         try {
             $results = $this->db->fetchAll($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Table might not exist or have different schema — try user_properties
             $sql = "SELECT * FROM user_properties WHERE status IN ('approved', 'verified') AND tenant_id = ?";
             $params = [$tid];
@@ -392,7 +392,7 @@ class ActionHandlers
                 "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, tenant_id, created_at) VALUES (0, 'complaint_filed', 'Complaint filed via AI chatbot: {$data['type']} (Ticket #{$ticketId})', ?, ?, NOW())",
                 [$userId, $tid]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Graceful
         error_log($e->getMessage());
         }
@@ -402,7 +402,7 @@ class ActionHandlers
             try {
                 $sms = new \App\Services\SMSService();
                 $sms->sendSMS($data['phone'], "APS Dream Homes: Aapki complaint (#{$ticketId}) register ho gayi hai. Hamari team 24 ghante mein contact karegi. Dhanyavaad!");
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
             // Graceful
             error_log($e->getMessage());
             }

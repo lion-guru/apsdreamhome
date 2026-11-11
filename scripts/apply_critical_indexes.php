@@ -56,7 +56,7 @@ foreach ($indexes as $item) {
     try {
         $pdo->exec("CREATE INDEX `$indexName` ON `$table`(`$column`)");
         echo "[+] Successfully created index: `$indexName` on `$table`(`$column`)\n";
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo "[!] Error creating index on $table.$column: " . $e->getMessage() . "\n";
     }
 }

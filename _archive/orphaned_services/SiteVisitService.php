@@ -51,7 +51,7 @@ class SiteVisitService
 
         try {
             $this->db->getConnection()->exec($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SiteVisitService::ensureTableExists error: ' . $e->getMessage());
         }
     }

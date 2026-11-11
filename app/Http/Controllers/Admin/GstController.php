@@ -23,7 +23,7 @@ class GstController extends AdminController
             ");
             $stmt->execute();
             $invoices = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $invoices = [];
         }
         return $this->render('admin/gst/index', [
@@ -44,7 +44,7 @@ class GstController extends AdminController
             ");
             $stmt->execute([$id]);
             $invoice = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $invoice = null;
         }
         if (!$invoice) {
@@ -65,7 +65,7 @@ class GstController extends AdminController
             $custStmt = $this->db->prepare("SELECT id, name, email, phone, gstin FROM users WHERE role = 'customer'{$tidSql} ORDER BY name ASC LIMIT 200");
             $custStmt->execute($tidParams);
             $users = $custStmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $users = [];
         }
         return $this->render('admin/gst/create', [
@@ -100,7 +100,7 @@ class GstController extends AdminController
             $stmt = $this->db->prepare("INSERT INTO invoices (client_id, client_type, invoice_number, invoice_date, due_date, client_name, gstin, total_amount, gst_type, gst_rate, cgst_amount, sgst_amount, igst_amount, hsn_code, place_of_supply, e_invoice_number, e_way_bill, status, tenant_id, created_at) VALUES (?, 'customer', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
             $stmt->execute([$user_id, $invoice_number, $invoice_date, $due_date, $client_name, $client_gstin, $total_amount, $gst_type, $gst_rate, $cgst_amount, $sgst_amount, $igst_amount, $hsn_code, $place_of_supply, $e_invoice_number, $e_way_bill, $status, $tid]);
             $this->setFlash('success', 'GST invoice created successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to create GST invoice: ' . $e->getMessage());
         }
         $this->redirect('/admin/gst');

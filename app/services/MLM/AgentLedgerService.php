@@ -139,9 +139,7 @@ class AgentLedgerService
         if (isset($this->agentStatusCache[$userId])) {
             return $this->agentStatusCache[$userId];
         }
-        $stmt = $this->pdo->prepare("SELECT status FROM associates WHERE user_id = ? LIMIT 1");
-        $stmt->execute([$userId]);
-        $status = $stmt->fetchColumn();
+        $status = (new \App\Services\IdentityService())->getAssociateStatus((int)$userId);
         $this->agentStatusCache[$userId] = $status ?: 'inactive';
         return $this->agentStatusCache[$userId];
     }

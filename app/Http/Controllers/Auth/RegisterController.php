@@ -173,7 +173,7 @@ class RegisterController extends BaseController
 
             if (in_array($role, ['agent', 'associate'], true)) {
                 try {
-                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
+                    $ass = $db->fetchOne("SELECT id FROM associate_profiles WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
                     if ($ass) {
                         $_SESSION['associate_id'] = (int)$ass['id'];
                         if ($role === 'agent') $_SESSION['agent_id'] = (int)$ass['id'];
@@ -181,7 +181,7 @@ class RegisterController extends BaseController
                 } catch (\Throwable $e) { error_log(__METHOD__ . ': ' . $e->getMessage()); }
             } elseif ($role === 'employee' || $role === 'telecaller') {
                 try {
-                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
+                    $emp = $db->fetchOne("SELECT id FROM employee_profiles WHERE user_id = ?" . $tenantSql . " LIMIT 1", $params);
                     if ($emp) {
                         $_SESSION['employee_id'] = (int)$emp['id'];
                         $_SESSION['employee_user_id'] = (int)$result['user_id'];
@@ -224,7 +224,7 @@ class RegisterController extends BaseController
                 $this->redirectToDashboard($role);
             }
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("RegisterController registration error: " . $e->getMessage());
             $_SESSION['errors'] = ['Registration failed. Please try again.'];
             $_SESSION['old_input'] = $_POST;

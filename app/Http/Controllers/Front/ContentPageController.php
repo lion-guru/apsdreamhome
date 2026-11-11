@@ -37,7 +37,7 @@ class ContentPageController extends BaseController
             // Get categories
             $categories = array_unique(array_column($posts, 'category'));
             $categories = array_filter($categories);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Blog page error: " . $e->getMessage());
             $posts = [];
             $categories = [];
@@ -74,7 +74,7 @@ class ContentPageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM blog_posts WHERE id != ? AND status = 'published' ORDER BY created_at DESC LIMIT 3");
             $stmt->execute([$post['id']]);
             $related = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // fallback
         }
 
@@ -92,7 +92,7 @@ class ContentPageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM news WHERE status = 'published' ORDER BY published_at DESC LIMIT 20");
             $stmt->execute();
             $news = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("News page error: " . $e->getMessage());
             $news = [];
         }
@@ -110,7 +110,7 @@ class ContentPageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM reviews WHERE status = 'approved' ORDER BY created_at DESC");
             $stmt->execute();
             $reviews = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Reviews page error: " . $e->getMessage());
             $reviews = [];
         }
@@ -192,7 +192,7 @@ class ContentPageController extends BaseController
                 WHERE is_active = 1{$tidSql}
                 ORDER BY sort_order
             ", $params) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("constructionServices query error: " . $e->getMessage());
         }
 
@@ -203,7 +203,7 @@ class ContentPageController extends BaseController
                 ORDER BY created_at DESC
                 LIMIT 6
             ") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("constructionServices projects query error: " . $e->getMessage());
         }
 
@@ -233,7 +233,7 @@ class ContentPageController extends BaseController
                 WHERE is_active = 1{$tidSql}
                 ORDER BY created_at DESC
             ", $params) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("interiorDesign query error: " . $e->getMessage());
         }
 
@@ -244,7 +244,7 @@ class ContentPageController extends BaseController
                 ORDER BY created_at DESC
                 LIMIT 6
             ") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("interiorDesign portfolio query error: " . $e->getMessage());
         }
 
@@ -255,7 +255,7 @@ class ContentPageController extends BaseController
                 ORDER BY created_at DESC
                 LIMIT 3
             ") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("interiorDesign testimonials query error: " . $e->getMessage());
         }
 
@@ -266,7 +266,7 @@ class ContentPageController extends BaseController
                 ORDER BY display_order
                 LIMIT 5
             ") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("interiorDesign faqs query error: " . $e->getMessage());
         }
 
@@ -329,7 +329,7 @@ class ContentPageController extends BaseController
                 WHERE verification_status IN ('verified','pending'){$tidSql}
                 ORDER BY uploaded_on DESC
             ", $params) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("documentGallery query error: " . $e->getMessage());
         }
 
@@ -340,7 +340,7 @@ class ContentPageController extends BaseController
                 WHERE document_type IS NOT NULL AND document_type != ''
                 ORDER BY document_type
             ") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("documentGallery categories query error: " . $e->getMessage());
         }
 

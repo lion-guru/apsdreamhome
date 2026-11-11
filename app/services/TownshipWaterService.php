@@ -11,7 +11,7 @@ class TownshipWaterService
 
     public function __construct(?PDO $db = null)
     {
-        $this->db = $db ?: Database::getInstance();
+        $this->db = $db ?: Database::getInstance()->getConnection();
         $this->ensureTableExists();
     }
 

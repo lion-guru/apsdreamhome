@@ -198,7 +198,7 @@ foreach ($plots as $plot) {
         if ($inserted % 50 === 0) {
             echo "Inserted $inserted properties...\n";
         }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo "ERROR inserting plot {$plot['plot_number']}: " . $e->getMessage() . "\n";
         $errors++;
     }

@@ -54,7 +54,7 @@ class HybridCommissionManager
                 $sql = "ALTER TABLE users ADD COLUMN commission_preference ENUM('mlm', 'traditional', 'hybrid') DEFAULT 'mlm'";
                 $this->db->execute($sql);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Column might already exist or table might be missing
                     error_log("HybridManager.php: " . $e->getMessage());
         }
@@ -367,7 +367,7 @@ class HybridCommissionManager
             $this->db->execute($sql, [$userId, $preference, $region, $this->tenantId]);
 
             return ['success' => true, 'message' => 'Commission preference updated successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => 'Failed to update preference: ' . $e->getMessage()];
         }
     }

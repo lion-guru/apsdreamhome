@@ -215,7 +215,7 @@ try {
     echo "   - file_tag_relations\n";
     echo "\n🎉 Total: 9 new tables!\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "\n❌ Error: " . $e->getMessage() . "\n";
     exit(1);
 }

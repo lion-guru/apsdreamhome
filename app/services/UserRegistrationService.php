@@ -145,7 +145,7 @@ class UserRegistrationService
             if ($existsPhone) {
                 return ['success' => false, 'message' => 'Phone number already registered', 'existing_user_id' => (int)$existsPhone['id']];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => 'Registration check failed'];
         }
 
@@ -279,10 +279,10 @@ class UserRegistrationService
 
             // Send verification email (best-effort: never breaks registration)
             try {
-                if (class_exists('\App\Services\Communication\EmailSenderService')) {
+                if (class_exists('\App\Services\Communication\EmailService')) {
                     $base = defined('BASE_URL') ? BASE_URL : '';
                     $link = $base . '/verify-email?email=' . urlencode($email) . '&token=' . urlencode($verifyToken);
-                    $mailer = new \App\Services\Communication\EmailSenderService();
+                    $mailer = new \App\Services\Communication\EmailService();
                     $mailer->send(
                         $email,
                         'Verify your email - APS Dream Home',
@@ -318,7 +318,7 @@ class UserRegistrationService
                 'user' => $user,
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             error_log("UserRegistrationService::createUser error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Registration failed: ' . $e->getMessage()];
@@ -472,7 +472,7 @@ class UserRegistrationService
                 $tid > 1 ? array_merge($params, [$tid]) : $params
             );
             return ['success' => true, 'message' => 'Profile updated successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("UserRegistrationService::updateProfile error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to update profile'];
         }
@@ -506,7 +506,7 @@ class UserRegistrationService
             $tid = $this->getTenantId();
             $this->db->query("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""), $tid > 1 ? [$hashed, $userId, $tid] : [$hashed, $userId]);
             return ['success' => true, 'message' => 'Password changed successfully'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("UserRegistrationService::changePassword error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to change password'];
         }

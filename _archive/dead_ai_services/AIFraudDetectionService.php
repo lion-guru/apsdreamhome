@@ -146,7 +146,7 @@ class AIFraudDetectionService
                 'recommendation' => $this->getUserRecommendation($riskLevel)
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -433,7 +433,7 @@ class AIFraudDetectionService
                 json_encode($factors)
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Silently fail
                     error_log("AIFraudDetectionService.php: " . $e->getMessage());
         }
@@ -466,7 +466,7 @@ class AIFraudDetectionService
                 json_encode($factors)
             ]);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Silently fail
                     error_log("AIFraudDetectionService.php: " . $e->getMessage());
         }
@@ -520,7 +520,7 @@ class AIFraudDetectionService
             
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -550,7 +550,7 @@ class AIFraudDetectionService
             
             return $stats;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

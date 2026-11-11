@@ -59,6 +59,6 @@ try {
     
     echo "\nDone!\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "ERROR: " . $e->getMessage() . "\n";
 }

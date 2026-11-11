@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\Admin\AdminController;
-use \App\Traits\TenantAwareTrait;
 
 class KycController extends AdminController
 {
@@ -28,7 +28,7 @@ class KycController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $requests = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $requests = [];
         }
 
@@ -39,7 +39,7 @@ class KycController extends AdminController
                 $stats[$row['status']] = (int)$row['cnt'];
                 $stats['total'] += (int)$row['cnt'];
             }
-        } catch (\Exception $e) { error_log("KycController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("KycController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         return $this->render('admin/kyc/index', [
             'page_title' => 'KYC Requests',
@@ -65,7 +65,7 @@ class KycController extends AdminController
             ");
             $stmt->execute([(int)$id]);
             $request = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $request = null;
         }
         if (!$request) {
@@ -106,7 +106,7 @@ class KycController extends AdminController
                 try {
                     $row = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
                     if (!empty($row['user_id'])) {
-                        $emailSvc = new \App\Services\EmailTemplateService();
+                        $emailSvc = new \App\Services\Communication\EmailService();
                         $pan = $this->db->fetchOne("SELECT pan_number FROM kyc_requests WHERE id = ?", [(int)$id]);
                         $emailSvc->sendKycApproved((int)$row['user_id'], [
                             'pan_number' => $pan['pan_number'] ?? 'XXXXX1234X',
@@ -131,7 +131,7 @@ class KycController extends AdminController
             } else {
                 $this->setFlash('warning', 'KYC request was already processed');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to approve: ' . $e->getMessage());
         }
         $this->redirect('/admin/kyc');
@@ -170,7 +170,7 @@ class KycController extends AdminController
                 try {
                     $row = $this->db->fetchOne("SELECT user_id FROM kyc_requests WHERE id = ?", [(int)$id]);
                     if (!empty($row['user_id'])) {
-                        $emailSvc = new \App\Services\EmailTemplateService();
+                        $emailSvc = new \App\Services\Communication\EmailService();
                         $emailSvc->sendKycRejected((int)$row['user_id'], [
                             'rejection_reason' => $reason,
                         ]);
@@ -194,7 +194,7 @@ class KycController extends AdminController
             } else {
                 $this->setFlash('warning', 'KYC request was already processed');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to reject: ' . $e->getMessage());
         }
 
@@ -219,7 +219,7 @@ class KycController extends AdminController
                     'related_entity_id' => $id,
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[KycController] department request error: " . $e->getMessage());
         }
 
@@ -239,7 +239,7 @@ class KycController extends AdminController
             ");
             $stmt->execute();
             $requests = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $requests = [];
         }
         return $this->render('admin/kyc/pending', [
@@ -277,22 +277,35 @@ class KycController extends AdminController
             $aadhaarResult = $kycService->verifyAadhaar($request['aadhaar_number'], $request['legal_name'], $request['dob'] ?? null);
             $results['aadhaar'] = $aadhaarResult;
 
+            // Cross-check OCR-extracted document fields against user-submitted KYC data
+            $ocrCheck = $kycService->crossCheckOcr((int)$id);
+            $results['ocr_cross_check'] = $ocrCheck;
+
+            if (!$ocrCheck['match'] && $ocrCheck['has_ocr']) {
+                $mismatchFields = array_column($ocrCheck['mismatches'], 'field');
+                $this->setFlash('warning', 'OCR mismatch detected on: ' . implode(', ', $mismatches) . '. Please review manually.');
+            } elseif ($ocrCheck['has_ocr'] && $ocrCheck['match']) {
+                $this->setFlash('info', 'OCR cross-check passed - all document fields match submitted data');
+            }
+
             // Determine overall status
             $panOk = $panResult['success'] ?? false;
             $aadhaarOk = $aadhaarResult['success'] ?? false;
+            $ocrOk = $ocrCheck['match'] || !$ocrCheck['has_ocr'];
 
-            if ($panOk && $aadhaarOk) {
+            if ($panOk && $aadhaarOk && $ocrOk) {
                 $this->setFlash('success', 'PAN and Aadhaar both verified successfully');
             } else {
                 $failed = [];
                 if (!$panOk) $failed[] = 'PAN: ' . ($panResult['message'] ?? 'failed');
                 if (!$aadhaarOk) $failed[] = 'Aadhaar: ' . ($aadhaarResult['message'] ?? 'failed');
+                if (!$ocrOk && $ocrCheck['has_ocr']) $failed[] = 'OCR: document mismatch';
                 $this->setFlash('warning', 'Verification issues: ' . implode('; ', $failed));
             }
 
             // Store results in session for the show page to display
             $_SESSION['kyc_verify_results'] = $results;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Verification error: ' . $e->getMessage());
         }
         $this->redirect('/admin/kyc/' . (int)$id);
@@ -310,7 +323,7 @@ class KycController extends AdminController
                 SELECT * FROM kyc_verification_logs ORDER BY created_at DESC LIMIT 100
             ");
             $logs = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $logs = [];
         }
         return $this->render('admin/kyc/logs', [

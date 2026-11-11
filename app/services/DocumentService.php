@@ -240,6 +240,101 @@ class DocumentService
         }
     }
 
+    /**
+     * Document module statistics.
+     *
+     * NOTE (S451): DocumentVaultController::stats() called a getStats() that
+     * never existed -> "Call to undefined method DocumentVaultService::getStats()".
+     */
+    public function getStats(): array
+    {
+        $stats = [];
+        try {
+            $tid = $this->tenantId();
+            $tSql = $tid > 1 ? " AND tenant_id = ?" : "";
+            $tP = $tid > 1 ? [$tid] : [];
+
+            $stats['total_documents'] = (int)($this->db->fetchOne(
+                "SELECT COUNT(*) c FROM documents WHERE 1=1" . $tSql, $tP
+            )['c'] ?? 0);
+
+            $stats['by_verification_status'] = [];
+            foreach ($this->db->fetchAll(
+                "SELECT verification_status, COUNT(*) c FROM documents WHERE 1=1" . $tSql . " GROUP BY verification_status",
+                $tP
+            ) ?: [] as $r) {
+                $stats['by_verification_status'][$r['verification_status'] ?: 'unknown'] = (int)$r['c'];
+            }
+
+            $stats['total_requests'] = (int)($this->db->fetchOne(
+                "SELECT COUNT(*) c FROM document_requests WHERE 1=1" . $tSql, $tP
+            )['c'] ?? 0);
+
+            $stats['total_templates'] = (int)($this->db->fetchOne(
+                "SELECT COUNT(*) c FROM document_templates"
+            )['c'] ?? 0);
+
+            $stats['total_esign'] = (int)($this->db->fetchOne(
+                "SELECT COUNT(*) c FROM document_esign WHERE 1=1" . $tSql, $tP
+            )['c'] ?? 0);
+        } catch (\Throwable $e) {
+            error_log('[DocumentService::getStats] ' . $e->getMessage());
+        }
+        return $stats;
+    }
+
+    /**
+     * Employee document requests (document_requests).
+     *
+     * NOTE (S451): DocumentVaultController::requests() called a getRequests()
+     * that never existed.
+     */
+    public function getRequests(array $filters = [], int $limit = 50, int $offset = 0): array
+    {
+        try {
+            $tid = $this->tenantId();
+            $where = ['1=1'];
+            $params = [];
+            if ($tid > 1) { $where[] = "tenant_id = ?"; $params[] = $tid; }
+            if (!empty($filters['status'])) { $where[] = "status = ?"; $params[] = $filters['status']; }
+            if (!empty($filters['employee_id'])) { $where[] = "employee_id = ?"; $params[] = (int)$filters['employee_id']; }
+            $sql = "SELECT r.*, e.name as employee_name, dc.name as category_name
+                    FROM document_requests r
+                    LEFT JOIN employees e ON r.employee_id = e.id
+                    LEFT JOIN document_categories dc ON r.category_id = dc.id
+                    WHERE " . implode(' AND ', $where) . "
+                    ORDER BY r.created_at DESC LIMIT $limit OFFSET $offset";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[DocumentService::getRequests] ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Documents uploaded by / belonging to an employee.
+     *
+     * NOTE (S451): EmployeeSelfServiceController called getEmployeeDocuments()
+     * that never existed.
+     */
+    public function getEmployeeDocuments(int $employeeId, int $limit = 50): array
+    {
+        try {
+            $tid = $this->tenantId();
+            $sql = "SELECT * FROM documents WHERE user_id = ?"
+                . ($tid > 1 ? " AND tenant_id = ?" : "")
+                . " ORDER BY uploaded_on DESC LIMIT $limit";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($tid > 1 ? [$employeeId, $tid] : [$employeeId]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[DocumentService::getEmployeeDocuments] ' . $e->getMessage());
+            return [];
+        }
+    }
+
     public function getEngines(): array
     {
         // Document AI engines available (OCR + vision extraction)

@@ -57,7 +57,7 @@ class OtpAuthController extends BaseController
 
             $csrf_token = $this->getCsrfToken();
             include __DIR__ . '/../../../views/auth/smart_register_role.php';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Role selection error: " . $e->getMessage());
             header('Location: ' . BASE_URL . '/register/smart');
             exit;
@@ -159,7 +159,7 @@ class OtpAuthController extends BaseController
 
             header('Location: ' . BASE_URL . '/register/smart/profile-complete?token=' . urlencode($token) . '&role=' . urlencode($role));
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Save role selection error: " . $e->getMessage());
             $_SESSION['error'] = 'Failed to save role selection';
             header('Location: ' . BASE_URL . '/register/smart/role?token=' . urlencode($token));
@@ -250,7 +250,7 @@ class OtpAuthController extends BaseController
             header('Location: ' . BASE_URL . '/auth/air-login/verify');
             exit;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Air Login OTP request error: " . $e->getMessage());
             $_SESSION['air_login_error'] = 'Failed to send OTP. Please try again.';
             header('Location: ' . BASE_URL . '/auth/air-login');
@@ -355,7 +355,7 @@ class OtpAuthController extends BaseController
             $this->redirectToDashboard($user['role'] ?? 'customer');
             exit;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['air_login_error'] = 'OTP verification failed. Please try again.';
             header('Location: ' . BASE_URL . '/auth/air-login/verify');
             exit;
@@ -426,7 +426,7 @@ class OtpAuthController extends BaseController
             }
 
             // associates
-            $existing = $db->fetchOne("SELECT id FROM associates WHERE user_id = ? LIMIT 1", [$userId]);
+            $existing = $db->fetchOne("SELECT id FROM associate_profiles WHERE user_id = ?" . $this->getTenantSql()[0] . " LIMIT 1", array_merge([$userId], $this->getTenantSql()[1]));
             if (!$existing) {
                 $db->insert('associates', [
                     'user_id' => $userId,
@@ -442,7 +442,7 @@ class OtpAuthController extends BaseController
             }
 
             $db->commit();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $db->rollBack();
             error_log("createMlmRecordsForExistingUser error: " . $e->getMessage());
         }
@@ -588,7 +588,7 @@ class OtpAuthController extends BaseController
                 } elseif ($channel === 'email' && !empty($email)) {
                     $this->sendEmailOtp($email, $otp);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("OTP send failed: " . $e->getMessage());
             }
             
@@ -603,7 +603,7 @@ class OtpAuthController extends BaseController
             header('Location: ' . BASE_URL . '/register/smart/otp?token=' . urlencode($sessionToken));
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Smart registration error: " . $e->getMessage());
             $_SESSION['error'] = 'Something went wrong. Please try again.';
             header('Location: ' . BASE_URL . '/register/smart');
@@ -772,14 +772,14 @@ class OtpAuthController extends BaseController
             try {
                 $visitorTracking = new \App\Services\VisitorTrackingService();
                 $visitorTracking->markAsConverted($newUserId);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Visitor conversion tracking failed: " . $e->getMessage());
             }
             
             header('Location: ' . BASE_URL . '/auth/smart/role?token=' . urlencode($token));
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OTP verification error: " . $e->getMessage());
             $_SESSION['error'] = 'Something went wrong. Please try again.';
             header('Location: ' . BASE_URL . '/register/smart/otp?token=' . urlencode($token));
@@ -876,7 +876,7 @@ class OtpAuthController extends BaseController
             ]);
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Profile save error: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['error' => 'Failed to save']);
@@ -952,7 +952,7 @@ class OtpAuthController extends BaseController
             echo json_encode(['success' => true]);
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Behavior tracking error: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['error' => 'Failed to track']);
@@ -1009,7 +1009,7 @@ class OtpAuthController extends BaseController
             header('Location: ' . BASE_URL . '/register/smart/otp?token=' . urlencode($token));
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Resend OTP error: " . $e->getMessage());
             $_SESSION['error'] = 'Failed to resend OTP.';
             header('Location: ' . BASE_URL . '/register/smart/otp?token=' . urlencode($token));
@@ -1037,7 +1037,7 @@ class OtpAuthController extends BaseController
                         [$session['id']]
                     );
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Skip profile error: " . $e->getMessage());
             }
         }
@@ -1057,7 +1057,7 @@ class OtpAuthController extends BaseController
                 "SELECT * FROM smart_registration_sessions WHERE session_token = ? LIMIT 1",
                 [$token]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Get session error: " . $e->getMessage());
             return null;
         }
@@ -1069,7 +1069,7 @@ class OtpAuthController extends BaseController
             $whatsappService = new \App\Services\Communication\WhatsAppService();
             $message = "Your APS Dream Home verification code is: *$otp*\n\nThis code expires in 10 minutes.\n\nDo not share this code with anyone.";
             return $whatsappService->sendTextMessage($phone, $message);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WhatsApp OTP failed: " . $e->getMessage());
             return $this->sendSmsOtp($phone, $otp);
         }
@@ -1080,7 +1080,7 @@ class OtpAuthController extends BaseController
         try {
             $smsService = new \App\Services\Communication\SmsService();
             return $smsService->sendOTP($phone, $otp);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("SMS OTP failed: " . $e->getMessage());
             error_log("OTP for $phone: $otp");
             return true;
@@ -1096,7 +1096,7 @@ class OtpAuthController extends BaseController
             $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
             
             return mail($email, $subject, $message, $headers);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Email OTP failed: " . $e->getMessage());
             return false;
         }

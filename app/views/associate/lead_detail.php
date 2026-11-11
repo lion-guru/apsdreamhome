@@ -299,6 +299,62 @@ $today = date('Y-m-d');
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>
+
+            <!-- Documents (S348: lead-doc linkage) -->
+            <div class="detail-card mt-3">
+                <h6><i class="fas fa-paperclip text-primary me-2"></i><?= __('assoc_lead_documents', [], 'Documents') ?> <span class="badge bg-secondary"><?= count($documents ?? []) ?></span></h6>
+
+                <!-- Upload Form -->
+                <form action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/documents/upload" method="POST" enctype="multipart/form-data" class="mb-3">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                    <div class="row g-2">
+                        <div class="col-md-5">
+                            <select class="form-select form-select-sm" name="document_type">
+                                <option value="general">General</option>
+                                <option value="kyc">KYC</option>
+                                <option value="site_photo">Site Photo</option>
+                                <option value="price_quote">Price Quote</option>
+                                <option value="agreement">Agreement</option>
+                                <option value="id_proof">ID Proof</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="file" class="form-control form-control-sm" name="document" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" required>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-upload me-1"></i><?= __('assoc_lead_upload', [], 'Upload') ?></button>
+                        </div>
+                    </div>
+                    <small class="text-muted">Max 10MB — PDF, JPG, PNG, DOC, XLS</small>
+                </form>
+
+                <!-- Document List -->
+                <?php if (!empty($documents)): ?>
+                    <?php foreach ($documents as $doc): ?>
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                            <div class="d-flex align-items-center">
+                                <?php
+                                $ext = strtolower(pathinfo($doc['document_name'] ?? '', PATHINFO_EXTENSION));
+                                $icon = in_array($ext, ['pdf']) ? 'fa-file-pdf text-danger' : (in_array($ext, ['jpg','jpeg','png']) ? 'fa-file-image text-success' : (in_array($ext, ['doc','docx']) ? 'fa-file-word text-primary' : 'fa-file text-secondary'));
+                                ?>
+                                <i class="fas <?= $icon ?> me-2"></i>
+                                <div>
+                                    <a href="<?= BASE_URL ?>/<?= htmlspecialchars($doc['document_path'] ?? '') ?>" target="_blank" class="text-decoration-none"><?= htmlspecialchars(mb_substr($doc['document_name'] ?? 'Untitled', 0, 40)) ?></a>
+                                    <br><small class="text-muted"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $doc['document_type'] ?? 'general'))) ?> · <?= date('d M Y', strtotime($doc['created_at'] ?? 'now')) ?></small>
+                                </div>
+                            </div>
+                            <form action="<?= BASE_URL ?>/associate/leads/<?= $lead['id'] ?>/documents/delete" method="POST" class="d-inline" onsubmit="return confirm('Delete this document?')">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
+                                <input type="hidden" name="doc_id" value="<?= $doc['id'] ?>">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-muted mb-0"><i class="fas fa-info-circle me-1"></i><?= __('assoc_lead_no_documents', [], 'No documents uploaded yet.') ?></p>
+                <?php endif; ?>
+            </div>
         </div>
 
         <!-- Right Column -->

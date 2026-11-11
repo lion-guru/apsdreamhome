@@ -68,7 +68,7 @@ class AsyncTaskManagerService
                 'task_id' => $taskId
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to create task", [
                 'type' => $type,
                 'error' => $e->getMessage()
@@ -113,7 +113,7 @@ $sql = "SELECT * FROM async_tasks
                     
                     $processed++;
                     
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $failed++;
                     $errors[] = "Task ID {$task['id']}: {$e->getMessage()}";
                     $processed++;
@@ -129,7 +129,7 @@ $sql = "SELECT * FROM async_tasks
                 'errors' => $errors
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to process tasks", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -155,7 +155,7 @@ $sql = "SELECT * FROM async_tasks WHERE id = ? AND tenant_id = ?";
             
             return $task;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get task", ['id' => $id, 'error' => $e->getMessage()]);
             return null;
         }
@@ -213,7 +213,7 @@ $sql = "SELECT * FROM async_tasks WHERE 1=1 AND tenant_id = ?";
             
             return $tasks;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get tasks", ['error' => $e->getMessage()]);
             return [];
         }
@@ -249,7 +249,7 @@ public function cancelTask(int $id): array
                 ];
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to cancel task", [
                 'task_id' => $id,
                 'error' => $e->getMessage()
@@ -306,7 +306,7 @@ $sql = "SELECT * FROM async_tasks
                     
                     $retried++;
                     
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $failureCount++;
                     $retried++;
                 }
@@ -320,7 +320,7 @@ $sql = "SELECT * FROM async_tasks
                 'failure_count' => $failureCount
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to retry tasks", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -406,7 +406,7 @@ $perfSql = "SELECT
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get task stats", ['error' => $e->getMessage()]);
             return [];
         }
@@ -443,7 +443,7 @@ $sql = "DELETE FROM async_tasks
                 'deleted_rows' => $deletedRows
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to clean old tasks", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -543,7 +543,7 @@ $sql = "UPDATE async_tasks
 
             return $result;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Update task with error
             $this->db->execute(
                 "UPDATE async_tasks SET status = ?, error_message = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?",

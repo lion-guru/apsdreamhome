@@ -1,11 +1,11 @@
 <?php
 namespace App\Http\Controllers\Admin;
-use App\Services\CRMVoiceService;
+use App\Services\AI\VoiceService;
 
 class CRMVoiceController extends AdminController {
     public function index() {
         $this->requireAdmin();
-        $service = new CRMVoiceService();
+        $service = new VoiceService();
         $userId = $_SESSION['admin_id'] ?? 0;
         $recent = $service->getRecentVoiceActivity($userId);
         $stats = $service->getVoiceStats();
@@ -26,7 +26,7 @@ class CRMVoiceController extends AdminController {
         header('Content-Type: application/json');
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { echo json_encode(['error' => 'POST required']); exit; }
         $input = json_decode(file_get_contents('php://input'), true);
-        $service = new CRMVoiceService();
+        $service = new VoiceService();
         $result = $service->saveVoiceNote(
             (int)($input['lead_id'] ?? 0),
             $_SESSION['admin_id'] ?? 0,
@@ -41,7 +41,7 @@ class CRMVoiceController extends AdminController {
         header('Content-Type: application/json');
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { echo json_encode(['error' => 'POST required']); exit; }
         $input = json_decode(file_get_contents('php://input'), true);
-        $service = new CRMVoiceService();
+        $service = new VoiceService();
         $result = $service->processVoiceCommand($input['command'] ?? '', $_SESSION['admin_id'] ?? 0);
         echo json_encode($result);
         exit;

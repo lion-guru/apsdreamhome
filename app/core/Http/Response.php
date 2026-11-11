@@ -2177,7 +2177,7 @@ class Response implements \JsonSerializable
             ob_start();
             try {
                 call_user_func($this->content);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 ob_end_clean(); // Clean the buffer on error
                 // Rethrow as RuntimeException to maintain the method's contract
                 throw new \RuntimeException('Error executing response callback: ' . $e->getMessage(), 0, $e);

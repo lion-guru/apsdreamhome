@@ -61,10 +61,11 @@ class SpotBonusService
                 return ['awarded' => false, 'reason' => 'already awarded'];
             }
 
-            // Resolve associate user
-            $au = $this->db->prepare("SELECT user_id FROM associates WHERE id = ? LIMIT 1");
-            $au->execute([$associateId]);
-            $assocUserId = (int)($au->fetchColumn() ?: 0);
+            // Resolve associate user via IdentityService (Phase 4/7: legacy-id → user_id)
+            if (!isset($identity)) {
+                $identity = new \App\Services\IdentityService();
+            }
+            $assocUserId = $identity->resolveAssociateUserId($associateId);
             if ($assocUserId <= 0) {
                 return ['awarded' => false, 'reason' => 'associate has no user'];
             }

@@ -410,4 +410,42 @@ class PDFService
 </body>
 </html>';
     }
+
+    /**
+     * Generate PDF from raw HTML string
+     */
+    public static function generateFromHtml(string $html, string $outputPath): void
+    {
+        // Use Dompdf or mPDF if available, otherwise fallback to shell
+        if (class_exists('Dompdf\Dompdf')) {
+            $dompdf = new \Dompdf\Dompdf();
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
+            file_put_contents($outputPath, $dompdf->output());
+            return;
+        }
+
+        if (class_exists('Mpdf\Mpdf')) {
+            $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
+            $mpdf->WriteHTML($html);
+            $mpdf->Output($outputPath, \Mpdf\Output\Destination::FILE);
+            return;
+        }
+
+        // Fallback: save HTML and use wkhtmltopdf if available
+        $tempHtml = sys_get_temp_dir() . '/pdf_' . uniqid() . '.html';
+        file_put_contents($tempHtml, $html);
+
+        $cmd = "wkhtmltopdf --quiet '$tempHtml' '$outputPath' 2>&1";
+        exec($cmd, $output, $returnVar);
+
+        if ($returnVar !== 0) {
+            // Fallback: just save HTML with .pdf extension
+            file_put_contents($outputPath, $html);
+            error_log("PDF generation fallback: saved HTML as .pdf. wkhtmltopdf not available. Output: " . implode("\n", $output));
+        }
+
+        @unlink($tempHtml);
+    }
 }

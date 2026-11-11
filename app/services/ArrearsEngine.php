@@ -208,7 +208,7 @@ class ArrearsEngine
                 'total_arrears' => $calculation['summary']['total_arrears_net'],
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }

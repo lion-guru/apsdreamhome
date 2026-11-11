@@ -253,7 +253,7 @@ class Cache
                 } else {
                     return $db->query($query)->fetchAll(\PDO::FETCH_ASSOC);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Cache query error: " . $e->getMessage());
                 return [];
             }

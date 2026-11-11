@@ -20,7 +20,7 @@ class LegalApiController extends BaseApiController
             $db = Database::getInstance();
             $pdo = method_exists($db, 'getConnection') ? $db->getConnection() : $db;
             $this->docService = new LegalDocumentService($pdo);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->docService = null;
         }
     }

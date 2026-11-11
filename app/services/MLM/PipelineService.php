@@ -153,7 +153,7 @@ class PipelineService
 
                     $pStmt = $this->pdo->prepare("
                         SELECT a.user_id, a.telecaller_parent_id 
-                        FROM associates a 
+                        FROM associate_profiles a 
                         WHERE a.user_id = ? LIMIT 1
                     ");
                     $pStmt->execute([$currentParentId]);
@@ -184,7 +184,7 @@ class PipelineService
 
             // Independent Agent bypass — flat commission, no MLM upline
             $assocStmt = $this->pdo->prepare(
-                "SELECT agent_track, agent_type, brokerage_model, brokerage_rate FROM associates WHERE user_id = ? LIMIT 1"
+                "SELECT agent_track, agent_type, brokerage_model, brokerage_rate FROM associate_profiles WHERE user_id = ? LIMIT 1"
             );
             $assocStmt->execute([$executingAgentId]);
             $assocRecord = $assocStmt->fetch(\PDO::FETCH_ASSOC);
@@ -263,7 +263,7 @@ class PipelineService
         }
         $stmt = $this->pdo->prepare("
             SELECT user_id, telecaller_parent_id, telecaller_percent_rate, telecaller_incentive_rate, telecaller_sqft_rate
-            FROM associates WHERE id = ? LIMIT 1
+            FROM associate_profiles WHERE legacy_id = ? LIMIT 1
         ");
         $stmt->execute([$booking['telecaller_id']]);
         return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;

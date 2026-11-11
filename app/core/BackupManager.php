@@ -160,7 +160,7 @@ class BackupManager
                 'table_count' => count($tables),
                 'backup_date' => date('Y-m-d H:i:s')
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -417,7 +417,7 @@ class BackupManager
                 'message' => 'Database restored successfully',
                 'tables_restored' => count($databaseBackup['tables'])
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }

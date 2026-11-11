@@ -47,9 +47,6 @@ class _AgreementPageState extends ConsumerState<AgreementPage> {
   int get _signedCount => _documents
       .where((d) => (d['status']?.toString() ?? '') == 'signed')
       .length;
-  int get _pendingCount => _documents
-      .where((d) => (d['status']?.toString() ?? '') != 'signed')
-      .length;
 
   void _showSignaturePad(BuildContext context, String title) {
     showModalBottomSheet(

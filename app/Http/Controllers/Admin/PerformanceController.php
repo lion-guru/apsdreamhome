@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\AdminController;
+// NOTE (S451): this imported the FRONT AdminController (the tiny web one,
+// which has no $db) instead of the admin one -> $this->db was null and
+// every query died with "Call to a member function fetchAll() on null".
+use App\Http\Controllers\Admin\AdminController;
 use App\Services\PerformanceService;
 
 class PerformanceController extends AdminController
@@ -13,6 +16,9 @@ class PerformanceController extends AdminController
     {
         parent::__construct();
         $this->service = new PerformanceService();
+        // NOTE (S451): the parent admin controller does not expose a
+        // $db, so every query died on a null. Set it explicitly.
+        $this->db = \App\Core\Database\Database::getInstance();
     }
 
     public function index()
@@ -29,7 +35,7 @@ class PerformanceController extends AdminController
         $offset = ($page - 1) * $limit;
 
         $goals = $this->service->getGoals($filters, $limit, $offset);
-        $employees = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status = 'active' ORDER BY u.name");
+        $employees = ($this->db ?: \App\Core\Database\Database::getInstance())->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status = 'active' ORDER BY u.name");
         $stats = $this->service->getStats();
 
         return $this->render('admin/performance/index', [
@@ -44,8 +50,8 @@ class PerformanceController extends AdminController
     public function create()
     {
         $this->requireAdmin();
-        $employees = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status = 'active' ORDER BY u.name");
-        $managers = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active' AND role IN ('admin','super_admin','manager','director','hr_manager') ORDER BY name");
+        $employees = ($this->db ?: \App\Core\Database\Database::getInstance())->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status = 'active' ORDER BY u.name");
+        $managers = ($this->db ?: \App\Core\Database\Database::getInstance())->fetchAll("SELECT id, name FROM users WHERE status = 'active' AND role IN ('admin','super_admin','manager','director','hr_manager') ORDER BY name");
         return $this->render('admin/performance/create', [
             'page_title' => 'Create Goal',
             'employees' => $employees,
@@ -86,8 +92,8 @@ class PerformanceController extends AdminController
             $this->setFlash('error', 'Goal not found');
             $this->redirect(BASE_URL . '/admin/performance');
         }
-        $employees = $this->db->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status = 'active' ORDER BY u.name");
-        $managers = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active' AND role IN ('admin','super_admin','manager','director','hr_manager') ORDER BY name");
+        $employees = ($this->db ?: \App\Core\Database\Database::getInstance())->fetchAll("SELECT e.id, u.name FROM employees e JOIN users u ON e.user_id = u.id WHERE e.status = 'active' ORDER BY u.name");
+        $managers = ($this->db ?: \App\Core\Database\Database::getInstance())->fetchAll("SELECT id, name FROM users WHERE status = 'active' AND role IN ('admin','super_admin','manager','director','hr_manager') ORDER BY name");
         return $this->render('admin/performance/create', [
             'page_title' => 'Edit Goal',
             'goal' => $goal,

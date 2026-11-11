@@ -115,7 +115,7 @@ class LegalFinancialSystemPageController extends BaseController
                 SELECT * FROM financial_services WHERE status = 'active' ORDER BY sort_order, title
             ");
             $services = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Financial services fetch error: " . $e->getMessage());
         }
         
@@ -144,7 +144,7 @@ class LegalFinancialSystemPageController extends BaseController
                     ");
                     $stmt->execute([$name, $email, $phone, $service, $message]);
                     $_SESSION['success'] = 'Thank you for your inquiry! Our financial team will contact you soon.';
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("Financial contact form error: " . $e->getMessage());
                     $_SESSION['error'] = 'Something went wrong. Please try again.';
                 }
@@ -161,7 +161,7 @@ class LegalFinancialSystemPageController extends BaseController
                 SELECT id, title, slug FROM financial_services WHERE status = 'active' ORDER BY sort_order, title
             ");
             $services = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Financial services fetch error: " . $e->getMessage());
         }
         

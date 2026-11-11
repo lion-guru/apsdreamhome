@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Property;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\BaseController;
 use App\Core\Database;
 use App\Services\AgentAssignmentService;
@@ -13,7 +14,6 @@ use UploadValidator;
  * Enhanced Property Workflow Controller
  * Property Buy/Sell workflow for all user types
  */
-use \App\Traits\TenantAwareTrait;
 
 class PropertyWorkflowController extends BaseController
 {

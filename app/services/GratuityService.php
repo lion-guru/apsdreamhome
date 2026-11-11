@@ -31,16 +31,27 @@ class GratuityService
     {
         $calculationDate = $calculationDate ?? date('Y-m-d');
         
-        // Get employee details
+        // Get employee details (profile-first, legacy fallback; id-space compatible)
         $employee = $this->fetchOne("
-            SELECT e.*, u.name, u.pan_number, ss.basic_salary
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id
-            LEFT JOIN salary_structures ss ON ss.employee_id = e.id AND ss.status = 'active'
-            WHERE e.id = ? AND e.tenant_id = ?
+            SELECT ep.legacy_id as id, ep.*, u.name, u.pan_number, ss.basic_salary
+            FROM employee_profiles ep
+            LEFT JOIN users u ON u.id = ep.user_id
+            LEFT JOIN salary_structures ss ON (ss.employee_id = ep.legacy_id OR ss.employee_id = ep.user_id OR ss.employee_id = ep.id) AND ss.status = 'active'
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.tenant_id = ?
             ORDER BY ss.effective_date DESC
             LIMIT 1
-        ", [$employeeId, $this->tenantId()]);
+        ", [$employeeId, $employeeId, $employeeId, $this->tenantId()]);
+        if (!$employee) {
+            $employee = $this->fetchOne("
+                SELECT ep.legacy_id as id, ep.*, u.name, u.pan_number, ss.basic_salary
+                FROM employee_profiles ep
+                LEFT JOIN users u ON u.id = ep.user_id
+                LEFT JOIN salary_structures ss ON (ss.employee_id = ep.legacy_id OR ss.employee_id = ep.user_id OR ss.employee_id = ep.id) AND ss.status = 'active'
+                WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.tenant_id = ?
+                ORDER BY ss.effective_date DESC
+                LIMIT 1
+            ", [$employeeId, $employeeId, $employeeId, $this->tenantId()]);
+        }
 
         if (!$employee) {
             return ['success' => false, 'message' => 'Employee not found'];
@@ -117,12 +128,12 @@ class GratuityService
     public function getAllEligibility(): array
     {
         $employees = $this->fetchAll("
-            SELECT e.id, e.employee_code, u.name, e.designation, e.department, e.joining_date,
+            SELECT ep.legacy_id AS id, ep.employee_code, u.name, ep.designation, ep.department, ep.joining_date,
                    ss.basic_salary
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id
-            LEFT JOIN salary_structures ss ON ss.employee_id = e.id AND ss.status = 'active'
-            WHERE e.status = 'active' AND e.tenant_id = ?
+            FROM employee_profiles ep
+            LEFT JOIN users u ON u.id = ep.user_id
+            LEFT JOIN salary_structures ss ON (ss.employee_id = ep.legacy_id OR ss.employee_id = ep.user_id OR ss.employee_id = ep.id) AND ss.status = 'active'
+            WHERE ep.status = 'active' AND ep.tenant_id = ?
             ORDER BY u.name
         ", [$this->tenantId()]);
 

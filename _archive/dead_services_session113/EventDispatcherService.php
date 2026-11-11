@@ -131,7 +131,7 @@ class EventDispatcherService
                 try {
                     ($listenerInfo['listener'])($event);
                     $listenersExecuted++;
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $errors[] = "Wildcard listener error: " . $e->getMessage();
                     $this->logger->error("Wildcard listener error", [
                         'event' => $eventName,
@@ -146,7 +146,7 @@ class EventDispatcherService
                     try {
                         ($listenerInfo['listener'])($event);
                         $listenersExecuted++;
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $errors[] = "Listener error: " . $e->getMessage();
                         $this->logger->error("Event listener error", [
                             'event' => $eventName,
@@ -171,7 +171,7 @@ class EventDispatcherService
                 'errors' => $errors
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Event dispatch failed", [
                 'event' => $eventName,
                 'error' => $e->getMessage()
@@ -208,7 +208,7 @@ class EventDispatcherService
                 'queue_id' => $queueId
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to queue async event", [
                 'event' => $eventName,
                 'error' => $e->getMessage()
@@ -272,7 +272,7 @@ class EventDispatcherService
 
                     $processed++;
 
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->updateQueueStatus($queuedEvent['id'], 'failed', $e->getMessage());
                     $failureCount++;
                     $errors[] = "Queue ID {$queuedEvent['id']}: {$e->getMessage()}";
@@ -289,7 +289,7 @@ class EventDispatcherService
                 'errors' => $errors
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Async queue processing failed", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -451,7 +451,7 @@ class EventDispatcherService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get event stats", ['error' => $e->getMessage()]);
             return [];
         }

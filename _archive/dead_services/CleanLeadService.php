@@ -60,7 +60,7 @@ class CleanLeadService
             $stmt->execute($params);
 
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -85,7 +85,7 @@ class CleanLeadService
             ");
             $stmt->execute([$id]);
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -103,7 +103,7 @@ class CleanLeadService
             ");
             $stmt->execute([$leadId]);
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -121,7 +121,7 @@ class CleanLeadService
             ");
             $stmt->execute([$leadId]);
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -139,7 +139,7 @@ class CleanLeadService
             ");
             $stmt->execute([$leadId]);
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -171,7 +171,7 @@ class CleanLeadService
             $stats['by_source'] = $stmt->fetchAll();
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -184,7 +184,7 @@ class CleanLeadService
         try {
             $stmt = $this->db->query("SELECT id, name as source_name FROM lead_sources WHERE is_active = 1 ORDER BY sort_order ASC, name ASC");
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -197,7 +197,7 @@ class CleanLeadService
         try {
             $stmt = $this->db->query("SELECT id, status_name FROM lead_statuses ORDER BY id ASC");
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -217,7 +217,7 @@ class CleanLeadService
                 ORDER BY u.name ASC
             ");
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -248,7 +248,7 @@ class CleanLeadService
                 $data['created_by']
             ]);
             return $this->db->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -281,7 +281,7 @@ class CleanLeadService
                 $id
             ]);
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -305,7 +305,7 @@ class CleanLeadService
                 $data['created_at']
             ]);
             return $this->db->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -322,7 +322,7 @@ class CleanLeadService
             );
             $stmt->execute([$data['lead_id'], $data['note'], $data['created_by']]);
             return $this->db->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -338,7 +338,7 @@ class CleanLeadService
             );
             $stmt->execute([$userId, $leadId]);
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -352,7 +352,7 @@ class CleanLeadService
             $stmt = $this->db->prepare("DELETE FROM leads WHERE id = ?");
             $stmt->execute([$id]);
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -423,7 +423,7 @@ class CleanLeadService
             $stmt = $this->db->prepare("UPDATE leads SET status = 'converted', updated_at = NOW() WHERE id = ?");
             $stmt->execute([$leadId]);
             return $userId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -454,7 +454,7 @@ class CleanLeadService
             }
 
             return $stmt->fetch();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

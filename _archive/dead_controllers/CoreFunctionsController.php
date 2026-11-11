@@ -50,7 +50,7 @@ class CoreFunctionsController extends BaseController
                     'result' => $result
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Validation failed',
@@ -81,7 +81,7 @@ class CoreFunctionsController extends BaseController
                 'success' => $result['valid'],
                 'data' => $result
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Validation failed',
@@ -112,7 +112,7 @@ class CoreFunctionsController extends BaseController
                 'success' => true,
                 'data' => $result
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to sanitize string',
@@ -146,7 +146,7 @@ class CoreFunctionsController extends BaseController
                     'formatted' => $formatted
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to format phone number',
@@ -180,7 +180,7 @@ class CoreFunctionsController extends BaseController
                     'hashed' => $hashed
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to hash password',
@@ -214,7 +214,7 @@ class CoreFunctionsController extends BaseController
                     'length' => strlen($randomString)
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to generate random string',
@@ -248,7 +248,7 @@ class CoreFunctionsController extends BaseController
                     'length' => strlen($token)
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to generate secure token',
@@ -323,7 +323,7 @@ class CoreFunctionsController extends BaseController
             } else {
                 throw new \Exception('Failed to process image');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to upload image',
@@ -356,7 +356,7 @@ class CoreFunctionsController extends BaseController
                     'age' => $age
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to calculate age',
@@ -390,7 +390,7 @@ class CoreFunctionsController extends BaseController
                     'length' => strlen($text)
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to extract text',
@@ -418,7 +418,7 @@ class CoreFunctionsController extends BaseController
                 'success' => true,
                 'data' => $info
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get client info',
@@ -441,7 +441,7 @@ class CoreFunctionsController extends BaseController
                     'csrf_token' => $token
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to generate CSRF token',
@@ -475,7 +475,7 @@ class CoreFunctionsController extends BaseController
                 'success' => true,
                 'message' => 'Action logged successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to log action',
@@ -518,7 +518,7 @@ class CoreFunctionsController extends BaseController
                     'success_rate' => round((array_sum($tests) / count($tests)) * 100, 2)
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Test failed',
@@ -546,7 +546,7 @@ class CoreFunctionsController extends BaseController
                     'verified_at' => date('Y-m-d H:i:s')
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to verify password hash',
@@ -586,7 +586,7 @@ class CoreFunctionsController extends BaseController
                     ]
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Header validation failed',
@@ -616,7 +616,7 @@ class CoreFunctionsController extends BaseController
                     'session_configured' => true
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to initialize admin session',
@@ -652,7 +652,7 @@ class CoreFunctionsController extends BaseController
                     'user_role' => $userRole
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to check permission',
@@ -695,7 +695,7 @@ class CoreFunctionsController extends BaseController
                     'message' => $allowed ? 'Rate limit not exceeded' : 'Rate limit exceeded'
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to check rate limit',
@@ -724,7 +724,7 @@ class CoreFunctionsController extends BaseController
                     'currency' => $currency
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to format currency',
@@ -754,7 +754,7 @@ class CoreFunctionsController extends BaseController
                     'format' => $format
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to format date',
@@ -783,7 +783,7 @@ class CoreFunctionsController extends BaseController
                     'slug' => $slug
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to generate slug',
@@ -818,7 +818,7 @@ class CoreFunctionsController extends BaseController
                     'suffix' => $suffix
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to truncate text',
@@ -931,7 +931,7 @@ class CoreFunctionsController extends BaseController
             imagedestroy($dest);
 
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Image resize error: ' . $e->getMessage());
             return false;
         }
@@ -1046,7 +1046,7 @@ class CoreFunctionsController extends BaseController
                 'exists' => !is_array($file) ? file_exists($file) : true
             ];
             echo json_encode(['success' => true, 'data' => $info]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;

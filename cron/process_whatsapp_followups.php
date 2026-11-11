@@ -247,7 +247,7 @@ try {
 
     waLog("=== Summary: {$todaySent} sent, {$todayFailed} failed today ===");
 
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     $errMsg = $e->getMessage();
     waLog("FATAL ERROR: {$errMsg}");
     exit(1);

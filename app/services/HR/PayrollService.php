@@ -420,11 +420,12 @@ class PayrollService
     {
         try {
             $tid = $this->getTenantId();
-            $sql = "SELECT p.*, e.name, e.employee_code, e.designation,
-                           e.department as department_name
+            $sql = "SELECT p.*, u_emp.name, ep.employee_code, ep.designation,
+                           ep.department as department_name
                     FROM employee_payrolls p
-                    JOIN employees e ON p.employee_id = e.id
-                    WHERE p.id = ?" . ($tid > 1 ? " AND e.tenant_id = ?" : "");
+                    LEFT JOIN employee_profiles ep ON ep.legacy_id = p.employee_id OR ep.user_id = p.employee_id OR ep.id = p.employee_id
+                    LEFT JOIN users u_emp ON u_emp.id = ep.user_id
+                    WHERE p.id = ?" . ($tid > 1 ? " AND ep.tenant_id = ?" : "");
         } catch (\Throwable $e) {
         // Gracefully handle dropped table ref
         error_log($e->getMessage());

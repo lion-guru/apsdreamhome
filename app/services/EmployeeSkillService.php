@@ -54,7 +54,7 @@ class EmployeeSkillService
                 [1, $employeeId, $skillName, $skill['category'], $level, $years, $certified ? 1 : 0, $certName, $certExpiry]
             );
             return ['success' => true, 'id' => $this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (strpos($e->getMessage(), 'Duplicate') !== false || strpos($e->getMessage(), 'uniq_emp_skill') !== false) {
                 return ['success' => false, 'message' => "Skill already exists for this employee"];
             }

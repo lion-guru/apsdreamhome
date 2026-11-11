@@ -21,19 +21,19 @@ class SLAService
     public function getAllRules() {
         try {
             return $this->db->fetchAll("SELECT * FROM crm_sla_rules ORDER BY rule_type ASC, target_minutes ASC" . $this->tenantSql()) ?: [];
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getActiveRules() {
         try {
             return $this->db->fetchAll("SELECT * FROM crm_sla_rules WHERE is_active = 1" . $this->tenantSql()) ?: [];
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getRuleById($id) {
         try {
             return $this->db->fetch("SELECT * FROM crm_sla_rules WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function createRule($data) {
@@ -46,7 +46,7 @@ class SLAService
                 $insertVals
             );
             return ['success' => true, 'id' => $this->db->lastInsertId()];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function updateRule($id, $data) {
@@ -56,7 +56,7 @@ class SLAService
                 array_merge([$data['name'], $data['rule_type'], $data['target_minutes'], $data['applies_to_roles'] ?? 'all', $data['applies_to_stages'] ?? 'all', $data['is_active'] ?? 1, $id], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             return ['success' => true];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function deleteRule($id) {
@@ -64,7 +64,7 @@ class SLAService
             $this->db->query("DELETE FROM crm_sla_logs WHERE sla_rule_id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             $this->db->query("DELETE FROM crm_sla_rules WHERE id = ?" . $this->tenantSql(), array_merge([$id], $this->tenantId() > 1 ? [$this->tenantId()] : []));
             return ['success' => true];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function startSLA($leadId, $ruleId) {
@@ -80,7 +80,7 @@ class SLAService
                 $insertVals
             );
             return ['success' => true, 'log_id' => $this->db->lastInsertId()];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function completeSLA($logId, $status = 'met', $notes = '') {
@@ -96,7 +96,7 @@ class SLAService
                 [$status, $responseTime, $notes, $logId]
             );
             return ['success' => true, 'response_time' => $responseTime];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function getComplianceStats($days = 30) {
@@ -114,7 +114,7 @@ class SLAService
             $stats['compliance_rate'] = ($stats['met'] + $stats['missed']) > 0
                 ? round(($stats['met'] / ($stats['met'] + $stats['missed'])) * 100, 1) : 0;
             return $stats ?: ['total' => 0, 'met' => 0, 'missed' => 0, 'breached' => 0, 'pending' => 0, 'avg_response' => 0, 'compliance_rate' => 0];
-        } catch (\Exception $e) { return ['total' => 0, 'met' => 0, 'missed' => 0, 'breached' => 0, 'pending' => 0, 'avg_response' => 0, 'compliance_rate' => 0]; }
+        } catch (\Throwable $e) { return ['total' => 0, 'met' => 0, 'missed' => 0, 'breached' => 0, 'pending' => 0, 'avg_response' => 0, 'compliance_rate' => 0]; }
     }
 
     public function getBreachedSLAs($limit = 50) {
@@ -128,7 +128,7 @@ class SLAService
                  ORDER BY sl.created_at DESC LIMIT ?",
                 [$limit]
             ) ?: [];
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getPendingSLAs() {
@@ -142,7 +142,7 @@ class SLAService
                  WHERE sl.status = 'pending'" . $this->tenantSqlForAlias('sl') . "
                  ORDER BY sl.started_at ASC"
             ) ?: [];
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function autoCheckBreaches() {
@@ -156,6 +156,6 @@ class SLAService
                 }
             }
             return ['success' => true, 'breached' => $breached];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 }

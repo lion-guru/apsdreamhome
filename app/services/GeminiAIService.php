@@ -53,13 +53,13 @@ class GeminiAIService
                 // We use a try-catch inside so that if table doesn't exist, it doesn't break the app
                 try {
                     $this->updateApiKey($fallbackKey);
-                } catch (\Exception $updateEx) {
+                } catch (\Throwable $updateEx) {
                             error_log("GeminiAIService.php: " . $updateEx->getMessage());
                 }
             }
 
             return $fallbackKey;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Log error and return default
             error_log('Gemini API Key Error: ' . $e->getMessage());
             return $_ENV['GEMINI_API_KEY'] ?? '';
@@ -96,7 +96,7 @@ class GeminiAIService
             $this->apiKey = $newKey;
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Update API Key Error: ' . $e->getMessage());
             return false;
         }
@@ -323,7 +323,7 @@ Requirements:
                     'status_code' => $httpCode
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Gemini API Request Error: ' . $e->getMessage());
 
             return [
@@ -355,7 +355,7 @@ Requirements:
             // Gracefully handle dropped table ref
             error_log($e->getMessage());
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to log API request: ' . $e->getMessage());
         }
     }
@@ -400,7 +400,7 @@ Requirements:
                 'requests_this_month' => $thisMonth[0]['requests_this_month'] ?? 0,
                 'error_count' => $errors[0]['error_count'] ?? 0
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()

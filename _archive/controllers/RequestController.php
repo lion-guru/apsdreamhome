@@ -74,7 +74,7 @@ class RequestController extends BaseController
                 'message' => 'Request processed successfully',
                 'data' => $result
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Request processing failed: ' . $e->getMessage()
@@ -148,7 +148,7 @@ class RequestController extends BaseController
                 'message' => 'Middleware added successfully',
                 'type' => $middlewareType
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to add middleware: ' . $e->getMessage()
@@ -171,7 +171,7 @@ class RequestController extends BaseController
                     'middleware_stack' => $stack
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get middleware stack: ' . $e->getMessage()
@@ -191,7 +191,7 @@ class RequestController extends BaseController
                 'success' => true,
                 'message' => 'Middleware stack cleared'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to clear middleware: ' . $e->getMessage()
@@ -245,7 +245,7 @@ class RequestController extends BaseController
                     'success_rate' => $successRate
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get request stats: ' . $e->getMessage()
@@ -280,7 +280,7 @@ class RequestController extends BaseController
                 'success' => true,
                 'message' => 'Request logged successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to log request: ' . $e->getMessage()
@@ -325,7 +325,7 @@ class RequestController extends BaseController
                     ]
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get request logs: ' . $e->getMessage()
@@ -347,7 +347,7 @@ class RequestController extends BaseController
                 'success' => true,
                 'message' => 'Request logs cleared successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to clear request logs: ' . $e->getMessage()
@@ -378,7 +378,7 @@ class RequestController extends BaseController
             header('Content-Disposition: attachment; filename="request_logs.csv"');
             echo $csv;
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Export failed: ' . $e->getMessage()
@@ -407,7 +407,7 @@ class RequestController extends BaseController
                 'test_data' => $testData,
                 'result' => $result
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Test request failed: ' . $e->getMessage()
@@ -450,7 +450,7 @@ class RequestController extends BaseController
                 'success' => true,
                 'data' => $config
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get request config: ' . $e->getMessage()

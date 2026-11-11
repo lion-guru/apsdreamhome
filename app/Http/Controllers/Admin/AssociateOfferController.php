@@ -17,7 +17,7 @@ class AssociateOfferController extends AdminController
         $offers = $svc->listOffers(true);
         try {
             $colonies = $this->db->fetchAll("SELECT id, name FROM colonies ORDER BY name LIMIT 200") ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $colonies = [];
         }
         return $this->render('admin/associate_offers/index', [
@@ -35,7 +35,7 @@ class AssociateOfferController extends AdminController
         try {
             $res = $svc->createOffer($_POST, (int)($_SESSION['user_id'] ?? 0));
             $this->setFlash($res['success'] ? 'success' : 'error', $res['success'] ? 'Offer campaign created as draft' : ($res['message'] ?? 'Failed'));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/associate-offers');

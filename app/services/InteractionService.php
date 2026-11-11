@@ -76,7 +76,7 @@ class InteractionService
                 'per_page' => $perPage,
                 'total_pages' => (int)ceil($total / $perPage),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('InteractionService::getInteractions error: ' . $e->getMessage());
             return ['interactions' => [], 'total' => 0, 'page' => 1, 'per_page' => 25, 'total_pages' => 0];
         }
@@ -94,7 +94,7 @@ class InteractionService
             if ($tid > 1) $params[] = $tid;
             $stmt = $this->db->query($sql, $params);
             return $stmt->fetch() ?: null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -120,7 +120,7 @@ class InteractionService
             if ($tid > 1) $params[] = $tid;
             $stmt->execute($params);
             return $this->db->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('InteractionService::create error: ' . $e->getMessage());
             return false;
         }
@@ -144,7 +144,7 @@ class InteractionService
             $stmt = $this->db->prepare("UPDATE crm_interactions SET " . implode(', ', $fields) . ", updated_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
             $stmt->execute($params);
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -157,7 +157,7 @@ class InteractionService
             $stmt = $this->db->prepare("DELETE FROM crm_interactions WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""));
             $stmt->execute($params);
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -174,7 +174,7 @@ class InteractionService
             if ($tid > 1) array_splice($params, 1, 0, $tid);
             $stmt = $this->db->query($sql, $params);
             return $stmt->fetchAll() ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -234,7 +234,7 @@ class InteractionService
                 'by_direction' => $byDirection,
                 'by_date' => $byDate,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['by_type' => [], 'by_direction' => [], 'by_date' => []];
         }
     }

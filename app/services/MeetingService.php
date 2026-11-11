@@ -38,7 +38,7 @@ class MeetingService
                  WHERE " . implode(' AND ', $where) . $tidSql . " ORDER BY m.start_time DESC LIMIT 100",
                 $tid > 1 ? $params : array_slice($params, 1)
             ) ?: [];
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getMeetingById($id) {
@@ -53,7 +53,7 @@ class MeetingService
                  WHERE m.id = ?" . $tidSql,
                 $tid > 1 ? [$id, $tid] : [$id]
             );
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return null; }
     }
 
     public function createMeeting($data) {
@@ -77,7 +77,7 @@ class MeetingService
             $crm->logActivity($data['lead_id'], 'meeting', "Meeting scheduled: " . $data['title'], null, null, $data['created_by'] ?? null);
 
             return ['success' => true, 'id' => $id];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function updateMeeting($id, $data) {
@@ -93,7 +93,7 @@ class MeetingService
             if ($tid > 1) $params[] = $tid;
             $this->db->query("UPDATE crm_meetings SET " . implode(', ', $fields) . " WHERE id = ?" . $whereClause, $params);
             return ['success' => true];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function deleteMeeting($id) {
@@ -102,7 +102,7 @@ class MeetingService
             $whereClause = $tid > 1 ? " AND tenant_id = ?" : "";
             $this->db->query("DELETE FROM crm_meetings WHERE id = ?" . $whereClause, $tid > 1 ? [$id, $tid] : [$id]);
             return ['success' => true];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function completeMeeting($id, $outcome, $notes) {
@@ -121,7 +121,7 @@ class MeetingService
                 $crm->logActivity($meeting['lead_id'], 'meeting', "Meeting completed: " . ($outcome ?: 'No outcome'), null, null, null);
             }
             return ['success' => true];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function getUpcomingMeetings($userId, $limit = 10) {
@@ -137,7 +137,7 @@ class MeetingService
                  ORDER BY m.start_time ASC LIMIT ?",
                 $params
             ) ?: [];
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getLeadMeetings($leadId) {
@@ -150,7 +150,7 @@ class MeetingService
                  WHERE m.lead_id = ?" . $tidSql . " ORDER BY m.start_time DESC LIMIT 20",
                 $tid > 1 ? [$leadId, $tid] : [$leadId]
             ) ?: [];
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getCalendarEvents($userId, $start, $end) {
@@ -166,7 +166,7 @@ class MeetingService
                  ORDER BY m.start_time ASC",
                 $params
             ) ?: [];
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getStats() {
@@ -182,6 +182,6 @@ class MeetingService
                  FROM crm_meetings WHERE start_time >= DATE_SUB(NOW(), INTERVAL 30 DAY)" . $tidSql,
                 $tid > 1 ? [$tid] : []
             ) ?: ['total' => 0, 'scheduled' => 0, 'completed' => 0, 'cancelled' => 0, 'no_show' => 0];
-        } catch (\Exception $e) { return ['total' => 0, 'scheduled' => 0, 'completed' => 0, 'cancelled' => 0, 'no_show' => 0]; }
+        } catch (\Throwable $e) { return ['total' => 0, 'scheduled' => 0, 'completed' => 0, 'cancelled' => 0, 'no_show' => 0]; }
     }
 }

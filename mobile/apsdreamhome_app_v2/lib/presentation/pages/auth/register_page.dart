@@ -138,13 +138,21 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xFFE8DFD0), width: 1.2),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0B194C).withValues(alpha: 0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: const Icon(
                 Icons.arrow_back,
-                color: Colors.white,
-                size: 22,
+                color: AppTheme.primaryColor,
+                size: 20,
               ),
             ),
           ),
@@ -166,10 +174,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: AppTheme.accentColor.withValues(alpha: 0.6),
+                width: 2,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryColor.withValues(alpha: 0.3),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.25),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -177,30 +189,27 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
             child: const Icon(
               Icons.person_add_rounded,
-              size: 40,
+              size: 38,
               color: Colors.white,
             ),
           ),
         ),
         const SizedBox(height: 16),
-        ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [AppTheme.primaryColor, AppTheme.accentColor],
-          ).createShader(bounds),
-          child: Text(
-            'Create Account',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-            ),
+        Text(
+          'Create Account',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            color: AppTheme.primaryColor,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0.5,
           ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          'Join us and find your dream property',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Colors.white70,
-            letterSpacing: 0.3,
+        const SizedBox(height: 6),
+        const Text(
+          'Join APS Dream Home & explore verified townships',
+          style: TextStyle(
+            color: Color(0xFF64748B),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -208,18 +217,29 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   Widget _buildRoleSelection() {
-    return GlassCard(
+    return Container(
       padding: const EdgeInsets.all(16),
-      opacity: 0.1,
-      blur: 8,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.goldBorder, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0B194C).withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'I want to join as:',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Colors.white.withValues(alpha: 0.9),
-              fontWeight: FontWeight.w600,
+            style: TextStyle(
+              color: AppTheme.primaryColor,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 12),
@@ -267,28 +287,37 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
                 )
               : null,
-          color: isSelected ? null : Colors.white.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(12),
+          color: isSelected ? null : const Color(0xFFFAF7F0),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected
-                ? AppTheme.accentColor.withValues(alpha: 0.6)
-                : Colors.white.withValues(alpha: 0.15),
-            width: 1.5,
+                ? AppTheme.accentColor
+                : const Color(0xFFE8DFD0),
+            width: isSelected ? 1.8 : 1.2,
           ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppTheme.primaryColor.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : null,
         ),
         child: Column(
           children: [
             Icon(
               icon,
-              color: isSelected ? AppTheme.accentColor : Colors.white60,
-              size: 28,
+              color: isSelected ? AppTheme.accentColor : AppTheme.primaryColor,
+              size: 26,
             ),
             const SizedBox(height: 6),
             Text(
               title,
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: isSelected ? Colors.white : Colors.white70,
+                fontWeight: FontWeight.w800,
+                color: isSelected ? Colors.white : AppTheme.primaryColor,
                 fontSize: 14,
               ),
             ),
@@ -296,7 +325,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               subtitle,
               style: TextStyle(
                 fontSize: 11,
-                color: isSelected ? Colors.white60 : Colors.white38,
+                color: isSelected ? Colors.white70 : const Color(0xFF64748B),
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -308,10 +338,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   Widget _buildForm() {
     return Form(
       key: _formKey,
-      child: GlassCard(
+      child: Container(
         padding: const EdgeInsets.all(24),
-        opacity: 0.12,
-        blur: 8,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppTheme.goldBorder, width: 1.2),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF0B194C).withValues(alpha: 0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
         child: Column(
           children: [
             _buildTextField(
@@ -373,7 +413,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   _obscurePassword
                       ? Icons.visibility_off_outlined
                       : Icons.visibility_outlined,
-                  color: Colors.white70,
+                  color: const Color(0xFF64748B),
                 ),
               ),
               validator: (v) {
@@ -399,7 +439,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   _obscureConfirmPassword
                       ? Icons.visibility_off_outlined
                       : Icons.visibility_outlined,
-                  color: Colors.white70,
+                  color: const Color(0xFF64748B),
                 ),
               ),
               validator: (v) {
@@ -420,30 +460,31 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               icon: Icons.card_giftcard_outlined,
               textCapitalization: TextCapitalization.characters,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.infoColor.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
+                color: const Color(0xFFFAF7F0),
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: AppTheme.infoColor.withValues(alpha: 0.3),
+                  color: const Color(0xFFE8DFD0),
                 ),
               ),
-              child: Row(
+              child: const Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.info_outline,
-                    color: AppTheme.infoColor,
+                    color: AppTheme.accentColor,
                     size: 18,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Have a referral code? Enter it to join under an associate and start earning!',
                       style: TextStyle(
                         fontSize: 11,
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: Color(0xFF64748B),
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -462,7 +503,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primaryColor.withValues(alpha: 0.4),
+                      color: AppTheme.primaryColor.withValues(alpha: 0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -503,7 +544,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w700,
                               ),
                         ),
                 ),
@@ -534,30 +575,39 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       keyboardType: keyboardType,
       textCapitalization: textCapitalization,
       maxLength: maxLength == 100 ? null : maxLength,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(
+        color: AppTheme.primaryColor,
+        fontWeight: FontWeight.w600,
+      ),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
-        labelStyle: const TextStyle(color: Colors.white70),
-        prefixIcon: Icon(icon, color: Colors.white70, size: 20),
+        hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+        labelStyle: const TextStyle(
+          color: Color(0xFF64748B),
+          fontWeight: FontWeight.w500,
+        ),
+        prefixIcon: Icon(icon, color: AppTheme.primaryColor, size: 20),
         prefixText: prefixText,
-        prefixStyle: const TextStyle(color: Colors.white60),
+        prefixStyle: const TextStyle(
+          color: AppTheme.primaryColor,
+          fontWeight: FontWeight.w600,
+        ),
         suffixIcon: suffixIcon,
         counterText: '',
         filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.08),
+        fillColor: const Color(0xFFFAF7F0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+          borderSide: const BorderSide(color: Color(0xFFE8DFD0)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppTheme.accentColor, width: 1.5),
+          borderSide: const BorderSide(color: AppTheme.accentColor, width: 1.8),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
@@ -572,11 +622,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           'Already have an account? ',
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
+            color: Color(0xFF475569),
             fontSize: 14,
+            fontWeight: FontWeight.w500,
           ),
         ),
         TextButton(
@@ -586,11 +637,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          child: Text(
+          child: const Text(
             'Sign In',
             style: TextStyle(
-              color: AppTheme.accentColor.withValues(alpha: 0.9),
-              fontWeight: FontWeight.w600,
+              color: AppTheme.accentColor,
+              fontWeight: FontWeight.w800,
               fontSize: 14,
             ),
           ),
@@ -600,10 +651,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   Widget _buildTerms() {
-    return Text(
+    return const Text(
       'By registering, you agree to our Terms of Service and Privacy Policy',
       style: TextStyle(
-        color: Colors.white.withValues(alpha: 0.5),
+        color: Color(0xFF64748B),
         fontSize: 11,
       ),
       textAlign: TextAlign.center,

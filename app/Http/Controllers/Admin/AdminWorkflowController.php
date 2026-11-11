@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Services\WorkflowEngineService;
 use App\Services\ReportBuilderService;
 use App\Services\AuditTrailService;
 use App\Services\ImportExportService;
 use App\Services\BackupRestoreService;
-use App\Services\EmailQueueService;
+use App\Services\Communication\EmailService;
 use App\Services\APIDocumentationService;
-use \App\Traits\TenantAwareTrait;
 
 /**
  * Admin Workflow Controller
@@ -33,25 +33,25 @@ class AdminWorkflowController extends AdminController
         $this->requireAdmin();
         try {
             $this->workflowService = new WorkflowEngineService();
-        } catch (\Exception $e) { error_log("WorkflowEngineService error: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("WorkflowEngineService error: " . $e->getMessage()); }
         try {
             $this->reportService = new ReportBuilderService();
-        } catch (\Exception $e) { error_log("ReportBuilderService error: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("ReportBuilderService error: " . $e->getMessage()); }
         try {
             $this->auditService = new AuditTrailService();
-        } catch (\Exception $e) { error_log("AuditTrailService error: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("AuditTrailService error: " . $e->getMessage()); }
         try {
             $this->importExportService = new ImportExportService();
-        } catch (\Exception $e) { error_log("ImportExportService error: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("ImportExportService error: " . $e->getMessage()); }
         try {
             $this->backupService = new BackupRestoreService();
-        } catch (\Exception $e) { error_log("BackupRestoreService error: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("BackupRestoreService error: " . $e->getMessage()); }
         try {
-            $this->emailQueueService = new EmailQueueService();
-        } catch (\Exception $e) { error_log("EmailQueueService error: " . $e->getMessage()); }
+            $this->emailQueueService = new \App\Services\Communication\EmailService();
+        } catch (\Throwable $e) { error_log("EmailQueueService error: " . $e->getMessage()); }
         try {
             $this->apiDocService = new APIDocumentationService();
-        } catch (\Exception $e) { error_log("APIDocumentationService error: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("APIDocumentationService error: " . $e->getMessage()); }
     }
     
     /**
@@ -207,7 +207,7 @@ class AdminWorkflowController extends AdminController
             if ($this->reportService) {
                 $savedReports = $this->reportService->getSavedReports($_SESSION['admin_id'] ?? 0);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("reports() getSavedReports error: " . $e->getMessage());
         }
         
@@ -235,7 +235,7 @@ class AdminWorkflowController extends AdminController
             if ($this->reportService) {
                 $data = $this->reportService->generateSalesReport($filters);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("salesReport error: " . $e->getMessage());
         }
         
@@ -249,7 +249,7 @@ class AdminWorkflowController extends AdminController
                     readfile($export['filepath']);
                     exit;
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("salesReport export error: " . $e->getMessage());
             }
         }
@@ -278,7 +278,7 @@ class AdminWorkflowController extends AdminController
             if ($this->reportService) {
                 $data = $this->reportService->generateLeadsReport($filters);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("leadsReport error: " . $e->getMessage());
         }
         
@@ -307,7 +307,7 @@ class AdminWorkflowController extends AdminController
             if ($this->reportService) {
                 $data = $this->reportService->generateCommissionReport($filters);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("commissionReport error: " . $e->getMessage());
         }
         
@@ -612,7 +612,7 @@ class AdminWorkflowController extends AdminController
             $stmt = $db->prepare("DELETE FROM backups WHERE id = ? $where");
             $stmt->execute(array_merge([$id], $params));
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
@@ -644,7 +644,7 @@ class AdminWorkflowController extends AdminController
             } else {
                 echo json_encode(['success' => false, 'error' => 'Backup file not found on disk']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
@@ -665,7 +665,7 @@ class AdminWorkflowController extends AdminController
             $stmt = $db->prepare("UPDATE email_queue SET status = 'cancelled', updated_at = NOW() WHERE id = ? AND status IN ('pending', 'queued') $where");
             $stmt->execute(array_merge([$id], $params));
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;

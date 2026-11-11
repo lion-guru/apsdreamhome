@@ -9,7 +9,7 @@ ini_set('display_errors', 1);
 try {
     $db = \App\Core\Database::getInstance();
     $conn = $db->getConnection();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log("Database connection failed: " . $e->getMessage());
     die("Database connection failed. Please check system logs.");
 }
@@ -106,7 +106,7 @@ try {
                 $value = array_values($row)[0] ?? 0;
                 echo "Γ£à $label: Γé╣" . number_format($value, 2) . "\n";
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo "ΓÜá∩╕Å  $label: Query issue - " . substr($e->getMessage(), 0, 30) . "...\n";
         }
     }
@@ -229,7 +229,7 @@ try {
         echo "\n≡ƒöº Please resolve issues before launch\n";
     }
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "Γ¥î CRITICAL ERROR: " . $e->getMessage() . "\n";
     echo "≡ƒöº Please check database connection and configuration\n";
     $allTestsPassed = false;

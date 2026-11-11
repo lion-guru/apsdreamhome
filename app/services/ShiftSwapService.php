@@ -8,6 +8,25 @@ use Exception;
 
 class ShiftSwapService
 {
+    /**
+     * Query runner: fetch a single row.
+     *
+     * NOTE (S451): this service calls $this->fetchOne($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchOne()".
+     */
+    private function fetchOne(string $sql, array $params = []): ?array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchOne] ' . $e->getMessage());
+            return null;
+        }
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -22,13 +41,21 @@ class ShiftSwapService
      */
     public function requestSwap(int $requesterId, array $data): array
     {
-        // Validate requester
-        $requester = $this->fetchOne("SELECT id, name, department FROM employees WHERE id = ? AND status = 'active'", [$requesterId]);
+        // Validate requester (profile-first, legacy fallback)
+        $requester = $this->fetchOne("
+            SELECT ep.legacy_id AS id, u.name, ep.department
+            FROM employee_profiles ep JOIN users u ON u.id = ep.user_id
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.status = 'active'
+        ", [$requesterId, $requesterId, $requesterId]);
         if (!$requester) return ['success' => false, 'message' => 'Requester not found or inactive'];
 
-        // Validate target
+        // Validate target (profile-first, legacy fallback)
         $targetId = (int)($data['target_id'] ?? 0);
-        $target = $this->fetchOne("SELECT id, name FROM employees WHERE id = ? AND status = 'active'", [$targetId]);
+        $target = $this->fetchOne("
+            SELECT ep.legacy_id AS id, u.name
+            FROM employee_profiles ep JOIN users u ON u.id = ep.user_id
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.status = 'active'
+        ", [$targetId, $targetId, $targetId]);
         if (!$target) return ['success' => false, 'message' => 'Target employee not found or inactive'];
 
         if ($targetId === $requesterId) {
@@ -94,13 +121,15 @@ class ShiftSwapService
     public function getEmployeeSwaps(int $employeeId): array
     {
         return $this->db->fetchAll("
-            SELECT ssr.*, 
-                   r.name as requester_name, r.employee_code as requester_code,
-                   t.name as target_name, t.employee_code as target_code,
+            SELECT ssr.*,
+                   u_r.name as requester_name, ep_r.employee_code as requester_code,
+                   u_t.name as target_name, ep_t.employee_code as target_code,
                    CASE WHEN ssr.requester_id = ? THEN 'requester' ELSE 'target' END as role
             FROM shift_swap_requests ssr
-            JOIN employees r ON ssr.requester_id = r.id
-            JOIN employees t ON ssr.target_id = t.id
+            LEFT JOIN employee_profiles ep_r ON ep_r.legacy_id = ssr.requester_id OR ep_r.user_id = ssr.requester_id OR ep_r.id = ssr.requester_id
+            LEFT JOIN users u_r ON u_r.id = ep_r.user_id
+            LEFT JOIN employee_profiles ep_t ON ep_t.legacy_id = ssr.target_id OR ep_t.user_id = ssr.target_id OR ep_t.id = ssr.target_id
+            LEFT JOIN users u_t ON u_t.id = ep_t.user_id
             WHERE (ssr.requester_id = ? OR ssr.target_id = ?)
               AND ssr.tenant_id = 1
             ORDER BY ssr.requested_at DESC
@@ -113,12 +142,14 @@ class ShiftSwapService
     public function getSwap(int $swapId): ?array
     {
         return $this->db->fetchOne("
-            SELECT ssr.*, 
-                   r.name as requester_name, r.employee_code as requester_code,
-                   t.name as target_name, t.employee_code as target_code
+            SELECT ssr.*,
+                   u_r.name as requester_name, ep_r.employee_code as requester_code,
+                   u_t.name as target_name, ep_t.employee_code as target_code
             FROM shift_swap_requests ssr
-            JOIN employees r ON ssr.requester_id = r.id
-            JOIN employees t ON ssr.target_id = t.id
+            LEFT JOIN employee_profiles ep_r ON ep_r.legacy_id = ssr.requester_id OR ep_r.user_id = ssr.requester_id OR ep_r.id = ssr.requester_id
+            LEFT JOIN users u_r ON u_r.id = ep_r.user_id
+            LEFT JOIN employee_profiles ep_t ON ep_t.legacy_id = ssr.target_id OR ep_t.user_id = ssr.target_id OR ep_t.id = ssr.target_id
+            LEFT JOIN users u_t ON u_t.id = ep_t.user_id
             WHERE ssr.id = ? AND ssr.tenant_id = 1
         ", [$swapId]);
     }
@@ -188,9 +219,10 @@ class ShiftSwapService
     public function getPendingSwaps(int $employeeId): array
     {
         return $this->db->fetchAll("
-            SELECT ssr.*, r.name as requester_name, r.employee_code as requester_code
+            SELECT ssr.*, u_r.name as requester_name, ep_r.employee_code as requester_code
             FROM shift_swap_requests ssr
-            JOIN employees r ON ssr.requester_id = r.id
+            LEFT JOIN employee_profiles ep_r ON ep_r.legacy_id = ssr.requester_id OR ep_r.user_id = ssr.requester_id OR ep_r.id = ssr.requester_id
+            LEFT JOIN users u_r ON u_r.id = ep_r.user_id
             WHERE ssr.target_id = ? AND ssr.status = 'pending' AND ssr.tenant_id = 1
             ORDER BY ssr.requested_at ASC
         ", [$employeeId]);
@@ -202,12 +234,14 @@ class ShiftSwapService
     public function getAllPendingSwaps(): array
     {
         return $this->db->fetchAll("
-            SELECT ssr.*, 
-                   r.name as requester_name, r.employee_code as requester_code,
-                   t.name as target_name, t.employee_code as target_code
+            SELECT ssr.*,
+                   u_r.name as requester_name, ep_r.employee_code as requester_code,
+                   u_t.name as target_name, ep_t.employee_code as target_code
             FROM shift_swap_requests ssr
-            JOIN employees r ON ssr.requester_id = r.id
-            JOIN employees t ON ssr.target_id = t.id
+            LEFT JOIN employee_profiles ep_r ON ep_r.legacy_id = ssr.requester_id OR ep_r.user_id = ssr.requester_id OR ep_r.id = ssr.requester_id
+            LEFT JOIN users u_r ON u_r.id = ep_r.user_id
+            LEFT JOIN employee_profiles ep_t ON ep_t.legacy_id = ssr.target_id OR ep_t.user_id = ssr.target_id OR ep_t.id = ssr.target_id
+            LEFT JOIN users u_t ON u_t.id = ep_t.user_id
             WHERE ssr.status = 'pending' AND ssr.tenant_id = 1
             ORDER BY ssr.requested_at ASC
         ");
@@ -219,12 +253,14 @@ class ShiftSwapService
     public function getAllSwaps(): array
     {
         return $this->db->fetchAll("
-            SELECT ssr.*, 
-                   r.name as requester_name, r.employee_code as requester_code,
-                   t.name as target_name, t.employee_code as target_code
+            SELECT ssr.*,
+                   u_r.name as requester_name, ep_r.employee_code as requester_code,
+                   u_t.name as target_name, ep_t.employee_code as target_code
             FROM shift_swap_requests ssr
-            JOIN employees r ON ssr.requester_id = r.id
-            JOIN employees t ON ssr.target_id = t.id
+            LEFT JOIN employee_profiles ep_r ON ep_r.legacy_id = ssr.requester_id OR ep_r.user_id = ssr.requester_id OR ep_r.id = ssr.requester_id
+            LEFT JOIN users u_r ON u_r.id = ep_r.user_id
+            LEFT JOIN employee_profiles ep_t ON ep_t.legacy_id = ssr.target_id OR ep_t.user_id = ssr.target_id OR ep_t.id = ssr.target_id
+            LEFT JOIN users u_t ON u_t.id = ep_t.user_id
             WHERE ssr.tenant_id = 1
             ORDER BY ssr.requested_at DESC
         ");

@@ -22,14 +22,14 @@ class GalleryController extends AdminController
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             $images = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $images = [];
         }
 
         $categories = [];
         try {
             $categories = $this->db->fetchAll("SELECT DISTINCT category, COUNT(*) as cnt FROM gallery GROUP BY category ORDER BY category");
-        } catch (\Exception $e) { error_log("GalleryController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("GalleryController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         $data = [
             'page_title' => 'Gallery Management',
@@ -97,7 +97,7 @@ class GalleryController extends AdminController
 
             $_SESSION['success'] = 'Image added to gallery!';
             $this->redirect('/admin/gallery');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/gallery/create');
         }
@@ -122,7 +122,7 @@ class GalleryController extends AdminController
                 'categories' => ['residential', 'commercial', 'projects', 'team', 'events', 'general']
             ];
             $this->render('admin/gallery/edit', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/gallery');
         }
@@ -174,7 +174,7 @@ class GalleryController extends AdminController
 
             $_SESSION['success'] = 'Image updated!';
             $this->redirect('/admin/gallery');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect("/admin/gallery/$id/edit");
         }
@@ -196,7 +196,7 @@ class GalleryController extends AdminController
             [$tw, $tp] = $this->tenantWhere();
             $this->db->prepare("DELETE FROM gallery WHERE id = ?" . $tw)->execute([$id, ...$tp]);
             $_SESSION['success'] = 'Image deleted!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/gallery');

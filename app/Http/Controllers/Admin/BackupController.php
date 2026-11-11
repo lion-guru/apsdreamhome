@@ -30,7 +30,7 @@ class BackupController extends AdminController
         parent::__construct();
         try {
             $this->backupService = new BackupRestoreService();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('BackupController: service init failed: ' . $e->getMessage());
             $this->backupService = null;
         }
@@ -50,7 +50,7 @@ class BackupController extends AdminController
                 'health'     => $health,
                 'stats'      => $stats,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('BackupController::index error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to load backup page: ' . $e->getMessage());
             $this->redirect('/admin/dashboard');
@@ -73,7 +73,7 @@ class BackupController extends AdminController
             } else {
                 $this->setFlash('error', 'Backup failed: ' . ($result['error'] ?? 'unknown error'));
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Backup failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/backup');
@@ -119,7 +119,7 @@ class BackupController extends AdminController
             } else {
                 $this->setFlash('error', "Restore failed: " . ($result['error'] ?? 'unknown'));
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Restore failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/backup');
@@ -179,7 +179,7 @@ class BackupController extends AdminController
             $stmt->execute(array_merge([$destPath, $fileSize, $checksum, $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? null], $tenantInsert));
 
             $this->setFlash('success', "Upload OK: {$destName} (" . $this->humanBytes($fileSize) . ")");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Upload failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/backup');
@@ -231,7 +231,7 @@ class BackupController extends AdminController
             header('Cache-Control: no-cache');
             readfile($filepath);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Download failed: ' . $e->getMessage());
             $this->redirect('/admin/backup');
         }

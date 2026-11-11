@@ -118,7 +118,7 @@ class WebSocketServer implements MessageComponentInterface
                 'user_id' => $conn->userId,
                 'role' => $conn->userRole
             ]));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WebSocket auth error: {$e->getMessage()}");
             $conn->send(json_encode([
                 'type' => 'auth',

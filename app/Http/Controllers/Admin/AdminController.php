@@ -7,12 +7,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\BaseController;
 use App\Http\Middleware\RBACManager;
 use App\Core\Cache;
 use App\Models\Property;
 use App\Models\User;
-use \App\Traits\TenantAwareTrait;
 
 use Exception;
 
@@ -120,7 +120,7 @@ class AdminController extends BaseController
                 $tidSql = $tid > 1 ? ' AND tenant_id = ?' : '';
                 $tidParam = $tid > 1 ? [$tid] : [];
                 $recentLeads = $this->db->fetchAll("SELECT * FROM leads WHERE 1=1{$tidSql} ORDER BY created_at DESC LIMIT 5", $tidParam) ?: [];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $recentLeads = [];
             }
 
@@ -134,7 +134,7 @@ class AdminController extends BaseController
             ]);
 
             return $this->render('admin/dashboard', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error loading enterprise dashboard: ' . $e->getMessage());
             return $this->render('admin/dashboard', [
                 'page_title' => 'Enterprise Dashboard - ' . $this->getConfig('app_name'),
@@ -165,7 +165,7 @@ class AdminController extends BaseController
         try {
             $pdo = $this->db->getConnection();
             $stats['database_tables'] = (int)($pdo->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE()")->fetchColumn() ?? 0);
-        } catch (\Exception $e) { $stats['database_tables'] = 0; }
+        } catch (\Throwable $e) { $stats['database_tables'] = 0; }
 
         try {
             [$tidSql, $tidParams] = $this->tenantWhere();
@@ -174,7 +174,7 @@ class AdminController extends BaseController
             $stats['total_users'] = $totalUsers;
             $stats['active_users'] = $activeUsers;
             $stats['active_users_pct'] = $totalUsers > 0 ? round(($activeUsers / $totalUsers) * 100, 1) : 0;
-        } catch (\Exception $e) { 
+        } catch (\Throwable $e) { 
             $stats['total_users'] = 0;
             $stats['active_users'] = 0;
             $stats['active_users_pct'] = 0;
@@ -185,90 +185,90 @@ class AdminController extends BaseController
             $totalLogs = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM user_activity_logs_unified WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)")['cnt'] ?? 0);
             $errorLogs = (int)($this->db->fetch("SELECT COUNT(*) AS cnt FROM user_activity_logs_unified WHERE action LIKE '%error%' OR action LIKE '%fail%' AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)")['cnt'] ?? 0);
             $stats['system_health_pct'] = $totalLogs > 0 ? max(0, 100 - round(($errorLogs / $totalLogs) * 100, 1)) : 99.9;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $stats['system_health_pct'] = 99.9;
         }
         try {
             $stats['land_active_leads'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM land_leads WHERE status NOT IN ('acquired','rejected')")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['land_active_leads'] = 0; }
+        } catch (\Throwable $e) { $stats['land_active_leads'] = 0; }
 
         try {
             $stats['land_acquisitions'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM land_acquisitions")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['land_acquisitions'] = 0; }
+        } catch (\Throwable $e) { $stats['land_acquisitions'] = 0; }
 
         // Module 2: Sales + Allotment
         try {
             $stats['sales_active_bookings'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM plot_bookings WHERE status NOT IN ('cancelled','transferred')")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['sales_active_bookings'] = 0; }
+        } catch (\Throwable $e) { $stats['sales_active_bookings'] = 0; }
 
         try {
             $stats['sales_booking_value'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(total_plot_value),0) AS total FROM plot_bookings WHERE status NOT IN ('cancelled','transferred')")['total'] ?? 0);
-        } catch (\Exception $e) { $stats['sales_booking_value'] = 0; }
+        } catch (\Throwable $e) { $stats['sales_booking_value'] = 0; }
 
         // Module 3: Money Workflow + Accounting
         try {
             $stats['money_today_collections'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(amount),0) AS total FROM daily_cash_book WHERE transaction_date = CURDATE() AND transaction_type='receipt'")['total'] ?? 0);
-        } catch (\Exception $e) { $stats['money_today_collections'] = 0; }
+        } catch (\Throwable $e) { $stats['money_today_collections'] = 0; }
 
         try {
             $stats['money_today_payments'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(amount),0) AS total FROM daily_cash_book WHERE transaction_date = CURDATE() AND transaction_type='payment'")['total'] ?? 0);
-        } catch (\Exception $e) { $stats['money_today_payments'] = 0; }
+        } catch (\Throwable $e) { $stats['money_today_payments'] = 0; }
 
         try {
             $stats['money_total_cash_flow'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(amount),0) AS total FROM daily_cash_book")['total'] ?? 0);
-        } catch (\Exception $e) { $stats['money_total_cash_flow'] = 0; }
+        } catch (\Throwable $e) { $stats['money_total_cash_flow'] = 0; }
 
         try {
             $stats['money_bounced_cheques'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM cheque_register WHERE status='bounced'")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['money_bounced_cheques'] = 0; }
+        } catch (\Throwable $e) { $stats['money_bounced_cheques'] = 0; }
 
         try {
             $stats['money_pending_tds'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM tds_register WHERE status='pending'")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['money_pending_tds'] = 0; }
+        } catch (\Throwable $e) { $stats['money_pending_tds'] = 0; }
 
         // EMI Dunning (Phase 30)
         try {
             $stats['emi_overdue_count'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM booking_payment_schedules WHERE status IN ('overdue','pending') AND due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['emi_overdue_count'] = 0; }
+        } catch (\Throwable $e) { $stats['emi_overdue_count'] = 0; }
 
         try {
             $stats['emi_overdue_amount'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(amount),0) AS total FROM booking_payment_schedules WHERE status IN ('overdue','pending') AND due_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)")['total'] ?? 0);
-        } catch (\Exception $e) { $stats['emi_overdue_amount'] = 0; }
+        } catch (\Throwable $e) { $stats['emi_overdue_amount'] = 0; }
 
         try {
             $stats['emi_total_penalties'] = (float) ($this->db->fetch("SELECT COALESCE(SUM(accrued_penalty),0) AS total FROM booking_payment_schedules WHERE accrued_penalty > 0")['total'] ?? 0);
-        } catch (\Exception $e) { $stats['emi_total_penalties'] = 0; }
+        } catch (\Throwable $e) { $stats['emi_total_penalties'] = 0; }
 
         try {
             $stats['emi_defaulted_count'] = (int) ($this->db->fetch("SELECT COUNT(DISTINCT booking_id) AS cnt FROM booking_payment_schedules WHERE status IN ('overdue','pending') AND due_date < DATE_SUB(CURDATE(), INTERVAL 90 DAY)")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['emi_defaulted_count'] = 0; }
+        } catch (\Throwable $e) { $stats['emi_defaulted_count'] = 0; }
 
         // Module 4: MLM Network
         try {
             $stats['mlm_commissions_paid'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM mlm_commission_ledger WHERE status='paid' AND MONTH(created_at)=MONTH(CURDATE())")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['mlm_commissions_paid'] = 0; }
+        } catch (\Throwable $e) { $stats['mlm_commissions_paid'] = 0; }
 
         try {
             [$tidSql, $tidParams] = $this->tenantWhere();
             $stats['mlm_pending_payouts'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM mlm_payouts WHERE status='pending'{$tidSql}", $tidParams)['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['mlm_pending_payouts'] = 0; }
+        } catch (\Throwable $e) { $stats['mlm_pending_payouts'] = 0; }
 
         // Module 5: Backoffice + Daily Operations
         try {
             $stats['backoffice_active_leads'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM lead_pipeline WHERE stage NOT IN ('closed_won','closed_lost')")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['backoffice_active_leads'] = 0; }
+        } catch (\Throwable $e) { $stats['backoffice_active_leads'] = 0; }
 
         try {
             $stats['backoffice_present_today'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM employee_attendance WHERE attendance_date=CURDATE() AND status='present'")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['backoffice_present_today'] = 0; }
+        } catch (\Throwable $e) { $stats['backoffice_present_today'] = 0; }
 
         try {
             $stats['backoffice_pending_leaves'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM employee_leave_requests WHERE status='pending'")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['backoffice_pending_leaves'] = 0; }
+        } catch (\Throwable $e) { $stats['backoffice_pending_leaves'] = 0; }
 
         try {
             $stats['backoffice_today_operations'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM daily_operations_log WHERE log_date=CURDATE()")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['backoffice_today_operations'] = 0; }
+        } catch (\Throwable $e) { $stats['backoffice_today_operations'] = 0; }
 
         // Recent activity feed (last 10 from daily_operations_log + daily_cash_book combined)
         $recentActivity = [];
@@ -282,7 +282,7 @@ class AdminController extends BaseController
                 ORDER BY activity_date DESC
                 LIMIT 10
             ") ?? [];
-        } catch (\Exception $e) { $recentActivity = []; }
+        } catch (\Throwable $e) { $recentActivity = []; }
 
         // Cash flow chart data (last 7 days)
         $cashFlowChart = [];
@@ -296,7 +296,7 @@ class AdminController extends BaseController
                 GROUP BY transaction_date
                 ORDER BY transaction_date ASC
             ") ?? [];
-        } catch (\Exception $e) { $cashFlowChart = []; }
+        } catch (\Throwable $e) { $cashFlowChart = []; }
 
         // Lead pipeline chart data
         $leadPipelineChart = [];
@@ -307,20 +307,20 @@ class AdminController extends BaseController
                 GROUP BY stage
                 ORDER BY cnt DESC
             ") ?? [];
-        } catch (\Exception $e) { $leadPipelineChart = []; }
+        } catch (\Throwable $e) { $leadPipelineChart = []; }
 
         // Department Requests stats
         try {
             $stats['dept_pending'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE status IN ('open','in_progress')")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['dept_pending'] = 0; }
+        } catch (\Throwable $e) { $stats['dept_pending'] = 0; }
 
         try {
             $stats['dept_high_priority'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE priority = 'high' AND status IN ('open','in_progress')")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['dept_high_priority'] = 0; }
+        } catch (\Throwable $e) { $stats['dept_high_priority'] = 0; }
 
         try {
             $stats['dept_overdue'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM department_requests WHERE due_date < CURDATE() AND status NOT IN ('closed','resolved','rejected')")['cnt'] ?? 0);
-        } catch (\Exception $e) { $stats['dept_overdue'] = 0; }
+        } catch (\Throwable $e) { $stats['dept_overdue'] = 0; }
 
         try {
             $stats['dept_by_department'] = $this->db->fetchAll("
@@ -331,7 +331,7 @@ class AdminController extends BaseController
                 GROUP BY dr.department_id
                 ORDER BY cnt DESC
             ") ?? [];
-        } catch (\Exception $e) { $stats['dept_by_department'] = []; }
+        } catch (\Throwable $e) { $stats['dept_by_department'] = []; }
 
         return $this->render('admin/erp/overview', [
             'page_title' => 'ERP Overview — APS Dream Home',
@@ -355,7 +355,7 @@ class AdminController extends BaseController
                 $tidWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
                 return $this->db->fetch("SELECT COUNT(*) as count FROM users{$tidWhere}", $tid > 1 ? [$tid] : [])['count'] ?? 0;
             }, 300);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -369,7 +369,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_total_properties', function () {
                 return $this->db->fetch("SELECT COUNT(*) as count FROM properties")['count'] ?? 0;
             }, 300);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -383,7 +383,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_total_inquiries', function () {
                 return $this->db->fetch("SELECT COUNT(*) as count FROM inquiries")['count'] ?? 0;
             }, 300);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -397,7 +397,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_total_revenue', function () {
                 return $this->db->fetch("SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'completed'")['total'] ?? 0;
             }, 300);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -411,7 +411,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_active_properties', function () {
                 return $this->db->fetch("SELECT COUNT(*) as count FROM properties WHERE status = 'active'")['count'] ?? 0;
             }, 300);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -427,7 +427,7 @@ class AdminController extends BaseController
                 $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
                 return $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE DATE(created_at) = CURDATE(){$tidSql}", $tid > 1 ? [$tid] : [])['count'] ?? 0;
             }, 120);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -441,7 +441,7 @@ class AdminController extends BaseController
             return Cache::remember('admin_dash_pending_approvals', function () {
                 return $this->db->fetch("SELECT COUNT(*) as count FROM properties WHERE status = 'pending'")['count'] ?? 0;
             }, 180);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -473,7 +473,7 @@ class AdminController extends BaseController
                 ORDER BY created_at DESC 
                 LIMIT 5
             ", $tidParams);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -505,7 +505,7 @@ class AdminController extends BaseController
                 }, 180),
             ];
             echo json_encode(['success' => true, 'data' => $stats]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -524,7 +524,7 @@ class AdminController extends BaseController
                 FROM users WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH){$tidSql}
                 GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY MIN(created_at)
             ", $tidParams);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $userData = [];
         }
         $userLabels = [];
@@ -545,7 +545,7 @@ class AdminController extends BaseController
                 FROM bookings WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
                 GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY MIN(created_at)
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $bookingData = [];
         }
         $bookingLabels = [];
@@ -568,7 +568,7 @@ class AdminController extends BaseController
                 WHERE b.created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
                 GROUP BY DATE_FORMAT(b.created_at, '%Y-%m') ORDER BY MIN(b.created_at)
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $revenueData = [];
         }
         $revenueLabels = [];
@@ -613,7 +613,7 @@ class AdminController extends BaseController
             $tid = (int)$this->tenantId();
             $tidWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
             return $this->db->fetchAll("SELECT id, name, email, role, status, created_at FROM users{$tidWhere} ORDER BY created_at DESC LIMIT 50", $tid > 1 ? [$tid] : []);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -621,7 +621,7 @@ class AdminController extends BaseController
     /**
      * JSON response helper
      */
-    public function jsonResponse($data, $status = 200)
+    public function jsonResponse($data, int $status = 200): void
     {
         http_response_code($status);
         header('Content-Type: application/json');
@@ -632,7 +632,7 @@ class AdminController extends BaseController
     /**
      * JSON error response helper
      */
-    protected function jsonError($message, $statusCode = 400)
+    protected function jsonError(string $message, int $statusCode = 400): void
     {
         $this->jsonResponse(['success' => false, 'message' => $message], $statusCode);
     }
@@ -671,7 +671,7 @@ class AdminController extends BaseController
             // Log the update if needed
             // error_log("Updating content for ID: $id");
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -725,7 +725,7 @@ class AdminController extends BaseController
     {
         try {
             return $this->db->fetchAll("SELECT id, title, location, price, status, featured, created_at FROM properties ORDER BY created_at DESC LIMIT 50");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -736,7 +736,7 @@ class AdminController extends BaseController
      * using the current request URI matched to admin_menu_items.url.
      * super_admin and admin always pass. Unknown URLs (not in menu table) pass by default.
      */
-    public function requireAdmin()
+    public function requireAdmin(): void
     {
         // Single source of truth for the effective role (same resolver the
         // sidebar menu service uses) — keeps guard, menu items and hub
@@ -810,7 +810,7 @@ class AdminController extends BaseController
                 );
                 $stmt->execute([$role, $url]);
                 return (int)$stmt->fetchColumn() > 0;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('checkMenuPermission error: ' . $e->getMessage());
                 return false;
             }
@@ -934,7 +934,7 @@ class AdminController extends BaseController
                 'specUrl'       => $base . '/api/docs/spec',
                 'activeVersion' => 'v2',
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ApiDocs error: ' . $e->getMessage());
             return $this->render('admin/stub_page', [
                 'page_title'   => 'API Documentation',
@@ -1048,6 +1048,25 @@ class AdminController extends BaseController
             }
         } catch (\Throwable $e) { error_log('omniSearch associates error: ' . $e->getMessage()); }
 
+        // 5. Search Menu/Pages (sidebar items) — command palette for navigation
+        try {
+            $pages = $this->db->fetchAll(
+                "SELECT name, url, section, icon FROM admin_menu_items
+                 WHERE is_active = 1 AND (name LIKE ? OR url LIKE ?) $tidWhere
+                 ORDER BY order_index LIMIT ?",
+                ["%$q%", "%$q%", 8]
+            );
+            foreach ($pages as $pg) {
+                $results[] = [
+                    'title' => htmlspecialchars($pg['name']),
+                    'subtitle' => htmlspecialchars($pg['url']) . ' • ' . htmlspecialchars($pg['section'] ?? ''),
+                    'url' => BASE_URL . $pg['url'],
+                    'category' => 'Pages',
+                    'icon' => $pg['icon'] ?: 'fas fa-file',
+                ];
+            }
+        } catch (\Throwable $e) { error_log('omniSearch pages error: ' . $e->getMessage()); }
+
         echo json_encode(['success' => true, 'results' => $results]);
         exit;
     }
@@ -1064,7 +1083,7 @@ class AdminController extends BaseController
                 return round(($completeCustomers / $totalCustomers) * 100, 1);
             }
             return 0;
-        } catch (\Exception $e) { error_log("Customer360 Error: " . $e->getMessage()); return 0; }
+        } catch (\Throwable $e) { error_log("Customer360 Error: " . $e->getMessage()); return 0; }
     }
 
     /**
@@ -1079,7 +1098,7 @@ class AdminController extends BaseController
                 return round(($completeAssociates / $totalAssociates) * 100, 1);
             }
             return 0;
-        } catch (\Exception $e) { error_log("Associate360 Error: " . $e->getMessage()); return 0; }
+        } catch (\Throwable $e) { error_log("Associate360 Error: " . $e->getMessage()); return 0; }
     }
 
     /**
@@ -1094,7 +1113,7 @@ class AdminController extends BaseController
                 return round(($activePlots / $totalPlots) * 100, 1);
             }
             return 0;
-        } catch (\Exception $e) { error_log("Plot360 Error: " . $e->getMessage()); return 0; }
+        } catch (\Throwable $e) { error_log("Plot360 Error: " . $e->getMessage()); return 0; }
     }
 
     /**
@@ -1109,7 +1128,7 @@ class AdminController extends BaseController
                 return round(($activeBookings / $totalBookings) * 100, 1);
             }
             return 0;
-        } catch (\Exception $e) { error_log("Booking360 Error: " . $e->getMessage()); return 0; }
+        } catch (\Throwable $e) { error_log("Booking360 Error: " . $e->getMessage()); return 0; }
     }
 
     /**
@@ -1124,6 +1143,6 @@ class AdminController extends BaseController
                 return round(($activeColonies / $totalColonies) * 100, 1);
             }
             return 0;
-        } catch (\Exception $e) { error_log("Colony360 Error: " . $e->getMessage()); return 0; }
+        } catch (\Throwable $e) { error_log("Colony360 Error: " . $e->getMessage()); return 0; }
     }
 }

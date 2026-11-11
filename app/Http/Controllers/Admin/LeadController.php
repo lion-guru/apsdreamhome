@@ -80,7 +80,7 @@ class LeadController extends AdminController
                 "SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY name",
                 $tid > 1 ? [$tid] : []
             )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $sources = []; $statuses = []; $assignees = [];
         }
         return $this->render('admin/leads/create', ['sources' => $sources, 'statuses' => $statuses, 'assignees' => $assignees]);
@@ -132,7 +132,7 @@ class LeadController extends AdminController
             try {
                 $automation = new \App\Services\AutomationTriggerService();
                 $automation->onLeadCreated($result['lead_id']);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('LeadController::store automation error: ' . $e->getMessage());
             }
 
@@ -144,7 +144,7 @@ class LeadController extends AdminController
                     'priority' => trim($_POST['priority'] ?? 'medium'),
                     'lead_category' => 'cold',
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('LeadController::store SLA trigger error: ' . $e->getMessage());
             }
 
@@ -194,7 +194,7 @@ class LeadController extends AdminController
             // Enroll in drip campaign if email provided
             if (!empty($result['lead_id']) && !empty($_POST['email'])) {
                 try {
-                    $dripSvc = new \App\Services\DripCampaignService(\App\Core\Database\Database::getInstance());
+                    $dripSvc = new \App\Services\Campaign\CampaignService(\App\Core\Database\Database::getInstance());
                     $leadName = trim(($_POST['first_name'] ?? '') . ' ' . ($_POST['last_name'] ?? ''));
                     $dripSvc->autoEnrollNewLeads((int)$result['lead_id'], $_POST['email'], $leadName ?: null);
                 } catch (\Throwable $e) {
@@ -368,7 +368,7 @@ class LeadController extends AdminController
             $monthTotalStmt = $db->query("SELECT COUNT(*) as cnt FROM leads WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())$tidSql");
             $monthlyLeads = (int)$monthTotalStmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $sourceData = [];
             $monthlyTrend = [];
             $totalLeads = 0;
@@ -395,7 +395,7 @@ class LeadController extends AdminController
             $statuses = $db->query("SELECT status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL$tidSql GROUP BY status ORDER BY cnt DESC", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $total = (int)$db->query("SELECT COUNT(*) FROM leads WHERE deleted_at IS NULL$tidSql", $tidParam)->fetchColumn();
             $by_source = $db->query("SELECT source, status, COUNT(*) as cnt FROM leads WHERE deleted_at IS NULL$tidSql GROUP BY source, status ORDER BY source, cnt DESC", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $statuses = []; $total = 0; $by_source = [];
         }
         return $this->render('admin/leads/status', ['statuses' => $statuses, 'total' => $total, 'by_source' => $by_source]);
@@ -411,7 +411,7 @@ class LeadController extends AdminController
             $tidParam = $tid > 1 ? [$tid] : [];
             $pending = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.next_activity_date IS NOT NULL AND l.next_activity_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) AND l.status NOT IN ('converted','closed','dead') AND l.deleted_at IS NULL$tidSql ORDER BY l.next_activity_date ASC", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $recent = $db->query("SELECT la.*, l.name as lead_name FROM lead_activities la LEFT JOIN leads l ON la.lead_id=l.id WHERE l.id IS NULL OR l.deleted_at IS NULL" . ($tid > 1 ? " AND l.tenant_id = ?" : "") . " ORDER BY la.activity_date DESC LIMIT 30", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $pending = []; $recent = [];
         }
         return $this->render('admin/leads/followups', ['pending' => $pending, 'recent' => $recent]);
@@ -426,7 +426,7 @@ class LeadController extends AdminController
             $tidSql = $tid > 1 ? " AND l.tenant_id = ?" : "";
             $tidParam = $tid > 1 ? [$tid] : [];
             $scored = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL$tidSql ORDER BY l.lead_score DESC LIMIT 50", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $scored = [];
         }
         return $this->render('admin/leads/scoring', ['scored' => $scored]);
@@ -441,7 +441,7 @@ class LeadController extends AdminController
             $tidSql = $tid > 1 ? " AND l.tenant_id = ?" : "";
             $tidParam = $tid > 1 ? [$tid] : [];
             $leads = $db->query("SELECT l.*, u.name as assignee_name FROM leads l LEFT JOIN users u ON l.assigned_to=u.id WHERE l.deleted_at IS NULL$tidSql ORDER BY l.created_at DESC LIMIT 100", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $leads = [];
         }
         return $this->render('admin/leads/bulk', ['leads' => $leads]);
@@ -467,7 +467,7 @@ class LeadController extends AdminController
             $by_source = $db->query("SELECT source, COUNT(*) as total, SUM(CASE WHEN status='converted' THEN 1 ELSE 0 END) as converted FROM leads WHERE deleted_at IS NULL$tidSql GROUP BY source ORDER BY total DESC", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $monthly = $db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as total, SUM(CASE WHEN status='converted' THEN 1 ELSE 0 END) as converted FROM leads WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH) AND deleted_at IS NULL$tidSql GROUP BY month ORDER BY month ASC", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $by_city = $db->query("SELECT city, COUNT(*) as cnt FROM leads WHERE city IS NOT NULL AND city != '' AND deleted_at IS NULL$tidSql GROUP BY city ORDER BY cnt DESC LIMIT 10", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $total = 0; $converted = 0; $conv_rate = 0; $by_source = []; $monthly = []; $by_city = [];
         }
         return $this->render('admin/leads/analysis', [
@@ -494,7 +494,7 @@ class LeadController extends AdminController
             $activities = $db->prepare("SELECT * FROM lead_activities WHERE lead_id=?" . $asql . " ORDER BY activity_date DESC LIMIT 20");
             $activities->execute([$id, ...$aparams]);
             $activities = $activities->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $lead = null; $notes = []; $activities = [];
         }
         return $this->render('admin/leads/documents', ['lead_id' => $id, 'lead' => $lead, 'notes' => $notes, 'activities' => $activities]);
@@ -514,7 +514,7 @@ class LeadController extends AdminController
             $tid = (int)$this->tenantId();
             $tidParam = $tid > 1 ? [$tid] : [];
             $assignees = $db->query("SELECT id, name FROM users WHERE role IN ('employee','admin','manager','associate','agent') AND deleted_at IS NULL" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY name", $tidParam)->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) { error_log("LeadController::edit assignees query failed: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("LeadController::edit assignees query failed: " . $e->getMessage()); }
         return $this->render('admin/leads/edit', ['lead' => $lead, 'assignees' => $assignees]);
     }
 
@@ -706,7 +706,7 @@ class LeadController extends AdminController
             $tid = (int)$this->tenantId();
             $stmt = $db->prepare("INSERT INTO lead_notes (lead_id, note, content, created_by, created_at, tenant_id) VALUES (?, ?, ?, ?, NOW(), ?)");
             $stmt->execute([(int)$id, $noteText, $noteText, $adminId, $tid]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LeadController::addNote error: ' . $e->getMessage());
         }
 
@@ -716,7 +716,7 @@ class LeadController extends AdminController
         try {
             $slaTrigger = new \App\Services\SLATriggerService();
             $slaTrigger->onInteractionLogged((int)$id, 'note');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LeadController::addNote SLA trigger error: ' . $e->getMessage());
         }
 
@@ -738,20 +738,20 @@ class LeadController extends AdminController
             try {
                 $automation = new \App\Services\AutomationTriggerService();
                 $automation->onLeadStatusChange($id, $result['old_status'], $newStatus);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('LeadController::updateStatus automation error: ' . $e->getMessage());
             }
 
             try {
                 \App\Services\Cache\HotPathCacheService::invalidateAdminDashboard();
-            } catch (\Exception $e) { error_log("LeadController::updateStatus cache invalidation failed: " . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log("LeadController::updateStatus cache invalidation failed: " . $e->getMessage()); }
 
             // Phase 4: SLA trigger on status change
             try {
                 $slaTrigger = new \App\Services\SLATriggerService();
                 $lead = $this->crm->getLeadById((int)$id);
                 $slaTrigger->onStatusChanged((int)$id, $result['old_status'], $newStatus, $lead ?? []);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('LeadController::updateStatus SLA trigger error: ' . $e->getMessage());
             }
 
@@ -837,7 +837,7 @@ class LeadController extends AdminController
             try {
                 $slaTrigger = new \App\Services\SLATriggerService();
                 $slaTrigger->onInteractionLogged((int)$id, $type);
-            } catch (\Exception $e) { error_log("LeadController::addInteraction SLA trigger failed: " . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log("LeadController::addInteraction SLA trigger failed: " . $e->getMessage()); }
 
             echo json_encode(['success' => true, 'interaction_id' => $result['interaction_id'] ?? 0]);
         } else {
@@ -911,7 +911,7 @@ class LeadController extends AdminController
             $db->query("DELETE FROM lead_documents WHERE id = ? AND lead_id = ? AND tenant_id = ?", [$docId, $id, $this->tenantId()]);
             $this->crm->logActivity((int)$id, $this->getCurrentUserId(), 'document_delete', 'Document deleted', "Document #$docId deleted");
             $this->setFlash('success', 'Document deleted');
-        } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); }
+        } catch (\Throwable $e) { $this->setFlash('error', $e->getMessage()); }
         return $this->redirect("/admin/leads/$id");
     }
 

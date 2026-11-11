@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use \App\Traits\TenantAwareTrait;
+use App\Traits\TenantAwareTrait;
 
 class AdminMarketplaceController extends AdminController
 {
@@ -60,7 +60,7 @@ class AdminMarketplaceController extends AdminController
                 // Recent boost transactions
                 $recentBoostTransactions = $this->db->prepare("SELECT pr.*, up.name as property_name, u.name as seller_name FROM platform_revenue pr LEFT JOIN user_properties up ON pr.source_id = up.id LEFT JOIN users u ON up.user_id = u.id WHERE pr.source_type = 'boost' $tWhere ORDER BY pr.recorded_at DESC LIMIT 10")->execute(array_merge([], $tParams)) ? $this->db->prepare("SELECT pr.*, up.name as property_name, u.name as seller_name FROM platform_revenue pr LEFT JOIN user_properties up ON pr.source_id = up.id LEFT JOIN users u ON up.user_id = u.id WHERE pr.source_type = 'boost' $tWhere ORDER BY pr.recorded_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC) : [];
 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('AdminMarketplaceController::index() query error: ' . $e->getMessage());
             }
 
@@ -90,7 +90,7 @@ class AdminMarketplaceController extends AdminController
                 // Builder Stats
                 'builderStats' => $builderStats,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load marketplace');
             $this->redirect('/admin/dashboard');
         }
@@ -120,7 +120,7 @@ class AdminMarketplaceController extends AdminController
             // Top builders by listing count
             $stats['top_builders'] = $this->db->prepare("SELECT u.name, u.email, COUNT(up.id) as listing_count, COALESCE(SUM(up.price),0) as total_value FROM users u JOIN user_properties up ON u.id = up.user_id WHERE up.listing_type = 'sell' $tWhere GROUP BY u.id ORDER BY listing_count DESC LIMIT 10")->execute(array_merge([], $tParams)) ? $this->db->prepare("SELECT u.name, u.email, COUNT(up.id) as listing_count, COALESCE(SUM(up.price),0) as total_value FROM users u JOIN user_properties up ON u.id = up.user_id WHERE up.listing_type = 'sell' $tWhere GROUP BY u.id ORDER BY listing_count DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC) : [];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AdminMarketplaceController::getBuilderStats() error: ' . $e->getMessage());
         }
 

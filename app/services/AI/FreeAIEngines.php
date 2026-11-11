@@ -456,6 +456,58 @@ class FreeAIEngines
         return null;
     }
 
+    /**
+     * Generate AI response with image (Gemini Vision / Multimodal)
+     * Supports base64-encoded images for visual analysis
+     */
+    public function generateWithImage(string $prompt, string $imageBase64, string $mimeType = 'image/jpeg', array $options = []): array
+    {
+        $maxTokens = $options['max_tokens'] ?? 1024;
+        $temperature = $options['temperature'] ?? 0.7;
+        $system = $options['system'] ?? $this->getSystemPrompt('chat');
+
+        // Try Gemini Vision (primary - best free multimodal)
+        if (!empty($this->geminiKey)) {
+            $result = $this->geminiGenerateWithImage($prompt, $imageBase64, $mimeType, $system, $temperature, $maxTokens);
+            if ($result) return ['text' => self::cleanResponse($result), 'engine' => 'gemini_vision', 'model' => $this->geminiModel, 'tokens' => 0];
+        }
+
+        // Fallback to text-only analysis
+        $fallbackPrompt = $prompt . "\n\n[Note: Image provided but vision model unavailable. Analyze based on context only.]\n";
+        $result = $this->generate($fallbackPrompt, $options, 'chat');
+        if (!empty($result['text'])) {
+            return $result;
+        }
+
+        return ['text' => 'Image analysis requires a vision-capable AI model. Please configure Gemini API key.', 'engine' => 'none', 'model' => '', 'tokens' => 0];
+    }
+
+    /**
+     * Gemini Vision API call with image data
+     */
+    private function geminiGenerateWithImage(string $prompt, string $imageBase64, string $mimeType, string $system, float $temp, int $maxTokens): ?string
+    {
+        $parts = [];
+        if ($system) $parts[] = ['text' => $system];
+        $parts[] = ['text' => $prompt];
+        $parts[] = ['inline_data' => ['mime_type' => $mimeType, 'data' => $imageBase64]];
+
+        $payload = [
+            'contents' => [['parts' => $parts]],
+            'generationConfig' => [
+                'temperature' => $temp,
+                'maxOutputTokens' => $maxTokens,
+                'thinkingConfig' => ['thinkingBudget' => 0],
+            ],
+        ];
+
+        $response = $this->httpPost($this->geminiUrlBase . $this->geminiModel . ':generateContent?key=' . $this->geminiKey, $payload, 30);
+        if ($response && isset($response['candidates'][0]['content']['parts'][0]['text'])) {
+            return $response['candidates'][0]['content']['parts'][0]['text'];
+        }
+        return null;
+    }
+
     // xAI Grok (free tier: available via xAI API)
     private function xaiGenerate(string $prompt, string $system, float $temp, int $maxTokens): ?string
     {
@@ -694,6 +746,26 @@ class FreeAIEngines
     public function getOllamaModel(): string
     {
         return $this->ollamaModel;
+    }
+
+    public function getGeminiKey(): string
+    {
+        return $this->geminiKey ?? '';
+    }
+
+    public function getHfKey(): string
+    {
+        return $this->hfKey ?? '';
+    }
+
+    public function getGroqKey(): string
+    {
+        return $this->groqKey ?? '';
+    }
+
+    public function getOpenRouterKey(): string
+    {
+        return $this->openRouterKey ?? '';
     }
 
     public function isGroqConfigured(): bool

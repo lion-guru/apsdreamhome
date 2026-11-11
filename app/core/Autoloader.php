@@ -119,16 +119,16 @@ class Autoloader
                     // error_log("Autoloader: Found file: " . $file);
                     require_once $file;
                     return;
-                } else {
-                    // Case-sensitivity fallback for Linux (e.g. Services/... -> services/..., Core/... -> core/..., Models/... -> models/...)
-                    $parts = explode('\\', $relativeClass);
-                    if (!empty($parts)) {
-                        $parts[0] = strtolower($parts[0]);
-                        $altFile = $baseDir . implode('/', $parts) . '.php';
-                        if (file_exists($altFile)) {
-                            require_once $altFile;
-                            return;
-                        }
+                }
+                // Case-sensitivity fallback for Linux (e.g. Services/... -> services/..., Core/... -> core/..., Models/... -> models/...)
+                // Only try fallback if exact case file doesn't exist
+                $parts = explode('\\', $relativeClass);
+                if (!empty($parts)) {
+                    $parts[0] = strtolower($parts[0]);
+                    $altFile = $baseDir . implode('/', $parts) . '.php';
+                    if (file_exists($altFile)) {
+                        require_once $altFile;
+                        return;
                     }
                 }
             }

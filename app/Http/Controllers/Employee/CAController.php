@@ -81,7 +81,7 @@ class CAController extends BaseController
                 'financial_metrics' => $financialMetrics,
                 'audit_status' => $auditStatus
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->handleError($e->getMessage());
         }
     }
@@ -308,7 +308,7 @@ class CAController extends BaseController
                 'success' => true,
                 'message' => "Invoice {$action} successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -380,7 +380,7 @@ class CAController extends BaseController
                 'success' => true,
                 'message' => "Tax compliance updated successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -452,7 +452,7 @@ class CAController extends BaseController
                 'success' => true,
                 'message' => "Budget updated successfully"
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()
@@ -482,7 +482,7 @@ class CAController extends BaseController
                 default:
                     throw new Exception("Invalid report type");
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => $e->getMessage()

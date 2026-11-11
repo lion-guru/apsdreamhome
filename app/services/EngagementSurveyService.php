@@ -288,10 +288,10 @@ class EngagementSurveyService
 
         $whereSql = 'WHERE ' . implode(' AND ', $where);
 
-        $sql = "SELECT sr.*, e.name as employee_name, e.email as employee_email, e.department
+        $sql = "SELECT sr.*, u.name as employee_name, u.email as employee_email, ep.department
             FROM survey_responses sr
-            JOIN employees e ON sr.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = sr.employee_id OR ep.user_id = sr.employee_id OR ep.id = sr.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             $whereSql
             ORDER BY sr.submitted_at DESC";
 

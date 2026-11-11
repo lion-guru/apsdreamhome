@@ -118,7 +118,7 @@ class LeadCustomFieldValue extends Model
                         }, $fieldValue));
                     }
                     return date('Y-m-d', strtotime($fieldValue));
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     return $fieldValue;
                 }
 
@@ -130,7 +130,7 @@ class LeadCustomFieldValue extends Model
                         }, $fieldValue));
                     }
                     return date('Y-m-d H:i:s', strtotime($fieldValue));
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     return $fieldValue;
                 }
 

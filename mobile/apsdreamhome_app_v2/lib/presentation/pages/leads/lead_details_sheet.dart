@@ -6,6 +6,8 @@ import 'package:uuid/uuid.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/lead_model.dart';
 import '../../widgets/status_badge.dart';
+import '../../widgets/ai/ai_score_badge.dart';
+import '../../widgets/ai/deal_probability_card.dart';
 
 class AddLeadSheet extends ConsumerStatefulWidget {
   const AddLeadSheet({
@@ -305,9 +307,19 @@ class LeadDetailsSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Status Badge
-                      StatusBadge(
-                        status: lead.status ?? '',
-                        color: _getStatusColor(lead.status ?? ''),
+                      Row(
+                        children: [
+                          StatusBadge(
+                            status: lead.status ?? '',
+                            color: _getStatusColor(lead.status ?? ''),
+                          ),
+                          const SizedBox(width: 12),
+                          AIScoreBadge(
+                            score: lead.aiScore,
+                            showLabel: true,
+                            size: AIScoreBadgeSize.medium,
+                          ),
+                        ],
                       ),
 
                       const SizedBox(height: 20),
@@ -353,6 +365,13 @@ class LeadDetailsSheet extends StatelessWidget {
                           ),
                         const SizedBox(height: 20),
                       ],
+
+                      // Deal Probability
+                      DealProbabilityCard(
+                        probability: lead.dealProbability,
+                        factors: lead.dealProbabilityFactors,
+                      ),
+                      const SizedBox(height: 20),
 
                       // Notes
                       if (lead.followUpNotes != null && lead.followUpNotes!.isNotEmpty) ...[

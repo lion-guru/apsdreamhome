@@ -55,7 +55,7 @@ class PropertyValuationController extends BaseController
         try {
             $result = $this->valuationEngine->generateValuation($propertyId);
             $this->jsonResponse($result);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Valuation engine error: " . $e->getMessage());
             $this->jsonResponse([
                 'success' => false,

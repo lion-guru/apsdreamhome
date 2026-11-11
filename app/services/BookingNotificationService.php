@@ -517,13 +517,13 @@ class BookingNotificationService
     {
         if (empty($to)) return false;
 
-        // Try SmsSenderService first
+        // Try unified SmsService first
         try {
-            $sender = new \App\Services\Communication\SmsSenderService();
-            $result = $sender->send($to, $message);
+            $smsService = new \App\Services\Communication\SmsService();
+            $result = $smsService->send($to, $message);
             return $result['success'] ?? false;
         } catch (\Throwable $e) {
-            error_log("[BookingNotificationService] SmsSender failed: " . $e->getMessage());
+            error_log("[BookingNotificationService] SmsService failed: " . $e->getMessage());
         }
 
         // Fallback: log to sms_queue

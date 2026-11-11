@@ -236,7 +236,7 @@ class PricePredictor
                         ];
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 continue;
             }
         }
@@ -249,7 +249,7 @@ class PricePredictor
         try {
             $stmt = $this->db->query("SHOW COLUMNS FROM $table LIKE '$column'");
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -313,7 +313,7 @@ class PricePredictor
             $placeholders = implode(', ', array_fill(0, count($values), '?'));
             $stmt = $this->db->prepare("INSERT INTO ai_price_models ($colStr) VALUES ($placeholders)");
             $stmt->execute($values);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Model save is best-effort
         error_log($e->getMessage());
         }

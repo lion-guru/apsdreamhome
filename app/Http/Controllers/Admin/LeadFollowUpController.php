@@ -45,7 +45,7 @@ class LeadFollowUpController extends AdminController
 
             echo json_encode(['success' => true, 'message' => 'Follow-ups sent successfully']);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
             exit;
         }

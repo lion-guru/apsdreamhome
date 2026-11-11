@@ -160,7 +160,7 @@ class AucBrainService
                 ['name' => 'Suryoday Plot', 'price' => 500000, 'area' => 1200],
                 ['name' => 'Raghunath Plot', 'price' => 450000, 'area' => 1000],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $cache = [['name' => 'Suryoday Plot', 'price' => 500000, 'area' => 1200]];
         }
         return $cache;
@@ -186,7 +186,7 @@ class AucBrainService
                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)
             ");
             $stmt->execute([$sessionId, $userId, $channel, $message, $response, $intent, $lang, $this->tenantId()]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AUC log error: " . $e->getMessage());
         }
     }

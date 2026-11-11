@@ -37,7 +37,9 @@ class PlotDemarcationController extends AdminController
             "SELECT p.id, p.plot_number, p.area_sqft, c.name AS colony_name
              FROM plots p
              JOIN colonies c ON p.colony_id = c.id
-             ORDER BY c.name ASC, p.plot_number ASC"
+             WHERE c.is_active = 1" . ($colonyId ? " AND c.id = " . (int)$colonyId : "") . "
+             ORDER BY c.name ASC, p.plot_number ASC
+             LIMIT 500"
         )->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
         $this->render('admin/plots/demarcation', [

@@ -4,7 +4,7 @@ namespace App\Services\HR;
 
 use App\Core\Database\Database;
 use App\Services\LoggingService;
-use App\Services\EmailService;
+use App\Services\Communication\EmailService;
 use Exception;
 use InvalidArgumentException;
 use RuntimeException;
@@ -257,7 +257,7 @@ class CareerService
         $body = $this->generateHRNotificationEmail($data, $resumeFile);
 
         // Send email using email service
-        $emailService = new EmailService();
+        $emailService = new \App\Services\Communication\EmailService();
         $emailService->send($to, $subject, $body);
     }
 
@@ -272,7 +272,7 @@ class CareerService
         $body = $this->generateApplicantConfirmationEmail($data);
 
         // Send email using email service
-        $emailService = new EmailService();
+        $emailService = new \App\Services\Communication\EmailService();
         $emailService->send($to, $subject, $body);
     }
 

@@ -103,7 +103,7 @@ class ProjectController extends AdminController
             ];
 
             return $this->render('admin/projects/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Project Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load projects');
             return $this->redirect('admin/dashboard');
@@ -123,7 +123,7 @@ class ProjectController extends AdminController
             ];
 
             return $this->render('admin/projects/create', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Project Create error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load project form');
             return $this->redirect('admin/projects');
@@ -216,7 +216,7 @@ class ProjectController extends AdminController
             }
 
             return $this->jsonError('Failed to create project', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Project Store error: " . $e->getMessage());
             return $this->jsonError('Failed to create project', 500);
         }
@@ -274,7 +274,7 @@ class ProjectController extends AdminController
             ];
 
             return $this->render('admin/projects/show', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Project Show error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load project details');
             return $this->redirect('admin/projects');
@@ -312,7 +312,7 @@ class ProjectController extends AdminController
             ];
 
             return $this->render('admin/projects/edit', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Project Edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load project form');
             return $this->redirect('admin/projects');
@@ -450,7 +450,7 @@ class ProjectController extends AdminController
             $this->invalidateHeaderProjectsCache();
 
             return $this->jsonError('Failed to update project', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Project Update error: " . $e->getMessage());
             return $this->jsonError('Failed to update project', 500);
         }
@@ -470,7 +470,7 @@ class ProjectController extends AdminController
             // table that the public header dropdown reads from.
             \App\Services\Cache\HotPathCacheService::invalidateHeaderProjects();
             \App\Services\Cache\HotPathCacheService::invalidateHomeFeatured();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Cache invalidation error: ' . $e->getMessage());
         }
     }
@@ -538,7 +538,7 @@ class ProjectController extends AdminController
             $this->invalidateHeaderProjectsCache();
 
             return $this->jsonError('Failed to delete project', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Project Destroy error: " . $e->getMessage());
             return $this->jsonError('Failed to delete project', 500);
         }
@@ -558,7 +558,7 @@ class ProjectController extends AdminController
             ];
 
             return $this->render('admin/projects/analytics', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Project Analytics error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load project analytics');
             return $this->redirect('admin/projects');
@@ -612,7 +612,7 @@ class ProjectController extends AdminController
             }
 
             return null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Upload Image error: " . $e->getMessage());
             return null;
         }
@@ -653,7 +653,7 @@ class ProjectController extends AdminController
             $analytics['timeline'] = $this->db->fetchAll($sql) ?: [];
 
             return $analytics;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Project Analytics error: " . $e->getMessage());
             return [];
         }
@@ -697,7 +697,7 @@ class ProjectController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Project Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,

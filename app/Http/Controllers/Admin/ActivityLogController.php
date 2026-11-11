@@ -15,7 +15,7 @@ class ActivityLogController extends AdminController
                 'unique_users' => (int)$db->query("SELECT COUNT(DISTINCT user_id) FROM audit_logs WHERE user_id IS NOT NULL")->fetchColumn(),
             ];
             $top_actions = $db->query("SELECT action, COUNT(*) as cnt FROM audit_logs GROUP BY action ORDER BY cnt DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $logs = [];
             $stats = ['total' => 0, 'today' => 0, 'unique_users' => 0];
             $top_actions = [];

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Employee;
 
-use \App\Traits\TenantAwareTrait;
+use App\Traits\TenantAwareTrait;
 
 class EmployeeTaxComplianceController extends AdminController
 {
@@ -27,7 +27,7 @@ class EmployeeTaxComplianceController extends AdminController
                 WHERE employee_id = ? 
                 ORDER BY financial_year DESC
             ", [$employeeId]);
-        } catch (\Exception $e) {}
+        } catch (\Throwable $e) {}
 
         $this->data = [
             'page_title' => 'TDS & GST Compliance',

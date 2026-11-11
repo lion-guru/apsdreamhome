@@ -80,7 +80,7 @@ class ProfileController extends BaseController
             $user = $db->fetchOne("SELECT * FROM users WHERE id = ?{$tidSql} LIMIT 1", $params);
 
             // Get associate info
-            $assoc = $db->fetchOne("SELECT * FROM associates WHERE user_id = ?{$tidSql} LIMIT 1", $params);
+            $assoc = (new \App\Services\IdentityService())->getAssociateProfile((int)$userId, true);
 
             // Get wallet
             $wallet = $db->fetchOne("SELECT points_balance AS balance FROM wallet_points WHERE user_id = ?{$tidSql} LIMIT 1", $params);
@@ -227,7 +227,7 @@ class ProfileController extends BaseController
             $user = $db->fetchOne("SELECT * FROM users WHERE id = ?{$tidSql} LIMIT 1", $params);
 
             // Get associate info
-            $assoc = $db->fetchOne("SELECT * FROM associates WHERE user_id = ?{$tidSql} LIMIT 1", $params);
+            $assoc = (new \App\Services\IdentityService())->getAssociateProfile((int)$userId, true);
 
             // Get referral code
             $referralCode = $user['referral_code'] ?? 'APS' . str_pad($userId, 6, '0', STR_PAD_LEFT);

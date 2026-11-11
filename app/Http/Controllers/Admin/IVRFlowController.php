@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use \App\Traits\TenantAwareTrait;
+use App\Traits\TenantAwareTrait;
 
 class IVRFlowController extends AdminController
 {
@@ -28,7 +28,7 @@ class IVRFlowController extends AdminController
                 FROM ivr_flows f
                 ORDER BY f.created_at DESC
             ");
-        } catch (\Exception $e) {}
+        } catch (\Throwable $e) {}
 
         $this->data = [
             'page_title' => 'IVR Flows',
@@ -67,7 +67,7 @@ class IVRFlowController extends AdminController
             ", [$name, $description, $welcome_message, $is_active]);
             $this->setFlash('success', 'IVR Flow created successfully');
             $this->redirect('/admin/ivr-flows');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to create flow: ' . $e->getMessage());
             $this->redirect('/admin/ivr-flows/create');
         }
@@ -81,7 +81,7 @@ class IVRFlowController extends AdminController
         try {
             $flow = $this->db->fetchOne("SELECT * FROM ivr_flows WHERE id = ?", [$id]);
             $steps = $this->db->fetchAll("SELECT * FROM ivr_flow_steps WHERE flow_id = ? ORDER BY step_order", [$id]);
-        } catch (\Exception $e) {}
+        } catch (\Throwable $e) {}
 
         if (!$flow) {
             $this->setFlash('error', 'Flow not found');
@@ -114,7 +114,7 @@ class IVRFlowController extends AdminController
             ", [$name, $description, $welcome_message, $is_active, $id]);
             $this->setFlash('success', 'IVR Flow updated successfully');
             $this->redirect('/admin/ivr-flows');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to update flow: ' . $e->getMessage());
             $this->redirect("/admin/ivr-flows/$id/edit");
         }
@@ -129,7 +129,7 @@ class IVRFlowController extends AdminController
             $this->db->execute("DELETE FROM ivr_flow_steps WHERE flow_id = ?", [$id]);
             $this->db->execute("DELETE FROM ivr_flows WHERE id = ?", [$id]);
             $this->setFlash('success', 'IVR Flow deleted successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to delete flow: ' . $e->getMessage());
         }
         $this->redirect('/admin/ivr-flows');
@@ -149,7 +149,7 @@ class IVRFlowController extends AdminController
         $steps = [];
         try {
             $steps = $this->db->fetchAll("SELECT * FROM ivr_flow_steps WHERE flow_id = ? ORDER BY step_order", [$flowId]);
-        } catch (\Exception $e) {}
+        } catch (\Throwable $e) {}
 
         $this->data = [
             'page_title' => 'IVR Steps: ' . $flow['name'],

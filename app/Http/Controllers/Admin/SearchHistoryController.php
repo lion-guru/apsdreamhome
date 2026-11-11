@@ -82,7 +82,7 @@ class SearchHistoryController extends AdminController
                 $stmt = $pdo->prepare($statsSql);
                 $stmt->execute($params);
                 $stats['unique_users'] = (int)$stmt->fetchColumn();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("[SearchHistoryController] unique_users stats error: " . $e->getMessage());
             }
 
@@ -94,13 +94,13 @@ class SearchHistoryController extends AdminController
                 if ($topRow) {
                     $stats['top_entity'] = $topRow['entity_type'];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("[SearchHistoryController] top_entity stats error: " . $e->getMessage());
             }
 
             $entityTypes = ['properties', 'plots', 'colonies', 'leads', 'all'];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[SearchHistoryController] index error: " . $e->getMessage());
             $history = [];
             $stats = ['total_searches' => 0, 'unique_users' => 0, 'top_entity' => '-'];

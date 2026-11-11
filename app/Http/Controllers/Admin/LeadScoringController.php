@@ -67,7 +67,7 @@ class LeadScoringController extends AdminController
             ];
 
             $this->render('admin/leads/scoring', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LeadScoringController::index error: " . $e->getMessage());
             // Show dashboard with empty data instead of redirecting
             $data = [
@@ -96,7 +96,7 @@ class LeadScoringController extends AdminController
         try {
             $this->pdo->query("SELECT 1 FROM lead_scoring LIMIT 1");
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -125,7 +125,7 @@ class LeadScoringController extends AdminController
 
             $this->setFlash('success', "Recalculated scores for {$updated} leads");
             $this->redirect('/admin/leads/scoring');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LeadScoringController::recalculateScores error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to recalculate scores');
             $this->redirect('/admin/leads/scoring');
@@ -153,7 +153,7 @@ class LeadScoringController extends AdminController
                 'score_breakdown' => $scoreBreakdown,
                 'score_history' => $scoreHistory
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LeadScoringController::getScoreDetails error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => 'Failed to get score details']);
         }
@@ -196,7 +196,7 @@ class LeadScoringController extends AdminController
 
             fclose($output);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LeadScoringController::export error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to export leads');
             $this->redirect('/admin/leads/scoring');
@@ -421,7 +421,7 @@ class LeadScoringController extends AdminController
             }
 
             // Lead score updates are already saved above in lead_scoring table
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LeadScoringController::saveLeadScore error: " . $e->getMessage());
         }
     }
@@ -472,7 +472,7 @@ class LeadScoringController extends AdminController
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -500,7 +500,7 @@ class LeadScoringController extends AdminController
                 'cold_count' => $result['cold_count'] ?? 0,
                 'total_scored' => $result['total_scored'] ?? 0
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'hot_count' => 0,
                 'warm_count' => 0,
@@ -519,7 +519,7 @@ class LeadScoringController extends AdminController
             $sql = "SELECT id, name FROM users WHERE role IN ('agent', 'manager', 'admin') AND status = 'active' ORDER BY name";
             $stmt = $this->pdo->query($sql);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -546,7 +546,7 @@ class LeadScoringController extends AdminController
                 'min_score' => $result['min_score'] ?? 0,
                 'total_scored' => $result['total_scored'] ?? 0
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'avg_score' => 0,
                 'max_score' => 0,
@@ -661,7 +661,7 @@ class LeadScoringController extends AdminController
                 'message' => "Auto-assigned {$assigned} leads",
                 'assigned' => $assigned
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LeadScoringController::autoAssign error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
@@ -702,7 +702,7 @@ class LeadScoringController extends AdminController
                 'score' => $score['total'],
                 'breakdown' => $score['breakdown']
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LeadScoringController::rescore error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
@@ -729,7 +729,7 @@ class LeadScoringController extends AdminController
             ];
 
             $this->render('admin/leads/scoring_show', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LeadScoringController::show error: " . $e->getMessage());
             $this->render('admin/leads/scoring_show', [
                 'page_title' => 'Lead Score Detail',

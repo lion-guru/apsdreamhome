@@ -399,6 +399,7 @@ class WhatsAppService
                 $this->createInboundLead($digits, $t, 'associate_join');
             }
         } else {
+            // Try keyword matching first
             if (preg_match('/\b(2|visit|cab|site|sunday|tour|dekhna|pickup)\b/u', $t)) {
                 $intent = 'site_visit';
             } elseif (preg_match('/\b(3|emi|book|payment|passbook|receipt|due|kist)\b/u', $t)) {
@@ -409,9 +410,23 @@ class WhatsAppService
                 $intent = 'plots';
             } elseif (preg_match('/\b(hi|hii+|hello|hey|namaste|namaskar|ram ram|start|menu|help)\b/u', $t)) {
                 $intent = 'menu';
+            } else {
+                // No keyword match - try AI bot for intelligent response
+                try {
+                    $aiBot = new \App\Services\WhatsAppAIBot();
+                    $aiResult = $aiBot->processMessage($from, $text, []);
+                    if (!empty($aiResult['response'])) {
+                        $reply = $aiResult['response'];
+                        $intent = $aiResult['action'] ?? 'ai_response';
+                        $aiHandled = true;
+                    }
+                } catch (\Throwable $e) {
+                    error_log("WhatsApp AI bot failed: " . $e->getMessage());
+                }
             }
 
             $base = defined('BASE_URL') ? BASE_URL : '';
+            if (empty($aiHandled)) {
             switch ($intent) {
                 case 'plots':
                     $reply = "*APS Dream Home — New Townships*\n" . $this->townshipLines()
@@ -445,6 +460,7 @@ class WhatsAppService
                         . "3 - My Booking & EMI Passbook\n"
                         . "4 - Become Associate (earn Rs.50,000/mo)";
                     break;
+            }
             }
         }
 

@@ -118,9 +118,12 @@ class DynamicPricingService
             $seasonFactor = in_array($month, [10, 11, 12, 1, 2, 3], true) ? 1.00
                           : (in_array($month, [4, 5, 6], true) ? 0.85 : 0.95);
 
-            $currentBase = (float)$colony['min_price_per_sqft'] > 0
+            $anchorBase = (float)$colony['min_price_per_sqft'] > 0
                 ? (float)$colony['min_price_per_sqft']
                 : ((float)$p['avg_base_pps'] > 0 ? (float)$p['avg_base_pps'] : 0.0);
+            // Stale-anchor guard: anchor < 10% of live avg pps is data garbage — use live avg
+            $liveAvg = (float)$p['avg_base_pps'] > 0 ? (float)$p['avg_base_pps'] : (float)$p['avg_pps'];
+            $currentBase = ($liveAvg > 0 && $anchorBase < $liveAvg * 0.1) ? $liveAvg : $anchorBase;
 
             return [
                 'colony_id'        => $colonyId,
@@ -292,6 +295,46 @@ class DynamicPricingService
             }
         }
         return $summary;
+    }
+
+    /**
+     * Feedback: latest suggestion per colony vs realized avg pps of sold/booked plots.
+     * Error = (realized - predicted_current) pct — demand model calibration signal.
+     */
+    public function getFeedbackReport(): array
+    {
+        try {
+            $rows = $this->pdo->prepare("
+                SELECT s.colony_id, s.current_base_pps, s.suggested_base_pps, s.status,
+                       COALESCE(r.realized_pps, 0) as realized_pps,
+                       COALESCE(r.realized_n, 0) as realized_n
+                FROM dynamic_pricing_suggestions s
+                LEFT JOIN (
+                    SELECT colony_id, AVG(price_per_sqft) as realized_pps, COUNT(*) as realized_n
+                    FROM plots WHERE status IN ('booked','sold')
+                    GROUP BY colony_id
+                ) r ON r.colony_id = s.colony_id
+                ORDER BY s.created_at DESC
+            ");
+            $rows->execute();
+            $out = [];
+            foreach ($rows->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+                $current = (float) $row['current_base_pps'] ?: 1.0;
+                $realized = (float) $row['realized_pps'];
+                $out[] = [
+                    'colony_id' => (int) $row['colony_id'],
+                    'status' => $row['status'],
+                    'predicted_pps' => (float) $row['current_base_pps'],
+                    'realized_pps' => $realized,
+                    'error_pct' => $realized > 0 ? round(($realized - $current) / $current * 100, 1) : null,
+                    'realized_n' => (int) $row['realized_n'],
+                ];
+            }
+            return $out;
+        } catch (\Throwable $e) {
+            error_log('[DynamicPricingService::getFeedbackReport] ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**

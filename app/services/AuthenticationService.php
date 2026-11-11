@@ -420,7 +420,7 @@ class AuthenticationService
             try {
                 $emailService = new \App\Services\Communication\EmailService();
                 $emailService->sendPasswordResetEmail($email, $token);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Failed to send password reset email: " . $e->getMessage());
             }
 

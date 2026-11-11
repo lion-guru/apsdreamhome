@@ -319,7 +319,7 @@ class EMICalculatorService
             
             return ['success' => true, 'plan_id' => $planId];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $pdo->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -416,7 +416,7 @@ class EMICalculatorService
                 'installment_count' => count($milestones)
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

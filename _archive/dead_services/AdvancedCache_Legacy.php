@@ -94,7 +94,7 @@ class AdvancedCache {
                 $this->config->get('REDIS_HOST', '127.0.0.1'),
                 $this->config->get('REDIS_PORT', 6379)
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Redis Connection Failed', [
                 'error' => $e->getMessage()
             ]);

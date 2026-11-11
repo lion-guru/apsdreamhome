@@ -33,7 +33,7 @@ class SalaryController extends AdminController
                 LEFT JOIN users u ON sp.employee_id = u.id
                 ORDER BY sp.created_at DESC LIMIT 10
             ") ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $totalPaid = 0; $pendingCount = 0; $employeeCount = 0; $pendingAmount = 0; $recentPayments = [];
         }
         return $this->render('admin/salary/index', [
@@ -56,7 +56,7 @@ class SalaryController extends AdminController
         try {
             $svc = new \App\Services\PayrollPeriodService();
             $periods = $svc->getAllPeriods();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $periods = [];
         }
         return $this->render('admin/salary/periods', [
@@ -78,7 +78,7 @@ class SalaryController extends AdminController
             } else {
                 $this->setFlash('error', 'Period not found');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', $e->getMessage());
         }
         $this->redirect('/admin/salary/periods');
@@ -111,7 +111,7 @@ class SalaryController extends AdminController
                 ORDER BY a.registration_count DESC, a.total_sales DESC
                 LIMIT 50
             ", $tidParams) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $totalAssociates = 0; $salaryEligible = 0; $targetBonusEligible = 0;
             $totalSalaryAmount = 0; $totalTargetBonus = 0; $associates = [];
         }
@@ -151,7 +151,7 @@ class SalaryController extends AdminController
 
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'message' => 'Associate salary updated successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -194,7 +194,7 @@ class SalaryController extends AdminController
             // 1. Calculate CRM Conversion Bonus
             $crmBonus = 0;
             // Find employee_id for this associate's user_id
-            $emp = $this->db->fetch("SELECT id FROM employees WHERE user_id=?", [$associate['user_id']]);
+            $emp = $this->db->fetch("SELECT id FROM employee_profiles WHERE user_id=?", [$associate['user_id']]);
             $employeeId = $emp['id'] ?? 0;
             $convertedLeads = 0;
             
@@ -240,7 +240,7 @@ class SalaryController extends AdminController
 
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'message' => 'Salary payment processed successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -264,7 +264,7 @@ class SalaryController extends AdminController
             ") ?? [];
             $tiers = $svc->getSalaryTiers();
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role IN ('associate','agent') AND status='active' ORDER BY name") ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $grants = []; $tiers = []; $users = [];
         }
         return $this->render('admin/salary/salary_grants', [
@@ -288,7 +288,7 @@ class SalaryController extends AdminController
             } else {
                 $this->setFlash('error', 'Not eligible or grant already active');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/salary-grants');
@@ -307,7 +307,7 @@ class SalaryController extends AdminController
             } else {
                 $this->setFlash('error', 'Processing failed: ' . ($res['error'] ?? 'unknown'));
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/salary-grants');
@@ -324,7 +324,7 @@ class SalaryController extends AdminController
                 GROUP BY DATE_FORMAT(payment_date,'%Y-%m') ORDER BY MIN(payment_date)
             ") ?: [];
             echo json_encode(['success' => true, 'data' => $monthly]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -346,7 +346,7 @@ class SalaryController extends AdminController
                 ORDER BY s.status DESC, s.created_at DESC
             ") ?? [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $structures = []; $users = [];
         }
         return $this->render('admin/salary/structures', [
@@ -379,7 +379,7 @@ class SalaryController extends AdminController
             $sid = $this->db->lastInsertId();
             $this->logHistory($employee_id, 'salary_structure_created', '0', (string)$sid, (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Salary structure created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/structures');
@@ -392,7 +392,7 @@ class SalaryController extends AdminController
         try {
             $structure = $this->db->fetch("SELECT s.*, u.name as employee_name FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id WHERE s.id=?", [$id]);
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $structure = null; $users = [];
         }
         if (!$structure) { $this->setFlash('error', 'Not found'); $this->redirect('/admin/salary/structures'); }
@@ -423,7 +423,7 @@ class SalaryController extends AdminController
         try {
             $this->db->execute("UPDATE salary_structures SET basic_salary=?, hra=?, conveyance=?, medical_allowance=?, special_allowance=?, other_allowances=?, pf_employee=?, tds=?, effective_date=? WHERE id=? AND tenant_id=?", [$basic, $hra, $conveyance, $medical, $special, $other_allowances, $pf_employee, $tds, $eff, $id, $tid]);
             $this->setFlash('success', 'Structure updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/structures');
@@ -448,7 +448,7 @@ class SalaryController extends AdminController
             $sql .= " ORDER BY sp.created_at DESC LIMIT 100";
             $payments = $this->db->fetchAll($sql, $params) ?? [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $payments = []; $users = [];
         }
         return $this->render('admin/salary/payments', [
@@ -467,7 +467,7 @@ class SalaryController extends AdminController
         try {
             $users = $this->db->fetchAll("SELECT DISTINCT u.id, u.name FROM users u JOIN salary_structures s ON u.id=s.employee_id WHERE s.status='active' AND u.role='employee' {$tidSql} ORDER BY u.name", $tidParams) ?? [];
             $structures = $this->db->fetchAll("SELECT s.*, u.name as employee_name FROM salary_structures s LEFT JOIN users u ON s.employee_id=u.id WHERE s.status='active' ORDER BY u.name") ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $users = []; $structures = [];
         }
         return $this->render('admin/salary/payment_create', [
@@ -501,7 +501,7 @@ class SalaryController extends AdminController
             $stmt->execute([$employee_id, $structure_id ?: null, $month, $year, $payment_date, $basic, $gross, $deductions, $net, $method, $txn, $status, (int)($_SESSION['admin_id'] ?? 0), $notes, $tid]);
             $this->logHistory($employee_id, 'payment_created', '0', number_format($net, 2), (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Payment record created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/payments');
@@ -512,7 +512,7 @@ class SalaryController extends AdminController
         $this->requireAdmin();
         try {
             $payment = $this->db->fetch("SELECT sp.*, u.name as employee_name, u.email as employee_email, u.phone as employee_phone FROM salary_payments sp LEFT JOIN users u ON sp.employee_id=u.id WHERE sp.id=?", [$id]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $payment = null;
         }
         if (!$payment) { $this->setFlash('error', 'Payment not found'); $this->redirect('/admin/salary/payments'); }
@@ -533,7 +533,7 @@ class SalaryController extends AdminController
             if ($p['payment_status'] === 'cancelled') { $this->setFlash('error', 'Cancelled payment cannot be marked paid'); $this->redirect('/admin/salary/payments'); }
             $this->db->execute("UPDATE salary_payments SET payment_status='paid', payment_date=CURDATE() WHERE id=? AND tenant_id=?", [$id, $tid]);
             $this->setFlash('success', 'Payment #' . (int)$id . ' marked as paid');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[SalaryController] " . __METHOD__ . "() exception: " . $e->getMessage());
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
@@ -551,7 +551,7 @@ class SalaryController extends AdminController
             if ($p['payment_status'] === 'cancelled') { $this->setFlash('error', 'Payment is already cancelled'); $this->redirect('/admin/salary/payments'); }
             $this->db->execute("UPDATE salary_payments SET payment_status='cancelled' WHERE id=? AND tenant_id=?", [$id, $tid]);
             $this->setFlash('success', 'Payment #' . (int)$id . ' cancelled');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[SalaryController] " . __METHOD__ . "() exception: " . $e->getMessage());
             $this->setFlash('error', 'Error: ' . $e->getMessage());
         }
@@ -661,7 +661,7 @@ class SalaryController extends AdminController
                 $count++;
             }
             $this->setFlash('success', "Bulk processed $count users with LOP & CRM Bonuses");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Bulk failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/payments');
@@ -685,7 +685,7 @@ class SalaryController extends AdminController
             ") ?? [];
             $payouts = $this->db->fetchAll("SELECT po.*, u.name as employee_name FROM salary_payouts po LEFT JOIN users u ON po.employee_id=u.id ORDER BY po.created_at DESC LIMIT 100") ?? [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' AND status='active' {$tidSql} ORDER BY name", $tidParams) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $batches = []; $payouts = []; $users = [];
         }
         return $this->render('admin/salary/payouts', [
@@ -712,7 +712,7 @@ class SalaryController extends AdminController
                 $this->db->execute("INSERT INTO salary_payouts (payout_batch_id, employee_id, amount, payout_date, status, payment_method, notes, tenant_id, created_at) VALUES (?,?,?,?,?,?,?, ?,NOW())", [$batch_id, (int)$eid, $amt, date('Y-m-d'), 'pending', $method, $notes, (int)$this->tenantId()]);
             }
             $this->setFlash('success', "Payout batch $batch_id created");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/payouts');
@@ -728,7 +728,7 @@ class SalaryController extends AdminController
             $tid = (int)$this->tenantId();
             $this->db->execute("UPDATE salary_payouts SET status='processed', reference_no=?, payout_date=CURDATE() WHERE id=? AND tenant_id=?", [$ref, $id, $tid]);
             $this->setFlash('success', 'Payout processed');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/payouts');
@@ -752,7 +752,7 @@ class SalaryController extends AdminController
             $advances = $this->db->fetchAll($sql, $params) ?? [];
             $users = $this->db->fetchAll("SELECT e.id, u.name, e.employee_code FROM employees e JOIN users u ON e.user_id=u.id WHERE e.status='active' {$tidSql} ORDER BY u.name", $tidParams) ?? [];
             $summary = $this->db->fetch("SELECT COUNT(*) as total, COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END),0) as pending_amount, COALESCE(SUM(CASE WHEN status='active' THEN amount ELSE 0 END),0) as active_amount FROM employee_advances") ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $advances = []; $users = []; $summary = [];
         }
         return $this->render('admin/salary/advances', [
@@ -784,7 +784,7 @@ class SalaryController extends AdminController
             } else {
                 $this->setFlash('error', 'Failed: ' . $result['message']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/advances');
@@ -800,7 +800,7 @@ class SalaryController extends AdminController
             } else {
                 $this->setFlash('error', 'Advance not found or already processed');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/advances');
@@ -813,7 +813,7 @@ class SalaryController extends AdminController
             $tid = (int)$this->tenantId();
             $this->db->execute("UPDATE employee_advances SET status='rejected' WHERE id=? AND status='pending' AND tenant_id=?", [(int)$id, $tid]);
             $this->setFlash('success', 'Advance rejected');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/advances');
@@ -835,7 +835,7 @@ class SalaryController extends AdminController
             $sql .= " ORDER BY r.created_at DESC LIMIT 200";
             $claims = $this->db->fetchAll($sql, $params) ?? [];
             $summary = $this->db->fetch("SELECT COUNT(*) as total, COALESCE(SUM(CASE WHEN status='pending' THEN amount ELSE 0 END),0) as pending_amount, COALESCE(SUM(CASE WHEN status='paid' THEN amount ELSE 0 END),0) as paid_amount FROM employee_reimbursements") ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $claims = []; $summary = [];
         }
         return $this->render('admin/salary/reimbursements', [
@@ -853,7 +853,7 @@ class SalaryController extends AdminController
             $tid = (int)$this->tenantId();
             $this->db->execute("UPDATE employee_reimbursements SET status='approved', approved_by=?, approved_at=NOW() WHERE id=? AND status='pending' AND tenant_id=?", [(int)($_SESSION['admin_id'] ?? 0), (int)$id, $tid]);
             $this->setFlash('success', 'Claim approved');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/reimbursements');
@@ -867,7 +867,7 @@ class SalaryController extends AdminController
             $tid = (int)$this->tenantId();
             $this->db->execute("UPDATE employee_reimbursements SET status='rejected', rejection_reason=?, approved_by=?, approved_at=NOW() WHERE id=? AND status='pending' AND tenant_id=?", [trim($_POST['rejection_reason'] ?? ''), (int)($_SESSION['admin_id'] ?? 0), (int)$id, $tid]);
             $this->setFlash('success', 'Claim rejected');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/reimbursements');
@@ -881,7 +881,7 @@ class SalaryController extends AdminController
             $tid = (int)$this->tenantId();
             $this->db->execute("UPDATE employee_reimbursements SET status='paid', paid_at=NOW(), payment_reference=? WHERE id=? AND status='approved' AND tenant_id=?", [trim($_POST['payment_reference'] ?? ('PAY-' . date('YmdHis'))), (int)$id, $tid]);
             $this->setFlash('success', 'Claim marked as paid');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/reimbursements');
@@ -904,7 +904,7 @@ class SalaryController extends AdminController
             $sql .= " ORDER BY sh.created_at DESC LIMIT 200";
             $history = $this->db->fetchAll($sql, $params) ?? [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $history = []; $users = [];
         }
         return $this->render('admin/salary/history', [
@@ -921,7 +921,7 @@ class SalaryController extends AdminController
         try {
             $employee = $this->db->fetch("SELECT id, name, email FROM users WHERE id=?", [$id]);
             $history = $this->db->fetchAll("SELECT sh.*, uc.name as changed_by_name FROM salary_history sh LEFT JOIN users uc ON sh.approved_by=uc.id WHERE sh.employee_id=? ORDER BY sh.created_at DESC LIMIT 200", [$id]) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $employee = null; $history = [];
         }
         if (!$employee) { $this->setFlash('error', 'Employee not found'); $this->redirect('/admin/salary/history'); }
@@ -951,7 +951,7 @@ class SalaryController extends AdminController
                 ORDER BY c.created_at DESC
             ") ?? [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $contracts = []; $users = [];
         }
         return $this->render('admin/salary/contracts', [
@@ -979,7 +979,7 @@ class SalaryController extends AdminController
             $this->db->execute("INSERT INTO salary_contracts (contract_number, employee_id, start_date, end_date, ctc, basic_salary, terms, status, tenant_id, created_at) VALUES (?,?,?,?,?,?,?,'active',?,NOW())", [$contractNo, $employee_id, $start, $end ?: null, $amount, $amount, $terms, $tid]);
             $this->logHistory($employee_id, 'contract_created', '0', "type=$type amount=$amount", (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Contract created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/contracts');
@@ -990,7 +990,7 @@ class SalaryController extends AdminController
         $this->requireAdmin();
         try {
             $contract = $this->db->fetch("SELECT c.*, u.name as employee_name, u.email as employee_email, c.ctc AS salary_amount, 'permanent' AS contract_type FROM salary_contracts c LEFT JOIN users u ON c.employee_id=u.id WHERE c.id=?", [$id]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $contract = null;
         }
         if (!$contract) { $this->setFlash('error', 'Contract not found'); $this->redirect('/admin/salary/contracts'); }
@@ -1010,7 +1010,7 @@ class SalaryController extends AdminController
             $this->db->execute("UPDATE salary_contracts SET status='terminated', end_date=CURDATE() WHERE id=? AND tenant_id=?", [$id, $tid]);
             $this->logHistory($contract['employee_id'], 'contract_terminated', 'active', 'terminated', (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Contract terminated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/contracts');
@@ -1025,7 +1025,7 @@ class SalaryController extends AdminController
         $this->requireAdmin();
         try {
             $plans = $this->db->fetchAll("SELECT * FROM salary_plans ORDER BY created_at DESC") ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $plans = [];
         }
         return $this->render('admin/salary/plans', [
@@ -1048,7 +1048,7 @@ class SalaryController extends AdminController
         try {
             $this->db->execute("INSERT INTO salary_plans (name, description, base_salary, bonus_percent, commission_percent, benefits_json, is_active, tenant_id, created_at) VALUES (?,?,?,?,?,?,1,?,NOW())", [$name, $desc, $base, $bonus, $comm, $benefits, $tid]);
             $this->setFlash('success', 'Plan created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/plans');
@@ -1069,7 +1069,7 @@ class SalaryController extends AdminController
         try {
             $this->db->execute("UPDATE salary_plans SET name=?, description=?, base_salary=?, bonus_percent=?, commission_percent=?, benefits_json=?, is_active=? WHERE id=? AND tenant_id=?", [$name, $desc, $base, $bonus, $comm, $benefits, $active, $id, $tid]);
             $this->setFlash('success', 'Plan updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/plans');
@@ -1097,7 +1097,7 @@ class SalaryController extends AdminController
                 if ($key === '') continue;
                 $months[$key] = ['year' => (int)substr($key, 0, 4), 'month' => (int)substr($key, 5, 2)];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $records = []; $users = []; $months = [];
         }
         return $this->render('admin/salary/records', [
@@ -1119,7 +1119,7 @@ class SalaryController extends AdminController
                 WHERE YEAR(r.pay_date)=? AND MONTH(r.pay_date)=?
                 ORDER BY u.name ASC
             ", [(int)$year, (int)$month]) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $records = [];
         }
         return $this->render('admin/salary/records', [
@@ -1153,7 +1153,7 @@ class SalaryController extends AdminController
             $sql .= " ORDER BY sp.payment_year DESC, sp.payment_month DESC LIMIT 200";
             $tracker = $this->db->fetchAll($sql, $params) ?? [];
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tracker = []; $users = [];
         }
         return $this->render('admin/salary/tracker', [
@@ -1181,7 +1181,7 @@ class SalaryController extends AdminController
             $this->db->execute("UPDATE salary_payments SET payment_status=?, payment_date=? WHERE id=? AND tenant_id=?", [$status, $date, $id, $tid]);
             $this->logHistory($current['employee_id'], 'tracker_updated', $current['payment_status'] ?? '', $status, (int)($_SESSION['admin_id'] ?? 0));
             $this->setFlash('success', 'Tracker updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/salary/tracker');
@@ -1219,7 +1219,7 @@ class SalaryController extends AdminController
             $total_net = array_sum(array_column($payments, 'net_amount'));
             $total_ded = array_sum(array_column($payments, 'deduction_amount'));
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE role='employee' {$tidSql} ORDER BY name", $tidParams) ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $payments = []; $total_gross = 0; $total_net = 0; $total_ded = 0; $users = [];
         }
         return $this->render('admin/salary/report', [
@@ -1258,7 +1258,7 @@ class SalaryController extends AdminController
                 $rr['status'] = $rr['payment_status'] ?? 'pending';
             }
             unset($rr);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $rows = [];
         }
         header('Content-Type: text/csv; charset=utf-8');
@@ -1282,7 +1282,7 @@ class SalaryController extends AdminController
         try {
             $payrollCount = $this->db->fetch("SELECT COUNT(*) as c FROM employee_payroll")['c'] ?? 0;
             $payrollTotal = $this->db->fetch("SELECT COALESCE(SUM(net_salary),0) as total FROM employee_payroll WHERE payment_status='paid'")['total'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $payrollCount = 0; $payrollTotal = 0;
         }
         return $this->render('admin/salary/payroll_integration', [
@@ -1313,7 +1313,7 @@ class SalaryController extends AdminController
         $newNum = is_numeric(str_replace([','], [''], (string)$new)) ? (float)str_replace([','], [''], (string)$new) : 0;
         try {
             $this->db->execute("INSERT INTO salary_history (employee_id, change_type, old_salary, new_salary, effective_date, reason, approved_by, tenant_id, created_at) VALUES (?,?,?,?,CURDATE(),?,?,?,?,NOW())", [$employee_id, $type, $oldNum, $newNum, "event=$field old=$old new=$new", $changed_by, (int)$this->tenantId()]);
-        } catch (\Exception $e) { error_log('SalaryController logHistory: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('SalaryController logHistory: ' . $e->getMessage()); }
     }
 
     // ──────────────────────────────────────────────
@@ -1357,7 +1357,7 @@ class SalaryController extends AdminController
             if (!empty($result['errors'])) {
                 $_SESSION['warning'] = count($result['errors']) . " errors: " . implode('; ', array_slice($result['errors'], 0, 3));
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/salary/payments');
@@ -1384,7 +1384,7 @@ class SalaryController extends AdminController
             $batchService = new \App\Services\PayrollBatchService();
             $updated = $batchService->processPayments($paymentIds, $method, $reference, $adminId);
             $_SESSION['success'] = "Processed $updated payments via $method";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/salary/payments');
@@ -1403,7 +1403,7 @@ class SalaryController extends AdminController
                 GROUP BY payment_year, payment_month, payment_status
                 ORDER BY payment_year DESC, payment_month DESC, payment_status
             ") ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $history = [];
         }
 
@@ -1458,7 +1458,7 @@ class SalaryController extends AdminController
                 $arrears = $arrearsEngine->calculateArrears($employeeId, $month, $year, $newStructure);
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $arrears = ['success' => false, 'message' => $e->getMessage()];
         }
 
@@ -1512,7 +1512,7 @@ class SalaryController extends AdminController
             } else {
                 $_SESSION['error'] = $result['message'];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
 
@@ -1532,7 +1532,7 @@ class SalaryController extends AdminController
                 WHERE sp.payment_type = 'arrears' OR sp.remarks LIKE '%Arrears%'
                 ORDER BY sp.created_at DESC
             ") ?? [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $arrears = [];
         }
 

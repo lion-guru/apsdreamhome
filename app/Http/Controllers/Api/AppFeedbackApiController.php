@@ -32,16 +32,15 @@ class AppFeedbackApiController extends BaseController
         return $userId;
     }
 
-    protected function requireAdmin(): int
+    protected function requireAdmin(): void
     {
-        $userId = $this->requireAuth();
+        $this->requireAuth();
         $role = $GLOBALS['api_user_role'] ?? '';
         if (!in_array($role, ['admin', 'employee', 'super_admin', 'superadmin'])) {
             http_response_code(403);
             echo json_encode(['success' => false, 'error' => 'Admin access required']);
             exit;
         }
-        return $userId;
     }
 
     public function index()

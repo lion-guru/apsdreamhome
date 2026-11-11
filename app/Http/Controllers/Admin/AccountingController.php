@@ -97,7 +97,7 @@ class AccountingController extends AdminController
             ];
 
             return $this->render('admin/accounting/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Accounting Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load accounting dashboard');
             return $this->redirect('admin/dashboard');
@@ -167,7 +167,7 @@ class AccountingController extends AdminController
             ];
 
             return $this->render('admin/accounting/income', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Accounting Income error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load income records');
             return $this->redirect('admin/accounting');
@@ -237,7 +237,7 @@ class AccountingController extends AdminController
             ];
 
             return $this->render('admin/accounting/expenses', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Accounting Expenses error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load expense records');
             return $this->redirect('admin/accounting');
@@ -307,7 +307,7 @@ class AccountingController extends AdminController
             }
 
             return $this->jsonError('Failed to record income', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Store Income error: " . $e->getMessage());
             return $this->jsonError('Failed to record income', 500);
         }
@@ -376,7 +376,7 @@ class AccountingController extends AdminController
             }
 
             return $this->jsonError('Failed to record expense', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Store Expense error: " . $e->getMessage());
             return $this->jsonError('Failed to record expense', 500);
         }
@@ -432,7 +432,7 @@ class AccountingController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Accounting Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
@@ -521,7 +521,7 @@ class AccountingController extends AdminController
                     ]
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Export Accounting error: " . $e->getMessage());
             return $this->jsonError('Failed to export accounting data', 500);
         }

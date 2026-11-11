@@ -207,7 +207,7 @@ try {
     echo "   - points_rules (10 rules)\n";
     echo "\n🎉 Tiers: Bronze → Silver → Gold → Platinum → Diamond\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "\n❌ Error: " . $e->getMessage() . "\n";
     exit(1);
 }

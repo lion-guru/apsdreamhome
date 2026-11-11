@@ -205,7 +205,7 @@ class RecommendationEngine
                     $row['__source'] = $t;
                     $candidates[] = $row;
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
             // table may not exist
             error_log($e->getMessage());
             }
@@ -231,12 +231,20 @@ class RecommendationEngine
     private function saveRecommendations(int $userId, string $itemType, array $items): void
     {
         $tenantIns = $this->tenantInsertData();
+        // NOTE (S451): this used to build ONE multi-row INSERT whose column
+        // list had 5 names but whose value list had 2 + 3*N entries ->
+        // "Column count doesn't match value count" (1136). The table wants
+        // ONE ROW per recommendation, so it is inserted row by row.
         $insCols = array_merge(['user_id', 'item_type', 'item_id', 'score', 'reason'], array_keys($tenantIns));
-        $insVals = array_merge([$userId, $itemType], array_map(fn($r) => $r['item']['id'] ?? 0, $items), array_map(fn($r) => $r['score'], $items), array_map(fn($r) => $r['reason'], $items), array_values($tenantIns));
         $colStr = implode(', ', $insCols);
-        $placeholders = implode(', ', array_fill(0, count($insVals), '?'));
+        $placeholders = implode(', ', array_fill(0, count($insCols), '?'));
         $stmt = $this->db->prepare("INSERT INTO ai_recommendations ($colStr) VALUES ($placeholders)");
-        $stmt->execute($insVals);
+        foreach ($items as $r) {
+            $stmt->execute(array_merge(
+                [$userId, $itemType, $r['item']['id'] ?? 0, $r['score'], $r['reason']],
+                array_values($tenantIns)
+            ));
+        }
     }
 
     /**

@@ -65,7 +65,7 @@ class TestimonialsAdminController extends AdminController
                 'statuses' => ['pending', 'approved', 'rejected'],
                 'current_status' => $status
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->view('admin/testimonials/index', [
                 'page_title' => 'Testimonials Management',
                 'testimonials' => [],
@@ -98,7 +98,7 @@ class TestimonialsAdminController extends AdminController
                 'testimonial' => $testimonial,
                 'statuses' => ['pending', 'approved', 'rejected']
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Location: ' . BASE_URL . '/admin/testimonials');
             exit;
         }
@@ -133,7 +133,7 @@ try {
                 'success' => true,
                 'message' => 'Testimonial ' . $status . ' successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonFail('Failed to update: ' . $e->getMessage(), 500);
         }
     }
@@ -149,7 +149,7 @@ try {
             $stmt->execute([$id]);
             
             return $this->jsonRespond(['success' => true, 'message' => 'Deleted']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonFail('Failed to delete', 500);
         }
     }

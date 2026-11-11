@@ -6,15 +6,25 @@ use App\Http\Controllers\Admin\AdminController;
 class ErpDashboardController extends AdminController
 {
     protected $db;
+    private $cacheService;
 
     public function __construct()
     {
         parent::__construct();
         $this->db = \App\Core\Database\Database::getInstance();
+        $this->cacheService = new \App\Services\Cache\CacheService();
     }
 
     public function inventory()
     {
+        // ── Inventory cache (5 min TTL) ──
+        $cacheKey = 'erp_inventory';
+        $cached = $this->cacheService->get($cacheKey);
+        if ($cached !== false && $cached !== null) {
+            $this->render('admin/erp/inventory', $cached);
+            return;
+        }
+
         $plots = $this->db->fetchAll("
             SELECT p.id, p.plot_number, p.area_sqft, p.total_price, p.status, p.block, p.sector,
                    c.name as colony_name,
@@ -36,12 +46,17 @@ class ErpDashboardController extends AdminController
         }
         $stats['total'] = count($plots);
 
-        $this->render('admin/erp/inventory', [
+        $finalData = [
             'page_title' => 'Plot Inventory',
             'plots' => $plots,
             'stats' => $stats,
             'currentPage' => 'erp-inventory'
-        ]);
+        ];
+
+        // Cache inventory data for 5 minutes (300 seconds)
+        $this->cacheService->set($cacheKey, $finalData, 300);
+
+        $this->render('admin/erp/inventory', $finalData);
     }
 
     public function plotProfit()
@@ -135,7 +150,7 @@ class ErpDashboardController extends AdminController
                 WHERE 1=1{$cSql}
                 ORDER BY c.name
             ", $cParams) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ErpDashboardController::colonyPnl colonies: ' . $e->getMessage());
             $colonies = [];
         }
@@ -236,7 +251,7 @@ class ErpDashboardController extends AdminController
                 $totals['plots'] += $row['plots'];
                 $totals['sold'] += $row['sold'];
                 $totals['area'] += $row['area'];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('ErpDashboardController::colonyPnl colony ' . $cid . ': ' . $e->getMessage());
             }
         }
@@ -302,7 +317,7 @@ class ErpDashboardController extends AdminController
                 ORDER BY overdue_days DESC
                 LIMIT 500
             ", $sParams) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ErpDashboardController::emiDefaulters: ' . $e->getMessage());
             $rows = [];
         }
@@ -401,7 +416,7 @@ class ErpDashboardController extends AdminController
                  ORDER BY s.due_date, b.booking_number
                  LIMIT 1000
             ", array_merge([$month], $sParams)) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ErpDashboardController::collectionSheet: ' . $e->getMessage());
             $rows = [];
         }
@@ -450,7 +465,7 @@ class ErpDashboardController extends AdminController
                 LEFT JOIN users u2 ON u2.id = b.user_id
                 WHERE s.id = ?{$sSql}
             ", array_merge([$scheduleId], $sParams));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ErpDashboardController::sendEmiReminder load: ' . $e->getMessage());
             $row = null;
         }
@@ -497,7 +512,7 @@ class ErpDashboardController extends AdminController
                 SET reminder_count = COALESCE(reminder_count, 0) + 1, last_reminder_at = NOW()
                 WHERE id = ?{$uSql}
             ", array_merge([$scheduleId], $uParams));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ErpDashboardController::sendEmiReminder counter: ' . $e->getMessage());
         }
         $this->json(['success' => true, 'whatsapp_url' => $waUrl, 'api_status' => $apiStatus]);

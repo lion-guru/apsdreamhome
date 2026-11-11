@@ -31,7 +31,7 @@ class AdminComplianceController extends AdminController
             $tdsSummary = $this->db->query("SELECT status, COUNT(*) as cnt, COALESCE(SUM(total_tds),0) as total FROM tds_register GROUP BY status")->fetchAll(\PDO::FETCH_ASSOC);
             $totalTdsAmount = (float)($this->db->query("SELECT COALESCE(SUM(total_tds),0) FROM tds_register")->fetchColumn());
             $pendingTds = (int)($this->db->query("SELECT COUNT(*) FROM tds_register WHERE status = 'pending'")->fetchColumn());
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AdminComplianceController::index error: ' . $e->getMessage());
         }
 

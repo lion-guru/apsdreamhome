@@ -40,7 +40,7 @@ class SecurityService extends ModernSecurityService
         try {
             $sql = "SELECT * FROM blocked_ips ORDER BY created_at DESC LIMIT " . intval($limit);
             return $this->db->fetchAll($sql) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to list blocked IPs: " . $e->getMessage());
             return [];
         }
@@ -59,7 +59,7 @@ class SecurityService extends ModernSecurityService
             }
             $sql .= " ORDER BY f.attempted_at DESC LIMIT 100";
             return $this->db->fetchAll($sql, $params) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to get failed login attempts: " . $e->getMessage());
             return [];
         }

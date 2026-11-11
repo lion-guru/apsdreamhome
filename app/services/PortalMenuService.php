@@ -181,6 +181,7 @@ class PortalMenuService
             // Main Operations
             $this->item('dashboard', 'Main', 'Dashboard', '/associate/dashboard', 'fas fa-tachometer-alt'),
             $this->item('crm', 'Main', 'CRM Dashboard', '/associate/crm', 'fas fa-funnel-dollar'),
+            $this->item('ai-dashboard', 'Main', 'AI Dashboard', '/associate/ai-dashboard', 'fas fa-brain'),
             $this->item('leads', 'Main', 'My Leads', '/associate/leads', 'fas fa-user-friends', $this->countTable('leads', 'assigned_to')),
             $this->item('leads-import', 'Main', 'Import Leads', '/associate/leads/import', 'fas fa-file-import'),
             $this->item('leads-bulk-wa', 'Main', 'Bulk WhatsApp', '/associate/leads/bulk-whatsapp', 'fab fa-whatsapp'),
@@ -332,15 +333,18 @@ class PortalMenuService
         if (!$this->pdo || !$this->userId) return null;
         
         try {
+            // Phase 4/7: use IdentityService for profile lookup
+            $emp = (new \App\Services\IdentityService())->getEmployeeProfile((int)$this->userId);
+            if (!$emp || empty($emp['designation'])) return 'employee';
+            
             $stmt = $this->pdo->prepare("
                 SELECT edr.sub_role
-                FROM employees e
-                INNER JOIN employee_designation_roles edr 
-                    ON edr.designation = e.designation AND (edr.department = e.department OR edr.department IS NULL)
-                WHERE e.user_id = ? {$this->tenantSqlForAlias('e')} AND edr.tenant_id = {$this->tenantId()}
+                FROM employee_designation_roles edr
+                WHERE edr.designation = ? AND (edr.department = ? OR edr.department IS NULL)
+                    AND edr.tenant_id = {$this->tenantId()}
                 LIMIT 1
             ");
-            $stmt->execute([$this->userId]);
+            $stmt->execute([$emp['designation'], $emp['department']]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $row ? $row['sub_role'] : 'employee';
         } catch (\Throwable $e) {

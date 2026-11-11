@@ -11,7 +11,7 @@ class AdminService {
         try {
             // Hold Database singleton wrapper; use its query() API
             $this->db = Database::getInstance();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Log the error and provide a user-friendly message
             error_log('Database connection error: ' . $e->getMessage());
             throw new \RuntimeException('Unable to connect to the database. Please try again later.');
@@ -61,7 +61,7 @@ class AdminService {
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'total_users' => 0,
                 'total_properties' => 0,
@@ -88,7 +88,7 @@ class AdminService {
             $stmt = $this->db->query($sql, [$limit], \PDO::FETCH_ASSOC);
             $stmt->execute([$limit]);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -251,7 +251,7 @@ class AdminService {
             $stmt = $this->db->query($sql, null, \PDO::FETCH_ASSOC);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -280,7 +280,7 @@ class AdminService {
             $stats['by_status'] = $stmt->fetchAll();
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -334,7 +334,7 @@ class AdminService {
             $stmt = $this->db->query($sql, null, \PDO::FETCH_ASSOC);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -363,7 +363,7 @@ class AdminService {
             $stats['by_status'] = $stmt;
             
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -425,7 +425,7 @@ class AdminService {
             $stmt = $this->db->query($sql, null, \PDO::FETCH_ASSOC);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -454,7 +454,7 @@ class AdminService {
             $stats['by_source'] = $stmt;
             
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -466,7 +466,7 @@ class AdminService {
         try {
             $stmt = $this->db->query("SELECT * FROM site_settings ORDER BY setting_group, setting_name", null, \PDO::FETCH_ASSOC);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -478,7 +478,7 @@ class AdminService {
         try {
             $stmt = $this->db->query("SELECT DISTINCT setting_group FROM site_settings ORDER BY setting_group", null, \PDO::FETCH_ASSOC);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -496,7 +496,7 @@ class AdminService {
             $stmt = $this->db->query($sql);
             $stmt->execute([$key, $value, $value]);
             return $stmt->rowCount() > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -517,7 +517,7 @@ class AdminService {
                                   array_sum(array_column($tables, 'Index_length'));
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['total_tables' => 0, 'total_size' => 0];
         }
     }
@@ -546,7 +546,7 @@ class AdminService {
             }
 
             return $backupFiles;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -574,7 +574,7 @@ class AdminService {
             }
 
             return $filepath;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new \Exception('Failed to create backup: ' . $e->getMessage());
         }
     }
@@ -593,7 +593,7 @@ class AdminService {
                     }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new \Exception('Failed to clear cache: ' . $e->getMessage());
         }
     }
@@ -618,7 +618,7 @@ class AdminService {
             }
 
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new \Exception('Export failed: ' . $e->getMessage());
         }
     }
@@ -662,7 +662,7 @@ class AdminService {
             }
 
             file_put_contents($filepath, $sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new \Exception('Failed to create backup: ' . $e->getMessage());
         }
     }
@@ -714,7 +714,7 @@ class AdminService {
             $stmt = $this->db->query($sql, null, \PDO::FETCH_ASSOC);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -747,7 +747,7 @@ class AdminService {
             $stats['by_month'] = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -783,7 +783,7 @@ class AdminService {
             }
 
             return array_reverse($logs);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -812,7 +812,7 @@ class AdminService {
             }
 
             return $logFiles;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

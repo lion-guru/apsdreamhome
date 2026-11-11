@@ -126,8 +126,8 @@ class ExpenseReimbursementService
         $sql = "SELECT ec.*, ec2.name as category_name, u.name as employee_name, u.email as employee_email
             FROM expense_claims ec
             JOIN expense_categories ec2 ON ec.category_id = ec2.id
-            JOIN employees e ON ec.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ec.employee_id OR ep.user_id = ec.employee_id OR ep.id = ec.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             $whereSql
             ORDER BY ec.created_at DESC LIMIT ? OFFSET ?";
         $params[] = $limit; $params[] = $offset;
@@ -143,8 +143,8 @@ class ExpenseReimbursementService
             SELECT ec.*, ec2.name as category_name, u.name as employee_name, u.email as employee_email
             FROM expense_claims ec
             JOIN expense_categories ec2 ON ec.category_id = ec2.id
-            JOIN employees e ON ec.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ec.employee_id OR ep.user_id = ec.employee_id OR ep.id = ec.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             WHERE ec.id = ? AND ec.tenant_id = ?
         ");
         $stmt->execute([$id, $this->tenantId()]);
@@ -198,8 +198,8 @@ class ExpenseReimbursementService
             FROM expense_approval_workflow eaw
             JOIN expense_claims ec ON eaw.claim_id = ec.id
             JOIN expense_categories ec2 ON ec.category_id = ec2.id
-            JOIN employees e ON ec.employee_id = e.id
-            JOIN users u ON e.user_id = u.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ec.employee_id OR ep.user_id = ec.employee_id OR ep.id = ec.employee_id
+            LEFT JOIN users u ON u.id = ep.user_id
             WHERE eaw.approver_id = ? AND eaw.status = 'pending' AND eaw.tenant_id = ?
             ORDER BY eaw.level ASC, ec.created_at ASC
         ");
@@ -321,16 +321,8 @@ class ExpenseReimbursementService
 
     private function getEmployeeManager(int $employeeId): ?int
     {
-        // Try to get manager from org chart or employees table
-        $mgr = $this->conn->fetch("SELECT manager_id FROM employees WHERE id = ? AND manager_id IS NOT NULL", [$employeeId]);
-        if ($mgr) return $mgr['manager_id'];
-
-        // Fallback: org chart parent
-        $node = $this->conn->fetch("SELECT parent_id FROM org_chart_nodes WHERE employee_id = ?", [$employeeId]);
-        if ($node && $node['parent_id']) {
-            $parent = $this->conn->fetch("SELECT employee_id FROM org_chart_nodes WHERE id = ?", [$node['parent_id']]);
-            if ($parent) return $parent['employee_id'];
-        }
+        // Manager lookup via employee_profiles: manager_id column not on profiles table,
+        // returns null for profile-only employees — org chart integration pending
         return null;
     }
 

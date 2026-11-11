@@ -62,7 +62,7 @@ class LegalDocumentController extends BaseController
                 $cat = $row['category'] ?: 'general';
                 $docs[$cat][] = $row;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LegalDocumentController@index: ' . $e->getMessage());
         }
 
@@ -91,7 +91,7 @@ class LegalDocumentController extends BaseController
             );
             $stmt->execute([$slug]);
             $document = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LegalDocumentController@show: ' . $e->getMessage());
         }
 
@@ -118,7 +118,7 @@ class LegalDocumentController extends BaseController
                 $stmt->execute([$document['id'], $userId, $document['version'] ?? '']);
                 $accepted = ((int)$stmt->fetch(\PDO::FETCH_ASSOC)['c']) > 0;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LegalDocumentController@show related/acceptance: ' . $e->getMessage());
         }
 
@@ -205,7 +205,7 @@ class LegalDocumentController extends BaseController
                 'message' => 'Document accepted successfully.',
                 'redirect' => $_POST['redirect'] ?? ($_SERVER['HTTP_REFERER'] ?? BASE_URL),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LegalDocumentController@accept: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Failed to record acceptance.']);
@@ -247,7 +247,7 @@ class LegalDocumentController extends BaseController
                     'url' => BASE_URL . '/legal/' . $doc['slug'],
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LegalDocumentController@getUnaccepted: ' . $e->getMessage());
         }
 

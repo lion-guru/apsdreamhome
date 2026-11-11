@@ -88,7 +88,7 @@ class AssociateAuthController extends BaseController
                 'rank_count' => $rankCount,
                 'max_rate' => $maxRate,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $cached = ['total_paid' => 10560320, 'commission_count' => 311, 'rank_count' => 7, 'max_rate' => 20];
         }
         return $cached;
@@ -197,7 +197,7 @@ class AssociateAuthController extends BaseController
 
             header('Location: ' . BASE_URL . '/associate/login');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Associate registration error: " . $e->getMessage());
             $_SESSION['errors'] = ["Registration failed: " . $e->getMessage()];
             header('Location: ' . BASE_URL . '/associate/register');
@@ -307,7 +307,7 @@ class AssociateAuthController extends BaseController
             $_SESSION['errors'] = ["Invalid email or password"];
             header('Location: ' . BASE_URL . '/associate/login');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['errors'] = ["Login failed"];
             header('Location: ' . BASE_URL . '/associate/login');
             exit;

@@ -39,7 +39,7 @@ class AutonomousTriggerSystem
 
                 // 5. Wait for next cycle (30 seconds)
                 $this->waitForNextCycle();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->log("❌ Error in autonomous loop: " . $e->getMessage());
                 sleep(5); // Wait 5 seconds before retry
             }
@@ -217,7 +217,7 @@ class AutonomousTriggerSystem
             // Simple database test
             $pdo = \App\Core\Database\Database::getInstance()->getConnection();
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -354,7 +354,7 @@ class AutonomousTriggerSystem
             }
 
             $this->log("✅ Database optimized");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->log("⚠️ Database optimization failed: " . $e->getMessage());
         }
     }

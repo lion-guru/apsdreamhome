@@ -1,119 +1,150 @@
 <?php
 /**
- * AI Auto-Dialer Cron Job
- * Processes scheduled calls every 2 minutes during working hours (9AM-8PM)
- * Usage: php scripts/cron_ai_autodialer.php
+ * AI Auto-Dialer Cron
+ * Runs every 2 minutes during business hours (9AM-8PM)
  */
 
-define('BASE_PATH', dirname(__DIR__));
-require_once BASE_PATH . '/config/bootstrap.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
+use App\Services\AI\VoiceProviderManager;
+use App\Services\Voice\VoiceCallService;
 use App\Core\Database\Database;
-use App\Core\Middleware\TenantContext;
 
-echo "[" . date('Y-m-d H:i:s') . "] Starting AI Auto-Dialer...\n";
+echo "=== AI Auto-Dialer Cron ===\n";
+echo "Time: " . date('Y-m-d H:i:s') . "\n";
+
+// Only run during business hours (9AM-8PM)
+$hour = (int)date('H');
+if ($hour < 9 || $hour >= 20) {
+    echo "Outside business hours (9AM-8PM). Skipping.\n";
+    exit(0);
+}
 
 try {
-    // Check working hours (9 AM - 8 PM IST)
-    $hour = (int)date('H');
-    if ($hour < 9 || $hour >= 20) {
-        echo "  ⏰ Outside working hours (9AM-8PM), skipping.\n";
+    $voiceService = new VoiceCallService();
+    $providerManager = VoiceProviderManager::getInstance();
+    
+    // Check provider health
+    $providerStatus = $providerManager->getProviderStatus();
+    $activeProviders = array_filter($providerStatus, fn($p) => $p['available'] ?? false);
+    
+    if (empty($activeProviders)) {
+        echo "No active voice providers. Skipping dialer.\n";
         exit(0);
     }
     
-    TenantContext::setById(1);
-    $db = Database::getInstance();
+    echo "Active providers: " . implode(', ', array_keys($activeProviders)) . "\n";
     
-    // Get pending scheduled calls for now
-    $now = date('Y-m-d H:i:s');
-    $today = date('Y-m-d');
-    $currentTime = date('H:i:s');
+    // Process scheduled calls
+    $db = Database::getInstance()->getConnection();
     
-    $pendingCalls = $db->fetchAll(
-        "SELECT acs.*, l.name as lead_name, l.phone as lead_phone
-         FROM ai_calling_schedule acs
-         LEFT JOIN leads l ON acs.lead_id = l.id
-         WHERE acs.scheduled_date = ? 
-         AND acs.scheduled_time <= ?
-         AND acs.status = 'pending'
-         AND acs.attempt_count < acs.max_attempts
-         ORDER BY acs.priority DESC, acs.scheduled_time ASC
-         LIMIT 10",
-        [$today, $currentTime]
-    ) ?: [];
+    // Get due calls (status = scheduled, scheduled_time <= now)
+    $stmt = $db->prepare("
+        SELECT * FROM ai_calling_schedule 
+        WHERE status = 'scheduled' 
+        AND scheduled_time <= NOW()
+        AND retry_count < 3
+        ORDER BY scheduled_time ASC
+        LIMIT 10
+    ");
+    $stmt->execute();
+    $dueCalls = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    if (empty($pendingCalls)) {
-        echo "  📭 No pending calls to process.\n";
+    if (empty($dueCalls)) {
+        echo "No due calls to process.\n";
         exit(0);
     }
     
-    echo "  📞 Found " . count($pendingCalls) . " calls to process.\n";
+    echo "Processing " . count($dueCalls) . " due calls...\n";
     
     $processed = 0;
     $failed = 0;
     
-    foreach ($pendingCalls as $call) {
+    foreach ($dueCalls as $call) {
         try {
-            // Update attempt count
-            $db->execute(
-                "UPDATE ai_calling_schedule SET attempt_count = attempt_count + 1, last_attempt_at = NOW(), status = 'processing' WHERE id = ?",
-                [$call['id']]
-            );
+            $provider = $providerManager->getProvider($call['provider'] ?? 'exotel');
             
-            // TODO: Integrate with actual voice provider (Exotel/Twilio/Plivo)
-            // For now, simulate call creation in ai_call_sessions
-            $sessionId = 'sess_' . uniqid();
-            $callSid = 'sim_' . uniqid();
+            if (!$provider || !($provider->isAvailable() ?? false)) {
+                // Try next available provider
+                $provider = array_values($activeProviders)[0] ?? null;
+                if (!$provider) {
+                    throw new Exception("No available provider");
+                }
+            }
             
-            $db->execute(
-                "INSERT INTO ai_call_sessions (
-                    campaign_id, tenant_id, session_id, lead_id, agent_id, agent_type,
-                    phone, call_type, status, ai_agent_id, script_code, script_template,
-                    scheduled_at, started_at, created_at, call_sid
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, 'outbound', 'in_progress', ?, ?, ?, ?, NOW(), NOW(), ?)",
-                [
-                    $call['campaign_id'] ?? 1,
-                    1,
-                    $sessionId,
-                    $call['lead_id'],
-                    $call['user_id'] ?? 1,
-                    'ai_agent',
-                    $call['phone'],
-                    $call['ai_agent_id'] ?? 'auto_agent_1',
-                    $call['script_code'] ?? 'default',
-                    $call['script_template'] ?? 'property_introduction',
-                    $call['scheduled_date'] . ' ' . $call['scheduled_time'],
-                    $callSid
-                ]
-            );
+            // Initiate call
+            $result = $provider->makeCall([
+                'to' => $call['phone_number'],
+                'from' => $call['caller_id'] ?? '',
+                'script' => $call['script'] ?? '',
+                'webhook_url' => $call['webhook_url'] ?? '',
+                'metadata' => [
+                    'schedule_id' => $call['id'],
+                    'lead_id' => $call['lead_id'] ?? null,
+                ],
+            ]);
             
-            // Mark schedule as completed (simulated)
-            $db->execute(
-                "UPDATE ai_calling_schedule SET status = 'completed', call_session_id = LAST_INSERT_ID(), updated_at = NOW() WHERE id = ?",
-                [$call['id']]
-            );
-            
-            $processed++;
-            echo "    ✅ Call initiated: {$call['lead_name']} ({$call['phone']})\n";
+            if ($result['success'] ?? false) {
+                // Update schedule status
+                $stmt = $db->prepare("
+                    UPDATE ai_calling_schedule 
+                    SET status = 'in_progress', 
+                        call_sid = ?, 
+                        provider = ?,
+                        started_at = NOW()
+                    WHERE id = ?
+                ");
+                $stmt->execute([
+                    $result['call_sid'] ?? '',
+                    $provider->getName() ?? 'unknown',
+                    $call['id'],
+                ]);
+                
+                $processed++;
+                echo "  ✅ Call initiated to {$call['phone_number']} (SID: {$result['call_sid']})\n";
+            } else {
+                throw new Exception($result['error'] ?? 'Call failed');
+            }
             
         } catch (\Throwable $e) {
             $failed++;
-            echo "    ❌ Failed: {$call['lead_name']} - " . $e->getMessage() . "\n";
             
-            // Reset schedule status for retry
-            $db->execute(
-                "UPDATE ai_calling_schedule SET status = 'pending', updated_at = NOW() WHERE id = ?",
-                [$call['id']]
-            );
+            // Increment retry count
+            $stmt = $db->prepare("
+                UPDATE ai_calling_schedule 
+                SET retry_count = retry_count + 1,
+                    last_error = ?,
+                    updated_at = NOW()
+                WHERE id = ?
+            ");
+            $stmt->execute([$e->getMessage(), $call['id']]);
+            
+            echo "  ❌ Failed to call {$call['phone_number']}: " . $e->getMessage() . "\n";
         }
     }
     
-    echo "[" . date('Y-m-d H:i:s') . "] Auto-Dialer: $processed processed, $failed failed\n";
-    exit($failed > 0 ? 1 : 0);
+    echo "Processed: $processed, Failed: $failed\n";
+    
+    // Also check for stuck in-progress calls (timeout after 5 minutes)
+    $stmt = $db->prepare("
+        UPDATE ai_calling_schedule 
+        SET status = 'failed', 
+            last_error = 'Call timeout (5 min)',
+            updated_at = NOW()
+        WHERE status = 'in_progress' 
+        AND started_at < DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+    ");
+    $stmt->execute();
+    $timedOut = $stmt->rowCount();
+    
+    if ($timedOut > 0) {
+        echo "Timed out $timedOut stuck calls\n";
+    }
     
 } catch (\Throwable $e) {
-    $errorMsg = "Auto-Dialer Cron Fatal: " . $e->getMessage();
-    echo "[" . date('Y-m-d H:i:s') . "] $errorMsg\n";
-    error_log($errorMsg);
+    echo "❌ ERROR: " . $e->getMessage() . "\n";
+    echo $e->getTraceAsString() . "\n";
     exit(1);
 }
+
+echo "=== AI Auto-Dialer Completed ===\n";

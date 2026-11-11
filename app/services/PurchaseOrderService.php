@@ -246,7 +246,7 @@ class PurchaseOrderService
     public function getVendors(): array
     {
         $tid = $this->tenantId();
-        return $this->db->fetchAll("SELECT id, name, contact_person, phone, email FROM vendors WHERE status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY name", $tid > 1 ? [$tid] : []) ?: [];
+        return $this->db->fetchAll("SELECT id, vendor_name, contact_person, phone, email FROM vendors WHERE status = 'active'" . ($tid > 1 ? " AND tenant_id = ?" : "") . " ORDER BY vendor_name", $tid > 1 ? [$tid] : []) ?: [];
     }
 
     public function getDepartments(): array

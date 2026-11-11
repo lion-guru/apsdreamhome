@@ -62,14 +62,14 @@ class ModelIntegration {
             foreach ($tables as $table) {
                 try {
                     $pdo->query("SELECT 1 FROM $table LIMIT 1");
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     // Table doesn't exist, create it
                     self::createTable($pdo, $table);
                 }
             }
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Database integrity check failed: ' . $e->getMessage());
             return false;
         }
@@ -91,7 +91,7 @@ class ModelIntegration {
         try {
             $pdo->query($sql);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to create table $tableName: " . $e->getMessage());
             return false;
         }

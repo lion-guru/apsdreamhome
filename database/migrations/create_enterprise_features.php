@@ -379,7 +379,7 @@ try {
     echo "\n🎉 Total: 18 new tables created!\n";
     echo "🌍 11 Indian languages supported!\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "\n❌ Error: " . $e->getMessage() . "\n";
     exit(1);
 }

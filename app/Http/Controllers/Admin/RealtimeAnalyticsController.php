@@ -59,28 +59,28 @@ class RealtimeAnalyticsController extends AdminController
             $m['leads_today'] = (int)($this->db->fetch(
                 "SELECT COUNT(*) AS cnt FROM leads WHERE DATE(created_at) = CURDATE()"
             )['cnt'] ?? 0);
-        } catch (\Exception $e) { $m['leads_today'] = 0; }
+        } catch (\Throwable $e) { $m['leads_today'] = 0; }
 
         // Bookings this month
         try {
             $m['bookings_month'] = (int)($this->db->fetch(
                 "SELECT COUNT(*) AS cnt FROM plot_bookings WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND status NOT IN ('cancelled','transferred')"
             )['cnt'] ?? 0);
-        } catch (\Exception $e) { $m['bookings_month'] = 0; }
+        } catch (\Throwable $e) { $m['bookings_month'] = 0; }
 
         // Revenue this month (total_plot_value of non-cancelled bookings)
         try {
             $m['revenue_month'] = (float)($this->db->fetch(
                 "SELECT COALESCE(SUM(total_plot_value),0) AS total FROM plot_bookings WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND status NOT IN ('cancelled','transferred')"
             )['total'] ?? 0);
-        } catch (\Exception $e) { $m['revenue_month'] = 0; }
+        } catch (\Throwable $e) { $m['revenue_month'] = 0; }
 
         // Collections today (daily_cash_book receipts)
         try {
             $m['collections_today'] = (float)($this->db->fetch(
                 "SELECT COALESCE(SUM(amount),0) AS total FROM daily_cash_book WHERE transaction_date = CURDATE() AND transaction_type = 'receipt'"
             )['total'] ?? 0);
-        } catch (\Exception $e) { $m['collections_today'] = 0; }
+        } catch (\Throwable $e) { $m['collections_today'] = 0; }
 
         return $m;
     }
@@ -97,7 +97,7 @@ class RealtimeAnalyticsController extends AdminController
                  WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
                  GROUP BY DATE(created_at) ORDER BY dt"
             ) ?: [];
-        } catch (\Exception $e) { $d['leads_7d'] = []; }
+        } catch (\Throwable $e) { $d['leads_7d'] = []; }
 
         // 2) Revenue by colony
         try {
@@ -109,7 +109,7 @@ class RealtimeAnalyticsController extends AdminController
                  WHERE pb.status NOT IN ('cancelled','transferred')
                  GROUP BY c.name ORDER BY revenue DESC"
             ) ?: [];
-        } catch (\Exception $e) { $d['revenue_by_colony'] = []; }
+        } catch (\Throwable $e) { $d['revenue_by_colony'] = []; }
 
         // 3) Lead sources breakdown
         try {
@@ -117,7 +117,7 @@ class RealtimeAnalyticsController extends AdminController
                 "SELECT COALESCE(source,'Other') AS source, COUNT(*) AS cnt
                  FROM leads GROUP BY source ORDER BY cnt DESC"
             ) ?: [];
-        } catch (\Exception $e) { $d['lead_sources'] = []; }
+        } catch (\Throwable $e) { $d['lead_sources'] = []; }
 
         // 4) Booking trend last 30 days
         try {
@@ -128,7 +128,7 @@ class RealtimeAnalyticsController extends AdminController
                    AND status NOT IN ('cancelled','transferred')
                  GROUP BY DATE(created_at) ORDER BY dt"
             ) ?: [];
-        } catch (\Exception $e) { $d['bookings_30d'] = []; }
+        } catch (\Throwable $e) { $d['bookings_30d'] = []; }
 
         return $d;
     }
@@ -145,7 +145,7 @@ class RealtimeAnalyticsController extends AdminController
             ) ?: [];
             foreach ($leads as &$l) { $l['icon'] = 'fa-user-plus'; $l['color'] = '#3b82f6'; }
             $activities = array_merge($activities, $leads);
-        } catch (\Exception $e) { error_log("RealtimeAnalyticsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("RealtimeAnalyticsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Recent bookings
         try {
@@ -160,7 +160,7 @@ class RealtimeAnalyticsController extends AdminController
             ) ?: [];
             foreach ($bookings as &$b) { $b['icon'] = 'fa-file-signature'; $b['color'] = '#10b981'; }
             $activities = array_merge($activities, $bookings);
-        } catch (\Exception $e) { error_log("RealtimeAnalyticsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("RealtimeAnalyticsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Recent payments
         try {
@@ -173,7 +173,7 @@ class RealtimeAnalyticsController extends AdminController
             ) ?: [];
             foreach ($payments as &$p) { $p['icon'] = 'fa-rupee-sign'; $p['color'] = '#14b8a6'; }
             $activities = array_merge($activities, $payments);
-        } catch (\Exception $e) { error_log("RealtimeAnalyticsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("RealtimeAnalyticsController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 
         // Sort by created_at desc, take top 10
         usort($activities, function ($a, $b) {

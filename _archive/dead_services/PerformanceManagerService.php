@@ -63,7 +63,7 @@ class PerformanceManager {
                     $container = container();
                     $logger = $container->resolve('logger');
                     $db = $container->resolve('db_connection');
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     // Fallback if container fails
                             error_log("ManagerService.php: " . $e->getMessage());
                 }
@@ -72,7 +72,7 @@ class PerformanceManager {
             if (!$db) {
                 try {
                     $db = \App\Core\App::database()->getConnection();
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     // Final fallback
                             error_log("ManagerService.php: " . $e->getMessage());
                 }
@@ -253,7 +253,7 @@ class PerformanceManager {
             $compressed_data = gzcompress($serialized_data, $this->config['compression_level']);
             
             $this->cache_driver->set($cache_key, $compressed_data, $lifetime);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->log(
                 "Cache write error: " . $e->getMessage(), 
                 'warning', 
@@ -282,7 +282,7 @@ class PerformanceManager {
             $result = unserialize($decompressed_data);
 
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->log(
                 "Cache read error: " . $e->getMessage(), 
                 'warning', 
@@ -415,7 +415,7 @@ class PerformanceManager {
         try {
             $db = \App\Core\App::database();
             $result = $db->fetchAll($query, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->log("Query Error: " . $e->getMessage(), 'error', 'performance');
             // If it's a stats query on a missing table, don't throw, just return empty
             if (strpos($e->getMessage(), "doesn't exist") !== false) {
@@ -574,7 +574,7 @@ class RedisCacheDriver extends CacheDriver {
                     }
                     $this->connected = true;
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Redis connection failed, will fallback to null/default
                 error_log("Redis Connection Error: " . $e->getMessage());
             }

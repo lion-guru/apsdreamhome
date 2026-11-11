@@ -96,6 +96,21 @@ Create-Task -TaskName "APS_AI_AutoDialer" -ScriptName "cron_ai_autodialer.php" -
 # 3. AI Health Check - Every 15 minutes, 24/7
 Create-Task -TaskName "APS_AI_HealthCheck" -ScriptName "cron_ai_health.php" -IntervalMinutes 15
 
+# 4. AI Employee Worker - Every 15 minutes (Aira/Vivaan/Sahil tasks)
+Create-Task -TaskName "APS_AI_Employee" -ScriptName "cron_ai_employee.php" -IntervalMinutes 15
+
+# 5. Office Autopilot - Every 15 minutes (WA intake + employees + digest + ping)
+Create-Task -TaskName "APS_Office_Autopilot" -ScriptName "cron_office_autopilot.php" -IntervalMinutes 15
+
+# 6. Lead Score Recalc - Every 60 minutes (fresh scores)
+Create-Task -TaskName "APS_Lead_Score_Recalc" -ScriptName "cron_lead_score_recalc.php" -IntervalMinutes 60
+
+# 7. Duplicate Lead Detect - Every 360 minutes (audit flags)
+Create-Task -TaskName "APS_DupLead_Detect" -ScriptName "cron_dup_lead_detect.php" -IntervalMinutes 360
+
+# 8. Weight Refit Report - Weekly (calibration, read-only)
+Create-Task -TaskName "APS_Weight_Refit_Report" -ScriptName "cron_weight_refit.php" -IntervalMinutes 10080
+
 Write-Host ""
 Write-Host "=== Verifying Tasks ===" -ForegroundColor Cyan
 Get-ScheduledTask -TaskName "APS_*" | Format-Table TaskName, State, @{Name="NextRun"; Expression={(Get-ScheduledTaskInfo -TaskName $_.TaskName).NextRunTime}} -AutoSize

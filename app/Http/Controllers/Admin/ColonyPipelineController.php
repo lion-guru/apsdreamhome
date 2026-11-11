@@ -50,7 +50,7 @@ class ColonyPipelineController extends AdminController
                         SUM(available_plots) as total_available
                  FROM colonies WHERE is_active = 1"
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $colonies = [];
             $stats = ['total_colonies' => 0, 'total_plots' => 0, 'total_available' => 0];
             error_log('ColonyPipeline dashboard error: ' . $e->getMessage());
@@ -126,7 +126,7 @@ class ColonyPipelineController extends AdminController
                     [$id]
                 ) ?: [];
             } catch (\Throwable $e) { $milestones = []; }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $colony = [];
             $plotStats = ['total' => 0, 'available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, 'total_value' => 0, 'avg_area' => 0];
             $devCost = ['total_cost' => 0, 'total_gst' => 0, 'total_paid' => 0, 'total_balance' => 0];
@@ -181,7 +181,7 @@ class ColonyPipelineController extends AdminController
             $totalAreaSqft = $existingPlots['count'] > 0
                 ? $this->db->selectOne("SELECT SUM(area_sqft) as total FROM plots WHERE colony_id = ?", [$id])
                 : null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $colony = [];
             $existingPlots = ['count' => 0];
             $currentLayout = null;
@@ -271,7 +271,7 @@ class ColonyPipelineController extends AdminController
 
             $this->setFlash('success', $generated . ' plots generated successfully in block ' . $blockName);
             $this->redirect('/admin/colony-pipeline/' . $id . '/layout');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ColonyPipeline generatePlots error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to generate plots: ' . $e->getMessage());
             $this->redirect('/admin/colony-pipeline/' . $id . '/layout');
@@ -327,7 +327,7 @@ class ColonyPipelineController extends AdminController
             }
             $result = $service->getPlotPreview($config);
             echo json_encode($result);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ColonyPipeline previewPlots error: ' . $e->getMessage());
             echo json_encode(['success' => false, 'error' => 'Preview failed']);
         }
@@ -369,7 +369,7 @@ class ColonyPipelineController extends AdminController
 
             $this->setFlash('success', 'All available plots deleted for ' . ($colony['name'] ?? 'colony'));
             $this->redirect('/admin/colony-pipeline/' . $id . '/layout');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ColonyPipeline deletePlots error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to delete plots: ' . $e->getMessage());
             $this->redirect('/admin/colony-pipeline/' . $id . '/layout');
@@ -424,7 +424,7 @@ class ColonyPipelineController extends AdminController
 
             $this->setFlash('success', 'Layout saved successfully');
             $this->redirect('/admin/colony-pipeline/' . $id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ColonyPipeline saveLayout error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to save layout: ' . $e->getMessage());
             $this->redirect('/admin/colony-pipeline/' . $id . '/layout');
@@ -537,7 +537,7 @@ class ColonyPipelineController extends AdminController
                  ORDER BY price_overridden_at DESC LIMIT 20",
                 [$id]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $colony = [];
             $plotStats = ['total' => 0, 'avg_ppsf' => 0, 'min_price' => 0, 'max_price' => 0, 'total_value' => 0, 'avg_area' => 0];
             $devCosts = [];
@@ -591,7 +591,7 @@ class ColonyPipelineController extends AdminController
             }
 
             $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ColonyPipeline calculatePricing error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to calculate pricing: ' . $e->getMessage());
             $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
@@ -734,7 +734,7 @@ class ColonyPipelineController extends AdminController
             }
 
             $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ColonyPipeline applyPricing error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to apply pricing: ' . $e->getMessage());
             $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
@@ -787,7 +787,7 @@ class ColonyPipelineController extends AdminController
                  GROUP BY cost_type ORDER BY amt DESC",
                 [$id]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $colony = [];
             $costs = [];
             $summary = ['total_amount' => 0, 'total_gst' => 0, 'total_paid' => 0, 'total_balance' => 0, 'cost_count' => 0];
@@ -860,7 +860,7 @@ class ColonyPipelineController extends AdminController
 
             $this->setFlash('success', 'Development cost recorded: ' . $costType . ' — ₹' . number_format($amount));
             $this->redirect('/admin/colony-pipeline/' . $id . '/costs');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ColonyPipeline storeCost error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to record cost: ' . $e->getMessage());
             $this->redirect('/admin/colony-pipeline/' . $id . '/costs');
@@ -880,7 +880,7 @@ class ColonyPipelineController extends AdminController
                 $this->setFlash('error', 'Colony not found');
                 $this->redirect('/admin/colony-pipeline');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error loading colony');
             $this->redirect('/admin/colony-pipeline');
         }
@@ -929,7 +929,7 @@ class ColonyPipelineController extends AdminController
             );
 
             $filters = ['status' => $status, 'block' => $block];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $plots = [];
             $total = 0;
             $totalPages = 1;
@@ -995,7 +995,7 @@ class ColonyPipelineController extends AdminController
                 'blocks' => $blocks,
                 'status_breakdown' => $statusBreakdown
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->json([
                 'success' => false,
                 'error' => 'Failed to load plot stats: ' . $e->getMessage()
@@ -1031,7 +1031,7 @@ class ColonyPipelineController extends AdminController
                  ORDER BY block, plot_number",
                 [$id]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $colony = [];
             $plots = [];
             error_log('ColonyPipeline plotMap error: ' . $e->getMessage());
@@ -1140,7 +1140,7 @@ class ColonyPipelineController extends AdminController
                     'center' => [$centerLat, $centerLng]
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('plotMapGeoJson error: ' . $e->getMessage());
             $this->json(['type' => 'FeatureCollection', 'features' => []], 500);
         }
@@ -1205,7 +1205,7 @@ class ColonyPipelineController extends AdminController
                 $this->setFlash('error', $result['error'] ?? 'Failed to save pricing plan');
             }
             $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('ColonyPipeline savePricingPlan error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to save pricing plan: ' . $e->getMessage());
             $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
@@ -1229,7 +1229,7 @@ class ColonyPipelineController extends AdminController
             } else {
                 $this->setFlash('error', $result['error'] ?? 'Failed to activate plan');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to activate plan: ' . $e->getMessage());
         }
         $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
@@ -1252,7 +1252,7 @@ class ColonyPipelineController extends AdminController
             } else {
                 $this->setFlash('error', $result['error'] ?? 'Failed to apply plan');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to apply plan: ' . $e->getMessage());
         }
         $this->redirect('/admin/colony-pipeline/' . $id . '/pricing');
@@ -1285,7 +1285,7 @@ class ColonyPipelineController extends AdminController
                 'colony' => $colony,
                 'plans' => $result['plans'] ?? []
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load history: ' . $e->getMessage());
             $this->redirect('/admin/colony-pipeline');
         }
@@ -1318,7 +1318,7 @@ class ColonyPipelineController extends AdminController
                 'colony' => $colony,
                 'applications' => $result['applications'] ?? []
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load applications: ' . $e->getMessage());
             $this->redirect('/admin/colony-pipeline');
         }

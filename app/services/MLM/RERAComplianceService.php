@@ -103,7 +103,7 @@ class RERAComplianceService
                 'message' => $reraDeducted > 0 ? "RERA fee of ₹$reraDeducted deducted. Net payout: ₹$netPayout" : "Full commission of ₹$netPayout released",
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -140,7 +140,7 @@ class RERAComplianceService
             }
             
             return ['success' => true, 'message' => 'RERA approved'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -162,7 +162,7 @@ class RERAComplianceService
             error_log($e->getMessage());
             }
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

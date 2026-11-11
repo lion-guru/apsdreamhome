@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+
 // NOTE (S449): this file is namespaced, so a bare PDO:: resolves to
 // <this-namespace>\PDO -> "Class App\...\PDO not found" fatal. The
 // custom autoloader does not fall back to the global PDO class.
 use PDO;
-
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use Exception;
@@ -34,7 +34,7 @@ class EmployeeController extends BaseController
             $stmt = $this->db->prepare("INSERT INTO employee_attendance (user_id, punch_in, status, tenant_id) VALUES (?, NOW(), 'present', ?)");
             $stmt->execute([$userId, $tid]);
             $this->jsonResponse(['success' => true, 'message' => 'Punched in successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to punch in: ' . $e->getMessage(), 500);
         }
     }
@@ -55,7 +55,7 @@ class EmployeeController extends BaseController
             $stmt = $this->db->prepare("UPDATE employee_attendance SET punch_out = NOW(), status = 'present' WHERE user_id = ? AND punch_out IS NULL{$tidSql} ORDER BY punch_in DESC LIMIT 1");
             $stmt->execute($params);
             $this->jsonResponse(['success' => true, 'message' => 'Punched out successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to punch out: ' . $e->getMessage(), 500);
         }
     }
@@ -77,7 +77,7 @@ class EmployeeController extends BaseController
             $stmt->execute($params);
             $attendance = $stmt->fetch(PDO::FETCH_ASSOC);
             $this->jsonResponse(['success' => true, 'data' => $attendance]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch attendance: ' . $e->getMessage(), 500);
         }
     }
@@ -99,7 +99,7 @@ class EmployeeController extends BaseController
             $stmt->execute($params);
             $total = $stmt->fetch(PDO::FETCH_ASSOC);
             $this->jsonResponse(['success' => true, 'data' => $total]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch dashboard: ' . $e->getMessage(), 500);
         }
     }
@@ -121,7 +121,7 @@ class EmployeeController extends BaseController
             $stmt->execute($params);
             $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $this->jsonResponse(['success' => true, 'data' => $tasks]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch tasks: ' . $e->getMessage(), 500);
         }
     }
@@ -143,7 +143,7 @@ class EmployeeController extends BaseController
             $stmt->execute($params);
             $attendance = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $this->jsonResponse(['success' => true, 'data' => $attendance]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonError('Failed to fetch attendance: ' . $e->getMessage(), 500);
         }
     }

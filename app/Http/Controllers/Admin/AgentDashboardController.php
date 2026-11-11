@@ -129,7 +129,7 @@ class AgentDashboardController extends AdminController
             )->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $performance]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Performance Data error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
@@ -162,7 +162,7 @@ class AgentDashboardController extends AdminController
             $network = $network->fetchAll(\PDO::FETCH_ASSOC);
 
             return $this->jsonResponse(['success' => true, 'data' => $network]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Network Tree error: " . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }

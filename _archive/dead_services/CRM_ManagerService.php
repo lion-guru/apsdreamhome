@@ -393,7 +393,7 @@ class CRMManager
                     return $leadId;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error adding lead: " . $e->getMessage(), 'error', 'crm');
             }
@@ -445,7 +445,7 @@ class CRMManager
             $probabilitySql = "UPDATE leads SET conversion_probability = :probability WHERE id = :id";
             if ($tid > 1) { $probabilitySql .= " AND tenant_id = :tenant_id"; }
             $this->db->execute($probabilitySql, [':probability' => $probability, ':id' => $leadId] + ($tid > 1 ? [':tenant_id' => $tid] : []));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error calculating lead score: " . $e->getMessage(), 'error', 'crm');
             }
@@ -466,7 +466,7 @@ class CRMManager
             if ($lead && $lead['email']) {
                 $this->emailManager->send($lead['email'], 'lead_welcome_email', ['name' => $lead['name']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error sending welcome email: " . $e->getMessage(), 'error', 'crm');
             }
@@ -541,7 +541,7 @@ class CRMManager
                 $leads[] = $row;
             }
             return $leads;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error fetching leads: " . $e->getMessage(), 'error', 'crm');
             }
@@ -608,7 +608,7 @@ class CRMManager
                     return $activityId;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error adding lead activity: " . $e->getMessage(), 'error', 'crm');
             }
@@ -629,7 +629,7 @@ class CRMManager
             $params = [$followUpDate, $leadId];
             if ($tid > 1) { $params[] = $tid; }
             $this->db->execute($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error scheduling follow-up: " . $e->getMessage(), 'error', 'crm');
             }
@@ -694,7 +694,7 @@ class CRMManager
                     return $opportunityId;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error creating opportunity: " . $e->getMessage(), 'error', 'crm');
             }
@@ -760,7 +760,7 @@ class CRMManager
 
         try {
             return $this->db->fetchAll($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error fetching opportunities: " . $e->getMessage(), 'error', 'crm');
             }
@@ -859,7 +859,7 @@ class CRMManager
                     return $customerId;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error converting lead to customer: " . $e->getMessage(), 'error', 'crm');
             }
@@ -922,7 +922,7 @@ class CRMManager
                     return $ticketId;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error creating support ticket: " . $e->getMessage(), 'error', 'crm');
             }
@@ -948,7 +948,7 @@ class CRMManager
             if ($ticket && $ticket['email']) {
                 $this->emailManager->send($ticket['email'], 'support_ticket_acknowledgment', ['ticket_number' => $ticket['ticket_number'], 'name' => $ticket['name']]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error sending ticket acknowledgment: " . $e->getMessage(), 'error', 'crm');
             }
@@ -1035,7 +1035,7 @@ class CRMManager
             if ($tidSrc > 1) { $srcSql .= " AND l.tenant_id = :tenant_id"; $srcParams[':tenant_id'] = $tidSrc; }
             $srcSql .= " GROUP BY ls.id, ls.source_name ORDER BY lead_count DESC";
             $dashboard['lead_sources'] = $this->db->fetchAll($srcSql, $srcParams);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error getting CRM dashboard: " . $e->getMessage(), 'error', 'crm');
             }
@@ -1052,7 +1052,7 @@ class CRMManager
         $sql = "SELECT * FROM lead_sources WHERE status = 'active' ORDER BY source_name";
         try {
             return $this->db->fetchAll($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error fetching lead sources: " . $e->getMessage(), 'error', 'crm');
             }
@@ -1082,7 +1082,7 @@ class CRMManager
                 $lead['tags'] = json_decode($lead['tags'] ?? '[]', true);
                 return $lead;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error fetching lead: " . $e->getMessage(), 'error', 'crm');
             }
@@ -1099,7 +1099,7 @@ class CRMManager
         $sql = "SELECT * FROM sales_pipeline_stages WHERE is_active = TRUE ORDER BY stage_order";
         try {
             return $this->db->fetchAll($sql);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error fetching pipeline stages: " . $e->getMessage(), 'error', 'crm');
             }
@@ -1135,7 +1135,7 @@ class CRMManager
                 $this->logger->log("Opportunity stage updated: ID $opportunityId to stage $stageId", 'info', 'crm');
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error updating opportunity stage: " . $e->getMessage(), 'error', 'crm');
             }
@@ -1156,7 +1156,7 @@ class CRMManager
         try {
             $row = $this->db->fetch($sql, $params);
             return $row['lead_id'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error getting opportunity lead ID: " . $e->getMessage(), 'error', 'crm');
             }
@@ -1185,7 +1185,7 @@ class CRMManager
 
             $nextNum = $maxNum + 1;
             return $prefix . $year . $month . str_pad($nextNum, 4, '0', STR_PAD_LEFT);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error generating lead number: " . $e->getMessage(), 'error', 'crm');
             }
@@ -1213,7 +1213,7 @@ class CRMManager
 
             $nextNum = $maxNum + 1;
             return $prefix . $year . $month . str_pad($nextNum, 4, '0', STR_PAD_LEFT);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->log("Error generating opportunity number: " . $e->getMessage(), 'error', 'crm');
             }

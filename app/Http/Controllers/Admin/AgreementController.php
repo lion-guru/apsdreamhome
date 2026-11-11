@@ -96,7 +96,7 @@ class AgreementController extends AdminController
                 'page_title' => 'Agreements - APS Dream Home',
                 'active_page' => 'agreements',
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin/agreements/index', [
                 'agreements' => [], 'total' => 0, 'stats' => [],
                 'filters' => ['type' => '', 'status' => '', 'search' => '', 'date_from' => '', 'date_to' => ''],
@@ -195,7 +195,7 @@ class AgreementController extends AdminController
             $agreementId = $this->db->lastInsertId();
 
             $this->json(['success' => true, 'id' => $agreementId, 'agreement_number' => $agreementNumber, 'redirect' => BASE_URL . '/admin/agreements/' . $agreementId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->json(['success' => false, 'error' => 'Failed to create agreement: ' . $e->getMessage()], 500);
         }
     }
@@ -242,7 +242,7 @@ class AgreementController extends AdminController
                 'page_title' => 'Agreement #' . htmlspecialchars($agreement['agreement_number']),
                 'active_page' => 'agreements',
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error loading agreement: ' . $e->getMessage());
             $this->redirect('/admin/agreements');
         }
@@ -290,7 +290,7 @@ class AgreementController extends AdminController
             try {
                 $agRow = $this->db->fetchOne("SELECT ag.*, pb.customer_id, pb.booking_number, p.plot_number, c.name as colony_name, u.name as customer_name, u.email as customer_email, u.phone as customer_phone FROM agreements ag LEFT JOIN plot_bookings pb ON ag.booking_id = pb.id LEFT JOIN plots p ON ag.plot_id = p.id LEFT JOIN colonies c ON p.colony_id = c.id LEFT JOIN users u ON pb.customer_id = u.id WHERE ag.id = ?", [(int)$id]);
                 if (!empty($agRow['customer_id'])) {
-                    $emailSvc = new \App\Services\EmailTemplateService();
+                    $emailSvc = new \App\Services\Communication\EmailService();
                     $bookingData = [
                         'booking_number' => $agRow['booking_number'] ?? '',
                         'plot_number' => $agRow['plot_number'] ?? '',
@@ -321,7 +321,7 @@ class AgreementController extends AdminController
             }
 
             $this->json(['success' => true, 'message' => 'Agreement updated to ' . ucfirst(str_replace('_', ' ', $newStatus))]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->json(['success' => false, 'error' => 'Failed to update: ' . $e->getMessage()], 500);
         }
     }
@@ -358,7 +358,7 @@ class AgreementController extends AdminController
             if ($docId) {
                 try {
                     $this->notificationService->sendAgreementGenerated($bookingId, $type);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("AgreementController: notification failed: " . $e->getMessage());
                 }
                 $this->setFlash('success', ucwords(str_replace('_', ' ', $type)) . ' generated successfully');
@@ -367,7 +367,7 @@ class AgreementController extends AdminController
                 $this->setFlash('error', 'Failed to generate agreement');
                 $this->redirect('/admin/agreements');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error generating agreement: ' . $e->getMessage());
             $this->redirect('/admin/agreements');
         }
@@ -401,7 +401,7 @@ class AgreementController extends AdminController
             header('Cache-Control: private, max-age=0');
             readfile($fullPath);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error downloading document: ' . $e->getMessage());
             $this->redirect('/admin/agreements');
         }
@@ -427,7 +427,7 @@ class AgreementController extends AdminController
                 'preview_html' => $html,
                 'page_title' => 'Preview ' . ucwords(str_replace('_', ' ', $type)),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error previewing agreement: ' . $e->getMessage());
             $this->redirect('/admin/agreements');
         }
@@ -449,9 +449,9 @@ class AgreementController extends AdminController
             $customerPhone = $bookingData['customer_phone'] ?? '';
 
             if (!empty($customerEmail)) {
-                // Send via EmailTemplateService (branded HTML email)
+                // Send via Communication\EmailService (branded HTML email)
                 try {
-                    $emailSvc = new \App\Services\EmailTemplateService();
+                    $emailSvc = new \App\Services\Communication\EmailService();
                     $emailSvc->sendAgreementPending(intval($bookingData['customer_id'] ?? 0), [
                         'booking_number' => $doc['entity_id'] ?? '',
                         'plot_number' => $bookingData['plot_number'] ?? '',
@@ -472,7 +472,7 @@ class AgreementController extends AdminController
                     try {
                         $stmt2 = $this->db->prepare("INSERT INTO email_queue (to_email, to_name, subject, body_text, status, tenant_id, created_at) VALUES (?, ?, ?, ?, 'pending', ?, NOW())");
                         $stmt2->execute([$customerEmail, $bookingData['customer_name'] ?? 'Customer', $subject, $message, $this->tenantId()]);
-                    } catch (\Exception $e2) {
+                    } catch (\Throwable $e2) {
                         error_log("AgreementController: email_queue fallback failed: " . $e2->getMessage());
                     }
                 }
@@ -483,21 +483,21 @@ class AgreementController extends AdminController
                 try {
                     $stmt = $this->db->prepare("INSERT INTO sms_queue (recipient, message, status, tenant_id, created_at) VALUES (?, ?, 'pending', ?, NOW())");
                     $stmt->execute([$customerPhone, $smsText, $this->tenantId()]);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("AgreementController.php: " . $e->getMessage());
                 }
             }
 
             try {
                 $this->notificationService->sendAgreementGenerated($doc['entity_id'], $doc['title'] ?? 'agreement');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("AgreementController: sendToCustomer notification failed: " . $e->getMessage());
             }
 
             $this->agreementService->markAsSent($id);
 
             $this->setFlash('success', 'Agreement sent to customer successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error sending agreement: ' . $e->getMessage());
         }
         $this->redirect('/admin/agreements');

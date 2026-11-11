@@ -36,7 +36,7 @@ class TINApiService
 
         try {
             $this->pdo = \App\Core\Database\Database::getInstance()->getConnection();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[TINApiService] DB connection failed: " . $e->getMessage());
         }
     }
@@ -239,7 +239,7 @@ class TINApiService
                 ($response['error'] ?? null) ? substr($response['error'], 0, 1000) : null,
                 $this->tenantId(),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[TINApiService] logApiCall() failed: " . $e->getMessage());
         }
     }

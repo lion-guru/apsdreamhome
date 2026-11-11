@@ -108,7 +108,7 @@ try {
                 $failed++;
                 echo "  FAIL [$id]: $error\n";
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $db->query(
                 "UPDATE push_notification_queue SET status = 'failed', error_message = ?, updated_at = NOW() WHERE id = ?{$cronTenantSql}",
                 [$e->getMessage(), $id]
@@ -121,7 +121,7 @@ try {
     echo "\n--- Push Queue Summary ---\n";
     echo "Processed: " . count($pending) . " | Sent: $sent | Failed: $failed\n";
 
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "ERROR processing push queue: " . $e->getMessage() . "\n";
 }
 

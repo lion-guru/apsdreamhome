@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Services\Land\LandAcquisitionService;
-use \App\Traits\TenantAwareTrait;
 use Exception;
 
 /**
@@ -29,12 +29,12 @@ class LandInventoryController extends AdminController
         parent::__construct();
         try {
             $this->db = \App\Core\Database\Database::getInstance();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db = null;
         }
         try {
             $this->service = new LandAcquisitionService();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LandInventoryController: service failed: " . $e->getMessage());
             $this->service = null;
         }
@@ -94,7 +94,7 @@ class LandInventoryController extends AdminController
             if ($deal) {
                 $ledger = $this->service->getAcquisitionLedger((int)$deal['id']);
             }
-        } catch (\Exception $e) { error_log('LandInventoryController::leadDetail error: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('LandInventoryController::leadDetail error: ' . $e->getMessage()); }
 
         $brokers = $this->service->listBrokers();
         $this->render('admin/land-inventory/lead-detail', [
@@ -234,7 +234,7 @@ class LandInventoryController extends AdminController
             if ($lead && ($lead['status'] ?? '') === 'screening') {
                 $this->service->advanceLead((int)$leadId, 'visit_done');
             }
-        } catch (\Exception $e) { error_log('LandInventoryController::visitStore error: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('LandInventoryController::visitStore error: ' . $e->getMessage()); }
 
         if (!empty($r['success'])) {
             $this->setFlash('success', 'Site visit recorded');
@@ -346,7 +346,7 @@ class LandInventoryController extends AdminController
                         $this->service->advanceLead((int)$leadId, 'legal');
                     }
                 }
-            } catch (\Exception $e) { error_log('LandInventoryController::opinionStore error: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('LandInventoryController::opinionStore error: ' . $e->getMessage()); }
             $this->setFlash('success', 'Legal opinion recorded');
         } else {
             $this->setFlash('error', 'Failed: ' . ($r['error'] ?? 'unknown'));
@@ -441,7 +441,7 @@ class LandInventoryController extends AdminController
                  WHERE d.id = ?",
                 [$id]
             );
-        } catch (\Exception $e) { error_log('LandInventoryController::registerForm error: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('LandInventoryController::registerForm error: ' . $e->getMessage()); }
         $this->render('admin/land-inventory/registration-form', [
             'page_title'   => 'Register — Deal #' . $id,
             'page_heading' => 'Register Property & Create Payment Plan',
@@ -517,7 +517,7 @@ class LandInventoryController extends AdminController
             } else {
                 $this->setFlash('error', 'Registration failed: ' . ($r['error'] ?? 'unknown'));
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LandInventoryController::registerSubmit error: ' . $e->getMessage());
             $this->setFlash('error', 'Registration error: ' . $e->getMessage());
         }
@@ -584,7 +584,7 @@ class LandInventoryController extends AdminController
             $pid = (int)$pid;
             try {
                 $payment = $this->db->fetch("SELECT * FROM land_deal_payments WHERE id = ?", [$pid]) ?: [];
-            } catch (\Exception $e) { error_log('LandInventoryController::paymentForm error: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('LandInventoryController::paymentForm error: ' . $e->getMessage()); }
         }
         $this->render('admin/land-inventory/payment-form', [
             'page_title'   => 'Payment — Deal #' . $dealId,
@@ -774,7 +774,7 @@ class LandInventoryController extends AdminController
     {
         try {
             return $this->db->fetchAll($sql, $params) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -784,7 +784,7 @@ class LandInventoryController extends AdminController
         try {
             $r = $this->db->fetchOne($sql, $params);
             return $r ?: null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -892,7 +892,7 @@ class LandInventoryController extends AdminController
                 'districts'    => $districts,
                 'summary'      => $summary,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LandInventoryController::farmerLedger error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load farmer ledger: ' . $e->getMessage());
             $this->render('admin/land-inventory/farmer-ledger', [
@@ -1055,7 +1055,7 @@ class LandInventoryController extends AdminController
                 'payments'     => $paymentsByDeal,
                 'farmer_plots' => $farmerPlots,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LandInventoryController::farmerDetail error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load farmer detail: ' . $e->getMessage());
             return $this->redirect('/admin/land-inventory/farmer-ledger');

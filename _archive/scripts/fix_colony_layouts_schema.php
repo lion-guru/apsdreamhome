@@ -42,7 +42,7 @@ foreach ($alterQueries as $query) {
     try {
         $db->query($query);
         echo "âœ“ Executed: $query\n";
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         // Check if column already exists
         if (strpos($e->getMessage(), 'Duplicate column name') !== false) {
             echo "âŠ˜ Already exists (skipped): " . substr($query, 0, 80) . "...\n";

@@ -98,6 +98,52 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <small class="text-muted">Only fill if you want to change password</small>
                                 </div>
                             </div>
+
+                            <?php 
+                            $isAssociate = ($user['role'] ?? '') === 'associate';
+                            $assocData = $associate ?? [];
+                            ?>
+                            <div class="p-3 rounded mb-3 border <?= $isAssociate ? 'bg-white shadow-sm' : 'bg-light' ?>" id="associateControlsBox" style="<?= $isAssociate ? '' : 'display:none;' ?>">
+                                <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                                    <h6 class="fw-bold mb-0 text-primary">
+                                        <i class="fas fa-user-shield me-2"></i>Associate Operations & Financial Controls (एसोसिएट नियंत्रण)
+                                    </h6>
+                                    <span class="badge bg-primary text-white">Security & Anti-Fraud</span>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-check form-switch p-0 d-flex align-items-center gap-3">
+                                            <input class="form-check-input ms-0" type="checkbox" role="switch" id="can_offline_book" name="can_offline_book" value="1" <?= !empty($assocData['can_offline_book']) ? 'checked' : '' ?> style="width: 2.5em; height: 1.3em;">
+                                            <label class="form-check-label fw-bold" for="can_offline_book">
+                                                Allow Direct Offline Plot Booking<br>
+                                                <small class="text-muted fw-normal">एसोसिएट को सीधे पोर्टल से ऑफलाइन प्लॉट बुक करने की अनुमति दें</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check form-switch p-0 d-flex align-items-center gap-3">
+                                            <input class="form-check-input ms-0" type="checkbox" role="switch" id="can_collect_cash" name="can_collect_cash" value="1" <?= !empty($assocData['can_collect_cash']) ? 'checked' : '' ?> style="width: 2.5em; height: 1.3em;">
+                                            <label class="form-check-label fw-bold" for="can_collect_cash">
+                                                Authorize Physical Cash Collection<br>
+                                                <small class="text-muted fw-normal">ग्राहक से सीधे नकद राशि (Cash) प्राप्त करने का विशेष अधिकार</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mt-2">
+                                        <label for="daily_cash_limit" class="form-label fw-bold">Max Daily Cash Collection Limit (₹)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₹</span>
+                                            <input type="number" step="1000" min="0" class="form-control" id="daily_cash_limit" name="daily_cash_limit" value="<?= htmlspecialchars((string)($assocData['daily_cash_limit'] ?? '0')) ?>" placeholder="0.00">
+                                        </div>
+                                        <div class="form-text small">अधिकतम दैनिक नकद सीमा। '0' का अर्थ है कोई नकद अनुमति नहीं (ऑनलाइन पेमेंट अनिवार्य)।</div>
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <div class="alert alert-secondary py-2 px-3 small mb-0">
+                                            <i class="fas fa-info-circle me-1 text-primary"></i> <strong>दिशा-निर्देश:</strong> कंपनी की भ्रष्टाचार-रोधी नीति के अनुसार अधिकांश एसोसिएट्स के लिए नकद संग्रह बंद रखें और केवल कंपनी UPI QR / बैंक खाते में सीधे भुगतान की सलाह दें।
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             
                             <hr class="my-4">
                             
@@ -120,14 +166,27 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <?php endif; ?>
     </div>
     
-    
     <script>
+        const roleSelect = document.getElementById('role');
+        const assocBox = document.getElementById('associateControlsBox');
+        if (roleSelect && assocBox) {
+            roleSelect.addEventListener('change', function() {
+                if (this.value === 'associate') {
+                    assocBox.style.display = 'block';
+                    assocBox.classList.add('bg-white', 'shadow-sm');
+                    assocBox.classList.remove('bg-light');
+                } else {
+                    assocBox.style.display = 'none';
+                }
+            });
+        }
+
         document.getElementById('editUserForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const formData = new FormData(this);
+            if (typeof showLoader === 'function') showLoader();
 
-            showLoader();
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
@@ -137,29 +196,34 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             })
             .then(response => {
                 const contentType = response.headers.get('content-type');
-                .catch(err => console.error('Request failed:', err));
                 if (contentType && contentType.includes('application/json')) {
                     return response.json();
                 } else {
-                    // Non-AJAX response - redirect to users list
                     window.location.href = '<?php echo e($base); ?>/admin/users';
                     return { success: true };
                 }
             })
             .then(data => {
                 if (data && data.success) {
-                    .catch(err => console.error('Request failed:', err));
-                    showToast('User updated successfully!', 'success');
+                    if (typeof showToast === 'function') {
+                        showToast('User updated successfully!', 'success');
+                    }
                     window.location.href = '<?php echo e($base); ?>/admin/users';
                 } else if (data) {
-                    showToast(data.message || 'Failed to update user', 'danger');
+                    if (typeof showToast === 'function') {
+                        showToast(data.message || 'Failed to update user', 'danger');
+                    } else {
+                        alert(data.message || 'Failed to update user');
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                // On network error, try redirecting anyway
                 window.location.href = '<?php echo e($base); ?>/admin/users';
-            ).finally(() => hideLoader());
+            })
+            .finally(() => {
+                if (typeof hideLoader === 'function') hideLoader();
+            });
         });
     </script>
 

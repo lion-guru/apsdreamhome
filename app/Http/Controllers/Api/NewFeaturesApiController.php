@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\BaseController;
 use App\Services\ProgressiveRegistrationService;
 use App\Services\PayrollService;
@@ -13,7 +14,6 @@ use App\Services\AnalyticsService;
 use App\Services\AgentOrchestrator;
 use App\Services\OcrService;
 use App\Services\PropertyMarketplaceService;
-use \App\Traits\TenantAwareTrait;
 
 class NewFeaturesApiController extends BaseController
 {
@@ -33,16 +33,15 @@ class NewFeaturesApiController extends BaseController
         return $userId;
     }
 
-    protected function requireAdmin(): int
+    protected function requireAdmin(): void
     {
-        $userId = $this->requireAuth();
+        $this->requireAuth();
         $role = $GLOBALS['api_user_role'] ?? '';
         if (!in_array($role, ['admin', 'employee', 'super_admin', 'superadmin'])) {
             http_response_code(403);
             echo json_encode(['success' => false, 'error' => 'Admin access required']);
             exit;
         }
-        return $userId;
     }
 
     private function reg(): ProgressiveRegistrationService { return new ProgressiveRegistrationService($this->db); }
@@ -347,6 +346,58 @@ class NewFeaturesApiController extends BaseController
         $content = $data['content'] ?? '';
         $result = $this->ocr()->autoClassify($docId, $fileName, $content);
         return $this->jsonResponse($result);
+    }
+
+    /**
+     * POST /api/v1/ocr/extract — mobile document scanner:
+     * {image_base64, file_name, document_type} -> ocr_documents row + OCR fields
+     */
+    public function ocrExtract()
+    {
+        $userId = $this->requireAuth();
+        $data = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+        $b64 = $data['image_base64'] ?? '';
+        if (empty($b64)) {
+            return $this->jsonResponse(['success' => false, 'error' => 'image_base64 is required'], 400);
+        }
+        $binary = base64_decode($b64, true);
+        if ($binary === false) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Invalid base64 image'], 400);
+        }
+        $fileName = preg_replace('/[^a-zA-Z0-9._\-]/', '_', $data['file_name'] ?? 'scan.jpg');
+        $rawType = strtolower((string)($data['document_type'] ?? 'other'));
+        $validTypes = ['aadhar', 'pan', 'passport', 'driving_license', 'bank_statement', 'salary_slip', 'invoice', 'receipt', 'contract', 'other'];
+        $docType = in_array($rawType, $validTypes, true) ? $rawType : 'other';
+        $dir = sys_get_temp_dir() . '/aps_ocr_' . $userId;
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+        $path = $dir . '/' . time() . '_' . $fileName;
+        if (@file_put_contents($path, $binary) === false) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Failed to store image'], 500);
+        }
+
+        $db = \App\Core\Database\Database::getInstance();
+        try {
+            $db->execute(
+                "INSERT INTO ocr_documents (file_name, file_path, original_name, file_size, mime_type, document_type, uploaded_by, ocr_status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')",
+                [$fileName, $path, $fileName, strlen($binary), 'image/jpeg', $docType, $userId]
+            );
+            $docId = (int) $db->fetchOne("SELECT LAST_INSERT_ID() as id");
+            $result = $this->ocr()->processDocument($docId);
+            @unlink($path);
+            if (empty($result['ok'])) {
+                return $this->jsonResponse(['success' => false, 'error' => $result['error'] ?? 'OCR failed'], 500);
+            }
+            return $this->jsonResponse([
+                'success' => true,
+                'document_id' => $docId,
+                'fields' => $result['fields'] ?? [],
+                'confidence' => $result['confidence'] ?? 0,
+            ]);
+        } catch (\Throwable $e) {
+            @unlink($path);
+            error_log('ocrExtract: ' . $e->getMessage());
+            return $this->jsonResponse(['success' => false, 'error' => 'OCR processing failed'], 500);
+        }
     }
 
     public function executeReport()

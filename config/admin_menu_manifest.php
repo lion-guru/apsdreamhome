@@ -1,7 +1,7 @@
 <?php
 /**
  * Admin menu manifest — future-proof static snapshot of admin_menu_items.
- * Generated: 2026-10-12 14:30:45 | items: 322
+ * Generated: 2026-11-08 18:01:11 | items: 369
  *
  * Used for: (1) sidebar fallback when DB menu is unreachable/empty,
  * (2) self-heal re-seeding of missing menu rows + role permissions.
@@ -338,6 +338,13 @@ return array (
         'view' => 1,
         'create' => 1,
         'edit' => 1,
+        'delete' => 0,
+      ),
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
         'delete' => 0,
       ),
     ),
@@ -2551,6 +2558,129 @@ return array (
       ),
     ),
   ),
+  '/employee/self-service/advances' => 
+  array (
+    'name' => 'Salary Advances & Loans',
+    'icon' => 'fas fa-hand-holding-usd',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 1,
+    'perm' => NULL,
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/expense-reimbursement' => 
+  array (
+    'name' => 'Expense Reimbursement',
+    'icon' => 'fas fa-receipt',
+    'section' => 'hr',
+    'parent_url' => NULL,
+    'order' => 1,
+    'perm' => 'expense_reimbursement',
+    'roles' => 
+    array (
+    ),
+  ),
+  '/admin/payroll' => 
+  array (
+    'name' => 'Payroll Management',
+    'icon' => 'fas fa-calculator',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 2,
+    'perm' => 'payroll.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chro' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/recruitment' => 
+  array (
+    'name' => 'Recruitment / ATS',
+    'icon' => 'fas fa-user-plus',
+    'section' => 'hr',
+    'parent_url' => NULL,
+    'order' => 1,
+    'perm' => 'recruitment_ats',
+    'roles' => 
+    array (
+    ),
+  ),
+  '/employee/self-service/expenses' => 
+  array (
+    'name' => 'My Expense Claims',
+    'icon' => 'fas fa-receipt',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 1,
+    'perm' => 'emp_expense_claims',
+    'roles' => 
+    array (
+    ),
+  ),
   '/admin/lead-kanban' => 
   array (
     'name' => 'Lead Kanban',
@@ -3122,67 +3252,6 @@ return array (
         'delete' => 0,
       ),
       'franchise_owner' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
-  '/admin/payroll' => 
-  array (
-    'name' => 'Payroll Management',
-    'icon' => 'fas fa-calculator',
-    'section' => 'hrm',
-    'parent_url' => NULL,
-    'order' => 2,
-    'perm' => 'payroll.view',
-    'roles' => 
-    array (
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'ceo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chro' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'hr_manager' => 
       array (
         'view' => 1,
         'create' => 1,
@@ -4296,6 +4365,110 @@ return array (
         'edit' => 1,
         'delete' => 1,
       ),
+    ),
+  ),
+  '/admin/reports/receivables-aging' => 
+  array (
+    'name' => 'Receivables Aging',
+    'icon' => 'fas fa-file-invoice-dollar',
+    'section' => 'reports',
+    'parent_url' => '/admin/reports',
+    'order' => 2,
+    'perm' => 'reports.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/self-service/encashment' => 
+  array (
+    'name' => 'Leave Encashment',
+    'icon' => 'fas fa-money-bill-wave',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 2,
+    'perm' => NULL,
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/performance' => 
+  array (
+    'name' => 'Performance & Goals',
+    'icon' => 'fas fa-bullseye',
+    'section' => 'hr',
+    'parent_url' => NULL,
+    'order' => 2,
+    'perm' => 'performance_goals',
+    'roles' => 
+    array (
+    ),
+  ),
+  '/employee/self-service/performance' => 
+  array (
+    'name' => 'My Performance & Goals',
+    'icon' => 'fas fa-bullseye',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 2,
+    'perm' => 'emp_performance',
+    'roles' => 
+    array (
     ),
   ),
   '/admin/dashboard/ceo' => 
@@ -5742,6 +5915,110 @@ return array (
       ),
     ),
   ),
+  '/admin/reports/payables-aging' => 
+  array (
+    'name' => 'Payables Aging',
+    'icon' => 'fas fa-file-invoice',
+    'section' => 'reports',
+    'parent_url' => '/admin/reports',
+    'order' => 3,
+    'perm' => 'reports.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/self-service/overtime' => 
+  array (
+    'name' => 'Overtime Management',
+    'icon' => 'fas fa-clock',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 3,
+    'perm' => NULL,
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/document-vault' => 
+  array (
+    'name' => 'Document Vault',
+    'icon' => 'fas fa-folder-open',
+    'section' => 'hr',
+    'parent_url' => NULL,
+    'order' => 3,
+    'perm' => 'document_vault',
+    'roles' => 
+    array (
+    ),
+  ),
+  '/employee/self-service/payslips' => 
+  array (
+    'name' => 'My Payslips',
+    'icon' => 'fas fa-file-invoice-dollar',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 3,
+    'perm' => 'emp_payslips',
+    'roles' => 
+    array (
+    ),
+  ),
   '/admin/dashboard/cfo' => 
   array (
     'name' => 'CFO Dashboard',
@@ -6179,102 +6456,6 @@ return array (
         'delete' => 0,
       ),
     ),
-  '/admin/chart-of-accounts' =>
-  array (
-    'name' => 'Chart of Accounts',
-    'icon' => 'fas fa-sitemap',
-    'section' => 'finance',
-    'parent_url' => NULL,
-    'order' => 5,
-    'perm' => 'financial.view',
-    'roles' =>
-    array (
-      'admin' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'manager' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'ceo' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'coo' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'finance_director' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'finance_manager' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'senior_accountant' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chartered_accountant' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'accountant' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'franchise_owner' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
   ),
   '/admin/telecaller' => 
   array (
@@ -6327,102 +6508,6 @@ return array (
         'create' => 0,
         'edit' => 1,
         'delete' => 0,
-  '/admin/journal-entries' =>
-  array (
-    'name' => 'Journal Entries',
-    'icon' => 'fas fa-book',
-    'section' => 'finance',
-    'parent_url' => NULL,
-    'order' => 6,
-    'perm' => 'financial.view',
-    'roles' =>
-    array (
-      'admin' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'manager' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'ceo' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'cfo' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'coo' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'finance_director' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'finance_manager' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'senior_accountant' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'chartered_accountant' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'accountant' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'franchise_owner' =>
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
       ),
     ),
   ),
@@ -7448,6 +7533,98 @@ return array (
       ),
     ),
   ),
+  '/admin/reports/fund-flow' => 
+  array (
+    'name' => 'Fund Flow Statement',
+    'icon' => 'fas fa-exchange-alt',
+    'section' => 'reports',
+    'parent_url' => '/admin/reports',
+    'order' => 4,
+    'perm' => 'reports.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/self-service/assets' => 
+  array (
+    'name' => 'My Asset Assignments',
+    'icon' => 'fas fa-laptop',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 4,
+    'perm' => NULL,
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/self-service/documents' => 
+  array (
+    'name' => 'My Documents',
+    'icon' => 'fas fa-folder',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 4,
+    'perm' => 'emp_documents',
+    'roles' => 
+    array (
+    ),
+  ),
   '/admin/dashboard/finance' => 
   array (
     'name' => 'Finance Dashboard',
@@ -8401,6 +8578,213 @@ return array (
       ),
     ),
   ),
+  '/admin/land-plot-link' => 
+  array (
+    'name' => 'Plot-Gata-Kisan Link',
+    'icon' => 'fas fa-link',
+    'section' => 'land',
+    'parent_url' => '/admin/farmer-acquisitions',
+    'order' => 5,
+    'perm' => 'land.acquisitions',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/chart-of-accounts' => 
+  array (
+    'name' => 'Chart of Accounts',
+    'icon' => 'fas fa-sitemap',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 5,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/self-service/announcements' => 
+  array (
+    'name' => 'Company Announcements',
+    'icon' => 'fas fa-bullhorn',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 5,
+    'perm' => NULL,
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/manual-calling' => 
+  array (
+    'name' => 'Manual Calling Desk',
+    'icon' => 'fa-phone-volume',
+    'section' => 'employee',
+    'parent_url' => NULL,
+    'order' => 5,
+    'perm' => 'telecalling.view',
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'agent' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/self-service/leave-calendar' => 
+  array (
+    'name' => 'Leave Calendar',
+    'icon' => 'fas fa-calendar-alt',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 5,
+    'perm' => 'emp_leave_calendar',
+    'roles' => 
+    array (
+    ),
+  ),
   '/admin/dashboard/sales' => 
   array (
     'name' => 'Sales Dashboard',
@@ -9274,6 +9658,121 @@ return array (
       ),
     ),
   ),
+  '/admin/journal-entries' => 
+  array (
+    'name' => 'Journal Entries',
+    'icon' => 'fas fa-book',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 6,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/self-service/shift-swaps' => 
+  array (
+    'name' => 'Shift Swaps',
+    'icon' => 'fas fa-exchange-alt',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 6,
+    'perm' => NULL,
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
   '/admin/campaigns' => 
   array (
     'name' => 'Campaigns',
@@ -9694,6 +10193,72 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/tax-planning' => 
+  array (
+    'name' => 'Tax Planning',
+    'icon' => 'fas fa-calculator',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 7,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/self-service/helpdesk' => 
+  array (
+    'name' => 'Helpdesk & Support',
+    'icon' => 'fas fa-headset',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 7,
+    'perm' => NULL,
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
       ),
     ),
   ),
@@ -11386,6 +11951,30 @@ return array (
       ),
     ),
   ),
+  '/admin/voice-calling' => 
+  array (
+    'name' => 'AI Voice Calling',
+    'icon' => 'phone',
+    'section' => 'ai_tech',
+    'parent_url' => NULL,
+    'order' => 10,
+    'perm' => 'voice_calling.view',
+    'roles' => 
+    array (
+    ),
+  ),
+  '#' => 
+  array (
+    'name' => 'Finance',
+    'icon' => 'fas fa-rupee-sign',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 20,
+    'perm' => 'finance',
+    'roles' => 
+    array (
+    ),
+  ),
   '/admin/bookings' => 
   array (
     'name' => 'Bookings Manager',
@@ -11824,7 +12413,7 @@ return array (
       ),
     ),
   ),
-  '/employee/reports' => 
+  '/employee/reporting' => 
   array (
     'name' => 'Reports',
     'icon' => 'fas fa-file-alt',
@@ -12000,6 +12589,114 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/dynamic-pricing' => 
+  array (
+    'name' => 'Dynamic Pricing AI',
+    'icon' => 'fas fa-chart-line',
+    'section' => 'plots',
+    'parent_url' => '/admin/plots',
+    'order' => 12,
+    'perm' => 'plots.development',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/recurring' => 
+  array (
+    'name' => 'Recurring Transactions',
+    'icon' => 'fas fa-sync-alt',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 12,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
       ),
     ),
   ),
@@ -12198,7 +12895,7 @@ return array (
       ),
     ),
   ),
-  '/employee/tax' => 
+  '/employee/self-service/tax-calculator' => 
   array (
     'name' => 'TDS & GST',
     'icon' => 'fas fa-percentage',
@@ -12562,15 +13259,22 @@ return array (
   ),
   '/employee/sales-dashboard' => 
   array (
-    'name' => 'Sales Dashboard',
-    'icon' => 'fas fa-chart-line',
+    'name' => 'Deals Pipeline',
+    'icon' => 'fas fa-handshake',
     'section' => 'employee',
     'parent_url' => NULL,
-    'order' => 14,
+    'order' => 16,
     'perm' => NULL,
     'roles' => 
     array (
       'employee_sales_manager' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'employee_telecaller_lead' => 
       array (
         'view' => 1,
         'create' => 0,
@@ -13216,53 +13920,6 @@ return array (
       ),
     ),
   ),
-  '/employee/deals' => 
-  array (
-    'name' => 'Deals Pipeline',
-    'icon' => 'fas fa-handshake',
-    'section' => 'employee',
-    'parent_url' => NULL,
-    'order' => 16,
-    'perm' => NULL,
-    'roles' => 
-    array (
-      'employee_sales_manager' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'employee_telecaller_lead' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-    ),
-  ),
   '/admin/mlm-rewards/rank-criteria' => 
   array (
     'name' => 'Rank Criteria',
@@ -13467,11 +14124,11 @@ return array (
   ),
   '/employee/hr-dashboard' => 
   array (
-    'name' => 'HR Dashboard',
-    'icon' => 'fas fa-users-cog',
+    'name' => 'Recruitment',
+    'icon' => 'fas fa-user-plus',
     'section' => 'employee',
     'parent_url' => NULL,
-    'order' => 17,
+    'order' => 19,
     'perm' => NULL,
     'roles' => 
     array (
@@ -13707,53 +14364,6 @@ return array (
       ),
     ),
   ),
-  '/employee/employees' => 
-  array (
-    'name' => 'Employees',
-    'icon' => 'fas fa-user-tie',
-    'section' => 'employee',
-    'parent_url' => NULL,
-    'order' => 18,
-    'perm' => NULL,
-    'roles' => 
-    array (
-      'employee_hr_manager' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'employee_hr_executive' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-    ),
-  ),
   '/admin/mlm-rewards/upgrades' => 
   array (
     'name' => 'Upgrades',
@@ -13953,46 +14563,6 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 0,
-      ),
-    ),
-  ),
-  '/employee/recruitment' => 
-  array (
-    'name' => 'Recruitment',
-    'icon' => 'fas fa-user-plus',
-    'section' => 'employee',
-    'parent_url' => NULL,
-    'order' => 19,
-    'perm' => NULL,
-    'roles' => 
-    array (
-      'employee_hr_manager' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
       ),
     ),
   ),
@@ -14790,24 +15360,24 @@ return array (
       ),
     ),
   ),
-  '/employee/infrastructure' => 
+  '/employee/ops-dashboard' => 
   array (
-    'name' => 'Infrastructure',
-    'icon' => 'fas fa-network-wired',
+    'name' => 'Vendors',
+    'icon' => 'fas fa-truck',
     'section' => 'employee',
     'parent_url' => NULL,
-    'order' => 21,
+    'order' => 32,
     'perm' => NULL,
     'roles' => 
     array (
-      'employee_it_manager' => 
+      'employee_ops_manager' => 
       array (
         'view' => 1,
         'create' => 0,
         'edit' => 0,
         'delete' => 0,
       ),
-      'employee_it_executive' => 
+      'employee_ops_executive' => 
       array (
         'view' => 1,
         'create' => 0,
@@ -14877,62 +15447,22 @@ return array (
   ),
   '/employee/legal-dashboard' => 
   array (
-    'name' => 'Legal Dashboard',
-    'icon' => 'fas fa-gavel',
+    'name' => 'Complaints',
+    'icon' => 'fas fa-exclamation-triangle',
     'section' => 'employee',
     'parent_url' => NULL,
-    'order' => 22,
+    'order' => 34,
     'perm' => NULL,
     'roles' => 
     array (
-      'employee_legal_advisor' => 
+      'employee_cs_manager' => 
       array (
         'view' => 1,
         'create' => 0,
         'edit' => 0,
         'delete' => 0,
       ),
-      'director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-    ),
-  ),
-  '/employee/compliance' => 
-  array (
-    'name' => 'Compliance',
-    'icon' => 'fas fa-shield-alt',
-    'section' => 'employee',
-    'parent_url' => NULL,
-    'order' => 23,
-    'perm' => NULL,
-    'roles' => 
-    array (
-      'employee_legal_advisor' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'employee_legal_executive' => 
+      'employee_cs_executive' => 
       array (
         'view' => 1,
         'create' => 0,
@@ -14983,15 +15513,15 @@ return array (
   ),
   '/employee/land-dashboard' => 
   array (
-    'name' => 'Land Dashboard',
-    'icon' => 'fas fa-map',
+    'name' => 'Projects',
+    'icon' => 'fas fa-project-diagram',
     'section' => 'employee',
     'parent_url' => NULL,
-    'order' => 24,
+    'order' => 27,
     'perm' => NULL,
     'roles' => 
     array (
-      'employee_land_manager' => 
+      'employee_project_manager' => 
       array (
         'view' => 1,
         'create' => 0,
@@ -15021,37 +15551,16 @@ return array (
       ),
     ),
   ),
-  '/employee/surveys' => 
+  '/admin/budgets' => 
   array (
-    'name' => 'Site Surveys',
-    'icon' => 'fas fa-compass',
-    'section' => 'employee',
+    'name' => 'Budget Management',
+    'icon' => 'fas fa-chart-pie',
+    'section' => 'finance',
     'parent_url' => NULL,
-    'order' => 25,
-    'perm' => NULL,
+    'order' => 24,
+    'perm' => 'budget.view',
     'roles' => 
     array (
-      'employee_land_manager' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'employee_land_executive' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
       'admin' => 
       array (
         'view' => 1,
@@ -15065,6 +15574,123 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/self-service/surveys' => 
+  array (
+    'name' => 'Engagement Surveys',
+    'icon' => 'fas fa-poll-h',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 104,
+    'perm' => 'employee',
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'agent' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
       ),
     ),
   ),
@@ -15087,7 +15713,96 @@ return array (
       ),
     ),
   ),
-  '/employee/construction-dashboard' => 
+  '/admin/budgets/planning' => 
+  array (
+    'name' => 'Budget Planning',
+    'icon' => 'fas fa-clipboard-list',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 25,
+    'perm' => 'budget.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/ca-dashboard' => 
   array (
     'name' => 'Construction Dashboard',
     'icon' => 'fas fa-hard-hat',
@@ -15127,30 +15842,16 @@ return array (
       ),
     ),
   ),
-  '/employee/projects' => 
+  '/admin/budgets/variance-report' => 
   array (
-    'name' => 'Projects',
-    'icon' => 'fas fa-project-diagram',
-    'section' => 'employee',
+    'name' => 'Budget Variance Report',
+    'icon' => 'fas fa-chart-bar',
+    'section' => 'finance',
     'parent_url' => NULL,
-    'order' => 27,
-    'perm' => NULL,
+    'order' => 26,
+    'perm' => 'budget.view',
     'roles' => 
     array (
-      'employee_project_manager' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
       'admin' => 
       array (
         'view' => 1,
@@ -15165,16 +15866,119 @@ return array (
         'edit' => 1,
         'delete' => 1,
       ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
     ),
   ),
-  '/employee/quality' => 
+  '/admin/fixed-assets' => 
   array (
-    'name' => 'Quality Control',
-    'icon' => 'fas fa-check-double',
+    'name' => 'Fixed Assets',
+    'icon' => 'fas fa-building',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 27,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/employee/self-service' => 
+  array (
+    'name' => 'Employee Self Service',
+    'icon' => 'fas fa-user-cog',
     'section' => 'employee',
     'parent_url' => NULL,
     'order' => 28,
-    'perm' => NULL,
+    'perm' => 'employee_self_service',
     'roles' => 
     array (
       'employee_project_manager' => 
@@ -15214,17 +16018,64 @@ return array (
       ),
     ),
   ),
+  '/admin/purchase-orders' => 
+  array (
+    'name' => 'Purchase Orders',
+    'icon' => 'fas fa-shopping-cart',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 28,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
   '/employee/marketing-dashboard' => 
   array (
-    'name' => 'Marketing Dashboard',
-    'icon' => 'fas fa-bullhorn',
+    'name' => 'Campaigns',
+    'icon' => 'fas fa-mail-bulk',
     'section' => 'employee',
     'parent_url' => NULL,
-    'order' => 29,
+    'order' => 30,
     'perm' => NULL,
     'roles' => 
     array (
       'employee_marketing_manager' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'employee_marketing_executive' => 
       array (
         'view' => 1,
         'create' => 0,
@@ -15251,6 +16102,121 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/pf-esi' => 
+  array (
+    'name' => 'PF/ESI Compliance',
+    'icon' => 'fas fa-shield-alt',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 29,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/grn' => 
+  array (
+    'name' => 'Goods Receipt Note (GRN)',
+    'icon' => 'fas fa-truck',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 29,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
       ),
     ),
   ),
@@ -15609,37 +16575,16 @@ return array (
       ),
     ),
   ),
-  '/employee/campaigns' => 
+  '/admin/multi-currency' => 
   array (
-    'name' => 'Campaigns',
-    'icon' => 'fas fa-mail-bulk',
-    'section' => 'employee',
+    'name' => 'Multi-Currency',
+    'icon' => 'fas fa-coins',
+    'section' => 'finance',
     'parent_url' => NULL,
     'order' => 30,
-    'perm' => NULL,
+    'perm' => 'financial.view',
     'roles' => 
     array (
-      'employee_marketing_manager' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'employee_marketing_executive' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
       'admin' => 
       array (
         'view' => 1,
@@ -15654,32 +16599,201 @@ return array (
         'edit' => 1,
         'delete' => 1,
       ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
     ),
   ),
-  '/employee/ops-dashboard' => 
+  '/admin/recurring-journal-entries' => 
   array (
-    'name' => 'Operations Dashboard',
-    'icon' => 'fas fa-cogs',
-    'section' => 'employee',
+    'name' => 'Recurring Journal Entries',
+    'icon' => 'fas fa-history',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 30,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/inter-company' => 
+  array (
+    'name' => 'Inter-Company Transactions',
+    'icon' => 'fas fa-exchange-alt',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 30,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/ivr-flows' => 
+  array (
+    'name' => 'IVR Flows',
+    'icon' => 'git-branch',
+    'section' => 'ai_tech',
+    'parent_url' => NULL,
+    'order' => 30,
+    'perm' => 'ivr_flows.view',
+    'roles' => 
+    array (
+    ),
+  ),
+  '/admin/scheduled-reports' => 
+  array (
+    'name' => 'Scheduled Reports',
+    'icon' => 'fas fa-clock',
+    'section' => 'finance',
     'parent_url' => NULL,
     'order' => 31,
-    'perm' => NULL,
+    'perm' => 'financial.view',
     'roles' => 
     array (
-      'employee_ops_manager' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
       'admin' => 
       array (
         'view' => 1,
@@ -15694,39 +16808,67 @@ return array (
         'edit' => 1,
         'delete' => 1,
       ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
     ),
   ),
-  '/employee/vendors' => 
+  '/admin/calendar-sync' => 
   array (
-    'name' => 'Vendors',
-    'icon' => 'fas fa-truck',
-    'section' => 'employee',
+    'name' => 'Calendar Sync',
+    'icon' => 'fas fa-calendar-alt',
+    'section' => 'finance',
     'parent_url' => NULL,
     'order' => 32,
-    'perm' => NULL,
+    'perm' => 'financial.view',
     'roles' => 
     array (
-      'employee_ops_manager' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'employee_ops_executive' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
       'admin' => 
       array (
         'view' => 1,
@@ -15741,9 +16883,58 @@ return array (
         'edit' => 1,
         'delete' => 1,
       ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
     ),
   ),
-  '/employee/cs-dashboard' => 
+  '/employee/dashboard-overview' => 
   array (
     'name' => 'Customer Success',
     'icon' => 'fas fa-headset',
@@ -15783,37 +16974,16 @@ return array (
       ),
     ),
   ),
-  '/employee/complaints' => 
+  '/admin/cloud-storage' => 
   array (
-    'name' => 'Complaints',
-    'icon' => 'fas fa-exclamation-triangle',
-    'section' => 'employee',
+    'name' => 'Cloud Storage (S3)',
+    'icon' => 'fas fa-cloud',
+    'section' => 'finance',
     'parent_url' => NULL,
-    'order' => 34,
-    'perm' => NULL,
+    'order' => 33,
+    'perm' => 'financial.view',
     'roles' => 
     array (
-      'employee_cs_manager' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'employee_cs_executive' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 0,
-        'delete' => 0,
-      ),
-      'director' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 0,
-      ),
       'admin' => 
       array (
         'view' => 1,
@@ -15827,6 +16997,205 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/storage-analytics' => 
+  array (
+    'name' => 'Storage Analytics',
+    'icon' => 'fas fa-chart-pie',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 34,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/storage-lifecycle' => 
+  array (
+    'name' => 'Storage Lifecycle',
+    'icon' => 'fas fa-recycle',
+    'section' => 'finance',
+    'parent_url' => NULL,
+    'order' => 35,
+    'perm' => 'financial.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
       ),
     ),
   ),
@@ -16185,6 +17554,60 @@ return array (
       ),
     ),
   ),
+  '/admin/ai-calling/call-logs' => 
+  array (
+    'name' => 'Voice Call Logs',
+    'icon' => 'fas fa-headset',
+    'section' => 'ai_tech',
+    'parent_url' => NULL,
+    'order' => 195,
+    'perm' => 'ai_calling',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'it_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'telecalling_lead' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_developer' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'telecalling_executive' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
   '/employee/payroll' => 
   array (
     'name' => 'Payroll',
@@ -16451,6 +17874,119 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 0,
+      ),
+    ),
+  ),
+  '/admin/labour-law-compliance' => 
+  array (
+    'name' => 'Labour Law Compliance',
+    'icon' => 'fas fa-gavel',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 50,
+    'perm' => 'hrm.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/voice-analytics' => 
+  array (
+    'name' => 'Voice Analytics',
+    'icon' => 'bar-chart-2',
+    'section' => 'ai_tech',
+    'parent_url' => NULL,
+    'order' => 50,
+    'perm' => 'voice_analytics.view',
+    'roles' => 
+    array (
+    ),
+  ),
+  '/admin/grievances' => 
+  array (
+    'name' => 'Employee Grievances',
+    'icon' => 'fas fa-balance-scale',
+    'section' => 'hrm',
+    'parent_url' => NULL,
+    'order' => 51,
+    'perm' => 'hrm.view',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'hr_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'hr_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
       ),
     ),
   ),
@@ -17458,6 +18994,58 @@ return array (
     array (
     ),
   ),
+  '/admin/rag' => 
+  array (
+    'name' => 'RAG Knowledge Base',
+    'icon' => 'fas fa-brain',
+    'section' => 'ai',
+    'parent_url' => '/admin/plots',
+    'order' => 60,
+    'perm' => 'ai.rag',
+    'roles' => 
+    array (
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'cto' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/telecalling/dashboard' => 
+  array (
+    'name' => 'Telecalling Dashboard',
+    'icon' => 'users',
+    'section' => 'ai_tech',
+    'parent_url' => NULL,
+    'order' => 60,
+    'perm' => 'telecalling.view',
+    'roles' => 
+    array (
+    ),
+  ),
   '/employee/documents' => 
   array (
     'name' => 'Documents',
@@ -18129,6 +19717,46 @@ return array (
       ),
     ),
   ),
+  '/admin/crm/call-recordings' => 
+  array (
+    'name' => 'Call Recordings',
+    'icon' => 'fas fa-headphones',
+    'section' => 'crm',
+    'parent_url' => '/admin/crm/voice',
+    'order' => 90,
+    'perm' => 'crm.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
   '/admin/referrals/leaderboard' => 
   array (
     'name' => 'Referral Leaderboard',
@@ -18208,6 +19836,39 @@ return array (
         'delete' => 0,
       ),
       'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/feedback-pipeline' => 
+  array (
+    'name' => 'Feedback Pipeline',
+    'icon' => 'fas fa-comments',
+    'section' => 'crm',
+    'parent_url' => '/admin/leads',
+    'order' => 95,
+    'perm' => 'crm.view',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
       array (
         'view' => 1,
         'create' => 1,
@@ -19182,6 +20843,95 @@ return array (
       ),
     ),
   ),
+  '/admin/export/excel/receivables-aging' => 
+  array (
+    'name' => 'Excel Export (.xlsx)',
+    'icon' => 'fas fa-file-excel',
+    'section' => 'reports',
+    'parent_url' => '/admin/reports',
+    'order' => 99,
+    'perm' => 'reports.export',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'ceo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'cfo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'coo' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_director' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'finance_manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'senior_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'chartered_accountant' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'accountant' => 
+      array (
+        'view' => 1,
+        'create' => 0,
+        'edit' => 0,
+        'delete' => 0,
+      ),
+    ),
+  ),
   '/employee/logout' => 
   array (
     'name' => 'Logout',
@@ -20111,6 +21861,60 @@ return array (
       ),
     ),
   ),
+  '/employee/self-service/grievances' => 
+  array (
+    'name' => 'My Grievances',
+    'icon' => 'fas fa-balance-scale',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 101,
+    'perm' => 'employee',
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'agent' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
   '/admin/crm/custom-fields' => 
   array (
     'name' => 'Custom Fields',
@@ -20360,6 +22164,60 @@ return array (
       ),
     ),
   ),
+  '/employee/self-service/training' => 
+  array (
+    'name' => 'Training & Skills',
+    'icon' => 'fas fa-graduation-cap',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 102,
+    'perm' => 'employee',
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'agent' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+    ),
+  ),
   '/admin/crm/drip' => 
   array (
     'name' => 'Drip Campaigns',
@@ -20540,6 +22398,60 @@ return array (
         'create' => 1,
         'edit' => 1,
         'delete' => 1,
+      ),
+    ),
+  ),
+  '/employee/self-service/org-chart' => 
+  array (
+    'name' => 'Org Chart',
+    'icon' => 'fas fa-sitemap',
+    'section' => 'employee',
+    'parent_url' => '/employee/self-service',
+    'order' => 103,
+    'perm' => 'employee',
+    'roles' => 
+    array (
+      'employee' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'agent' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'telecaller' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'manager' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
+      ),
+      'super_admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 0,
       ),
     ),
   ),
@@ -21863,60 +23775,6 @@ return array (
       ),
     ),
   ),
-  '/admin/ai-calling/call-logs' => 
-  array (
-    'name' => 'Voice Call Logs',
-    'icon' => 'fas fa-headset',
-    'section' => 'ai_tech',
-    'parent_url' => NULL,
-    'order' => 195,
-    'perm' => 'ai_calling',
-    'roles' => 
-    array (
-      'admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'super_admin' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'it_manager' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'telecalling_lead' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-      'senior_developer' => 
-      array (
-        'view' => 1,
-        'create' => 1,
-        'edit' => 1,
-        'delete' => 1,
-      ),
-      'telecalling_executive' => 
-      array (
-        'view' => 1,
-        'create' => 0,
-        'edit' => 1,
-        'delete' => 0,
-      ),
-    ),
-  ),
   '/admin/tools/esign' => 
   array (
     'name' => 'eSign Management',
@@ -22249,6 +24107,32 @@ return array (
         'delete' => 1,
       ),
       'senior_developer' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+    ),
+  ),
+  '/admin/messenger/dead-letters' => 
+  array (
+    'name' => 'Dead Letter Queue',
+    'icon' => 'fas fa-envelope-open',
+    'section' => 'system',
+    'parent_url' => '/admin/erp',
+    'order' => 999,
+    'perm' => 'system.dead_letter',
+    'roles' => 
+    array (
+      'admin' => 
+      array (
+        'view' => 1,
+        'create' => 1,
+        'edit' => 1,
+        'delete' => 1,
+      ),
+      'super_admin' => 
       array (
         'view' => 1,
         'create' => 1,

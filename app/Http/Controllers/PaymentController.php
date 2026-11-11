@@ -211,7 +211,7 @@ class PaymentController extends BaseController
                     COALESCE(SUM(CASE WHEN status = 'refunded' THEN amount ELSE 0 END), 0) as total_refunded
                  FROM payments"
             ) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $payments = [];
             $stats = [];
         }

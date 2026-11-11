@@ -81,7 +81,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                     "SELECT * FROM ai_calling_scripts WHERE script_code = ? AND is_active = 1 LIMIT 1",
                     [$scriptCode]
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $script = null;
             }
 
@@ -110,7 +110,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 ] : null,
                 'lead_phone' => $phone
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('VoiceAgentController::startCall error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -220,7 +220,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 'suggested_slots' => $suggestedSlots,
                 'qualification_result' => $qualificationResult
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('VoiceAgentController::processResponse error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -252,7 +252,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
             }
 
             return $this->jsonResponse(['success' => true, 'session' => $session]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('VoiceAgentController::getSession error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -321,7 +321,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 'outcome' => $outcome,
                 'sentiment' => $sentiment
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('VoiceAgentController::endCall error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -357,7 +357,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
             $schedule = $this->db->fetchAll($sql, $params);
 
             return $this->jsonResponse(['success' => true, 'schedule' => $schedule]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('VoiceAgentController::getSchedule error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -401,7 +401,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 'scheduled_date' => $scheduledDate,
                 'agent_type' => $agentType
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('VoiceAgentController::scheduleCall error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -432,7 +432,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
             $leads = $this->db->fetchAll($sql, $params);
 
             return $this->jsonResponse(['success' => true, 'extracted_leads' => $leads]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('VoiceAgentController::getExtractedLeads error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -489,7 +489,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 'extracted_lead_id' => $id,
                 'message' => 'Lead converted successfully'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('VoiceAgentController::convertExtractedLead error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -542,7 +542,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                     'avg_call_duration_seconds' => round((float)($avgDuration['avg_sec'] ?? 0))
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('VoiceAgentController::getStats error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }
@@ -608,7 +608,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                     'total_pages' => max(1, ceil((int)($total['count'] ?? 0) / $limit))
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('VoiceAgentController::getCallHistory error: ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Internal server error'], 500);
         }

@@ -151,7 +151,7 @@ class EFilingService
                 SUM(MONTH(created_at)=MONTH(NOW()) AND YEAR(created_at)=YEAR(NOW())) as this_month
                 FROM efiling_submissions")->fetch(PDO::FETCH_ASSOC);
             if ($row) $stats = array_merge($stats, $row);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[EFilingService] getSubmissionStats() exception: " . $e->getMessage());
         }
         return $stats;
@@ -168,7 +168,7 @@ class EFilingService
                 ORDER BY due_date ASC");
             $stmt->execute([$days]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[EFilingService] getUpcomingDeadlines() exception: " . $e->getMessage());
             return [];
         }
@@ -181,7 +181,7 @@ class EFilingService
                 WHERE due_date < CURDATE() AND status IN ('upcoming','extended')
                 ORDER BY due_date ASC");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[EFilingService] getOverdueDeadlines() exception: " . $e->getMessage());
             return [];
         }
@@ -201,7 +201,7 @@ class EFilingService
                 SUM(due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) AND status='upcoming') as due_this_month
                 FROM efiling_deadlines")->fetch(PDO::FETCH_ASSOC);
             return $row ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[EFilingService] getDeadlineStats() exception: " . $e->getMessage());
             return [];
         }
@@ -213,7 +213,7 @@ class EFilingService
             $stmt = $this->getPdo()->prepare("UPDATE efiling_deadlines
                 SET status = 'completed', submission_id = ? WHERE id = ?");
             return $stmt->execute([$submissionId, $deadlineId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[EFilingService] markDeadlineComplete() exception: " . $e->getMessage());
             return false;
         }
@@ -231,7 +231,7 @@ class EFilingService
                 WHERE " . implode(' AND ', $where) . " ORDER BY due_date ASC");
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[EFilingService] getAllDeadlines() exception: " . $e->getMessage());
             return [];
         }
@@ -252,7 +252,7 @@ class EFilingService
             $tdsPending = (int)$this->getPdo()->query(
                 "SELECT COUNT(*) FROM tds_register WHERE status='pending'"
             )->fetchColumn();
-        } catch (\Exception $e) { error_log("[EFilingService] TDS pending query: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("[EFilingService] TDS pending query: " . $e->getMessage()); }
 
         // GST summary
         $gstPending = 0;
@@ -260,7 +260,7 @@ class EFilingService
             $gstPending = (int)$this->getPdo()->query(
                 "SELECT COUNT(*) FROM gst_returns WHERE filing_status IN ('draft','pending')"
             )->fetchColumn();
-        } catch (\Exception $e) { error_log("[EFilingService] GST pending query: " . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log("[EFilingService] GST pending query: " . $e->getMessage()); }
 
         // Recent submissions
         $recent = $this->listSubmissions(['limit' => 10]);

@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `marketing_templates` (
 try {
     $db->exec($sql);
     echo "✅ marketing_templates created\n";
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ " . $e->getMessage() . "\n";
     exit(1);
 }
@@ -74,7 +74,7 @@ foreach ($templates as $t) {
         $stmt = $db->prepare("INSERT IGNORE INTO marketing_templates (name, slug, category, description, canvas_w, canvas_h, bg_color, accent_color, title_text, subtitle_text, show_price, show_location, show_offer, show_branding, show_qr, photo_layout, is_active, is_system, sort_order, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1, ?, NOW())");
         $stmt->execute([$t['name'], $t['slug'], $t['category'], $t['description'], $t['canvas_w'], $t['canvas_h'], $t['bg_color'], $t['accent_color'], $t['title_text'], $t['subtitle_text'], $t['show_price'], $t['show_location'], $t['show_offer'], $t['show_branding'], $t['show_qr'], $t['photo_layout'], $t['sort_order']]);
         echo "✅ {$t['name']} ({$t['category']})\n";
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo "❌ {$t['name']}: " . $e->getMessage() . "\n";
     }
 }

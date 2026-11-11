@@ -70,7 +70,13 @@
                             </div>
                         </div>
 
-                        <div class="row g-3 text-center">
+                        <div class="text-center mb-4">
+                            <button type="button" class="btn btn-primary btn-lg px-4 shadow-sm" onclick="calcVal(true)">
+                                <i class="fas fa-calculator me-2"></i><?php echo __('calculate_valuation', [], 'Calculate Valuation'); ?>
+                            </button>
+                        </div>
+
+                        <div class="row g-3 text-center" id="valuationResults">
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('estimated_value', [], 'Estimated Value'); ?></small>
@@ -97,7 +103,7 @@
     </div>
 </section>
 <script>
-function calcVal() {
+function calcVal(shouldScroll = false) {
     const type = document.getElementById('propType').value;
     const area = parseFloat(document.getElementById('area').value) || 0;
     const loc = document.getElementById('locSel').value;
@@ -118,6 +124,16 @@ function calcVal() {
     document.getElementById('estVal').textContent = '\u20B9' + total.toLocaleString('en-IN');
     document.getElementById('ppsf').textContent = '\u20B9' + Math.round(ppsf).toLocaleString('en-IN');
     document.getElementById('valRange').textContent = '\u20B9' + (low / 100000).toFixed(1) + 'L \u2014 \u20B9' + (high / 100000).toFixed(1) + 'L';
+
+    if (shouldScroll) {
+        const resEl = document.getElementById('valuationResults');
+        if (resEl) {
+            resEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            resEl.style.transition = 'transform 0.25s ease, box-shadow 0.25s ease';
+            resEl.style.transform = 'scale(1.02)';
+            setTimeout(() => { resEl.style.transform = 'scale(1)'; }, 250);
+        }
+    }
 }
 calcVal();
 </script>

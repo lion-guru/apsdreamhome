@@ -56,7 +56,7 @@ if (!isset($_SESSION['last_regeneration'])) {
 try {
     $db = \App\Core\Database::getInstance();
     $pdo = $db->getConnection();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     die("Database connection failed: " . $e->getMessage());
 }
 
@@ -108,7 +108,7 @@ try {
     $stmt = $pdo->prepare("SELECT type, message, created_at FROM notifications WHERE user_id = :user_id ORDER BY created_at DESC LIMIT 20");
     $stmt->execute(['user_id' => $user_id]);
     $notifications = $stmt->fetchAll();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log('Error in self_service_portal.php: ' . $e->getMessage());
     $_SESSION['error'] = 'An error occurred. Please try again later.';
     header('Location: ' . BASE_URL . '/error');

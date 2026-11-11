@@ -2,9 +2,9 @@
 
 namespace App\Services\Legacy;
 
+use App\Http\Middleware\AdminLogger;
 // NOTE (S448): without this import AdminLogger:: resolved to
 // App\Services\Legacy\AdminLogger -> class not found -> fatal.
-use App\Http\Middleware\AdminLogger;
 /**
  * Advanced Security Monitoring and Threat Detection System
  * Provides comprehensive security monitoring, anomaly detection, and threat prevention
@@ -211,7 +211,7 @@ class SecurityMonitor {
             $db->execute($sql, [$identifier, $ip]);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Rate limit check error: " . $e->getMessage());
             return true; // Fail open for rate limiting
         }
@@ -267,7 +267,7 @@ class SecurityMonitor {
                 json_encode($data),
                 $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Security threat logging error: " . $e->getMessage());
         }
     }

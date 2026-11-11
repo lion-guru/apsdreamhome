@@ -32,7 +32,7 @@ if (!function_exists('verifyCSRFToken')) {
 if (!isset($db)) {
     try {
         $db = \App\Core\Database::getInstance();
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         $db = null;
     }
 }

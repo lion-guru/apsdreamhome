@@ -116,7 +116,7 @@
                                         $sel = ($vSettings['default_script'] ?? '') === $s['script_code'] ? 'selected' : '';
                                         echo "<option value=\"{$s['script_code']}\" $sel>" . htmlspecialchars($s['script_name']) . "</option>";
                                     }
-                                } catch (\Exception $e) { error_log('voice-users/settings scripts dropdown: ' . $e->getMessage()); }
+                                } catch (\Throwable $e) { error_log('voice-users/settings scripts dropdown: ' . $e->getMessage()); }
                                 ?>
                             </select>
                         </div>

@@ -155,7 +155,7 @@ class DemandLetterController extends AdminController
                 $cs = $this->db->prepare("SELECT id, name FROM colonies WHERE 1=1" . $tenantSql . " ORDER BY name ASC");
                 $cs->execute($tenantParams);
                 $colonies = $cs->fetchAll(\PDO::FETCH_ASSOC);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('DemandLetterController::index colonies fetch error: ' . $e->getMessage());
             }
 
@@ -166,7 +166,7 @@ class DemandLetterController extends AdminController
                 'pagination' => $pagination,
                 'colonies'   => $colonies,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DemandLetterController::index error: ' . $e->getMessage());
             $this->setFlash('error', 'Unable to load demand letters.');
             $this->redirect('/admin/finance/dashboard');
@@ -274,7 +274,7 @@ class DemandLetterController extends AdminController
                 'customer'   => $this->fetchBookingCustomer($booking),
                 'bookings'   => [],
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DemandLetterController::generate error: ' . $e->getMessage());
             $this->setFlash('error', 'Demand letter generation failed.');
             $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/finance/dashboard');
@@ -320,7 +320,7 @@ class DemandLetterController extends AdminController
             header('Cache-Control: no-cache, must-revalidate');
             readfile($pdfPath);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DemandLetterController::pdf error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to load demand letter PDF.');
             $this->redirect('/admin/finance/demand-letters');
@@ -392,7 +392,7 @@ class DemandLetterController extends AdminController
                 } elseif ($response === true) {
                     $delivered = true;
                 }
-            } catch (\Exception $wa) {
+            } catch (\Throwable $wa) {
                 error_log('DemandLetterController::sendWhatsApp provider error: ' . $wa->getMessage());
             }
 
@@ -410,7 +410,7 @@ class DemandLetterController extends AdminController
                 $this->setFlash('error', 'WhatsApp delivery failed; letter kept as ' . $newStatus . '. Please try again.');
             }
             $this->redirect('/admin/finance/demand-letters?status=' . urlencode($newStatus));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DemandLetterController::sendWhatsApp error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to send demand letter via WhatsApp.');
             $this->redirect('/admin/finance/demand-letters');
@@ -484,7 +484,7 @@ class DemandLetterController extends AdminController
             }
             fclose($out);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DemandLetterController::exportCsv error: ' . $e->getMessage());
             $this->setFlash('error', 'CSV export failed.');
             $this->redirect('/admin/finance/demand-letters');
@@ -606,7 +606,7 @@ class DemandLetterController extends AdminController
             unset($booking);
 
             return $bookings;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DemandLetterController::fetchBookingsWithInstallments error: ' . $e->getMessage());
             return [];
         }

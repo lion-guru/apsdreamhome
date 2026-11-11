@@ -98,7 +98,7 @@ class ServiceController extends AdminController
                 $stmt = $this->db->prepare("SELECT COUNT(*) as cnt FROM service_interests WHERE service_type = ?");
                 $stmt->execute([$type]);
                 $counts[$type] = $stmt->fetch()['cnt'];
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $counts[$type] = 0;
             }
         }
@@ -133,7 +133,7 @@ class ServiceController extends AdminController
                 $leadStmt = $this->db->prepare("SELECT * FROM leads WHERE id = ?");
                 $leadStmt->execute([$service['lead_id']]);
                 $service['lead'] = $leadStmt->fetch(\PDO::FETCH_ASSOC);
-            } catch (\Exception $e) { error_log('ServiceController view lead fetch: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('ServiceController view lead fetch: ' . $e->getMessage()); }
         }
 
         // Get property details if exists
@@ -142,7 +142,7 @@ class ServiceController extends AdminController
                 $propStmt = $this->db->prepare("SELECT * FROM sites WHERE id = ?");
                 $propStmt->execute([$service['property_id']]);
                 $service['property'] = $propStmt->fetch(\PDO::FETCH_ASSOC);
-            } catch (\Exception $e) { error_log('ServiceController view property fetch: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('ServiceController view property fetch: ' . $e->getMessage()); }
         }
 
         $data = ['service' => $service];
@@ -165,7 +165,7 @@ class ServiceController extends AdminController
             $services = $db->query("SELECT si.*, l.name, l.phone, l.email FROM service_interests si LEFT JOIN leads l ON si.lead_id=l.id WHERE si.service_type='home_loan' ORDER BY si.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $count = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='home_loan'")->fetchColumn();
             $pending = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='home_loan' AND status='pending'")->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $services = []; $count = 0; $pending = 0;
         }
         return $this->render('admin/services/home-loan', ['services' => $services, 'count' => $count, 'pending' => $pending, 'service_type' => 'home_loan']);
@@ -179,7 +179,7 @@ class ServiceController extends AdminController
             $services = $db->query("SELECT si.*, l.name, l.phone, l.email FROM service_interests si LEFT JOIN leads l ON si.lead_id=l.id WHERE si.service_type IN ('legal','registry','mutation') ORDER BY si.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $count = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type IN ('legal','registry','mutation')")->fetchColumn();
             $pending = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type IN ('legal','registry','mutation') AND status='pending'")->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $services = []; $count = 0; $pending = 0;
         }
         return $this->render('admin/services/legal', ['services' => $services, 'count' => $count, 'pending' => $pending, 'service_type' => 'legal']);
@@ -193,7 +193,7 @@ class ServiceController extends AdminController
             $services = $db->query("SELECT si.*, l.name, l.phone, l.email FROM service_interests si LEFT JOIN leads l ON si.lead_id=l.id WHERE si.service_type='interior' ORDER BY si.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $count = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='interior'")->fetchColumn();
             $pending = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='interior' AND status='pending'")->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $services = []; $count = 0; $pending = 0;
         }
         return $this->render('admin/services/interior', ['services' => $services, 'count' => $count, 'pending' => $pending, 'service_type' => 'interior']);
@@ -207,7 +207,7 @@ class ServiceController extends AdminController
             $services = $db->query("SELECT si.*, l.name, l.phone, l.email FROM service_interests si LEFT JOIN leads l ON si.lead_id=l.id WHERE si.service_type='property_tax' ORDER BY si.created_at DESC LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
             $count = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='property_tax'")->fetchColumn();
             $pending = (int)$db->query("SELECT COUNT(*) FROM service_interests WHERE service_type='property_tax' AND status='pending'")->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $services = []; $count = 0; $pending = 0;
         }
         return $this->render('admin/services/tax', ['services' => $services, 'count' => $count, 'pending' => $pending, 'service_type' => 'property_tax']);
@@ -226,7 +226,7 @@ class ServiceController extends AdminController
                 $stmt = $this->db->prepare("UPDATE service_interests SET status = ?, notes = ?, updated_at = NOW() WHERE id = ? $tenantSql");
                 $stmt->execute(array_merge([$status, $notes, $id], $tenantParams));
                 $this->setFlash('success', 'Status updated successfully');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->setFlash('error', 'Failed to update status');
             }
         }

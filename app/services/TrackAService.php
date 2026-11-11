@@ -31,7 +31,7 @@ class TrackAService extends ServiceTenantTrait
             foreach ($rows as $row) {
                 $this->slabDifferentials[$row['rank_name']] = (float)$row['commission_rate'];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback to defaults
             $this->slabDifferentials = [
                 'associate' => 5, 'sr_associate' => 7, 'bdm' => 10,

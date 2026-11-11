@@ -328,7 +328,7 @@ class LoyaltyRewardsService
                 'tier_upgrade' => $tierUpgrade
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -396,7 +396,7 @@ class LoyaltyRewardsService
                 'expires_at' => date('Y-m-d H:i:s', strtotime('+30 days'))
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -710,7 +710,7 @@ class LoyaltyRewardsService
             $redemptionStmt = $this->database->prepare($redemptionSql);
             $redemptionStmt->execute($tid > 1 ? [$tid] : []);
             $redemptionData = $redemptionStmt->fetch(\PDO::FETCH_NUM);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Table or column may not exist yet
                     error_log("LoyaltyRewardsService.php: " . $e->getMessage());
         }

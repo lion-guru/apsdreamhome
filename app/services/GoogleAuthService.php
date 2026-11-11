@@ -82,7 +82,7 @@ class GoogleAuthService {
 
             return $user;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Google Auth Service Error: ' . $e->getMessage());
             return false;
         }

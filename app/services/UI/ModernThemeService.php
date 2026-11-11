@@ -271,7 +271,7 @@ class ModernThemeService
                 'success' => true,
                 'action_id' => $this->database->lastInsertId()
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -290,7 +290,7 @@ class ModernThemeService
             }
             
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

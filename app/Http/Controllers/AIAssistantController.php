@@ -49,7 +49,7 @@ class AIAssistantController extends BaseController
                 'data' => [
                     'reply' => $reply,
                     'intent' => $gwResult['result']['intent']['intent'] ?? 'general',
-                    'confidence' => $aiResult['engine'] !== 'none' ? 0.9 : 0.95,
+                    'confidence' => $aiResult['engine'] !== 'none' ? 0.9 : 0.2,
                     'engine' => $aiResult['engine'],
                 ]
             ]);

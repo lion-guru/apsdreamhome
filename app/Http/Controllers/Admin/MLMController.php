@@ -185,7 +185,7 @@ class MLMController extends AdminController
                 $this->setFlash('success', 'MLM Associate / Agent created successfully');
                 return $this->redirect('/admin/mlm/associates');
                 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 if ($db->inTransaction()) {
                     $db->rollBack();
                 }
@@ -197,7 +197,7 @@ class MLMController extends AdminController
         try {
             $this->data['sponsors'] = $db->query("SELECT id, name, email FROM users WHERE role IN ('associate', 'admin', 'telecaller') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
             $this->data['telecallers'] = $db->query("SELECT id, name, email FROM users WHERE role = 'telecaller' ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['sponsors'] = [];
             $this->data['telecallers'] = [];
         }
@@ -259,8 +259,8 @@ class MLMController extends AdminController
             try {
                 $bonus = $db->fetch("SELECT COALESCE(SUM(amount),0) as total FROM mlm_commission_ledger WHERE commission_type = 'pairing'");
                 $data['stats']['pairing_bonus'] = (float)($bonus['total'] ?? 0);
-            } catch (\Exception $e) { $data['stats']['pairing_bonus'] = 0; }
-        } catch (\Exception $e) { error_log('MLMController::getTreeData error: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { $data['stats']['pairing_bonus'] = 0; }
+        } catch (\Throwable $e) { error_log('MLMController::getTreeData error: ' . $e->getMessage()); }
         return $data;
     }
 
@@ -279,8 +279,8 @@ class MLMController extends AdminController
             try {
                 $depth = $db->fetch("SELECT COALESCE(MAX(level),0) as max_depth FROM network_tree");
                 $data['stats']['max_depth'] = (int)($depth['max_depth'] ?? 0);
-            } catch (\Exception $e) { $data['stats']['max_depth'] = 0; }
-        } catch (\Exception $e) { error_log('MLMController::getGenealogyData error: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { $data['stats']['max_depth'] = 0; }
+        } catch (\Throwable $e) { error_log('MLMController::getGenealogyData error: ' . $e->getMessage()); }
         return $data;
     }
 
@@ -291,18 +291,18 @@ class MLMController extends AdminController
             $db = $this->db;
             try {
                 $data['benefits'] = $db->fetchAll("SELECT * FROM mlm_rank_benefits ORDER BY rank_order ASC") ?? [];
-            } catch (\Exception $e) { $data['benefits'] = []; }
+            } catch (\Throwable $e) { $data['benefits'] = []; }
             try {
                 $raw = $db->fetchAll("SELECT mp.current_level, COUNT(*) as cnt FROM mlm_profiles mp GROUP BY mp.current_level");
                 $data['rankCounts'] = [];
                 foreach ($raw as $r) { $data['rankCounts'][$r['current_level']] = (int)$r['cnt']; }
-            } catch (\Exception $e) { $data['rankCounts'] = []; }
+            } catch (\Throwable $e) { $data['rankCounts'] = []; }
             $data['stats']['total_ranks'] = count($data['benefits']);
             $data['stats']['total_members'] = array_sum($data['rankCounts']);
             try {
                 $data['recentPromotions'] = $db->fetchAll("SELECT mp.user_id, u.name, mp.current_level, mp.rank_updated_at FROM mlm_profiles mp LEFT JOIN users u ON mp.user_id = u.id WHERE mp.rank_updated_at IS NOT NULL ORDER BY mp.rank_updated_at DESC LIMIT 10") ?? [];
-            } catch (\Exception $e) { $data['recentPromotions'] = []; }
-        } catch (\Exception $e) { error_log('MLMController::getRanksData error: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { $data['recentPromotions'] = []; }
+        } catch (\Throwable $e) { error_log('MLMController::getRanksData error: ' . $e->getMessage()); }
         return $data;
     }
 }

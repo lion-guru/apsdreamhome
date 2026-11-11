@@ -87,7 +87,7 @@ class PropertyVerificationService
             }
 
             return ['success' => false, 'error' => 'Failed to create verification request'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyVerificationService::createRequest] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Database error: ' . $e->getMessage()];
         }
@@ -205,7 +205,7 @@ class PropertyVerificationService
                 return ['success' => true, 'message' => 'Request updated'];
             }
             return ['success' => false, 'error' => 'No changes made'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyVerificationService::updateRequest] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Database error: ' . $e->getMessage()];
         }
@@ -275,7 +275,7 @@ class PropertyVerificationService
                 return ['success' => true, 'id' => $id];
             }
             return ['success' => false, 'error' => 'Failed to add document'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyVerificationService::addDocument] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Database error: ' . $e->getMessage()];
         }
@@ -312,7 +312,7 @@ class PropertyVerificationService
                 return ['success' => true, 'message' => $verified ? 'Document verified' : 'Document marked unverified'];
             }
             return ['success' => false, 'error' => 'Failed to update document'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyVerificationService::verifyDocument] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Database error: ' . $e->getMessage()];
         }
@@ -353,7 +353,7 @@ class PropertyVerificationService
                 return ['success' => true, 'id' => $id, 'badge_code' => 'VER-' . bin2hex(random_bytes(12))];
             }
             return ['success' => false, 'error' => 'Failed to issue badge'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyVerificationService::issueBadge] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Database error: ' . $e->getMessage()];
         }
@@ -393,7 +393,7 @@ class PropertyVerificationService
                 return ['success' => true, 'message' => 'Badge revoked'];
             }
             return ['success' => false, 'error' => 'Failed to revoke badge'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyVerificationService::revokeBadge] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Database error: ' . $e->getMessage()];
         }

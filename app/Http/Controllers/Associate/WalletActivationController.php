@@ -21,7 +21,7 @@ class WalletActivationController extends BaseController
         return true;
     }
 
-    private function requireAssociate(): void
+    protected function requireAssociate(): void
     {
         @session_start();
         if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'associate') {

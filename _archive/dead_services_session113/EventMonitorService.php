@@ -65,7 +65,7 @@ class EventMonitorService
                 'severity' => $severity
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to log event", [
                 'event' => $eventName,
                 'error' => $e->getMessage()
@@ -149,7 +149,7 @@ class EventMonitorService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get event stats", ['error' => $e->getMessage()]);
             return [];
         }
@@ -213,7 +213,7 @@ class EventMonitorService
 
             return $security;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get security metrics", ['error' => $e->getMessage()]);
             return [];
         }
@@ -274,7 +274,7 @@ class EventMonitorService
 
             return $performance;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get performance metrics", ['error' => $e->getMessage()]);
             return [];
         }
@@ -307,7 +307,7 @@ class EventMonitorService
                 'severity' => $severity
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to create security alert", [
                 'type' => $type,
                 'error' => $e->getMessage()
@@ -360,7 +360,7 @@ class EventMonitorService
 
             return $health;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get system health", ['error' => $e->getMessage()]);
             return [];
         }
@@ -386,7 +386,7 @@ class EventMonitorService
                 'deleted_rows' => $deletedRows
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to clear old logs", ['error' => $e->getMessage()]);
             return [
                 'success' => false,

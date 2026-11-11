@@ -5,6 +5,7 @@ namespace App\Http\Controllers\MLM;
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
+use App\Services\Cache\CacheService;
 use App\Services\LoggingService;
 
 /**
@@ -15,12 +16,14 @@ class MLMDashboardController extends BaseController
 {
     protected $db;
     protected $logger;
+    private $cacheService;
 
     public function __construct()
     {
         parent::__construct();
         $this->db = \App\Core\Database\Database::getInstance();
         $this->logger = new LoggingService();
+        $this->cacheService = new CacheService();
 
         // Ensure user is logged in
         if (!isset($_SESSION['user_id'])) {
@@ -42,6 +45,13 @@ class MLMDashboardController extends BaseController
 
         $userId = (int)$_SESSION['user_id'];
         $base   = defined('BASE_URL') ? BASE_URL : '';
+
+        // ── Dashboard cache (5 min TTL) ──
+        $cacheKey = 'mlm_dashboard:' . $userId;
+        $cached = $this->cacheService->get($cacheKey);
+        if ($cached !== false && $cached !== null) {
+            return $this->render('pages/mlm_dashboard', $cached);
+        }
 
         // ── defaults (safe fallback if no associate record) ──────────────
         $data = [
@@ -76,12 +86,12 @@ class MLMDashboardController extends BaseController
         try {
             $pdo = $this->db->getConnection();
 
-            // ── 1. Associate record (from `associates` table — real table) ──
+            // ── 1. Associate profile (unified identity) ──
             $stmt = $pdo->prepare("
-                SELECT a.*, u.name AS user_name, u.phone
-                FROM associates a
-                JOIN users u ON u.id = a.user_id
-                WHERE a.user_id = ? AND a.status = 'active'
+                SELECT ap.*, u.name AS user_name, u.phone
+                FROM associate_profiles ap
+                JOIN users u ON u.id = ap.user_id
+                WHERE ap.user_id = ?
                 LIMIT 1
             ");
             $stmt->execute([$userId]);
@@ -234,9 +244,12 @@ class MLMDashboardController extends BaseController
             $stmt->execute([$userId]);
             $data['team_size'] = (int)$stmt->fetchColumn();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('MLMDashboardController error: ' . $e->getMessage());
         }
+
+        // Cache dashboard data for 5 minutes (300 seconds)
+        $this->cacheService->set($cacheKey, $data, 300);
 
         return $this->render('pages/mlm_dashboard', $data);
     }
@@ -269,7 +282,7 @@ class MLMDashboardController extends BaseController
                 'associate' => $associate,
                 'tree' => $tree
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Network tree error: " . $e->getMessage());
             $this->view('error', ['message' => 'Failed to load network tree']);
         }
@@ -321,7 +334,7 @@ class MLMDashboardController extends BaseController
                 'totalPaid' => $totalPaid,
                 'totalPending' => $totalPending
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Commissions error: " . $e->getMessage());
             $this->view('error', ['message' => 'Failed to load commissions']);
         }
@@ -387,7 +400,7 @@ class MLMDashboardController extends BaseController
                 'pendingAmount' => $pending['pending_amount'] ?? 0,
                 'bankDetails' => $bankDetails
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Payouts error: " . $e->getMessage());
             $this->view('error', ['message' => 'Failed to load payouts']);
         }
@@ -466,7 +479,7 @@ class MLMDashboardController extends BaseController
             $_SESSION['success'] = 'Payout request submitted successfully';
             header('Location: /mlm/payouts');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Payout request error: " . $e->getMessage());
             $_SESSION['error'] = 'Failed to submit payout request';
             header('Location: /mlm/payouts');
@@ -579,7 +592,7 @@ class MLMDashboardController extends BaseController
             $_SESSION['success'] = 'Registration successful! Welcome to the network.';
             header('Location: /mlm/dashboard');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Associate registration error: " . $e->getMessage());
             $_SESSION['error'] = 'Registration failed. Please try again.';
             header('Location: /mlm/register');

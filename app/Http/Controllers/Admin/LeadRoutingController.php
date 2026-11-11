@@ -5,9 +5,9 @@
  */
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\Admin\AdminController;
 use App\Services\LeadRoutingService;
-use \App\Traits\TenantAwareTrait;
 
 class LeadRoutingController extends AdminController
 {

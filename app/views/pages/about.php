@@ -44,6 +44,9 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <a href="#story" class="btn btn-outline-secondary btn-lg px-4 rounded-pill custom-btn-outline">
                         Our Story <i class="fas fa-arrow-right ms-2"></i>
                     </a>
+                    <a href="#company-video" class="btn btn-outline-light btn-lg px-4 rounded-pill custom-btn-outline d-inline-flex align-items-center">
+                        <i class="fas fa-play-circle text-warning me-2"></i> Corporate Video
+                    </a>
                 </div>
             </div>
             
@@ -427,6 +430,76 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 <div class="story-detail">
                     <h6><i class="fas fa-star me-2"></i> Rating</h6>
                     <p>5.0/5 Stars on India Online &bull; Trusted by 500+ Families</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- CORPORATE VIDEO SHOWCASE -->
+<!-- ============================================ -->
+<section class="about-video-section py-5 position-relative" id="company-video" style="background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5 text-white">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3" style="background: rgba(45, 212, 191, 0.15); border: 1px solid rgba(45, 212, 191, 0.3); color: #2dd4bf; font-size: 0.82rem; font-weight: 700; text-transform: uppercase;">
+                    <i class="fas fa-video"></i> Corporate Presentation
+                </div>
+                <h2 class="display-6 fw-bold mb-3 text-white">
+                    Experience the <span style="background: linear-gradient(135deg, #2dd4bf, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">APS Difference</span>
+                </h2>
+                <p class="text-light opacity-75 mb-4" style="line-height: 1.8;">
+                    Watch our official brand story and discover how APS Dream Homes Private Limited has delivered over 200+ plots with 100% legal registry across Gorakhpur, Lucknow, and Kushinagar.
+                </p>
+                <div class="d-flex flex-column gap-3 mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 42px; height: 42px; background: rgba(13, 148, 136, 0.3); border: 1px solid #2dd4bf; flex-shrink: 0;">
+                            <i class="fas fa-shield-alt text-teal"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-white">RERA &amp; Transparent Registry</h6>
+                            <small class="text-light opacity-75">100% verified mutation and registry documents</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 42px; height: 42px; background: rgba(56, 189, 248, 0.3); border: 1px solid #38bdf8; flex-shrink: 0;">
+                            <i class="fas fa-users text-info"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold text-white">500+ Happy Families</h6>
+                            <small class="text-light opacity-75">Customer trust, timely possession, and modern gated colonies</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="https://youtube.com/@apsdreamhomes?si=kFGBniCRsdQXRyr9" target="_blank" rel="noopener noreferrer" class="btn btn-danger rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2">
+                        <i class="fab fa-youtube"></i> Subscribe on YouTube
+                    </a>
+                    <a href="<?= BASE_URL ?>/company/projects" class="btn btn-outline-light rounded-pill px-4 py-2">
+                        View Colonies <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="card-header border-0 bg-transparent px-4 pt-3 pb-2 d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-teal text-white px-2 py-1" style="background: #0d9488 !important;"><i class="fas fa-play-circle me-1"></i> Official Video</span>
+                            <span class="small text-light opacity-75">Gorakhpur &amp; UP Projects</span>
+                        </div>
+                        <a href="https://www.youtube.com/watch?v=uB63fG1n5sY" target="_blank" rel="noopener noreferrer" class="text-white-50 text-decoration-none small hover-light">
+                            <i class="fab fa-youtube text-danger me-1"></i> Open on YouTube
+                        </a>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="ratio ratio-16x9 rounded-3 overflow-hidden shadow">
+                            <video controls playsinline preload="metadata" poster="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+                                <source src="<?= BASE_URL ?>/assets/images/logo/apslogovideo.mp4" type="video/mp4">
+                                Your browser does not support HTML5 video.
+                            </video>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -38,7 +38,7 @@ class ContactController extends PageController
                     ");
                     $stmt->execute([$name, $email, $phone, $service, $message]);
                     $_SESSION['success'] = 'Thank you for your message! We will get back to you soon.';
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("Quick inquiry form error: " . $e->getMessage());
                     $_SESSION['error'] = 'Something went wrong. Please try again.';
                 }

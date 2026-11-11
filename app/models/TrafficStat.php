@@ -27,7 +27,7 @@ class TrafficStat extends Model {
     public function trackVisit(array $data) {
         try {
             return static::create($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             \error_log('Track visit error: ' . $e->getMessage());
             return false;
         }

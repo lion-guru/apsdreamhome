@@ -59,7 +59,7 @@ class RegistrationFollowupService
             
             return $result;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WhatsApp reminder failed: " . $e->getMessage());
             return false;
         }
@@ -109,7 +109,7 @@ class RegistrationFollowupService
             
             return $result;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Email reminder failed: " . $e->getMessage());
             return false;
         }
@@ -153,7 +153,7 @@ class RegistrationFollowupService
             
             return $result;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("SMS reminder failed: " . $e->getMessage());
             return false;
         }
@@ -222,7 +222,7 @@ class RegistrationFollowupService
             
             return $results;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Process abandoned failed: " . $e->getMessage());
             return ['error' => $e->getMessage()];
         }
@@ -254,7 +254,7 @@ class RegistrationFollowupService
             
             return $stats;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Get stats failed: " . $e->getMessage());
             return [];
         }

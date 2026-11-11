@@ -12,7 +12,7 @@ if (!isset($_ENV['APP_ENV']) && file_exists(dirname(__DIR__, 2) . '/.env') && cl
     try {
         $dotenv = Dotenv::createImmutable(dirname(__DIR__, 2));
         $dotenv->safeLoad();
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         // Ignore errors if .env cannot be loaded here
     }
 }
@@ -68,7 +68,7 @@ if (!function_exists('config')) {
                     }
                     return $app->config($key) ?? $default;
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // App instance might not be ready
             }
         }

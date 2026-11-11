@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use \App\Traits\TenantAwareTrait;
+use App\Traits\TenantAwareTrait;
 
 // AdminController resolved via namespace
 

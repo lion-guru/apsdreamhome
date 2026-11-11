@@ -366,7 +366,7 @@ class SalariedAgentService
     {
         try {
             $tid    = (int)$this->tenantId();
-            $tWhere = $tid > 1 ? 'AND a.tenant_id = ?' : '';
+            $tWhere = $tid > 1 ? 'AND u.tenant_id = ?' : '';
             $params = [];
             if ($tid > 1) {
                 $params[] = $tid;
@@ -374,13 +374,13 @@ class SalariedAgentService
 
             $stmt = $this->pdo->prepare("
                 SELECT
-                    a.id AS associate_id,
-                    a.user_id,
+                    ap.legacy_id AS associate_id,
+                    ap.user_id AS user_id,
                     u.name,
                     u.email,
                     u.phone,
-                    a.agent_type,
-                    a.salary_eligible AS is_salary_active,
+                    ap.agent_type AS agent_type,
+                    ap.salary_eligible AS is_salary_active,
                     s.basic_salary,
                     s.hra,
                     s.ta_da,
@@ -388,13 +388,13 @@ class SalariedAgentService
                     s.incentive_type,
                     s.incentive_value,
                     s.effective_from
-                FROM associates a
-                JOIN users u ON u.id = a.user_id
+                FROM users u
+                LEFT JOIN associate_profiles ap ON ap.user_id = u.id
                 LEFT JOIN salaried_agent_structures s
-                    ON s.user_id = a.user_id
+                    ON s.user_id = u.id
                     AND s.effective_from <= CURDATE()
                     AND (s.effective_to IS NULL OR s.effective_to >= CURDATE())
-                WHERE a.agent_type = 'salaried'
+                WHERE ap.agent_type = 'salaried'
                   {$tWhere}
                 ORDER BY u.name ASC
             ");

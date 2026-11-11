@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../core/services/api_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/logger.dart';
 import '../../../data/services/crm_service.dart';
@@ -132,6 +136,61 @@ class _LeadCreatePageState extends ConsumerState<LeadCreatePage> {
     }
   }
 
+  Future<void> _createLeadFromPhoto() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 80,
+    );
+    if (image == null) return;
+    if (!mounted) return;
+
+    setState(() => _saving = true);
+    try {
+      final bytes = await File(image.path).readAsBytes();
+      final base64Image = base64Encode(bytes);
+      final api = ApiService();
+      final response = await api.post('/ai/lead-from-photo', data: {
+        'image_base64': base64Image,
+        'image_mime': 'image/jpeg',
+        'name': _nameCtrl.text.trim().isNotEmpty
+            ? _nameCtrl.text.trim()
+            : 'Photo Lead',
+        'phone': _phoneCtrl.text.trim(),
+        'email': _emailCtrl.text.trim(),
+      });
+      if (!mounted) return;
+      if (response['success'] == true) {
+        final data = response['data'] ?? {};
+        final leadId = (data['lead_id'] ?? '').toString();
+        AppWidgets.showSuccessSnackBar(
+          context,
+          'Lead created from photo! ID: $leadId',
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          if (mounted) context.pop();
+        });
+      } else {
+        final err = response['error'] as String?;
+        AppWidgets.showErrorSnackBar(
+          context,
+          err ?? 'Failed to create lead from photo',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        AppWidgets.showErrorSnackBar(
+          context,
+          'Photo lead creation failed: $e',
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,6 +200,13 @@ class _LeadCreatePageState extends ConsumerState<LeadCreatePage> {
           onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.camera_alt),
+            tooltip: 'Create Lead from Photo (AI)',
+            onPressed: _saving ? null : _createLeadFromPhoto,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),

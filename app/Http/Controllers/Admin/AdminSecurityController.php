@@ -26,7 +26,7 @@ class AdminSecurityController extends AdminController
             $recentEvents = $this->db->query("SELECT u.name, a.action, a.description AS details, a.ip_address, a.created_at FROM audit_logs a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC LIMIT 20")->fetchAll(\PDO::FETCH_ASSOC);
             $topIPs = $this->db->query("SELECT ip_address, COUNT(*) as cnt FROM failed_login_attempts WHERE attempted_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) GROUP BY ip_address ORDER BY cnt DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
             $recentBlocked = $this->db->query("SELECT * FROM blocked_ips ORDER BY created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AdminSecurityController::index error: ' . $e->getMessage());
         }
 

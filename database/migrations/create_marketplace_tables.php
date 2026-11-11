@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `user_saved_properties` (
     KEY `idx_tenant` (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='User shortlisted/favorited properties';
 ";
-try { $db->exec($sql); echo "✅ user_saved_properties created\n"; } catch (\Exception $e) { echo "❌ " . $e->getMessage() . "\n"; }
+try { $db->exec($sql); echo "✅ user_saved_properties created\n"; } catch (\Throwable $e) { echo "❌ " . $e->getMessage() . "\n"; }
 
 // 2. followup_schedules - automated follow-up system
 echo "\n2. Creating followup_schedules...\n";
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `followup_schedules` (
     KEY `idx_tenant` (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Automated follow-up schedules for interested buyers';
 ";
-try { $db->exec($sql); echo "✅ followup_schedules created\n"; } catch (\Exception $e) { echo "❌ " . $e->getMessage() . "\n"; }
+try { $db->exec($sql); echo "✅ followup_schedules created\n"; } catch (\Throwable $e) { echo "❌ " . $e->getMessage() . "\n"; }
 
 // 3. builder_packages - monetization for builders/brokers
 echo "\n3. Creating builder_packages...\n";
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `builder_packages` (
     KEY `idx_active` (`is_active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Subscription packages for builders/brokers';
 ";
-try { $db->exec($sql); echo "✅ builder_packages created\n"; } catch (\Exception $e) { echo "❌ " . $e->getMessage() . "\n"; }
+try { $db->exec($sql); echo "✅ builder_packages created\n"; } catch (\Throwable $e) { echo "❌ " . $e->getMessage() . "\n"; }
 
 // 4. builder_subscriptions - track builder subscriptions
 echo "\n4. Creating builder_subscriptions...\n";
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS `builder_subscriptions` (
     KEY `idx_tenant` (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Active builder/broker subscriptions';
 ";
-try { $db->exec($sql); echo "✅ builder_subscriptions created\n"; } catch (\Exception $e) { echo "❌ " . $e->getMessage() . "\n"; }
+try { $db->exec($sql); echo "✅ builder_subscriptions created\n"; } catch (\Throwable $e) { echo "❌ " . $e->getMessage() . "\n"; }
 
 // 5. platform_revenue - track all revenue streams
 echo "\n5. Creating platform_revenue...\n";
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `platform_revenue` (
     KEY `idx_tenant` (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='All platform revenue streams';
 ";
-try { $db->exec($sql); echo "✅ platform_revenue created\n"; } catch (\Exception $e) { echo "❌ " . $e->getMessage() . "\n"; }
+try { $db->exec($sql); echo "✅ platform_revenue created\n"; } catch (\Throwable $e) { echo "❌ " . $e->getMessage() . "\n"; }
 
 // 6. property_verification_logs - track verification workflow
 echo "\n6. Creating property_verification_logs...\n";
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `property_verification_logs` (
     KEY `idx_tenant` (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Property verification audit trail';
 ";
-try { $db->exec($sql); echo "✅ property_verification_logs created\n"; } catch (\Exception $e) { echo "❌ " . $e->getMessage() . "\n"; }
+try { $db->exec($sql); echo "✅ property_verification_logs created\n"; } catch (\Throwable $e) { echo "❌ " . $e->getMessage() . "\n"; }
 
 // 7. associate_resale_commissions - track associate/agent commissions on resale
 echo "\n7. Creating associate_resale_commissions...\n";
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `associate_resale_commissions` (
     KEY `idx_tenant` (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Associate/agent commissions from resale deals';
 ";
-try { $db->exec($sql); echo "✅ associate_resale_commissions created\n"; } catch (\Exception $e) { echo "❌ " . $e->getMessage() . "\n"; }
+try { $db->exec($sql); echo "✅ associate_resale_commissions created\n"; } catch (\Throwable $e) { echo "❌ " . $e->getMessage() . "\n"; }
 
 // 8. property_interest_logs - track all buyer interest signals
 echo "\n8. Creating property_interest_logs...\n";
@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `property_interest_logs` (
     KEY `idx_tenant` (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Granular buyer interest tracking for retargeting/followup';
 ";
-try { $db->exec($sql); echo "✅ property_interest_logs created\n"; } catch (\Exception $e) { echo "❌ " . $e->getMessage() . "\n"; }
+try { $db->exec($sql); echo "✅ property_interest_logs created\n"; } catch (\Throwable $e) { echo "❌ " . $e->getMessage() . "\n"; }
 
 // 9. Insert default builder packages
 echo "\n9. Seeding default builder packages...\n";
@@ -228,7 +228,7 @@ foreach ($packages as $pkg) {
         $stmt = $db->prepare("INSERT IGNORE INTO builder_packages (name, slug, description, price_monthly, price_yearly, max_listings, max_featured, max_urgent, logo_on_listing, priority_support, analytics_access, lead_export, api_access, is_active, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)");
         $stmt->execute([$pkg['name'], $pkg['slug'], $pkg['description'], $pkg['price_monthly'], $pkg['price_yearly'], $pkg['max_listings'], $pkg['max_featured'], $pkg['max_urgent'], $pkg['logo_on_listing'] ?? 0, $pkg['priority_support'] ?? 0, $pkg['analytics_access'] ?? 0, $pkg['lead_export'] ?? 0, $pkg['api_access'] ?? 0, array_search($pkg['slug'], ['starter','professional','enterprise'])]);
         echo "✅ Package: {$pkg['name']}\n";
-    } catch (\Exception $e) { echo "❌ " . $e->getMessage() . "\n"; }
+    } catch (\Throwable $e) { echo "❌ " . $e->getMessage() . "\n"; }
 }
 
 // 10. Insert default commission structure for resell
@@ -252,7 +252,7 @@ foreach ($commissions as $c) {
     try {
         $stmt = $db->prepare("INSERT IGNORE INTO resell_commission_structure (property_type, min_price, max_price, commission_pct, flat_amount, platform_fee_pct, is_active, effective_from) VALUES (?, ?, ?, ?, ?, ?, 1, CURDATE())");
         $stmt->execute([$c['property_type'], $c['min_price'], $c['max_price'], $c['commission_pct'], $c['flat_amount'], $c['platform_fee_pct']]);
-    } catch (\Exception $e) { /* ignore duplicates */ }
+    } catch (\Throwable $e) { /* ignore duplicates */ }
 }
 echo "✅ Commission structure seeded\n";
 

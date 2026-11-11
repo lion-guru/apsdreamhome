@@ -49,8 +49,8 @@ class LeadAssignmentService
                 $today = date('Y-m-d');
                 $query .= " AND EXISTS (
                                 SELECT 1 FROM employee_attendance a
-                                JOIN employees e ON a.employee_id = e.id
-                                WHERE e.user_id = u.id
+                                LEFT JOIN employee_profiles ep ON ep.legacy_id = a.employee_id OR ep.user_id = a.employee_id OR ep.id = a.employee_id
+                                WHERE ep.user_id = u.id
                                 AND a.attendance_date = ?
                                 AND a.check_in_time IS NOT NULL
                                 AND a.check_out_time IS NULL
@@ -119,13 +119,15 @@ class LeadAssignmentService
                 }
                 $this->db->query($q, $p);
 
-                // Log the assignment in crm_assignments
+                // Log the assignment in crm_assignments (assigned_by NOT NULL — fallback to assignee/system)
                 try {
                     $cols = "lead_id, assigned_from, assigned_to, assigned_by, reason, is_active, tenant_id";
                     $vals = "?, ?, ?, ?, 'auto_assign', 1, ?";
-                    $logParams = [$leadId, $fromUserId, $assignedUserId, $fromUserId, $tid > 1 ? $tid : 1];
+                    $assignedBy = $fromUserId ?? $assignedUserId;
+                    if (empty($assignedBy)) $assignedBy = $assignedUserId ?: 1;
+                    $logParams = [$leadId, $fromUserId, $assignedUserId, $assignedBy, $tid > 1 ? $tid : 1];
                     $this->db->query("INSERT INTO crm_assignments ($cols) VALUES ($vals)", $logParams);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("Failed to log lead assignment: " . $e->getMessage());
                 }
 
@@ -134,7 +136,7 @@ class LeadAssignmentService
 
             return ['success' => false, 'message' => 'Failed to determine assignee'];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LeadAssignmentService error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Internal assignment error'];
         }
@@ -179,7 +181,7 @@ class LeadAssignmentService
             }
             $row = $this->db->fetchOne($q, $p);
             return $row ? $row['value'] : $default;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $default;
         }
     }

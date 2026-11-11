@@ -74,7 +74,7 @@ class ContactCareerPageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM careers WHERE status = 'active' ORDER BY created_at DESC");
             $stmt->execute();
             $jobs = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Careers page error: " . $e->getMessage());
             $jobs = [];
         }
@@ -121,7 +121,7 @@ class ContactCareerPageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM careers WHERE status = 'active' ORDER BY created_at DESC");
             $stmt->execute();
             $jobs = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Career jobs page error: " . $e->getMessage());
             $jobs = [];
         }

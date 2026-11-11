@@ -31,7 +31,7 @@ class WhatsAppAgent extends BaseAgent {
         try {
             $bot = new \App\Services\AI\Agents\HindiConversationalBot();
             $response = $bot->process($input, $context);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $response = [
                 'success' => true,
                 'response' => "Namaste! Main APS Dream Home ka AI assistant hoon. Aapki kya madad kar sakta hoon?",
@@ -43,7 +43,7 @@ class WhatsAppAgent extends BaseAgent {
         try {
             $whatsappService = new \App\Services\Communication\WhatsAppIntegrationService();
             $whatsappService->sendMessage($sender, $response['response'] ?? '...');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // WhatsApp not configured â€” return response anyway
         }
 
@@ -58,7 +58,7 @@ class WhatsAppAgent extends BaseAgent {
         try {
             $whatsappService = new \App\Services\Communication\WhatsAppIntegrationService();
             return $whatsappService->sendMessage($to, $message, $type, $mediaUrl);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

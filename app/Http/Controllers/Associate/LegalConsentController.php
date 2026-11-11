@@ -46,8 +46,9 @@ class LegalConsentController extends BaseController
 
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
-            $stmt = $db->prepare("SELECT legal_consent_accepted FROM associates WHERE user_id = ? LIMIT 1");
-            $stmt->execute([$userId]);
+            [$tSql, $tParams] = $this->tenantWhere();
+            $stmt = $db->prepare("SELECT legal_consent_accepted FROM associate_profiles WHERE user_id = ?" . $tSql . " LIMIT 1");
+            $stmt->execute(array_merge([$userId], $tParams));
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$row) {
@@ -94,8 +95,9 @@ class LegalConsentController extends BaseController
             $db = \App\Core\Database\Database::getInstance()->getConnection();
 
             // Check if already accepted
-            $stmt = $db->prepare("SELECT legal_consent_accepted FROM associates WHERE user_id = ? LIMIT 1");
-            $stmt->execute([$userId]);
+            [$tSql, $tParams] = $this->tenantWhere();
+            $stmt = $db->prepare("SELECT legal_consent_accepted FROM associate_profiles WHERE user_id = ?" . $tSql . " LIMIT 1");
+            $stmt->execute(array_merge([$userId], $tParams));
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!empty($row['legal_consent_accepted'])) {
@@ -107,8 +109,9 @@ class LegalConsentController extends BaseController
             }
 
             // Record acceptance
-            $stmt = $db->prepare("UPDATE associates SET legal_consent_accepted = ? WHERE user_id = ?");
-            $stmt->execute([$now, $userId]);
+            [$tSql, $tParams] = $this->tenantWhere();
+            $stmt = $db->prepare("UPDATE associate_profiles SET legal_consent_accepted = ? WHERE user_id = ?" . $tSql . "");
+            $stmt->execute(array_merge([$now, $userId], $tParams));
 
             // Audit log
             try {

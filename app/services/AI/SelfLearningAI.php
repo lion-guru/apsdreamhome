@@ -214,7 +214,7 @@ class SelfLearningAI
             }
 
             return $bestMatch;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -245,7 +245,7 @@ class SelfLearningAI
                     ];
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Table might not have source column
         error_log($e->getMessage());
         }
@@ -493,7 +493,7 @@ class SelfLearningAI
                     'suggestions' => $this->getFollowUpSuggestions($intent)
                 ];
             }
-        } catch (\Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         return null;
     }
@@ -520,7 +520,7 @@ class SelfLearningAI
                     'suggestions' => $this->getFollowUpSuggestions($intent)
                 ];
             }
-        } catch (\Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         return null;
     }
@@ -682,7 +682,7 @@ class SelfLearningAI
                  ORDER BY id DESC LIMIT 1",
                 [$this->sessionId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Silent fail for learning - don't break chat
         error_log($e->getMessage());
         }
@@ -721,7 +721,7 @@ class SelfLearningAI
                     [json_encode([$entities['location']]), $this->userId]
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Silent fail
         error_log($e->getMessage());
         }
@@ -744,7 +744,7 @@ class SelfLearningAI
                 $tid > 1 ? [$this->userId, $tid] : [$this->userId]
             );
             return $profile ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -763,7 +763,7 @@ class SelfLearningAI
                  LIMIT 10",
                 [$this->sessionId]
             ) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -803,7 +803,7 @@ class SelfLearningAI
                     $confidence
                 ]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Silent fail
         error_log($e->getMessage());
         }
@@ -841,7 +841,7 @@ class SelfLearningAI
             );
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -878,7 +878,7 @@ class SelfLearningAI
             $stats['total_feedback'] = (int)($fb['total_feedback'] ?? 0);
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Services\CampaignService;
+use App\Services\Campaign\CampaignService;
 use Exception;
 
 class CampaignController extends AdminController
@@ -15,7 +15,7 @@ class CampaignController extends AdminController
     public function __construct()
     {
         parent::__construct();
-        $this->campaignService = new CampaignService();
+        $this->campaignService = new \App\Services\Campaign\CampaignService();
     }
 
     /**
@@ -89,7 +89,7 @@ class CampaignController extends AdminController
                 $this->data['error'] = 'Failed to create campaign';
                 return $this->create();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error creating campaign: " . $e->getMessage());
             $this->data['error'] = 'An error occurred while creating the campaign';
             return $this->create();
@@ -160,7 +160,7 @@ class CampaignController extends AdminController
                 $this->data['error'] = 'Failed to update campaign';
                 return $this->edit($campaignId);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error updating campaign: " . $e->getMessage());
             $this->data['error'] = 'An error occurred while updating the campaign';
             return $this->edit($campaignId);
@@ -183,7 +183,7 @@ class CampaignController extends AdminController
             } else {
                 $this->data['error'] = 'Failed to delete campaign';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error deleting campaign: " . $e->getMessage());
             $this->data['error'] = 'An error occurred while deleting the campaign';
         }
@@ -220,7 +220,7 @@ class CampaignController extends AdminController
         try {
             $query = "SELECT * FROM campaigns WHERE campaign_id = ?";
             return $this->db->fetch($query, [$campaignId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error getting campaign: " . $e->getMessage());
             return null;
         }
@@ -248,7 +248,7 @@ class CampaignController extends AdminController
 
             $this->db->execute($query, $params);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error updating campaign: " . $e->getMessage());
             return false;
         }
@@ -273,7 +273,7 @@ class CampaignController extends AdminController
             $this->db->execute("DELETE FROM campaigns WHERE campaign_id = ? AND tenant_id = ?", [$campaignId, $tid]);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error deleting campaign: " . $e->getMessage());
             return false;
         }
@@ -301,7 +301,7 @@ class CampaignController extends AdminController
             } else {
                 $this->data['error'] = 'Failed to launch campaign';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error launching campaign: " . $e->getMessage());
             $this->data['error'] = 'An error occurred while launching the campaign';
         }
@@ -327,7 +327,7 @@ class CampaignController extends AdminController
                     $campaign['campaign_id']
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error creating campaign notifications: " . $e->getMessage());
         }
     }
@@ -368,7 +368,7 @@ class CampaignController extends AdminController
             }
 
             return $this->db->fetchAll($query, array_merge($params, $tidParams));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error getting target users: " . $e->getMessage());
             return [];
         }
@@ -404,7 +404,7 @@ class CampaignController extends AdminController
             $stmt = $this->db->query("SELECT * FROM email_templates ORDER BY template_name ASC");
             $templates = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $this->data['templates'] = $templates ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Template editor error: " . $e->getMessage());
             $this->data['templates'] = [];
         }
@@ -451,7 +451,7 @@ class CampaignController extends AdminController
                 $stmt->execute([$templateCode, $templateName, $subject, $bodyHtml, $bodyHtml, $tid]);
                 $this->data['success'] = 'Template created successfully!';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Save template error: " . $e->getMessage());
             $this->data['error'] = 'Failed to save template.';
         }
@@ -495,7 +495,7 @@ class CampaignController extends AdminController
             $this->data['perPage'] = $perPage;
             $this->data['totalPages'] = ceil($total / $perPage);
             $this->data['statusFilter'] = $statusFilter;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Email logs error: " . $e->getMessage());
             $this->data['logs'] = [];
             $this->data['total'] = 0;
@@ -585,7 +585,7 @@ class CampaignController extends AdminController
                             $wa->sendMessage($phone, $message);
                         }
                         $sent++;
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $failed++;
                     }
                 }
@@ -593,7 +593,7 @@ class CampaignController extends AdminController
                 $message_text = "Broadcast sent: {$sent} successful, {$failed} failed.";
                 $message_type = $failed > 0 ? 'warning' : 'success';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $templates = $templates ?? [];
             $stats = $stats ?? ['users' => 0, 'leads' => 0, 'users' => 0];
             $message_text = $message_text ?? ($_SERVER['REQUEST_METHOD'] === 'POST' ? 'Broadcast failed: ' . $e->getMessage() : '');

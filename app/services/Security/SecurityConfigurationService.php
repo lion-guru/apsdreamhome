@@ -91,7 +91,7 @@ class SecurityConfigurationService
 
             return $result;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get security configuration", [
                 'category' => $category,
                 'key' => $key,
@@ -153,7 +153,7 @@ class SecurityConfigurationService
                 'message' => 'Security configuration updated successfully'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to set security configuration", [
                 'category' => $category,
                 'key' => $key,
@@ -202,7 +202,7 @@ class SecurityConfigurationService
                 'improvements' => $improvements
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to apply security policies", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -291,7 +291,7 @@ class SecurityConfigurationService
             
             return $logs;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get security audit log", ['error' => $e->getMessage()]);
             return [];
         }
@@ -332,7 +332,7 @@ class SecurityConfigurationService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get security stats", ['error' => $e->getMessage()]);
             return [];
         }
@@ -437,7 +437,7 @@ class SecurityConfigurationService
                 'message' => 'Configuration applied successfully'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Failed to apply configuration: ' . $e->getMessage()

@@ -1,0 +1,4 @@
+plot_number,width_ft,length_ft,total_price,status,colony_id,facing,corner_plot,park_facing,road_width_ft
+A-001,30,40,1500000,available,2,north,0,1,20
+A-002,35,45,1800000,available,2,east,1,0,25
+B-001,40,50,2200000,booked,3,south,0,0,30

@@ -45,7 +45,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to set cache item',
@@ -82,7 +82,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to get cache item',
@@ -121,7 +121,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to remember value',
@@ -153,7 +153,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to delete cache item',
@@ -183,7 +183,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to clear cache by tags',
@@ -208,7 +208,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to clear cache',
@@ -242,7 +242,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to memoize function',
@@ -276,7 +276,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to cache query',
@@ -310,7 +310,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to cache API response',
@@ -344,7 +344,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to cache computed value',
@@ -369,7 +369,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to get cache statistics',
@@ -394,7 +394,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to reset cache statistics',
@@ -419,7 +419,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to get cache information',
@@ -449,7 +449,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to warm up cache',
@@ -474,7 +474,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to get cache size',
@@ -503,7 +503,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to optimize cache',
@@ -529,7 +529,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to generate cache report',
@@ -564,7 +564,7 @@ class PerformanceCacheController extends BaseController
             ];
 
             return $this->jsonResponse($data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $data = [
                 'success' => false,
                 'message' => 'Failed to get cache dashboard',

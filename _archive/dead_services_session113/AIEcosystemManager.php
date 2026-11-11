@@ -97,7 +97,7 @@ class AIEcosystemManager {
                     $this->db->execute("ALTER TABLE ai_agents ADD COLUMN type VARCHAR(50) AFTER name");
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Table might not exist yet, ignore
                     error_log("AIEcosystemManager.php: " . $e->getMessage());
         }
@@ -127,7 +127,7 @@ class AIEcosystemManager {
                     }
                 }
                 $this->db->execute($q);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Log but continue
                 error_log("AI Ecosystem Setup Error: " . $e->getMessage() . " Query: " . $q);
             }

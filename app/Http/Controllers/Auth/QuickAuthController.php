@@ -103,7 +103,7 @@ private function getTenantSql(): array
 
             $this->quickRegisterCustomer($name, $email, $phone, $referralCode);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('QuickAuthController::quickRegister error: ' . $e->getMessage());
             $this->quickJson(['success' => false, 'message' => 'Request failed. Please try again.']);
         }
@@ -190,7 +190,7 @@ private function getTenantSql(): array
 
             $this->quickJson(['success' => true, 'redirect' => (defined('BASE_URL') ? BASE_URL : '') . '/user/dashboard', 'message' => 'Account created successfully! Welcome to APS Dream Home.']);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('QuickAuthController::quickRegisterCustomer error: ' . $e->getMessage());
             $this->quickJson(['success' => false, 'message' => 'Request failed. Please try again.']);
         }
@@ -225,12 +225,12 @@ private function getTenantSql(): array
 
         $newUserId = (int)($result['user_id'] ?? 0);
 
-        // Resolve associates row id for portal sessions
+        // Resolve associate profile row for portal sessions
         $assocId = 0;
         try {
-            $row = $this->db->fetchOne("SELECT id FROM associates WHERE user_id = ? LIMIT 1", [$newUserId]);
+            $row = $this->db->fetchOne("SELECT id FROM associate_profiles WHERE user_id = ?" . $this->getTenantSql()[0] . " LIMIT 1", array_merge([$newUserId], $this->getTenantSql()[1]));
             if ($row) $assocId = (int)$row['id'];
-        } catch (\Throwable $e) { error_log('QuickAuthController: associates lookup failed: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('QuickAuthController: associate_profiles lookup failed: ' . $e->getMessage()); }
 
         $_SESSION['user_id'] = $newUserId;
         $_SESSION['user_name'] = $name;
@@ -290,7 +290,7 @@ private function getTenantSql(): array
             ]);
             exit;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Request failed: ' . $e->getMessage()]);
             exit;
         }
@@ -434,7 +434,7 @@ private function getTenantSql(): array
             ]);
             exit;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => 'Auto-generation failed: ' . $e->getMessage()]);
             exit;
         }

@@ -71,7 +71,7 @@ class DirectoryService
                 $stmt = $this->db->prepare("INSERT INTO directory_categories (name, slug, description, icon, parent_id, sort_order, is_active, tenant_id) VALUES (?,?,?,?,?,?,?,?)");
                 return $stmt->execute([$data['name'], $data['slug'], $data['description'] ?? '', $data['icon'] ?? 'fas fa-building', $data['parent_id'] ?: null, (int)($data['sort_order'] ?? 0), (int)($data['is_active'] ?? 1), $this->tenantId()]);
             }
-        } catch (\Exception $e) { error_log('DirectoryService::upsertCategory: ' . $e->getMessage()); return false; }
+        } catch (\Throwable $e) { error_log('DirectoryService::upsertCategory: ' . $e->getMessage()); return false; }
     }
 
     public function deleteCategory(int $id): bool
@@ -81,7 +81,7 @@ class DirectoryService
             $stmt->execute([$id, $this->tenantId()]);
             $stmt2 = $this->db->prepare("DELETE FROM directory_categories WHERE id = ? AND tenant_id = ?");
             return $stmt2->execute([$id, $this->tenantId()]);
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     // ── Listings ──
@@ -199,7 +199,7 @@ class DirectoryService
                 $stmt->execute([$data['category_id'], $data['user_id'] ?? null, $data['business_name'], $data['owner_name'] ?? '', $data['description'] ?? '', $data['phone'] ?? '', $data['whatsapp'] ?? '', $data['email'] ?? '', $data['website'] ?? '', $data['address'] ?? '', $data['city'] ?? '', $data['state'] ?? '', $data['pincode'] ?? '', $data['latitude'] ?: null, $data['longitude'] ?: null, (int)($data['experience_years'] ?? 0), $data['price_range'] ?? '', $data['photo'] ?? '', (int)($data['is_verified'] ?? 0), (int)($data['is_featured'] ?? 0), $data['status'] ?? 'pending', $this->tenantId()]);
                 return (int)$this->db->lastInsertId();
             }
-        } catch (\Exception $e) { error_log('DirectoryService::upsertListing: ' . $e->getMessage()); return 0; }
+        } catch (\Throwable $e) { error_log('DirectoryService::upsertListing: ' . $e->getMessage()); return 0; }
     }
 
     public function deleteListing(int $id): bool
@@ -209,14 +209,14 @@ class DirectoryService
             $this->db->prepare("DELETE FROM directory_materials WHERE listing_id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]);
             $this->db->prepare("DELETE FROM directory_listings WHERE id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]);
             return true;
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     private function incrementListingViews(int $id): void
     {
         try {
             $this->db->prepare("UPDATE directory_listings SET views = views + 1 WHERE id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]);
-        } catch (\Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
     }
 
     public function addReview(array $data): bool
@@ -226,7 +226,7 @@ class DirectoryService
             $r = $stmt->execute([$data['listing_id'], $data['user_id'] ?? null, $data['reviewer_name'] ?? 'Anonymous', (int)$data['rating'], $data['review'] ?? '', $data['status'] ?? 'approved', $this->tenantId()]);
             $this->recalculateRating($data['listing_id']);
             return $r;
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function recalculateRating(int $listingId): void
@@ -261,7 +261,7 @@ class DirectoryService
             $row = $rStmt->fetch(PDO::FETCH_ASSOC);
             if ($row) $this->recalculateRating($row['listing_id']);
             return true;
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     // ── Jobs ──
@@ -295,13 +295,13 @@ class DirectoryService
                 $stmt = $this->db->prepare("INSERT INTO directory_jobs (listing_id, user_id, title, job_type, category, description, location, salary_range, contact_phone, contact_person, is_seeking, status, tenant_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 return $stmt->execute([$data['listing_id'] ?: null, $data['user_id'] ?? null, $data['title'], $data['job_type'] ?? 'gig', $data['category'] ?? '', $data['description'] ?? '', $data['location'] ?? '', $data['salary_range'] ?? '', $data['contact_phone'] ?? '', $data['contact_person'] ?? '', (int)($data['is_seeking'] ?? 1), $data['status'] ?? 'active', $this->tenantId()]);
             }
-        } catch (\Exception $e) { error_log('DirectoryService::upsertJob: ' . $e->getMessage()); return false; }
+        } catch (\Throwable $e) { error_log('DirectoryService::upsertJob: ' . $e->getMessage()); return false; }
     }
 
     public function deleteJob(int $id): bool
     {
         try { return $this->db->prepare("DELETE FROM directory_jobs WHERE id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]); }
-        catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
+        catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function getAllJobsAdmin(): array
@@ -334,13 +334,13 @@ class DirectoryService
                 $stmt = $this->db->prepare("INSERT INTO directory_materials (listing_id, material_name, category, brand, unit, price, price_date, notes, status, tenant_id) VALUES (?,?,?,?,?,?,?,?,?,?)");
                 return $stmt->execute([$data['listing_id'] ?: null, $data['material_name'], $data['category'] ?? '', $data['brand'] ?? '', $data['unit'] ?? '', $data['price'], $data['price_date'] ?? date('Y-m-d'), $data['notes'] ?? '', $data['status'] ?? 'active', $this->tenantId()]);
             }
-        } catch (\Exception $e) { error_log('DirectoryService::upsertMaterial: ' . $e->getMessage()); return false; }
+        } catch (\Throwable $e) { error_log('DirectoryService::upsertMaterial: ' . $e->getMessage()); return false; }
     }
 
     public function deleteMaterial(int $id): bool
     {
         try { return $this->db->prepare("DELETE FROM directory_materials WHERE id = ? AND tenant_id = ?")->execute([$id, $this->tenantId()]); }
-        catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
+        catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return false; }
     }
 
     public function getAllMaterialsAdmin(): array

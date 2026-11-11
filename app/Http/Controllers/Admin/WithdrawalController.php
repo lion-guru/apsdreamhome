@@ -85,7 +85,7 @@ class WithdrawalController extends AdminController
                 if (isset($stats[$key])) $stats[$key] = intval($row['cnt']);
                 $stats['total'] += intval($row['cnt']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log($e->getMessage());
         }
         

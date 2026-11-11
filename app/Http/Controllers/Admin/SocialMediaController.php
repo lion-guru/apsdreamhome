@@ -70,7 +70,7 @@ class SocialMediaController extends AdminController
 
             $_SESSION['success'] = 'Social media account connected successfully!';
             $this->redirect('/admin/social-media');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Failed to connect account: ' . $e->getMessage();
             $this->redirect('/admin/social-media/create');
         }
@@ -111,7 +111,7 @@ class SocialMediaController extends AdminController
                 'status' => $_POST['status'] ?? 'connected',
             ]);
             $_SESSION['success'] = 'Account updated successfully!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Failed to update: ' . $e->getMessage();
         }
         $this->redirect('/admin/social-media');
@@ -136,7 +136,7 @@ class SocialMediaController extends AdminController
         try {
             $result = $this->service->syncLeads((int)$id, ['since' => $_POST['since'] ?? null]);
             $this->jsonResponse($result);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }

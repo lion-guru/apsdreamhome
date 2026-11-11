@@ -10,7 +10,7 @@
 try {
     $db = \App\Core\Database::getInstance();
     $conn = $db->getConnection();
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log("Database connection failed: " . $e->getMessage());
     die("Database connection failed. Please check system logs.");
 }
@@ -98,7 +98,7 @@ function calculateScenario($data)
                 'company_margin_percentage' => (($data['total_sales'] - $total_payout) / $data['total_sales']) * 100
             ]
         ];
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         return ['success' => false, 'message' => 'Error calculating scenario: ' . $e->getMessage()];
     }
 }

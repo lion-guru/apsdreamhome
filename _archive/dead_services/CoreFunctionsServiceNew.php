@@ -50,7 +50,7 @@ class CoreFunctionsServiceNew
             }
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to log admin action: ' . $e->getMessage());
             return false;
         }
@@ -313,7 +313,7 @@ class CoreFunctionsServiceNew
                 mkdir($fullDir, 0755, true);
             }
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to create directory: ' . $dir . ' - ' . $e->getMessage());
             return false;
         }
@@ -414,7 +414,7 @@ class CoreFunctionsServiceNew
             }
 
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Image resize failed: ' . $sourcePath . ' - ' . $e->getMessage());
             return false;
         }
@@ -503,7 +503,7 @@ class CoreFunctionsServiceNew
             }
             
             return [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Failed to load WhatsApp templates: ' . $e->getMessage());
             return [];
         }

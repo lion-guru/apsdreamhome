@@ -146,7 +146,7 @@ class CRMSettingsController extends AdminController
                 }
             }
             $_SESSION['crm_settings_success'] = 'CRM settings updated successfully.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CRMSettings update error: " . $e->getMessage());
             $_SESSION['crm_settings_error'] = 'Failed to update CRM settings.';
         }

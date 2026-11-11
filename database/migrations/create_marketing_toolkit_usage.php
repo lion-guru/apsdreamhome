@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `marketing_toolkit_usage` (
 try {
     $db->exec($sql);
     echo "✅ marketing_toolkit_usage created\n";
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ " . $e->getMessage() . "\n";
 }
 

@@ -102,7 +102,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("ReportService::generatePropertySalesReport - Error: " . $e->getMessage());
             return [];
         }
@@ -156,7 +156,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("ReportService::generateUserActivityReport - Error: " . $e->getMessage());
             return [];
         }
@@ -202,7 +202,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("ReportService::generateFinancialSummaryReport - Error: " . $e->getMessage());
             return [];
         }
@@ -216,7 +216,7 @@ class ReportService
         try {
             $sql = "SELECT 
                 a.id, a.name, a.email, a.phone, a.commission_rate,
-                ass.joining_date as join_date, ass.status as associate_status,
+                ap.joining_date as join_date, ap.status as associate_status,
                 COUNT(DISTINCT s.property_id) as total_properties,
                 COUNT(CASE WHEN s.status = 'completed' THEN 1 END) as sold_properties,
                 COALESCE(SUM(s.sale_amount), 0) as total_property_value,
@@ -225,19 +225,18 @@ class ReportService
                 MAX(s.sale_date) as last_sale_date,
                 COALESCE(SUM(CASE WHEN s.sale_date >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END), 0) as sales_this_month
                 FROM users a
-                LEFT JOIN associates ass ON ass.user_id = a.id
-                LEFT JOIN sales s ON s.associate_id = a.id
+                LEFT JOIN associate_profiles ap ON ap.user_id = a.id\r\n                LEFT JOIN sales s ON s.associate_id = a.id
                 WHERE 1=1{$this->tJoin('a')}";
             
             $params = $this->tVal();
             
             if (!empty($filters['start_date'])) {
-                $sql .= " AND ass.joining_date >= ?";
+                $sql .= " AND ap.joining_date >= ?";
                 $params[] = $filters['start_date'];
             }
             
             if (!empty($filters['end_date'])) {
-                $sql .= " AND ass.joining_date <= ?";
+                $sql .= " AND ap.joining_date <= ?";
                 $params[] = $filters['end_date'];
             }
             
@@ -249,12 +248,12 @@ class ReportService
             // NOTE: min_rating filter dropped — users/associates have no rating column
             
             $sql .= " GROUP BY a.id, a.name, a.email, a.phone, a.commission_rate,
-                      ass.joining_date, ass.status
+                      ap.joining_date, ap.status
                       ORDER BY total_commissions DESC";
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("ReportService::generateAssociatePerformanceReport - Error: " . $e->getMessage());
             return [];
         }
@@ -300,7 +299,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("ReportService::generateLeadConversionReport - Error: " . $e->getMessage());
             return [];
         }
@@ -352,7 +351,7 @@ class ReportService
             
             return $this->db->fetchAll($sql, $params);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("ReportService::generatePropertyInventoryReport - Error: " . $e->getMessage());
             return [];
         }
@@ -388,7 +387,7 @@ class ReportService
             fclose($output);
             exit;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("ReportService::exportToCSV - Error: " . $e->getMessage());
             return false;
         }
@@ -464,7 +463,7 @@ class ReportService
                 'enquiries' => $enquiryStats
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("ReportService::getDashboardStatistics - Error: " . $e->getMessage());
             return [];
         }
@@ -489,8 +488,9 @@ class ReportService
             
             $this->db->execute($sql, $params);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("ReportService::logActivity - Error: " . $e->getMessage());
         }
     }
 }
+

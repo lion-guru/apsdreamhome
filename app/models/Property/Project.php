@@ -69,7 +69,7 @@ class Project extends Model
                 $stmt->execute();
             }
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getAllActiveProjects: " . $e->getMessage());
             return [];
         }
@@ -90,7 +90,7 @@ class Project extends Model
             $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getFeaturedProjects: " . $e->getMessage());
             return [];
         }
@@ -106,7 +106,7 @@ class Project extends Model
             $stmt = $db->prepare("SELECT * FROM projects WHERE id = :id AND status != 'cancelled'");
             $stmt->execute(['id' => $id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getProjectById: " . $e->getMessage());
             return null;
         }
@@ -122,7 +122,7 @@ class Project extends Model
             $stmt = $db->prepare("SELECT * FROM projects WHERE name = :code AND status != 'cancelled'");
             $stmt->execute(['code' => $code]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getProjectByCode: " . $e->getMessage());
             return null;
         }
@@ -145,7 +145,7 @@ class Project extends Model
                 'city' => "%{$location}%"
             ]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getProjectsByLocation: " . $e->getMessage());
             return [];
         }
@@ -188,7 +188,7 @@ class Project extends Model
             $stmt->execute($data);
 
             return $db->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in createProject: " . $e->getMessage());
             return false;
         }
@@ -232,7 +232,7 @@ class Project extends Model
             $sql = "UPDATE projects SET " . implode(', ', $setParts) . " WHERE id = :id";
             $stmt = $db->prepare($sql);
             return $stmt->execute($params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in updateProject: " . $e->getMessage());
             return false;
         }
@@ -247,7 +247,7 @@ class Project extends Model
             $db = \App\Core\Database::getInstance();
             $stmt = $db->prepare("UPDATE projects SET status = 'cancelled', updated_at = NOW() WHERE id = :id");
             return $stmt->execute(['id' => $id]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in deleteProject: " . $e->getMessage());
             return false;
         }
@@ -297,7 +297,7 @@ class Project extends Model
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in searchProjects: " . $e->getMessage());
             return [];
         }
@@ -322,7 +322,7 @@ class Project extends Model
 
             $stmt = $db->query($sql);
             return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getProjectStats: " . $e->getMessage());
             return [];
         }
@@ -342,7 +342,7 @@ class Project extends Model
             $stmt = $db->prepare($sql);
             $stmt->execute(['city' => $city]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getProjectsByCity: " . $e->getMessage());
             return [];
         }
@@ -357,7 +357,7 @@ class Project extends Model
             $db = \App\Core\Database::getInstance();
             $stmt = $db->query("SELECT DISTINCT name FROM projects WHERE status != 'cancelled' ORDER BY name");
             return $stmt->fetchAll(PDO::FETCH_COLUMN);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getUniqueCities: " . $e->getMessage());
             return [];
         }
@@ -372,7 +372,7 @@ class Project extends Model
             $db = \App\Core\Database::getInstance();
             $stmt = $db->query("SELECT DISTINCT project_type FROM projects WHERE status != 'cancelled' ORDER BY project_type");
             return $stmt->fetchAll(PDO::FETCH_COLUMN);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error in getUniqueProjectTypes: " . $e->getMessage());
             return [];
         }

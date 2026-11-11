@@ -41,7 +41,7 @@ class EmailTrackingService
                 $this->updateEngagementScore($emailId);
             }
             return ['success' => true];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     public function trackClick($emailId, $recipient, $linkUrl, $ipAddress, $userAgent) {
@@ -55,7 +55,7 @@ class EmailTrackingService
         );
             $this->updateEngagementScore($emailId);
             return ['success' => true];
-        } catch (\Exception $e) { return ['success' => false, 'error' => $e->getMessage()]; }
+        } catch (\Throwable $e) { return ['success' => false, 'error' => $e->getMessage()]; }
     }
 
     private function updateEngagementScore($emailId) {
@@ -71,7 +71,7 @@ class EmailTrackingService
                     $this->db->query("UPDATE leads SET lead_score = ? WHERE id = ?" . $this->tenantSql(), array_merge([$newScore, $lead['id']], $this->tenantId() > 1 ? [$this->tenantId()] : []));
                 }
             }
-        } catch (\Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
     }
 
     public function getOverallStats($days = 30) {
@@ -86,7 +86,7 @@ class EmailTrackingService
                 array_merge([$days], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             return $stats ?: ['total_events' => 0, 'opens' => 0, 'clicks' => 0, 'emails_tracked' => 0, 'unique_recipients' => 0];
-        } catch (\Exception $e) { return ['total_events' => 0, 'opens' => 0, 'clicks' => 0, 'emails_tracked' => 0, 'unique_recipients' => 0]; }
+        } catch (\Throwable $e) { return ['total_events' => 0, 'opens' => 0, 'clicks' => 0, 'emails_tracked' => 0, 'unique_recipients' => 0]; }
     }
 
     public function getDailyStats($days = 30) {
@@ -97,7 +97,7 @@ class EmailTrackingService
                  GROUP BY DATE(event_at), event_type ORDER BY day ASC",
                 array_merge([$days], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             ) ?: [];
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 
     public function getLeadEmailStats($leadId) {
@@ -112,7 +112,7 @@ class EmailTrackingService
                 array_merge([$lead['email']], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             );
             return $stats ?: ['opens' => 0, 'clicks' => 0, 'last_activity' => null];
-        } catch (\Exception $e) { return ['opens' => 0, 'clicks' => 0, 'last_activity' => null]; }
+        } catch (\Throwable $e) { return ['opens' => 0, 'clicks' => 0, 'last_activity' => null]; }
     }
 
     public function getTopClickedLinks($limit = 20) {
@@ -123,6 +123,6 @@ class EmailTrackingService
                  GROUP BY link_url ORDER BY clicks DESC LIMIT ?",
                 array_merge([$limit], $this->tenantId() > 1 ? [$this->tenantId()] : [])
             ) ?: [];
-        } catch (\Exception $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
+        } catch (\Throwable $e) { error_log('Silent catch: ' . $e->getMessage()); return []; }
     }
 }

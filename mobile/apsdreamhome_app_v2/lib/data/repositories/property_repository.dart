@@ -253,6 +253,29 @@ class PropertyRepository {
     );
     return localData.map((e) => PropertyModel.fromJson(e)).toList();
   }
+
+  /// Get recommended properties for user (AI-based recommendations)
+  /// Returns properties based on user preferences, browsing history, and AI recommendations
+  Future<List<PropertyModel>> getRecommendedProperties(String userId, {int limit = 10}) async {
+    if (await _apiService.isConnected()) {
+      try {
+        final response = await _apiService.get(
+          '/properties/recommended',
+          queryParameters: {'user_id': userId, 'limit': limit},
+        );
+        return (response['data'] as List)
+            .map((json) => PropertyModel.fromJson(json as Map<String, dynamic>))
+            .toList();
+      } catch (e) {
+        // Fallback to local cache
+        final localData = await _dbHelper.getProperties();
+        return localData.map((e) => PropertyModel.fromJson(e)).toList().take(limit).toList();
+      }
+    }
+    // Offline fallback
+    final localData = await _dbHelper.getProperties();
+    return localData.map((e) => PropertyModel.fromJson(e)).toList().take(limit).toList();
+  }
 }
 
 

@@ -3,9 +3,9 @@
 
 $page_title = $page_title ?? 'Edit Goal';
 $mode = 'edit';
-$goal = $goal ?? [];
+$db = $db ?? \App\Core\Database\Database::getInstance();
 $employees = $employees ?? [];
-$managers = $managers ?? [];
+$db = $db ?? \App\Core\Database\Database::getInstance();
 ?>
 
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>"></style>

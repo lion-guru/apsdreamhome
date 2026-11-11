@@ -144,7 +144,7 @@ class DigitalBookingController extends BaseController
             }
             
             return $this->jsonResponse(['success' => false, 'error' => $result['error'] ?? 'Signing failed'], 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DigitalBookingController::signDocument] ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Server error'], 500);
         }
@@ -203,7 +203,7 @@ class DigitalBookingController extends BaseController
             ]);
             
             return $this->jsonResponse(['success' => true, 'message' => 'Video consent recorded']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DigitalBookingController::recordVideoConsent] ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Failed to record consent'], 500);
         }
@@ -239,7 +239,7 @@ class DigitalBookingController extends BaseController
             }
             
             return $this->jsonResponse(['success' => false, 'error' => $result['error'] ?? 'Failed to generate schedule']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DigitalBookingController::emiPreview] ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Server error'], 500);
         }
@@ -287,7 +287,7 @@ class DigitalBookingController extends BaseController
             }
             
             return $this->jsonResponse(['success' => false, 'error' => $result['error'] ?? 'Failed to generate schedule']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DigitalBookingController::emiConfirm] ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Server error'], 500);
         }
@@ -368,7 +368,7 @@ class DigitalBookingController extends BaseController
             echo $pdfHtml;
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DigitalBookingController::downloadEMIAgreement] ' . $e->getMessage());
             return $this->jsonResponse(['success' => false, 'error' => 'Download failed'], 500);
         }
@@ -704,7 +704,7 @@ class DigitalBookingController extends BaseController
             
             $pdo->commit();
             return $agreementId;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $pdo->rollBack();
             error_log('[createEMIAgreement] ' . $e->getMessage());
             return 0;

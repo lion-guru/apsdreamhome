@@ -96,7 +96,7 @@ class EmailQueueService
                 error_log("EmailQueueService: email_templates table missing 'template_code' column — skipping seed");
                 return;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EmailQueueService: cannot check email_templates schema: " . $e->getMessage());
             return;
         }
@@ -131,7 +131,7 @@ class EmailQueueService
                 if (!empty($insertData)) $params = array_merge($params, array_values($insertData));
                 $stmt->execute($params);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EmailQueueService: seed error (non-critical): " . $e->getMessage());
         }
     }
@@ -254,7 +254,7 @@ class EmailQueueService
                 
                 $results['processed']++;
                 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->markAsFailed($email['id'], $e->getMessage());
                 $results['failed']++;
             }

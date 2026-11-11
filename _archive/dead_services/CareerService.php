@@ -91,7 +91,7 @@ class CareerService
                 'message' => 'Application submitted successfully',
                 'application_id' => $applicationId
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to submit application: {$email} - " . $e->getMessage());
 
             return [
@@ -121,7 +121,7 @@ class CareerService
             }
 
             return $application;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to get application ID {$id}: " . $e->getMessage());
             return null;
         }
@@ -188,7 +188,7 @@ class CareerService
             }
 
             return $applications;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to get applications: " . $e->getMessage());
             return [];
         }
@@ -236,7 +236,7 @@ class CareerService
                 'success' => true,
                 'message' => 'Application status updated successfully'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to update application status ID {$id}: " . $e->getMessage());
 
             return [
@@ -279,7 +279,7 @@ class CareerService
                 'message' => 'Interview scheduled successfully',
                 'interview_id' => $interviewId
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to schedule interview for application ID {$applicationId}: " . $e->getMessage());
 
             return [
@@ -348,7 +348,7 @@ class CareerService
             $stats['recent_applications'] = $this->getApplications(['limit' => 10]);
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to get career stats: " . $e->getMessage());
             return [];
         }
@@ -461,7 +461,7 @@ class CareerService
                 'file_path' => $filepath,
                 'filename' => $filename
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'File processing failed: ' . $e->getMessage()

@@ -78,6 +78,6 @@ try {
     }
     echo "Cache cleared.\n";
 
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "Error: " . $e->getMessage() . "\n";
 }

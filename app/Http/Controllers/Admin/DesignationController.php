@@ -75,7 +75,7 @@ class DesignationController extends AdminController
                 'status'          => $_POST['status'] ?? 'active',
             ]);
             $_SESSION['success'] = "Designation created successfully (ID: $id)";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/designations');
@@ -120,7 +120,7 @@ class DesignationController extends AdminController
                 'status'          => $_POST['status'] ?? 'active',
             ]);
             $_SESSION['success'] = "Designation updated successfully";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/designations');
@@ -136,7 +136,7 @@ class DesignationController extends AdminController
         try {
             $this->desigService->delete($id);
             $_SESSION['success'] = "Designation deleted";
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/admin/designations');

@@ -88,7 +88,7 @@ class AchievementController extends BaseController
             $this->checkAndAwardBadges($userId);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AchievementController::awardPoints error: " . $e->getMessage());
             return false;
         }
@@ -314,7 +314,7 @@ class AchievementController extends BaseController
             $stmt = $this->pdo->prepare("SELECT SUM(points) as total FROM user_points WHERE user_id = ?");
             $stmt->execute([$userId]);
             echo json_encode(['success' => true, 'points' => (int)$stmt->fetchColumn()]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'points' => 0]);
         }
         exit;
@@ -332,7 +332,7 @@ class AchievementController extends BaseController
             $stmt = $this->pdo->prepare("SELECT b.* FROM badges b JOIN user_badges ub ON b.id = ub.badge_id WHERE ub.user_id = ?");
             $stmt->execute([$userId]);
             echo json_encode(['success' => true, 'badges' => $stmt->fetchAll()]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'badges' => []]);
         }
         exit;

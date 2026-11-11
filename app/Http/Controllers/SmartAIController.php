@@ -10,7 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Core\Database\Database;
 use App\Services\AI\SelfLearningAI;
-use App\Services\AI\RAGAgent;
+use App\Services\AI\RAGService;
 use App\Services\AI\ConversationEngine;
 use App\Traits\TenantAwareTrait;
 
@@ -45,7 +45,7 @@ class SmartAIController extends BaseController
             try {
                 $row = $this->db->fetch("SELECT key_value FROM api_keys WHERE key_name = 'GEMINI_API_KEY' AND is_active = 1");
                 $this->geminiApiKey = $row['key_value'] ?? '';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("SmartAI: DB key load failed: " . $e->getMessage());
             }
         }
@@ -54,7 +54,7 @@ class SmartAIController extends BaseController
             try {
                 $row = $this->db->fetch("SELECT api_key FROM ai_settings WHERE service = 'gemini' AND is_active = 1");
                 $this->geminiApiKey = $row['api_key'] ?? '';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                         error_log("SmartAIController.php: " . $e->getMessage());
             }
         }
@@ -63,7 +63,7 @@ class SmartAIController extends BaseController
         try {
             $row = $this->db->fetch("SELECT key_value FROM api_keys WHERE key_name = 'OpenRouter' AND is_active = 1");
             $this->openrouterApiKey = $row['key_value'] ?? getenv('OPENROUTER_API_KEY') ?: '';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
                     error_log("SmartAIController.php: " . $e->getMessage());
         }
 
@@ -71,7 +71,7 @@ class SmartAIController extends BaseController
         try {
             $row = $this->db->fetch("SELECT key_value FROM api_keys WHERE key_name = 'HuggingFace' AND is_active = 1");
             $this->huggingfaceApiKey = $row['key_value'] ?? getenv('HUGGINGFACE_API_KEY') ?: '';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
                     error_log("SmartAIController.php: " . $e->getMessage());
         }
 
@@ -200,7 +200,7 @@ class SmartAIController extends BaseController
                 $response = $aiResult['response'];
                 $modelUsed = 'self_learning';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("SelfLearningAI error: " . $e->getMessage());
         }
 
@@ -211,7 +211,7 @@ class SmartAIController extends BaseController
         // because retrieval relevance is hardcoded per source type.
         if ($response === null) {
             try {
-                $rag = new RAGAgent();
+                $rag = new RAGService();
                 $ragResult = $rag->answer($message, $userContext['id']);
                 $ragHasProse = false;
                 foreach (($ragResult['sources'] ?? []) as $src) {
@@ -224,7 +224,7 @@ class SmartAIController extends BaseController
                     $response = $ragResult['answer'];
                     $modelUsed = 'rag';
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("RAGAgent error: " . $e->getMessage());
             }
         }
@@ -245,7 +245,7 @@ class SmartAIController extends BaseController
                     $response = trim($freeResult['text']);
                     $modelUsed = 'free_ai:' . ($freeResult['engine'] ?? 'unknown');
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("FreeAIEngines error in SmartAI: " . $e->getMessage());
             }
         }
@@ -257,7 +257,7 @@ class SmartAIController extends BaseController
                 $ruleResponse = $chatbotService->processMessage($message);
                 $response = $ruleResponse['reply'] ?? null;
                 if ($response) $modelUsed = 'rule';
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                         error_log("SmartAIController.php: " . $e->getMessage());
             }
         }
@@ -440,7 +440,7 @@ class SmartAIController extends BaseController
             $data['total_leads'] = $leadsStats['total'] ?? 0;
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -468,7 +468,7 @@ class SmartAIController extends BaseController
             $data['total_inquiries'] = $inquiryStats['total'] ?? 0;
 
             return $data;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -569,7 +569,7 @@ class SmartAIController extends BaseController
             }
 
             return $this->getSmartLocalResponse($message, $userContext, $language);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Gemini API Error: " . $e->getMessage());
             return $this->getSmartLocalResponse($message, $userContext, $language);
         }
@@ -612,7 +612,7 @@ class SmartAIController extends BaseController
             if (isset($result['choices'][0]['message']['content'])) {
                 return trim($result['choices'][0]['message']['content']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OpenRouter API Error: " . $e->getMessage());
         }
         return null;
@@ -648,7 +648,7 @@ class SmartAIController extends BaseController
                 $text = substr($text, strlen($prompt));
                 return trim($text) ?: null;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("HuggingFace API Error: " . $e->getMessage());
         }
         return null;
@@ -734,7 +734,7 @@ class SmartAIController extends BaseController
                     );
                     $result['performed'] = true;
                     $result['message'] = "Aapki lead humare team ko bhej di gayi hai! Aapko 24 ghante mein call karenge.";
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("Lead creation error: " . $e->getMessage());
                 }
             }
@@ -812,7 +812,7 @@ EOT;
                 if (!empty($bookings)) {
                     $prompt .= "Active Plot Bookings: " . count($bookings) . "\n";
                 }
-            } catch (\Exception $e) { error_log("SmartAIController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log("SmartAIController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
             
             // Query live EMI schedules and overdue counts
             try {
@@ -821,7 +821,7 @@ EOT;
                 
                 $overdue = $this->db->fetch("SELECT count(*) as count, sum(amount) as balance FROM emi_payments WHERE user_id = ? AND status = 'overdue'", [$userContext['id']]);
                 $prompt .= "Overdue Installments: " . ($overdue['count'] ?? 0) . " (Balance: �" . number_format($overdue['balance'] ?? 0) . ")\n";
-            } catch (\Exception $e) { error_log("SmartAIController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log("SmartAIController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
         }
 
         return $prompt;
@@ -854,7 +854,7 @@ EOT;
                 "INSERT INTO ai_conversations (session_id, user_id, user_role, message, response, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
                 [$sessionId, $userContext['id'], $userContext['role'], $message, $response]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Conversation save error: " . $e->getMessage());
         }
     }
@@ -875,7 +875,7 @@ EOT;
             );
 
             echo json_encode(['success' => true, 'history' => array_reverse($history)]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
@@ -925,7 +925,7 @@ EOT;
                         $positive ? 5 : 1
                     ]
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Feedback save error: " . $e->getMessage());
             }
 
@@ -934,14 +934,14 @@ EOT;
                 try {
                     $selfLearning = new SelfLearningAI($sessionId, $userId);
                     $selfLearning->processFeedback($messageId, $positive, $comment);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                 // Graceful - message might not exist in ai_chat_messages
                 error_log($e->getMessage());
                 }
             }
 
             echo json_encode(['success' => true]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
@@ -961,7 +961,7 @@ EOT;
             $stats = $selfLearning->getPerformanceStats();
 
             echo json_encode(['success' => true, 'stats' => $stats]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
@@ -974,10 +974,10 @@ EOT;
     {
         header('Content-Type: application/json');
         try {
-            $rag = new RAGAgent();
+            $rag = new RAGService();
             $stats = $rag->getStats();
             echo json_encode(['success' => true, 'stats' => $stats]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
@@ -1007,7 +1007,7 @@ EOT;
             };
 
             echo json_encode($result);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
@@ -1033,7 +1033,7 @@ EOT;
             $result = $agent->processEvent($event, $data);
 
             echo json_encode(['success' => true, 'result' => $result]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
@@ -1061,7 +1061,7 @@ EOT;
                 FROM ai_chat_conversations
                 WHERE created_at >= ?
             ", [date('Y-m-d H:i:s', strtotime("-{$days} days"))]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $conversations = ['total' => 0, 'completed' => 0, 'active' => 0, 'awaiting_confirm' => 0, 'cancelled' => 0];
         }
 
@@ -1119,7 +1119,7 @@ EOT;
                 ORDER BY c.created_at DESC
                 LIMIT {$limit} OFFSET {$offset}
             ", $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $conversations = [];
             $total = 0;
             $totalPages = 1;

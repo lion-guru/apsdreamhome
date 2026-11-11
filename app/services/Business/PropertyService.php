@@ -115,7 +115,7 @@ class PropertyService
                 'current_page' => $page,
                 'last_page' => ceil($total / $limit)
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PropertyService::getAllProperties - Error: " . $e->getMessage());
             return [
                 'data' => [],
@@ -150,7 +150,7 @@ class PropertyService
             }
 
             return $property;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PropertyService::getPropertyById - Error: " . $e->getMessage());
             return null;
         }
@@ -213,7 +213,7 @@ class PropertyService
                 'message' => 'Property created successfully',
                 'property_id' => $propertyId
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PropertyService::createProperty - Error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -274,7 +274,7 @@ class PropertyService
                 'success' => true,
                 'message' => 'Property updated successfully'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PropertyService::updateProperty - Error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -309,7 +309,7 @@ class PropertyService
                 'success' => true,
                 'message' => 'Property deleted successfully'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PropertyService::deleteProperty - Error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -345,7 +345,7 @@ class PropertyService
             $stats['recent'] = $this->db->fetchAll("SELECT * FROM properties WHERE status != 'deleted' ORDER BY created_at DESC LIMIT 5");
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PropertyService::getPropertyStats - Error: " . $e->getMessage());
             return [];
         }
@@ -400,7 +400,7 @@ class PropertyService
 
             $searchParams = $tid > 1 ? array_merge($params, [$tid]) : $params;
             return $this->db->fetchAll($sql, $searchParams);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PropertyService::searchProperties - Error: " . $e->getMessage());
             return [];
         }
@@ -430,7 +430,7 @@ class PropertyService
                     $this->db->execute($sql, [$propertyId, $filepath, $index + 1]);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PropertyService::uploadPropertyImages - Error: " . $e->getMessage());
         }
     }
@@ -446,7 +446,7 @@ class PropertyService
 
             // Upload new images
             $this->uploadPropertyImages($propertyId, $images);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PropertyService::updatePropertyImages - Error: " . $e->getMessage());
         }
     }
@@ -469,7 +469,7 @@ class PropertyService
             ];
 
             $this->db->execute($sql, $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("PropertyService::logActivity - Error: " . $e->getMessage());
         }
     }

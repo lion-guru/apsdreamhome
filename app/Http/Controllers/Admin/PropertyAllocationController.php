@@ -59,7 +59,7 @@ class PropertyAllocationController extends AdminController
             
             return $this->render('admin.property-allocations.index', $data);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin.property-allocations.index', [
                 'page_title' => 'Property Allocation Management',
                 'allocations' => [],
@@ -96,7 +96,7 @@ class PropertyAllocationController extends AdminController
             
             return $this->render('admin.property-allocations.create', $data);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin.property-allocations.create', [
                 'page_title' => 'Create Property Allocation',
                 'error' => $e->getMessage()
@@ -141,7 +141,7 @@ class PropertyAllocationController extends AdminController
             redirect('/admin/property-allocations?success=Property allocated successfully');
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/property-allocations/create?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -195,7 +195,7 @@ class PropertyAllocationController extends AdminController
             
             return $this->render('admin.property-allocations.show', $data);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/property-allocations?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -225,7 +225,7 @@ class PropertyAllocationController extends AdminController
             redirect('/admin/property-allocations?success=Property allocation confirmed');
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/property-allocations?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -259,7 +259,7 @@ class PropertyAllocationController extends AdminController
             redirect('/admin/property-allocations?success=Property allocation cancelled');
             exit;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             redirect('/admin/property-allocations?error=' . urlencode($e->getMessage()));
             exit;
         }
@@ -297,7 +297,7 @@ class PropertyAllocationController extends AdminController
             
             return $this->render('admin.property-allocations.calendar', $data);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->render('admin.property-allocations.calendar', [
                 'page_title' => 'Property Availability Calendar',
                 'error' => $e->getMessage()
@@ -327,7 +327,7 @@ class PropertyAllocationController extends AdminController
             
             return $stats;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

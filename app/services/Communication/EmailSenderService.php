@@ -56,6 +56,30 @@ class EmailSenderService
         }
     }
 
+    /**
+     * Create and return a fresh PHPMailer instance for legacy compatibility
+     * Used by legacy EmailService wrapper
+     */
+    public function createMailerForLegacy(): PHPMailer
+    {
+        $mailer = new PHPMailer(true);
+        try {
+            $mailer->isSMTP();
+            $mailer->Host = $this->config['host'];
+            $mailer->SMTPAuth = true;
+            $mailer->Username = $this->config['user'];
+            $mailer->Password = $this->config['pass'];
+            $mailer->SMTPSecure = $this->config['encryption'];
+            $mailer->Port = (int)$this->config['port'];
+            $mailer->setFrom($this->config['from_email'], $this->config['from_name']);
+            $mailer->isHTML(true);
+            $mailer->CharSet = 'UTF-8';
+        } catch (PHPMailerException $e) {
+            error_log("EmailSenderService: Legacy mailer init failed: " . $e->getMessage());
+        }
+        return $mailer;
+    }
+
     public function send($to, $subject, $bodyHtml, $bodyText = '')
     {
         try {
@@ -100,7 +124,7 @@ public function sendFromQueue($queueId)
                 $updParams2
             );
             return $sent;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $updParams3 = [$e->getMessage(), $queueId];
             if ($tid > 1) $updParams3[] = $tid;
             $this->db->query(
@@ -145,7 +169,7 @@ public function processQueue($limit = 10)
                 'created_at' => date('Y-m-d H:i:s'),
                 'sent_at' => $status === 'sent' ? date('Y-m-d H:i:s') : null,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EmailSenderService: Queue log failed: " . $e->getMessage());
         }
     }
@@ -158,7 +182,7 @@ public function getQueueStats()
             $tenantFilter = $tid > 1 ? " AND tenant_id = ?" : "";
             $rows = $this->db->fetchAll("SELECT status, COUNT(*) as cnt FROM email_queue WHERE 1=1" . $tenantFilter . " GROUP BY status", $tid > 1 ? [$tid] : []);
             foreach ($rows as $r) $stats[$r['status']] = (int)$r['cnt'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
                     error_log("EmailSenderService.php: " . $e->getMessage());
         }
         return $stats;
@@ -174,6 +198,6 @@ public function getQueueStats()
         try {
             $sql = "SELECT * FROM email_queue $where" . $tenantFilter . " ORDER BY created_at DESC LIMIT ? OFFSET ?";
             return $this->db->fetchAll($sql, array_merge($params, [$limit, $offset]));
-        } catch (\Exception $e) { return []; }
+        } catch (\Throwable $e) { return []; }
     }
 }

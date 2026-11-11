@@ -111,7 +111,7 @@ class AdManagerController extends AdminController
             if ($row2) {
                 $autoAdCode = $row2['setting_value'];
             }
-        } catch (\Exception $e) { error_log('AdManagerController index: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('AdManagerController index: ' . $e->getMessage()); }
 
         $this->render('admin/ads/settings', [
             'page_title' => 'AdSense Settings',
@@ -125,7 +125,7 @@ class AdManagerController extends AdminController
         try {
             $svc = new \App\Services\AdManagerService();
             $svc->incrementClicks($id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
                     error_log("AdManagerController.php: " . $e->getMessage());
         }
         $ref = $_SERVER['HTTP_REFERER'] ?? '/';
@@ -150,7 +150,7 @@ class AdManagerController extends AdminController
             $stmt2->execute(['adsense_auto_ad_code', $autoAdCode, $autoAdCode]);
 
             $this->flashMessage('AdSense settings saved', 'success');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->flashMessage('Error saving settings: ' . $e->getMessage(), 'error');
         }
 

@@ -23,7 +23,7 @@ class FacebookAuthController extends \App\Http\Controllers\BaseController
                 $_SESSION['error'] = 'Facebook login is not configured. Please contact admin.';
                 header('Location: ' . BASE_URL . '/login');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Facebook login configuration error: ' . $e->getMessage();
             header('Location: ' . BASE_URL . '/login');
         }
@@ -57,7 +57,7 @@ class FacebookAuthController extends \App\Http\Controllers\BaseController
                 }
             }
             $_SESSION['error'] = 'Facebook login failed. Could not retrieve user info.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Facebook login failed: ' . $e->getMessage();
         }
         header('Location: ' . BASE_URL . '/login');

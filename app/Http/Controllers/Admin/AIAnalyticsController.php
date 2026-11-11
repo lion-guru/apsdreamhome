@@ -42,7 +42,7 @@ class AIAnalyticsController extends AdminController
             $this->data['leadTotals'] = array_column($this->data['weeklyLeads'], 'total');
             $this->data['leadQualified'] = array_column($this->data['weeklyLeads'], 'qualified');
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['totalCalls'] = $this->data['completedCalls'] = $this->data['totalLeads'] = 0;
             $this->data['hotLeads'] = $this->data['totalCampaigns'] = $this->data['activeCampaigns'] = 0;
             $this->data['conversionBySource'] = $this->data['callsByScript'] = $this->data['weeklyLeads'] = [];
@@ -97,7 +97,7 @@ class AIAnalyticsController extends AdminController
                 $this->data['insights'][] = ['type' => 'success', 'icon' => 'fas fa-check-circle', 'title' => 'All Good', 'text' => 'No critical insights at this time. All metrics are within normal range.'];
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->data['totalLeads'] = $this->data['newLeadsWeek'] = $this->data['hotLeads'] = 0;
             $this->data['coldLeads'] = $this->data['unassignedLeads'] = $this->data['totalCalls'] = 0;
             $this->data['interestedCalls'] = $this->data['avgCallDuration'] = 0;

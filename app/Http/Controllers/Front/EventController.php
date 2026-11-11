@@ -18,7 +18,7 @@ class EventController extends BaseController
         try {
             $stmt = $this->db->query("SELECT * FROM events WHERE status = 'active' AND event_date >= CURDATE() ORDER BY event_date ASC");
             $events = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $events = [];
         }
         $this->render('pages/event_list', [
@@ -33,7 +33,7 @@ class EventController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM events WHERE id = ? AND status = 'active'");
             $stmt->execute([$id]);
             $event = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $event = null;
         }
         if (!$event) {

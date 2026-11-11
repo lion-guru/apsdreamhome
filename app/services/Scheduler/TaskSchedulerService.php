@@ -190,7 +190,7 @@ private function getTenantId(): int
                     $tid
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Table schema mismatch - skip seeding
                     error_log("TaskSchedulerService.php: " . $e->getMessage());
         }
@@ -221,7 +221,7 @@ private function getTenantId(): int
             $stmt = $this->database->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -247,7 +247,7 @@ private function getTenantId(): int
             $stmt = $this->database->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -304,7 +304,7 @@ private function getTenantId(): int
                 'memory_usage' => $memoryUsage
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $executionTime = round(microtime(true) - $startTime);
             
             // Update task
@@ -378,7 +378,7 @@ private function getTenantId(): int
                 'task_id' => $taskId
             ];
             
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -575,7 +575,7 @@ private function getTenantId(): int
             }
             $stmt = $this->database->prepare($sql);
             $stmt->execute($params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Schema mismatch - skip
                     error_log("TaskSchedulerService.php: " . $e->getMessage());
         }
@@ -600,7 +600,7 @@ private function getTenantId(): int
             
             $stmt = $this->database->prepare($sql);
             $stmt->execute($params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Schema mismatch - skip
                     error_log("TaskSchedulerService.php: " . $e->getMessage());
         }
@@ -627,7 +627,7 @@ private function getTenantId(): int
             }
             $stmt = $this->database->prepare($sql);
             $stmt->execute($params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Schema mismatch - skip
                     error_log("TaskSchedulerService.php: " . $e->getMessage());
         }
@@ -714,7 +714,7 @@ private function getTenantId(): int
             
             $stmt = $this->database->query($sql);
             $stats = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $stats = ['total_tasks' => 0, 'active_tasks' => 0, 'failed_tasks' => 0, 'stale_tasks' => 0];
         }
         

@@ -78,7 +78,7 @@ class FinancialInquiryController extends AdminController
                 'status' => $status,
                 'search' => $search,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("FinancialInquiryController::index error: " . $e->getMessage());
             $this->render('admin/financial-inquiries/index', [
                 'page_title' => 'Financial Inquiries',
@@ -111,7 +111,7 @@ class FinancialInquiryController extends AdminController
                 'page_title' => 'Financial Inquiry #' . $id,
                 'inquiry' => $inquiry,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
             $this->redirect('/admin/financial-inquiries');
         }
@@ -136,7 +136,7 @@ class FinancialInquiryController extends AdminController
             $stmt->execute($params);
 
             $_SESSION['success'] = 'Status updated successfully.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/financial-inquiries/' . $id);
@@ -150,7 +150,7 @@ class FinancialInquiryController extends AdminController
             $stmt = $this->db->prepare("DELETE FROM financial_inquiries WHERE id = ? $tenantSql");
             $stmt->execute(array_merge([$id], $tenantParams));
             $_SESSION['success'] = 'Inquiry deleted.';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
         $this->redirect('/admin/financial-inquiries');

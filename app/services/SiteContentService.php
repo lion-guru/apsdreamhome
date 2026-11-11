@@ -87,7 +87,7 @@ class SiteContentService
             self::$memCache[$section] = $result;
             $this->writeCache($section, $result);
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SiteContentService::getSection error: ' . $e->getMessage());
             return [];
         }
@@ -116,7 +116,7 @@ class SiteContentService
                 $result[$group][$row['content_key']] = $row['content_value'];
             }
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -130,7 +130,7 @@ class SiteContentService
             $rows = $this->getPdo()->prepare("SELECT * FROM site_content WHERE section = ? ORDER BY content_group ASC, sort_order ASC");
             $rows->execute([$section]);
             return $rows->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -147,7 +147,7 @@ class SiteContentService
             $ok = $stmt->execute($params);
             if ($ok) $this->clearCacheFor($section);
             return $ok;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SiteContentService::update error: ' . $e->getMessage());
             return false;
         }
@@ -170,7 +170,7 @@ class SiteContentService
             $pdo->commit();
             $this->clearCacheFor($section);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->getPdo()->rollBack();
             error_log('SiteContentService::bulkUpdate error: ' . $e->getMessage());
             return false;
@@ -198,7 +198,7 @@ class SiteContentService
             $ok = $stmt->execute($values);
             if ($ok) $this->clearCacheFor($data['section'] ?? '');
             return $ok;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('SiteContentService::create error: ' . $e->getMessage());
             return false;
         }
@@ -216,7 +216,7 @@ class SiteContentService
             $ok = $stmt->execute($params);
             if ($ok) $this->clearCacheFor($section);
             return $ok;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -229,7 +229,7 @@ class SiteContentService
         try {
             $rows = $this->getPdo()->query("SELECT DISTINCT section, COUNT(*) as item_count FROM site_content GROUP BY section ORDER BY section");
             return $rows->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

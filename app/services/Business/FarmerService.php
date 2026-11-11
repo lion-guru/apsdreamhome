@@ -105,7 +105,7 @@ class FarmerService
                 'farmer_id' => $farmerId
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to register farmer", [
                 'email' => $farmerData['email'] ?? 'unknown',
                 'error' => $e->getMessage()
@@ -175,7 +175,7 @@ class FarmerService
                 'allocation_id' => $allocationId
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to allocate land", [
                 'farmer_id' => $farmerId,
                 'error' => $e->getMessage()
@@ -213,7 +213,7 @@ class FarmerService
             
             return $farmer;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get farmer", ['id' => $id, 'error' => $e->getMessage()]);
             return null;
         }
@@ -292,7 +292,7 @@ class FarmerService
             
             return $farmers;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get farmers", ['error' => $e->getMessage()]);
             return [];
         }
@@ -353,7 +353,7 @@ class FarmerService
                 'message' => 'Farmer status updated successfully'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to update farmer status", [
                 'id' => $id,
                 'error' => $e->getMessage()
@@ -406,7 +406,7 @@ class FarmerService
                 'amount' => $amount
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to generate commission", [
                 'farmer_id' => $farmerId,
                 'type' => $type,
@@ -500,7 +500,7 @@ class FarmerService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get farmer stats", ['error' => $e->getMessage()]);
             return [];
         }

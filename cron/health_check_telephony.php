@@ -24,7 +24,7 @@ try {
     $db = Database::getInstance();
     $db->query("SELECT 1");
     $results['database'] = ['status' => 'ok', 'message' => 'Connected'];
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     $results['database'] = ['status' => 'error', 'message' => $e->getMessage()];
     $allOk = false;
 }
@@ -43,7 +43,7 @@ try {
     } else {
         $results['asterisk'] = ['status' => 'warning', 'message' => 'Not reachable (Docker not running?)'];
     }
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     $results['asterisk'] = ['status' => 'error', 'message' => $e->getMessage()];
 }
 
@@ -95,7 +95,7 @@ try {
             'details' => $status,
         ];
     }
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     $results['whatsapp'] = ['status' => 'warning', 'message' => 'Service not running'];
 }
 
@@ -111,7 +111,7 @@ try {
         'processing' => (int)$processing,
         'completed_today' => (int)$completedToday,
     ];
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     $results['schedule'] = ['status' => 'error', 'message' => $e->getMessage()];
 }
 
@@ -125,7 +125,7 @@ try {
         'overdue' => (int)$overdue,
         'upcoming_3_days' => (int)$upcoming3d,
     ];
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     $results['emi'] = ['status' => 'error', 'message' => $e->getMessage()];
 }
 

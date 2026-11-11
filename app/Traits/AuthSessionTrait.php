@@ -41,34 +41,54 @@ trait AuthSessionTrait
         // Role-specific session IDs
         $role = $_SESSION['role'];
         
-        // Associate/Agent: fetch associate_id from associates table
+        // Associate/Agent: fetch associate_id from associate_profiles (canonical source, has tenant_id)
+        // Falls back to legacy associates table if profile not found
         if (in_array($role, ['agent', 'associate'], true)) {
             try {
                 $params = array_merge([(int)$user['id']], $tParams);
-                $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tSql . " LIMIT 1", $params);
-                if ($ass) {
-                    $_SESSION['associate_id'] = (int)$ass['id'];
+                // Try new profile table first (has tenant_id for proper scoping)
+                $ass = $db->fetchOne("SELECT legacy_id FROM associate_profiles WHERE user_id = ?" . $tSql . " LIMIT 1", $params);
+                if ($ass && $ass['legacy_id']) {
+                    $_SESSION['associate_id'] = (int)$ass['legacy_id'];
                     if ($role === 'agent') {
-                        $_SESSION['agent_id'] = (int)$ass['id'];
+                        $_SESSION['agent_id'] = (int)$ass['legacy_id'];
+                    }
+                } else {
+                    // Fallback: legacy associates table (backward compat)
+                    $ass = $db->fetchOne("SELECT id FROM associates WHERE user_id = ?" . $tSql . " LIMIT 1", $params);
+                    if ($ass) {
+                        $_SESSION['associate_id'] = (int)$ass['id'];
+                        if ($role === 'agent') {
+                            $_SESSION['agent_id'] = (int)$ass['id'];
+                        }
                     }
                 }
             } catch (\Throwable $e) { 
                 error_log("AuthSessionTrait associate lookup error: " . $e->getMessage()); 
             }
         } 
-        // Employee/Telecaller: fetch employee_id from employees table (PK of employees table)
+        // Employee/Telecaller: fetch employee_id from employee_profiles (canonical source, has tenant_id)
+        // Falls back to legacy employees table if profile not found
         elseif ($role === 'employee' || $role === 'telecaller') {
             try {
                 $params = array_merge([(int)$user['id']], $tParams);
-                $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tSql . " LIMIT 1", $params);
-                if ($emp) {
-                    $_SESSION['employee_id'] = (int)$emp['id'];          // PK of employees table
+                // Try new profile table first (has tenant_id for proper scoping)
+                $emp = $db->fetchOne("SELECT legacy_id FROM employee_profiles WHERE user_id = ?" . $tSql . " LIMIT 1", $params);
+                if ($emp && $emp['legacy_id']) {
+                    $_SESSION['employee_id'] = (int)$emp['legacy_id'];          // legacy PK of employees table
                     $_SESSION['employee_user_id'] = (int)$user['id'];    // FK to users table
                 } else {
-                    // No employees row yet — fallback to users.id but mark for resolution
-                    $_SESSION['employee_id'] = (int)$user['id'];
-                    $_SESSION['employee_user_id'] = (int)$user['id'];
-                    $_SESSION['employee_needs_resolution'] = true;
+                    // Fallback: legacy employees table (backward compat)
+                    $emp = $db->fetchOne("SELECT id FROM employees WHERE user_id = ?" . $tSql . " LIMIT 1", $params);
+                    if ($emp) {
+                        $_SESSION['employee_id'] = (int)$emp['id'];
+                        $_SESSION['employee_user_id'] = (int)$user['id'];
+                    } else {
+                        // No employees row yet — fallback to users.id but mark for resolution
+                        $_SESSION['employee_id'] = (int)$user['id'];
+                        $_SESSION['employee_user_id'] = (int)$user['id'];
+                        $_SESSION['employee_needs_resolution'] = true;
+                    }
                 }
                 $_SESSION['employee_role'] = $role;
             } catch (\Throwable $e) { 

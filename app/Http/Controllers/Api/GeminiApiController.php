@@ -480,7 +480,7 @@ class GeminiApiController extends BaseController
                             "UPDATE ai_knowledge_base SET usage_count = usage_count + 1 WHERE question_pattern = ?",
                             [$row['question_pattern']]
                         );
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         // Ignore update errors
                                 error_log("GeminiApiController.php: " . $e->getMessage());
                     }
@@ -489,7 +489,7 @@ class GeminiApiController extends BaseController
             }
 
             return null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Table might not exist
             return null;
                     error_log("GeminiApiController.php: " . $e->getMessage());
@@ -508,7 +508,7 @@ class GeminiApiController extends BaseController
                  VALUES (?, ?, ?, ?, ?, NOW())",
                 [$sessionId, $_SESSION['user_id'] ?? null, $_SESSION['role'] ?? 'guest', $message, $response]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Table might not exist, ignore error
                     error_log("GeminiApiController.php: " . $e->getMessage());
         }
@@ -562,7 +562,7 @@ class GeminiApiController extends BaseController
                     );
                     $context['total_commission'] = $commission['total'] ?? 0;
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Ignore database errors
                         error_log("GeminiApiController.php: " . $e->getMessage());
             }
@@ -595,7 +595,7 @@ class GeminiApiController extends BaseController
                     "SELECT COUNT(*) as count FROM bookings WHERE DATE(created_at) = CURDATE()"
                 );
                 $context['today_bookings'] = $bookings['count'] ?? 0;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Ignore errors
                         error_log("GeminiApiController.php: " . $e->getMessage());
             }

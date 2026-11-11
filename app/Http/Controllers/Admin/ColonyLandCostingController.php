@@ -48,7 +48,7 @@ class ColonyLandCostingController extends AdminController
             $stmt = $this->db->prepare("SELECT id, name FROM colonies WHERE id = ? LIMIT 1");
             $stmt->execute([$colonyId]);
             $colony = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ColonyLandCostingController] create: ' . $e->getMessage());
             $colony = ['id' => $colonyId, 'name' => "Colony #{$colonyId}"];
         }
@@ -128,7 +128,7 @@ class ColonyLandCostingController extends AdminController
             ");
             $stmt->execute([$costingId]);
             $costing = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ColonyLandCostingController] show: ' . $e->getMessage());
             $costing = null;
         }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\TenantAwareTrait;
 use App\Http\Controllers\Admin\AdminController;
-use \App\Traits\TenantAwareTrait;
 
 class TelecallerController extends AdminController
 {
@@ -32,7 +32,7 @@ class TelecallerController extends AdminController
             [$tidSql, $tidParams] = $this->tenantWhere();
             $telecallers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('telecaller','employee','agent'){$tidSql} ORDER BY name", $tidParams);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $todayStats = ['total_calls' => 0, 'connected' => 0, 'converted' => 0, 'pending' => 0];
             $tasks = [];
             $telecallers = [];
@@ -70,7 +70,7 @@ class TelecallerController extends AdminController
             [$tidSql, $tidParams] = $this->tenantWhere();
             $telecallers = $this->db->fetchAll("SELECT id, name, email, phone FROM users WHERE role IN ('telecaller','employee','agent'){$tidSql} ORDER BY name", $tidParams);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $overallStats = ['total_calls' => 0, 'connected' => 0, 'converted' => 0, 'total_commission' => 0];
             $records = [];
             $telecallers = [];
@@ -96,7 +96,7 @@ class TelecallerController extends AdminController
                 header('Location: ' . BASE_URL . '/admin/telecaller');
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Location: ' . BASE_URL . '/admin/telecaller');
             exit;
         }
@@ -117,7 +117,7 @@ class TelecallerController extends AdminController
                 header('Location: ' . BASE_URL . '/admin/telecaller/performance');
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             header('Location: ' . BASE_URL . '/admin/telecaller/performance');
             exit;
         }
@@ -147,7 +147,7 @@ class TelecallerController extends AdminController
         try {
             $this->db->query("INSERT INTO telecaller_daily_tasks (telecaller_id, task_date, total_leads_assigned, calls_made, calls_connected, leads_converted, leads_callback, leads_not_interested, pending_calls, target_calls, notes, tenant_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())", [$userId, $taskDate, $leadsAssigned, $callsMade, $callsConnected, $leadsConverted, $leadsCallback, $leadsNotInterested, $pendingCalls, $targetCalls, $notes, (int)$this->tenantId()]);
             $this->setFlash('success', 'Daily task saved successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to save task: ' . $e->getMessage());
         }
 
@@ -169,7 +169,7 @@ class TelecallerController extends AdminController
         try {
             $this->db->query("UPDATE telecaller_performance SET total_calls = ?, connected_calls = ?, leads_converted = ?, total_commission = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?", [$totalCalls, $connectedCalls, $leadsConverted, $totalCommission, $id, (int)$this->tenantId()]);
             $this->setFlash('success', 'Performance updated successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to update performance: ' . $e->getMessage());
         }
 

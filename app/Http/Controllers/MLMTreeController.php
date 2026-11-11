@@ -127,7 +127,7 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
                     'pairing_bonus' => 0,
                 ]
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('MLMTreeController tree error: ' . $e->getMessage());
         }
 
@@ -262,7 +262,7 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
         try {
             $treeData = $this->buildTree($userId, $levels);
             echo json_encode($treeData);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("MLM Tree error: " . $e->getMessage());
             echo json_encode(['error' => 'Failed to load tree data']);
         }
@@ -302,7 +302,7 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
             );
 
             echo json_encode($results);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([]);
         }
         exit;
@@ -376,7 +376,7 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
                 'recent_commissions' => $commissions,
                 'direct_downline' => $downline
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['error' => 'Failed to load details']);
         }
         exit;
@@ -418,7 +418,7 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
                     [$rootId]
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $user = null;
         }
 
@@ -457,7 +457,7 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
                     [$rootId, $maxLevels]
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $children = [];
         }
 
@@ -591,7 +591,7 @@ class MLMTreeController extends \App\Http\Controllers\Admin\AdminController
                     [$userId, $userId]
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Return default stats if query fails
             $stats = [
                 'total_members' => 0,

@@ -52,7 +52,7 @@ class SystemMonitor
         foreach ($this->healthChecks as $checkName => $checkFunction) {
             try {
                 $results[$checkName] = call_user_func($checkFunction);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $results[$checkName] = [
                     'status' => 'error',
                     'message' => $e->getMessage(),
@@ -90,7 +90,7 @@ class SystemMonitor
                 'execution_time' => round($executionTime * 1000, 2) . 'ms',
                 'timestamp' => date('Y-m-d H:i:s')
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'status' => 'error',
                 'message' => 'Database error: ' . $e->getMessage(),
@@ -156,7 +156,7 @@ class SystemMonitor
                 'driver' => \function_exists('config') ? \config('cache.driver', 'file') : 'file',
                 'timestamp' => date('Y-m-d H:i:s')
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'status' => 'error',
                 'message' => 'Cache error: ' . $e->getMessage(),

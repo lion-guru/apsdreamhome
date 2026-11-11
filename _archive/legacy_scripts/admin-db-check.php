@@ -75,7 +75,7 @@ foreach ($tablesToCheck as $table) {
         } else {
             $passing[] = $table;
         }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         printf("<span style='color:#f87171'>%-35s %-10s %-12s %s</span>\n", 
             $table, 'MISSING', 'â€”', 'â�Œ MISSING');
         $missing[] = $table;
@@ -88,8 +88,8 @@ echo str_repeat('â”€', 70) . "\n";
 // Check if bookings table exists vs plot_bookings
 $hasBookings = false;
 $hasPlotBookings = false;
-try { $pdo->query("SELECT 1 FROM bookings LIMIT 1"); $hasBookings = true; } catch (\Exception $e) {}
-try { $pdo->query("SELECT 1 FROM plot_bookings LIMIT 1"); $hasPlotBookings = true; } catch (\Exception $e) {}
+try { $pdo->query("SELECT 1 FROM bookings LIMIT 1"); $hasBookings = true; } catch (\Throwable $e) {}
+try { $pdo->query("SELECT 1 FROM plot_bookings LIMIT 1"); $hasPlotBookings = true; } catch (\Throwable $e) {}
 
 echo "bookings table (legacy):     " . ($hasBookings ? "âœ… EXISTS" : "â�Œ MISSING") . "\n";
 echo "plot_bookings table (real):  " . ($hasPlotBookings ? "âœ… EXISTS" : "â�Œ MISSING") . "\n";
@@ -119,21 +119,21 @@ try {
     $comm = $pdo->query("SELECT type, COUNT(*) as cnt, SUM(amount) as total FROM mlm_commission_ledger GROUP BY type ORDER BY total DESC LIMIT 5")->fetchAll(\PDO::FETCH_ASSOC);
     echo "\nTop 5 Commission Types:\n";
     foreach ($comm as $c) echo "  {$c['type']}: {$c['cnt']} entries = â‚¹" . number_format($c['total']) . "\n";
-} catch(\Exception $e) { echo "Commission query failed: " . $e->getMessage() . "\n"; }
+} catch(\Throwable $e) { echo "Commission query failed: " . $e->getMessage() . "\n"; }
 
 // Properties status
 try {
     $props = $pdo->query("SELECT status, COUNT(*) as cnt FROM properties GROUP BY status")->fetchAll(\PDO::FETCH_ASSOC);
     echo "\nProperties by status:\n";
     foreach ($props as $p) echo "  {$p['status']}: {$p['cnt']}\n";
-} catch(\Exception $e) {}
+} catch(\Throwable $e) {}
 
 // Plots status
 try {
     $plots = $pdo->query("SELECT status, COUNT(*) as cnt FROM plots GROUP BY status")->fetchAll(\PDO::FETCH_ASSOC);
     echo "\nPlots by status:\n";
     foreach ($plots as $p) echo "  {$p['status']}: {$p['cnt']}\n";
-} catch(\Exception $e) {}
+} catch(\Throwable $e) {}
 
 echo "\n<span style='color:#f0abfc;'>SUMMARY</span>\n";
 echo str_repeat('â”€', 70) . "\n";

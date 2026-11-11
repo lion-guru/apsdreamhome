@@ -27,7 +27,7 @@ class TestimonialController extends AdminController
         try {
             $stmt = $this->db->query("SELECT * FROM testimonials ORDER BY created_at DESC");
             $testimonials = $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $testimonials = [];
         }
 
@@ -84,7 +84,7 @@ class TestimonialController extends AdminController
             $_SESSION['success'] = 'Testimonial added successfully!';
             header('Location: ' . BASE_URL . '/admin/testimonials');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error adding testimonial: ' . $e->getMessage();
             header('Location: ' . BASE_URL . '/admin/testimonials/create');
             exit;
@@ -106,7 +106,7 @@ class TestimonialController extends AdminController
                 header('Location: ' . BASE_URL . '/admin/testimonials');
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error loading testimonial';
             header('Location: ' . BASE_URL . '/admin/testimonials');
             exit;
@@ -134,7 +134,7 @@ class TestimonialController extends AdminController
                 header('Location: ' . BASE_URL . '/admin/testimonials');
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error loading testimonial';
             header('Location: ' . BASE_URL . '/admin/testimonials');
             exit;
@@ -183,7 +183,7 @@ class TestimonialController extends AdminController
             $_SESSION['success'] = 'Testimonial updated successfully!';
             header('Location: ' . BASE_URL . '/admin/testimonials');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error updating testimonial: ' . $e->getMessage();
             header('Location: ' . BASE_URL . '/admin/testimonials/' . $id . '/edit');
             exit;
@@ -201,7 +201,7 @@ class TestimonialController extends AdminController
             $stmt->execute(array_merge([$id], $tenantParams));
 
             $_SESSION['success'] = 'Testimonial deleted successfully!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error deleting testimonial: ' . $e->getMessage();
         }
 

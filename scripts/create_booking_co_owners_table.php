@@ -22,6 +22,6 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     ");
     echo "booking_co_owners table created/verified\n";
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "ERR: " . $e->getMessage() . "\n";
 }

@@ -701,6 +701,61 @@ echo PHP_EOL;
         echo PHP_EOL;
     }
 
+    // 16. DEAD LETTER QUEUE MONITORING & CLEANUP
+    if (in_array($mode, ['daily', 'monthly', 'all'])) {
+        $taskNum++;
+        echo "==========================================================================================================" . PHP_EOL;
+        echo "{$taskNum}  Dead Letter Queue Monitor & Cleanup" . PHP_EOL;
+        echo "==========================================================================================================" . PHP_EOL;
+        try {
+            require_once $root . '/app/Services/Messenger/DeadLetterMonitorService.php';
+            $monitor = new \App\Services\Messenger\DeadLetterMonitorService(
+                \App\Core\Database\Database::getInstance(),
+                new class implements \Psr\Log\LoggerInterface {
+                    public function log($level, $message, array $context = []): void {
+                        echo date('[Y-m-d H:i:s]') . ' ' . strtoupper($level) . ": $message" . PHP_EOL;
+                    }
+                    public function emergency(string $message, array $context = []): void { $this->log('emergency', $message, $context); }
+                    public function alert(string $message, array $context = []): void { $this->log('alert', $message, $context); }
+                    public function critical(string $message, array $context = []): void { $this->log('critical', $message, $context); }
+                    public function error(string $message, array $context = []): void { $this->log('error', $message, $context); }
+                    public function warning(string $message, array $context = []): void { $this->log('warning', $message, $context); }
+                    public function notice(string $message, array $context = []): void { $this->log('notice', $message, $context); }
+                    public function info(string $message, array $context = []): void { $this->log('info', $message, $context); }
+                    public function debug(string $message, array $context = []): void { $this->log('debug', $message, $context); }
+                },
+                $_ENV['DEAD_LETTER_ALERT_EMAIL'] ?? '',
+                (int)($_ENV['DEAD_LETTER_THRESHOLD'] ?? 10),
+                (int)($_ENV['DEAD_LETTER_RETENTION_DAYS'] ?? 30)
+            );
+            
+            // Show stats
+            $stats = $monitor->getStats();
+            echo "  Failed messages: {$stats['total_failed']} (threshold: {$monitor->thresholdCount})" . PHP_EOL;
+            
+            // Send alert if threshold exceeded
+            if ($stats['total_failed'] >= $monitor->thresholdCount && $monitor->alertEmail) {
+                $monitor->sendAlertIfNeeded();
+                echo "  [ALERT] Threshold exceeded - alert sent to {$monitor->alertEmail}" . PHP_EOL;
+            }
+            
+            // Cleanup old messages
+            $deleted = $monitor->cleanupOldMessages();
+            echo "  [OK] Cleaned up $deleted old failed messages (older than {$monitor->retentionDays} days)" . PHP_EOL;
+            
+            $log['dead_letter_monitor'] = [
+                'total_failed' => $stats['total_failed'],
+                'threshold' => $monitor->thresholdCount,
+                'alert_sent' => $stats['total_failed'] >= $monitor->thresholdCount,
+                'cleaned_up' => $deleted,
+            ];
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'dead_letter_monitor: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+    }
+
     // SUMMARY
     // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
     $elapsed = round(microtime(true) - $startTime, 2);

@@ -274,7 +274,7 @@ class MapController extends BaseController
             $u = trim((string)($row['media_url'] ?? ''));
             if ($u === '' || stripos($u, 'http') === 0) return $u;
             return (defined('BASE_URL') ? rtrim(BASE_URL, '/') : '') . '/' . ltrim($u, '/');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return '';
         }
     }

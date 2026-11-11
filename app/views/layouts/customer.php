@@ -230,5 +230,6 @@ use App\Services\PortalMenuService;
     </script>
     <script defer src="<?= BASE_URL ?>/assets/js/notification-system.js?v=5"></script>
     <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
+<?php include __DIR__ . '/../components/ai_chatbot_widget.php'; ?>
 </body>
 </html>

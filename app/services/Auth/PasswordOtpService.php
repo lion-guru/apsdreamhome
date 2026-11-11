@@ -3,7 +3,7 @@ namespace App\Services\Auth;
 
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
-use App\Services\Communication\EmailSenderService;
+use App\Services\Communication\EmailService;
 use App\Services\NotificationService;
 
 /**
@@ -25,7 +25,7 @@ class PasswordOtpService
     public function __construct()
     {
         $this->db = Database::getInstance();
-        $this->email = new EmailSenderService();
+        $this->email = new EmailService();
     }
 
     /**
@@ -124,7 +124,7 @@ class PasswordOtpService
                 'otp' => getenv('APP_DEBUG') === 'true' ? $otp : null, // Only in debug
                 'expires_in' => $this->otpExpiryMinutes,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("PasswordOtpService::sendOtp error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to send OTP. Please try again.'];
         }
@@ -214,7 +214,7 @@ class PasswordOtpService
                 'reset_token' => $resetToken,
                 'user_id' => $user['id'],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("PasswordOtpService::verifyOtp error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Verification failed. Please try again.'];
         }
@@ -258,7 +258,7 @@ class PasswordOtpService
                 'message' => 'Password reset successful',
                 'user_id' => $user['id'],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("PasswordOtpService::resetPasswordWithToken error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Password reset failed'];
         }
@@ -280,7 +280,7 @@ class PasswordOtpService
 
         try {
             return $this->email->send($email, $subject, $body, "Your OTP is: {$otp}");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("PasswordOtpService: email send failed: " . $e->getMessage());
             return false;
         }
@@ -306,7 +306,7 @@ class PasswordOtpService
                 $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             );
             @file_put_contents($logFile, $line, FILE_APPEND | LOCK_EX);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Silently fail
         error_log($e->getMessage());
         }

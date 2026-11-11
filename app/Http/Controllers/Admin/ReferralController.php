@@ -20,7 +20,7 @@ class ReferralController extends AdminController
                 'converted' => (int)$db->query("SELECT COUNT(*) FROM referrals WHERE status='converted'")->fetchColumn(),
                 'rejected' => (int)$db->query("SELECT COUNT(*) FROM referrals WHERE status='rejected'")->fetchColumn(),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $referrals = [];
             $stats = ['total' => 0, 'pending' => 0, 'converted' => 0, 'rejected' => 0];
         }
@@ -35,7 +35,7 @@ class ReferralController extends AdminController
             $referral = $db->prepare("SELECT r.*, u.name as referrer_name, u.email as referrer_email FROM referrals r LEFT JOIN users u ON r.referrer_id=u.id WHERE r.id=?");
             $referral->execute([$id]);
             $referral = $referral->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $referral = null;
         }
         return $this->render('admin/referrals/show', ['referral' => $referral]);
@@ -47,7 +47,7 @@ class ReferralController extends AdminController
         try {
             $db = \App\Core\Database\Database::getInstance()->getConnection();
             $users = $db->query("SELECT id, name, email FROM users WHERE role IN ('customer','associate') ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $users = [];
         }
         return $this->render('admin/referrals/create', ['users' => $users]);
@@ -71,7 +71,7 @@ class ReferralController extends AdminController
             $stmt = $db->prepare("INSERT INTO referrals ($cols) VALUES ($vals)");
             $stmt->execute($params);
             $this->setFlash('success', 'Referral created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         return $this->redirect('/admin/referrals');
@@ -85,7 +85,7 @@ class ReferralController extends AdminController
             list($tSql, $tParams) = $this->tenantWhere();
             $db->prepare("UPDATE referrals SET status='converted', converted_at=NOW() WHERE id=? $tSql")->execute(array_merge([$id], $tParams));
             $this->setFlash('success', 'Referral approved');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed');
         }
         return $this->redirect('/admin/referrals');
@@ -99,7 +99,7 @@ class ReferralController extends AdminController
             list($tSql, $tParams) = $this->tenantWhere();
             $db->prepare("UPDATE referrals SET status='rejected' WHERE id=? $tSql")->execute(array_merge([$id], $tParams));
             $this->setFlash('success', 'Referral rejected');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed');
         }
         return $this->redirect('/admin/referrals');

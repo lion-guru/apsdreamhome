@@ -242,7 +242,7 @@ class LoginController extends BaseController
 
             $this->redirectToDashboard($role);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("LoginController login error: " . $e->getMessage());
             $_SESSION['errors'] = ['Login failed. Please try again.'];
             header('Location: ' . BASE_URL . '/auth/login');

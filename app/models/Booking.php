@@ -61,7 +61,7 @@ class Booking extends Model
             $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Admin bookings query error: ' . $e->getMessage());
             return [];
         }
@@ -100,7 +100,7 @@ class Booking extends Model
             $stmt->execute();
             
             return (int)$stmt->fetchColumn();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Admin total bookings query error: ' . $e->getMessage());
             return 0;
         }

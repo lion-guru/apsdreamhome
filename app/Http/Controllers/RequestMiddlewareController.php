@@ -32,7 +32,7 @@ class RequestMiddlewareController extends BaseController
                 'metadata' => $metadata
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get request metadata: ' . $e->getMessage()
@@ -67,7 +67,7 @@ class RequestMiddlewareController extends BaseController
                 'rule' => $rule
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to add middleware rule: ' . $e->getMessage()
@@ -88,7 +88,7 @@ class RequestMiddlewareController extends BaseController
                 'rules' => $rules
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get middleware rules: ' . $e->getMessage()
@@ -121,7 +121,7 @@ class RequestMiddlewareController extends BaseController
                 'rule' => $result
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to update middleware rule: ' . $e->getMessage()
@@ -143,7 +143,7 @@ class RequestMiddlewareController extends BaseController
                 'deleted' => $result
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to delete middleware rule: ' . $e->getMessage()
@@ -176,7 +176,7 @@ class RequestMiddlewareController extends BaseController
                 'test_result' => $result
             ]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to test middleware rule: ' . $e->getMessage()

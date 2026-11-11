@@ -25,7 +25,7 @@ class ColonyDetailPage extends ConsumerWidget {
     final message =
         'Check out ${colony.name} by APS Dream Home!\n'
         '$locationText\n'
-        '${colony.pricePerSqft > 0 ? "Price from ₹${colony.pricePerSqft.toStringAsFixed(0)}/sqft" : ""}\n'
+        '${colony.pricePerSqft > 0 ? "Price from ₹${AppWidgets.formatCurrency(colony.pricePerSqft)}/sqft" : ""}\n'
         'Plots: ${colony.availablePlots} available out of ${colony.totalPlots}\n'
         'View details: https://apsdreamhome.com/colonies/$colonyId';
     Share.share(message, subject: colony.name);
@@ -64,29 +64,16 @@ class ColonyDetailPage extends ConsumerWidget {
                     fit: StackFit.expand,
                     children: [
                       // Background Image
-                      colony.displayImages.isNotEmpty
-                          ? Image.network(
-                              colony.displayImages.first,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  color: Colors.grey.shade300,
-                                  child: const Icon(
-                                    Icons.image_not_supported_outlined,
-                                    size: 80,
-                                    color: Colors.grey,
-                                  ),
-                                );
-                              },
-                            )
-                          : Container(
-                              color: Colors.grey.shade300,
-                              child: const Icon(
-                                Icons.home_work_outlined,
-                                size: 80,
-                                color: Colors.grey,
-                              ),
-                            ),
+                      Image.network(
+                        colony.displayImages.first,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.network(
+                            colony.luxuryHeroImage,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
 
                       // Gradient Overlay
                       Container(

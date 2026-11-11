@@ -309,7 +309,7 @@ class BookingComplianceService
                 'token_deadline' => $tokenDeadline,
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -389,7 +389,7 @@ class BookingComplianceService
                 error_log("BookingCompliance: Booking #{$v['id']} auto-cancelled. Plot #$plotId released back to available.");
                 $released++;
 
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("BookingCompliance: Error processing booking #{$v['id']}: " . $e->getMessage());
                 $warnings++;
             }
@@ -496,7 +496,7 @@ try {
                 'payment_status' => $paymentStatus,
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }

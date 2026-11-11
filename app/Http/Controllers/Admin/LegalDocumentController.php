@@ -34,7 +34,7 @@ class LegalDocumentController extends AdminController
 
         try {
             $docs = $db->query("SELECT d.*, u.name as creator_name FROM legal_documents d LEFT JOIN users u ON d.created_by = u.id WHERE d.tenant_id = ? ORDER BY d.created_at DESC LIMIT 20", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $docs = [];
         }
 
@@ -56,7 +56,7 @@ class LegalDocumentController extends AdminController
 
         try {
             $cats = $db->query("SELECT c.*, (SELECT COUNT(*) FROM legal_document_templates WHERE category_id = c.id) as template_count FROM legal_document_categories c WHERE c.tenant_id = ? ORDER BY c.sort_order ASC, c.name ASC", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $cats = [];
         }
 
@@ -88,7 +88,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("INSERT INTO legal_document_categories (name, slug, description, icon, sort_order, is_active, tenant_id, created_by, created_at) VALUES (?, ?, ?, ?, ?, 1, ?, ?, NOW())");
             $stmt->execute([$name, $slug, $description, $icon, $sort_order, $tid, $_SESSION['admin_id'] ?? null]);
             $this->setFlash('success', 'Category created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/categories');
@@ -111,7 +111,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("UPDATE legal_document_categories SET name=?, description=?, icon=?, sort_order=?, is_active=?, updated_at=NOW() WHERE id=? AND tenant_id=?");
             $stmt->execute([$name, $description, $icon, $sort_order, $is_active, $id, $tid]);
             $this->setFlash('success', 'Category updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/categories');
@@ -128,7 +128,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM legal_document_categories WHERE id=? AND tenant_id=?");
             $stmt->execute([$id, $tid]);
             $this->setFlash('success', 'Category deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/categories');
@@ -155,13 +155,13 @@ class LegalDocumentController extends AdminController
 
         try {
             $tpls = $db->query("SELECT t.*, c.name as category_name FROM legal_document_templates t LEFT JOIN legal_document_categories c ON t.category_id = c.id $where ORDER BY t.created_at DESC", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tpls = [];
         }
 
         try {
             $cats = $db->query("SELECT id, name FROM legal_document_categories WHERE tenant_id = ? ORDER BY name", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $cats = [];
         }
 
@@ -204,7 +204,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("INSERT INTO legal_document_templates (tenant_id, category_id, name, description, content, merge_fields, status, is_customer_facing, version, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, NOW())");
             $stmt->execute([$tid, $category_id ?: null, $name, $description, $content, $merge_fields, $status, $is_customer_facing, $_SESSION['admin_id'] ?? null]);
             $this->setFlash('success', 'Template created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/templates');
@@ -222,13 +222,13 @@ class LegalDocumentController extends AdminController
             $tpl = $db->prepare("SELECT * FROM legal_document_templates WHERE id = ? AND tenant_id = ?");
             $tpl->execute([$id, $tid]);
             $tpl = $tpl->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $tpl = null;
         }
 
         try {
             $cats = $db->query("SELECT id, name FROM legal_document_categories WHERE tenant_id = ? ORDER BY name", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $cats = [];
         }
 
@@ -264,7 +264,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("UPDATE legal_document_templates SET category_id=?, name=?, description=?, content=?, merge_fields=?, status=?, is_customer_facing=?, updated_at=NOW() WHERE id=? AND tenant_id=?");
             $stmt->execute([$category_id ?: null, $name, $description, $content, $merge_fields, $status, $is_customer_facing, $id, $tid]);
             $this->setFlash('success', 'Template updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/templates');
@@ -281,7 +281,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM legal_document_templates WHERE id=? AND tenant_id=?");
             $stmt->execute([$id, $tid]);
             $this->setFlash('success', 'Template deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/templates');
@@ -315,13 +315,13 @@ class LegalDocumentController extends AdminController
 
         try {
             $clauses = $db->query("SELECT cl.*, c.name as category_name FROM legal_clause_library cl LEFT JOIN legal_document_categories c ON cl.category_id = c.id $where ORDER BY cl.sort_order ASC, cl.title ASC")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $clauses = [];
         }
 
         try {
             $cats = $db->query("SELECT id, name FROM legal_document_categories ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $cats = [];
         }
 
@@ -353,7 +353,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("INSERT INTO legal_clause_library (category_id, title, content, tags, sort_order, is_active, created_by, created_at) VALUES (?, ?, ?, ?, ?, 1, ?, NOW())");
             $stmt->execute([$category_id ?: null, $title, $content, $tags, $sort_order, $_SESSION['admin_id'] ?? null]);
             $this->setFlash('success', 'Clause created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/clauses');
@@ -376,7 +376,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("UPDATE legal_clause_library SET category_id=?, title=?, content=?, tags=?, sort_order=?, is_active=?, updated_at=NOW() WHERE id=?");
             $stmt->execute([$category_id ?: null, $title, $content, $tags, $sort_order, $is_active, $id]);
             $this->setFlash('success', 'Clause updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/clauses');
@@ -392,7 +392,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM legal_clause_library WHERE id=?");
             $stmt->execute([$id]);
             $this->setFlash('success', 'Clause deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/clauses');
@@ -418,13 +418,13 @@ class LegalDocumentController extends AdminController
 
         try {
             $docs = $db->query("SELECT d.*, u.name as creator_name FROM legal_documents d LEFT JOIN users u ON d.created_by = u.id $where ORDER BY d.created_at DESC", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $docs = [];
         }
 
         try {
             $cats = $db->query("SELECT DISTINCT category FROM legal_documents WHERE tenant_id = ? AND category IS NOT NULL ORDER BY category", $tidParams)->fetchAll(\PDO::FETCH_COLUMN);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $cats = [];
         }
 
@@ -444,32 +444,32 @@ class LegalDocumentController extends AdminController
 
         try {
             $templates = $db->query("SELECT id, name FROM legal_document_templates WHERE tenant_id = ? AND status = 'active' ORDER BY name", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $templates = [];
         }
         try {
             $customers = $db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $customers = [];
         }
         try {
             $bookings = $db->query("SELECT id, customer_name FROM plot_bookings ORDER BY id DESC LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $bookings = [];
         }
         try {
             $plots = $db->query("SELECT id, plot_number FROM plots ORDER BY plot_number LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $plots = [];
         }
         try {
             $associates = $db->query("SELECT a.id, u.name FROM associates a JOIN users u ON a.user_id = u.id ORDER BY u.name LIMIT 100")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $associates = [];
         }
         try {
             $colonies = $db->query("SELECT id, name FROM colonies ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $colonies = [];
         }
 
@@ -503,7 +503,7 @@ class LegalDocumentController extends AdminController
             $doc = $db->prepare("SELECT d.*, u.name as creator_name FROM legal_documents d LEFT JOIN users u ON d.created_by = u.id WHERE d.id = ? AND d.tenant_id = ?");
             $doc->execute([$id, $tid]);
             $doc = $doc->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $doc = null;
         }
 
@@ -511,7 +511,7 @@ class LegalDocumentController extends AdminController
             $uploads = $db->prepare("SELECT * FROM legal_document_uploads WHERE document_id = ? ORDER BY created_at DESC");
             $uploads->execute([$id]);
             $uploads = $uploads->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $uploads = [];
         }
 
@@ -558,7 +558,7 @@ class LegalDocumentController extends AdminController
             $docId = $db->lastInsertId();
             $this->setFlash('success', 'Document created');
             $this->redirect("/admin/legal/documents/$docId");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             $this->redirect('/admin/legal/documents/create');
         }
@@ -575,7 +575,7 @@ class LegalDocumentController extends AdminController
             $doc = $db->prepare("SELECT d.*, u.name as creator_name FROM legal_documents d LEFT JOIN users u ON d.created_by = u.id WHERE d.id = ? AND d.tenant_id = ?");
             $doc->execute([$id, $tid]);
             $doc = $doc->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $doc = null;
         }
 
@@ -583,7 +583,7 @@ class LegalDocumentController extends AdminController
             $uploads = $db->prepare("SELECT * FROM legal_document_uploads WHERE document_id = ? ORDER BY created_at DESC");
             $uploads->execute([$id]);
             $uploads = $uploads->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $uploads = [];
         }
 
@@ -631,7 +631,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
             $this->setFlash('success', 'Document updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect("/admin/legal/documents/$id");
@@ -650,7 +650,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("UPDATE legal_documents SET status=? WHERE id=? AND tenant_id=?");
             $stmt->execute([$status, $id, $tid]);
             $this->setFlash('success', "Document status set to $status");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect("/admin/legal/documents/$id");
@@ -667,7 +667,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("UPDATE legal_documents SET kyc_verified = 1, kyc_verified_at = NOW(), kyc_verified_by = ? WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$_SESSION['admin_id'] ?? null, $id, $tid]);
             $this->setFlash('success', 'Document KYC verified');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect("/admin/legal/documents/$id");
@@ -690,7 +690,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM legal_documents WHERE id=? AND tenant_id=?");
             $stmt->execute([$id, $tid]);
             $this->setFlash('success', 'Document deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/documents');
@@ -707,7 +707,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("UPDATE legal_documents SET deleted_at = NULL WHERE id=? AND tenant_id=?");
             $stmt->execute([$id, $tid]);
             $this->setFlash('success', 'Document restored');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/documents');
@@ -724,7 +724,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM legal_documents WHERE id=? AND tenant_id=?");
             $stmt->execute([$id, $tid]);
             $this->setFlash('success', 'Document permanently deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/documents');
@@ -741,7 +741,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("UPDATE legal_documents SET status='active', published_at=NOW() WHERE id=? AND tenant_id=?");
             $stmt->execute([$id, $tid]);
             $this->setFlash('success', 'Document published');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect("/admin/legal/documents/$id");
@@ -758,7 +758,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("UPDATE legal_documents SET status='inactive' WHERE id=? AND tenant_id=?");
             $stmt->execute([$id, $tid]);
             $this->setFlash('success', 'Document archived');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect("/admin/legal/documents/$id");
@@ -801,7 +801,7 @@ class LegalDocumentController extends AdminController
                     break;
             }
             $this->setFlash('success', 'Bulk action completed');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/documents');
@@ -859,17 +859,17 @@ class LegalDocumentController extends AdminController
 
         try {
             $prompts = $db->query("SELECT * FROM legal_ai_prompts WHERE is_active = 1 ORDER BY name")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $prompts = [];
         }
         try {
             $cats = $db->query("SELECT id, name FROM legal_document_categories WHERE tenant_id = ? ORDER BY name", $tidParams)->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $cats = [];
         }
         try {
             $customers = $db->query("SELECT id, name, email FROM users WHERE role = 'customer' ORDER BY name LIMIT 50")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $customers = [];
         }
 
@@ -911,7 +911,7 @@ class LegalDocumentController extends AdminController
 
         try {
             $prompts = $db->query("SELECT * FROM legal_ai_prompts ORDER BY document_category, name")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $prompts = [];
         }
 
@@ -944,7 +944,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("INSERT INTO legal_ai_prompts (name, description, prompt_template, document_category, model, temperature, max_tokens, is_active, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, NOW())");
             $stmt->execute([$name, $description, $prompt_template, $document_category, $model, $temperature, $max_tokens, $_SESSION['admin_id'] ?? null]);
             $this->setFlash('success', 'Prompt created');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/ai-prompts');
@@ -969,7 +969,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("UPDATE legal_ai_prompts SET name=?, description=?, prompt_template=?, document_category=?, model=?, temperature=?, max_tokens=?, is_active=?, updated_at=NOW() WHERE id=?");
             $stmt->execute([$name, $description, $prompt_template, $document_category, $model, $temperature, $max_tokens, $is_active, $id]);
             $this->setFlash('success', 'Prompt updated');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/ai-prompts');
@@ -985,7 +985,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM legal_ai_prompts WHERE id=?");
             $stmt->execute([$id]);
             $this->setFlash('success', 'Prompt deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect('/admin/legal/ai-prompts');
@@ -1003,7 +1003,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("UPDATE legal_document_uploads SET status='verified', verified_at=NOW(), verified_by=? WHERE id=?");
             $stmt->execute([$_SESSION['admin_id'] ?? null, $id]);
             $this->setFlash('success', 'Upload verified');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/legal/documents');
@@ -1019,7 +1019,7 @@ class LegalDocumentController extends AdminController
             $stmt = $db->prepare("DELETE FROM legal_document_uploads WHERE id=?");
             $stmt->execute([$id]);
             $this->setFlash('success', 'Upload deleted');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
         }
         $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/legal/documents');
@@ -1067,7 +1067,7 @@ class LegalDocumentController extends AdminController
             header('Content-Length: ' . filesize($res['pdf_path']));
             readfile($res['pdf_path']);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LegalDocumentController::titleCertificate: ' . $e->getMessage());
             $this->setFlash('error', 'Certificate failed.');
             return $this->redirect('/admin/plots/' . $plotId);

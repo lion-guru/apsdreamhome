@@ -42,7 +42,17 @@ class ColonyService {
       final colonies = <ColonyModel>[];
       for (var i = 0; i < data.length; i++) {
         try {
-          final item = data[i] as Map<String, dynamic>;
+          final rawMap = data[i] as Map<String, dynamic>;
+          final item = Map<String, dynamic>.from(rawMap);
+          if (item['latitude'] != null) {
+            item['latitude'] = double.tryParse(item['latitude'].toString());
+          }
+          if (item['longitude'] != null) {
+            item['longitude'] = double.tryParse(item['longitude'].toString());
+          }
+          if (item['starting_price'] != null) {
+            item['starting_price'] = double.tryParse(item['starting_price'].toString()) ?? 0.0;
+          }
           colonies.add(ColonyModel.fromJson(item));
         } catch (e, st) {
           AppLogger.error('[Colonies] Parse error at index $i', e, st);

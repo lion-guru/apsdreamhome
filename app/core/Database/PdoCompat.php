@@ -8,6 +8,12 @@ namespace App\Core\Database;
  * (it expects an int fetch mode). Codebase-wide, ~38 call sites pass
  * parameter arrays to ->query(). This shim routes those calls through
  * prepare()/execute(); all standard PDO::query() usage is untouched.
+ *
+ * S355: Also provides Database wrapper methods (fetch, fetchOne, fetchAll,
+ * insert, update, delete, execute) so that code calling getConnection()
+ * (which returns PdoCompat) can use both PDO methods and wrapper methods.
+ * This fixes silent failures where getConnection() returned raw PDO and
+ * wrapper methods like fetchOne() didn't exist on PDO.
  */
 class PdoCompat extends \PDO
 {
@@ -26,78 +32,146 @@ class PdoCompat extends \PDO
     }
 
     /**
-     * Wrapper-style helpers mirroring App\Core\Database\Database::fetchAll/
-     * fetchOne()/insert(). Controllers that call Database::getInstance()
-     * ->getConnection() receive this class (not the wrapper), so without
-     * these helpers every $db->fetchAll($sql,$params) fatals with
-     * "Call to undefined method" (caught upstream -> empty pages).
+     * Wrapper: fetch single row
      */
-    public function execute($sql, $params = [])
+    public function fetch(string $sql, array $params = []): ?array
     {
         $stmt = $this->prepare($sql);
         $stmt->execute($params);
-        return $stmt;
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result ?: null;
     }
 
-    public function fetch($sql, $params = [])
-    {
-        return $this->execute($sql, $params)->fetch(\PDO::FETCH_ASSOC);
-    }
-
-    public function fetchOne($sql, $params = [])
-    {
-        return $this->fetch($sql, $params);
-    }
-
-    public function fetchRow($sql, $params = [])
+    /**
+     * Wrapper: fetch single row (alias for fetch)
+     */
+    public function fetchOne(string $sql, array $params = []): ?array
     {
         return $this->fetch($sql, $params);
     }
 
-    public function fetchAll($sql, $params = [])
+    /**
+     * Wrapper: fetch single row (alias)
+     */
+    public function fetchRow(string $sql, array $params = []): ?array
     {
-        return $this->execute($sql, $params)->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->fetch($sql, $params);
     }
 
-    public function select($sql, $params = [])
+    /**
+     * Wrapper: fetch all rows
+     */
+    public function fetchAll(string $sql, array $params = []): array
+    {
+        $stmt = $this->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Wrapper: fetch column value
+     */
+    public function fetchColumn(string $sql, array $params = [], int $column = 0): mixed
+    {
+        $stmt = $this->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchColumn($column);
+    }
+
+    /**
+     * Wrapper: execute statement (INSERT/UPDATE/DELETE)
+     */
+    public function execute(string $sql, array $params = []): bool
+    {
+        $stmt = $this->prepare($sql);
+        return $stmt->execute($params);
+    }
+
+    /**
+     * Wrapper: insert row and return last insert ID
+     */
+    public function insert(string $table, array $data): int
+    {
+        $columns = implode(', ', array_keys($data));
+        $placeholders = implode(', ', array_fill(0, count($data), '?'));
+        $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
+        $stmt = $this->prepare($sql);
+        $stmt->execute(array_values($data));
+        return (int)$this->lastInsertId();
+    }
+
+    /**
+     * Wrapper: update rows
+     */
+    public function update(string $table, array $data, string $where = '', array $whereParams = []): int
+    {
+        $sets = [];
+        $values = [];
+        foreach ($data as $key => $val) {
+            $sets[] = "{$key} = ?";
+            $values[] = $val;
+        }
+        $sql = "UPDATE {$table} SET " . implode(', ', $sets);
+        if ($where) {
+            $sql .= " WHERE " . $where;
+        }
+        $values = array_merge($values, $whereParams);
+        $stmt = $this->prepare($sql);
+        $stmt->execute($values);
+        return $stmt->rowCount();
+    }
+
+    /**
+     * Wrapper: delete rows
+     */
+    public function delete(string $table, string $where = '', array $params = []): int
+    {
+        $sql = "DELETE FROM {$table}";
+        if ($where) {
+            $sql .= " WHERE " . $where;
+        }
+        $stmt = $this->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->rowCount();
+    }
+
+    /**
+     * Wrapper: select (alias for fetchAll)
+     */
+    public function select(string $sql, array $params = []): array
     {
         return $this->fetchAll($sql, $params);
     }
 
-    public function selectOne($sql, $params = [])
+    /**
+     * Wrapper: selectOne (alias for fetch)
+     */
+    public function selectOne(string $sql, array $params = []): ?array
     {
         return $this->fetch($sql, $params);
     }
 
-    public function fetchColumn($sql, $params = [], $column = 0)
+    /**
+     * Wrapper: lastInsertId (already in PDO, but ensure int return)
+     */
+    public function getLastInsertId(): int
     {
-        return $this->execute($sql, $params)->fetchColumn($column);
+        return (int)$this->lastInsertId();
     }
 
-    public function insert($table, $data)
+    /**
+     * Wrapper: beginTransaction (already in PDO)
+     */
+    public function beginTransaction(): bool
     {
-        $columns = implode(', ', array_keys($data));
-        $placeholders = implode(', ', array_map(fn($key) => ":$key", array_keys($data)));
-        $this->execute("INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})", $data);
-        return $this->lastInsertId();
+        return parent::beginTransaction();
     }
 
-    public function update($table, $data, $where, $whereParams = [])
+    /**
+     * Wrapper: inTransaction (already in PDO 5.3.3+)
+     */
+    public function inTransaction(): bool
     {
-        $set = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
-        if (is_array($where)) {
-            $conditions = [];
-            $bindings = [];
-            foreach ($where as $col => $val) {
-                $conditions[] = "$col = :_where_$col";
-                $bindings["_where_$col"] = $val;
-            }
-            $sql = "UPDATE {$table} SET {$set} WHERE " . implode(' AND ', $conditions);
-            $params = array_merge($data, $bindings);
-        } else {
-            $sql = "UPDATE {$table} SET {$set} WHERE {$where}";
-            $params = array_merge($data, $whereParams);
-        }
-        return $this->execute($sql, $params)->rowCount();
+        return parent::inTransaction();
     }
 }

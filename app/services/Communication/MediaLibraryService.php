@@ -77,7 +77,7 @@ class MediaLibraryService
                 $filepath,
                 $file['size'],
                 $fileInfo['mime_type'],
-                $fileInfo['file_type'],
+                $fileInfo['media_type'],
                 json_encode(array_merge($metadata, $fileInfo)),
                 $metadata['uploaded_by'] ?? null
             ]);
@@ -100,7 +100,7 @@ class MediaLibraryService
                 'file_info' => $fileInfo
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('File upload failed', [
                 'filename' => $file['name'] ?? 'unknown',
                 'error' => $e->getMessage()
@@ -134,7 +134,7 @@ class MediaLibraryService
             
             return $media;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get media', ['id' => $id, 'error' => $e->getMessage()]);
             return null;
         }
@@ -147,8 +147,8 @@ class MediaLibraryService
     {
         try {
             $sql = "SELECT * FROM media_library 
-                    WHERE file_type = ? AND deleted_at IS NULL 
-                    ORDER BY created_at DESC 
+                    WHERE media_type = ? AND deleted_at IS NULL 
+                    ORDER BY uploaded_at DESC 
                     LIMIT ? OFFSET ?";
             
             $media = $this->db->fetchAll($sql, [$type, $limit, $offset]);
@@ -160,7 +160,7 @@ class MediaLibraryService
             
             return $media;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get media by type', ['type' => $type, 'error' => $e->getMessage()]);
             return [];
         }
@@ -174,7 +174,7 @@ class MediaLibraryService
         try {
             $sql = "SELECT * FROM media_library 
                     WHERE JSON_EXTRACT(metadata, '$.category') = ? AND deleted_at IS NULL 
-                    ORDER BY created_at DESC 
+                    ORDER BY uploaded_at DESC 
                     LIMIT ?";
             
             $media = $this->db->fetchAll($sql, [$category, $limit]);
@@ -186,7 +186,7 @@ class MediaLibraryService
             
             return $media;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get media by category', ['category' => $category, 'error' => $e->getMessage()]);
             return [];
         }
@@ -198,7 +198,7 @@ class MediaLibraryService
     public function searchMedia(string $query, array $filters = []): array
     {
         try {
-            $sql = "SELECT * FROM media_library WHERE deleted_at IS NULL";
+            $sql = "SELECT * FROM media_library";
             $params = [];
 
             // Add search conditions
@@ -209,9 +209,9 @@ class MediaLibraryService
             }
 
             // Add filters
-            if (!empty($filters['file_type'])) {
-                $sql .= " AND file_type = ?";
-                $params[] = $filters['file_type'];
+            if (!empty($filters['media_type'])) {
+                $sql .= " AND media_type = ?";
+                $params[] = $filters['media_type'];
             }
 
             if (!empty($filters['uploaded_by'])) {
@@ -229,7 +229,7 @@ class MediaLibraryService
                 $params[] = $filters['date_to'];
             }
 
-            $sql .= " ORDER BY created_at DESC";
+            $sql .= " ORDER BY uploaded_at DESC";
 
             if (!empty($filters['limit'])) {
                 $sql .= " LIMIT ?";
@@ -245,7 +245,7 @@ class MediaLibraryService
             
             return $media;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to search media', ['query' => $query, 'error' => $e->getMessage()]);
             return [];
         }
@@ -282,7 +282,7 @@ class MediaLibraryService
                 'message' => 'Metadata updated successfully'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to update media metadata', ['id' => $id, 'error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -329,7 +329,7 @@ class MediaLibraryService
                 'message' => $permanent ? 'Media permanently deleted' : 'Media deleted'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to delete media', ['id' => $id, 'error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -348,24 +348,24 @@ class MediaLibraryService
 
             // Total files
             $stats['total_files'] = $this->db->fetchOne(
-                "SELECT COUNT(*) FROM media_library WHERE deleted_at IS NULL"
+                "SELECT COUNT(*) FROM media_library"
             ) ?? 0;
 
             // Total size
             $stats['total_size'] = $this->db->fetchOne(
-                "SELECT COALESCE(SUM(file_size), 0) FROM media_library WHERE deleted_at IS NULL"
+                "SELECT COALESCE(SUM(file_size), 0) FROM media_library"
             ) ?? 0;
 
             // Files by type
             $typeStats = $this->db->fetchAll(
-                "SELECT file_type, COUNT(*) as count, COALESCE(SUM(file_size), 0) as total_size 
-                 FROM media_library WHERE deleted_at IS NULL 
-                 GROUP BY file_type"
+                "SELECT media_type, COUNT(*) as count, COALESCE(SUM(file_size), 0) as total_size 
+                 FROM media_library  
+                 GROUP BY media_type"
             );
 
             $stats['by_type'] = [];
             foreach ($typeStats as $stat) {
-                $stats['by_type'][$stat['file_type']] = [
+                $stats['by_type'][$stat['media_type']] = [
                     'count' => $stat['count'],
                     'size' => $stat['total_size']
                 ];
@@ -374,8 +374,8 @@ class MediaLibraryService
             // Recent uploads
             $stats['recent_uploads'] = $this->db->fetchAll(
                 "SELECT * FROM media_library 
-                 WHERE deleted_at IS NULL 
-                 ORDER BY created_at DESC 
+                 
+                 ORDER BY uploaded_at DESC 
                  LIMIT 10"
             );
 
@@ -388,7 +388,7 @@ class MediaLibraryService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get media stats', ['error' => $e->getMessage()]);
             return [];
         }
@@ -428,7 +428,7 @@ class MediaLibraryService
                 'gallery_id' => $galleryId
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to create gallery', ['name' => $galleryName, 'error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -451,7 +451,7 @@ class MediaLibraryService
                                    'original_name', m.original_name,
                                    'file_path', m.file_path,
                                    'file_url', CONCAT('" . $this->getBaseUrl() . "/', m.file_path),
-                                   'file_type', m.media_type,
+                                   'media_type', m.media_type,
                                    'metadata', m.mime_type,
                                    'position', mgi.position
                                )
@@ -471,7 +471,7 @@ class MediaLibraryService
             
             return $gallery;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get gallery', ['gallery_id' => $galleryId, 'error' => $e->getMessage()]);
             return null;
         }
@@ -531,7 +531,7 @@ class MediaLibraryService
 
         // Basic file info
         $info['mime_type'] = mime_content_type($filepath);
-        $info['file_type'] = $this->getFileType($info['mime_type']);
+        $info['media_type'] = $this->getFileType($info['mime_type']);
         $info['extension'] = strtolower(pathinfo($filepath, PATHINFO_EXTENSION));
 
         // Image-specific info

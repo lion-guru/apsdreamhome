@@ -171,7 +171,7 @@ class TokenBookingController extends AdminController
                     'plot_id' => $plotId, 'old_status' => 'available', 'new_status' => 'hold',
                     'changed_by' => $me, 'created_at' => date('Y-m-d H:i:s'),
                 ]);
-            } catch (\Exception $e) { error_log('TokenBookingController hold log: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('TokenBookingController hold log: ' . $e->getMessage()); }
             $this->setFlash('success', 'Token ' . $receiptNo . ' recorded. Plot locked for 7 days.');
             return $this->redirect('/admin/sales/token-booking/receipt/' . urlencode($receiptNo));
         } catch (\Throwable $e) {

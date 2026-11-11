@@ -147,7 +147,7 @@ try {
 
     echo "\n✅ Employee Self-Service migration completed!\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ Migration failed: " . $e->getMessage() . "\n";
     exit(1);
 }

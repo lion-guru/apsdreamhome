@@ -71,7 +71,7 @@ class SecurityService
                 default:
                     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Sanitization failed", ['input' => $input, 'type' => $type, 'error' => $e->getMessage()]);
             return '';
         }
@@ -193,7 +193,7 @@ class SecurityService
             
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Rate limit check failed", ['identifier' => $identifier, 'error' => $e->getMessage()]);
             return true; // Allow on error
         }
@@ -383,7 +383,7 @@ class SecurityService
 
             $this->logger->warning("Security event logged", $logEntry);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to log security event", ['error' => $e->getMessage()]);
         }
     }
@@ -435,7 +435,7 @@ class SecurityService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get security stats", ['error' => $e->getMessage()]);
             return [];
         }
@@ -449,7 +449,7 @@ class SecurityService
         try {
             $this->createSecurityTables();
             $this->ensureLogDirectory();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to initialize security", ['error' => $e->getMessage()]);
         }
     }

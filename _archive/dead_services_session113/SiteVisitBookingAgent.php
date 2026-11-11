@@ -133,7 +133,7 @@ class SiteVisitBookingAgent extends BaseAgent
             $agentId = $agent['agent_id'] ?? 'agent_10';
             $svc = new VoiceCallService();
             $svc->scheduleCall($leadId, $phone, $agentId, $reminderDate, '10:00:00', 'site_visit_booking', 'high');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
                     error_log("SiteVisitBookingAgent.php: " . $e->getMessage());
         }
     }

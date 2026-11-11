@@ -200,7 +200,7 @@ class DashboardController extends BaseController
                     WHERE f.user_id = ?
                     ORDER BY f.created_at DESC
                 ", [$userId]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Favorites fetch error: " . $e->getMessage());
             }
         }

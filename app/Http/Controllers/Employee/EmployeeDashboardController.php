@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\BaseController;
 use App\Core\Database\Database;
+use App\Services\Cache\CacheService;
 use Exception;
 
 /**
@@ -15,12 +16,14 @@ class EmployeeDashboardController extends BaseController
     protected $db;
     protected $employeeId;
     protected $employeeRole;
+    private $cacheService;
 
     public function __construct()
     {
         parent::__construct();
         $this->layout = 'layouts/employee';
         $this->db = Database::getInstance();
+        $this->cacheService = new CacheService();
         $this->initializeEmployeeSession();
     }
 
@@ -48,6 +51,14 @@ class EmployeeDashboardController extends BaseController
      */
     public function dashboard()
     {
+        // ── Dashboard cache (5 min TTL) ──
+        $cacheKey = 'employee_dashboard:' . $this->employeeId;
+        $cached = $this->cacheService->get($cacheKey);
+        if ($cached !== false && $cached !== null) {
+            $this->render('employee/dashboard', $cached);
+            return;
+        }
+
         try {
             // Get employee information
             $employee = $this->getEmployeeInfo();
@@ -67,7 +78,7 @@ class EmployeeDashboardController extends BaseController
             // Get team communications
             $communications = $this->getCommunications();
 
-            $this->render('employee/dashboard', [
+            $finalData = [
                 'page_title' => 'Employee Dashboard - APS Dream Home',
                 'employee' => $employee,
                 'dashboard_data' => $dashboardData,
@@ -76,9 +87,14 @@ class EmployeeDashboardController extends BaseController
                 'schedule' => $schedule,
                 'communications' => $communications,
                 'role_specific_data' => $this->getRoleSpecificData(),
-            ]);
+            ];
 
-        } catch (\Exception $e) {
+            // Cache dashboard data for 5 minutes (300 seconds)
+            $this->cacheService->set($cacheKey, $finalData, 300);
+
+            $this->render('employee/dashboard', $finalData);
+
+        } catch (\Throwable $e) {
             $this->handleError($e->getMessage());
         }
     }
@@ -650,7 +666,7 @@ class EmployeeDashboardController extends BaseController
             
             return ['success' => false, 'message' => 'Failed to update task'];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -687,7 +703,7 @@ class EmployeeDashboardController extends BaseController
             $socialShares    = 0;
             $campaigns       = $this->db->fetchAll("SELECT name, type, status FROM campaigns ORDER BY created_at DESC LIMIT 5");
             $leadSources     = $this->db->fetchAll("SELECT source, COUNT(*) as count FROM leads GROUP BY source ORDER BY count DESC LIMIT 5");
-        } catch (\Exception $e) { error_log('Marketing dashboard error: ' . $e->getMessage()); $activeCampaigns = $totalLeads = $blogPosts = $socialShares = 0; $campaigns = $leadSources = []; }
+        } catch (\Throwable $e) { error_log('Marketing dashboard error: ' . $e->getMessage()); $activeCampaigns = $totalLeads = $blogPosts = $socialShares = 0; $campaigns = $leadSources = []; }
         $this->render('employee/marketing_dashboard', compact('activeCampaigns', 'totalLeads', 'blogPosts', 'socialShares', 'campaigns', 'leadSources'));
     }
 
@@ -704,7 +720,7 @@ class EmployeeDashboardController extends BaseController
             $taxDeadlines      = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM efiling_deadlines WHERE due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) AND status <> 'filed'")['c'] ?? 0);
             $recentTransactions = $this->db->fetchAll("SELECT DATE(transaction_date) as date, description, amount, status FROM financial_transactions ORDER BY transaction_date DESC LIMIT 5");
             $budgetVariance    = $this->db->fetchAll("SELECT d.name AS department, (b.allocated_amount - b.spent_amount) AS variance FROM budgets b LEFT JOIN departments d ON b.department_id = d.id WHERE b.fiscal_year = YEAR(CURDATE()) LIMIT 5");
-        } catch (\Exception $e) { error_log('Finance dashboard error: ' . $e->getMessage()); $totalIncome = $totalExpenses = $pendingInvoices = $taxDeadlines = 0; $recentTransactions = $budgetVariance = []; }
+        } catch (\Throwable $e) { error_log('Finance dashboard error: ' . $e->getMessage()); $totalIncome = $totalExpenses = $pendingInvoices = $taxDeadlines = 0; $recentTransactions = $budgetVariance = []; }
         $this->render('employee/finance_dashboard', compact('totalIncome', 'totalExpenses', 'pendingInvoices', 'taxDeadlines', 'recentTransactions', 'budgetVariance'));
     }
 
@@ -727,7 +743,7 @@ class EmployeeDashboardController extends BaseController
                 ['component' => 'WebSocket', 'status' => 'ok'],
                 ['component' => 'Storage', 'status' => 'ok'],
             ];
-        } catch (\Exception $e) { error_log('IT dashboard error: ' . $e->getMessage()); $systemUptime = '99.9%'; $openTickets = $securityAlerts = 0; $dbSize = '0 MB'; $deployments = $systemHealth = []; }
+        } catch (\Throwable $e) { error_log('IT dashboard error: ' . $e->getMessage()); $systemUptime = '99.9%'; $openTickets = $securityAlerts = 0; $dbSize = '0 MB'; $deployments = $systemHealth = []; }
         $this->render('employee/it_dashboard', compact('systemUptime', 'openTickets', 'securityAlerts', 'dbSize', 'deployments', 'systemHealth'));
     }
 
@@ -744,7 +760,7 @@ class EmployeeDashboardController extends BaseController
             $siteVisitsToday = (int)($this->db->fetchOne("SELECT COUNT(*) as c FROM visits WHERE DATE(visit_date) = CURDATE()")['c'] ?? 0);
             $pendingOperations = $this->db->fetchAll("SELECT log_type AS title, description, assigned_to, DATE(created_at) as due_date, priority FROM daily_operations_log WHERE status = 'pending' ORDER BY created_at ASC LIMIT 5");
             $projectStatus = $this->db->fetchAll("SELECT name as label, status, COUNT(*) as count FROM projects GROUP BY status LIMIT 5");
-        } catch (\Exception $e) { error_log('Ops dashboard error: ' . $e->getMessage()); $activeProjects = $pendingApprovals = $activeVendors = $siteVisitsToday = 0; $pendingOperations = $projectStatus = []; }
+        } catch (\Throwable $e) { error_log('Ops dashboard error: ' . $e->getMessage()); $activeProjects = $pendingApprovals = $activeVendors = $siteVisitsToday = 0; $pendingOperations = $projectStatus = []; }
         $this->render('employee/ops_dashboard', compact('activeProjects', 'pendingApprovals', 'activeVendors', 'siteVisitsToday', 'pendingOperations', 'projectStatus'));
     }
 
@@ -763,7 +779,7 @@ class EmployeeDashboardController extends BaseController
             $conversionRate = $totalLeads > 0 ? round(($closedDeals / $totalLeads) * 100, 1) : 0;
             $deals = $this->db->fetchAll("SELECT d.*, l.name as customer_name, NULL as property_name FROM deals d LEFT JOIN leads l ON d.lead_id = l.id WHERE COALESCE(d.status,'') NOT IN ('won','lost') ORDER BY d.deal_value DESC LIMIT 5");
             $salesByColony = $this->db->fetchAll("SELECT c.name as colony, COALESCE(SUM(pb.agreement_value),0) as total FROM plot_bookings pb LEFT JOIN colonies c ON pb.colony_id = c.id WHERE pb.status = 'confirmed' GROUP BY c.id, c.name ORDER BY total DESC LIMIT 5");
-        } catch (\Exception $e) { error_log('Sales dashboard error: ' . $e->getMessage()); $totalSales = $activeDeals = $pendingFollowups = $conversionRate = 0; $deals = $salesByColony = []; }
+        } catch (\Throwable $e) { error_log('Sales dashboard error: ' . $e->getMessage()); $totalSales = $activeDeals = $pendingFollowups = $conversionRate = 0; $deals = $salesByColony = []; }
         $this->render('employee/sales_dashboard', compact('totalSales', 'activeDeals', 'pendingFollowups', 'conversionRate', 'deals', 'salesByColony'));
     }
 }

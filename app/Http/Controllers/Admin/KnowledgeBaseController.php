@@ -29,7 +29,7 @@ class KnowledgeBaseController extends AdminController
         try {
             $stmt = $this->db->query("SELECT * FROM knowledge_base ORDER BY created_at DESC");
             $articles = $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $articles = [];
         }
 
@@ -83,7 +83,7 @@ class KnowledgeBaseController extends AdminController
             $_SESSION['success'] = 'Article added successfully!';
             header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error adding article: ' . $e->getMessage();
             header('Location: ' . BASE_URL . '/admin/knowledge-base/create');
             exit;
@@ -116,7 +116,7 @@ class KnowledgeBaseController extends AdminController
                 header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error loading article';
             header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
             exit;
@@ -150,7 +150,7 @@ class KnowledgeBaseController extends AdminController
                 header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
                 exit;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error loading article';
             header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
             exit;
@@ -192,7 +192,7 @@ class KnowledgeBaseController extends AdminController
             $_SESSION['success'] = 'Article updated successfully!';
             header('Location: ' . BASE_URL . '/admin/knowledge-base-new');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error updating article: ' . $e->getMessage();
             header('Location: ' . BASE_URL . '/admin/knowledge-base/' . $id . '/edit');
             exit;
@@ -216,7 +216,7 @@ class KnowledgeBaseController extends AdminController
             $stmt->execute([$id, ...$tp]);
 
             $_SESSION['success'] = 'Article deleted successfully!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error deleting article: ' . $e->getMessage();
         }
 

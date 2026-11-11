@@ -167,12 +167,12 @@ class EmployeePerformanceService
         return $this->db->fetchAll(
             "SELECT e.id, e.name, e.role, ep.overall_score, ep.tasks_completed, ep.tasks_on_time, ep.quality_score
              FROM users e
-             JOIN employees emp ON emp.user_id = e.id
-             LEFT JOIN employee_performance ep ON ep.employee_id = e.id 
-                 AND ep.tenant_id = 1 
+             LEFT JOIN employee_profiles epr ON epr.legacy_id = e.id OR epr.user_id = e.id OR epr.id = e.id
+             LEFT JOIN employee_performance ep ON ep.employee_id = e.id
+                 AND ep.tenant_id = 1
                  AND ep.period_type = ?
                  AND ep.period_start >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
-             WHERE e.status = 'active' AND emp.status = 'active' AND emp.department = ?
+             WHERE e.status = 'active' AND epr.status = 'active' AND epr.department = ?
              ORDER BY ep.overall_score DESC",
             [$periodType, $department]
         );

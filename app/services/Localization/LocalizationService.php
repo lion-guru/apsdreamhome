@@ -91,7 +91,9 @@ class LocalizationService
         string $mode = self::MODE_ADVANCED
     ) {
         $this->db = $db;
-        $this->logger = $logger;
+        $this->logger = $logger ?: new class extends \Psr\Log\AbstractLogger {
+            public function log($level, $message, array $context = []): void {}
+        };
         $this->currentLocale = $locale;
         $this->defaultLocale = 'en_US';
         $this->supportedLocales = ['en_US', 'hi_IN', 'gu_IN', 'mr_IN'];
@@ -126,7 +128,7 @@ class LocalizationService
                     'mode' => $this->localizationMode
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->error('Failed to initialize localization', ['error' => $e->getMessage()]);
             }
@@ -155,7 +157,7 @@ class LocalizationService
             try {
                 $this->db->execute($sql);
                 $this->logger->info("Localization table created or verified", ['table' => $tableName]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logger->error("Failed to create localization table", [
                     'table' => $tableName,
                     'error' => $e->getMessage()
@@ -187,7 +189,7 @@ class LocalizationService
                     "INSERT IGNORE INTO localization_config (config_key, config_value, description) VALUES (?, ?, ?)",
                     [$key, $value, "Default configuration for {$key}"]
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logger->warning("Failed to insert default config", [
                     'key' => $key,
                     'error' => $e->getMessage()
@@ -209,7 +211,7 @@ class LocalizationService
             if ($result) {
                 $this->supportedLocales = json_decode($result['config_value'], true) ?: $this->supportedLocales;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->warning("Failed to load supported locales", ['error' => $e->getMessage()]);
         }
     }
@@ -225,7 +227,7 @@ class LocalizationService
             );
             
             $this->translationSources = $sources ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->warning("Failed to load translation sources", ['error' => $e->getMessage()]);
         }
     }
@@ -276,12 +278,16 @@ class LocalizationService
             );
             
             return $result ? $result['translation_value'] : null;
-        } catch (\Exception $e) {
-            $this->logger->error("Failed to get translation from database", [
-                'key' => $key,
-                'locale' => $locale,
-                'error' => $e->getMessage()
-            ]);
+        } catch (\Throwable $e) {
+            if ($this->logger) {
+                $this->logger->error("Failed to get translation from database", [
+                    'key' => $key,
+                    'locale' => $locale,
+                    'error' => $e->getMessage()
+                ]);
+            } else {
+                error_log("LocalizationService: translation lookup failed for [$key] locale=$locale: " . $e->getMessage());
+            }
             return null;
         }
     }
@@ -341,7 +347,7 @@ class LocalizationService
             ]);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to add translation", [
                 'key' => $key,
                 'locale' => $locale,
@@ -403,7 +409,7 @@ class LocalizationService
 
             $this->logger->info("Locale added to supported list", ['locale' => $locale]);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to add supported locale", [
                 'locale' => $locale,
                 'error' => $e->getMessage()
@@ -432,7 +438,7 @@ class LocalizationService
             }
 
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get all translations", [
                 'locale' => $locale,
                 'error' => $e->getMessage()
@@ -460,7 +466,7 @@ class LocalizationService
             ]);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to delete translation", [
                 'key' => $key,
                 'locale' => $locale,
@@ -516,7 +522,7 @@ class LocalizationService
             }
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get localization statistics", ['error' => $e->getMessage()]);
             return [];
         }

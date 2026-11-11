@@ -24,7 +24,7 @@ class LegalAIService
             if (class_exists('App\Services\AI\AIGateway')) {
                 return AIGateway::getInstance();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LegalAIService::initAIGateway error: ' . $e->getMessage());
         }
         return null;
@@ -69,7 +69,7 @@ class LegalAIService
                 'prompt_name' => $prompt['name'],
                 'category' => $prompt['document_category']
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LegalAIService::generateDocument error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -99,7 +99,7 @@ class LegalAIService
             }
 
             return ['success' => false, 'error' => 'AI generation failed or unavailable'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LegalAIService::generateFromCustomPrompt error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -122,7 +122,7 @@ class LegalAIService
                 }
             }
             return ['success' => false, 'error' => 'Could not generate suggestions'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

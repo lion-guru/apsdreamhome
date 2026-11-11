@@ -1,21 +1,21 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
-use App\Services\Communication\EmailSenderService;
-use App\Services\Communication\SmsSenderService;
+use App\Services\Communication\EmailService;
+use App\Services\Communication\SmsService;
 use App\Services\Communication\QueueProcessorService;
 
 class CommunicationController extends AdminController
 {
     private $emailSender;
-    private $smsSender;
+    private $smsService;
     private $queueProcessor;
 
     public function __construct()
     {
         parent::__construct();
-        $this->emailSender = new EmailSenderService();
-        $this->smsSender = new SmsSenderService();
+        $this->emailSender = new EmailService();
+        $this->smsService = new SmsService();
         $this->queueProcessor = new QueueProcessorService();
     }
 
@@ -28,7 +28,7 @@ class CommunicationController extends AdminController
         $smsFilter = $_GET['sms_status'] ?? null;
 
         $emails = $this->emailSender->getQueueItems($emailFilter ?: null, 50, 0);
-        $smsItems = $this->smsSender->getQueueItems($smsFilter ?: null, 50, 0);
+        $smsItems = $this->smsService->getQueueItems($smsFilter ?: null, 50, 0);
 
         return $this->render('admin/communication/queue', [
             'page_title' => 'Communication Queue - APS Dream Home',
@@ -109,7 +109,7 @@ class CommunicationController extends AdminController
             $this->redirect('/admin/communication/test-sms');
         }
 
-        $result = $this->smsSender->send($phone, $message);
+        $result = $this->smsService->send($phone, $message);
 
         if ($result['success'] ?? false) {
             $_SESSION['flash_message'] = 'Test SMS sent successfully to ' . $phone;

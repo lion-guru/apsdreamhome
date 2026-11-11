@@ -31,7 +31,7 @@ class LandController extends BaseController
                 'stats' => $stats,
                 'page_title' => 'Land Management Dashboard - APS Dream Home'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to load land dashboard", ['error' => $e->getMessage()]);
             return $this->response(['success' => false, 'message' => 'Dashboard error'], 500);
         }
@@ -61,7 +61,7 @@ class LandController extends BaseController
                     'errors' => $result['errors'] ?? []
                 ], 400);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to create project", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -93,7 +93,7 @@ class LandController extends BaseController
                     'errors' => $result['errors'] ?? []
                 ], 400);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to subdivide land", ['project_id' => $projectId, 'error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -123,7 +123,7 @@ class LandController extends BaseController
                     'message' => $result['message']
                 ], 400);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to reserve plot", [
                 'plot_id' => $plotId,
                 'error' => $e->getMessage()
@@ -158,7 +158,7 @@ class LandController extends BaseController
                     'errors' => $result['errors'] ?? []
                 ], 400);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to sell plot", [
                 'plot_id' => $plotId,
                 'error' => $e->getMessage()
@@ -189,7 +189,7 @@ class LandController extends BaseController
                     'message' => 'Project not found'
                 ], 404);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get project", ['project_id' => $projectId, 'error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -217,7 +217,7 @@ class LandController extends BaseController
                     'message' => 'Plot not found'
                 ], 404);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get plot", ['plot_id' => $plotId, 'error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -239,7 +239,7 @@ class LandController extends BaseController
                 'success' => true,
                 'data' => $plots
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get available plots", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -269,7 +269,7 @@ class LandController extends BaseController
                     'message' => $result['message']
                 ], 400);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to update plot status", ['plot_id' => $plotId, 'error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,

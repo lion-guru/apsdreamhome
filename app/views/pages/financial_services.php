@@ -8,7 +8,7 @@ try {
     $services = $services ?? [];
     $advisors = $advisors ?? [];
     $faqs = $faqs ?? [];
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     error_log('Financial services page database error: ' . $e->getMessage());
     $services = [];
     $advisors = [];

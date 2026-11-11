@@ -50,7 +50,7 @@ class BackupIntegrityService
             $this->createBackupTables();
             $this->createBackupDirectories();
             $this->logger->info('Backup integrity system initialized');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to initialize backup system', ['error' => $e->getMessage()]);
             throw new \RuntimeException('Backup system initialization failed: ' . $e->getMessage());
         }
@@ -77,7 +77,7 @@ class BackupIntegrityService
             try {
                 $this->db->execute($sql);
                 $this->logger->info("Backup table created or verified", ['table' => $tableName]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logger->error("Failed to create backup table", [
                     'table' => $tableName,
                     'error' => $e->getMessage()
@@ -163,7 +163,7 @@ class BackupIntegrityService
 
             return $result;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Backup integrity verification failed", [
                 'backup_file' => $backupFile,
                 'error' => $e->getMessage()
@@ -220,7 +220,7 @@ class BackupIntegrityService
                 'actual' => $actualChecksum,
                 'message' => $isValid ? 'Checksum verification passed' : 'Checksum verification failed'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'status' => 'failed',
                 'error' => $e->getMessage(),
@@ -259,7 +259,7 @@ class BackupIntegrityService
                 'elements_required' => count($requiredElements),
                 'message' => $isValid ? 'Backup structure verification passed' : 'Backup structure verification failed'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'status' => 'failed',
                 'error' => $e->getMessage(),
@@ -294,7 +294,7 @@ class BackupIntegrityService
                 'expected_tables' => $this->config['critical_tables'],
                 'message' => $isValid ? 'Critical tables verification passed' : 'Critical tables verification failed'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'status' => 'failed',
                 'error' => $e->getMessage(),
@@ -329,7 +329,7 @@ class BackupIntegrityService
                 'duration' => $duration,
                 'message' => $restoreSuccess ? 'Restore test passed' : 'Restore test failed'
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'status' => 'failed',
                 'error' => $e->getMessage(),
@@ -362,7 +362,7 @@ class BackupIntegrityService
         try {
             // In a real implementation, this would drop the test database
             $this->logger->info("Test database cleaned up", ['database' => $testDbName]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->warning("Failed to clean up test database", [
                 'database' => $testDbName,
                 'error' => $e->getMessage()
@@ -393,7 +393,7 @@ class BackupIntegrityService
                 ];
             }, $records);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get verification history", ['error' => $e->getMessage()]);
             return [];
         }
@@ -433,7 +433,7 @@ class BackupIntegrityService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get backup statistics", ['error' => $e->getMessage()]);
             return [];
         }
@@ -456,7 +456,7 @@ class BackupIntegrityService
             ]);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to schedule backup verification", [
                 'backup_file' => $backupFile,
                 'error' => $e->getMessage()
@@ -488,7 +488,7 @@ class BackupIntegrityService
                 ];
             }, $schedules);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get scheduled verifications", ['error' => $e->getMessage()]);
             return [];
         }
@@ -549,7 +549,7 @@ class BackupIntegrityService
 
             return $filename;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to export verification report", ['error' => $e->getMessage()]);
             throw $e;
         }
@@ -570,7 +570,7 @@ class BackupIntegrityService
 
             return $deleted;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to cleanup old records", ['error' => $e->getMessage()]);
             return 0;
         }

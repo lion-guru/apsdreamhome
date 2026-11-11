@@ -53,7 +53,7 @@ class StampDutyController extends BaseApiController
             }
             
             return $this->jsonError($result['error'] ?? 'Calculation failed');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyController::calculate] ' . $e->getMessage());
             return $this->jsonError('Calculation failed: ' . $e->getMessage());
         }
@@ -79,7 +79,7 @@ class StampDutyController extends BaseApiController
             }
             
             return $this->jsonError('State not found', 404);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyController::getRates] ' . $e->getMessage());
             return $this->jsonError('Failed to fetch rates');
         }
@@ -117,7 +117,7 @@ class StampDutyController extends BaseApiController
             }
             
             return $this->jsonError('Circle rate not found for this area', 404);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyController::getCircleRate] ' . $e->getMessage());
             return $this->jsonError('Failed to fetch circle rate');
         }
@@ -139,7 +139,7 @@ class StampDutyController extends BaseApiController
         try {
             $results = $this->service->searchCircleRates($stateCode, $search);
             return $this->jsonSuccess(['results' => $results]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyController::searchCircleRates] ' . $e->getMessage());
             return $this->jsonError('Failed to search circle rates');
         }
@@ -154,7 +154,7 @@ class StampDutyController extends BaseApiController
         try {
             $states = $this->service->getAllStates();
             return $this->jsonSuccess(['states' => $states]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyController::getStates] ' . $e->getMessage());
             return $this->jsonError('Failed to fetch states');
         }

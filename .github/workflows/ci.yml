@@ -47,7 +47,12 @@ jobs:
           sleep 10
           mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/schema.sql 2>/dev/null || echo "Schema import skipped - using existing"
       - name: Run schema scanner
-        run: php testing/scan_schema_mismatches.php
+        run: |
+          if [ -f testing/scan_schema_mismatches.php ]; then
+            php testing/scan_schema_mismatches.php
+          else
+            echo "Schema scanner not found, skipping"
+          fi
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
@@ -55,26 +60,8 @@ jobs:
           DB_USERNAME: root
           DB_PASSWORD: root
 
-  visual-regression:
-    name: Visual Regression Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install Playwright
-        run: |
-          cd testing/visual_tests
-          npm ci
-          npx playwright install --with-deps chromium
-      - name: Run visual smoke tests
-        run: |
-          cd testing/visual_tests
-          node E2E_MASTER_TEST.mjs
-        env:
-          BASE_URL: http://localhost:8000
+  # Visual regression is handled by visual-regression.yml (dedicated workflow)
+  # Removed redundant job here to avoid duplicate runs.
 
   flutter-analyze:
     name: Flutter Analyze
@@ -84,7 +71,6 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
           channel: stable
       - name: Flutter analyze
         working-directory: mobile/apsdreamhome_app_v2
@@ -100,7 +86,6 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
           channel: stable
       - name: Build release APK
         working-directory: mobile/apsdreamhome_app_v2

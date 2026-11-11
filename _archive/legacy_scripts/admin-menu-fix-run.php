@@ -155,7 +155,7 @@ try {
     echo "âœ… COMPLETE! Admin menu structure has been fixed.\n";
     echo "â†’ Reload: <a href='/apsdreamhome/admin/dashboard' style='color:#38bdf8'>Admin Dashboard</a>\n";
 
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "â�Œ ERROR: " . $e->getMessage() . "\n";
 }
 echo "</pre>";?>

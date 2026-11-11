@@ -9,7 +9,7 @@ foreach (['backups', 'email_queue'] as $t) {
         } else {
             echo $t . ': NO tenant_id' . PHP_EOL;
         }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo $t . ': TABLE NOT FOUND' . PHP_EOL;
     }
 }?>

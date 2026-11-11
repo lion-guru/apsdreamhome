@@ -141,7 +141,7 @@ class View
         try {
             $path = $this->findView($view);
             file_put_contents(dirname(__DIR__, 3) . '/debug_view.log', "View::render view: $view -> path: $path\n", FILE_APPEND);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             file_put_contents(dirname(__DIR__, 3) . '/debug_view.log', "View::render error finding view $view: " . $e->getMessage() . "\n", FILE_APPEND);
             throw $e;
         }
@@ -152,7 +152,7 @@ class View
 
         try {
             $path = $this->findView($view);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw $e;
         }
 

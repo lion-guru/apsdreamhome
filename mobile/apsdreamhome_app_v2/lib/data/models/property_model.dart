@@ -16,6 +16,9 @@ class Property {
   final String createdAt;
   final String updatedAt;
   final String? lastSyncedAt;
+  final double? matchScore; // AI recommendation match score (0-100)
+  final String? aiRecommendation; // AI recommendation text
+  final Map<String, dynamic>? aiMetadata; // Additional AI metadata
   
   const Property({
     required this.propertyId,
@@ -23,13 +26,16 @@ class Property {
     required this.description,
     required this.type,
     required this.price,
-    this.size,
+    this.size, // in sq ft or sq meters
     required this.location,
     required this.status,
     this.imageUrl,
     required this.createdAt,
     required this.updatedAt,
     this.lastSyncedAt,
+    this.matchScore,
+    this.aiRecommendation,
+    this.aiMetadata,
   });
   
   factory Property.fromJson(Map<String, dynamic> json) => _$PropertyFromJson(json);
@@ -48,6 +54,9 @@ class Property {
     String? createdAt,
     String? updatedAt,
     String? lastSyncedAt,
+    double? matchScore,
+    String? aiRecommendation,
+    Map<String, dynamic>? aiMetadata,
   }) {
     return Property(
       propertyId: propertyId ?? this.propertyId,
@@ -62,6 +71,9 @@ class Property {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      matchScore: matchScore ?? this.matchScore,
+      aiRecommendation: aiRecommendation ?? this.aiRecommendation,
+      aiMetadata: aiMetadata ?? this.aiMetadata,
     );
   }
   
@@ -115,7 +127,7 @@ class Property {
   
   // Check if property is on hold
   bool get isOnHold => status.toLowerCase() == 'hold';
-
+  
   // Common alias
   String get id => propertyId;
 }

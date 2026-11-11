@@ -94,7 +94,7 @@ class EngagementController extends AdminController
             ];
 
             return $this->render('admin/engagement/index', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Engagement Index error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load engagement dashboard');
             return $this->redirect('admin/dashboard');
@@ -125,7 +125,7 @@ class EngagementController extends AdminController
             ];
 
             return $this->render('admin/engagement/goals', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Engagement Goals error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load engagement goals');
             return $this->redirect('admin/engagement');
@@ -147,7 +147,7 @@ class EngagementController extends AdminController
             ];
 
             return $this->render('admin/engagement/create_goal', $data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Engagement Create Goal error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load goal form');
             return $this->redirect('admin/engagement/goals');
@@ -230,7 +230,7 @@ class EngagementController extends AdminController
             }
 
             return $this->jsonError('Failed to create engagement goal', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Store Engagement Goal error: " . $e->getMessage());
             return $this->jsonError('Failed to create engagement goal', 500);
         }
@@ -288,7 +288,7 @@ class EngagementController extends AdminController
             }
 
             return $this->jsonError('Failed to update goal progress', 500);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Update Goal Progress error: " . $e->getMessage());
             return $this->jsonError('Failed to update goal progress', 500);
         }
@@ -349,7 +349,7 @@ class EngagementController extends AdminController
                 'success' => true,
                 'data' => $stats
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->loggingService->error("Get Engagement Stats error: " . $e->getMessage());
             return $this->jsonResponse([
                 'success' => false,
@@ -372,7 +372,7 @@ class EngagementController extends AdminController
             }
 
             return min(($currentValue / $targetValue) * 100, 100);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }

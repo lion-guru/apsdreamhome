@@ -176,7 +176,7 @@ class UserPropertyController extends AdminController
                 // Log SMS for now (gateway integration ready for Twilio/MSG91/etc)
                 error_log("SMS TO: {$property['phone']} - {$smsMessage}");
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Property notification error: " . $e->getMessage());
         }
 
@@ -205,7 +205,7 @@ class UserPropertyController extends AdminController
                     'related_entity_type' => 'user_property',
                     'related_entity_id' => $id,
                 ]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('UserPropertyController::action department request error: ' . $e->getMessage());
             }
         }
@@ -286,7 +286,7 @@ class UserPropertyController extends AdminController
                     }
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Bulk action notification error: " . $e->getMessage());
         }
 

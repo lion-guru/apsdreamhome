@@ -122,7 +122,7 @@ class AIPropertyValuationService
                 'recommendations' => $this->generateRecommendations($features, $predictedPrice)
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -295,7 +295,7 @@ class AIPropertyValuationService
             
             return max(min($score, 1.0), 0.0);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0.5;
         }
     }
@@ -322,7 +322,7 @@ class AIPropertyValuationService
             
             return $score;
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0.5;
         }
     }
@@ -377,7 +377,7 @@ class AIPropertyValuationService
             
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -471,7 +471,7 @@ class AIPropertyValuationService
                 'recommendation' => $this->getMarketRecommendation($latest)
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'trend' => 'unknown',
                 'forecast' => 'insufficient data'
@@ -555,7 +555,7 @@ class AIPropertyValuationService
             
             return $db->lastInsertId();
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -593,7 +593,7 @@ class AIPropertyValuationService
             
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

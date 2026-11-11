@@ -62,7 +62,7 @@ class AssignmentApprovalService
             );
 
             return ['success' => true, 'approval_id' => $approvalId, 'auto_approved' => false];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AssignmentApprovalService::requestAssignment error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -108,7 +108,7 @@ class AssignmentApprovalService
             );
 
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AssignmentApprovalService::approveRequest error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -140,7 +140,7 @@ class AssignmentApprovalService
             );
 
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AssignmentApprovalService::rejectRequest error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -168,7 +168,7 @@ class AssignmentApprovalService
                  ORDER BY laa.created_at ASC",
                 $tid > 1 ? [$tid] : []
             ) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -196,7 +196,7 @@ class AssignmentApprovalService
                  ORDER BY laa.created_at DESC LIMIT " . ($tid > 1 ? "?" : "") . " ",
                 $tid > 1 ? array_merge([$limit, $tid]) : [$limit]
             ) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -219,7 +219,7 @@ class AssignmentApprovalService
                 $tid > 1 ? [$tid] : []
             );
             return $stats ?: ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['total' => 0, 'pending' => 0, 'approved' => 0, 'rejected' => 0];
         }
     }
@@ -231,7 +231,7 @@ class AssignmentApprovalService
             $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $user = $this->db->fetch("SELECT role FROM users WHERE id = ?" . $tidSql, $tid > 1 ? [$userId, $tid] : [$userId]);
             return $user['role'] ?? 'user';
-        } catch (\Exception $e) { return 'user'; }
+        } catch (\Throwable $e) { return 'user'; }
     }
 
     private function getUserName(int $userId): string
@@ -241,6 +241,6 @@ class AssignmentApprovalService
             $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             $user = $this->db->fetch("SELECT name FROM users WHERE id = ?" . $tidSql, $tid > 1 ? [$userId, $tid] : [$userId]);
             return $user['name'] ?? 'Unknown';
-        } catch (\Exception $e) { return 'Unknown'; }
+        } catch (\Throwable $e) { return 'Unknown'; }
     }
 }

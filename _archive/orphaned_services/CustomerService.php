@@ -47,7 +47,7 @@ class CustomerService
             $this->db->commit();
 
             return ["success" => true, "user_id" => $userId];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             error_log("Customer registration failed: " . $e->getMessage());
             return ["success" => false, "message" => "Registration failed"];
@@ -266,7 +266,7 @@ class CustomerService
 
             $this->db->commit();
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollback();
             return false;
         }

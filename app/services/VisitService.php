@@ -110,7 +110,7 @@ class VisitService
             try {
                 $customerId = $data['customer_id'] ?? 0;
                 if ($customerId > 0) {
-                    $emailSvc = new \App\Services\EmailTemplateService();
+                    $emailSvc = new \App\Services\Communication\EmailService();
                     $propertyTitle = '';
                     try {
                         $pstmt = $this->pdo->prepare("SELECT name FROM user_properties WHERE id = ?");

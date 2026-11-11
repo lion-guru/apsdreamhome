@@ -75,7 +75,7 @@ class LocalizationController extends AdminController
                     'message' => 'Failed to set locale'
                 ], 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to set locale", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -97,7 +97,7 @@ class LocalizationController extends AdminController
                 'success' => true,
                 'locale' => $locale
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to get current locale", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -119,7 +119,7 @@ class LocalizationController extends AdminController
                 'success' => true,
                 'locales' => $locales
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to get supported locales", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -143,7 +143,7 @@ class LocalizationController extends AdminController
                 'translations' => $translations,
                 'locale' => $locale
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to get translations", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -188,7 +188,7 @@ class LocalizationController extends AdminController
                     'message' => 'Failed to add translation'
                 ], 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to add translation", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -233,7 +233,7 @@ class LocalizationController extends AdminController
                     'message' => 'Failed to update translation'
                 ], 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to update translation", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -277,7 +277,7 @@ class LocalizationController extends AdminController
                     'message' => 'Failed to delete translation'
                 ], 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to delete translation", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -310,7 +310,7 @@ class LocalizationController extends AdminController
 
             echo json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to export translations", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -362,7 +362,7 @@ class LocalizationController extends AdminController
                     'message' => 'Some translations failed to import'
                 ], 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to import translations", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -405,7 +405,7 @@ class LocalizationController extends AdminController
                     'message' => 'Failed to add locale'
                 ], 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to add locale", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -431,7 +431,7 @@ class LocalizationController extends AdminController
                 $stats = $this->localizationService->getStatistics();
                 $current_locale = $this->localizationService->getCurrentLocale();
                 $supported_locales = $this->localizationService->getSupportedLocales();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logger?->error("Failed to load localization management", ['error' => $e->getMessage()]);
                 $serviceAvailable = false;
             }
@@ -463,7 +463,7 @@ class LocalizationController extends AdminController
                 'supported_locales' => $this->localizationService->getSupportedLocales(),
                 'page_title' => 'Translation Editor - APS Dream Home'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger?->error("Failed to load translation editor", ['error' => $e->getMessage()]);
             return $this->view('errors.500');
         }

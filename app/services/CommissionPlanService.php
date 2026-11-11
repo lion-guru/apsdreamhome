@@ -461,7 +461,7 @@ public function addLevel(int $planId, array $data): int
             (float)($data['leadership_bonus'] ?? 0),
             (float)($data['performance_bonus'] ?? 0),
             (float)($data['monthly_target'] ?? 0),
-            ...$tidParams,
+            ...$tidParam,
         ]);
         return (int)$this->pdo->lastInsertId();
     }

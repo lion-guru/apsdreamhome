@@ -42,7 +42,7 @@ class SiteSetting extends UnifiedModel
                 $results[$item['setting_name']] = $item;
             }
             return $results;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

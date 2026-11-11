@@ -46,7 +46,7 @@ class PublicCustomer extends Model
             }
 
             return false;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("PublicCustomer save error: " . $e->getMessage());
             return false;
         }

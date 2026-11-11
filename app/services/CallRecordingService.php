@@ -22,48 +22,74 @@ class CallRecordingService
      */
     public function getAssociateRecordings(int $associateId, array $filters = []): array
     {
-        $where = ['cr.associate_id = ?'];
-        $params = [$associateId];
+        return $this->getAll(array_merge($filters, ['associate_id' => $associateId]));
+    }
 
+    public function getAll(array $filters = []): array
+    {
+        $where = ['1 = 1'];
+        $params = [];
+        if (!empty($filters['associate_id'])) {
+            $where[] = 'cr.associate_id = ?';
+            $params[] = (int)$filters['associate_id'];
+        }
         if (!empty($filters['lead_id'])) {
             $where[] = 'cr.lead_id = ?';
-            $params[] = $filters['lead_id'];
+            $params[] = (int)$filters['lead_id'];
         }
-
-        if (!empty($filters['date_from'])) {
-            $where[] = 'DATE(cr.created_at) >= ?';
-            $params[] = $filters['date_from'];
-        }
-
-        if (!empty($filters['date_to'])) {
-            $where[] = 'DATE(cr.created_at) <= ?';
-            $params[] = $filters['date_to'];
-        }
-
-        if (!empty($filters['duration_min'])) {
-            $where[] = 'cr.duration >= ?';
-            $params[] = (int)$filters['duration_min'] * 60; // convert minutes to seconds
-        }
-
         if (!empty($filters['search'])) {
-            $where[] = '(l.name LIKE ? OR l.phone LIKE ? OR cr.notes LIKE ?)';
-            $searchTerm = '%' . $filters['search'] . '%';
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
-            $params[] = $searchTerm;
+            $where[] = '(l.name LIKE ? OR l.phone LIKE ? OR cr.notes LIKE ? OR cr.caller_number LIKE ?)';
+            $s = '%' . $filters['search'] . '%';
+            $params[] = $s; $params[] = $s; $params[] = $s; $params[] = $s;
         }
-
-        $whereClause = 'WHERE ' . implode(' AND ', $where);
-
         $sql = "
-            SELECT cr.*, l.name as lead_name, l.phone as lead_phone, l.lead_number
+            SELECT cr.*, l.name AS lead_name, u.name AS agent_name,
+                   cr.caller_number AS phone, cr.call_type AS status,
+                   cr.duration AS duration_seconds, cr.notes AS customer_response
             FROM call_recordings cr
             LEFT JOIN leads l ON cr.lead_id = l.id
-            $whereClause
-            ORDER BY cr.created_at DESC
+            LEFT JOIN users u ON u.id = cr.associate_id
+            WHERE " . implode(' AND ', $where) . "
+            ORDER BY cr.created_at DESC LIMIT 200
         ";
+        return $this->db->fetchAll($sql, $params) ?: [];
+    }
 
-        return $this->db->fetchAll($sql, $params);
+    public function getStats(): array
+    {
+        $row = $this->db->fetchOne(
+            "SELECT COUNT(*) AS total,
+                    COALESCE(SUM(duration),0) AS total_seconds,
+                    COUNT(DISTINCT lead_id) AS leads,
+                    SUM(CASE WHEN duration > 0 THEN 1 ELSE 0 END) AS completed
+             FROM call_recordings"
+        ) ?: [];
+        return [
+            'total' => (int)($row['total'] ?? 0),
+            'completed' => (int)($row['completed'] ?? 0),
+            'leads' => (int)($row['leads'] ?? 0),
+            'total_seconds' => (int)($row['total_seconds'] ?? 0),
+        ];
+    }
+
+    public function getById(int $id): ?array
+    {
+        $row = $this->db->fetchOne(
+            "SELECT cr.*, l.name AS lead_name, l.phone AS lead_phone, l.lead_number, u.name AS agent_name,
+                    cr.caller_number AS phone, cr.call_type AS status,
+                    cr.duration AS duration_seconds, cr.notes AS customer_response
+             FROM call_recordings cr
+             LEFT JOIN leads l ON cr.lead_id = l.id
+             LEFT JOIN users u ON u.id = cr.associate_id
+             WHERE cr.id = ?",
+            [$id]
+        );
+        return $row ?: null;
+    }
+
+    public function getByLead(int $leadId): array
+    {
+        return $this->getAll(['lead_id' => $leadId]);
     }
 
     /**

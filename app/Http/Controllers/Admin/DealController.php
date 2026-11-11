@@ -56,7 +56,7 @@ class DealController extends AdminController
                 'won_this_month' => $this->db->fetch("SELECT COUNT(*) as count, COALESCE(SUM(deal_value),0) as total FROM deals WHERE status = 'won' AND YEAR(created_at) = YEAR(NOW()) AND MONTH(created_at) = MONTH(NOW())") ?: ['count' => 0, 'total' => 0],
                 'lost_this_month' => $this->db->fetch("SELECT COUNT(*) as count FROM deals WHERE status = 'lost' AND YEAR(created_at) = YEAR(NOW()) AND MONTH(created_at) = MONTH(NOW())") ?: ['count' => 0]
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("DealController index error: " . $e->getMessage());
         }
 
@@ -69,7 +69,7 @@ class DealController extends AdminController
                 $deal['lead_email'] ??= '';
                 $deal['property_title'] ??= 'Not specified';
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("DealController deals query: " . $e->getMessage());
         }
         $stats['pipeline_value'] = $stats['total_value'] ?? 0;
@@ -121,7 +121,7 @@ class DealController extends AdminController
                 'won_this_month' => ['count' => 0, 'total' => 0],
                 'lost_this_month' => ['count' => 0]
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("DealController kanban error: " . $e->getMessage());
         }
 
@@ -166,7 +166,7 @@ class DealController extends AdminController
             [$tidSql, $tidParams] = $this->tenantWhere();
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active'{$tidSql} ORDER BY name ASC", $tidParams) ?: [];
             $stages = [['id' => 1, 'stage_name' => 'New'], ['id' => 2, 'stage_name' => 'Contacted'], ['id' => 3, 'stage_name' => 'Qualified'], ['id' => 4, 'stage_name' => 'Negotiation'], ['id' => 5, 'stage_name' => 'Closed Won']];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("DealController create error: " . $e->getMessage());
         }
 
@@ -243,7 +243,7 @@ class DealController extends AdminController
             $_SESSION['success'] = 'Deal created successfully';
             header('Location: ' . $base . '/admin/deals');
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Failed to create deal: ' . $e->getMessage();
             header('Location: ' . $base . '/admin/deals/create');
             exit;
@@ -396,7 +396,7 @@ class DealController extends AdminController
             $_SESSION['success'] = 'Deal updated successfully';
             header('Location: ' . $base . '/admin/deals/' . $dealId);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Failed to update deal: ' . $e->getMessage();
             header('Location: ' . $base . '/admin/deals/' . $dealId);
             exit;
@@ -458,7 +458,7 @@ class DealController extends AdminController
             );
 
             echo json_encode(['success' => true, 'message' => 'Deal stage updated']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
     }
@@ -476,7 +476,7 @@ class DealController extends AdminController
         try {
             $this->db->query("DELETE FROM deals WHERE id = ? AND tenant_id = ?", [$dealId, $tid]);
             $_SESSION['success'] = 'Deal deleted successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Failed to delete deal: ' . $e->getMessage();
         }
 
@@ -529,7 +529,7 @@ class DealController extends AdminController
             ]);
 
             $_SESSION['success'] = 'Activity added successfully';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Failed to add activity: ' . $e->getMessage();
         }
 
@@ -554,7 +554,7 @@ class DealController extends AdminController
             error_log($e->getMessage());
             }
             $stmt->execute([$dealId, $type, $title, $description, $_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Log activity error: " . $e->getMessage());
         }
     }
@@ -564,7 +564,7 @@ class DealController extends AdminController
         try {
             $stage = $this->db->fetch("SELECT stage_name FROM deal_stages WHERE id = ?", [$stageId]);
             return $stage ? $stage['stage_name'] : 'Unknown';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 'Unknown';
         }
     }
@@ -582,6 +582,6 @@ class DealController extends AdminController
 
     public function updateStage($id) {
         $this->requireAdmin();
-        try { $stage = $_POST['stage'] ?? 'new'; $tid = (int)$this->tenantId(); $this->db->query("UPDATE deals SET stage_id = ? WHERE id = ? AND tenant_id = ?", [$stage, $id, $tid]); $this->setFlash('success', 'Stage updated'); } catch (\Exception $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id");
+        try { $stage = $_POST['stage'] ?? 'new'; $tid = (int)$this->tenantId(); $this->db->query("UPDATE deals SET stage_id = ? WHERE id = ? AND tenant_id = ?", [$stage, $id, $tid]); $this->setFlash('success', 'Stage updated'); } catch (\Throwable $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id");
     }
 }

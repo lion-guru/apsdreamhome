@@ -31,7 +31,7 @@ class MarketingController extends BaseController
                 'stats' => $stats,
                 'page_title' => 'Marketing Dashboard - APS Dream Home'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to load marketing dashboard", ['error' => $e->getMessage()]);
             return $this->view('errors.500');
         }
@@ -59,7 +59,7 @@ class MarketingController extends BaseController
                     'message' => 'Failed to create campaign'
                 ], 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to create campaign", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -90,7 +90,7 @@ class MarketingController extends BaseController
                     'message' => $result['message']
                 ], 400);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to execute campaign", [
                 'id' => $id,
                 'error' => $e->getMessage()
@@ -126,7 +126,7 @@ class MarketingController extends BaseController
                     'message' => 'Failed to add lead'
                 ], 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to add lead", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -154,7 +154,7 @@ class MarketingController extends BaseController
                     'message' => 'Lead not found'
                 ], 404);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get lead", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -185,7 +185,7 @@ class MarketingController extends BaseController
                     'message' => $result['message']
                 ], 400);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to update lead status", [
                 'id' => $id,
                 'error' => $e->getMessage()
@@ -220,7 +220,7 @@ class MarketingController extends BaseController
                     'message' => $result['message']
                 ], 500);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to process workflows", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -242,7 +242,7 @@ class MarketingController extends BaseController
                 'success' => true,
                 'analytics' => $stats,
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get analytics", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -314,7 +314,7 @@ class MarketingController extends BaseController
                 'leads' => $leadData,
                 'total' => count($leadData)
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get leads", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -374,7 +374,7 @@ class MarketingController extends BaseController
                 'success' => true,
                 'scoring_data' => $scoringData
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get lead scoring", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -455,7 +455,7 @@ class MarketingController extends BaseController
             }
             fclose($output);
             exit;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to export leads", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -507,7 +507,7 @@ class MarketingController extends BaseController
                 'success' => true,
                 'performance' => $performance
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get campaign performance", ['error' => $e->getMessage()]);
             return $this->response([
                 'success' => false,
@@ -525,7 +525,7 @@ class MarketingController extends BaseController
             return $this->view('marketing.settings', [
                 'page_title' => 'Marketing Settings - APS Dream Home'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to load marketing settings", ['error' => $e->getMessage()]);
             return $this->view('errors.500');
         }

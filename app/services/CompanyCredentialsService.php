@@ -19,7 +19,7 @@ class CompanyCredentialsService
         }
         try {
             $this->db = \App\Core\Database\Database::getInstance()->getConnection();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[CompanyCredentials] DB connection failed: " . $e->getMessage());
             $this->db = null;
         }

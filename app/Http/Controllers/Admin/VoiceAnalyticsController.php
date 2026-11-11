@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use \App\Traits\TenantAwareTrait;
+use App\Traits\TenantAwareTrait;
 
 class VoiceAnalyticsController extends AdminController
 {
@@ -69,7 +69,7 @@ class VoiceAnalyticsController extends AdminController
             $stats['avg_duration'] = $this->db->fetch("SELECT AVG(duration) as avg FROM ai_call_sessions WHERE $where AND duration > 0")['avg'] ?? 0;
             $stats['total_leads'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_extracted_leads WHERE $where AND auto_created_lead_id IS NOT NULL")['c'] ?? 0;
             $stats['conversion_rate'] = $stats['total_calls'] > 0 ? round(($stats['total_leads'] / $stats['total_calls']) * 100, 2) : 0;
-        } catch (\Exception $e) {}
+        } catch (\Throwable $e) {}
 
         return $stats;
     }
@@ -89,7 +89,7 @@ class VoiceAnalyticsController extends AdminController
                 GROUP BY DATE(created_at)
                 ORDER BY date ASC
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -111,7 +111,7 @@ class VoiceAnalyticsController extends AdminController
                 GROUP BY a.agent_id
                 ORDER BY total_calls DESC
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -127,7 +127,7 @@ class VoiceAnalyticsController extends AdminController
                 WHERE $where
                 GROUP BY interest_level
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -144,7 +144,7 @@ class VoiceAnalyticsController extends AdminController
                 GROUP BY call_outcome, customer_response
                 ORDER BY count DESC
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -159,7 +159,7 @@ class VoiceAnalyticsController extends AdminController
                 GROUP BY HOUR(created_at)
                 ORDER BY hour
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -180,7 +180,7 @@ class VoiceAnalyticsController extends AdminController
                 ['stage' => 'Leads Created', 'count' => $leads, 'pct' => $total > 0 ? round($leads/$total*100,1) : 0],
                 ['stage' => 'Bookings', 'count' => $booked, 'pct' => $total > 0 ? round($booked/$total*100,1) : 0],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -200,7 +200,7 @@ class VoiceAnalyticsController extends AdminController
                 WHERE $where
                 GROUP BY a.provider
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

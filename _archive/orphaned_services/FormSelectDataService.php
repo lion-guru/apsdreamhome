@@ -61,7 +61,7 @@ class FormSelectDataService
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getCustomers: ' . $e->getMessage());
             return [];
         }
@@ -103,7 +103,7 @@ class FormSelectDataService
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getAssociates: ' . $e->getMessage());
             return [];
         }
@@ -152,7 +152,7 @@ class FormSelectDataService
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getAgents: ' . $e->getMessage());
             return [];
         }
@@ -202,7 +202,7 @@ class FormSelectDataService
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getProperties: ' . $e->getMessage());
             return [];
         }
@@ -247,7 +247,7 @@ class FormSelectDataService
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getPlots: ' . $e->getMessage());
             return [];
         }
@@ -298,7 +298,7 @@ class FormSelectDataService
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getProjects: ' . $e->getMessage());
             return [];
         }
@@ -333,7 +333,7 @@ class FormSelectDataService
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getStates: ' . $e->getMessage());
             return [];
         }
@@ -383,7 +383,7 @@ class FormSelectDataService
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getDistricts: ' . $e->getMessage());
             return [];
         }
@@ -406,7 +406,7 @@ class FormSelectDataService
             }
             
             return $states;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getStatesWithDistricts: ' . $e->getMessage());
             return [];
         }
@@ -447,7 +447,7 @@ class FormSelectDataService
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getEmployees: ' . $e->getMessage());
             return [];
         }
@@ -494,7 +494,7 @@ class FormSelectDataService
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in FormSelectDataService::getUsersByRole: ' . $e->getMessage());
             return [];
         }

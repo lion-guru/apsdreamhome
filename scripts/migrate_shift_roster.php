@@ -103,7 +103,7 @@ try {
 
     echo "\n✅ Shift Roster & Overtime migration completed!\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ Migration failed: " . $e->getMessage() . "\n";
     exit(1);
 }

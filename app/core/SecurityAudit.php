@@ -132,7 +132,7 @@ class SecurityAudit
             // Check for SQL injection protection
             $this->checkSqlInjection();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->vulnerabilities[] = [
                 'type' => 'database_connection',
                 'severity' => 'high',

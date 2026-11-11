@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use \App\Traits\TenantAwareTrait;
+use App\Traits\TenantAwareTrait;
 
 class VoiceAgentAdminController extends AdminController
 {
@@ -30,7 +30,7 @@ class VoiceAgentAdminController extends AdminController
             $connected = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE DATE(created_at) = CURDATE() AND status = 'completed'")['c'] ?? 0;
             $interested = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE DATE(created_at) = CURDATE() AND (customer_response = 'interested' OR interest_level IN ('hot','warm'))")['c'] ?? 0;
             $bookings = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_extracted_leads WHERE auto_created_lead_id IS NOT NULL AND DATE(created_at) = CURDATE()")['c'] ?? 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $todayCalls = 0; $connected = 0; $interested = 0; $bookings = 0;
         }
 
@@ -46,7 +46,7 @@ class VoiceAgentAdminController extends AdminController
                 GROUP BY DATE(created_at)
                 ORDER BY date ASC
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $callTrend = [];
         }
 
@@ -56,7 +56,7 @@ class VoiceAgentAdminController extends AdminController
                 FROM ai_call_extracted_leads 
                 GROUP BY interest_level
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $leadSources = [];
         }
 
@@ -67,7 +67,7 @@ class VoiceAgentAdminController extends AdminController
                 FROM ai_calling_agents 
                 ORDER BY total_calls_made DESC
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $users = [];
         }
 
@@ -81,7 +81,7 @@ class VoiceAgentAdminController extends AdminController
                 ORDER BY s.created_at DESC
                 LIMIT 10
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $recentCalls = [];
         }
 
@@ -157,7 +157,7 @@ class VoiceAgentAdminController extends AdminController
                 ORDER BY s.created_at DESC
                 LIMIT $perPage OFFSET $offset
             ", $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $total = 0; $calls = [];
         }
 
@@ -165,7 +165,7 @@ class VoiceAgentAdminController extends AdminController
 
         try {
             $agentsList = $this->db->fetchAll("SELECT agent_id, agent_name FROM ai_calling_agents ORDER BY agent_name");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $agentsList = [];
         }
 
@@ -199,19 +199,19 @@ class VoiceAgentAdminController extends AdminController
                 ORDER BY s.scheduled_date ASC, s.scheduled_time ASC
                 LIMIT 50
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $today = 0; $pending = 0; $completed = 0; $failed = 0; $scheduleItems = [];
         }
 
         try {
             $agentsList = $this->db->fetchAll("SELECT agent_id, agent_name, status, current_calls, max_concurrent_calls FROM ai_calling_agents ORDER BY agent_name");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $agentsList = [];
         }
 
         try {
             $leadsForSchedule = $this->db->fetchAll("SELECT id, name, phone, property_interest FROM leads WHERE status IN ('new','contacted','nurture') AND id NOT IN (SELECT lead_id FROM ai_calling_schedule WHERE status = 'pending') LIMIT 50");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $leadsForSchedule = [];
         }
 
@@ -236,7 +236,7 @@ class VoiceAgentAdminController extends AdminController
                 SELECT * FROM ai_call_scripts 
                 ORDER BY is_active DESC, usage_count DESC
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $scripts = [];
         }
 
@@ -285,7 +285,7 @@ class VoiceAgentAdminController extends AdminController
                 ORDER BY e.quality_score DESC, e.created_at DESC
                 LIMIT 100
             ", $params);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $totalExtracted = 0; $verified = 0; $converted = 0; $pendingReview = 0; $leads = [];
         }
 
@@ -328,7 +328,7 @@ class VoiceAgentAdminController extends AdminController
                     ]);
                     $_SESSION['success'] = 'Schedule settings saved';
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $_SESSION['error'] = 'Error saving settings: ' . $e->getMessage();
             }
             $this->redirect('/admin/voice-users/settings');
@@ -336,19 +336,19 @@ class VoiceAgentAdminController extends AdminController
 
         try {
             $users = $this->db->fetchAll("SELECT * FROM ai_calling_agents ORDER BY agent_name");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $users = [];
         }
 
         try {
             $voiceSettings = $this->db->fetch("SELECT * FROM ai_settings WHERE service = 'voice_provider'");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $voiceSettings = ['api_key' => '', 'settings' => '{}'];
         }
 
         try {
             $scheduleSettings = $this->db->fetch("SELECT * FROM ai_settings WHERE service = 'schedule_settings'");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $scheduleSettings = ['settings' => '{}'];
         }
 
@@ -376,7 +376,7 @@ class VoiceAgentAdminController extends AdminController
 
             $totalLeads = $newLeads + $contacted + $qualified + $proposal + $negotiation + $nurture;
             $conversionRate = $totalLeads > 0 ? round(($closedWon / $totalLeads) * 100, 1) : 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $newLeads = 0; $contacted = 0; $qualified = 0; $negotiation = 0;
             $closedWon = 0; $closedLost = 0; $nurture = 0; $proposal = 0;
             $totalLeads = 0; $conversionRate = 0;
@@ -392,13 +392,13 @@ class VoiceAgentAdminController extends AdminController
                          lead_score DESC
                 LIMIT 100
             ");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $leadDetails = [];
         }
 
         try {
             $settings = $this->db->fetchAll("SELECT * FROM ai_settings WHERE service IN ('voice_provider','schedule_settings')");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $settings = [];
         }
 
@@ -468,7 +468,7 @@ class VoiceAgentAdminController extends AdminController
             ]);
 
             echo json_encode(['success' => true, 'message' => 'Lead converted successfully', 'lead_id' => $leadId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         exit;
@@ -491,7 +491,7 @@ class VoiceAgentAdminController extends AdminController
         try {
             $this->db->execute("UPDATE ai_calling_schedule SET scheduled_date = ?, scheduled_time = ?, status = 'pending', attempt_count = 0 WHERE id = ? AND tenant_id = ?", [$newDate, $newTime, $scheduleId, $tid]);
             $_SESSION['success'] = 'Call rescheduled';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error rescheduling: ' . $e->getMessage();
         }
 
@@ -512,7 +512,7 @@ class VoiceAgentAdminController extends AdminController
         try {
             $this->db->execute("UPDATE ai_calling_schedule SET status = 'cancelled' WHERE id = ? AND tenant_id = ?", [$scheduleId, $tid]);
             $_SESSION['success'] = 'Call cancelled';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error cancelling: ' . $e->getMessage();
         }
 
@@ -553,7 +553,7 @@ class VoiceAgentAdminController extends AdminController
                     $tid,
                 ]);
                 $success++;
-            } catch (\Exception $e) { error_log('VoiceAgentAdminController bulkSchedule: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('VoiceAgentAdminController bulkSchedule: ' . $e->getMessage()); }
         }
 
         $_SESSION['success'] = "$success leads scheduled for calling";
@@ -567,7 +567,7 @@ class VoiceAgentAdminController extends AdminController
         try {
             $users = $this->db->fetchAll("SELECT agent_id, current_calls, max_concurrent_calls, daily_call_limit, status FROM ai_calling_agents WHERE status = 'active'");
             $pendingLeads = $this->db->fetchAll("SELECT l.id, l.name, l.phone, l.property_interest FROM leads l LEFT JOIN ai_calling_schedule s ON s.lead_id = l.id AND s.status = 'pending' WHERE l.status IN ('new','contacted','nurture') AND s.id IS NULL LIMIT 50");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $users = []; $pendingLeads = [];
         }
 
@@ -594,7 +594,7 @@ class VoiceAgentAdminController extends AdminController
                     $tid,
                 ]);
                 $assigned++;
-            } catch (\Exception $e) { error_log('VoiceAgentAdminController autoAssign: ' . $e->getMessage()); }
+            } catch (\Throwable $e) { error_log('VoiceAgentAdminController autoAssign: ' . $e->getMessage()); }
         }
 
         $_SESSION['success'] = "$assigned leads auto-assigned to users";
@@ -630,7 +630,7 @@ class VoiceAgentAdminController extends AdminController
                     'date' => date('d M Y h:i A', strtotime($a['created_at'] ?? 'now')),
                 ];
             }
-        } catch (\Exception $e) { error_log('VoiceAgentAdminController ajaxLeadTimeline activities: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('VoiceAgentAdminController ajaxLeadTimeline activities: ' . $e->getMessage()); }
 
         try {
             $calls = $this->db->fetchAll("
@@ -655,7 +655,7 @@ class VoiceAgentAdminController extends AdminController
                     'date' => date('d M Y h:i A', strtotime($c['created_at'] ?? 'now')),
                 ];
             }
-        } catch (\Exception $e) { error_log('VoiceAgentAdminController ajaxLeadTimeline calls: ' . $e->getMessage()); }
+        } catch (\Throwable $e) { error_log('VoiceAgentAdminController ajaxLeadTimeline calls: ' . $e->getMessage()); }
 
         if (empty($timeline)) {
             $timeline[] = [
@@ -734,7 +734,7 @@ class VoiceAgentAdminController extends AdminController
         }
 
         try {
-            $voice = new \App\Services\Voice\TwilioVoiceService();
+            $voice = new \App\Services\AI\VoiceService();
             $result = $voice->transferCall($callSid, $to);
             header('Content-Type: application/json');
             echo json_encode($result);
@@ -761,7 +761,7 @@ class VoiceAgentAdminController extends AdminController
         }
 
         try {
-            $voice = new \App\Services\Voice\TwilioVoiceService();
+            $voice = new \App\Services\AI\VoiceService();
             $result = $voice->hangupCall($callSid);
             header('Content-Type: application/json');
             echo json_encode($result);

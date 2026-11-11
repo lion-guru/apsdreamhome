@@ -62,7 +62,7 @@ class ReviewController extends BaseApiController
                     'total_pages' => \ceil(($summary['total_reviews'] ?? 0) / $limit)
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -129,7 +129,7 @@ class ReviewController extends BaseApiController
 
             return $this->jsonError('Failed to submit review', 500);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }

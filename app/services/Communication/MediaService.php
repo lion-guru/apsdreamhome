@@ -54,7 +54,7 @@ class MediaService
 
             return $media;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get media for templates', ['error' => $e->getMessage()]);
             return [];
         }
@@ -84,7 +84,7 @@ class MediaService
 
             return $images;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get header images', ['error' => $e->getMessage()]);
             return [];
         }
@@ -114,7 +114,7 @@ class MediaService
 
             return $photos;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get team photos', ['error' => $e->getMessage()]);
             return [];
         }
@@ -144,7 +144,7 @@ class MediaService
 
             return $images;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get property images', ['error' => $e->getMessage()]);
             return [];
         }
@@ -174,7 +174,7 @@ class MediaService
 
             return $images;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get project images', ['error' => $e->getMessage()]);
             return [];
         }
@@ -209,7 +209,7 @@ class MediaService
 
             return $documents;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get documents', ['error' => $e->getMessage()]);
             return [];
         }
@@ -239,7 +239,7 @@ class MediaService
 
             return $images;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get carousel images', ['error' => $e->getMessage()]);
             return [];
         }
@@ -292,7 +292,7 @@ class MediaService
 
             return $media;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get all media', ['error' => $e->getMessage()]);
             return [];
         }
@@ -343,7 +343,7 @@ class MediaService
             $this->logger->info('Media file uploaded successfully', ['filename' => $filename]);
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to upload media', ['error' => $e->getMessage()]);
             return false;
         }
@@ -367,7 +367,7 @@ class MediaService
 
             return null;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get media URL', ['error' => $e->getMessage()]);
             return null;
         }

@@ -49,7 +49,7 @@ class AdvancedAnalytics {
         foreach ($tables as $sql) {
             try {
                 $this->db->execute($sql);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Analytics table creation error: " . $e->getMessage());
             }
         }

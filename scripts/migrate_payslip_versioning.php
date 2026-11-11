@@ -32,13 +32,13 @@ try {
             ADD CONSTRAINT chk_paid_immutable 
             CHECK (status != 'paid' OR (version = 1 AND previous_version_id IS NULL))");
         echo "✓ Added CHECK constraint for paid slip immutability\n";
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo "! CHECK constraint skipped (MySQL version): " . $e->getMessage() . "\n";
     }
     
     echo "\n✅ Migration completed successfully!\n";
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ Migration failed: " . $e->getMessage() . "\n";
     exit(1);
 }

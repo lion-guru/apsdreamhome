@@ -270,7 +270,7 @@ class WhatsAppService
                 VALUES (?, 'whatsapp', ?, ?, ?, ?, ?, ?, NOW(), ?)
             ");
             $stmt->execute([$waId ?: uniqid('wa_'), $inbound, $outbound, $intent, $phone, $direction, $waId, $this->tenantId()]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("WA log error: " . $e->getMessage());
         }
     }

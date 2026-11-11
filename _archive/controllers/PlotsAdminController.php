@@ -270,7 +270,7 @@ class PlotsAdminController extends AdminController
         try {
             \App\Models\Plot::updateStatus($id, $new_status, $_SESSION['user_id'] ?? 0, $reason);
             echo json_encode(['success' => true, 'message' => 'Status updated successfully']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
         return;

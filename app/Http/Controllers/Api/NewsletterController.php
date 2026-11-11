@@ -44,7 +44,7 @@ class NewsletterController extends BaseApiController
                 "success" => true,
                 "message" => "Thank you for subscribing!"
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 "success" => false,
                 "message" => "Subscription failed. Please try again."

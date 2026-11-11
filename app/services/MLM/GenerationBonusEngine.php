@@ -250,14 +250,14 @@ class GenerationBonusEngine
         if (!$this->db) return [];
         try {
             $r = $this->db->query("
-                SELECT DISTINCT u.id AS user_id, a.level AS rank
+                SELECT DISTINCT u.id AS user_id, ap.level AS rank
                 FROM users u
-                INNER JOIN associates a ON a.user_id = u.id
-                INNER JOIN mlm_network_tree nt ON nt.associate_id = a.id
-                WHERE a.status = 'active'
-                  AND a.level != 'associate'
+                INNER JOIN associate_profiles ap ON ap.user_id = u.id
+                INNER JOIN mlm_network_tree nt ON nt.associate_id = ap.legacy_id OR nt.associate_id = ap.id OR nt.associate_id = ap.user_id
+                WHERE ap.status = 'active'
+                  AND ap.level != 'associate'
                 {$this->getTenantWhere()}u
-                ORDER BY FIELD(a.level, 'site_manager','president','vice_president','sr_bdm','bdm','senior_associate')
+                ORDER BY FIELD(ap.level, 'site_manager','president','vice_president','sr_bdm','bdm','senior_associate')
             ");
             return $r->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (\Throwable $e) {
@@ -293,11 +293,11 @@ class GenerationBonusEngine
                 // Find children where parent_id = any current parent's user_id
                 $placeholders = implode(',', array_fill(0, count($currentParentUserIds), '?'));
                 $stmt = $this->db->prepare("
-                    SELECT nt.associate_id, a.level, a.user_id
+                    SELECT nt.associate_id, ap.level, ap.user_id
                     FROM mlm_network_tree nt
-                    INNER JOIN associates a ON a.id = nt.associate_id
+                    INNER JOIN associate_profiles ap ON ap.legacy_id = nt.associate_id OR ap.user_id = nt.associate_id OR ap.id = nt.associate_id
                     WHERE nt.parent_id IN ({$placeholders})
-                      AND a.status = 'active'
+                      AND ap.status = 'active'
                 ");
                 $stmt->execute($currentParentUserIds);
                 $children = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -345,7 +345,7 @@ class GenerationBonusEngine
     {
         if (!$this->db) return null;
         try {
-            $stmt = $this->db->prepare("SELECT id FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1");
+            $stmt = $this->db->prepare("SELECT ap.id FROM associate_profiles ap JOIN users u ON u.id = ap.user_id WHERE ap.user_id = ? AND u.status = 'active' LIMIT 1");
             $stmt->execute([$userId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ? (int)$row['id'] : null;

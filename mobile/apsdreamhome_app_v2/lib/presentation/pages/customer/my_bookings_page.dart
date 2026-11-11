@@ -5,21 +5,21 @@ import 'package:intl/intl.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/providers/auth_provider.dart';
 import '../../widgets/app_widgets.dart';
-import 'package:dio/dio.dart';
+import '../../../core/services/api_service.dart';
 
 /// Provider to fetch customer bookings from API
 final myBookingsProvider = FutureProvider<List<dynamic>>((ref) async {
-  final dio = Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
-  final token = await ref.read(authProvider.notifier).getToken();
-
   try {
-    final response = await dio.get(
-      '${AppConstants.apiVersion}/customer/bookings',
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
-    );
-    return response.data['data'] as List<dynamic>? ?? [];
+    final api = ApiService();
+    final response = await api.get('/customer/bookings');
+    if (response['success'] == true && response['data'] != null) {
+      return (response['data'] as List).cast<dynamic>();
+    }
+    if (response['data'] is List) {
+      return (response['data'] as List).cast<dynamic>();
+    }
+    return [];
   } catch (e) {
     return [];
   }

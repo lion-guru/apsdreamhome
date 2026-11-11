@@ -25,6 +25,23 @@ namespace App\Http\Controllers\Admin;
 class ColonyController extends AdminController
 {
     /**
+     * Invalidate dashboard + list caches after colony changes.
+     * Used so new colonies auto-appear on public lists and user dashboards.
+     */
+    private function bustColonyCaches(): void
+    {
+        try {
+            $cache = new \App\Services\Cache\CacheService();
+            // User dashboards (all roles) — full data refresh on next load
+            $cache->delete('colonies_list');
+            // Legacy colonies_list is string-cache (different service) — also bust it
+            try { (new \App\Services\CacheService())->delete('colonies_list'); } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+            error_log('ColonyController::bustColonyCaches: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Dashboard — all colonies with district/state names.
      * Filters (GET): search, state_id, district_id.
      */
@@ -297,6 +314,8 @@ class ColonyController extends AdminController
                 $this->tenantId(),
             ]);
 
+            $this->bustColonyCaches();
+
             $_SESSION['success'] = 'Colony created successfully';
             redirect('/admin/colonies');
             return;
@@ -418,6 +437,8 @@ class ColonyController extends AdminController
                 $this->tenantId(),
             ]);
 
+            $this->bustColonyCaches();
+
             $_SESSION['success'] = 'Colony updated successfully';
             redirect('/admin/colonies/' . $id);
             return;
@@ -454,6 +475,7 @@ class ColonyController extends AdminController
             $stmt = $this->db->prepare("DELETE FROM colonies WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$id, $this->tenantId()]);
             $this->loggingService->logUserActivity($_SESSION['user_id'] ?? 0, 'colony_deleted', ['colony_id' => $id]);
+            $this->bustColonyCaches();
             $_SESSION['success'] = 'Colony deleted successfully';
         } catch (\Throwable $e) {
             error_log("ColonyController@destroy: " . $e->getMessage());

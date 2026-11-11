@@ -20,7 +20,7 @@ class SalaryService
         try {
             $tid = TenantContext::getId();
             return $tid > 0 ? $tid : 1;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return 1;
         }
     }
@@ -41,7 +41,7 @@ class SalaryService
             $this->createPayrollTables();
             $this->insertSampleData();
             $this->logger->info('Payroll system initialized');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to initialize payroll system', ['error' => $e->getMessage()]);
             throw new \RuntimeException('Payroll system initialization failed: ' . $e->getMessage());
         }
@@ -68,7 +68,7 @@ class SalaryService
             try {
                 $this->db->execute($sql);
                 $this->logger->info("Payroll table created or verified", ['table' => $tableName]);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logger->error("Failed to create payroll table", [
                     'table' => $tableName,
                     'error' => $e->getMessage()
@@ -99,7 +99,7 @@ class SalaryService
                     "INSERT IGNORE INTO payroll_settings (setting_key, setting_value, description) VALUES (?, ?, ?)",
                     [$key, $value, "Default setting for {$key}"]
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logger->warning("Failed to insert default setting", [
                     'key' => $key,
                     'error' => $e->getMessage()
@@ -141,7 +141,7 @@ class SalaryService
                     $this->createSalaryStructure($sampleStructure);
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->warning("Failed to insert sample data", ['error' => $e->getMessage()]);
         }
     }
@@ -189,7 +189,7 @@ class SalaryService
             }
 
             return 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to create salary structure", [
                 'employee_id' => $data['employee_id'] ?? null,
                 'error' => $e->getMessage()
@@ -209,7 +209,7 @@ class SalaryService
                  WHERE employee_id = ? AND effective_from < ? AND is_active = TRUE",
                 [$employeeId, $effectiveFrom]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to deactivate previous salary structures", [
                 'employee_id' => $employeeId,
                 'error' => $e->getMessage()
@@ -249,7 +249,7 @@ class SalaryService
             }
 
             return ['success' => false, 'message' => 'Failed to process salary'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to process monthly salary", [
                 'employee_id' => $employeeId,
                 'month' => $month,
@@ -272,7 +272,7 @@ class SalaryService
                  ORDER BY effective_from DESC LIMIT 1",
                 [$employeeId]
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get current salary structure", [
                 'employee_id' => $employeeId,
                 'error' => $e->getMessage()
@@ -293,7 +293,7 @@ class SalaryService
                 [$employeeId, $month, $year]
             );
             return $result['count'] > 0;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to check salary processed status", [
                 'employee_id' => $employeeId,
                 'month' => $month,
@@ -383,7 +383,7 @@ class SalaryService
             );
 
             return (int)$this->db->lastInsertId();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to save monthly payment", ['error' => $e->getMessage()]);
             return 0;
         }
@@ -418,7 +418,7 @@ class SalaryService
                     'overtime_amount' => (float)$payment['overtime_amount']
                 ];
             }, $payments);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get salary history", [
                 'employee_id' => $employeeId,
                 'error' => $e->getMessage()
@@ -457,7 +457,7 @@ class SalaryService
             $stats['average_salary'] = (float)($result['avg_salary'] ?? 0);
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get payroll statistics", ['error' => $e->getMessage()]);
             return [];
         }
@@ -497,7 +497,7 @@ class SalaryService
 
             $this->logger->info("Salary structure updated", ['structure_id' => $structureId]);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to update salary structure", [
                 'structure_id' => $structureId,
                 'error' => $e->getMessage()
@@ -520,7 +520,7 @@ class SalaryService
             }
             
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get payroll settings", ['error' => $e->getMessage()]);
             return [];
         }
@@ -540,7 +540,7 @@ class SalaryService
 
             $this->logger->info("Payroll setting updated", ['key' => $key]);
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to update payroll setting", [
                 'key' => $key,
                 'error' => $e->getMessage()

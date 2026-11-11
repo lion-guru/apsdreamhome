@@ -20,7 +20,7 @@ class AssociateExtensionController extends AdminController
             ");
             $stmt->execute($tp);
             $users = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $users = [];
         }
         return $this->render('admin/associate-extensions/index', [
@@ -42,7 +42,7 @@ class AssociateExtensionController extends AdminController
             ");
             $stmt->execute(array_merge([$id], $tp));
             $associate = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $associate = null;
         }
         if (!$associate) {
@@ -66,7 +66,7 @@ class AssociateExtensionController extends AdminController
             $stmt = $this->db->prepare("UPDATE users SET total_points = ? WHERE id = ?" . $tw);
             $stmt->execute([$points, $id, ...$tp]);
             $this->setFlash('success', 'Associate extension updated successfully');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to update: ' . $e->getMessage());
         }
         $this->redirect('/admin/associate-extensions/show/' . $id);

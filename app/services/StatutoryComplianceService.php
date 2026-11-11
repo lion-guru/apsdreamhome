@@ -28,13 +28,13 @@ class StatutoryComplianceService
      */
     public function generateForm16(int $employeeId, int $financialYear): array
     {
-        // Get employee details
+        // Get employee details (profile-based; id-space compatible via OR)
         $emp = $this->fetchOne("
-            SELECT e.*, u.name, u.email, u.pan_number, u.address
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id
-            WHERE e.id = ?{$this->tenantSql()}
-        ", array_merge([$employeeId], $this->tVal()));
+            SELECT ep.legacy_id as id, ep.*, u.name, u.email, u.pan_number, u.address
+            FROM employee_profiles ep
+            LEFT JOIN users u ON u.id = ep.user_id
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.tenant_id = ?
+        ", [$employeeId, $employeeId, $employeeId, $this->tenantId()]);
         
         if (!$emp) throw new \Exception('Employee not found');
 
@@ -47,9 +47,9 @@ class StatutoryComplianceService
                    ss.pf_employee, ss.esi_employee, ss.tds, ss.professional_tax
             FROM salary_payments sp
             LEFT JOIN salary_structures ss ON sp.salary_structure_id = ss.id{$this->tenantSqlForAlias('ss')}
-            WHERE sp.employee_id = ? AND sp.payment_date BETWEEN ? AND ? AND sp.payment_status = 'paid'
+            WHERE (sp.employee_id = ? OR sp.user_id = ?) AND sp.payment_date BETWEEN ? AND ? AND sp.payment_status = 'paid'
             ORDER BY sp.payment_date
-        ", array_merge([$employeeId, $fyStart, $fyEnd], $this->tVal()));
+        ", array_merge([$employeeId, $employeeId, $fyStart, $fyEnd], $this->tVal()));
 
         // Calculate totals
         $totals = [
@@ -148,12 +148,12 @@ class StatutoryComplianceService
         $fyEnd = date('Y-m-t', strtotime($fyStart));
         
         $employees = $this->fetchAll("
-            SELECT e.*, u.name, u.pan_number, u.aadhaar_number, u.date_of_birth,
+            SELECT ep.legacy_id as id, ep.*, u.name, u.pan_number, u.aadhaar_number, u.date_of_birth,
                    ss.basic_salary, ss.pf_employee, ss.pf_employer
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id{$this->tJoin('u')}
-            LEFT JOIN salary_structures ss ON ss.employee_id = e.id AND ss.status='active'{$this->tenantSqlForAlias('ss')}
-            WHERE e.status = 'active' AND e.tenant_id = ?
+            FROM employee_profiles ep
+            LEFT JOIN users u ON u.id = ep.user_id{$this->tJoin('u')}
+            LEFT JOIN salary_structures ss ON (ss.employee_id = ep.legacy_id OR ss.employee_id = ep.user_id OR ss.employee_id = ep.id) AND ss.status='active'{$this->tenantSqlForAlias('ss')}
+            WHERE ep.status = 'active' AND ep.tenant_id = ?
         ", [$this->tenantId()]);
 
         $lines = [];
@@ -224,13 +224,13 @@ class StatutoryComplianceService
         
         // ESI applicable only if gross <= 21000
         $employees = $this->fetchAll("
-            SELECT e.*, u.name, u.esi_number,
+            SELECT ep.legacy_id as id, ep.*, u.name, u.esi_number,
                    sp.gross_amount, sp.esi_employee, sp.esi_employer
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id{$this->tJoin('u')}
-            LEFT JOIN salary_payments sp ON sp.employee_id = e.id 
+            FROM employee_profiles ep
+            LEFT JOIN users u ON u.id = ep.user_id{$this->tJoin('u')}
+            LEFT JOIN salary_payments sp ON (sp.employee_id = ep.legacy_id OR sp.user_id = ep.user_id OR sp.employee_id = ep.user_id OR sp.employee_id = ep.id)
                 AND sp.payment_month = ? AND sp.payment_year = ? AND sp.payment_status = 'paid'
-            WHERE e.status = 'active' AND e.tenant_id = ?
+            WHERE ep.status = 'active' AND ep.tenant_id = ?
         ", [$month, $year, $this->tenantId()]);
 
         $lines = [];
@@ -274,13 +274,13 @@ class StatutoryComplianceService
         $fyEnd = date('Y-m-t', strtotime($fyStart));
         
         $employees = $this->fetchAll("
-            SELECT e.*, u.name, u.pan_number,
+            SELECT ep.legacy_id as id, ep.*, u.name, u.pan_number,
                    sp.professional_tax, sp.gross_amount
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id{$this->tJoin('u')}
-            LEFT JOIN salary_payments sp ON sp.employee_id = e.id 
+            FROM employee_profiles ep
+            LEFT JOIN users u ON u.id = ep.user_id{$this->tJoin('u')}
+            LEFT JOIN salary_payments sp ON (sp.employee_id = ep.legacy_id OR sp.user_id = ep.user_id OR sp.employee_id = ep.user_id OR sp.employee_id = ep.id)
                 AND sp.payment_month = ? AND sp.payment_year = ? AND sp.payment_status = 'paid'
-            WHERE e.status = 'active' AND e.tenant_id = ?
+            WHERE ep.status = 'active' AND ep.tenant_id = ?
         ", [$month, $year, $this->tenantId()]);
 
         $totalPt = 0;

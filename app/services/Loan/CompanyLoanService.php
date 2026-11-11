@@ -87,7 +87,7 @@ class CompanyLoanService
             }
 
             return ['success' => true, 'loan_id' => $loanId, 'loan_number' => $loanNumber];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CompanyLoanService::createLoan error: ' . $e->getMessage());
             return ['success' => false, 'error' => 'Failed to create loan: ' . $e->getMessage()];
         }
@@ -111,7 +111,7 @@ class CompanyLoanService
             $stmt->execute($params);
             $loan = $stmt->fetch(PDO::FETCH_ASSOC);
             return $loan ?: null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CompanyLoanService::getLoanById error: ' . $e->getMessage());
             return null;
         }
@@ -161,7 +161,7 @@ class CompanyLoanService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CompanyLoanService::listLoans error: ' . $e->getMessage());
             return [];
         }
@@ -229,7 +229,7 @@ class CompanyLoanService
             $stats['total_penalty'] = (float)$stmt11->fetchColumn();
 
             return $stats;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CompanyLoanService::getDashboardStats error: ' . $e->getMessage());
             return [];
         }
@@ -340,7 +340,7 @@ class CompanyLoanService
             }
 
             return ['success' => true, 'count' => count($installments)];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CompanyLoanService::generateInstallmentSchedule error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -357,7 +357,7 @@ class CompanyLoanService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CompanyLoanService::getInstallments error: ' . $e->getMessage());
             return [];
         }
@@ -410,7 +410,7 @@ class CompanyLoanService
             $this->logActivity($installment['loan_id'], 'payment_received', 'Payment of ₹' . number_format($paidAmount) . ' received for installment #' . $installment['installment_no']);
 
             return ['success' => true, 'status' => $status];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             error_log('CompanyLoanService::recordPayment error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
@@ -433,7 +433,7 @@ class CompanyLoanService
             $this->logActivity($loanId, 'loan_disbursed', 'Loan disbursed of ₹' . number_format($loan['loan_amount']));
 
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CompanyLoanService::disburseLoan error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -449,7 +449,7 @@ class CompanyLoanService
             $this->db->prepare($sql)->execute($params);
             $this->logActivity($loanId, 'loan_defaulted', 'Loan marked as defaulted');
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -475,7 +475,7 @@ class CompanyLoanService
             $this->logActivity($loanId, 'loan_foreclosed', 'Loan foreclosed with settlement of ₹' . number_format($settlementAmount));
 
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -538,7 +538,7 @@ class CompanyLoanService
             }
 
             return ['success' => true, 'penalties_applied' => $count];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CompanyLoanService::applyDailyPenalties error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -594,7 +594,7 @@ class CompanyLoanService
                 'incentive_applied' => $incentive ? $incentive['name'] : null,
                 'settlement_amount' => max($settlementAmount, 0),
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CompanyLoanService::calculateEarlySettlement error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -610,7 +610,7 @@ class CompanyLoanService
             $sql .= " ORDER BY name ASC";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -621,7 +621,7 @@ class CompanyLoanService
             $sql = "SELECT * FROM loan_early_incentives";
             if ($activeOnly) $sql .= " WHERE is_active = 1";
             return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -637,7 +637,7 @@ class CompanyLoanService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -660,7 +660,7 @@ class CompanyLoanService
                 $this->tenantId
             ]);
             return ['success' => true, 'id' => (int)$this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -682,7 +682,7 @@ class CompanyLoanService
                 $data['valid_until'] ?? null
             ]);
             return ['success' => true, 'id' => (int)$this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -702,7 +702,7 @@ class CompanyLoanService
             $params[] = $id;
             $this->db->prepare("UPDATE loan_offers SET " . implode(', ', $fields) . " WHERE id = ?")->execute($params);
             return ['success' => true];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -724,7 +724,7 @@ class CompanyLoanService
                 (float)($data['max_loan_amount'] ?? 0)
             ]);
             return ['success' => true, 'id' => (int)$this->db->lastInsertId()];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -735,7 +735,7 @@ class CompanyLoanService
             $stmt = $this->db->prepare("SELECT * FROM loan_documents WHERE loan_id = ? AND tenant_id = ? ORDER BY created_at DESC");
             $stmt->execute([$loanId, $this->tenantId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -746,7 +746,7 @@ class CompanyLoanService
             $stmt = $this->db->prepare("SELECT * FROM loan_activity_log WHERE loan_id = ? AND tenant_id = ? ORDER BY created_at DESC");
             $stmt->execute([$loanId, $this->tenantId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -756,7 +756,7 @@ class CompanyLoanService
         try {
             $stmt = $this->db->prepare("INSERT INTO loan_activity_log (loan_id, action, description, old_value, new_value, performed_by, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$loanId, $action, $description, $oldValue, $newValue, $userId ?? ($_SESSION['admin_id'] ?? null), $this->tenantId]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('CompanyLoanService::logActivity error: ' . $e->getMessage());
         }
     }
@@ -767,7 +767,7 @@ class CompanyLoanService
             $stmt = $this->db->prepare("SELECT id, name, phone, email FROM users WHERE role IN ('customer','associate','agent') AND tenant_id = ? ORDER BY name ASC");
             $stmt->execute([$this->tenantId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -778,7 +778,7 @@ class CompanyLoanService
             $stmt = $this->db->prepare("SELECT p.id, p.plot_number, p.total_price, c.name as colony_name FROM plots p LEFT JOIN colonies c ON p.colony_id = c.id WHERE p.status IN ('available','booked') AND p.tenant_id = ? ORDER BY c.name, p.plot_number");
             $stmt->execute([$this->tenantId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

@@ -1,0 +1,69 @@
+framework:
+    messenger:
+        # Default transport (in-memory for development, Redis for production)
+        default_bus: messenger.bus.default
+        
+        transports:
+            # Async transports (processed by workers)
+            notifications: '%env(MESSENGER_TRANSPORT_DSN)%/notifications'
+            emails: '%env(MESSENGER_TRANSPORT_DSN)%/emails'
+            sms: '%env(MESSENGER_TRANSPORT_DSN)%/sms'
+            pdf: '%env(MESSENGER_TRANSPORT_DSN)%/pdf'
+            reports: '%env(MESSENGER_TRANSPORT_DSN)%/reports'
+            
+            # Sync transport (for immediate processing)
+            sync: 'sync://'
+            
+            # Failed messages transport
+            failed: '%env(MESSENGER_TRANSPORT_DSN)%/failed'
+        
+        routing:
+            # Route messages to transports
+            'App\Messages\SendNotificationMessage': notifications
+            'App\Messages\SendEmailMessage': emails
+            'App\Messages\SendSmsMessage': sms
+            'App\Messages\GeneratePdfMessage': pdf
+            'App\Messages\GenerateReportMessage': reports
+            
+            # Failed messages routing
+            'App\Messages\*': failed
+        
+        # Retry policy
+        retry_strategy:
+            max_retries: 3
+            multiplier: 2
+            max_delay: 300
+            service: null
+        
+        # Failure transport
+        failure_transport: failed
+        
+        # Serialization
+        serializer:
+            default_context: []
+            enable_php_object_serialization: false
+        
+        # Default bus
+        buses:
+            messenger.bus.default:
+                middleware:
+                    - 'Symfony\Component\Messenger\Middleware\AddBusNameStampMiddleware'
+                    - 'Symfony\Component\Messenger\Middleware\DispatchAfterCurrentBusMiddleware'
+                    - 'Symfony\Component\Messenger\Middleware\FailedMessageProcessingMiddleware'
+                    - 'App\Messenger\LoggingMiddleware'
+                    - 'App\Messenger\TenantContextMiddleware'
+        
+        # Worker options
+        worker:
+            max_messages: 100
+            time_limit: 3600
+            memory_limit: 256M
+            sleep_on_idle: true
+            sleep_delay: 1000
+
+parameters:
+    # Messenger transport DSN (Redis for production, Doctrine for dev)
+    MESSENGER_TRANSPORT_DSN: 'redis://%env(REDIS_HOST)%:%env(REDIS_PORT)%/%env(REDIS_DB)%'
+    REDIS_HOST: '127.0.0.1'
+    REDIS_PORT: 6379
+    REDIS_DB: 1

@@ -332,7 +332,7 @@ class AIController extends AdminController
     /**
      * Check if user is admin
      */
-    protected function isAdmin()
+    protected function isAdmin(): bool
     {
         $admin_roles = ['superadmin', 'director', 'ithead'];
         return in_array($this->getUserRole(), $admin_roles);
@@ -474,7 +474,7 @@ class AIController extends AdminController
                 'valuation' => $valuation,
                 'valuation_id' => $valuationId
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->jsonResponse(['success' => false, 'message' => $e->getMessage()]);
         }
     }

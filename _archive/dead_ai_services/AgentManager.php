@@ -62,7 +62,7 @@ class AgentManager {
 
         try {
             return $agent->process($input, $context);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $agent->handleError($e->getMessage());
         }
     }

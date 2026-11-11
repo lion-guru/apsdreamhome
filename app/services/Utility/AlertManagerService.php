@@ -95,7 +95,7 @@ class AlertManagerService
                 'alert_id' => $alertId
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to create alert", [
                 'type' => $type,
                 'error' => $e->getMessage()
@@ -120,7 +120,7 @@ class AlertManagerService
             // Check database connection
             try {
                 $this->db->fetchOne("SELECT 1");
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $healthIssues[] = [
                     'type' => self::TYPE_SYSTEM,
                     'message' => 'Database connection failed',
@@ -184,7 +184,7 @@ class AlertManagerService
                 'health_issues' => $healthIssues
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("System health check failed", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -227,7 +227,7 @@ class AlertManagerService
                     
                     $processed++;
                     
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->updateAlertQueueStatus($alert['id'], self::STATUS_FAILED, $e->getMessage());
                     $failed++;
                     $errors[] = "Alert ID {$alert['id']}: {$e->getMessage()}";
@@ -244,7 +244,7 @@ class AlertManagerService
                 'errors' => $errors
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to send alert notifications", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -334,7 +334,7 @@ class AlertManagerService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get alert stats", ['error' => $e->getMessage()]);
             return [];
         }
@@ -362,7 +362,7 @@ class AlertManagerService
                 'message' => 'Alert acknowledged successfully'
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to acknowledge alert", [
                 'alert_id' => $alertId,
                 'error' => $e->getMessage()
@@ -417,7 +417,7 @@ class AlertManagerService
                     
                     $retried++;
                     
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $failureCount++;
                     $retried++;
                 }
@@ -431,7 +431,7 @@ class AlertManagerService
                 'failure_count' => $failureCount
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to retry alerts", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -465,7 +465,7 @@ class AlertManagerService
                 'deleted_queue_items' => $deletedQueueRows
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to clean old alerts", ['error' => $e->getMessage()]);
             return [
                 'success' => false,
@@ -593,7 +593,7 @@ class AlertManagerService
                 'message' => 'Alert sent successfully'
             ];
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Failed to send alert: ' . $e->getMessage()

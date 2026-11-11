@@ -222,7 +222,7 @@ foreach ($templates as $t) {
             ':vars' => $t['variables'],
         ]);
         echo "✅ Added: {$t['template_code']} ({$t['channel']}) - {$t['template_name']}\n";
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo "❌ Error adding {$t['template_code']}: " . $e->getMessage() . "\n";
     }
 }

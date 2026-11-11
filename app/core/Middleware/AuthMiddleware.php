@@ -68,7 +68,7 @@ class AuthMiddleware {
             self::createSecureSession($user['username'] ?? $username);
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

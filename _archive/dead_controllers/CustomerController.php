@@ -46,7 +46,7 @@ class CustomerController extends BaseController
                 } else {
                     $_SESSION['error'] = $result['message'];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Customer profile update error: " . $e->getMessage());
                 $_SESSION['error'] = 'Failed to update profile';
             }
@@ -64,7 +64,7 @@ class CustomerController extends BaseController
                     "SELECT * FROM users WHERE id = ? AND status = 'active'",
                     [$userId]
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Error getting customer: " . $e->getMessage());
     }
 }

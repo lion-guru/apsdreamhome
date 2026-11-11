@@ -72,7 +72,7 @@ class DailyCappingService
             $stmt->execute($params);
             
             error_log("DailyCapping: Flushed ₹$amount from user #$userId. Reason: $reason");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("DailyCapping: Failed to log flush_out: " . $e->getMessage());
         }
     }

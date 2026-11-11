@@ -53,23 +53,27 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
     final aiState = ref.watch(aiProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: const Color(0xFFFAF7F0),
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('APS AI Assistant'),
+            const Text(
+              'APS Real Estate AI',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
             Text(
-              _getRoleDisplayName(_currentRole),
+              '${_getRoleDisplayName(_currentRole)} • Live RAG Intelligence',
               style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.normal,
+                fontSize: 11,
+                color: Color(0xFFE5A93C),
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
         ),
         elevation: 0,
-        backgroundColor: const Color(0xFF4285F4),
+        backgroundColor: const Color(0xFF0B194C),
         foregroundColor: Colors.white,
         actions: [
           // Employee Mode Toggle
@@ -224,57 +228,88 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
 
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF4285F4).withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF0B194C), Color(0xFF1E3A8A)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0B194C).withValues(alpha: 0.2),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.smart_toy_outlined,
+                size: 54,
+                color: Color(0xFFE5A93C),
+              ),
             ),
-            child: const Icon(
-              Icons.smart_toy,
-              size: 64,
-              color: Color(0xFF4285F4),
+            const SizedBox(height: 20),
+            const Text(
+              'APS Real Estate AI Advisor',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF0B194C),
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'APS AI Assistant',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+            const SizedBox(height: 8),
+            Text(
+              '7 टाउनशिप्स, 750+ प्लॉट्स, EMI प्लान्स और RERA लीगल पेपर्स की लाइव जानकारी',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey.shade700,
+                height: 1.4,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'How can I help you today?',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey.shade600,
+            const SizedBox(height: 28),
+            Wrap(
+              spacing: 8,
+              runSpacing: 10,
+              alignment: WrapAlignment.center,
+              children: [
+                _buildSuggestionChip('🏰 Gorakhpur ki 7 Townships dikhayein'),
+                _buildSuggestionChip('💰 1000 sqft Plot rate & EMI plan'),
+                _buildSuggestionChip('📜 143 Mutation aur RERA registry details'),
+                _buildSuggestionChip('🚗 Free Site Visit kaise book karein?'),
+                _buildSuggestionChip('🤝 Associate commission aur earnings'),
+              ],
             ),
-          ),
-          const SizedBox(height: 32),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            alignment: WrapAlignment.center,
-            children: [
-              _buildSuggestionChip('Show me plots in Gorakhpur'),
-              _buildSuggestionChip('What is EMI calculator?'),
-              _buildSuggestionChip('How to book a plot?'),
-              _buildSuggestionChip('Compare properties'),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildSuggestionChip(String text) {
     return ActionChip(
-      label: Text(text),
+      label: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF0B194C),
+        ),
+      ),
+      backgroundColor: Colors.white,
+      side: const BorderSide(color: Color(0xFFE8DFD0), width: 1.2),
+      elevation: 1,
+      shadowColor: const Color(0xFF0B194C).withValues(alpha: 0.05),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       onPressed: () {
         _messageController.text = text;
         _sendMessage();
@@ -294,21 +329,31 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
         return Align(
           alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(bottom: 14),
+            padding: const EdgeInsets.all(14),
             constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.8,
+              maxWidth: MediaQuery.of(context).size.width * 0.82,
             ),
             decoration: BoxDecoration(
-              color: isUser ? const Color(0xFF4285F4) : Colors.white,
+              gradient: isUser
+                  ? const LinearGradient(
+                      colors: [Color(0xFF0B194C), Color(0xFF1E3A8A)],
+                    )
+                  : null,
+              color: isUser ? null : Colors.white,
               borderRadius: BorderRadius.circular(16).copyWith(
                 bottomRight: isUser ? const Radius.circular(4) : null,
                 bottomLeft: !isUser ? const Radius.circular(4) : null,
               ),
+              border: isUser
+                  ? null
+                  : Border.all(color: const Color(0xFFE8DFD0), width: 1.2),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 4,
+                  color: const Color(0xFF0B194C).withValues(
+                    alpha: isUser ? 0.12 : 0.04,
+                  ),
+                  blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -316,14 +361,44 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (!isUser) ...[
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFAF7F0),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.smart_toy,
+                          size: 14,
+                          color: Color(0xFFF58220),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Text(
+                        'APS AI Advisor',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0B194C),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                ],
                 Text(
                   message['message'] as String,
                   style: TextStyle(
-                    color: isUser ? Colors.white : Colors.black87,
-                    fontSize: 15,
+                    color: isUser ? Colors.white : const Color(0xFF0B194C),
+                    fontSize: 14.5,
+                    height: 1.45,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   _formatTime(message['timestamp'] as String?),
                   style: TextStyle(
@@ -343,12 +418,15 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
 
   Widget _buildInputArea(AIState aiState) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
+        border: const Border(
+          top: BorderSide(color: Color(0xFFE8DFD0), width: 1.2),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: const Color(0xFF0B194C).withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -357,28 +435,61 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
       child: SafeArea(
         child: Row(
           children: [
-            // Voice Input Button
-            IconButton(
-              onPressed: () {
-                // TODO: Implement voice input
-              },
-              icon: const Icon(Icons.mic),
-              color: Colors.grey.shade600,
+            // Voice / Assistance Icon
+            Container(
+              decoration: const BoxDecoration(
+                color: Color(0xFFFAF7F0),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  _messageController.text = 'Gorakhpur me plots ka rate list batao';
+                  _sendMessage();
+                },
+                icon: const Icon(Icons.flash_on, color: Color(0xFFF58220), size: 20),
+                tooltip: 'Quick Query',
+              ),
             ),
+            const SizedBox(width: 8),
 
             // Text Input
             Expanded(
               child: TextField(
                 controller: _messageController,
+                style: const TextStyle(
+                  color: Color(0xFF0B194C),
+                  fontSize: 14,
+                ),
                 decoration: InputDecoration(
                   hintText: aiState.isLoading
-                      ? 'AI is thinking...'
-                      : 'Type your message...',
+                      ? 'AI is analyzing township data...'
+                      : 'Ask about plots, EMI, colonies, registry...',
+                  hintStyle: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 13,
+                  ),
                   filled: true,
-                  fillColor: Colors.grey.shade100,
+                  fillColor: const Color(0xFFFAF7F0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
+                    borderSide: const BorderSide(
+                      color: Color(0xFFE8DFD0),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: const BorderSide(
+                      color: Color(0xFFE8DFD0),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: const BorderSide(
+                      color: Color(0xFF0B194C),
+                      width: 1.5,
+                    ),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -394,22 +505,37 @@ class _AdvancedAIChatPageState extends ConsumerState<AdvancedAIChatPage> {
             const SizedBox(width: 8),
             aiState.isLoading
                 ? const SizedBox(
-                    width: 48,
-                    height: 48,
+                    width: 44,
+                    height: 44,
                     child: Center(
                       child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFF0B194C),
+                        ),
                       ),
                     ),
                   )
-                : IconButton.filled(
-                    onPressed: _sendMessage,
-                    icon: const Icon(Icons.send),
-                    style: IconButton.styleFrom(
-                      backgroundColor: const Color(0xFF4285F4),
-                      foregroundColor: Colors.white,
+                : Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF0B194C), Color(0xFF1E3A8A)],
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF0B194C).withValues(alpha: 0.25),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      onPressed: _sendMessage,
+                      icon: const Icon(Icons.send_rounded, size: 20),
+                      color: const Color(0xFFE5A93C),
                     ),
                   ),
           ],

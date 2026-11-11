@@ -37,7 +37,7 @@ class PropertyInquiry extends Model {
 
             return $db->lastInsertId();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PropertyInquiry creation error: ' . $e->getMessage());
             return false;
         }
@@ -58,7 +58,7 @@ class PropertyInquiry extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PropertyInquiry fetch error: ' . $e->getMessage());
             return [];
         }
@@ -80,7 +80,7 @@ class PropertyInquiry extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('User inquiries fetch error: ' . $e->getMessage());
             return [];
         }
@@ -97,7 +97,7 @@ class PropertyInquiry extends Model {
             $stmt = $db->query($sql, [$status, $inquiry_id]);
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Inquiry status update error: ' . $e->getMessage());
             return false;
         }
@@ -126,7 +126,7 @@ class PropertyInquiry extends Model {
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Inquiry stats error: ' . $e->getMessage());
             return [];
         }
@@ -150,7 +150,7 @@ class PropertyInquiry extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Recent inquiries fetch error: ' . $e->getMessage());
             return [];
         }
@@ -179,7 +179,7 @@ class PropertyInquiry extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Inquiry search error: ' . $e->getMessage());
             return [];
         }
@@ -195,7 +195,7 @@ class PropertyInquiry extends Model {
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute([$inquiry_id]);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Inquiry deletion error: ' . $e->getMessage());
             return false;
         }
@@ -219,7 +219,7 @@ class PropertyInquiry extends Model {
 
             return $stmt->fetch();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Inquiry fetch by ID error: ' . $e->getMessage());
             return null;
         }
@@ -244,7 +244,7 @@ class PropertyInquiry extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Inquiries by status fetch error: ' . $e->getMessage());
             return [];
         }
@@ -281,7 +281,7 @@ class PropertyInquiry extends Model {
 
             return $stmt->fetchAll();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Inquiry trends error: ' . $e->getMessage());
             return [];
         }
@@ -336,7 +336,7 @@ class PropertyInquiry extends Model {
 
             return $data;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Inquiry export error: ' . $e->getMessage());
             return false;
         }
@@ -361,7 +361,7 @@ class PropertyInquiry extends Model {
             $stmt = static::getDb()->prepare($sql);
             return $stmt->execute($params);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Bulk inquiry status update error: ' . $e->getMessage());
             return false;
         }
@@ -387,7 +387,7 @@ class PropertyInquiry extends Model {
 
             return $stmt->fetch();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Agent performance error: ' . $e->getMessage());
             return [];
         }

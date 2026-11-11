@@ -419,8 +419,6 @@ class TeamManagementController extends BaseController
             $messages = $this->db->fetchAll(
                 "SELECT 
                     tm.message,
-                    tm.type,
-                    tm.recipients,
                     tm.created_at,
                     u.name as sender_name
                  FROM team_messages tm 

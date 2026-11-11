@@ -88,7 +88,7 @@ try {
         echo "   ✓ $table: " . count($indexes) . " indexes\n";
     }
     
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "❌ Error: " . $e->getMessage() . "\n";
 }
 

@@ -452,6 +452,64 @@ class AIGateway
         return !empty($this->geminiApiKey) && $this->geminiApiKey !== 'YOUR_REAL_GEMINI_API_KEY_HERE';
     }
 
+    /**
+     * Get provider status for all AI providers
+     */
+    public function getProvidersStatus(): array
+    {
+        $status = [];
+        try {
+            $freeEngines = $this->freeEngines;
+            $reflection = new \ReflectionClass($freeEngines);
+            $props = $reflection->getProperties(\ReflectionProperty::IS_PRIVATE);
+            $providerMap = [
+                'groqKey' => 'groq',
+                'openRouterKey' => 'openrouter',
+                'geminiKey' => 'gemini',
+                'xaiKey' => 'xai',
+                'hfKey' => 'huggingface',
+                'togetherKey' => 'together',
+                'togetherAiKey' => 'together',
+                'deepseekKey' => 'deepseek',
+                'cohereKey' => 'cohere',
+                'opencodeZenKey' => 'opencode_zen',
+            ];
+            foreach ($providerMap as $propName => $providerKey) {
+                try {
+                    $prop = $reflection->getProperty($propName);
+                    $prop->setAccessible(true);
+                    $value = $prop->getValue($freeEngines);
+                    $status[$providerKey] = [
+                        'name' => ucfirst($providerKey),
+                        'configured' => !empty($value),
+                        'available' => !empty($value),
+                    ];
+                } catch (\Throwable $e) {
+                    // Property might not exist
+                }
+            }
+        } catch (\Throwable $e) {
+            error_log("AIGateway::getProvidersStatus error: " . $e->getMessage());
+        }
+
+        // Ensure at least basic providers are listed
+        if (empty($status)) {
+            $status = [
+                'groq' => ['name' => 'Groq', 'configured' => false, 'available' => false],
+                'openrouter' => ['name' => 'OpenRouter', 'configured' => false, 'available' => false],
+                'gemini' => ['name' => 'Gemini', 'configured' => !empty($this->geminiApiKey), 'available' => !empty($this->geminiApiKey)],
+                'ollama' => ['name' => 'Ollama', 'configured' => true, 'available' => true],
+            ];
+        }
+
+        // Add ollama (always available as local fallback)
+        if (!isset($status['ollama'])) {
+            $status['ollama'] = ['name' => 'Ollama', 'configured' => true, 'available' => true];
+        }
+
+        return $status;
+    }
+
     public function getStats(): array
     {
         try {

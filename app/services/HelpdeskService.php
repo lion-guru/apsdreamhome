@@ -8,6 +8,42 @@ use Exception;
 
 class HelpdeskService
 {
+    /**
+     * Query runner: fetch all rows.
+     *
+     * NOTE (S451): this service calls $this->fetchAll($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchAll()".
+     */
+    private function fetchAll(string $sql, array $params = []): array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchAll] ' . $e->getMessage());
+            return [];
+        }
+    }
+    /**
+     * Query runner: fetch a single row.
+     *
+     * NOTE (S451): this service calls $this->fetchOne($sql, $params) but the
+     * helper never existed -> "Call to undefined method <Service>::fetchOne()".
+     */
+    private function fetchOne(string $sql, array $params = []): ?array
+    {
+        try {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '::fetchOne] ' . $e->getMessage());
+            return null;
+        }
+    }
+
     use ServiceTenantTrait;
 
     private $db;
@@ -108,7 +144,7 @@ class HelpdeskService
         }
 
         $query .= " ORDER BY created_at DESC";
-        return $this->fetchAll($query, $params);
+        return $this->db->fetchAll($query, $params);
     }
 
     /**
@@ -117,10 +153,11 @@ class HelpdeskService
     public function getTicket(int $ticketId): ?array
     {
         return $this->db->fetchOne("
-            SELECT ht.*, e.name as employee_name, e.employee_code, e.email, e.phone,
+            SELECT ht.*, u_emp.name as employee_name, ep.employee_code, u_emp.email, u_emp.phone,
                    u.name as assigned_to_name
             FROM helpdesk_tickets ht
-            LEFT JOIN employees e ON ht.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ht.employee_id OR ep.user_id = ht.employee_id OR ep.id = ht.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             LEFT JOIN users u ON ht.assigned_to = u.id
             WHERE ht.id = ? AND ht.tenant_id = 1
         ", [$ticketId]);
@@ -132,9 +169,10 @@ class HelpdeskService
     public function getTicketByNumber(string $ticketNumber): ?array
     {
         return $this->db->fetchOne("
-            SELECT ht.*, e.name as employee_name, e.employee_code
+            SELECT ht.*, u_emp.name as employee_name, ep.employee_code
             FROM helpdesk_tickets ht
-            JOIN employees e ON ht.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ht.employee_id OR ep.user_id = ht.employee_id OR ep.id = ht.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             WHERE ht.ticket_number = ? AND ht.tenant_id = 1
         ", [$ticketNumber]);
     }
@@ -255,10 +293,11 @@ class HelpdeskService
     public function getAllTickets(array $filters = []): array
     {
         $query = "
-            SELECT ht.*, e.name as employee_name, e.employee_code, e.department,
+            SELECT ht.*, u_emp.name as employee_name, ep.employee_code, ep.department,
                    u.name as assigned_to_name
             FROM helpdesk_tickets ht
-            JOIN employees e ON ht.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ht.employee_id OR ep.user_id = ht.employee_id OR ep.id = ht.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             LEFT JOIN users u ON ht.assigned_to = u.id
             WHERE ht.tenant_id = 1
         ";
@@ -344,9 +383,10 @@ class HelpdeskService
     public function getSLABreaches(): array
     {
         return $this->db->fetchAll("
-            SELECT ht.*, e.name as employee_name
+            SELECT ht.*, u_emp.name as employee_name
             FROM helpdesk_tickets ht
-            JOIN employees e ON ht.employee_id = e.id
+            LEFT JOIN employee_profiles ep ON ep.legacy_id = ht.employee_id OR ep.user_id = ht.employee_id OR ep.id = ht.employee_id
+            LEFT JOIN users u_emp ON u_emp.id = ep.user_id
             WHERE ht.tenant_id = 1
               AND ht.status IN ('open','in_progress')
               AND ht.sla_breached = 0

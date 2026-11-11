@@ -27,7 +27,7 @@ try {
     }
 
     echo "Inserted $inserted Module 5 menu items.\n";
-} catch (\Exception $e) {
+} catch (\Throwable $e) {
     echo "Error: " . $e->getMessage() . "\n";
     exit(1);
 }?>

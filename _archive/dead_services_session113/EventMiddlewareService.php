@@ -114,7 +114,7 @@ class EventMiddlewareService
                         ]);
                         return $event; // Filter blocked event
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->logger->error("Event filter error", [
                         'filter' => $filterName,
                         'error' => $e->getMessage()
@@ -128,7 +128,7 @@ class EventMiddlewareService
 
                 try {
                     $event = ($transformerInfo['transformer'])($event);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->logger->error("Event transformer error", [
                         'transformer' => $transformerName,
                         'error' => $e->getMessage()
@@ -150,7 +150,7 @@ class EventMiddlewareService
                         return $event; // Middleware stopped event
                     }
                     $event = $result; // Middleware can modify event
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->logger->error("Event middleware error", [
                         'middleware' => $middlewareName,
                         'error' => $e->getMessage()
@@ -170,7 +170,7 @@ class EventMiddlewareService
 
             return $event;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Event middleware processing failed", [
                 'event' => $event->name,
                 'error' => $e->getMessage()
@@ -220,7 +220,7 @@ class EventMiddlewareService
 
             return $stats;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("Failed to get middleware stats", ['error' => $e->getMessage()]);
             return [];
         }

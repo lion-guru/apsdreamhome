@@ -52,7 +52,7 @@ class SystemConfigService
             $value = $this->castValue($row['config_value'], $row['config_type'] ?? 'string');
             self::$cache["syscfg_{$key}"] = $value;
             return $value;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("SystemConfigService::get error for {$key}: " . $e->getMessage());
             return $default;
         }
@@ -106,7 +106,7 @@ class SystemConfigService
                 ];
             }
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("SystemConfigService::getAll error: " . $e->getMessage());
             return [];
         }
@@ -195,7 +195,7 @@ class SystemConfigService
             $this->logAudit($key, $value);
 
             return ['success' => true, 'message' => 'Configuration updated'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("SystemConfigService::set error for {$key}: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to update configuration'];
         }
@@ -241,7 +241,7 @@ class SystemConfigService
             }
             
             return ['success' => false, 'message' => 'Configuration not found'];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("SystemConfigService::delete error for {$key}: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to delete configuration'];
         }
@@ -259,7 +259,7 @@ class SystemConfigService
                 $tid > 1 ? [$this->tenantId()] : []
             );
             return array_column($rows, 'config_group');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -288,7 +288,7 @@ class SystemConfigService
                 'validation_rules' => $row['validation_rules'] ? json_decode($row['validation_rules'], true) : [],
                 'options' => $row['options'] ? json_decode($row['options'], true) : [],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -381,7 +381,7 @@ class SystemConfigService
                  SELECT config_key, config_value, ?, ?, NOW(), ? FROM system_configs WHERE config_key = ?" . ($this->tenantId() > 1 ? " AND tenant_id = ?" : ""),
                 array_merge([$this->serializeValue($newValue, 'string'), $userId, $this->tenantId(), $key], $tid > 1 ? [$this->tenantId()] : [])
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Silent fail for audit
         }
     }

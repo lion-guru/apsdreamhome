@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../data/services/colony_service.dart';
@@ -23,6 +24,7 @@ class PlotDetailPage extends ConsumerWidget {
     final plotAsync = ref.watch(plotDetailProvider(plotId));
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFAF7F0),
       appBar: AppBar(
         title: const Text('Plot Details'),
         backgroundColor: AppTheme.primaryColor,
@@ -42,6 +44,127 @@ class PlotDetailPage extends ConsumerWidget {
             onRetry: () => ref.refresh(plotDetailProvider(plotId)),
           ),
         ),
+      ),
+      bottomNavigationBar: plotAsync.when(
+        data: (plot) {
+          if (plot == null) return const SizedBox.shrink();
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: const Border(
+                top: BorderSide(color: Color(0xFFE8DFD0), width: 1.2),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0B194C).withValues(alpha: 0.08),
+                  blurRadius: 10,
+                  offset: const Offset(0, -3),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Total Deal Price',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        Text(
+                          plot.formattedPrice,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      final message = Uri.encodeComponent(
+                        'Namaste APS Dream Home! I am interested in Plot #${plot.plotNumber} in ${plot.colonyName} (${plot.formattedPrice}, ${plot.areaSqft.toStringAsFixed(0)} sqft). Please share deal terms & site visit.',
+                      );
+                      launchUrl(
+                        Uri.parse('https://wa.me/917007444842?text=$message'),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.chat,
+                      color: Color(0xFF25D366),
+                      size: 18,
+                    ),
+                    label: const Text(
+                      'WhatsApp',
+                      style: TextStyle(
+                        color: Color(0xFF0B194C),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(
+                        color: Color(0xFF25D366),
+                        width: 1.5,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (plot.isAvailable) {
+                        context.push(
+                          '/booking',
+                          extra: {
+                            'plotId': plot.id,
+                            'colonyId': plot.colonyId,
+                            'plotNumber': plot.plotNumber,
+                            'amount': plot.finalPrice ?? plot.totalPrice,
+                          },
+                        );
+                      } else {
+                        launchUrl(Uri.parse('tel:+917007444842'));
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      plot.isAvailable ? 'Book Plot' : 'Enquire',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        loading: () => const SizedBox.shrink(),
+        error: (_, _) => const SizedBox.shrink(),
       ),
     );
   }
@@ -68,51 +191,96 @@ class PlotDetailPage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Plot Image Placeholder + Status Badge
-          Container(
+          // Luxury Plot Hero Image + Colony & Status Badges
+          SizedBox(
             width: double.infinity,
-            height: 200,
-            color: AppTheme.primaryColor.withValues(alpha: 0.08),
+            height: 240,
             child: Stack(
+              fit: StackFit.expand,
               children: [
-                Center(
+                Image.network(
+                  plot.plotHeroImage,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => Container(
+                    color: AppTheme.primaryColor,
+                    child: const Center(
+                      child: Icon(Icons.apartment, size: 60, color: Colors.white54),
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.3),
+                        Colors.black.withValues(alpha: 0.8),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 16,
+                  left: 16,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.landscape, size: 60, color: AppTheme.primaryColor.withValues(alpha: 0.4)),
-                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF58220),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          plot.colonyName.toUpperCase(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
                       Text(
                         'Plot ${plot.plotNumber}',
-                        style: TextStyle(
-                          fontSize: 20,
+                        style: const TextStyle(
+                          fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryColor.withValues(alpha: 0.6),
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                 ),
                 Positioned(
-                  top: 12,
-                  right: 12,
+                  top: 14,
+                  right: 14,
                   child: _buildStatusBadge(plot.status),
                 ),
                 if (plot.hasPremiumLocation)
                   Positioned(
-                    top: 12,
-                    left: 12,
+                    top: 14,
+                    left: 14,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: AppTheme.accentColor,
+                        color: const Color(0xFFE5A93C),
                         borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 6,
+                          ),
+                        ],
                       ),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.star, color: Colors.white, size: 12),
+                          Icon(Icons.star, color: Colors.white, size: 13),
                           SizedBox(width: 4),
-                          Text('Premium', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                          Text('Premium Location', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -137,12 +305,12 @@ class PlotDetailPage extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '₹${_formatPrice(displayPrice)}',
+                          AppWidgets.formatCurrency(displayPrice),
                           style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '₹${plot.pricePerSqft.toStringAsFixed(0)}/sqft',
+                          '${AppWidgets.formatCurrency(plot.pricePerSqft)}/sqft',
                           style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                         ),
                       ],
@@ -182,6 +350,155 @@ class PlotDetailPage extends ConsumerWidget {
 
           // Pricing Breakdown
           _buildPricingBreakdown(plot, displayPrice),
+
+          // Smart EMI Calculator Card
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE8DFD0), width: 1.2),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0B194C).withValues(alpha: 0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.calculate, color: Color(0xFFF58220), size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      'Smart EMI & Payment Plan',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0B194C),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Flexible 12 to 60 month in-house installment plans available with 0% interest on initial booking.',
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700, height: 1.4),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFAF7F0),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Est. Monthly EMI', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+                            const SizedBox(height: 2),
+                            Text(
+                              '₹${((displayPrice * 0.7) / 36).toStringAsFixed(0)} / mo',
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF0B194C)),
+                            ),
+                            Text('(for 36 months)', style: TextStyle(fontSize: 10, color: Colors.grey.shade500)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFAF7F0),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Min. Down Payment', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+                            const SizedBox(height: 2),
+                            Text(
+                              '₹${(displayPrice * 0.3).toStringAsFixed(0)}',
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF10B981)),
+                            ),
+                            Text('(30% booking token)', style: TextStyle(fontSize: 10, color: Colors.grey.shade500)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // APS AI Assistant Real Estate Consultation Card
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF0B194C), Color(0xFF1E3A8A)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0B194C).withValues(alpha: 0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.smart_toy, color: Color(0xFFE5A93C), size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      'APS AI Property Advisor',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Have questions about Plot #${plot.plotNumber} legal 143 mutation status, road connectivity, or price negotiation?',
+                  style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/ai-chat'),
+                  icon: const Icon(Icons.forum, size: 16),
+                  label: const Text('Consult AI Assistant Now'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE5A93C),
+                    foregroundColor: const Color(0xFF0B194C),
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
           // Action Buttons
           if (plot.isAvailable)

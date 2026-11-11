@@ -50,6 +50,21 @@ class User extends UnifiedModel
     }
 
     /**
+     * Find user by ID.
+     *
+     * NOTE (S451): HasModelLoading::getCurrentUser() calls
+     * getUserById(), but this model only had findById(). Model::__call
+     * forwarded the unknown method to the QueryBuilder, so /api/leads
+     * answered "Call to undefined method
+     * App\Core\Database\QueryBuilder::getUserById()".
+     * This is an alias of findById() so both spellings work.
+     */
+    public function getUserById($id)
+    {
+        return $this->findById($id);
+    }
+
+    /**
      * Get users for select dropdown
      * 
      * @param string $status Filter by status (default: active)
@@ -79,7 +94,7 @@ class User extends UnifiedModel
             $stmt->execute();
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in User::getCustomers: ' . $e->getMessage());
             return [];
         }
@@ -115,7 +130,7 @@ class User extends UnifiedModel
             $stmt->execute();
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in User::getAssociates: ' . $e->getMessage());
             return [];
         }
@@ -150,7 +165,7 @@ class User extends UnifiedModel
             $stmt->execute($params);
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in User::getAgents: ' . $e->getMessage());
             return [];
         }
@@ -193,7 +208,7 @@ class User extends UnifiedModel
             $stmt->execute();
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in User::getByRole: ' . $e->getMessage());
             return [];
         }
@@ -235,7 +250,7 @@ class User extends UnifiedModel
             $stmt->execute();
 
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Error in User::getForSelect: ' . $e->getMessage());
             return [];
         }

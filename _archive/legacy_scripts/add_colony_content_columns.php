@@ -30,7 +30,7 @@ foreach ($columns as $sql) {
     try {
         $db->query($sql);
         echo "  OK: " . substr($sql, 0, 80) . "...\n";
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         // Column already exists or syntax differences - try without IF NOT EXISTS
         $sql = str_replace(" IF NOT EXISTS", "", $sql);
         $sql = str_replace("IF NOT EXISTS ", "", $sql);
@@ -38,7 +38,7 @@ foreach ($columns as $sql) {
         try {
             $db->query($sql);
             echo "  OK: " . substr($sql, 0, 80) . "...\n";
-        } catch (\Exception $e2) {
+        } catch (\Throwable $e2) {
             echo "  SKIP (likely exists): " . $e2->getMessage() . "\n";
         }
     }

@@ -201,7 +201,7 @@ class FullAndFinalSettlementService
             $this->pdo->commit();
             return ['success' => true, 'message' => 'Settlement processed', 'settlement_id' => $settlementId, 'settlement_no' => $settlementNo, 'net_payable' => $settlement['totals']['net_payable']];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -211,12 +211,22 @@ class FullAndFinalSettlementService
 
     private function getEmployeeDetails(int $employeeId): ?array
     {
-        return $this->fetchOne("
-            SELECT e.*, u.name, u.email, u.phone
-            FROM employees e
-            LEFT JOIN users u ON e.user_id = u.id
-            WHERE e.id=?{$this->tenantSql()}
-        ", array_merge([$employeeId], $this->tVal()));
+        $d = $this->fetchOne("
+            SELECT ep.legacy_id as id, ep.*, u.name, u.email, u.phone
+            FROM employee_profiles ep
+            LEFT JOIN users u ON u.id = ep.user_id
+            WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.tenant_id = ?
+        ", [$employeeId, $employeeId, $employeeId, $this->tenantId()]);
+        if (!$d) {
+            $d = $this->fetchOne("
+                SELECT ep.legacy_id as id, ep.*, u.name, u.email, u.phone
+                FROM employee_profiles ep
+                LEFT JOIN users u ON u.id = ep.user_id
+                WHERE (ep.legacy_id = ? OR ep.user_id = ? OR ep.id = ?) AND ep.tenant_id = ?
+                LIMIT 1
+            ", array_merge([$employeeId, $employeeId, $employeeId, $this->tenantId()], $this->tVal()));
+        }
+        return $d;
     }
 
     private function getLatestSalaryStructure(int $employeeId): ?array
@@ -286,7 +296,7 @@ class FullAndFinalSettlementService
     private function calculateLeaveEncashment(int $employeeId, float $basicSalary, string $lastWorkingDay): array
     {
         // Get leave balances
-        $emp = $this->fetchOne("SELECT id FROM employees WHERE user_id=?", [$employeeId]);
+        $emp = $this->fetchOne("SELECT id FROM employee_profiles WHERE user_id=?", [$employeeId]);
         if (!$emp) return ['eligible' => false, 'amount' => 0, 'description' => 'Employee record not found'];
 
         $balances = $this->fetchAll("

@@ -196,7 +196,7 @@ foreach ($badges as $b) {
             $skipped++;
             echo "  [.] Unchanged badge: {$b['name']}\n";
         }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
         echo "  [x] Error on {$b['name']}: " . $e->getMessage() . "\n";
     }
 }

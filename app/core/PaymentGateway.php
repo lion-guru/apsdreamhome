@@ -76,7 +76,7 @@ class PaymentGateway {
                 'key' => $this->razorpay_key_id
             ];
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -121,7 +121,7 @@ class PaymentGateway {
                 throw new \Exception('Payment signature verification failed');
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -155,7 +155,7 @@ class PaymentGateway {
                 ];
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -250,7 +250,7 @@ class PaymentGateway {
 
             return $pdo->lastInsertId();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new \Exception('Database error: ' . $e->getMessage());
         }
     }
@@ -276,7 +276,7 @@ class PaymentGateway {
             $stmt = $pdo->prepare($sql);
             $stmt->execute($values);
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new \Exception('Database error: ' . $e->getMessage());
         }
     }
@@ -351,7 +351,7 @@ class PaymentGateway {
                 throw new \Exception('Refund failed: ' . ($error['error']['description'] ?? 'Unknown error'));
             }
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage()

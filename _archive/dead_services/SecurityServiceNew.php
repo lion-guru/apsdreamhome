@@ -191,7 +191,7 @@ class SecurityService
             } else {
                 $this->addTestResult($testName, 'FAIL', 'Database prepared statements failed');
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->addTestResult($testName, 'FAIL', 'Database security test error: ' . $e->getMessage());
         }
     }

@@ -20,7 +20,7 @@ class MlmRewardsController extends AdminController
         $criteria = [];
         try {
             $criteria = $this->db->fetchAll("SELECT * FROM mlm_rank_criteria ORDER BY FIELD(rank, 'bronze','silver','gold','platinum','diamond','crown')") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Table may not exist
         error_log($e->getMessage());
         }
@@ -74,7 +74,7 @@ class MlmRewardsController extends AdminController
                 JOIN users u ON u.id = ru.associate_id
                 ORDER BY ru.upgrade_date DESC
             ") ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         // Table may not exist
         error_log($e->getMessage());
         }
@@ -107,7 +107,7 @@ class MlmRewardsController extends AdminController
                 }
                 $stats['total'] += intval($row['cnt']);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log($e->getMessage());
         }
 
@@ -213,7 +213,7 @@ class MlmRewardsController extends AdminController
             $this->db->commit();
 
             $_SESSION['success'] = 'Withdrawal request ' . $status . ' successfully!';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->db && method_exists($this->db, 'inTransaction') && $this->db->inTransaction()) {
                 $this->db->rollBack();
             }

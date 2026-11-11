@@ -39,7 +39,7 @@ class HomePageController extends BaseController
                 $pageTitle = $row['title'];
                 $pageContent = $row['content'];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('HomePageController loadPageContent: ' . $e->getMessage());
         }
         return [$pageTitle, $pageContent];
@@ -88,7 +88,7 @@ class HomePageController extends BaseController
                         $minPrice = (float)$priceRow['min_price'];
                         $priceText = 'Starting from ' . "\xE2\x82\xB9" . number_format($minPrice) . '/sqft';
                     }
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     // fallback to generic text
                     error_log($e->getMessage());
                 }
@@ -106,7 +106,7 @@ class HomePageController extends BaseController
                     'description' => $project->description ?? null
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Home projects error: " . $e->getMessage());
         }
 
@@ -121,7 +121,7 @@ class HomePageController extends BaseController
                     $post['featured_image'] = BASE_URL . '/' . ltrim($post['featured_image'], '/');
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Home blog posts error: " . $e->getMessage());
         }
 
@@ -220,7 +220,7 @@ class HomePageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM testimonials WHERE status = 'approved' ORDER BY created_at DESC LIMIT 10");
             $stmt->execute();
             $testimonials = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Testimonials error: ' . $e->getMessage());
             $testimonials = [];
         }
@@ -238,7 +238,7 @@ class HomePageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM team_members WHERE status = 'active' ORDER BY sort_order ASC");
             $stmt->execute();
             $teamMembers = $stmt->fetchAll(\PDO::FETCH_OBJ) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Team page error: ' . $e->getMessage());
             $teamMembers = [];
         }
@@ -254,7 +254,7 @@ class HomePageController extends BaseController
         try {
             $stmt = $this->db->query("SELECT * FROM team_groups WHERE is_active = 1 ORDER BY score DESC");
             $teamGroups = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $teamGroups = [];
         }
 
@@ -273,7 +273,7 @@ class HomePageController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM gallery_albums WHERE status = 'active' ORDER BY sort_order ASC");
             $stmt->execute();
             $albums = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Gallery error: ' . $e->getMessage());
             $albums = [];
         }

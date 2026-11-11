@@ -44,7 +44,7 @@ class FinancialReportController extends AdminController
                 $monthlyData = $this->db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, SUM(amount) as revenue, payment_method FROM payment_transactions WHERE payment_status = 'completed' AND created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH) GROUP BY month, payment_method ORDER BY month ASC")->fetchAll(\PDO::FETCH_ASSOC);
                 $methodBreakdown = $this->db->query("SELECT payment_method, COUNT(*) as cnt, SUM(amount) as total FROM payment_transactions WHERE payment_status = 'completed' GROUP BY payment_method ORDER BY total DESC")->fetchAll(\PDO::FETCH_ASSOC);
                 $recentPayments = $this->db->query("SELECT pt.*, u.name FROM payment_transactions pt LEFT JOIN users u ON pt.user_id = u.id ORDER BY pt.created_at DESC LIMIT 10")->fetchAll(\PDO::FETCH_ASSOC);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('FinancialReportController::index() query error: ' . $e->getMessage());
             }
 
@@ -70,7 +70,7 @@ class FinancialReportController extends AdminController
             $this->data['netIncome'] = $netIncome;
 
             $this->render('admin/reports/financial', $this->data);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load financial reports');
             $this->redirect('/admin/dashboard');
         }

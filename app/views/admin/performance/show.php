@@ -2,7 +2,7 @@
 /** Admin Performance - Show Goal */
 
 $page_title = $page_title ?? 'Goal: ' . ($goal['title'] ?? 'Unknown');
-$goal = $goal ?? [];
+$db = $db ?? \App\Core\Database\Database::getInstance();
 ?>
 
 <style nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
