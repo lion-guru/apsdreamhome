@@ -49,14 +49,21 @@ A **literal** route (no `{param}`) makes the router call the handler with **no a
 ### Also found (reported, not fixed)
 - **`routes/web.php` has 53 duplicate method+path registrations** (api.php had 11 — all 6 functionally damaging ones fixed in S449). A new duplicate-path sweep shows **0 middleware losses** left in web.php, but **19 pairs where the handler CHANGED** — the earlier registration is dead code (same class spelled differently, or a superseded method). Harmless today; a dedicated cleanup round would remove them.
 - `App\Core\App` **does not exist** (the class lives in `app/Core/Legacy/AppCoreService.php`), so the location views' `class_exists('\App\Core\App')` guard skips their amenities fetch and falls back to static copy — correct, but worth knowing.
-- `bohisawagar-banner.jpg` is missing from `public/assets/images/projects/gorakhpur/` (the other 5 location views' images all exist).
+- `bohisawagar-banner.jpg` does not exist in `public/assets/images/projects/gorakhpur/` (the other 5 location views' images all exist) → the Bohisawagar hero now uses a real Gorakhpur township photo with the missing dedicated banner noted in the code comment. **Owner action:** drop the real Bohisawagar banner into that folder.
+
+### 🔧 Follow-up in the same round — the galleries were pointing at a folder that does not exist
+Wiring the 6 pages exposed the next layer: the three gallery partials built their `<img src>` as `BASE_URL . '/images/' . $item['image']`, but the assets live in `public/assets/images/` — `public/images/` holds only `apple-touch-icon.png`, so **every amenity photo resolved to `/images/amenities/N.jpg` → 404** (broken image icons on three live marketing pages). Fixed:
+- Prefix corrected to `/assets/images/` in `gorakhpur-raghunath-nagri`, `gorakhpur-suryoday-colony`, `varanasi-ganga-nagri`.
+- The controller now supplies the **7 real gallery images** (`public/assets/images/amenities/1..7.jpg`). Every caption was **checked against the actual file** (read one by one) rather than invented: *site development & drainage* (earthworks + drainage pipe), *hospital*, *landscaped parks & walkways*, *wide roads & covered parking*, *street lighting at night*, *school & education*, *24×7 security*.
+- `bohisawagar`'s hero used a **relative** `css url()` to a file that does not exist → now an absolute `BASE_URL` path to a real Gorakhpur township photo, with the missing dedicated banner flagged in the comment.
 
 ### Verification
 - Web sweep: **1989 GET routes → 0 × 500** (histogram stable, no 503/429 left)
 - All 6 location pages → **200 with their own distinct `<h1>`**, no PHP warnings in `logs/php_error.log`; unknown slug → **404**
+- The 3 gallery pages render **7 amenity images each** and **every image URL resolves HTTP 200**
 - `/projects/suryoday-colony` → **'SURYODAY COLONY'** (project page, un-shadowed) vs `/project-locations/suryoday-colony` → **'Suryoday Colony'** (marketing page) — both correct and distinct
-- `php testing/master_test_runner.php`: **10/10 PASSED** (20.63s)
-- Staged **mine-only** (5 files, +95/−10) via blob-staging, so the parallel actor's `catch(\Exception)`→`\Throwable` sweep in the same files was **not** co-committed
+- `php testing/master_test_runner.php`: **10/10 PASSED** (20.63s / 17.74s, two clean runs)
+- Staged **mine-only** (5 files, +95/−10 then +24/−6) via blob-staging, so the parallel actor's `catch(\Exception)`→`\Throwable` sweep in the same files was **not** co-committed
 
 ### Key Lessons (carried, continued)
 _795. **A feature can be 100% built and 100% unreachable.** Six marketing pages, 4–12 KB each, with real copy, images and enquiry forms — and not one route. "Built" is not "reachable"; grep the view folder for orphans, not just the route table for gaps.
