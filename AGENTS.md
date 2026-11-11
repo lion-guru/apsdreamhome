@@ -17,6 +17,58 @@
 
 > **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
 
+## Session 449: Mobile API 500 Sweep Round 2 — 12 → 0 × 500, 3 Missing Tables, Public Lead Form Revived, Duplicate-Route Shadowing Found (2026-11-11)
+
+### Trigger
+User: "do next" — continuing the S448 mobile/backend sweep. The route table was green (5267 routes resolve), so the next layer was **running** the API with a **stable** token.
+
+### 🔑 The sweep itself was lying (and hid 10 real 500s)
+S448's sweep re-logged-in every 25 requests. `auth.login` is rate-limited to **5/60s** (`config/rate_limits.php`), so once the window filled, `get_token()` returned `None` and the probe sent an **empty `Bearer`** → the whole batch came back **401**. Those 401s were *masking* 10 genuine 500s.
+
+Fix: `?test_login=1` on the login URL (dev-only bypass, `APP_ENV=development`) → the histogram became **stable and reproducible** (212/13/9/2/10 across two identical runs). Only then did the real defect list appear.
+
+### Root causes fixed (all real, all 500s)
+1. **`colony_milestones` table never existed** — 5 controllers (`ProjectProgressController`, `ColonyPipelineController`, `ConstructionApiController`, `CustomerPassbookController`) read/write it. Mobile colony-progress 500'd; the web desks silently returned empty. → idempotent migration, schema derived from live column usage (19 cols).
+2. **`property_verification_*` (4 tables) never existed** — 18 live mobile routes 500'd. The feature IS customer-facing (both the web page and the Flutter page advertise **Basic ₹0 / Premium ₹999 / Gold ₹2,499 / Platinum ₹4,999**) → levels seeded from that published copy so the API and the marketing page tell the same story.
+3. **The PUBLIC website lead form was dead** — `PageController::inquiry()` INSERTed a phantom `subject` column (1054), wrote `status='new'` which is **not in** the `inquiries.status` enum (1265), and bound `tenant_id = NULL` on a **NOT NULL** column (1048). Three faults stacked; the form failed for **every visitor**. Fixed via migration (`subject` column + enum widened to the union) + code.
+4. **`financial_inquiries` had no `notes` column** → every admin status update 1054'd (`UPDATE … notes = CONCAT(IFNULL(notes,''), ?)`).
+5. **8 phantom columns** across 6 controllers: `is_default`→`is_primary`, `postal_code`→`pincode`, `bonus`→`amount`, `bookings.assigned_to`→`(associate_id OR created_by)`, `tasks.assignee_id`→`assigned_to`, `documents.status`→`verification_status`, `documents.category`→`type`, `documents.created_at`→`uploaded_on`.
+6. **Missing `use PDO;` in 7 namespaced files** — the custom autoloader resolves an unqualified class inside a namespace to `<ns>\<Class>` and does **not** fall back to global. `PDO::FETCH_ASSOC` in `namespace App\Services;` → `Class "App\Services\PDO" not found`. This killed **every property search** (5 routes) and sat latent in the **payment** service (8 sites).
+7. **12 legacy `/api/mobile/v2/*` routes had no auth middleware** → all 401, and `dashboardV2`/`dashboardV3` silently answered with the dashboard of **user id 0** (always empty). Mirrored the canonical `/api/v2/mobile/*` twins.
+8. **6 duplicate route registrations silently stripped middleware** — `Router::addRoute()` stores `$routes[$method][$path]`, so the **LAST** registration wins (not first, as lesson _506 assumed). The later duplicates overwrote the canonical ones, costing 4 rate limits and 2 deprecation headers. Removed the 6 later duplicates.
+9. **`AdvancedSearchService` count query never matched** — a `str_replace` on a multi-line SELECT prefix whose indentation didn't match the query string, so the "count" query was still the full property SELECT → `$total` was **always null** and `total_pages` always 0 → pagination silently broken. Rebuilt the SELECT list with a regex instead.
+
+### 🔴 Two regressions I introduced and caught
+- Adding `namespace App\Services;` to `AdvancedSearchService.php` **turned its working `PDO::` into a fatal** (it had been global-namespace before). Found by the search probe, fixed with `use PDO;`, then swept repo-wide for the same pattern.
+- Adding `namespace` to `EmailNotification.php` did the same (2 sites).
+
+### Verification
+- Mobile API GET sweep (246 routes): **12 × 500 → 0 × 500**, histogram **228 / 13 / 400 / 3 × 401 / 2 × 403** (the 401/403 are admin-role routes probed with a customer token = correct).
+- Web page probe: **20/20** (admin 10, customer 5, public 5) with content needles.
+- Public lead form E2E: row created with `subject` + `status='new'` → **deleted, leftover 0**.
+- `php testing/master_test_runner.php`: **10/10 PASSED** (16.97s / 16.84s, two clean runs).
+- All 3 migrations re-run → **all SKIP** (idempotent proven).
+- DB zero drift: users 75 · plots 756 · leads 994 · properties 627 · employees 15 · documents 27 · inquiries 10 · document_esign 0.
+- Probe litter cleaned: 94 `api_tokens` + 1 probe notification deleted; `storage/cache` (271 files) cleared.
+- Safety dumps taken before the schema changes: `backups/db/apsdreamhome_pre-milestone_s449_*.sql` (57.2 MB) + `…_pre-inquiries_s449_*.sql` (57.5 MB).
+- Committed **mine-only** (38 files, +800/−103) via blob-staging so the parallel actor's `catch (\Exception)`→`\Throwable` sweep in the same files was **not** co-committed (lesson _543).
+
+### Owner actions still open
+- Play Console upload of `public/downloads/apsdreamhome-v1.2.10-release.aab` (1.2.10+13).
+- Voice / S3 / scheduler / Redis credentials.
+- `api_tokens` for the 30-day-TTL mobile sessions can be pruned by a scheduled cron (94 stale rows accumulated from one sweep day).
+
+### Key Lessons (carried, continued)
+_786. **A probe that logs in on a schedule is a probe that reports its own rate limiter.** The `auth.login` 5/60s cap turned the token into `None` after 5 refreshes, and every request after that went out with an empty `Bearer` and came back **401**. The 401s were not "these endpoints are role-gated" — they were **the probe losing its own credential**. Fix the credential first, then read the histogram.
+_787. **A rate-limited sweep is a NON-REPRODUCIBLE sweep.** Three runs of the identical probe gave 133 / 116 / 70 × 200 — a *decaying* histogram, because the limiter's counter carried over between runs. A metric that changes when nothing changed is measuring the probe. Use the dev `?test_login` bypass, and require **two identical runs** before believing a histogram.
+_788. **"The table was never migrated" is a whole FEATURE family, not one bug.** `colony_milestones` and 4 `property_verification_*` tables were referenced by 5 + 18 call sites that had been failing since they were written. Sweep for **referenced-but-missing tables** (grep the table name across the app → `SHOW TABLES LIKE`) — it is the same class as the phantom-column sweep and it is bigger.
+_789. **A missing column on a NOT NULL column is a third, separate fault.** The public lead form had THREE stacked faults (unknown column, enum value outside the enum, NULL into NOT NULL) and fixing only the first still produced a 500. Probe the write path end-to-end and read the exact MySQL error each time — one probe per fault.
+_790. **Adding a `namespace` to a file can BREAK it.** `PDO::FETCH_ASSOC` in a global-namespace file resolves to the global `PDO`; the moment the file gets a namespace it resolves to `<ns>\PDO` → fatal. The custom autoloader does **not** fall back to global. Any namespacing change must be followed by a sweep for unqualified built-ins — `use PDO;` first, `class_exists('App\Services\PDO')` proved the fallback does not exist.
+_791. **The router is LAST-wins, not first-wins.** `Router::addRoute()` keys `$routes[$method][$path]`, so a duplicate path registration **overwrites** the earlier one *including its middleware*. 6 duplicates in `routes/api.php` were quietly stripping rate limits and deprecation headers. Lesson _506 said "first-match-wins" — correct it to **last-wins**, and write a duplicate-path sweep (70 duplicate pairs found repo-wide; 53 of them still live in `routes/web.php`).
+_792. **A string surgery on SQL that never matches fails SILENTLY.** `str_replace` on a multi-line SELECT prefix whose indentation differed from the query string returned the ORIGINAL query unchanged — the "count" query was still the full property SELECT, `total` was always null, and pagination looked fine because 0 pages render. Assert the replacement happened (or build the query from a regex / a separate count expression) instead of trusting that it did.
+_793. **A stale cache can make a working fix look broken.** The search still returned `total: null` after the fix because `Cache::remember` had cached the old response for 300s. Clear `storage/cache/*.cache` after any service-level change before re-probing.
+_794. **A parallel actor's sweep rewrites the same files you touched.** `catch (\Exception)` → `catch (\Throwable)` was applied across the codebase by another actor and landed inside 8 of my files. Staging whole files would have co-committed their sweep. Stage **only your hunks** with `git hash-object -w` + `git update-index --cacheinfo` on a HEAD-based reconstruction, and leave the worktree untouched (lesson _543).
+
 ## Session 448: Mobile API Runtime Sweep — 34 → 0 × 500, Account-Delete Hole Closed, APK 1.2.10+13 Deployed (2026-11-10)
 
 ### Trigger
