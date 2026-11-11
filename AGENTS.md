@@ -17,6 +17,55 @@
 
 > **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
 
+## Session 450: Full Web-Route Sweep — 1989 GET Routes → 0 × 500, 6 Orphan Marketing Pages Wired, Fraud + Localization Fixed (2026-11-11)
+
+### Trigger
+User: "do next" — S449 finished the mobile API layer. The parallel actor has since rewritten ~500 files (a `catch (\Exception)` → `catch (\Throwable)` sweep across the codebase), so the **web** layer needed re-probing, not the mobile one.
+
+### The sweep
+Extract every **literal** GET path from `routes/web.php` → probe each with an admin session → histogram. **1989 routes in 82 s** using 8 concurrent `curl.exe` workers (the S448 lesson: use a **stable** credential — `?test_login=1` on the admin login, since `auth.login` is capped at 5/60 s).
+
+| Status | Before | After |
+|---|---|---|
+| 200 | 302 | **317** |
+| 301 / 302 / 400 / 401 / 403 / 429 | 1870 | 1871 |
+| **500** | **1** | **0** |
+| **503** | **4** | **0** |
+| 404 | 2 | 1 |
+
+### Root causes fixed
+1. **`/api/fraud/dashboard` 500** — `FraudDetectionService::analyzeUserBehavior()` selected `COALESCE(activity_logs_unified, 0)` as a **column of `users`**. It is a **count of the user's rows in the `activity_logs_unified` table** → 1054 → every fraud analysis died. Now a correlated subquery, and `last_login_ip` reads the **real** `users` column instead of a hardcoded `''` (which was fabricating "no IP" for every user).
+2. **All 4 `/api/localization/*` endpoints 503** — `LocalizationController` received its service by **constructor injection**, but the router instantiates controllers with **no arguments** → the service was *always* null → `requireLocalizationService()` answered 503 "Localization service not available" for every request. The controller now **self-resolves** it.
+3. **Six complete marketing/SEO landing pages were built but never wired to a route** — `app/views/locations/{gorakhpur-bohisawagar, gorakhpur-raghunath-nagri, gorakhpur-suryoday-colony, kushinagar-budha-city, lucknow-ram-nagri, varanasi-ganga-nagri}.php` (4–12 KB each) had **zero route references**. Now reachable under **`/project-locations/{slug}`**.
+4. **`/projects/budha-city` 404'd for every visitor** — it delegated to `projectDetails('budha-city')`, which looks the slug up in the `projects` table. There is **no such row** (the table holds only *Braj Radha Nagri* ×2 + *SURYODAY COLONY*), so it 404'd even though the Budha City landing page had been built all along.
+5. **`gorakhpur-bohisawagar.php` called `CSRFProtection::csrfField()`** — that method **does not exist** on the class (it has `hiddenField()` / `getTokenField()`), and the class was not imported either → the page would have fataled on render.
+
+### 🔴 A shadowing bug I introduced and caught
+My first attempt registered the 6 pages as literal `/projects/{slug}` paths. That **silently shadowed the DB-driven project page**: the `projects` table really does contain a **SURYODAY COLONY** row, so `/projects/suryoday-colony` stopped serving it. Caught by reading the live rows before committing → moved all 6 to a dedicated `/project-locations/*` prefix (`/locations/{slug}` is already the colony-by-slug alias, and `/projects/{slug}` must stay generic).
+
+### Router behaviour learned
+A **literal** route (no `{param}`) makes the router call the handler with **no arguments** (`$matches` is empty → `params = []`). A controller that expects a parameter silently receives `null` — `locationLanding()` now derives the slug from `REQUEST_URI` when no parameter arrives.
+
+### Also found (reported, not fixed)
+- **`routes/web.php` has 53 duplicate method+path registrations** (api.php had 11 — all 6 functionally damaging ones fixed in S449). A new duplicate-path sweep shows **0 middleware losses** left in web.php, but **19 pairs where the handler CHANGED** — the earlier registration is dead code (same class spelled differently, or a superseded method). Harmless today; a dedicated cleanup round would remove them.
+- `App\Core\App` **does not exist** (the class lives in `app/Core/Legacy/AppCoreService.php`), so the location views' `class_exists('\App\Core\App')` guard skips their amenities fetch and falls back to static copy — correct, but worth knowing.
+- `bohisawagar-banner.jpg` is missing from `public/assets/images/projects/gorakhpur/` (the other 5 location views' images all exist).
+
+### Verification
+- Web sweep: **1989 GET routes → 0 × 500** (histogram stable, no 503/429 left)
+- All 6 location pages → **200 with their own distinct `<h1>`**, no PHP warnings in `logs/php_error.log`; unknown slug → **404**
+- `/projects/suryoday-colony` → **'SURYODAY COLONY'** (project page, un-shadowed) vs `/project-locations/suryoday-colony` → **'Suryoday Colony'** (marketing page) — both correct and distinct
+- `php testing/master_test_runner.php`: **10/10 PASSED** (20.63s)
+- Staged **mine-only** (5 files, +95/−10) via blob-staging, so the parallel actor's `catch(\Exception)`→`\Throwable` sweep in the same files was **not** co-committed
+
+### Key Lessons (carried, continued)
+_795. **A feature can be 100% built and 100% unreachable.** Six marketing pages, 4–12 KB each, with real copy, images and enquiry forms — and not one route. "Built" is not "reachable"; grep the view folder for orphans, not just the route table for gaps.
+_796. **A literal route shadows a wildcard route for the SAME path — check the DB before you claim a URL.** `/projects/suryoday-colony` looked free (no static file) but the `projects` table has a real *SURYODAY COLONY* row behind the wildcard. New literal paths belong in their own namespace unless you have PROVEN no DB row can produce that slug.
+_797. **Constructor injection does not work in this router.** The router calls handlers with no arguments, so any controller that takes its dependencies through the constructor gets `null` and must self-resolve. Symptom: a clean 503 "service not available" on every endpoint of one controller — a 503 with a *constructor* in the message is always this.
+_798. **A hardcoded `''` in a SELECT is a silent data lie.** `'' as last_login_ip` made every user look like they had never logged in — the fraud score was computed on fabricated input. When you replace a phantom column, check whether the code was also faking the value.
+_799. **Sweep the layer the last actor actually touched.** The parallel actor rewrote ~500 files this session; re-running the *mobile* sweep would have found nothing. The web layer was where the damage was, and a 1989-route sweep takes 82 s.
+_800. **A 503 is a 500 with a nicer label.** The localization endpoints did not crash — they returned a *deliberate* 503. A sweep that only counts 500s misses every "gracefully degraded" failure, so count 4xx/5xx classes separately, not just 500.
+
 ## Session 449: Mobile API 500 Sweep Round 2 — 12 → 0 × 500, 3 Missing Tables, Public Lead Form Revived, Duplicate-Route Shadowing Found (2026-11-11)
 
 ### Trigger
