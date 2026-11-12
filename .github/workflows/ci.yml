@@ -71,6 +71,15 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          # S453: the Flutter SDK is PINNED on purpose.  With only
+          # `channel: stable` the runner picks up whatever stable is on the
+          # day, and the 2026-11-11 stable release (3.50.0) deprecated
+          # package:flutter/material.dart, which turned 281 imports into
+          # analyzer infos - and infos are fatal for `flutter analyze`.
+          # Bumping this needs the package:material_ui migration (note:
+          # flutter_localizations still ships the SDK's MaterialLocalizations,
+          # so it has to be migrated together).
+          flutter-version: '3.47.9'
           channel: stable
       - name: Flutter analyze
         working-directory: mobile/apsdreamhome_app_v2
@@ -86,6 +95,15 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          # S453: the Flutter SDK is PINNED on purpose.  With only
+          # `channel: stable` the runner picks up whatever stable is on the
+          # day, and the 2026-11-11 stable release (3.50.0) deprecated
+          # package:flutter/material.dart, which turned 281 imports into
+          # analyzer infos - and infos are fatal for `flutter analyze`.
+          # Bumping this needs the package:material_ui migration (note:
+          # flutter_localizations still ships the SDK's MaterialLocalizations,
+          # so it has to be migrated together).
+          flutter-version: '3.47.9'
           channel: stable
       - name: Build release APK
         working-directory: mobile/apsdreamhome_app_v2

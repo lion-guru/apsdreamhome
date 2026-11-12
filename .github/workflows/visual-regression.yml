@@ -14,7 +14,12 @@ on:
 
 jobs:
   visual-regression:
-    runs-on: ubuntu-latest
+    # S453: the runner is PINNED on purpose.  `ubuntu-latest` now resolves to
+    # ubuntu-26.04, and Playwright 1.59.1 refuses to install its browsers
+    # there ("Playwright does not support chromium on ubuntu26.04-x64"),
+    # so the job died before a single test ran.  ubuntu-24.04 is a supported
+    # Playwright target and keeps the browser install deterministic.
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
       BASE_URL: http://localhost:8000
