@@ -168,7 +168,9 @@ class SecurityTestSuite
 
         $htaccessPath = $this->projectRoot . '/.htaccess';
         $htaccess = file_exists($htaccessPath) ? file_get_contents($htaccessPath) : '';
-        $headerFile = $this->projectRoot . '/app/Core/BaseController.php';
+        // NOTE (S453): BaseController lives under Http/Controllers/, and
+        // app/core is tracked in LOWERCASE (case-sensitive CI/production).
+        $headerFile = $this->projectRoot . '/app/Http/Controllers/BaseController.php';
         $baseController = file_exists($headerFile) ? file_get_contents($headerFile) : '';
         $configFile = $this->projectRoot . '/app/Http/Controllers/BaseController.php';
         $configContent = file_exists($configFile) ? file_get_contents($configFile) : '';
@@ -256,8 +258,8 @@ class SecurityTestSuite
         $sqlPatterns = ["' OR '1'='1", "'; DROP TABLE", "UNION SELECT", "1; UPDATE"];
         $xssPatterns = ['<script>alert(1)</script>', '"><img onerror=alert(1)>', "javascript:alert(1)", '<svg onload=alert(1)>'];
 
-        $validatorFile = $this->projectRoot . '/app/Services/ValidatorService.php';
-        $securityFile = $this->projectRoot . '/app/Services/Security/SecurityService.php';
+        $validatorFile = $this->projectRoot . '/app/services/ValidatorService.php';
+        $securityFile = $this->projectRoot . '/app/services/Security/SecurityService.php';
         $content = '';
         if (file_exists($validatorFile)) $content .= file_get_contents($validatorFile);
         if (file_exists($securityFile)) $content .= file_get_contents($securityFile);
@@ -276,7 +278,7 @@ class SecurityTestSuite
         }
 
         $pdoContent = '';
-        $dbFile = $this->projectRoot . '/app/Core/Database/Database.php';
+        $dbFile = $this->projectRoot . '/app/core/Database/Database.php';
         if (file_exists($dbFile)) $pdoContent = file_get_contents($dbFile);
         if (stripos($pdoContent, 'PREPARE') !== false || stripos($pdoContent, 'prepare') !== false) {
             $score += 20; $details[] = 'PDO prepared statements used';
@@ -298,7 +300,7 @@ class SecurityTestSuite
         $score = 0;
         $details = [];
 
-        $fileUploadService = $this->projectRoot . '/app/Services/File/FileUploadService.php';
+        $fileUploadService = $this->projectRoot . '/app/services/FileUploadService.php';
         $content = file_exists($fileUploadService) ? file_get_contents($fileUploadService) : '';
 
         if (empty($content)) {
@@ -330,8 +332,8 @@ class SecurityTestSuite
         $details = [];
 
         $authFiles = [
-            $this->projectRoot . '/app/Services/Auth/AuthenticationService.php',
-            $this->projectRoot . '/app/Services/AuthenticationService.php',
+            $this->projectRoot . '/app/services/Auth/AuthenticationService.php',
+            $this->projectRoot . '/app/services/AuthenticationService.php',
             $this->projectRoot . '/app/Services/AuthManager.php',
         ];
         $content = '';
@@ -362,7 +364,7 @@ class SecurityTestSuite
         $score = 0;
         $details = [];
 
-        $rateLimitFile = $this->projectRoot . '/app/Services/Security/RateLimitService.php';
+        $rateLimitFile = $this->projectRoot . '/app/services/Security/RateLimitService.php';
         $hasRateLimitService = file_exists($rateLimitFile);
 
         if ($hasRateLimitService) {
@@ -395,7 +397,7 @@ class SecurityTestSuite
         $indexContent = file_exists($indexFile) ? file_get_contents($indexFile) : '';
 
         $hasDisplayOff = stripos($indexContent, 'display_errors') !== false && (stripos($indexContent, 'Off') !== false || stripos($indexContent, '0') !== false);
-        $hasErrorHandler = file_exists($this->projectRoot . '/app/Core/ErrorHandler.php') || stripos($indexContent, 'set_error_handler') !== false;
+        $hasErrorHandler = file_exists($this->projectRoot . '/app/core/ErrorHandler.php') || stripos($indexContent, 'set_error_handler') !== false;
 
         $configFiles = glob($this->projectRoot . '/config/*.php');
         $configContent = '';
@@ -424,10 +426,10 @@ class SecurityTestSuite
         $score = 0;
         $details = [];
 
-        $dbFile = $this->projectRoot . '/app/Core/Database/Database.php';
+        $dbFile = $this->projectRoot . '/app/core/Database/Database.php';
         $dbContent = file_exists($dbFile) ? file_get_contents($dbFile) : '';
 
-        $configService = $this->projectRoot . '/app/Core/ConfigService.php';
+        $configService = $this->projectRoot . '/app/core/ConfigService.php';
         $configContent = file_exists($configService) ? file_get_contents($configService) : '';
 
         $envFile = $this->projectRoot . '/.env';

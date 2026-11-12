@@ -181,9 +181,11 @@ if (defined('APP_ROOT')) {
     $autoloader->addClassMap('ErrorHandler', \APP_ROOT . '/app/core/ErrorHandler.php');
     $autoloader->addClassMap('Security', \APP_ROOT . '/app/core/Security.php');
 
-    // Register consolidated models for seamless migration
-    $autoloader->addClassMap('ConsolidatedUser', \APP_ROOT . '/app/models/ConsolidatedUser.php');
-    $autoloader->addClassMap('ConsolidatedProperty', \APP_ROOT . '/app/models/ConsolidatedProperty.php');
+    // NOTE (S453): the ConsolidatedUser / ConsolidatedProperty classmap
+    // entries were removed - those classes do not exist anywhere in the
+    // repo, and the classmap is consulted BEFORE the PSR-4 lookup and
+    // require_once'd unconditionally, so a stale entry is a fatal the
+    // moment anything asks for that class.
     $autoloader->addClassMap('UnifiedModel', \APP_ROOT . '/app/core/UnifiedModel.php');
 
     // PropertyFavorite class lives in Property/Favorite.php but is declared
@@ -194,9 +196,12 @@ if (defined('APP_ROOT')) {
     // App\Models namespace — PSR-4 can't resolve it, so map explicitly.
     $autoloader->addClassMap('App\Models\Customer', \APP_ROOT . '/app/models/User/Customer.php');
 
-    // Register root-namespace controllers
-    $autoloader->addClassMap('AIAssistantController', \APP_ROOT . '/app/Http/Controllers/AI/AssistantController.php');
-    $autoloader->addClassMap('App\Http\Controllers\AIAssistantController', \APP_ROOT . '/app/Http/Controllers/AI/AssistantController.php');
+    // Register root-namespace controllers.
+    // NOTE (S453): the class lives at app/Http/Controllers/AIAssistantController.php
+    // - the old path had an extra 'AI/' segment, so the classmap pointed at a
+    // file that does not exist and require_once would have fataled.
+    $autoloader->addClassMap('AIAssistantController', \APP_ROOT . '/app/Http/Controllers/AIAssistantController.php');
+    $autoloader->addClassMap('App\Http\Controllers\AIAssistantController', \APP_ROOT . '/app/Http/Controllers/AIAssistantController.php');
 
     // Register misnamed-file controllers
     $autoloader->addClassMap('App\Http\Controllers\Api\MonitorController', \APP_ROOT . '/app/Http/Controllers/Api/MonitorController.php');
@@ -208,7 +213,11 @@ if (defined('APP_ROOT')) {
     $autoloader->addClassMap('App\Http\Controllers\Api\PaymentGatewayController', \APP_ROOT . '/app/Http/Controllers/Payment/PaymentGatewayController.php');
     $autoloader->addClassMap('App\Http\Controllers\Api\AnalyticsController', \APP_ROOT . '/app/Http/Controllers/Admin/AnalyticsController.php');
     $autoloader->addClassMap('App\Http\Controllers\Api\ReferralController', \APP_ROOT . '/app/Http/Controllers/Admin/ReferralController.php');
-    $autoloader->addClassMap('App\Http\Controllers\Api\AuthController', \APP_ROOT . '/app/Http/Controllers/AuthController.php');
+    // NOTE (S453): Api\AuthController lives in the Api/ subdirectory - the
+    // old path (app/Http/Controllers/AuthController.php) does not exist, and
+    // the classmap is require_once'd unconditionally, so asking for that
+    // class was a fatal.
+    $autoloader->addClassMap('App\Http\Controllers\Api\AuthController', \APP_ROOT . '/app/Http/Controllers/Api/AuthController.php');
 
     // Register BaseAgent (class is in Agents/ directory but namespace was 'users')
     $autoloader->addClassMap('App\Services\AI\users\BaseAgent', \APP_ROOT . '/app/services/AI/Agents/BaseAgent.php');

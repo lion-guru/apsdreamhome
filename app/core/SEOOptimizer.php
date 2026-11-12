@@ -357,21 +357,37 @@ class SEOOptimizer
      */
     private function optimizeImages($content)
     {
-        // Add alt texts to images that don't have them
-        $content = preg_replace(
-            '/<img([^>]+)(?<!alt="[^"]*")>/i',
-            '<img$1 alt="Property image">',
+        // Add alt texts to images that don't have them, and loading="lazy"
+        // to images that don't have it.
+        //
+        // NOTE (S453): this used a variable-length lookbehind
+        //   '/<img([^>]+)(?<!alt="[^"]*")>/i'
+        // which is NOT valid PCRE ("lookbehind assertion is not fixed
+        // length" on PHP 8.2, "length of lookbehind assertion is not
+        // limited" on PHP 8.3).  preg_replace() therefore returned NULL and
+        // wiped the ENTIRE page content.  A callback does the same job with
+        // a valid pattern, and also stops a second loading="lazy" being
+        // appended to an <img> that already had one.
+        if (!is_string($content) || $content === '') {
+            return $content;
+        }
+
+        $result = preg_replace_callback(
+            '/<img\b([^>]*)>/i',
+            static function (array $m): string {
+                $attrs = $m[1];
+                if (!preg_match('/\balt\s*=/i', $attrs)) {
+                    $attrs .= ' alt="Property image"';
+                }
+                if (!preg_match('/\bloading\s*=/i', $attrs)) {
+                    $attrs .= ' loading="lazy"';
+                }
+                return '<img' . $attrs . '>';
+            },
             $content
         );
 
-        // Add loading="lazy" for performance
-        $content = preg_replace(
-            '/<img([^>]+)>/i',
-            '<img$1 loading="lazy">',
-            $content
-        );
-
-        return $content;
+        return $result === null ? $content : $result;
     }
 
     /**

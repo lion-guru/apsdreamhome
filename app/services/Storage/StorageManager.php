@@ -189,7 +189,7 @@ class StorageManager
     {
         try {
             if (!class_exists('App\\Core\\Database\\Database', false)) {
-                $path = (defined('APP_ROOT') ? APP_ROOT : dirname(__DIR__, 3)) . '/app/Core/Database/Database.php';
+                $path = (defined('APP_ROOT') ? APP_ROOT : dirname(__DIR__, 3)) . '/app/core/Database/Database.php';
                 if (is_file($path)) require_once $path;
             }
             $dbClass = 'App\\Core\\Database\\Database';

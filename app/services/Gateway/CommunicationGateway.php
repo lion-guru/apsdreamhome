@@ -597,9 +597,12 @@ class CommunicationGateway
     protected function safeMake($class)
     {
         if (!class_exists($class)) {
-            // Try to autoload via the framework
-            if (defined('APP_ROOT') && file_exists(APP_ROOT . '/app/Core/Autoloader.php')) {
-                require_once APP_ROOT . '/app/Core/Autoloader.php';
+            // Try to autoload via the framework.
+            // NOTE (S453): the repo tracks app/core in LOWERCASE - on a
+            // case-sensitive filesystem (Linux CI / production) the
+            // capitalised path does not exist and the require fatals.
+            if (defined('APP_ROOT') && file_exists(APP_ROOT . '/app/core/Autoloader.php')) {
+                require_once APP_ROOT . '/app/core/Autoloader.php';
             }
         }
         if (!class_exists($class)) {

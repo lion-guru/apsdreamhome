@@ -113,9 +113,18 @@ class Config
 
         $configPath = defined('CONFIG_PATH') ? CONFIG_PATH : APP_ROOT . '/config';
         
-        // Application config
-        if (file_exists($configPath . '/application.php')) {
-            $appConfig = require $configPath . '/application.php';
+        // Application config.
+        // NOTE (S453): this looked for config/application.php, but that file
+        // was RENAMED to config/app.php long ago - so the application config
+        // was never loaded at all.  The merge stays FLAT on purpose: every
+        // config() caller in the codebase uses a dotted key (app.name,
+        // app.url, database.default, seo.*, cache.driver), so the flat
+        // top-level keys this file contributes (name, url, env, ...) are not
+        // read by anyone and nothing changes for the existing consumers.
+        // (Merging it under the 'app' key instead would repoint
+        // config('app.url') - the SEO canonical URL - at localhost.)
+        if (file_exists($configPath . '/app.php')) {
+            $appConfig = require $configPath . '/app.php';
             if (is_array($appConfig)) {
                 self::$config = array_merge(self::$config, $appConfig);
             }
