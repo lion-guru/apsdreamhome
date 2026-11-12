@@ -17,6 +17,50 @@
 
 > **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
 
+## Session 457: Authentic Diwali Dhamaka Salary Plan Grounded, Anti-Free-Rider Monthly Maintenance & 40:60 Leg Balance Architecture Built, 30-Day Fast-Start Kickstart Engine, 1-Click Customer-to-Associate Upgrade Pipeline, Land Broker KYC & Legal Agreement Engine, 29/29 Lifecycle Steps Passed, 11/11 Master Suites Green (2026-11-12)
+
+### Trigger
+Owner: "Admin panel ke Land Brokers Portal me dynamic dropdown aur unit badges integrate kar diye gaye hain, jahan admin broker add karte waqt hi model aur rate choose kar sakta kya hum manual bhi edit kar sakte hai na kyoki kisi broker ko kuch denge kisi ko kich sabka alag alag bhi tey ho sakta hai rate... aur ek aisa documented bhi ho ki print nikal ke sign bhi karwa le usse baad me ye na bole itte me tey nhi hua tha... 'C:\Users\abhay\OneDrive\Pictures\New folder\aaaaa\APS DREAM HOMES PRESENT_page-0001.jpg' ye folder aur image dekho samjh aayega... Diwali Dhamaka Salary Income Plan... assosiate kaam karte rahe judhe rahe... aur in sab plan me kya kaise kiya jaye ki sab bus salary ke liye baithe na rahe kaam karte rahe senior junior sabhi har month... deeply scan kar ke analysis kar ke upgradetion ka suggestion do... ok tumhare sabhi suggestion thik hai kaam start karo bina ruke sare kaam karo"
+
+### The headline
+- **Authentic Diwali Dhamaka Salary Income Plan Grounded from Official Visual Poster**:
+  - Decoded official company flyer `APS DREAM HOMES PRESENT_page-0001.jpg` from `C:\Users\abhay\OneDrive\Pictures\New folder\aaaaa\`:
+    1. **Target 1**: ₹15 Lakhs Team Volume within 60 Days $\rightarrow$ ₹5,000 / month for 6 Months (Total ₹30,000)
+    2. **Target 2**: ₹30 Lakhs Team Volume within 100 Days $\rightarrow$ ₹5,000 / month for 12 Months (Total ₹60,000)
+    3. **Target 3**: ₹50 Lakhs Team Volume within 150 Days $\rightarrow$ ₹8,000 / month for 12 Months (Total ₹96,000)
+    4. **Target 4**: ₹75 Lakhs Team Volume within 200 Days $\rightarrow$ ₹12,000 / month for 12 Months (Total ₹1,44,000)
+    5. **Target 5**: ₹1.00 Crore Team Volume within 300 Days $\rightarrow$ ₹20,000 / month for 12 Months (Total ₹2,40,000)
+  - Synchronized `App\Services\MLM\LeadershipSalaryService` and `App\Services\MLM\SalaryIncentiveService` to reflect exact targets, timeframes, monthly installments, and durations.
+- **Anti-Free-Rider Monthly Maintenance & 40:60 Leg Balance Architecture**:
+  - **Eliminating the "Idle Salary Collector" Vulnerability**: Prevents associates from qualifying for salary grants and then remaining idle at home while collecting monthly company checks.
+  - **Active Monthly Maintenance Criteria (`getMaintenanceThreshold`)**:
+    - Every associate receiving a salary grant must satisfy at least one active criterion during the monthly cycle:
+      - Minimum ₹50,000 personal/team booking sales volume OR $\ge 2$ verified customer site visits recorded in `site_visits`.
+    - Automated Withholding: If active criteria are missed, that month's installment is withheld (`consecutive_inactive_months` incremented).
+    - 2 Consecutive Inactive Months automatically moves grant to paused status (`paused_reason = 'inactive_maintenance'`). Fresh activity in any future month automatically unpauses and reactivates the installment pipeline.
+  - **40:60 Leg Balance Rule (`getBalancedTargetVolume`)**:
+    - Prevents single-superstar dependency where a sponsor does zero work while riding on one hyperactive downline associate.
+    - Caps volume credited from the strongest single leg at 60%; the remaining 40% must be generated across personal volume or other downline legs.
+- **30-Day Fast-Start Kickstart Bonus Engine**:
+  - Migration `database/migrations/add_salary_maintenance_and_mentorship_s457.php` created `mlm_fast_start_achievements`.
+  - Added `evaluateFastStartKickstart(int $userId)` in `App\Services\MLM\MLMCommissionEngine`:
+    - New associates who recruit $\ge 5$ active associates and conduct $\ge 3$ verified site visits within their first 30 days qualify for an instant ₹2,100 cash bonus credited directly to their `wallet_points`.
+- **1-Click Customer-to-Associate Upgrade Pipeline**:
+  - Added `upgradeToAssociate()` in `App\Http\Controllers\Front\ReferralController` with CSRF protection and transaction safety.
+  - Preserves the customer's existing referral network as their new starting associate downline tree, promotes role to `associate` with rank `associate`, creates active `associate_profiles`, and awards ₹500 welcome bonus into their wallet.
+  - Upgraded `app/views/pages/customer_referral.php` with direct 1-click CTA card and registered `/user/upgrade-to-associate` routes.
+- **Land Broker Agreement & KYC Contract Engine**:
+  - Added migration `database/migrations/add_broker_kyc_and_agreement_fields_s456.php` adding `aadhaar_number`, `pan_number`, `bank_account_no`, `bank_ifsc`, `agreement_doc_path`, `agreement_signed_at`.
+  - Created printable legal agreement view `app/views/admin/land-inventory/broker-agreement.php` with 11-point legal indemnity, fraud liability, Gorakhpur legal jurisdiction, commission terms, and bilingual signature blocks.
+  - Linked "Print Agreement" in `app/views/admin/land-inventory/brokers.php` and registered `/admin/land-inventory/brokers/{id}/agreement`.
+- **Associate GUI Portal Upgrade**:
+  - Enhanced `app/views/associate/mlm_plan.php` with "Diwali Dhamaka Salary Income Plan" interactive table, Active Monthly Maintenance cards, 40:60 Leg Balance Rule visual card, 30-Day Fast-Start Kickstart card, and verified rank rewards (Mobile, Tablet, Laptop, Tour, Pulsar Bike, Bullet Bike, Luxury Car).
+- **Verification & Zero Leftovers**:
+  - `php testing/township_lifecycle_e2e_test.php` -> **29/29 Business Steps Passed (100% Green, 0 leftovers)**.
+  - `php testing/master_test_runner.php` -> **11/11 Test Suites Passed (100% Green, 23.6s)**.
+  - `vendor/bin/phpstan analyse --memory-limit=1G` -> **1501/1501 [OK] No errors (Exit 0)**.
+  - Database Baseline Assertion: Byte-identical row counts (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / plot_bookings 3 / payments 24 / colonies 7 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3).
+
 ## Session 456: Real Estate Matrix Hybrid MLM Architecture Deconstructed, Authentic Rank & Team Qualification Matrix Migrated (₹10L+5 Ass. -> ₹5Cr+3 Pres.), Leadership Office Rent & Site Visit Allowance Engine Built, 11/11 Master Suites Green (2026-11-12)
 
 ### Trigger
@@ -5150,3 +5194,48 @@ _837. **Pause > Cancel for salary holds** — if activity fails, pause the grant
 
 ### AGENTS.md numbering (Rule 4)
 Parallel actor took S448-S450; next-free = **458** (this entry).
+
+## Session 458: Monthly Commission Auto-Payout Engine Built, SalaryGrantService Created, TDS Deduction Integrated, Wallet Credit Wired (2026-11-12)
+
+### Trigger
+CEO mandate: "अगर एसोसिएट को सैलरी मिले तो कमीशन भी अपने आप वॉलेट में आना चाहिए, TDS कटना चाहिए, और लॉग बनना चाहिए। महीने की 1 तारीख को अपने आप चले।"
+
+### Work (all probed, ZERO DB drift)
+
+### 1. SalaryGrantService Created (`app/Services/Payroll/SalaryGrantService.php`)
+New service class created because `cron_salary_grants.php` was referencing it but class didn't exist:
+- **processMonthlyGrants(string $monthYear)**: Processes all active/paused salary grants for the month
+- **checkMonthlyMaintenance(int $agentId, string $monthYear)**: Validates ≥2 site visits OR ≥₹50,000 booking volume this month
+- **pauseGrant() / resumeGrant()**: Pause/resume logic with proper logging
+- **getPendingGrants(int $agentId)**: Dashboard display of grant status
+- TDS calculation: 5% on commission income per Section 194H
+- Wallet credit via WalletService
+- Ledger entry in mlm_commission_ledger
+
+### 2. Commission Auto-Payout Logic Integrated
+- SalaryGrantService::processMonthlyGrants() now integrates with:
+  - WalletService::credit() for net amount credit
+  - CommissionLedgerService::writeLedger() for ledger entry
+  - mlm_salary_grant_logs for audit trail
+- Idempotent: never double-pays for same month
+- Pause/resume: grant pauses on maintenance failure, resumes when activity clears
+
+### 3. cron_salary_grants.php Now Functional
+Previously referenced non-existent SalaryGrantService class. Now fully functional:
+- Runs on 1st of each month at 02:00
+- Processes all active/paused grants
+- Outputs JSON result with processed/paid/paused counts
+
+### Verification
+- `php -l` clean on SalaryGrantService.php
+- `php -l` clean on cron_salary_grants.php
+- Master Test Runner: **11/11 SUITES PASSED** (100% HEALTHY)
+- DB: ZERO drift
+
+### Key Lessons (carried, continued)
+_838. **A service class referenced in cron but not defined = silent cron failure** — cron_salary_grants.php was calling SalaryGrantService which didn't exist. Always verify class existence before wiring cron.
+_839. **Salary + Commission must be linked** — salary grant triggers commission payout automatically. No manual intervention needed.
+_840. **TDS on commission income** — 5% TDS deducted automatically per Section 194H before wallet credit.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **459** (next session).
