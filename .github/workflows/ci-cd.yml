@@ -151,6 +151,21 @@ jobs:
           cd mobile/apsdreamhome_app_v2
           flutter build web --release
       
+      - name: Guard against dependency drift
+        # S453: see the same guard in ci.yml - the pinned SDK must resolve
+        # EXACTLY the committed lockfile, otherwise the build here and the
+        # analysis there drift apart.
+        run: |
+          if ! git diff --exit-code -- \
+               mobile/apsdreamhome_app_v2/pubspec.lock \
+               mobile/apsdreamhome_app_v2/analysis_options.yaml; then
+            echo "::error::pubspec.lock / analysis_options.yaml are out of date for the pinned Flutter SDK."
+            echo "Run 'flutter pub get' with Flutter 3.47.9 locally and commit the result."
+            git diff -- mobile/apsdreamhome_app_v2/pubspec.lock mobile/apsdreamhome_app_v2/analysis_options.yaml
+            exit 1
+          fi
+          echo "Dependency lockfile is in sync with the pinned SDK."
+      
       - name: Build Flutter Android (optional)
         if: false
         run: |

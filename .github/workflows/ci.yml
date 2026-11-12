@@ -84,6 +84,23 @@ jobs:
       - name: Flutter analyze
         working-directory: mobile/apsdreamhome_app_v2
         run: flutter analyze
+      - name: Guard against dependency drift
+        # S453: the pinned SDK must resolve EXACTLY the committed lockfile.
+        # When it did not, the runner re-resolved 7 packages on every run and
+        # printed "Changed 7 dependencies!" - and the analysis in CI then
+        # differed from the analysis on a developer machine (that is how 281
+        # material_ui infos appeared in CI but not locally).  Fail loudly
+        # instead of drifting silently.
+        run: |
+          if ! git diff --exit-code -- \
+               mobile/apsdreamhome_app_v2/pubspec.lock \
+               mobile/apsdreamhome_app_v2/analysis_options.yaml; then
+            echo "::error::pubspec.lock / analysis_options.yaml are out of date for the pinned Flutter SDK."
+            echo "Run 'flutter pub get' with Flutter 3.47.9 locally and commit the result."
+            git diff -- mobile/apsdreamhome_app_v2/pubspec.lock mobile/apsdreamhome_app_v2/analysis_options.yaml
+            exit 1
+          fi
+          echo "Dependency lockfile is in sync with the pinned SDK."
 
   flutter-build-release:
     name: Build Release APK

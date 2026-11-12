@@ -17,6 +17,8 @@
  *    10. Log Retention Purge (ab_events 90d, visitor_page_views 60d, csp_violations 30d)
  *    11. Leave Accrual (per leave-type frequency)
  *    12. Payroll Auto-Lock (2+ mo) / Auto-Close (6+ mo)
+ *    13. API Token Prune (expired > 30 days - the mobile app mints 30-day
+ *        tokens and api_tokens otherwise only ever grows)
  *
  *   MONTHLY (1st of each month):
  *     7. Royalty Pool Distribution (2% →' qualified site managers)
@@ -106,6 +108,7 @@ if ($statusOnly || $dryRun) {
         echo "   10. Log Retention Purge" . PHP_EOL;
         echo "   11. Leave Accrual" . PHP_EOL;
         echo "   12. Payroll Auto-Lock/Close" . PHP_EOL;
+        echo "   13. API Token Prune (expired > 30d)" . PHP_EOL;
     }
     if (in_array($mode, ['monthly', 'all'])) {
         echo "  MONTHLY:" . PHP_EOL;
@@ -500,6 +503,45 @@ try {
         } catch (\Throwable $e) {
             echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
             $errors[] = 'payroll_periods: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 13. API TOKEN PRUNE (expired mobile/api tokens older than 30 days)
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}/13  API Token Prune (expired > 30d)" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            // The mobile app mints 30-day tokens, so every login - and every
+            // test sweep - leaves a dead token behind and api_tokens only
+            // ever grows.  A 30-day grace window keeps a recently expired
+            // token around for audit; anything older is dead weight.
+            // (scripts/prune_expired_tokens.php does the same thing on demand
+            // with --dry-run.)
+            $cutoff = date('Y-m-d H:i:s', time() - (30 * 86400));
+            $cntStmt = $pdo->prepare(
+                'SELECT COUNT(*) FROM api_tokens WHERE expires_at IS NOT NULL AND expires_at < ?'
+            );
+            $cntStmt->execute([$cutoff]);
+            $expired = (int) $cntStmt->fetchColumn();
+
+            if ($expired > 0) {
+                $delStmt = $pdo->prepare(
+                    'DELETE FROM api_tokens WHERE expires_at IS NOT NULL AND expires_at < ?'
+                );
+                $delStmt->execute([$cutoff]);
+                $deleted = $delStmt->rowCount();
+                $remaining = (int) $pdo->query('SELECT COUNT(*) FROM api_tokens')->fetchColumn();
+                echo "  [OK] {$deleted} expired API token(s) deleted, {$remaining} left" . PHP_EOL;
+                $log['api_token_prune'] = ['deleted' => $deleted, 'remaining' => $remaining];
+            } else {
+                $remaining = (int) $pdo->query('SELECT COUNT(*) FROM api_tokens')->fetchColumn();
+                echo "  [OK] no expired API tokens (table holds {$remaining})" . PHP_EOL;
+                $log['api_token_prune'] = ['deleted' => 0, 'remaining' => $remaining];
+            }
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'api_token_prune: ' . $e->getMessage();
         }
         echo PHP_EOL;
     }
