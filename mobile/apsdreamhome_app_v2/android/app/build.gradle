@@ -1,7 +1,21 @@
 plugins {
     id "com.android.application"
     id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services"
+}
+
+// S453: android/app/google-services.json holds the Firebase API key and is
+// gitignored on purpose, so it does NOT exist on the CI runner.  Applying
+// the google-services plugin unconditionally made the release build die with
+//   "Execution failed for task ':app:processReleaseGoogleServices'"
+// even though everything else compiled.  Apply it only when the file is
+// there, so a CI smoke APK builds without Firebase config while a local
+// build (and any build that provides the file) keeps the full config.
+//
+// To get a Firebase-enabled APK out of CI, add the file as a repository
+// secret and write it before the build:
+//   echo "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
+if (file('google-services.json').exists()) {
+    apply plugin: 'com.google.gms.google-services'
 }
 
 def localProperties = new Properties()
