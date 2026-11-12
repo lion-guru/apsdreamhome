@@ -53,7 +53,21 @@ jobs:
           cache: 'npm'
 
       - name: Import database schema
-        run: mysql -h 127.0.0.1 -u root -proot < database/schema.sql 2>/dev/null || true
+        run: |
+          # S453: MariaDB needs a moment before it accepts the import, and the
+          # import needs the port and the database name - without them the
+          # connection is refused and the whole schema import is silently
+          # skipped by the old `2>/dev/null || true`.  This mirrors the
+          # schema-scan job in ci.yml, which passes.
+          for i in $(seq 1 30); do
+            if mysqladmin -h 127.0.0.1 -P 3306 -u root -proot ping --silent 2>/dev/null; then
+              echo "MariaDB is up after ${i} attempt(s)"
+              break
+            fi
+            sleep 2
+          done
+          mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/schema.sql \
+            || echo "Schema import failed - continuing with whatever the service created"
 
       - name: Install dependencies
         run: npm ci
