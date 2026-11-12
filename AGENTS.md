@@ -21,6 +21,50 @@
 
 > **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
 
+## Session 467: The Scanner Under-Reported (a Top-Level Alternation Matched Empty), 14 Phantom Columns/Tables Fixed, 9 Domain Columns Added, and Two Analytics Services That Could Never Run (2026-11-13)
+
+### Trigger
+Owner: "do next bina ruke kaam karo" — continuing the schema-mismatch work from S466: with a real scanner and a ratchet in place, the next job was to fix what it finds, and to make sure the scanner itself was telling the truth.
+
+### The headline
+
+**1. THE SCANNER WAS UNDER-REPORTING - ITS OWN REGEX WAS BROKEN**
+The continuation fragment was composed like this:
+```
+'/\bFROM\s+`?([A-Za-z_][A-Za-z0-9_]*)`?' . '\s*`?(?:WHERE|...)\b|\s*$/i'
+```
+The fragment's own `|` is **top level** in the composed pattern, so the whole thing became *"FROM ..."* **OR** *"\s*$"* - and the second alternative matched the empty string almost everywhere.  The reported table names were therefore leftovers from the previous match (`agent_commissi`, `rate_`, ...).  Wrapping the fragment in a group fixed it: the real count is **265** (179 phantom tables + 86 phantom columns), not the 237 the broken pattern reported.  The ratchet baseline was regenerated and still bites (exit 1 on an injected phantom table, exit 0 after the restore).
+
+**2. NINE PHANTOM COLUMNS FIXED BY A MIGRATION, FIVE BY A RENAME, ONE NOT-NULL COLUMN SUPPLIED**
+- **New idempotent migration** `add_missing_team_notification_auction_columns_s466.php`: `team_messages.type` / `.recipients`, `notifications.sender_id` / `.recipient_type`, `auction_bids.bidder_name` / `.max_auto_bid` / `.bid_type` / `.ip_address` / `.status`.  Every one is a real DOMAIN field the application writes, not a typo - so the schema was missing them and each INSERT died with 1054 inside a try/catch: **a team message could not be sent, an auction bid could not be placed, and an executive-AI notification could not be created.**
+- **Renamed to the real columns**: `lead_activities.user_id` -> `created_by`, `.action` -> `activity_type`, `.details` -> `description`, `.type` -> `activity_type`, `notifications.reference_id` -> `related_id`, `.reference_type` -> `related_type`.
+- **`notifications.type` is NOT NULL with no default** and `ExecutiveAIService::sendNotification()` never supplied it -> 1364 "Field 'type' doesn't have a default value", so the notification could not be created even after the columns existed.  It now passes `$params['type'] ?? 'executive_ai'`.
+
+**3. TWO ANALYTICS SERVICES THAT COULD NEVER RUN - THREE INDEPENDENT DEFECTS EACH**
+`RateLimitAnalytics` (9 methods) and its sibling `ApiAnalytics` (8 methods) were unreachable:
+1. **The namespace did not match the file path.** `app/services/Analytics/Reports/RateLimitAnalytics.php` declared `namespace App\Services\Legacy\Analytics;` - PSR-4 looked for `app/Services/Legacy/Analytics/RateLimitAnalytics.php`, which does not exist.  The class was unreachable under BOTH names.
+2. **The constructor called a method that does not exist.** `App::make('logger')` - `App\Core\App` has no `make()` -> "Call to undefined method App\Core\App::make()".  The stand-in now implements exactly the methods the code calls (`log`, `warning`, `error`, `info`, `alert`) - `App\Core\Log\Logger` has no `alert()`, so it could not be dropped in as-is.
+3. **`ensureTables()` executed broken SQL.**  The two `CREATE TABLE` statements had been stripped from the method by an earlier bulk edit, so what remained ran `"ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"` as SQL -> a syntax error -> the constructor threw.  It now VERIFIES the tables and reports a missing one; the tables are created by the idempotent migration `create_rate_limit_analytics_tables_s467.php` (`rate_limit_events`, `rate_limit_violations` - per-API-key rate-limit METRICS, a different domain from the existing `rate_limit_logs` - plus `api_requests.api_key_id`, which `ApiAnalytics` writes and the table did not have).  Two column names in `ApiAnalytics`' insert were corrected to the real ones: `response_time` -> `response_time_ms`, `timestamp` -> `created_at`.
+
+### Verification
+- **Money/feature probe**: `RateLimitAnalytics.recordEvent`, `recordViolation`, `getEndpointMetrics` (returns rows), `getViolationHistory` (returns rows), `getUserMetrics` - all clean, all probe rows deleted.  `ApiAnalytics` constructs and its `api_requests` insert works.  The five previously-1054 inserts (team_messages, notifications x2, auction_bids, lead_activities) were each executed and the values read back.
+- **phpstan** -> `[OK] No errors` (exit 0).  **Master test suite** -> **10/10 PASSED**.
+- **Schema ratchet** -> 263 known / **0 new** -> exit 0; and exit 1 when a phantom table is injected into the code.
+- **Migrations idempotent**: `add_missing_team_notification_auction_columns_s466.php` (9 x ADD / 9 x skip) and `create_rate_limit_analytics_tables_s467.php` (2 x CREATE + 1 x ADD, then all skip).
+- **Live DB byte-identical**: users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / api_requests 0 / rate_limit_events 0 / rate_limit_violations 0.
+- Commits: `1184be93c` (the 9 columns + 5 renames + the `type` fix), `5cf1c1970` (the scanner's broken alternation + the regenerated baseline), `6ae6dace2` (the two analytics services + their tables) - all pushed.
+
+### Key Lessons (carried, continued)
+_877. **A top-level `|` in a concatenated regex silently changes what the pattern means.** `'/FROM...' . '/...|\s*$/'` is *"FROM ..."* **OR** *"\s*$"*, and the empty alternative matched everywhere - so the scanner reported truncated names and under-counted by 28.  A fragment that is spliced into a larger pattern must carry its own group.
+_878. **A namespace that does not match the file path makes a class permanently unreachable.** `namespace App\Services\Legacy\Analytics;` in `app/services/Analytics/Reports/` - PSR-4 can never find it, and no amount of `use` will either.  The class was dead code with a full method set and a table it never wrote.
+_879. **`App::make()` does not exist in this framework.** The service-repository idiom from another framework was used verbatim, so the constructor raised before the object could exist - and the `?? new class {...}` fallback never ran, because a missing method throws instead of returning null.
+_880. **A `catch` around a failed CREATE TABLE turns a missing table into a missing feature.** `ensureTables()` executed a broken DDL string, the constructor threw, and the service could never be built - nobody saw it because the class was also unreachable for a second, unrelated reason.  Two defects hid each other.
+_881. **A bulk edit can delete a statement and leave the syntax valid.** `CREATE TABLE ... (` vanished and the method still parsed - it just executed the remaining fragment as SQL.  A method that CREATES schema is a smell; schema belongs in a migration.
+_882. **Fixing the schema and fixing the code are two different jobs.** 9 phantom columns needed a migration; 5 needed a rename; 1 needed a value that was never supplied.  Only the scanner tells you which is which.
+
+### Owner actions still open (carried forward)
+Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) - voice/S3/scheduler/Redis credentials - `bohisawagar-banner.jpg` owner asset drop - `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED; ~32 GB) - the `package:material_ui` migration if the Flutter pin is ever raised above 3.47.9 (281 imports, and `flutter_localizations` has to move with it) - **the 15 destructive GET routes still have no POST twin** (the cross-origin guard stops the CSRF; the durable fix is a POST + CSRF token per route, ~15 views) - **the visual baselines should be regenerated as one consistent set** if a real pixel gate is wanted - **263 schema mismatches remain** (`database/schema_mismatch_baseline.txt`); the next most-used are `marketing_strategies` (6), `alert_queue` (6), `performance_alerts` (6), `customer_assignments` (6), `plot_locks` (5), `backup_verifications` (5), `auction_watchers` (5) - and `user_wallets` vs `wallet_points` is a SECOND, parallel wallet system the codebase still mixes.
+
 ## Session 466: The "Schema Mismatch Scan" Gate Was A No-Op (Scanner File Did Not Exist) - A Real Scanner Written, 237 Phantom Tables/Columns Found, and a Salary Advance / Leave Encashment That NEVER Reached the Employee's Wallet (2026-11-13)
 
 ### Trigger
