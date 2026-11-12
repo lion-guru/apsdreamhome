@@ -1,6 +1,11 @@
 <?php
 
-namespace App\Services\Legacy\Analytics;
+// S467: the namespace did not match the file path, so PSR-4 could never
+// resolve this class - App\Services\Analytics\Reports\RateLimitAnalytics
+// maps to app/Services/Analytics/Reports/RateLimitAnalytics.php, while the
+// class declared App\Services\Legacy\Analytics.  The class was
+// unreachable by BOTH names, i.e. dead code that could never run.
+namespace App\Services\Analytics\Reports;
 
 use App\Core\App;
 use Exception;
@@ -18,7 +23,22 @@ class RateLimitAnalytics {
 
     public function __construct() {
         $this->db = App::database();
-        $this->logger = App::make('logger') ?? new class { public function log($msg) { error_log('[RateLimitAnalytics] ' . $msg); } };
+        // S467: `App::make()` does not exist on App\Core\App, so this line
+        // raised "Call to undefined method App\Core\App::make()" and the
+        // constructor - and therefore the whole service - was unreachable.
+        // The calls below use warning()/error()/info()/alert()/log(), so the
+        // stand-in implements exactly those.
+        $this->logger = new class {
+            private function write(string $level, $msg, array $ctx = []): void {
+                error_log('[RateLimitAnalytics] ' . $level . ': ' . (is_scalar($msg) ? (string)$msg : json_encode($msg))
+                    . ($ctx ? ' ' . json_encode($ctx) : ''));
+            }
+            public function log($msg, array $ctx = []): void { $this->write('LOG', $msg, $ctx); }
+            public function warning($msg, array $ctx = []): void { $this->write('WARNING', $msg, $ctx); }
+            public function error($msg, array $ctx = []): void { $this->write('ERROR', $msg, $ctx); }
+            public function info($msg, array $ctx = []): void { $this->write('INFO', $msg, $ctx); }
+            public function alert($msg, array $ctx = []): void { $this->write('ALERT', $msg, $ctx); }
+        };
         $this->initializeCache();
         $this->loadConfig();
         $this->ensureTables();
@@ -65,15 +85,27 @@ class RateLimitAnalytics {
      * Ensure required tables exist
      */
     private function ensureTables() {
-        // Rate limit events table
-        $this->db->execute("
-            ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-        ");
-
-        // Rate limit violations table
-        $this->db->execute("
-            ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-        ");
+        // S467: the two CREATE TABLE statements were MISSING from this
+        // method (a bulk edit had stripped them), so it executed the string
+        // "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" as SQL -> a syntax error
+        // -> the constructor threw -> the service could never be built.
+        //
+        // The tables are created by the idempotent migration
+        // database/migrations/create_rate_limit_analytics_tables_s467.php.
+        // Here we only VERIFY them and say so if they are missing.
+        foreach (['rate_limit_events', 'rate_limit_violations'] as $table) {
+            try {
+                $row = $this->db->fetchOne(
+                    "SELECT COUNT(*) AS c FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?",
+                    [$table]
+                );
+                if ((int)($row['c'] ?? 0) === 0) {
+                    $this->logger->warning("Table {$table} is missing - run database/migrations/create_rate_limit_analytics_tables_s467.php");
+                }
+            } catch (Exception $e) {
+                $this->logger->warning("Could not verify {$table}: " . $e->getMessage());
+            }
+        }
     }
 
     /**

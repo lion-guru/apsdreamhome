@@ -1,6 +1,11 @@
 <?php
 
-namespace App\Services\Legacy\Analytics;
+// S467: the namespace did not match the file path, so PSR-4 could never
+// resolve this class - App\Services\Analytics\Reports\RateLimitAnalytics
+// maps to app/Services/Analytics/Reports/RateLimitAnalytics.php, while the
+// class declared App\Services\Legacy\Analytics.  The class was
+// unreachable by BOTH names, i.e. dead code that could never run.
+namespace App\Services\Analytics\Reports;
 
 use App\Core\App;
 use App\Traits\ServiceTenantTrait;
@@ -22,7 +27,20 @@ class ApiAnalytics {
     public function __construct() {
         $this->db = App::database();
         // Use a generic logger or the one from App if available
-        $this->logger = App::make('logger') ?? new class { public function log($msg) { error_log('[ApiAnalytics] ' . $msg); } };
+        // S467: `App::make()` does not exist on App\Core\App, so this line
+        // raised "Call to undefined method App\Core\App::make()" and the
+        // constructor - and therefore the whole service - was unreachable.
+        $this->logger = new class {
+            private function write(string $level, $msg, array $ctx = []): void {
+                error_log('[ApiAnalytics] ' . $level . ': ' . (is_scalar($msg) ? (string)$msg : json_encode($msg))
+                    . ($ctx ? ' ' . json_encode($ctx) : ''));
+            }
+            public function log($msg, array $ctx = []): void { $this->write('LOG', $msg, $ctx); }
+            public function warning($msg, array $ctx = []): void { $this->write('WARNING', $msg, $ctx); }
+            public function error($msg, array $ctx = []): void { $this->write('ERROR', $msg, $ctx); }
+            public function info($msg, array $ctx = []): void { $this->write('INFO', $msg, $ctx); }
+            public function alert($msg, array $ctx = []): void { $this->write('ALERT', $msg, $ctx); }
+        };
         $this->initializeCache();
         $this->loadConfig();
     }
@@ -69,8 +87,8 @@ class ApiAnalytics {
         try {
             // Record in database
             $sql = "INSERT INTO api_requests (
-                    endpoint, method, api_key_id, response_time, status_code,
-                    ip_address, tenant_id, timestamp
+                    endpoint, method, api_key_id, response_time_ms, status_code,
+                    ip_address, tenant_id, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
 
             $this->db->execute($sql, [

@@ -13,7 +13,7 @@
 #
 # Format: one identifier per line - a table name, or table.column.
 #
-# --- phantom tables (179) ---
+# --- phantom tables (177) ---
 acquisitions
 active_sessions
 admin_error_log
@@ -146,8 +146,6 @@ query_log
 queue
 rank_requirements
 rate_limit
-rate_limit_events
-rate_limit_violations
 reports
 request_logs
 review_helpful_votes
