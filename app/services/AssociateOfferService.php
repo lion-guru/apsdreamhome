@@ -30,11 +30,24 @@ class AssociateOfferService
         $ends = $data['ends_at'] ?? date('Y-m-d', strtotime('+30 days'));
         if ($ends < $starts) return ['success' => false, 'message' => 'End date must be on/after start date'];
         $tid = $this->tenantId();
+        $festivalName = trim($data['festival_name'] ?? '') ?: 'Festival Special';
+        $rewardItem = trim($data['reward_item'] ?? '') ?: ($rewardType === 'gift' ? 'Festival Gift' : 'Cash Bonus');
+        $rewardMode = in_array($data['reward_mode'] ?? '', ['wallet_cash', 'physical_gift', 'extra_commission_pct'], true) ? $data['reward_mode'] : 'wallet_cash';
+        $minVisits = (int)($data['min_site_visits'] ?? 0);
+
         $stmt = $this->pdo->prepare("
-            INSERT INTO associate_offers (tenant_id, title, description, reward_type, reward_value, criteria_type, criteria_value, colony_id, starts_at, ends_at, status, created_by, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, NOW())
+            INSERT INTO associate_offers (
+                tenant_id, title, festival_name, description, reward_type, reward_item, reward_mode, reward_value,
+                criteria_type, criteria_value, min_site_visits, colony_id, starts_at, ends_at, status, created_by, created_at
+            ) VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?, 'draft', ?, NOW()
+            )
         ");
-        $stmt->execute([$tid, $title, trim($data['description'] ?? ''), $rewardType, (float)($data['reward_value'] ?? 0), $criteriaType, (float)($data['criteria_value'] ?? 0), (int)($data['colony_id'] ?? 0) ?: null, $starts, $ends, $createdBy]);
+        $stmt->execute([
+            $tid, $title, $festivalName, trim($data['description'] ?? ''), $rewardType, $rewardItem, $rewardMode, (float)($data['reward_value'] ?? 0),
+            $criteriaType, (float)($data['criteria_value'] ?? 0), $minVisits, (int)($data['colony_id'] ?? 0) ?: null, $starts, $ends, $createdBy
+        ]);
         return ['success' => true, 'id' => (int)$this->pdo->lastInsertId()];
     }
 

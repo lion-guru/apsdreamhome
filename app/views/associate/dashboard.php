@@ -215,13 +215,16 @@ body {
         <div class="col-md-5 text-md-end mt-4 mt-md-0">
             <div class="d-flex flex-wrap gap-2 justify-content-md-end">
                 <a href="<?= BASE_URL ?>/associate/salary" class="action-pill" style="background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4);">
-                    <i class="fas fa-hand-holding-usd text-warning"></i> Diwali Salary
+                    <i class="fas fa-hand-holding-usd text-warning"></i> Career Salary
                 </a>
                 <a href="<?= BASE_URL ?>/associate/allowances" class="action-pill">
                     <i class="fas fa-gas-pump text-success"></i> Allowances
                 </a>
                 <a href="<?= BASE_URL ?>/associate/rewards" class="action-pill" style="background: rgba(124, 58, 237, 0.2); border: 1px solid rgba(124, 58, 237, 0.4);">
                     <i class="fas fa-trophy text-warning"></i> Rewards
+                </a>
+                <a href="<?= BASE_URL ?>/associate/offers" class="action-pill" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4);">
+                    <i class="fas fa-gift text-danger"></i> Festive Offers
                 </a>
                 <a href="<?= BASE_URL ?>/associate/leads" class="action-pill">
                     <i class="fas fa-users"></i> Leads
@@ -269,13 +272,13 @@ $sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
     $isMaintOk = !empty($salary_data['maintenance']['is_qualified']);
     $fastStart = $salary_data['fast_start'] ?? [];
 ?>
-<!-- DIWALI DHAMAKA SALARY PROGRESS & PERFORMANCE MONITOR (S458) -->
+<!-- PERMANENT LEADERSHIP CAREER SALARY PROGRESS & PERFORMANCE MONITOR -->
 <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; border-radius: 16px;">
     <div class="card-body p-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
             <div>
-                <span class="badge bg-warning text-dark px-2 py-1 fw-bold me-2">
-                    <i class="fas fa-gift me-1"></i> दीपावली धमाका सैलरी इनकम प्लान
+                <span class="badge bg-primary text-white px-2 py-1 fw-bold me-2">
+                    <i class="fas fa-award me-1"></i> परमानेंट लीडरशिप करियर सैलरी प्लान
                 </span>
                 <span class="text-white-50 small">Target: <strong><?= htmlspecialchars($curTarget['name'] ?? 'Target 1') ?> (₹<?= number_format($tarVol) ?>)</strong></span>
             </div>

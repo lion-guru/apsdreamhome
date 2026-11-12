@@ -105,7 +105,7 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
             </li>
             <li class="sidebar-item">
                 <a href="<?php echo e($base); ?>/associate/salary" class="sidebar-link <?php echo ($current_page ?? '') == 'salary' ? 'active' : ''; ?>">
-                    <i class="fas fa-hand-holding-usd text-warning"></i> Diwali Salary Plan
+                    <i class="fas fa-hand-holding-usd text-warning"></i> Career Salary Plan
                 </a>
             </li>
             <li class="sidebar-item">
@@ -116,6 +116,11 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
             <li class="sidebar-item">
                 <a href="<?php echo e($base); ?>/associate/rewards" class="sidebar-link <?php echo ($current_page ?? '') == 'rewards' ? 'active' : ''; ?>">
                     <i class="fas fa-trophy text-warning"></i> Rank Rewards
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo e($base); ?>/associate/offers" class="sidebar-link <?php echo ($current_page ?? '') == 'offers' ? 'active' : ''; ?>">
+                    <i class="fas fa-gift text-danger"></i> Festival Offers
                 </a>
             </li>
             <li class="sidebar-item">

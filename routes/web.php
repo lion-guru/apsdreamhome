@@ -1157,6 +1157,7 @@ $router->get('/associate/leads', 'App\\Http\\Controllers\\Associate\\CrmControll
 $router->get('/associate/crm', 'App\\Http\\Controllers\\Associate\\CrmController@crmDashboard');
 $router->get('/associate/commissions', 'App\\Http\\Controllers\\Associate\\CommissionController@commissions');
 $router->get('/associate/offers', 'App\\Http\\Controllers\\Associate\\OfferController@index');
+$router->post('/associate/offers/{id}/claim', 'App\\Http\\Controllers\\Associate\\OfferController@claim');
 $router->get('/associate/properties', 'App\\Http\\Controllers\\Associate\\PropertyController@properties');
 $router->get('/associate/properties/edit/{id}', 'App\\Http\\Controllers\\Associate\\PropertyController@editProperty');
 $router->post('/associate/properties/update/{id}', 'App\\Http\\Controllers\\Associate\\PropertyController@updateProperty');
@@ -4269,6 +4270,8 @@ $router->get('/admin/promotional-offers', 'App\\Http\\Controllers\\Admin\\Promot
 $router->post('/admin/promotional-offers/store', 'App\\Http\\Controllers\\Admin\\PromotionalOfferController@store');
 $router->post('/admin/promotional-offers/status', 'App\\Http\\Controllers\\Admin\\PromotionalOfferController@setStatus');
 $router->post('/admin/promotional-offers/delete', 'App\\Http\\Controllers\\Admin\\PromotionalOfferController@delete');
+$router->post('/api/promo/validate', 'App\\Http\\Controllers\\Admin\\PromotionalOfferController@validatePromo');
+$router->get('/api/promo/validate', 'App\\Http\\Controllers\\Admin\\PromotionalOfferController@validatePromo');
 $router->get('/admin/company-loans/check-eligibility', 'App\\Http\\Controllers\\Admin\\CompanyLoanController@checkEligibility');
 $router->post('/admin/company-loans/run-penalties', 'App\\Http\\Controllers\\Admin\\CompanyLoanController@runPenalties');
 
@@ -4553,6 +4556,9 @@ $router->post('/admin/associate-offers/store', 'App\\Http\\Controllers\\Admin\\A
 $router->post('/admin/associate-offers/activate', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@activate');
 $router->post('/admin/associate-offers/close', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@close');
 $router->post('/admin/associate-offers/delete', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@delete');
+$router->post('/admin/associate-offers/claims/{id}/approve', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@approveClaim');
+$router->post('/admin/associate-offers/claims/{id}/disburse', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@disburseCash');
+$router->post('/admin/associate-offers/claims/{id}/deliver', 'App\\Http\\Controllers\\Admin\\AssociateOfferController@markDelivered');
 $router->get('/admin/salary/periods', 'App\\Http\\Controllers\\Admin\\SalaryController@periods');
 $router->post('/admin/salary/periods/reopen', 'App\\Http\\Controllers\\Admin\\SalaryController@reopenPeriod');
 $router->get('/admin/salary/structures', 'App\\Http\\Controllers\\Admin\\SalaryController@structures');

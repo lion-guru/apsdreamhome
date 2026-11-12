@@ -184,6 +184,93 @@ class Router
             }
         }
 
+        // Step 5c: Cross-origin guard for DESTRUCTIVE GET requests.
+        //
+        // S461: 25 admin routes were registered for GET but DELETE, TOGGLE,
+        // SEND, APPROVE or CANCEL - for example
+        //   /admin/drip-campaigns/delete
+        //   /admin/marketing-campaigns/send/{id}
+        //   /admin/mlm-realestate/bookings/{id}/approve
+        //   /admin/api-keys/toggle/{id}
+        // A GET is safe by definition, so any third-party page could trigger
+        // them with a single <img src="..."> - CSRF with no token and no
+        // same-origin check at all.  A live GET sweep even proved the risk:
+        // it reached /admin/drip-campaigns/delete with an admin session and
+        // would have deleted 5 rows.
+        //
+        // The POST CSRF gate above does not help here - it only runs for
+        // POST/PUT/DELETE.  These routes have no POST twin either, so
+       // rather than break the admin UI the router now refuses a
+        // CROSS-ORIGIN GET on them:
+        //   - Sec-Fetch-Site: cross-site  (every modern browser sends it)
+        //   - a Referer whose host is not this host
+        // A same-origin navigation - the admin clicking the button - is
+        // unaffected, and a direct URL / bookmark is still allowed.
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET') {
+            $destructiveGetPaths = [
+                '#^/admin/app-feedback/[^/]+/delete$#',
+                '#^/admin/auctions/delete/[^/]+$#',
+                '#^/admin/blogs/comment/[^/]+/(delete|approve|reject)$#',
+                '#^/admin/campaign-templates/delete/[^/]+$#',
+                '#^/admin/coding-challenges/delete/[^/]+$#',
+                '#^/admin/crm/drip/[^/]+/delete$#',
+                '#^/admin/drip-campaigns/(delete|toggle)$#',
+                '#^/admin/faqs/[^/]+/delete$#',
+                '#^/admin/financial-inquiries/[^/]+/delete$#',
+                '#^/admin/gallery/[^/]+/destroy$#',
+                '#^/admin/locations/(districts|states)/delete/[^/]+$#',
+                '#^/admin/marketing-campaigns/(delete|send/[^/]+)$#',
+                '#^/admin/property-alerts/delete$#',
+                '#^/admin/voice-uploads/[^/]+/delete$#',
+                '#^/admin/api-keys/toggle/[^/]+$#',
+                '#^/admin/chatbot/train/toggle/[^/]+$#',
+                '#^/admin/deal-pipeline/[^/]+/mark-(won|lost)$#',
+                '#^/admin/mlm-realestate/bookings/[^/]+/approve$#',
+                '#^/admin/property-allocations/[^/]+/cancel$#',
+                '#^/user/upgrade-to-associate$#',
+            ];
+
+            foreach ($destructiveGetPaths as $destructivePattern) {
+                if (!preg_match($destructivePattern, $uri)) {
+                    continue;
+                }
+
+                $crossOrigin = false;
+                $reason = '';
+
+                $fetchSite = strtolower((string)($_SERVER['HTTP_SEC_FETCH_SITE'] ?? ''));
+                if ($fetchSite === 'cross-site') {
+                    $crossOrigin = true;
+                    $reason = 'Sec-Fetch-Site: cross-site';
+                }
+
+                if (!$crossOrigin) {
+                    $referer = (string)($_SERVER['HTTP_REFERER'] ?? '');
+                    if ($referer !== '') {
+                        $refHost = parse_url($referer, PHP_URL_HOST);
+                        $ourHost = (string)($_SERVER['HTTP_HOST'] ?? '');
+                        if ($refHost !== null && $ourHost !== '' && strcasecmp($refHost, $ourHost) !== 0) {
+                            $crossOrigin = true;
+                            $reason = 'Referer host ' . $refHost . ' != ' . $ourHost;
+                        }
+                    }
+                }
+
+                if ($crossOrigin) {
+                    error_log("CROSS-ORIGIN-GET: blocked GET {$uri} ({$reason})");
+                    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                        header('Content-Type: application/json', true, 403);
+                        echo json_encode(['success' => false, 'error' => 'Cross-origin request blocked']);
+                        exit;
+                    }
+                    http_response_code(403);
+                    echo '403 Forbidden: cross-origin requests are not allowed for this action.';
+                    exit;
+                }
+                break;
+            }
+        }
+
         // Step 5b: Global admin authentication gate
         // Every /admin/* route requires an authenticated session whose role is in
         // BaseController::ADMIN_ROLES. Controllers may still enforce stricter

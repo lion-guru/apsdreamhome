@@ -239,14 +239,14 @@ foreach ($rank_benefits as $rb) {
     </div>
 </div>
 
-<!-- DIWALI DHAMAKA SALARY INCOME PLAN -->
+<!-- PERMANENT LEADERSHIP CAREER SALARY INCOME PLAN -->
 <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-left: 5px solid #d97706 !important;">
     <div class="card-header bg-transparent border-0 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
         <div>
-            <span class="badge bg-danger text-white px-2 py-1 mb-1"><i class="fas fa-fire me-1"></i>DIWALI DHAMAKA SPECIAL</span>
-            <h5 class="card-title mb-0 fw-bold text-dark"><i class="fas fa-calendar-check text-warning me-2"></i>Diwali Dhamaka Salary Income Plan (दीपावली धमाका सैलरी इनकम प्लान)</h5>
+            <span class="badge bg-primary text-white px-2 py-1 mb-1"><i class="fas fa-award me-1"></i>PERMANENT LEADERSHIP PLAN</span>
+            <h5 class="card-title mb-0 fw-bold text-dark"><i class="fas fa-calendar-check text-warning me-2"></i>Permanent Career Salary Plan (परमानेंट लीडरशिप करियर सैलरी प्लान)</h5>
         </div>
-        <span class="badge bg-warning text-dark px-3 py-2 fs-6 fw-bold">Permanent Target Salary</span>
+        <span class="badge bg-warning text-dark px-3 py-2 fs-6 fw-bold">Active Monthly Maintenance Gated</span>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">

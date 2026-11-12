@@ -138,6 +138,36 @@ if ($selectedPlotId) {
                     <label class="form-label"><?= __('sale_agreement_value_label') ?></label>
                     <input type="number" step="0.01" name="agreement_value" value="<?= htmlspecialchars((string)($booking['agreement_value'] ?? $booking['total_plot_value'] ?? '')) ?>" class="form-control" required>
                 </div>
+                <div class="col-12">
+                    <div class="card border-info bg-light p-3 rounded-3 shadow-sm">
+                        <div class="row align-items-center g-2">
+                            <div class="col-md-5">
+                                <label class="form-label fw-bold text-dark mb-1">
+                                    <i class="fas fa-gift text-danger me-1"></i>Festival / Promo Code (त्योहारी ऑफर / डिस्काउंट कूपन)
+                                </label>
+                                <div class="input-group">
+                                    <input type="text" name="promo_code_applied" id="booking_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5" value="<?= htmlspecialchars((string)($booking['promo_code_applied'] ?? '')) ?>" <?= $mode === 'edit' ? 'readonly' : '' ?>>
+                                    <?php if ($mode !== 'edit'): ?>
+                                    <button type="button" class="btn btn-primary" id="btn_apply_promo_code">
+                                        <i class="fas fa-check me-1"></i>Apply
+                                    </button>
+                                    <?php endif; ?>
+                                </div>
+                                <input type="hidden" name="promotional_offer_id" id="booking_promo_offer_id" value="<?= (int)($booking['promotional_offer_id'] ?? 0) ?>">
+                                <input type="hidden" name="discount_amount" id="booking_discount_amount" value="<?= (float)($booking['discount_amount'] ?? 0.0) ?>">
+                            </div>
+                            <div class="col-md-7">
+                                <div id="promo_code_message" class="small <?= !empty($booking['promo_code_applied']) ? 'text-success fw-bold' : 'text-muted' ?>">
+                                    <?php if (!empty($booking['promo_code_applied'])): ?>
+                                        <i class="fas fa-check-circle text-success me-1"></i>Applied: <?= htmlspecialchars($booking['promo_code_applied']) ?> (Saved &#8377;<?= number_format((float)($booking['discount_amount'] ?? 0)) ?>)
+                                    <?php else: ?>
+                                        Enter festival coupon code (e.g. <code>FESTIVE21</code> for &#8377;21,000 flat off, <code>SUBHLABH5</code> for 5% off).
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-12" id="statutory_financial_box">
                     <div class="card bg-light border-primary p-3 rounded-3 shadow-sm">
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -448,6 +478,70 @@ if (plotSelect) {
                 }
             }
         }
+    });
+}
+
+// Promo Code Application Handler
+const btnApplyPromo = document.getElementById('btn_apply_promo_code');
+if (btnApplyPromo) {
+    btnApplyPromo.addEventListener('click', function() {
+        const promoInput = document.getElementById('booking_promo_code');
+        const code = promoInput ? promoInput.value.trim() : '';
+        const msgDiv = document.getElementById('promo_code_message');
+        const offerIdField = document.getElementById('booking_promo_offer_id');
+        const discAmountField = document.getElementById('booking_discount_amount');
+        const plotValInput = document.querySelector('input[name="total_plot_value"]');
+        const agreementInput = document.querySelector('input[name="agreement_value"]');
+        const colonySelect = document.getElementById('booking_colony_id');
+
+        if (!code) {
+            if (msgDiv) {
+                msgDiv.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Please enter a promo code</span>';
+            }
+            return;
+        }
+
+        const plotVal = parseFloat(plotValInput ? plotValInput.value : 0) || 0;
+        const colonyId = colonySelect ? colonySelect.value : '';
+
+        btnApplyPromo.disabled = true;
+        btnApplyPromo.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Checking...';
+
+        fetch('<?= $base ?>/api/promo/validate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'promo_code=' + encodeURIComponent(code) + '&plot_value=' + encodeURIComponent(plotVal) + '&colony_id=' + encodeURIComponent(colonyId)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            btnApplyPromo.disabled = false;
+            btnApplyPromo.innerHTML = '<i class="fas fa-check me-1"></i>Apply';
+
+            if (data.valid) {
+                if (offerIdField) offerIdField.value = data.offer_id;
+                if (discAmountField) discAmountField.value = data.discount_amount;
+                if (agreementInput && plotVal > 0) {
+                    agreementInput.value = Math.max(0, plotVal - data.discount_amount);
+                }
+                if (msgDiv) {
+                    msgDiv.innerHTML = '<span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>' + data.message + '</span>';
+                }
+                updateFinancialSummary();
+            } else {
+                if (offerIdField) offerIdField.value = '0';
+                if (discAmountField) discAmountField.value = '0';
+                if (msgDiv) {
+                    msgDiv.innerHTML = '<span class="text-danger fw-bold"><i class="fas fa-exclamation-triangle me-1"></i>' + (data.message || 'Invalid promo code') + '</span>';
+                }
+            }
+        })
+        .catch(function(err) {
+            btnApplyPromo.disabled = false;
+            btnApplyPromo.innerHTML = '<i class="fas fa-check me-1"></i>Apply';
+            if (msgDiv) {
+                msgDiv.innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Failed to validate promo code</span>';
+            }
+        });
     });
 }
 

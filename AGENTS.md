@@ -17,6 +17,37 @@
 
 > **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
 
+## Session 462: Permanent Leadership Career Salary Plan Established, Dynamic Festival & Promotional Campaign Engine Delivered (Associate Targets & Customer Promo Codes), Real-Time Promo Validation & Plot Booking Discount Interlinked, 37/37 Township Steps Passed, 11/11 Master Suites Green, 1509/1509 PHPStan Clean (2026-11-13)
+
+### Trigger
+Owner: "diwali dhamaka to banaye the but ab humesa ke liye soche hai kar diya jaye bus diwali dhamaka nhi aur diwali dhamaka likh ke na kuch kar dena namin aur ek aur chize kabhi koi offer laya jaye festival par assosiate ke liye cash reward ya koi aur rewards to wo banane aur apply karne ka option ho aur calculation etc sab bhi ho jaye aur coustomers ke liye bhi koib offer lana ho to wo sab sara system bhi ho aur interlin ho sab kuch jaise banta hai ye sab system etc tum soach samjh lena ki kya kaise hoga sara system workflow etc"
+
+### The headline
+- **Permanent Leadership Career Salary Plan (परमानेंट लीडरशिप करियर सैलरी प्लान)**:
+  - Transitioned the seasonal plan into the company's standing recurring **Permanent Leadership Career Salary Plan**.
+  - Updated all Associate views (`/associate/salary`, `/associate/mlm-plan`, `/associate/dashboard`), layouts, navigation, and controllers, removing the temporary festival label while retaining the full authentic 5-tier matrix, 40:60 Leg Balance Rule, and Anti-Free-Rider Monthly Maintenance criteria.
+- **Dynamic Festival & Promotional Offer Architecture (`App\Services\FestivalOfferService`)**:
+  - Migration `database/migrations/add_festival_promotional_offers_s460.php`:
+    - Extended `associate_offers` with `festival_name`, `reward_item`, `reward_mode`, `min_site_visits`, `banner_image`.
+    - Created `associate_offer_claims` table with full lifecycle tracking: `eligible` $\rightarrow$ `claimed` $\rightarrow$ `approved` $\rightarrow$ `wallet_credited` / `delivered`.
+    - Extended `promotional_offers` with `festival_name`, `discount_type` (`percentage`, `flat_amount`, `per_sqft`, `gift_item`, `cashback_wallet`), `discount_value`, `min_booking_amount`, `colony_id`, `promo_code`, `valid_from`, `valid_until`, `max_redemptions`, `times_redeemed`.
+    - Extended `plot_bookings` with `discount_amount`, `promotional_offer_id`, `promo_code_applied`.
+    - Seeded idempotent initial campaigns: "Mega Festive Leadership Target" (₹10L volume + 2 visits $\rightarrow$ 5g Gold Coin or ₹35,000 cash) and customer promo codes `FESTIVE21` (₹21,000 flat discount) and `SUBHLABH5` (5% concession).
+- **Associate Festival Offers Portal (`/associate/offers`) & Admin Review Desk (`/admin/associate-offers`)**:
+  - Associate Portal GUI (`app/views/associate/offers.php`): Live progress cards calculating volume, bookings, and verified site visits against active festival windows; interactive 1-click claim modal (wallet cash vs physical gift delivery); and personal claim ledger.
+  - Admin Operations Desk (`app/views/admin/associate_offers/index.php`): Real-time campaign overview and claim fulfillment desk supporting 1-click claim approval, 1-click cash credit to associate wallet via `WalletService::credit()`, and physical gift delivery logging.
+- **Customer Festival Offers & Promo Code Hub (`/admin/promotional-offers`)**:
+  - Re-architected Admin desk (`app/views/admin/promotional_offers/index.php`): Real-time KPI summaries (Active Offers, Total Redemptions, Estimated Customer Savings, Live Codes), colony scoping, redemption caps, and dynamic discount configuration modal.
+- **Real-Time Promo Validation & Plot Booking Interlink**:
+  - Added API route `POST /api/promo/validate` with coupon validation against active dates, colony restrictions, and minimum booking thresholds.
+  - Upgraded `BookingLifecycleService::createBooking()` and `BookingLifecycleController::createBookingStore()` to apply promo codes, store discounts into `plot_bookings`, and increment redemption counters.
+  - Enhanced Admin Plot Booking form (`app/views/admin/sales/booking-form.php`) with interactive coupon input, real-time AJAX validation, and automatic net agreement value deduction.
+- **Verification & Zero Leftovers**:
+  - `php testing/township_lifecycle_e2e_test.php` -> **37/37 Business Steps Passed (100% Green, 0 leftovers)**.
+  - `php testing/master_test_runner.php` -> **11/11 Test Suites Passed (100% Green, 21.24s)**.
+  - `vendor/bin/phpstan analyse --memory-limit=1G` -> **1509/1509 [OK] No errors (Exit 0)**.
+  - Database Baseline Assertion: Byte-identical row counts (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / plot_bookings 3 / payments 24 / colonies 7 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3).
+
 ## Session 461: CI Gate Made Deterministic (Drift Guard + Token Prune Cron), Linux Autoloader Case-Fix (381 Classes), 5 Broken Class References Repaired, 'paused' Salary Enum Restored, 12 csrfField Pages Revived, HY093 Fixed, GET-Mutation Privilege-Escalation Hole Closed, 2005-Route Sweep 0 x 500 (2026-11-13)
 
 ### Trigger

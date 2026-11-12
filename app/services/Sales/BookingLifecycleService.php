@@ -168,11 +168,31 @@ class BookingLifecycleService
             $commissionAmt  = round($totalValue * $commissionPct / 100, 2);
             $bookingNumber  = $this->generateBookingNumber();
 
+            $discountAmount = (float)($data['discount_amount'] ?? 0.0);
+            $promotionalOfferId = !empty($data['promotional_offer_id']) ? (int)$data['promotional_offer_id'] : null;
+            $promoCodeApplied = !empty($data['promo_code_applied']) ? strtoupper(trim((string)$data['promo_code_applied'])) : null;
+
+            // If promo code supplied but offer id missing, resolve via FestivalOfferService
+            if ($promoCodeApplied !== null && $promotionalOfferId === null) {
+                try {
+                    $festSvc = new \App\Services\FestivalOfferService($this->db);
+                    $valRes = $festSvc->validateCustomerPromo($promoCodeApplied, $totalValue);
+                    if (!empty($valRes['valid'])) {
+                        $promotionalOfferId = (int)$valRes['offer_id'];
+                        if ($discountAmount <= 0) {
+                            $discountAmount = (float)$valRes['discount_amount'];
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    error_log('[BookingLifecycleService] Promo code resolve failed: ' . $e->getMessage());
+                }
+            }
+
             $cols = "plot_id, customer_id, booking_number, booking_date,
                  total_plot_value, booking_amount, agreement_value,
                  status, sales_manager_id, channel, associate_id,
-                 commission_pct, commission_amount, notes";
-            $vals = "?, ?, ?, CURDATE(), ?, ?, ?, 'token_paid', ?, ?, ?, ?, ?, ?";
+                 commission_pct, commission_amount, discount_amount, promotional_offer_id, promo_code_applied, notes";
+            $vals = "?, ?, ?, CURDATE(), ?, ?, ?, 'token_paid', ?, ?, ?, ?, ?, ?, ?, ?, ?";
             $params = [
                 $plotId,
                 $customerId,
@@ -185,12 +205,25 @@ class BookingLifecycleService
                 !empty($data['associate_id']) ? (int)$data['associate_id'] : null,
                 $commissionPct,
                 $commissionAmt,
+                $discountAmount,
+                $promotionalOfferId,
+                $promoCodeApplied,
                 (string)($data['notes'] ?? ''),
             ];
             if ($tid = $this->tid()) { $cols .= ", tenant_id"; $vals .= ", ?"; $params[] = $tid; }
             $stmt = $this->db->prepare("INSERT INTO plot_bookings ($cols) VALUES ($vals)");
             $stmt->execute($params);
             $bookingId = (int)$this->db->lastInsertId();
+
+            // Interlink promotional offer redemption counter
+            if ($promotionalOfferId) {
+                try {
+                    $festSvc = new \App\Services\FestivalOfferService($this->db);
+                    $festSvc->applyOfferToBooking($bookingId, $promotionalOfferId, $discountAmount, (string)$promoCodeApplied);
+                } catch (\Throwable $e) {
+                    error_log('[BookingLifecycleService] applyOfferToBooking failed: ' . $e->getMessage());
+                }
+            }
 
             // Audit trail
             $this->logStatusHistory($bookingId, null, 'token_paid', null, 'Booking created');

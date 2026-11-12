@@ -47,8 +47,8 @@ class SalaryController extends BaseController
             $data = $this->salaryService->getAssociateSalaryDashboardData($userId);
 
             $this->render('associate/salary', [
-                'page_title'       => 'Salary Income Plan & Progress — Associate Portal',
-                'page_description' => 'Track your Diwali Dhamaka monthly salary targets, 40:60 leg balance, and active monthly maintenance status.',
+                'page_title'       => 'Permanent Career Salary Plan & Progress — Associate Portal',
+                'page_description' => 'Track your monthly leadership salary targets, 40:60 leg balance, and active monthly maintenance status.',
                 'data'             => $data,
                 'current_page'     => 'salary',
             ], 'layouts/associate');

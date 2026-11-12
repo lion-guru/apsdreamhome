@@ -56,6 +56,7 @@ $created = [
     'allowance_ids'     => [],
     'site_visit_ids'    => [],
     'career_reward_ids' => [],
+    'assoc_offer_claim_ids' => [],
     'expense_ids'       => []
 ];
 
@@ -730,6 +731,61 @@ try {
     $fulfillmentOk = (!empty($apprRes['success']) && !empty($dispRes['success']) && !empty($delvRes['success']) && !empty($cashRes['success']));
     $recordStep('Stage 4: Commissions, Payouts & Staff Payroll', 'Admin Reward Dispatch, Tracking & Cash Conversion Engine', $fulfillmentOk, "Reward #$rewardId: Approved -> Dispatched (Blue Dart) -> Handed Over | Reward #$cashRewardId: ₹30k Converted to Wallet");
 
+    // 4.14 Associate Festival Campaign Eligibility & Claim Engine (S460)
+    // Add second site visit so Vikram satisfies min 2 verified site visits requirement
+    $stmt = $pdo->prepare("INSERT INTO site_visits (property_id, user_id, visitor_name, visitor_phone, visit_date, visit_time, status, created_at) VALUES (?, ?, 'Client Second Festive Visit', '9800001123', CURDATE(), '14:00:00', 'completed', NOW())");
+    $stmt->execute([$targetPlotId, $associateId]);
+    $siteVisitId2 = (int)$pdo->lastInsertId();
+    if ($siteVisitId2) $created['site_visit_ids'][] = $siteVisitId2;
+
+    $festService = new \App\Services\FestivalOfferService($pdo);
+    $festOffers = $pdo->query("SELECT id, title, criteria_value, reward_value FROM associate_offers WHERE title LIKE '%Mega Festive%' LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    $festOfferId = (int)($festOffers['id'] ?? 0);
+    $festClaimRes = $festService->claimAssociateOffer($associateId, $festOfferId, [
+        'claim_mode'       => 'wallet_cash',
+        'contact_phone'    => '9800001122',
+        'shipping_address' => 'Gorakhpur Town Office',
+    ]);
+    $festClaimId = (int)($festClaimRes['claim_id'] ?? 0);
+    if ($festClaimId) {
+        $created['assoc_offer_claim_ids'][] = $festClaimId;
+    }
+    $festClaimOk = (!empty($festClaimRes['success']) && $festClaimId > 0);
+    $recordStep('Stage 4: Commissions, Payouts & Staff Payroll', 'Associate Festival Campaign Eligibility & Claim Engine', $festClaimOk, "Associate Vikram qualified for '{$festOffers['title']}' (₹15L volume >= ₹10L target) -> Submitted ₹35,000 Wallet Cash Claim #$festClaimId");
+
+    // 4.15 Admin Festival Claim Approval & Instant Wallet Cash Disburse Engine (S460)
+    $festApproveRes = $festService->approveAssociateOfferClaim($festClaimId, 1, 'Approved by festive committee');
+    $festDisburseRes = $festService->disburseAssociateOfferCash($festClaimId, 1);
+    $disburseOk = (!empty($festApproveRes['success']) && !empty($festDisburseRes['success']));
+    $recordStep('Stage 4: Commissions, Payouts & Staff Payroll', 'Admin Festival Claim Approval & Instant Wallet Cash Disburse Engine', $disburseOk, "Claim #$festClaimId: Approved -> Instantly Disbursed ₹35,000 cash directly into Associate Vikram's wallet");
+
+    // 4.16 Customer Festival Promo Code Validation & Plot Booking Discount Application (S460)
+    $promoValRes = $festService->validateCustomerPromo('FESTIVE21', 1500000.00);
+    $promoCodeOk = (!empty($promoValRes['valid']) && (float)($promoValRes['discount_amount'] ?? 0) === 21000.00);
+
+    // Create a promotional booking to verify end-to-end discount ledger
+    $bookingService = new \App\Services\Sales\BookingLifecycleService($pdo);
+    $promoBookingRes = $bookingService->createBooking([
+        'plot_id'              => $cutPlots[1]['id'], // Plot A-102
+        'customer_id'          => $customerId,
+        'total_plot_value'     => 1500000.00,
+        'booking_amount'       => 51000.00,
+        'agreement_value'      => 1479000.00, // 15L - 21k
+        'promotional_offer_id' => (int)($promoValRes['offer_id'] ?? 0),
+        'promo_code_applied'   => 'FESTIVE21',
+        'discount_amount'      => 21000.00,
+        'channel'              => 'associate',
+        'associate_id'         => $associateId,
+        'notes'                => 'Customer booking with FESTIVE21 promo code',
+    ]);
+    $promoBookingId = (int)($promoBookingRes['id'] ?? 0);
+    if ($promoBookingId) {
+        $created['booking_ids'][] = $promoBookingId;
+    }
+    $bookingDiscountCheck = $pdo->query("SELECT discount_amount, promo_code_applied, agreement_value FROM plot_bookings WHERE id = $promoBookingId")->fetch(PDO::FETCH_ASSOC);
+    $bookingDiscountOk = $promoCodeOk && !empty($promoBookingRes['success']) && ((float)($bookingDiscountCheck['discount_amount'] ?? 0) === 21000.00) && ($bookingDiscountCheck['promo_code_applied'] === 'FESTIVE21');
+    $recordStep('Stage 4: Commissions, Payouts & Staff Payroll', 'Customer Festival Promo Code & Plot Booking Discount Application', $bookingDiscountOk, "Promo Code 'FESTIVE21' validated -> Booking #$promoBookingId saved with ₹21,000 concession (Net Agreement: ₹14,79,000)");
+
     echo "\n";
 
     // =========================================================================
@@ -797,6 +853,13 @@ try {
     echo "────────────────────────────────────────────────────────────────────────\n";
 
     // Clean in reverse dependency order
+    if (!empty($created['assoc_offer_claim_ids'])) {
+        $ids = implode(',', $created['assoc_offer_claim_ids']);
+        $pdo->exec("DELETE FROM associate_offer_claims WHERE id IN ($ids)");
+    }
+    // Reset promotional offer redemptions
+    $pdo->exec("UPDATE promotional_offers SET times_redeemed = 0 WHERE promo_code = 'FESTIVE21'");
+
     if (!empty($created['career_reward_ids'])) {
         $ids = implode(',', $created['career_reward_ids']);
         $pdo->exec("DELETE FROM mlm_career_rewards WHERE id IN ($ids)");
@@ -832,6 +895,7 @@ try {
     }
     if (!empty($created['booking_ids'])) {
         $ids = implode(',', $created['booking_ids']);
+        $pdo->exec("DELETE FROM booking_status_history WHERE booking_id IN ($ids)");
         $pdo->exec("DELETE FROM plot_bookings WHERE id IN ($ids)");
     }
     if (!empty($created['customer_lead_ids'])) {

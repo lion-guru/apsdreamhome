@@ -27,10 +27,10 @@ $totalEarned = (float)($data['total_salary_earned'] ?? 0.0);
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
             <h2 class="h4 mb-1 text-dark fw-bold">
-                <i class="fas fa-hand-holding-usd text-warning me-2"></i> दीपावली धमाका सैलरी इनकम प्लान
+                <i class="fas fa-hand-holding-usd text-warning me-2"></i> परमानेंट लीडरशिप करियर सैलरी प्लान
             </h2>
             <p class="text-muted small mb-0">
-                Official Diwali Dhamaka Salary Progress, 40:60 Leg Balance, and Active Monthly Maintenance Monitor.
+                Permanent Leadership Career Salary Progress, 40:60 Leg Balance, and Active Monthly Maintenance Monitor.
             </p>
         </div>
         <div class="d-flex align-items-center gap-2">
@@ -299,7 +299,7 @@ $totalEarned = (float)($data['total_salary_earned'] ?? 0.0);
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-white py-3 border-0">
             <h5 class="card-title mb-0 fw-bold">
-                <i class="fas fa-gift text-danger me-2"></i> 5 आधिकारिक दीपावली धमाका सैलरी टारगेट्स (Live Progression)
+                <i class="fas fa-award text-primary me-2"></i> 5 आधिकारिक लीडरशिप सैलरी टारगेट्स (Live Career Progression)
             </h5>
         </div>
         <div class="card-body pt-0">

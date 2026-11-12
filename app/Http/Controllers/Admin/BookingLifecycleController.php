@@ -331,9 +331,12 @@ class BookingLifecycleController extends AdminController
             'agreement_value'  => $_POST['agreement_value']  ?? 0,
             'channel'          => $_POST['channel']          ?? 'direct',
             'associate_id'     => $_POST['associate_id']     ?? 0,
-            'sales_manager_id' => $_POST['sales_manager_id'] ?? 0,
-            'commission_pct'   => $_POST['commission_pct']   ?? 0,
-            'notes'            => $_POST['notes']            ?? '',
+            'sales_manager_id'     => $_POST['sales_manager_id']     ?? 0,
+            'commission_pct'       => $_POST['commission_pct']       ?? 0,
+            'promotional_offer_id' => $_POST['promotional_offer_id'] ?? 0,
+            'promo_code_applied'   => $_POST['promo_code_applied']   ?? '',
+            'discount_amount'      => $_POST['discount_amount']      ?? 0,
+            'notes'                => $_POST['notes']                ?? '',
         ];
         $result = $this->service->createBooking($data);
         if (!empty($result['success'])) {
