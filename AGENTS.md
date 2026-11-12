@@ -17,6 +17,137 @@
 
 > **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
 
+## Session 456: Real Estate Matrix Hybrid MLM Architecture Deconstructed, Authentic Rank & Team Qualification Matrix Migrated (₹10L+5 Ass. -> ₹5Cr+3 Pres.), Leadership Office Rent & Site Visit Allowance Engine Built, 11/11 Master Suites Green (2026-11-12)
+
+### Trigger
+Owner: "yah MLM Mein L1 L2 L3 kya hai plus direct Sel yah dekhna hai... Hamara system मैट्रिक्स हाइब्रिड एमएलएम प्लान है... एसोसिएट से साइट मैनेजर तक... उसके नीचे भी तो लोग आएंगे ही आएंगे कि 7 लेवल अधिकतम तक ही ठीक है यह... aur Humne referral system Bhi Banaya hua tha public ke liye bhi referral system banaya tha aur customer ke liye bhi... ek associate senior associate tab banega jab 5 associate ho jayenge plus 10 lakh ka business... senior associate bdm kab banega jab 35 lakh complete karega aur sath me 3 senior associate hone chahiye... reward bhi complete hota jayega... salary plan... hume ye bhi dekhna padega koi agar senior ho jata hai to apna office bhi kholna hai to company ki taraf se help... site visit karata hai to uska charge... kya system banaye suggestion do... do next apne suggestion se karo kam"
+
+### The headline
+- **Real Estate Matrix Hybrid MLM Model Deconstructed**:
+  - **Direct Sale (प्रत्यक्ष बिक्री)**: Commission received by the booking closer based on their current rank slab (5% for Associate up to 20% for Site Manager).
+  - **L1, L2, L3 vs Generation Differential**:
+    - *Plot Sales*: Evaluated via **Generation Gap Differential** ($Senior\% - Junior\%$). The LOS (Line of Sponsorship) walk uses dynamic compression up to the 20% company hard cap, ensuring that depth beyond 7 levels never cuts off legitimate senior overrides or leads to over-budget payouts.
+    - *Customer Referrals & Wallet Activations*: Evaluated via **Matrix Level Rewards (L1, L2, L3)** (e.g., L1 gets 20%, L2 gets 5% on package activations; customer referral cashback directly credited to `wallet_points`).
+  - **Customer-to-Associate Pipeline**: Customers who earn referral bonuses receive a 1-click in-dashboard upgrade path to Associate, preserving their referral tree as their starting downline.
+- **Authentic Rank & Downline Structure Qualification Matrix (`database/migrations/update_mlm_plan_and_leader_allowances_s456.php`)**:
+  - Implemented exact business rules in `mlm_rank_benefits` & `App\Services\MLM\MLMCommissionEngine`:
+    1. **Sr. Associate**: ₹10,00,000 (10 Lakhs) Volume + **5 Direct Associates** (Reward: Tablet, Rate: 7%)
+    2. **BDM**: ₹35,00,000 (35 Lakhs) Volume + **3 Senior Associates in downline** (Reward: Laptop, Rate: 10%)
+    3. **Sr. BDM**: ₹70,00,000 (70 Lakhs) Volume + **3 BDMs in downline** (Reward: Domestic / Foreign Tour, Rate: 12%)
+    4. **Vice President**: ₹1,50,00,000 (1.5 Crore) Volume + **3 Sr. BDMs in downline** (Reward: Pulsar Bike, Rate: 15%)
+    5. **President**: ₹3,00,00,000 (3.0 Crore) Volume + **3 Vice Presidents in downline** (Reward: Bullet Bike, Rate: 18%)
+    6. **Site Manager**: ₹5,00,00,000 (5.0 Crore) Volume + **3 Presidents in downline** (Reward: Luxury Car, Rate: 20%)
+  - Engine upgraded with `getDirectLegRanks(int $userId)` and `countLegsAtOrAboveRank(int $userId, string $requiredRank)` to enforce downline rank quality alongside volume targets.
+- **Leadership Office Support & Site Visit Expense Allowance Engine (`App\Services\MLM\LeadershipExpenseFundService`)**:
+  - Designed performance-gated leadership allowance system:
+    - **Office Support / Branch Rent Allowance**:
+      - BDM: ₹15L monthly team volume -> ₹10,000/mo Office Support
+      - Sr. BDM: ₹30L monthly team volume -> ₹20,000/mo Office Support
+      - V.P.: ₹50L monthly team volume -> ₹35,000/mo Office Support
+      - President / Site Manager: ₹1.0 Cr+ monthly team volume -> ₹50,000/mo Office Support
+    - **Site Visit Vehicle & Fuel Allowance**:
+      - Local Gorakhpur township visits: Flat ₹800 per verified visit
+      - Outstation Purvanchal visits: ₹1,800 per verified trip
+      - Anti-fraud: Checked against `site_visits` GPS coordinate verification.
+    - Integrated with `WalletService` for automatic wallet credit upon approval.
+- **Verification**:
+  - `php testing/township_lifecycle_e2e_test.php` -> **26/26 Business Steps Passed (100% Green, 0 leftovers)**.
+  - `php testing/master_test_runner.php` -> **11/11 Test Suites Passed (100% Green, 20.9s)**.
+  - `vendor/bin/phpstan analyse --memory-limit=1G` -> **1500/1500 [OK] No errors**.
+
+## Session 455: End-to-End Real Estate Township Business Lifecycle E2E Suite Authored & Verified, Schema & Services Upgraded (plot_booking_id FK + Auto Plot Costing + Live P&L Analytics), Flexible Dalal Commission Models (5 units), MLM Generation Gap Differential Distribution & Cross-Team Security, Wallet System Concurrency & Black Hole Hardening, 26/26 Business Steps Passed, 11/11 Master Test Suites Green (2026-11-12)
+
+### Trigger
+Owner: "dalal 2% wale bhi hhonge auraur per katha ya decimil ya bigha wale bhi honge. mlm me jiska booking hoga aur team ko upar paisa jayega na percent difrence .ye bhi dekhna higa ki kisi aur ke team ka paisa na banane lage jaise mlm me hita hai na ateam seniour juniour ka waisa hi ho tum dimag laga lo kaise kya hoga waisa hi ho mujhe bhi bata dena kaise kya ho raha hai calculation ek plot bik rakha to kitna paisa distribute ho raha ye bhi sabse jaruri hai aur wallet system bhi kaise kaam.kar raha koi bug ya black hole na ho to deeply scan kar ke sab analysis kar ke batana aur kya improve kiya jaye ye bhi bataobahut se see improvment karne hai sab karo tum deeply soach samjh ke sacn kar kar ke dekho kya k kya aur improve karna hai aur kaha kaha aur gui me bhi delh lena"
+
+### The headline
+- **Full End-to-End Township Business Lifecycle Test Authored & Upgraded (`testing/township_lifecycle_e2e_test.php`)**:
+  - Simulates the entire 5-stage real-world real estate business operations:
+    1. **Land Acquisition from Farmer via Broker**:
+       - Flexible Land Brokerage Models: Percentage (2%), Per Bigha (₹25,000/Bigha), Per Kattha (₹2,500/Kattha), Per Decimil (₹1,000/Decimil), Per Sq.Ft. (₹10/sqft), and Fixed Lump-sum fee.
+       - Grounded to Gorakhpur / Purvanchal land conversion standards: 1 Pakka Bigha = 27,225 sqft (20 Kattha), 1 Kattha = 1,361.25 sqft, 1 Decimil = 435.6 sqft (1 Acre = 100 Decimil = 43,560 sqft).
+       - Land Lead capture (2 Bigha / 54,450 sqft @ ₹50,00,000), 40ft road feasibility & GPS verification, 30-year legal search & title clearance, Deal contract execution, Farmer advance (Bayana) ₹10,00,000 via RTGS, Brokerage payout ₹1,00,000, Farmer deal ledger balance validation.
+    2. **Township / Colony Planning & Plot Cutting**:
+       - Colony creation (`colonies`), development costing (Roads ₹5L, Wall/Demarcation ₹3L, Drains/Power ₹4L = ₹12L in `colony_development_costs`), automated plot subdivision (10 residential plots A-101..A-110 @ ₹1,500/sqft = ₹1.50 Crore inventory value in `plots`), Total Station GPS demarcation & certificate token generation (`plot_demarcations`).
+       - Automated Plot Cost Allocation (`App\Services\ColonyLandCostingService`): Land Acquisition cost ₹5,00,000 + Development cost ₹1,20,000 allocated per plot (`acquisition_cost_allocated` and `development_cost_allocated`).
+    3. **Multi-Channel Sales & Multi-Tier MLM Network Hierarchy**:
+       - Structured 3-Tier Senior-Junior Line of Sponsorship:
+         - Level 2 Senior Upline: Rajesh Director (Site Manager, 20% slab)
+         - Level 1 Senior Upline: Anita Sr Associate (Sr. Ass., 7% slab, referred by Rajesh)
+         - Direct Selling Associate: Vikram Singh (Ass., 5% slab, referred by Anita)
+         - Unrelated Parallel Branch: Sunil Patel (Team B, 5% slab, independent)
+       - Customer lead conversion (`leads`), Plot A-101 booking execution (`plot_bookings`), 20% down payment (₹3,00,000 in `payments`), 12-month equal EMI schedule generation (₹1,00,000/mo = ₹12,00,000 across `booking_emi_agreements` & `booking_emi_installments`).
+    4. **Commissions, Differential Overrides, Payouts & Wallet Security**:
+       - **MLM Generation Gap Differential Distribution Engine (`explainDifferentialDistribution`)**:
+         - Direct Seller Vikram (Ass. 5%): ₹75,000 (5.0%)
+         - Level 1 Senior Anita (Sr. Ass. 7% - 5% = 2% gap): ₹30,000 (2.0%)
+         - Level 2 Senior Rajesh (Site Manager 20% - 7% = 13% gap): ₹1,95,000 (13.0%)
+         - Total Distributed: Exactly ₹3,00,000 (20.0% Global Company Cap strictly preserved).
+         - **Cross-Line / Cross-Team Leakage Isolation**: Sunil Patel (Team B) received strictly **₹0.00**; non-ancestor parallel branches are mathematically and programmatically isolated.
+       - **Wallet Concurrency & Black Hole Hardening**:
+         - Upgraded `WalletService` and `WalletController` (`credit`, `debit`, `transferToEmi`, `processEmiTransfer`, `requestWithdrawal`) with:
+           a) `SELECT ... FOR UPDATE` row locks inside explicit database transactions.
+           b) Fail-closed rejection of non-positive / negative amounts (`$amount <= 0`).
+           c) Conditional atomic database updates (`UPDATE wallet_points SET ... WHERE user_id = ? AND points_balance >= ?`).
+           d) Elimination of money black holes where balances were deducted without transactions or without ledger records.
+         - Hardened `App\Models\Wallet` to delegate all operations to `WalletService`.
+       - Staff payroll: monthly site supervisor salary disbursement (`employee_payroll`).
+    5. **Financial Profit & Loss and Accounting Ledger**:
+       - Total project revenue potential ₹1.50 Crore, total project cost budget ₹72.60 Lakhs, projected net profit ₹77.40 Lakhs (51.6% Return on Investment).
+       - Live Colony Real Estate P&L Analytics Engine (`App\Services\Land\ColonyAnalyticsService::getColonyAnalytics`).
+- **Admin GUI Updates**:
+  - `app/views/admin/land-inventory/brokers.php`: Upgraded "Add New Broker" form with dynamic "Brokerage Model" dropdown (Percentage, Per Bigha, Per Kattha, Per Decimil, Per Sqft, Fixed Lump-sum) and dynamic unit label script. Upgraded table to render badges for all brokerage types with regional unit formatting.
+- **100% Self-Cleaning Teardown & Byte-Identical DB Restoration**:
+  - All test records tagged and cleanly deleted in reverse dependency order in `finally` block (including `associate_profiles`, `wallet_transactions`, `wallet_points`, `users`, `plots`, `colonies`, etc.).
+  - Zero leftovers confirmed: baseline counts byte-identically verified (`users: 75`, `plots: 756`, `leads: 994`, `properties: 627`, `employees: 15`, `plot_bookings: 3`, `payments: 24`, `colonies: 7`, `associate_profiles: 5`, `wallet_points: 76`, `wallet_transactions: 3`).
+- **Master Test Runner Integrated**:
+  - Added `Township Lifecycle Full Chain` to `testing/master_test_runner.php`.
+  - All **11/11 Test Suites PASSED (100% Healthy, 22.2s)**.
+
+### Verification
+- `php testing/township_lifecycle_e2e_test.php` -> **26/26 BUSINESS STEPS PASSED (100% HEALTHY, Exit 0)**.
+- `php testing/master_test_runner.php` -> **11/11 TEST SUITES PASSED (100% HEALTHY, 22.2s)**.
+- `vendor/bin/phpstan analyse --memory-limit=1G` -> **1500/1500 [OK] No errors (Exit 0)**.
+- Database Baseline Assertion: Byte-identical row counts (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / colonies 7 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3).
+
+## Session 454: 43.3GB Disk Reclaimed, 19 Conflicting Routes Disambiguated (0 Conflicts), CacheService Bridge & HotPathCache Fix, S454 Performance Indexes Migration, 151 Expired API Tokens Pruned (2026-11-12)
+
+### Trigger
+Owner: "c drive full kyo ho gya tha... thik hai pure project ko scan karo deeply max level aur suggestion do upar upar scan nhi karna deeply karna har file... karo sara kaam fix aur Routing Conflicts: 19 Duplicate Route Pairs in routes/web.php... sayad kisi aur kaam ke liye nhi bani ho ye bhi dekhna hai tum dipply dekh soach samjh ke koi kaam karna jo sara suggestion diye ho kaam karo fir"
+
+### The headline
+- **Disk Reclaimed**: OpenCode SQLite DB (`opencode.db`) had 32.15 GB freelist dead space out of 42.25 GB. Upgraded `scripts/vacuum_opencode_db.ps1` with cross-drive staging support onto D: (which has 400+ GB free). Compacted database from **42.25 GB -> 10.06 GB** (row counts on all 30 application tables 100% verified identical: 658k parts, 170k messages, 1.2k sessions). C: drive free space jumped from **7.29 GB -> 50.63 GB FREE** (**+43.34 GB free space reclaimed**).
+- **Critical HotPathCacheService Runtime Error Resolved**: 143,000+ line fatal error spam in `php_error.log` ("Call to undefined method App\Services\CacheService::cache()") eliminated. `App\Services\CacheService` upgraded with static `cache()`, `remember()`, `invalidate()`, `invalidatePattern()`, resilient file-cache persistence (`storage/cache/`), and magic `__callStatic()`.
+- **Routing Conflicts Completely Resolved (19 -> 0 Conflicts across 4,313 routes)**:
+  - Custom router uses "last registration wins", causing subtle shadowing bugs where later duplicate definitions silently overrode earlier controllers.
+  - Group A (Admin Inventory): Disambiguated `/admin/plot-inventory` & `/admin/plots/inventory-overview` -> `SiteController@inventory` (Plot Inventory Overview), preserving `/admin/inventory` for `InventoryController@index` (Construction Materials Inventory).
+  - Group B (Admin Performance): Line 4880 registered `/admin/performance` for `AdminPerformanceController@index` (Server/Hardware Diagnostics), shadowing `PerformanceController@index` (HR Employee Goals/Reviews at line 2820). Disambiguated server diagnostics to `/admin/server-performance`, `/admin/system-performance`, and `/admin/performance/server`, preserving `/admin/performance` for HR Employee Performance & Goals.
+  - Group C (Admin GST): Line 4635 registered `/admin/gst` for `GstController@index` (Invoice CRUD), shadowing the full GST Compliance & Returns Dashboard at line 3422 (`GstComplianceController@dashboard`). Disambiguated to `/admin/gst-invoices` and `/admin/gst/invoices-list`, preserving `/admin/gst` & `/admin/gst/dashboard` for GST Compliance Dashboard.
+  - Group D (Admin Farmers & Training Aliases): Removed obsolete closures at lines 4914 & 4920 that redirected admins out of the admin panel to public `/farmers` and `/admin/training`. Wired `/admin/farmers` & `/admin/farmers/manage` canonically to `FarmerAdminController@index` (Admin Portal).
+  - Group E (Customer Portal Duplicates): Unified duplicate customer routes (`/user/bookings`, `/user/inquiries`, `/user/saved-properties`, `/user/tickets`) so canonical controller actions handle them consistently.
+  - Group F (Exact Redundant Duplicates): Cleaned exact duplicate blocks in Leave Calendar (line 6725 vs 1471), Employee department dashboards, and Labour Law Compliance (lines 6834-6839).
+  - Automated probe scan confirmed: **0 conflicting handlers across entire routes/web.php**.
+- **Database Performance Migration (`database/migrations/add_performance_indexes_s454.php`)**:
+  - Idempotent migration adding missing lookup & foreign-key indexes:
+    - `plot_bookings`: `idx_plot_bookings_colony_id`, `idx_plot_bookings_associate_id`, `idx_plot_bookings_sales_mgr_id`
+    - `properties`: `idx_properties_category_id`, `idx_properties_land_id`
+    - `payments`: `idx_payments_transaction_id`
+  - Re-run verified: all 6 indexes skip cleanly.
+- **API Token Pruning Tool (`scripts/prune_expired_tokens.php`)**:
+  - Standalone safe CLI tool with `--dry-run` and `--days=N` support.
+  - Pruned 151 expired tokens (`expires_at < NOW()`). Active tokens count (206) byte-preserved.
+- **Dead Laravel Files Cleaned**:
+  - Archived `app/models/UserDashboardLayout.php` and `app/Providers/CommissionServiceProvider.php` (which extended uninstalled Illuminate framework classes) to `_archive/dead_laravel/`.
+  - Cleaned `phpstan.neon` exclusion paths.
+
+### Verification
+- `vendor/bin/phpstan analyse --memory-limit=1G` -> **1500/1500 [OK] No errors (Exit 0)**.
+- `php testing/master_test_runner.php` -> **10/10 TEST SUITES PASSED (100% HEALTHY, 20.51s)**.
+- `flutter analyze` in `mobile/apsdreamhome_app_v2` -> **No issues found! (Exit 0)**.
+- `php -l` on all modified files -> **No syntax errors**.
+- Database Baseline Assertion: Byte-identical row counts (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / plot_bookings 3 / payments 24 / document_esign 0).
+- Reclaimed Disk: C: free space **50.63 GB FREE** (up from 7.29 GB).
+
 ## Session 453: GitHub Actions GREEN - CI + CI/CD Pipeline + Visual Regression fixed, 523->0 Flutter issues, 7454->0 PHPStan errors, 7 real production bugs repaired (2026-11-12)
 
 ### Trigger
@@ -4219,44 +4350,7 @@ Owner: "register/smart workflow test karo" + home hero animated text ("We offer 
 ### Work (all browser/DB-proven)
 1. **Hero typing — 2 stacked bugs** in `modern-effects.js` + `premium-animations.js`: (a) BOTH files run competing `setTimeout` type-loops on `#typed-text` (defer vs DOMContentLoaded) → garble/flicker; (b) both split `data-strings` on `'||'` but the `__()` translation chunk uses single `|` → literal pipes on screen ("...Gorakhpur|Smart Investment|..."). Fixed: `dataset.typedActive` first-wins guard + split on single `|` with trim/filter in both files. Cache-bust: `modern-effects.js?v=2`, `premium-animations.js?v=20261009` (else visitors keep old JS).
 2. **Profile-save 400**: `saveProfileProgress()` read `$token = $_POST['token']` but page POSTs JSON (`$_POST` empty for JSON) → EVERY profile save failed. Fixed → token from decoded body. (Sibling `trackBehavior` already did it right.)
-3. **Full E2E in real Chromium** (test phone 9000090009): phone+captcha(123456 dev bypass, real glyphs misread twice) → SMS channel → OTP page → DB-read OTP `154094` → auto-submit → user created → role customer → profile (Mumbai/Salaried/25-50L) → **83% + success overlay** → DB: session `profile_complete`, user name/city/occupation saved, wallet row present. **All test rows deleted, 0 orphan behavior rows.**
-4. Master **7/7** after all fixes. Second-actor churn active again mid-session (5 new files: PropertyWorkflowController, colony_map, colony_plot_map, capital_gains, gst_calculator) — untouched.
-
-### Key Lessons (carried, continued)
-_458. **Two typers on one element = garble, not speed** — defer-script + footer-script both typed `#typed-text`; first-wins flag (`dataset.typedActive`) is the minimal safe arbitration.
-_459. **Split on the weakest separator, filter empties** — `split('|')+trim+filter` handles `|` and `||` and trailing separators; `split('||')` breaks the moment one chunk uses single pipes.
-_460. **Always bump `?v=` with a JS fix** — visitors' browsers cache old JS; without a version bump the fix never reaches them (and your own verification reads stale code).
-_461. **`$_POST` is empty for JSON POSTs** — any PHP endpoint reading `$_POST['x']` while the client sends `application/json` fails 100% of the time. Read the decoded body.
-_462. **Transient `ChildProcess.kill` on first agent-browser call** — immediate retry succeeds; don't investigate before one retry.
-
-## Session 180: Site-Wide JS Blackout — Strict CSP Relaxed + Smart-Register Fixes (2026-10-09, uncommitted)
-
-### Trigger
-Owner: `/register/smart` "scroll nahi ho raha" → then "JS KAAM NHI KAR RAHA" → then "PURE WEBSITE ME... KAI JAGAH JS ME GADBAD, DEEPLY DEKH LO".
-
-### Root causes (all probe-verified)
-1. **Scroll lock**: `body{...overflow:hidden}` in `smart_register_phone/otp/profile.php` cut off taller-than-viewport cards. Fixed → `overflow-y:auto` + `flex-start` + `margin:auto 0` wrappers + `position:fixed` deco glows (4 files incl. role page hardening).
-2. **Site-wide JS blackout**: Session 176's strict CSP (`script-src` nonce-only + `strict-dynamic`, no `unsafe-inline`) silently kills ALL `onclick`/`on*` handlers + all nonce-less scripts. Measured: **459 files / 1322 inline handlers + 517 files / 660 scripts**. `BaseController` ctor sends it on every page → whole site affected. Pre-176 policy had `unsafe-inline` + `unsafe-eval` (site worked for years).
-3. **Fix**: restored `unsafe-inline` (+`unsafe-eval`) to script-src/style-src, **removed `strict-dynamic`** (it makes modern browsers ignore `unsafe-inline` — keeping both would still block everything). Nonce infra kept emitting (defense-in-depth + reports). Re-tightening = separate 459-file conversion project, noted in code comment.
-4. **CSP-correct hardening kept**: smart-register `onclick`/`onkeydown` → `addEventListener` bindings (phone/otp/profile/role), `nonce` added to bootstrap `<script src>` tags.
-
-### Verification
-- Real Chromium (agent-browser): SMS channel click → hidden value `sms` + `selected` class. JS genuinely runs.
-- Master **7/7**, home/login/smart/properties all 200 + fixed CSP header, `php -l` clean.
-- `/csp-report` full cycle: POST → 204 → row in `csp_violations` → test row deleted.
-- Worktree = exactly these 5 files; `storage/logs/smoke_report.json` churn reverted; other-tab scratch (`check_*`, `queryex`) untouched. **No commit** (not requested).
-
-### Key Lessons (carried, continued)
-_454. **A strict CSP is a site-wide kill switch when the codebase is built on inline JS** — count `on*=` handlers + nonce-less scripts BEFORE removing `unsafe-inline`; here it was 1300+ handlers. Aspirational headers must match codebase reality.
-_455. **`strict-dynamic` + `unsafe-inline` = still blocked** — spec says browsers ignore `unsafe-inline` when `strict-dynamic` is present. Relaxing requires removing `strict-dynamic`, not just adding `unsafe-inline`.
-_456. **PowerShell tool-harness strips `"` from commands** — curl `--data-binary '{"a":1}'` arrived as `{a:1}` (proved via echo-server: len=2/raw=`{\`). Send JSON via `--data-binary @file` instead; same for `php -r` (use a file).
-_457. **A 400 from your own endpoint may be your probe's fault** — `/csp-report` 400s were malformed-by-shell JSON, not a controller bug; echo-server + file-based payload proved it in minutes.
-
-## Session 179: Extension E2E Attempt + Manifest Permission Fix (2026-10-09)
-
-### Trigger
-"do next": prove second tab's extension works end-to-end (backend was proven 10/10 in Session 177, JS syntax clean in 176 — browser-side load/integration unproven).
-
+3. **Full E2E in real Chromium** (test phone 9000090009): phone+captcha(123456 dev bypass, real glyphs misread twice) → SMS channel → OTP page → DB-read OTP `154094` → auto-submit → user created → role customer → profile (Mumbai/Salaried/25-50L) → **83% + success overlay** → DB: session `profile_complete`, user name/city/occupation saved, wallet row present. **All test rows del
 ### Work (pushed as `e08d26379`)
 - **Static chrome.* audit** across all 4 JS files vs manifest: `alarms` + `notifications` permissions were missing (sync cycle + every toast would throw). Added both; all other APIs covered.
 - **MV3 package validation** (scripted): 31/32 — sole flag is the validator's own glob artifact (`icons/*.png` in web_accessible_resources is a glob, not a file).
@@ -5013,3 +5107,46 @@ _529. **Cloud-first AI voice abstraction** — provider-agnostic XML/JSON genera
 
 - Remote synced `origin/main` = `ea2f85cd7`
 > **DB RESTORE PROTOCOL (Rule 1, S228 + S333):** Full safety dump saved (39.6MB + 2.4KB) before any DB change. Window open: NO DB WRITES TILL DONE. Verify counts + master 10/10 after close.
+
+## Session 458: Anti-Lazy Salary System — Monthly Activity Gate, 40:60 Leg Balance, Peer Rank Royalty (1%), Pause/Resume Logic (2026-11-12)
+
+### Trigger
+Owner: "अगर एसोसिएट को 6 या 12 महीने की फिक्स सैलरी मिलने लगे, तो वह काम छोड़कर घर बैठ जाएगा और कंपनी का पैसा डूबने लगेगा। सीनियर और जूनियर दोनों हर महीने लगातार फील्ड में दौड़ते रहें, अपनी टीम बढ़ाते रहें और कंपनी का बिजनेस 10 गुना तेजी से बढ़े—इसके लिए क्या सिस्टम बनाएं?"
+
+### Work (all probed, 11/11 master green, ZERO DB drift)
+
+### 1. Anti-Lazy Salary — Monthly Activity Maintenance Rule (`SalaryIncentiveService.php`)
+Enhanced `checkMonthlyMaintenance()` to require EITHER:
+- **≥2 verified site visits** this month (from `site_visits` table, status='completed')
+- **OR ≥₹50,000 booking volume** this month (from `plot_bookings` table)
+
+If neither is met → salary is **PAUSED** (not forfeited). Next month when activity resumes, paused salary resumes.
+
+### 2. 40:60 Leg Balance Rule (`getLegBalanceCheck()`)
+No single downline leg can contribute more than **60%** of the agent's total team volume. At least 40% must come from other legs or personal sales. Prevents single-leg dependency.
+
+### 3. Peer Rank Mentorship Royalty (1%) (`processPeerRankRoyalty()`)
+When a junior reaches the **same rank** as their senior, the senior earns **1% of the junior's team volume** as mentorship royalty. Recorded in new `mlm_peer_rank_royalties` table. Prevents seniors from blocking junior growth.
+
+### 4. Pause/Resume Salary Logic (`processMonthlyGrants()`)
+- If maintenance fails → grant status = `'paused'` (not cancelled)
+- Next month when activity clears → status = `'active'` again, backlogged salary released
+- Idempotent: never double-pays for same month
+
+### 5. Migration: `mlm_peer_rank_royalties` table
+New migration `database/migrations/create_mlm_peer_rank_royalties_s458.php` — idempotent, creates table with unique constraint on (senior_id, junior_id, month_year).
+
+### Verification
+- `php -l` clean on SalaryIncentiveService.php
+- **PHPStan: 0 errors** on SalaryIncentiveService.php
+- **Master Test Runner: 11/11 SUITES PASSED** (100% HEALTHY, 23.2s)
+- **DB: ZERO drift** — users 75, plots 756, leads 994, payments 24 (all probe rows cleaned)
+
+### Key Lessons (carried, continued)
+_834. **Salary without activity is a zombie cost** — tie every rupee of salary to monthly field activity (site visits OR booking volume). A paused salary is more motivating than a cancelled one — it creates urgency to reactivate.
+_835. **Single-leg dependency kills team growth** — cap any one leg at 60% of total volume. Forces seniors to build 3-5 active legs, not just rely on one superstar junior.
+_836. **Same-rank royalty prevents senior-junior conflict** — when juniors catch up to senior rank, pay the senior 1% override. Seniors then actively mentor juniors instead of holding them back.
+_837. **Pause > Cancel for salary holds** — if activity fails, pause the grant (status='paused'), don't cancel it. Resume automatically next month when activity clears. Zero revenue loss, maximum motivation.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor took S448-S450; next-free = **458** (this entry).
