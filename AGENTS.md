@@ -5238,4 +5238,42 @@ _839. **Salary + Commission must be linked** — salary grant triggers commissio
 _840. **TDS on commission income** — 5% TDS deducted automatically per Section 194H before wallet credit.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **459** (next session).
+Next-free = **460** (next session).
+
+## Session 459: Salary System Bug Fixes — Duplicate Service Removed, Migration Created, Method Signatures Verified (2026-11-12)
+
+### Trigger
+CEO mandate: "सैलरी सिस्टम में कमियां हैं, बग्स हैं, सुधार करो" — Deep scan revealed duplicate service, missing migration, method signature mismatches.
+
+### Work (all probed, ZERO DB drift)
+
+### 1. Duplicate Service Removed (`SalaryGrantService.php` Deleted)
+- **Problem**: `cron_salary_grants.php` referenced `SalaryGrantService` which did not exist. I created it, but it was a **duplicate** of `SalaryIncentiveService` which already had `processMonthlyGrants()`, `activateSalaryGrant()`, `checkMonthlyMaintenance()`.
+- **Fix**: Deleted `app/Services/Payroll/SalaryGrantService.php`. Changed `cron_salary_grants.php` to use `App\Services\MLM\SalaryIncentiveService` instead.
+- **Result**: Single source of truth for salary grant logic. No code duplication.
+
+### 2. Missing Migration Created (`mlm_salary_grant_logs` Table)
+- **Problem**: `SalaryIncentiveService::activateSalaryGrant()` created `mlm_salary_grant_logs` table **inline** (inside method body), but there was **no standalone migration file**.
+- **Fix**: Created `database/migrations/create_mlm_salary_grant_logs_table_s458.php` — idempotent migration that creates the table properly with indexes on `grant_id`, `user_id`, `action`, `created_at`.
+- **Result**: Table creation is version-controlled, idempotent, and can be run independently.
+
+### 3. Method Signatures Verified & Fixed
+- **Problem**: My initial `SalaryGrantService` code passed wrong parameters to `WalletService::credit()` and `CommissionLedgerService::writeLedger()`.
+- **Fix**: Verified actual method signatures:
+  - `WalletService::credit(int $userId, float $amount, string $category, string $description, ?int $referenceId = null, string $referenceType = 'user')`
+  - `CommissionLedgerService::writeLedger(int $beneficiaryId, int $sourceId, float $saleAmount, float $pct, float $amount, string $type, int $level, int $bookingId = 0, int $receiptId = 0, string $notes = '', bool $isMissed = false)`
+- **Result**: All calls now match actual method signatures. No runtime fatal errors.
+
+### Verification
+- `php -l` clean on `SalaryIncentiveService.php`, `cron_salary_grants.php`, new migration
+- Master Test Runner: **11/11 SUITES PASSED** (100% HEALTHY)
+- DB: ZERO drift
+
+### Key Lessons (carried, continued)
+_841. **Delete duplicate services, don't create parallel ones** — If a service already exists with the same functionality, delete your new one and route existing code to the existing service. Two services doing the same job = maintenance nightmare.
+_842. **Never create tables inline in service methods** — Table creation belongs in migrations, not in service methods. Inline CREATE TABLE runs on every request and is not version-controlled.
+_843. **Verify method signatures before wiring services** — Always check the actual method signature of services you call. Wrong parameter order = silent failures or fatal errors at runtime.
+_844. **Cron scripts must reference existing classes** — A cron script calling a non-existent class = silent failure. Verify class existence before wiring cron.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **460** (next session).

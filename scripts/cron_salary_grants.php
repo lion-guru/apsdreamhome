@@ -7,14 +7,14 @@
 require_once __DIR__ . '/../config/bootstrap.php';
 
 use App\Core\Database\Database;
-use App\Services\Payroll\SalaryGrantService;
+use App\Services\MLM\SalaryIncentiveService;
 
 echo "=== Monthly Salary Grants Cron Started ===\n";
 echo "Time: " . date('Y-m-d H:i:s') . "\n";
 
 try {
     $db = Database::getInstance()->getConnection();
-    $service = new SalaryGrantService();
+    $service = new SalaryIncentiveService();
     
     $month = date('Y-m');
     echo "Processing month: $month\n";
