@@ -184,7 +184,15 @@ class EmployeeGrievanceController extends BaseController
         exit;
     }
 
-    private function isAjax(): bool
+    /**
+     * NOTE (S460): was `private`.  The front BaseController now declares
+     * `protected function isAjax()`, and a child may not REDUCE the
+     * visibility of an inherited method - PHP fatals with
+     * "Access level to EmployeeGrievanceController::isAjax() must be
+     * protected (as in class App\Http\Controllers\BaseController) or
+     * weaker in ... on line 187".  Widened to protected.
+     */
+    protected function isAjax(): bool
     {
         return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
             || strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false

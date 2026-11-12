@@ -156,6 +156,30 @@ class ReferralController extends BaseController
      */
     public function upgradeToAssociate()
     {
+        // NOTE (S460): a GET MUST NOT MUTATE.
+        //
+        // The route registers BOTH GET and POST to this action and the method
+        // had no method branch, so simply VISITING the URL upgraded the
+        // logged-in account: users.role -> 'associate', an associate_profiles
+        // row, and a Rs.500 wallet credit.  A link preview, a crawler or a
+        // browser prefetch was therefore enough to change someone's account -
+        // and a GET-sweep probe hit an admin account and turned it into an
+        // associate.
+        //
+        // GET is now read-only: it sends the visitor back to the page that
+        // carries the upgrade form (/user/referral).
+        if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            if ($this->isAjax()) {
+                return $this->json([
+                    'success'    => false,
+                    'error'      => 'Use POST to upgrade to an Associate Partner.',
+                    'csrf_field' => \App\Helpers\SecurityHelper::csrfField(),
+                ], 405);
+            }
+            $this->setFlash('info', 'कृपया नीचे दिए गए बटन से अपग्रेड की पुष्टि करें।');
+            return $this->redirect('/user/referral');
+        }
+
         if (empty($_SESSION['user_id'])) {
             if ($this->isAjax()) {
                 return $this->json(['success' => false, 'error' => 'Please login to continue'], 401);
@@ -180,6 +204,19 @@ class ReferralController extends BaseController
             }
             $this->setFlash('info', 'आप पहले से ही APS Dream Homes के एसोसिएट पार्टनर हैं।');
             return $this->redirect('/associate/dashboard');
+        }
+
+        // NOTE (S460): the POST had NO CSRF check at all, so any third-party
+        // page could POST this form for a logged-in customer and silently
+        // turn them into an associate.  The form posts `csrf_token`, which is
+        // the same $_SESSION key validateCsrfToken() compares against.
+        $csrfToken = (string)($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
+        if (!$this->validateCsrfToken($csrfToken)) {
+            if ($this->isAjax()) {
+                return $this->json(['success' => false, 'error' => 'Invalid CSRF token'], 403);
+            }
+            $this->setFlash('error', 'सुरक्षा टोकन अमान्य है। कृपया पेज रीफ्रेश करके पुनः प्रयास करें।');
+            return $this->redirect('/user/referral');
         }
 
         try {
@@ -208,7 +245,17 @@ class ReferralController extends BaseController
                     ->execute([$userId]);
             }
 
-            // 3. Ensure wallet & credit ₹500 welcome activation bonus
+            // NOTE (S460): the Rs.500 welcome bonus is credited AFTER the
+            // commit, on purpose.
+            //
+            // WalletService::credit() opens its OWN transaction, and a nested
+            // one raises "There is already an active transaction" - which the
+            // surrounding catch swallowed into a log line.  The bonus was
+            // therefore NEVER credited, while the success message below
+            // cheerfully claimed it had been.
+            $this->db->commit();
+
+            $bonusCredited = false;
             try {
                 $walletService = new \App\Services\WalletService();
                 $walletService->credit(
@@ -219,25 +266,29 @@ class ReferralController extends BaseController
                     $userId,
                     'user'
                 );
+                $bonusCredited = true;
             } catch (\Throwable $wEx) {
-                error_log("upgradeToAssociate: Wallet bonus credit skipped: " . $wEx->getMessage());
+                error_log("upgradeToAssociate: Wallet bonus credit FAILED: " . $wEx->getMessage());
             }
-
-            $this->db->commit();
 
             // Update active session roles
             $_SESSION['user_role'] = 'associate';
             $_SESSION['role'] = 'associate';
 
+            $message = $bonusCredited
+                ? 'बधाई हो! आप APS Dream Homes के आधिकारिक एसोसिएट पार्टनर बन चुके हैं। ₹500 वेलकम बोनस आपके वॉलेट में जमा कर दिया गया है।'
+                : 'बधाई हो! आप APS Dream Homes के आधिकारिक एसोसिएट पार्टनर बन चुके हैं। वेलकम बोनस जमा नहीं हो सका - कृपया सहायता से संपर्क करें।';
+
             if ($this->isAjax()) {
                 return $this->json([
                     'success'       => true,
-                    'message'       => 'बधाई हो! आप APS Dream Homes के आधिकारिक एसोसिएट पार्टनर बन चुके हैं। ₹500 वेलकम बोनस आपके वॉलेट में जमा कर दिया गया है।',
+                    'message'       => $message,
+                    'bonus_credited' => $bonusCredited,
                     'redirect_url'  => BASE_URL . '/associate/dashboard',
                 ]);
             }
 
-            $this->setFlash('success', 'बधाई हो! आप APS Dream Homes के आधिकारिक एसोसिएट पार्टनर बन चुके हैं। ₹500 वेलकम बोनस आपके वॉलेट में जमा कर दिया गया है।');
+            $this->setFlash('success', $message);
             return $this->redirect('/associate/dashboard');
 
         } catch (\Throwable $e) {
