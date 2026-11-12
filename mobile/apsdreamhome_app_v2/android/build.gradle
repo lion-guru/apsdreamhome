@@ -16,6 +16,26 @@ allprojects {
     }
 }
 
+// S453: the app module's build directory must be <flutter_project>/build/<module>,
+// because that is where the Flutter tool looks for the APK.
+//
+// This project still uses the old Groovy android/build.gradle, and it never got
+// the build-directory redirect that the current Flutter template has. Without
+// it Gradle wrote to android/app/build/... while the tool looked in
+// <flutter_project>/build/app/outputs/flutter-apk/ - so `flutter build apk`
+// ended with
+//   "Gradle build failed to produce an .apk file. It's likely that this file
+//    was generated under .../android/app/build, but the tool couldn't find it."
+// even though the APK had been built.  The same missing redirect is why the
+// CI "Build Release APK" job stayed red.
+def newBuildDir = rootProject.layout.buildDirectory.dir('../../build').get()
+rootProject.layout.buildDirectory.set(newBuildDir)
+
+subprojects {
+    def newSubprojectBuildDir = newBuildDir.dir(project.name)
+    project.layout.buildDirectory.set(newSubprojectBuildDir)
+}
+
 subprojects {
     afterEvaluate {
         if (project.hasProperty('android')) {

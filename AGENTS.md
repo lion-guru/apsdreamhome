@@ -58,6 +58,9 @@ Error: The '@JS' annotation on an extension type constructor has no effect.
 ### Failure 4 - CI -> "Build Release APK" -> `flutter build apk --release` -> exit 1
 - **`android/gradle.properties` committed a Windows-only JDK path**: `org.gradle.java.home=C:\\Program Files\\Android\\Android Studio\\jbr`. On Linux that is an invalid Java home and Gradle died with *"Value 'C:\\Program Files\\...' given for org.gradle.java.home ... is invalid"*. Removed (with a note on where to set it locally).
 - The runner's default JDK is **25**, and Gradle 8.14 rejects it (*"The Java version used for the build is 25.0.5, which is incompatible with Gradle 8.14"*). The project targets Java 17, so the job now installs temurin 17 and points Flutter at it.
+- **`android/build.gradle` never got the build-directory redirect that the current Flutter template has.** The template sets `rootProject.layout.buildDirectory` to `<flutter_project>/build` and every subproject to `<flutter_project>/build/<module>`; this project still uses the old Groovy `build.gradle` and had neither. Gradle therefore wrote the APK to `android/app/build/outputs/...` while the Flutter tool looked in `<flutter_project>/build/app/outputs/flutter-apk/` -> *"Gradle build failed to produce an .apk file. It's likely that this file was generated under .../android/app/build, but the tool couldn't find it."* - i.e. the APK was built and the tool could not see it. This is the same message S448 saw locally and wrote off as a Flutter quirk; it was a real missing redirect. The redirect is now in `android/build.gradle`.
+- `android/app/build.gradle` applied the `com.google.gms.google-services` plugin **unconditionally**, but `android/app/google-services.json` holds the Firebase API key and is gitignored, so it is not on the runner -> *"Execution failed for task ':app:processReleaseGoogleServices'"*. The plugin is now applied only when the file exists.
+- The same file read `key.properties` (the UPLOAD KEYSTORE) only when it existed but then used `signingConfigs.release` unconditionally -> *"SigningConfig \"release\" is missing required property \"storeFile\""*. The release build type now falls back to `signingConfigs.debug` when the keystore is absent, so CI produces a debug-signed smoke APK and a local build still signs with the upload key.
 
 ### Failure 5 - Visual Regression -> `npx playwright install --with-deps chromium` -> exit 1
 ```
@@ -108,6 +111,7 @@ The committed `pubspec.lock` did not satisfy Dart 3.13.7, so **every CI run re-r
 ### Verification
 - `flutter analyze` (Flutter 3.47.9 / Dart 3.13.7, installed locally to MATCH the runner) -> **No issues found, exit 0**.
 - `flutter build web --release` -> **Built build/web, exit 0**.
+- `flutter build apk --release` -> **exit 0** with the APK at `build/app/outputs/flutter-apk/app-release.apk` (after the build-dir redirect; before the fix the same build ended with "Gradle build failed to produce an .apk file").
 - `vendor/bin/phpstan analyse --memory-limit=512M` -> **[OK] No errors, exit 0**.
 - `php testing/master_test_runner.php` -> **10/10 PASSED**.
 - Live HTTP smoke (`/`, `/properties`, `/api/health`, `/admin/login`) -> 200.
@@ -130,6 +134,7 @@ _828. **A script that deletes "the line the analyser flagged" breaks multi-line 
 _829. **Fixing one CI job reveals the next one.** The pipeline had been red at step 1 for a month, so steps 2-4 had never run. Expect a chain, and budget for it instead of assuming one fix ends it.
 _830. **`channel: stable` with no version is a moving target that breaks CI on someone else's schedule.** The Flutter SDK moved 3.47.9 -> 3.50.0 mid-session and turned 281 imports into fatal infos. Pin the SDK, the runner image AND the JDK; a `channel` without a `version` is a latent outage.
 _831. **A committed absolute path is never right for anyone but its author.** `org.gradle.java.home=C:\\Program Files\\...` and the repo's lowercase `app/core` vs the code's `app/Core` both worked on the author's machine and failed on every other one. Grep the repo for absolute paths and for path literals whose case does not match the tracked tree - a case-sensitive deployment target (Linux) is where they surface.
+_832. **"the tool cannot find the file it just built" is a layout mismatch, not a tool bug.** The current Flutter template redirects the app module's build directory to `<project>/build/<module>`; a project that still uses the old Groovy `android/build.gradle` and never got that redirect writes to `android/app/build/...` while the tool looks in `<project>/build/app/...`. When a build reports "it is likely that this file was generated under X, but the tool couldn't find it", diff the two locations against the template before blaming the tool - and treat an old "known quirk" note as a bug report, not as a fact.
 
 ## Session 452: Web 500 Sweep Round 2 - 37 -> 0 x 500 (1989 GET Routes), Autoload Shim + Global config() Helper, Missing Query-Runner Family, MariaDB Aria Crash Recovery (2026-11-11)
 
