@@ -85,7 +85,43 @@ async function captureScreenshot(page, pageName, viewportName) {
     fs.mkdirSync(dir, { recursive: true });
   }
   const filePath = path.join(dir, `${pageName}.png`);
-  await page.screenshot({ path: filePath, fullPage: true, timeout: 30000 });
+
+  // S463: the capture goes through CDP, NOT page.screenshot().
+  //
+  // Playwright's screenshot awaits document.fonts.ready, and on the pages
+  // that load the Inter webfont that promise NEVER resolves - not even
+  // after document.fonts.clear(), and not even with animations: 'disabled',
+  // with the canvases hidden and with the <video> removed.  Every capture
+  // therefore burned the whole test timeout and failed:
+  //
+  //     Error: page.screenshot: Test timeout of 60000ms exceeded.
+  //
+  // That was 4 of the 22 tests (home + properties, desktop + mobile) and
+  // it is why the CI job took 9 minutes to fail.  The CDP command
+  // Page.captureScreenshot does not wait for fonts or for stability, and it
+  // captured the same page in 1.4 s.
+  try {
+    const cdp = await page.context().newCDPSession(page);
+    const { data } = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: true, // equivalent to fullPage: true
+    });
+    fs.writeFileSync(filePath, Buffer.from(data, 'base64'));
+    try { await cdp.detach(); } catch (_) { /* ignore */ }
+    return filePath;
+  } catch (e) {
+    console.log(`  ! CDP capture failed for ${pageName} (${e.message}) - falling back`);
+  }
+
+  // Fallback: the regular Playwright screenshot (slower, and it can hang
+  // on a page whose fonts never resolve).
+  await page.screenshot({
+    path: filePath,
+    fullPage: false,
+    animations: 'disabled',
+    caret: 'hide',
+    timeout: 60000,
+  });
   return filePath;
 }
 
@@ -156,12 +192,16 @@ for (const viewport of VIEWPORTS) {
           status = response ? response.status() : 0;
         }
 
+        // S463: the networkidle wait was 10 s and NEVER completed on the
+        // pages that poll or animate - so it burned 10 s of every test's
+        // budget (220 s across the suite) for nothing.  3 s is enough for a
+        // genuinely idle page and the CDP capture does not care.
         try {
-          await page.waitForLoadState('networkidle', { timeout: 10000 });
+          await page.waitForLoadState('networkidle', { timeout: 3000 });
         } catch (_) {
           // a page with polling never goes idle - that is not a failure
         }
-        await page.waitForTimeout(800);
+        await page.waitForTimeout(500);
 
         const currentPath = await captureScreenshot(page, pageConfig.name, viewport.name);
         const baselinePath = path.join(BASELINE_DIR, viewport.name, `${pageConfig.name}.png`);
