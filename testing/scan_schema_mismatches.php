@@ -207,7 +207,14 @@ foreach ($files as $file) {
             // '/\s*`?(WHERE|...)/i' produced the literal text "?)" inside the
             // pattern, so the FROM and JOIN branches NEVER matched and only
             // the UPDATE branch reported anything.
-            $after = '\s*`?(?:\(|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|CROSS|FULL|USING|SET|ON|GROUP|ORDER|LIMIT|OFFSET|VALUES|,|;|\))\b|\s*$';
+            // NOTE (S466): the fragment MUST be wrapped in a group.  With a
+            // top-level `|` the composed pattern became
+            //     /\bFROM\s+`?(NAME)`?\s*`?(?:...)\b|\s*$/i
+            // i.e. "FROM ..." OR "\s*$" - the second alternative matched the
+            // empty string almost everywhere, so the reported table names
+            // were leftovers from the previous match ("agent_commissi",
+            // "rate_", ...).  The group keeps the alternation INSIDE.
+            $after = '(?:\s*`?(?:\(|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|CROSS|FULL|USING|SET|ON|GROUP|ORDER|LIMIT|OFFSET|VALUES|,|;|\))\b|\s*$)';
             $patterns = [
                 '/\bFROM\s+`?([A-Za-z_][A-Za-z0-9_]*)`?' . $after . '/i',
                 '/\bJOIN\s+`?([A-Za-z_][A-Za-z0-9_]*)`?' . $after . '/i',
