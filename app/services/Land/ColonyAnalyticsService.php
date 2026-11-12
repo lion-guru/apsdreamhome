@@ -79,8 +79,64 @@ class ColonyAnalyticsService
                 FROM colony_development_costs WHERE colony_id = ?
             ", [$colonyId]) ?: [];
 
-            // Land cost
-            $landCost = $colony['estimated_land_cost'] ?? 0;
+            // Land cost: Ground-truth from linked land_deals, fallback to estimated_land_cost
+            $landDeal = $this->db->fetchOne("
+                SELECT 
+                    COALESCE(SUM(total_consideration), 0) as total_consideration,
+                    COALESCE(SUM(advance_paid), 0) as total_advance
+                FROM land_deals WHERE colony_id = ?
+            ", [$colonyId]);
+
+            $contractedLandCost = floatval($landDeal['total_consideration'] ?? 0);
+            $landCost = $contractedLandCost > 0 ? $contractedLandCost : floatval($colony['estimated_land_cost'] ?? 0);
+
+            // Actual payments made for land acquisition (Bayana / Registry)
+            $landPaid = $this->db->fetchOne("
+                SELECT COALESCE(SUM(p.amount), 0) as total_paid
+                FROM land_deal_payments p
+                JOIN land_deals d ON d.id = p.land_deal_id
+                WHERE d.colony_id = ? AND p.status = 'cleared'
+            ", [$colonyId]);
+            $actualLandPaid = floatval($landPaid['total_paid'] ?? 0);
+
+            // Actual Cash Inflow from plot bookings & down payments
+            $cashInflow = $this->db->fetchOne("
+                SELECT COALESCE(SUM(amount), 0) as total_collected
+                FROM payments
+                WHERE status = 'completed'
+                  AND (
+                    plot_booking_id IN (SELECT id FROM plot_bookings WHERE colony_id = ?)
+                    OR (property_type = 'plot' AND property_id IN (SELECT id FROM plots WHERE colony_id = ?))
+                  )
+            ", [$colonyId, $colonyId]);
+            $actualCashCollected = floatval($cashInflow['total_collected'] ?? 0);
+
+            // Commissions incurred on colony plots / bookings
+            $commData = $this->db->fetchOne("
+                SELECT 
+                    COALESCE(SUM(amount), 0) as total_commissions,
+                    COALESCE(SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END), 0) as paid_commissions
+                FROM commissions
+                WHERE associate_id IN (SELECT associate_id FROM plot_bookings WHERE colony_id = ? AND associate_id IS NOT NULL)
+            ", [$colonyId]);
+            $totalCommissions = floatval($commData['total_commissions'] ?? 0);
+
+            // Unsold Plot Inventory Value
+            $unsoldStock = $this->db->fetchOne("
+                SELECT COALESCE(SUM(total_price), 0) as unsold_val, COUNT(*) as unsold_count
+                FROM plots WHERE colony_id = ? AND status = 'available'
+            ", [$colonyId]);
+            $unsoldInventoryValue = floatval($unsoldStock['unsold_val'] ?? 0);
+
+            // Future EMI Receivables
+            $emiPending = $this->db->fetchOne("
+                SELECT COALESCE(SUM(i.total_amount), 0) as pending_receivables
+                FROM booking_emi_installments i
+                JOIN booking_emi_agreements a ON a.id = i.agreement_id
+                JOIN plot_bookings pb ON pb.id = a.booking_id
+                WHERE pb.colony_id = ? AND i.status = 'pending'
+            ", [$colonyId]);
+            $pendingReceivables = floatval($emiPending['pending_receivables'] ?? 0);
 
             // Revenue calculations
             $totalRevenue = floatval($plotStats['total_revenue'] ?? 0);
@@ -153,6 +209,20 @@ class ColonyAnalyticsService
                 'sales_velocity'   => $salesVelocity,
                 'milestone_progress' => $milestoneProgress,
                 'roi_projection'   => $roiProjection,
+                'financial_ledger' => [
+                    'contracted_land_cost'   => $contractedLandCost,
+                    'actual_land_paid'       => $actualLandPaid,
+                    'actual_cash_collected'  => $actualCashCollected,
+                    'pending_receivables'    => $pendingReceivables,
+                    'total_commissions'      => $totalCommissions,
+                    'unsold_inventory_value' => $unsoldInventoryValue,
+                    'unsold_plot_count'      => (int)($unsoldStock['unsold_count'] ?? 0),
+                    'total_dev_cost'         => $totalDevCost,
+                    'total_project_cost'     => $totalCost,
+                    'projected_revenue'      => $totalRevenue,
+                    'projected_gross_profit' => $grossProfit,
+                    'projected_roi_pct'      => round($profitMargin, 1),
+                ],
             ];
         } catch (Exception $e) {
             return ['success' => false, 'error' => $e->getMessage()];

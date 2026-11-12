@@ -449,4 +449,163 @@ class ColonyLandCostingService
             return [];
         }
     }
+
+    /**
+     * Apportion and apply colony land and development costing to all subdivided plots.
+     *
+     * Calculates and populates:
+     *   - acquisition_cost_allocated = round(area_sqft * land_cost_per_sqft, 2)
+     *   - development_cost_allocated = round(area_sqft * dev_cost_per_sqft, 2)
+     *   - base_price_per_sqft = landing_cost_per_sqft (if not already set or override=true)
+     *
+     * @param int $colonyId
+     * @param int|null $costingId (optional, defaults to latest approved or latest version)
+     * @param bool $overrideBasePrice Whether to overwrite existing base_price_per_sqft
+     * @return array ['success' => bool, 'plots_updated' => int, 'land_cost_sqft' => float, 'dev_cost_sqft' => float]
+     */
+    public function applyCostingToPlots(int $colonyId, ?int $costingId = null, bool $overrideBasePrice = false): array
+    {
+        try {
+            $costing = null;
+            // Check if colony_land_costing table exists
+            $tableExists = (bool)$this->pdo->query("SHOW TABLES LIKE 'colony_land_costing'")->fetch();
+
+            if ($tableExists) {
+                if ($costingId !== null && $costingId > 0) {
+                    $stmt = $this->pdo->prepare("SELECT * FROM colony_land_costing WHERE id = ? AND colony_id = ?");
+                    $stmt->execute([$costingId, $colonyId]);
+                    $costing = $stmt->fetch(PDO::FETCH_ASSOC);
+                }
+
+                if (!$costing) {
+                    // Fetch latest approved or latest version
+                    $stmt = $this->pdo->prepare("
+                        SELECT * FROM colony_land_costing 
+                        WHERE colony_id = ? 
+                        ORDER BY is_approved DESC, version DESC 
+                        LIMIT 1
+                    ");
+                    $stmt->execute([$colonyId]);
+                    $costing = $stmt->fetch(PDO::FETCH_ASSOC);
+                }
+            }
+
+            // Fallback: If no explicit colony_land_costing record exists, calculate dynamically
+            // from land_deals (or colonies.estimated_land_cost) and colony_development_costs
+            $landCostSqft = 0.0;
+            $devCostSqft = 0.0;
+            $landingCostSqft = 0.0;
+
+            if ($costing) {
+                $sellableSqft = (float)($costing['net_sellable_sqft'] ?? 0);
+                $totalLandCost = ((float)($costing['total_land_sqft'] ?? 0) * (float)($costing['land_purchase_rate'] ?? 0)) + (float)($costing['land_registry_cost'] ?? 0);
+                $landCostSqft = $sellableSqft > 0 ? ($totalLandCost / $sellableSqft) : 0.0;
+                
+                $devCostSqft = (float)($costing['road_dev_cost_sqft'] ?? 0) +
+                               (float)($costing['drainage_dev_cost_sqft'] ?? 0) +
+                               (float)($costing['electricity_cost_sqft'] ?? 0) +
+                               (float)($costing['water_pipeline_cost_sqft'] ?? 0) +
+                               (float)($costing['boundary_wall_cost_sqft'] ?? 0) +
+                               (float)($costing['other_dev_cost_sqft'] ?? 0);
+                
+                $landingCostSqft = (float)($costing['landing_cost_sqft'] ?? ($landCostSqft + $devCostSqft));
+            } else {
+                // Dynamic aggregation from live land deal & dev costs
+                $dealStmt = $this->pdo->prepare("
+                    SELECT COALESCE(SUM(total_consideration), 0) as total_land, COALESCE(SUM(total_area_sqft), 0) as total_sqft
+                    FROM land_deals WHERE colony_id = ?
+                ");
+                $dealStmt->execute([$colonyId]);
+                $dealData = $dealStmt->fetch(PDO::FETCH_ASSOC);
+
+                $totalLandCost = (float)($dealData['total_land'] ?? 0);
+                $totalLandSqft = (float)($dealData['total_sqft'] ?? 0);
+
+                if ($totalLandCost <= 0) {
+                    $cStmt = $this->pdo->prepare("SELECT estimated_land_cost, total_area_sqft FROM colonies WHERE id = ?");
+                    $cStmt->execute([$colonyId]);
+                    $cData = $cStmt->fetch(PDO::FETCH_ASSOC);
+                    $totalLandCost = (float)($cData['estimated_land_cost'] ?? 0);
+                    $totalLandSqft = (float)($cData['total_area_sqft'] ?? 0);
+                }
+
+                $devStmt = $this->pdo->prepare("
+                    SELECT COALESCE(SUM(amount + COALESCE(gst_amount, 0)), 0) as total_dev
+                    FROM colony_development_costs WHERE colony_id = ? AND status != 'cancelled'
+                ");
+                $devStmt->execute([$colonyId]);
+                $totalDevCost = (float)$devStmt->fetchColumn();
+
+                // Get total sellable plot sqft in colony
+                $plotAreaStmt = $this->pdo->prepare("SELECT COALESCE(SUM(area_sqft), 0) FROM plots WHERE colony_id = ?");
+                $plotAreaStmt->execute([$colonyId]);
+                $sellableSqft = (float)$plotAreaStmt->fetchColumn();
+
+                if ($sellableSqft <= 0 && $totalLandSqft > 0) {
+                    $sellableSqft = $totalLandSqft * 0.75; // assume standard 25% wastage
+                }
+
+                $landCostSqft = $sellableSqft > 0 ? ($totalLandCost / $sellableSqft) : 0.0;
+                $devCostSqft = $sellableSqft > 0 ? ($totalDevCost / $sellableSqft) : 0.0;
+                $landingCostSqft = $landCostSqft + $devCostSqft;
+            }
+
+            // Fetch plots for this colony
+            $plotsStmt = $this->pdo->prepare("SELECT id, area_sqft, base_price_per_sqft FROM plots WHERE colony_id = ?");
+            $plotsStmt->execute([$colonyId]);
+            $plots = $plotsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($plots)) {
+                return [
+                    'success' => true,
+                    'plots_updated' => 0,
+                    'message' => 'No plots found for this colony',
+                    'land_cost_sqft' => round($landCostSqft, 4),
+                    'dev_cost_sqft' => round($devCostSqft, 4),
+                ];
+            }
+
+            $updateStmt = $this->pdo->prepare("
+                UPDATE plots SET 
+                    acquisition_cost_allocated = ?,
+                    development_cost_allocated = ?,
+                    base_price_per_sqft = CASE WHEN ? = 1 OR base_price_per_sqft IS NULL OR base_price_per_sqft = 0 THEN ? ELSE base_price_per_sqft END,
+                    updated_at = NOW()
+                WHERE id = ?
+            ");
+
+            $updatedCount = 0;
+            $this->pdo->beginTransaction();
+            foreach ($plots as $p) {
+                $area = (float)($p['area_sqft'] ?? 0);
+                $acqCost = round($area * $landCostSqft, 2);
+                $devCost = round($area * $devCostSqft, 2);
+                $updateStmt->execute([
+                    $acqCost,
+                    $devCost,
+                    $overrideBasePrice ? 1 : 0,
+                    round($landingCostSqft, 2),
+                    $p['id']
+                ]);
+                $updatedCount++;
+            }
+            $this->pdo->commit();
+
+            return [
+                'success' => true,
+                'plots_updated' => $updatedCount,
+                'land_cost_sqft' => round($landCostSqft, 4),
+                'dev_cost_sqft' => round($devCostSqft, 4),
+                'landing_cost_sqft' => round($landingCostSqft, 4),
+                'total_allocated_acquisition' => round($sellableSqft * $landCostSqft, 2),
+                'total_allocated_development' => round($sellableSqft * $devCostSqft, 2),
+            ];
+        } catch (Exception $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            error_log('[ColonyLandCostingService] applyCostingToPlots: ' . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage(), 'plots_updated' => 0];
+        }
+    }
 }

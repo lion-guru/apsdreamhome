@@ -567,7 +567,7 @@ $router->get('/user/dashboard', 'Front\\UserController@dashboard');
 $router->get('/user/properties', 'Front\\UserController@myProperties');
 $router->get('/user/boost-property/{id}', 'Front\\UserPackageController@boost');
 $router->post('/user/boost-property/purchase', 'Front\\UserPackageController@purchase');
-$router->get('/user/bookings', 'Front\\UserController@userBookings');
+// S454: GET /user/bookings canonical handler registered at line 863 (Front\UserController@myBookings)
 $router->get('/user/bookings/new', 'Front\\UserController@newBooking');
 $router->post('/user/bookings/create', 'Front\\UserController@createBooking');
 $router->get('/user/bookings/{id}', 'Front\\UserController@bookingDetail');
@@ -583,7 +583,7 @@ $router->get('/user/installments/{id}/demand-letter', 'Front\\UserController@dem
 $router->get('/user/installments/{id}/pay', 'Front\\UserController@payInstallment');
 $router->post('/user/installments/{id}/pay', 'Front\\UserController@processInstallmentPayment');
 $router->get('/user/installments/{id}/success', 'Front\\UserController@installmentSuccess');
-$router->get('/user/inquiries', 'Front\\UserController@myInquiries');
+// S454: GET /user/inquiries canonical handler registered at line 857 (DashboardController@inquiries)
 $router->get('/user/contacts', 'Front\\UserContactsController@myContacts');
 $router->post('/user/contacts/store', 'Front\\UserContactsController@storeContact');
 $router->post('/user/contacts/{id}/stage', 'Front\\UserContactsController@updateStage');
@@ -602,7 +602,7 @@ $router->post('/user/support/store', 'Front\\UserController@storeSupportTicket')
 $router->get('/user/support/{id}', 'Front\\UserController@ticketDetail');
 $router->post('/user/support/{id}/reply', 'Front\\UserController@ticketReply');
 
-$router->get('/user/profile', 'Front\\UserController@profile');
+// S454: GET /user/profile canonical handler registered at line 851 (DashboardController@profile)
 // S264: removed dead POST /user/profile â†’ Front\UserController@updateProfile
 // (shadowed by DashboardController@updateProfile below â€” last-registration-wins,
 // so this line never served). Canonical: POST /user/profile â†’ DashboardController.
@@ -629,7 +629,7 @@ $router->post('/user/notification-settings', 'Front\\UserController@updateNotifi
 $router->get('/user/notification-preferences', 'Front\\NotificationPreferenceController@index');
 $router->post('/user/notification-preferences', 'Front\\NotificationPreferenceController@update');
 $router->get('/api/user/notification-preferences', 'Front\\NotificationPreferenceController@getPreferences');
-$router->get('/user/favorites', 'Front\\UserController@favorites');
+// S454: GET /user/favorites canonical handler registered at line 853 (DashboardController@favorites)
 
 // Installments list (missing route)
 $router->get('/user/installments', 'Front\\UserController@installments');
@@ -843,6 +843,8 @@ $router->post('/property-comparison/clear', 'App\\Http\\Controllers\\Front\\Prop
 $router->get('/property-comparison/share', 'App\\Http\\Controllers\\Front\\PropertyComparisonController@share');
 
 $router->get('/user/referral', 'App\\Http\\Controllers\\Front\\ReferralController@index');
+$router->get('/user/upgrade-to-associate', 'App\\Http\\Controllers\\Front\\ReferralController@upgradeToAssociate');
+$router->post('/user/upgrade-to-associate', 'App\\Http\\Controllers\\Front\\ReferralController@upgradeToAssociate');
 
 // ============================================================
 // CUSTOMER / USER PORTAL ROUTES (/user/*)
@@ -853,7 +855,7 @@ $router->post('/user/profile',           'App\\Http\\Controllers\\DashboardContr
 $router->get('/user/favorites',          'App\\Http\\Controllers\\DashboardController@favorites');
 $router->post('/user/favorites/add',     'App\\Http\\Controllers\\DashboardController@addFavorite');
 $router->post('/user/favorites/remove',  'App\\Http\\Controllers\\DashboardController@removeFavorite');
-$router->get('/user/saved-properties',   'App\\Http\\Controllers\\DashboardController@favorites'); // alias
+// S454: /user/saved-properties is canonically served by Front\MarketplaceController@savedProperties (line 668)
 $router->get('/user/inquiries',          'App\\Http\\Controllers\\DashboardController@inquiries');
 $router->post('/user/inquiries/submit',  'App\\Http\\Controllers\\DashboardController@submitInquiry');
 $router->get('/user/settings',           'Front\\UserController@profile');
@@ -865,11 +867,7 @@ $router->get('/user/emi-tracker',        'Front\\UserController@emiTracker');
 $router->get('/user/payment-history',    'Front\\UserController@paymentHistory');
 $router->get('/user/site-visits',        'Front\\UserController@mySiteVisits');
 $router->get('/user/passbook',           'App\\Http\\Controllers\\Front\\CustomerPassbookController@passbook');
-$router->get('/user/tickets',            'Front\\UserController@myTickets');
 $router->post('/user/tickets',           'Front\\UserController@createTicket');
-$router->post('/user/tickets/create',    'Front\\UserController@createTicket');
-$router->get('/user/insurance',          'Front\\UserController@insurance');
-$router->get('/user/investment-plans',   'Front\\UserController@investmentPlans');
 
 // Customer Portal Redirects (/customer/* -> /user/* canonical)
 // Dashboard
@@ -1198,6 +1196,14 @@ $router->post('/associate/settings/update', 'App\\Http\\Controllers\\AssociateCo
 $router->post('/associate/settings/password', 'App\\Http\\Controllers\\AssociateController@settings');
 $router->post('/associate/settings/notifications', 'App\\Http\\Controllers\\AssociateController@settings');
 $router->post('/associate/settings/2fa', 'App\\Http\\Controllers\\AssociateController@settings');
+// Associate Diwali Dhamaka Salary & Allowance Portals (S458)
+$router->get('/associate/salary', 'App\\Http\\Controllers\\Associate\\SalaryController@index');
+$router->get('/associate/allowances', 'App\\Http\\Controllers\\Associate\\AllowanceController@index');
+$router->post('/associate/allowances/claim-office', 'App\\Http\\Controllers\\Associate\\AllowanceController@claimOffice');
+$router->post('/associate/allowances/claim-visit', 'App\\Http\\Controllers\\Associate\\AllowanceController@claimVisit');
+// Associate Career Rank Rewards Portal (S459)
+$router->get('/associate/rewards', 'App\\Http\\Controllers\\Associate\\RewardController@index');
+$router->post('/associate/rewards/{id}/claim', 'App\\Http\\Controllers\\Associate\\RewardController@claim');
 $router->get('/associate/mlm-plan', 'App\\Http\\Controllers\\AssociateController@mlmPlan');
 $router->get('/associate/documents', 'App\\Http\\Controllers\\AssociateController@documents');
 $router->get('/associate/kyc', 'App\\Http\\Controllers\\AssociateController@documents');
@@ -1312,17 +1318,7 @@ $router->post('/associate/tools/plot-converter', 'App\\Http\\Controllers\\Associ
 $router->get('/associate/tools/commission', 'App\\Http\\Controllers\\AssociateController@commissionCalculator');
 $router->post('/associate/tools/commission', 'App\\Http\\Controllers\\AssociateController@commissionCalculator');
 
-// Farmer Management
-$router->get('/farmers', 'User\\FarmerController@index');
-$router->get('/farmers/list', 'User\\FarmerController@list');
-$router->get('/farmers/create', 'User\\FarmerController@create');
-$router->post('/farmers', 'User\\FarmerController@store');
-$router->get('/farmers/search', 'User\\FarmerController@search');
-$router->get('/farmers/{id}', 'User\\FarmerController@show');
-$router->get('/farmers/{id}/edit', 'User\\FarmerController@edit');
-$router->post('/farmers/{id}/update', 'User\\FarmerController@update');
-$router->post('/farmers/{id}/delete', 'User\\FarmerController@delete');
-
+// S454: Farmer Management canonical routes registered under FARMER & LANDOWNER LEDGER at line 3084
 // Farmer Self-Service Portal
 $router->get('/farmer/login', 'Auth\\FarmerAuthController@loginForm');
 $router->post('/farmer/login', 'Auth\\FarmerAuthController@login');
@@ -1441,6 +1437,7 @@ $router->get('/employee/ops-dashboard', 'Employee\\EmployeeDashboardController@o
 $router->get('/employee/sales-dashboard', 'Employee\\EmployeeDashboardController@salesDashboard');
 $router->post('/employee/dashboard/update-task-status', 'Employee\\EmployeeDashboardController@updateTaskStatus');
 
+
 // ============================================================
 // EMPLOYEE SELF-SERVICE PORTAL
 // ============================================================
@@ -1532,11 +1529,7 @@ $router->get('/employee/self-service/helpdesk/create', 'Employee\\EmployeeSelfSe
 $router->post('/employee/self-service/helpdesk/create', 'Employee\\EmployeeSelfServiceController@ticketCreate');
 $router->get('/employee/self-service/helpdesk/{id}', 'Employee\\EmployeeSelfServiceController@ticketDetail');
 
-$router->get('/employee/finance-dashboard', 'Employee\\EmployeeDashboardController@financeDashboard');
-$router->get('/employee/it-dashboard', 'Employee\\EmployeeDashboardController@itDashboard');
-$router->get('/employee/ops-dashboard', 'Employee\\EmployeeDashboardController@opsDashboard');
-$router->get('/employee/sales-dashboard', 'Employee\\EmployeeDashboardController@salesDashboard');
-$router->post('/employee/dashboard/update-task-status', 'Employee\\EmployeeDashboardController@updateTaskStatus');
+
 
 // Employee department pages (16 missing sidebar routes â€” single dynamic route)
 $router->get('/employee/{slug}', 'Employee\\EmployeeController@departmentPage');
@@ -2010,7 +2003,10 @@ $router->get('/admin/sites/{id}', 'App\\Http\\Controllers\\Admin\\SiteController
 $router->get('/admin/sites/{id}/edit', 'App\\Http\\Controllers\\Admin\\SiteController@edit');
 $router->post('/admin/sites/{id}/update', 'App\\Http\\Controllers\\Admin\\SiteController@update');
 $router->post('/admin/sites/{id}/destroy', 'App\\Http\\Controllers\\Admin\\SiteController@destroy');
-$router->get('/admin/inventory', 'App\\Http\\Controllers\\Admin\\SiteController@inventory');
+// S454: Plot/Colony inventory overview canonical is /admin/sites/inventory (and /admin/plot-inventory).
+// /admin/inventory is reserved for Construction Materials Inventory (InventoryController@index).
+$router->get('/admin/plot-inventory', 'App\\Http\\Controllers\\Admin\\SiteController@inventory');
+$router->get('/admin/plots/inventory-overview', 'App\\Http\\Controllers\\Admin\\SiteController@inventory');
 
 // Admin Inquiries
 $router->get('/admin/inquiries', 'App\\Http\\Controllers\\Admin\\InquiryController@index');
@@ -3096,14 +3092,17 @@ $router->post('/farmers/{id}/store-land-holding',     'App\\Http\\Controllers\\U
 $router->get('/farmers/{id}/add-purchase',            'App\\Http\\Controllers\\User\\FarmerController@addPurchase');
 $router->post('/farmers/{id}/store-purchase',         'App\\Http\\Controllers\\User\\FarmerController@storePurchase');
 
-// Admin Farmer Aliases
-$router->get('/admin/farmers',                        'App\\Http\\Controllers\\User\\FarmerController@list');
+// Admin Farmer Aliases (Admin management is canonically at /admin/farmers -> FarmerAdminController@index)
+$router->get('/admin/farmers/directory',             'App\\Http\\Controllers\\User\\FarmerController@list');
 $router->get('/admin/farmers/create',                 'App\\Http\\Controllers\\User\\FarmerController@create');
 $router->get('/admin/farmers/{id}',                   'App\\Http\\Controllers\\User\\FarmerController@show');
 $router->post('/admin/land-inventory/colonies/{colonyId}/layouts/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@layoutStore');
 
 $router->get('/admin/land-inventory/brokers', 'App\\Http\\Controllers\\Admin\\LandInventoryController@brokers');
 $router->post('/admin/land-inventory/brokers/store', 'App\\Http\\Controllers\\Admin\\LandInventoryController@brokerStore');
+$router->post('/admin/land-inventory/brokers/{id}/update', 'App\\Http\\Controllers\\Admin\\LandInventoryController@brokerUpdate');
+$router->get('/admin/land-inventory/brokers/{id}/agreement', 'App\\Http\\Controllers\\Admin\\LandInventoryController@brokerAgreement');
+$router->post('/admin/land-inventory/brokers/{id}/send-agreement', 'App\\Http\\Controllers\\Admin\\LandInventoryController@brokerSendAgreement');
 
 // Farmer Land Bank Acquisition Ledger
 $router->get('/admin/land-inventory/farmer-ledger', 'App\\Http\\Controllers\\Admin\\LandInventoryController@farmerLedger');
@@ -3427,6 +3426,7 @@ $router->post('/admin/property-tax/rebate-rule/delete/{id}', 'App\\Http\\Control
 
 // GST Compliance & Returns
 $router->get('/admin/gst', 'App\\Http\\Controllers\\Admin\\GstComplianceController@dashboard');
+$router->get('/admin/gst/dashboard', 'App\\Http\\Controllers\\Admin\\GstComplianceController@dashboard');
 $router->get('/admin/gst/invoices', 'App\\Http\\Controllers\\Admin\\GstComplianceController@invoices');
 $router->get('/admin/gst/invoices/create', 'App\\Http\\Controllers\\Admin\\GstComplianceController@invoiceCreate');
 $router->post('/admin/gst/invoices/store', 'App\\Http\\Controllers\\Admin\\GstComplianceController@invoiceStore');
@@ -4429,6 +4429,19 @@ $router->get('/admin/mlm-realestate/salary/diagnostics', 'Admin\MLMRealEstateCon
 $router->get('/admin/mlm-realestate/rera/status', 'Admin\MLMRealEstateController@reraStatus');
 $router->get('/admin/mlm-realestate/rera/diagnostics', 'Admin\MLMRealEstateController@reraDiagnostics');
 
+// Admin Leadership Allowances & Site Visit Reimbursements (S458)
+$router->get('/admin/mlm-realestate/allowances', 'App\\Http\\Controllers\\Admin\\AllowanceController@index');
+$router->post('/admin/mlm-realestate/allowances/{id}/approve', 'App\\Http\\Controllers\\Admin\\AllowanceController@approve');
+$router->post('/admin/mlm-realestate/allowances/{id}/reject', 'App\\Http\\Controllers\\Admin\\AllowanceController@reject');
+
+// Admin MLM Real Estate Career Rank Rewards Desk (S459)
+$router->get('/admin/mlm-realestate/rewards', 'App\\Http\\Controllers\\Admin\\MlmRealEstateRewardController@index');
+$router->post('/admin/mlm-realestate/rewards/{id}/approve', 'App\\Http\\Controllers\\Admin\\MlmRealEstateRewardController@approve');
+$router->post('/admin/mlm-realestate/rewards/{id}/dispatch', 'App\\Http\\Controllers\\Admin\\MlmRealEstateRewardController@dispatch');
+$router->post('/admin/mlm-realestate/rewards/{id}/deliver', 'App\\Http\\Controllers\\Admin\\MlmRealEstateRewardController@deliver');
+$router->post('/admin/mlm-realestate/rewards/{id}/cash', 'App\\Http\\Controllers\\Admin\\MlmRealEstateRewardController@convertToCash');
+$router->post('/admin/mlm-realestate/rewards/{id}/reject', 'App\\Http\\Controllers\\Admin\\MlmRealEstateRewardController@reject');
+
 // Language switcher
 $router->get('/language/set/{lang}', 'Front\\PageController@setLanguage');
 $router->get('/language/selector', 'App\\Http\\Controllers\\Utility\\LanguageController@languageSelector');
@@ -4639,7 +4652,9 @@ $router->post('/admin/company/users', 'App\\Http\\Controllers\\Admin\\CompanyCon
 // â€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Â
 // GST INVOICE MANAGEMENT
 // â€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Â
-$router->get('/admin/gst', 'App\\Http\\Controllers\\Admin\\GstController@index');
+// S454: GST Invoices CRUD (Compliance dashboard canonically at /admin/gst -> GstComplianceController@dashboard)
+$router->get('/admin/gst-invoices', 'App\\Http\\Controllers\\Admin\\GstController@index');
+$router->get('/admin/gst/invoices-list', 'App\\Http\\Controllers\\Admin\\GstController@index');
 $router->get('/admin/gst/create', 'App\\Http\\Controllers\\Admin\\GstController@create');
 $router->post('/admin/gst/store', 'App\\Http\\Controllers\\Admin\\GstController@store');
 $router->get('/admin/gst/{id}', 'App\\Http\\Controllers\\Admin\\GstController@show');
@@ -4771,6 +4786,7 @@ $router->post('/admin/voice-scheduler/cancel', 'App\\Http\\Controllers\\Admin\\V
 // â€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Â
 // FARMERS MANAGEMENT (Admin)
 // â€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Ââ€¢Â
+$router->get('/admin/farmers', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@index');
 $router->get('/admin/farmers/manage', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@index');
 $router->get('/admin/farmers/manage/{id}', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@show');
 $router->get('/admin/farmers/agreements', 'App\\Http\\Controllers\\Admin\\FarmerAdminController@agreements');
@@ -4884,7 +4900,10 @@ $router->get('/admin/advanced-analytics/users', 'App\\Http\\Controllers\\Analyti
 $router->get('/admin/advanced-analytics/financial', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@financialAnalytics');
 $router->get('/admin/advanced-analytics/mlm', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@mlmAnalytics');
 $router->get('/admin/advanced-analytics/realtime', 'App\\Http\\Controllers\\Analytics\\AdvancedAnalyticsController@apiGetRealtimeData');
-$router->get('/admin/performance', 'App\\Http\\Controllers\\Admin\\AdminPerformanceController@index');
+// S454: Server & System Performance Diagnostics (/admin/performance is HR Performance & Goals -> PerformanceController@index)
+$router->get('/admin/server-performance', 'App\\Http\\Controllers\\Admin\\AdminPerformanceController@index');
+$router->get('/admin/system-performance', 'App\\Http\\Controllers\\Admin\\AdminPerformanceController@index');
+$router->get('/admin/performance/server', 'App\\Http\\Controllers\\Admin\\AdminPerformanceController@index');
 $router->get('/admin/security', 'App\\Http\\Controllers\\Admin\\AdminSecurityController@index');
 
 // ============================================================
@@ -4917,18 +4936,8 @@ $router->get('/admin/customer-leads', function () {
     exit;
 });
 
-// /admin/farmers -> /farmers (public)
-$router->get('/admin/farmers', function () {
-    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/farmers');
-    exit;
-});
-
-// Training courses redirect (sidebar link alias)
-$router->get('/admin/training/courses', function () {
-    $base = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
-    header('Location: ' . $base . '/admin/training');
-    exit;
-});
+// S454: /admin/farmers is handled by FarmerAdminController@index (line 4770)
+// S454: /admin/training/courses is handled by HRController@trainingCourses (line 6728)
 
 // ============================================================
 // NOTIFICATION ROUTES
@@ -6728,8 +6737,7 @@ $router->get('/employee/self-service/documents/{id}', 'Employee\\EmployeeSelfSer
 $router->get('/employee/self-service/documents/{id}/download', 'Employee\\EmployeeSelfServiceController@documentDownload');
 $router->post('/employee/self-service/documents/{id}/verify', 'Employee\\EmployeeSelfServiceController@documentVerifyRequest');
 
-// Employee Leave Calendar
-$router->get('/employee/self-service/leave-calendar', 'Employee\\EmployeeSelfServiceController@leaveCalendar');
+// S454: Employee Leave Calendar declared at line 1471 with month route
 
 // Admin Training / L&D
 $router->get('/admin/training/courses', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourses');
@@ -6836,12 +6844,10 @@ $router->get('/admin/township-fire-safety/{id}/print', 'App\\Http\\Controllers\\
 
 
 
-$router->get('/admin/labour-law-compliance', 'App\Http\Controllers\Admin\LabourLawComplianceController@index');
-$router->get('/admin/labour-law-compliance/create', 'App\Http\Controllers\Admin\LabourLawComplianceController@create');
-$router->post('/admin/labour-law-compliance/store', 'App\Http\Controllers\Admin\LabourLawComplianceController@store');
-$router->get('/admin/labour-law-compliance/show/{id}', 'App\Http\Controllers\Admin\LabourLawComplianceController@show');
-$router->post('/admin/labour-law-compliance/update-status/{id}', 'App\Http\Controllers\Admin\LabourLawComplianceController@updateStatus');
-$router->post('/admin/labour-law-compliance/delete/{id}', 'App\Http\Controllers\Admin\LabourLawComplianceController@delete');
+
+
+
+// Labour Law Compliance
 $router->get('/admin/labour-law-compliance', 'App\Http\Controllers\Admin\LabourLawComplianceController@index');
 $router->get('/admin/labour-law-compliance/create', 'App\Http\Controllers\Admin\LabourLawComplianceController@create');
 $router->post('/admin/labour-law-compliance/store', 'App\Http\Controllers\Admin\LabourLawComplianceController@store');

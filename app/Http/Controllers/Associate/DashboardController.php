@@ -232,6 +232,15 @@ class DashboardController extends BaseController
                 error_log('Associate dashboard today-actions: ' . $e->getMessage());
             }
 
+            // Diwali Dhamaka Salary & Maintenance Data (S458)
+            $salaryData = [];
+            try {
+                $salaryService = new \App\Services\MLM\LeadershipSalaryService();
+                $salaryData = $salaryService->getAssociateSalaryDashboardData($userId);
+            } catch (\Throwable $e) {
+                error_log('Associate dashboard salary data: ' . $e->getMessage());
+            }
+
             $dashboardData = [
                 'page_title' => 'Associate Dashboard - APS Dream Home',
                 'page_description' => 'Welcome to your Associate Dashboard',
@@ -256,6 +265,7 @@ class DashboardController extends BaseController
                 'today_actions' => $todayActions,
                 'referral_earnings_breakdown' => $referralEarningsBreakdown,
                 'attribution_stats' => $attributionStats,
+                'salary_data' => $salaryData,
             ];
 
             // Cache dashboard data for 5 minutes (300 seconds)

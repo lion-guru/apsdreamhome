@@ -41,6 +41,7 @@ $suites = [
         'Township Operations Health (21 Modules)' => 'php testing/township_health_probe.php',
         'Withdrawal Lifecycle Money Probe' => 'php testing/withdrawal_lifecycle_probe.php',
         'Portal Menu Links Probe' => 'php testing/portal_menu_links_probe.php',
+        'Township Lifecycle Full Chain (22 Steps)' => 'php testing/township_lifecycle_e2e_test.php',
     ],
     'HTTP Production Smoke Tests' => [
         'Production Smoke Runner (24 Routes)' => 'php testing/production_smoke_runner.php',

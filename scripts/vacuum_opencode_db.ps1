@@ -116,14 +116,34 @@ $deadGB = $fl * $ps / 1073741824;
 echo "SIZE_BEFORE={$pc} live={$liveGB} dead={$deadGB}\n";
 
 $needGB = $liveGB + 2;
-$freeGB = (int) (trim(shell_exec('echo ' . escapeshellarg((string) (int) (disk_free_space('C:') / 1073741824))))) ;
+$freeGB = round(disk_free_space('C:') / 1073741824, 2);
+
+$useStaging = false;
+$stageFile = null;
 if ($freeGB < $needGB) {
-    fwrite(STDERR, "INSUFFICIENT_SPACE need=" . round($needGB,2) . "GB free={$freeGB}GB\n");
-    exit(2);
+    // Check D: or E: for staging space (VACUUM INTO writes directly to large external drive)
+    $dFree = @disk_free_space('D:') ? round(disk_free_space('D:') / 1073741824, 2) : 0;
+    $eFree = @disk_free_space('E:') ? round(disk_free_space('E:') / 1073741824, 2) : 0;
+    if ($dFree >= $needGB) {
+        $stageDir = 'D:\\temp_vacuum';
+        if (!is_dir($stageDir)) @mkdir($stageDir, 0777, true);
+        $stageFile = $stageDir . '\\opencode_compacted.db';
+        $useStaging = true;
+        echo "STAGING_ON_D: free={$dFree}GB need={$needGB}GB (bypassing low C: drive headroom)\n";
+    } elseif ($eFree >= $needGB) {
+        $stageDir = 'E:\\temp_vacuum';
+        if (!is_dir($stageDir)) @mkdir($stageDir, 0777, true);
+        $stageFile = $stageDir . '\\opencode_compacted.db';
+        $useStaging = true;
+        echo "STAGING_ON_E: free={$eFree}GB need={$needGB}GB (bypassing low C: drive headroom)\n";
+    } else {
+        fwrite(STDERR, "INSUFFICIENT_SPACE need=" . round($needGB,2) . "GB free={$freeGB}GB\n");
+        exit(2);
+    }
 }
 
-// --- snapshot every table's row count ---
-$tables = $pdo->query("SELECT name FROM sqlite_master WHERE type='table'")->fetchAll(PDO::FETCH_COLUMN);
+// --- snapshot every table's row count (excluding internal SQLite system tables) ---
+$tables = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")->fetchAll(PDO::FETCH_COLUMN);
 $before = [];
 foreach ($tables as $t) {
     try { $before[$t] = (int) $pdo->query('SELECT COUNT(*) FROM "' . $t . '"')->fetchColumn(); }
@@ -131,36 +151,94 @@ foreach ($tables as $t) {
 }
 echo "TABLES=" . count($before) . "\n";
 
-// --- the reclaim: enable incremental auto-vacuum, then VACUUM ---------------
 $t0 = microtime(true);
-$pdo->exec('PRAGMA auto_vacuum = INCREMENTAL');
-$pdo->exec('VACUUM');
-$pdo->exec('PRAGMA wal_checkpoint(TRUNCATE)');
-echo "VACUUM_SECONDS=" . round(microtime(true) - $t0, 1) . "\n";
+if ($useStaging) {
+    if (file_exists($stageFile)) @unlink($stageFile);
+    $pdo->exec('PRAGMA auto_vacuum = INCREMENTAL');
+    $pdo->exec('VACUUM INTO ' . $pdo->quote($stageFile));
+    echo "VACUUM_SECONDS=" . round(microtime(true) - $t0, 1) . "\n";
 
-// --- verify: counts must be IDENTICAL ---------------------------------------
-$after = [];
-foreach ($tables as $t) {
-    try { $after[$t] = (int) $pdo->query('SELECT COUNT(*) FROM "' . $t . '"')->fetchColumn(); }
-    catch (Throwable $e) { $after[$t] = -1; }
+    // verify on staged DB
+    $pdoStaged = new PDO('sqlite:' . $stageFile, null, null, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_TIMEOUT => 30,
+    ]);
+    $after = [];
+    foreach ($tables as $t) {
+        try { $after[$t] = (int) $pdoStaged->query('SELECT COUNT(*) FROM "' . $t . '"')->fetchColumn(); }
+        catch (Throwable $e) { $after[$t] = -1; }
+    }
+    $mismatch = 0;
+    foreach ($before as $t => $c) {
+        if ($c !== $after[$t]) { $mismatch++; echo "ROWCOUNT_MISMATCH $t before=$c after={$after[$t]}\n"; }
+    }
+    echo "ROWCOUNT_MISMATCHES=$mismatch\n";
+
+    $ic = $pdoStaged->query('PRAGMA integrity_check')->fetchColumn();
+    echo "INTEGRITY=$ic\n";
+
+    $pc2 = (int) $pdoStaged->query('PRAGMA page_count')->fetchColumn();
+    $fl2 = (int) $pdoStaged->query('PRAGMA freelist_count')->fetchColumn();
+    echo "SIZE_AFTER={$pc2} freelist={$fl2}\n";
+    echo "RECLAIMED_GB=" . round(($pc - $pc2) * $ps / 1073741824, 2) . "\n";
+
+    if ($mismatch > 0) { fwrite(STDERR, "ABORT_ROWCOUNT_MISMATCH\n"); exit(3); }
+    if (strtoupper((string)$ic) !== 'OK') { fwrite(STDERR, "ABORT_INTEGRITY\n"); exit(4); }
+
+    // Close connections to unlock files
+    $pdoStaged = null;
+    $pdo = null;
+
+    // Replace original db on C: with staged compact db
+    $bak = $db . '.pre_vacuum_bak';
+    if (file_exists($bak)) @unlink($bak);
+    if (!@rename($db, $bak)) {
+        fwrite(STDERR, "ABORT_RENAME_FAILED\n");
+        exit(5);
+    }
+    if (!@rename($stageFile, $db)) {
+        if (!@copy($stageFile, $db)) {
+            @rename($bak, $db);
+            fwrite(STDERR, "ABORT_MOVE_FAILED\n");
+            exit(6);
+        }
+        @unlink($stageFile);
+    }
+    // Delete the backup to reclaim disk space immediately
+    @unlink($bak);
+    if (file_exists($db . '-wal')) @unlink($db . '-wal');
+    if (file_exists($db . '-shm')) @unlink($db . '-shm');
+    echo "RESULT=OK\n";
+} else {
+    $pdo->exec('PRAGMA auto_vacuum = INCREMENTAL');
+    $pdo->exec('VACUUM');
+    $pdo->exec('PRAGMA wal_checkpoint(TRUNCATE)');
+    echo "VACUUM_SECONDS=" . round(microtime(true) - $t0, 1) . "\n";
+
+    // --- verify: counts must be IDENTICAL ---------------------------------------
+    $after = [];
+    foreach ($tables as $t) {
+        try { $after[$t] = (int) $pdo->query('SELECT COUNT(*) FROM "' . $t . '"')->fetchColumn(); }
+        catch (Throwable $e) { $after[$t] = -1; }
+    }
+    $mismatch = 0;
+    foreach ($before as $t => $c) {
+        if ($c !== $after[$t]) { $mismatch++; echo "ROWCOUNT_MISMATCH $t before=$c after={$after[$t]}\n"; }
+    }
+    echo "ROWCOUNT_MISMATCHES=$mismatch\n";
+
+    $ic = $pdo->query('PRAGMA integrity_check')->fetchColumn();
+    echo "INTEGRITY=$ic\n";
+
+    $pc2 = (int) $pdo->query('PRAGMA page_count')->fetchColumn();
+    $fl2 = (int) $pdo->query('PRAGMA freelist_count')->fetchColumn();
+    echo "SIZE_AFTER={$pc2} freelist={$fl2}\n";
+    echo "RECLAIMED_GB=" . round(($pc - $pc2) * $ps / 1073741824, 2) . "\n";
+
+    if ($mismatch > 0) { fwrite(STDERR, "ABORT_ROWCOUNT_MISMATCH\n"); exit(3); }
+    if (strtoupper((string)$ic) !== 'OK') { fwrite(STDERR, "ABORT_INTEGRITY\n"); exit(4); }
+    echo "RESULT=OK\n";
 }
-$mismatch = 0;
-foreach ($before as $t => $c) {
-    if ($c !== $after[$t]) { $mismatch++; echo "ROWCOUNT_MISMATCH $t before=$c after={$after[$t]}\n"; }
-}
-echo "ROWCOUNT_MISMATCHES=$mismatch\n";
-
-$ic = $pdo->query('PRAGMA integrity_check')->fetchColumn();
-echo "INTEGRITY=$ic\n";
-
-$pc2 = (int) $pdo->query('PRAGMA page_count')->fetchColumn();
-$fl2 = (int) $pdo->query('PRAGMA freelist_count')->fetchColumn();
-echo "SIZE_AFTER={$pc2} freelist={$fl2}\n";
-echo "RECLAIMED_GB=" . round(($pc - $pc2) * $ps / 1073741824, 2) . "\n";
-
-if ($mismatch > 0) { fwrite(STDERR, "ABORT_ROWCOUNT_MISMATCH\n"); exit(3); }
-if (strtoupper((string)$ic) !== 'OK') { fwrite(STDERR, "ABORT_INTEGRITY\n"); exit(4); }
-echo "RESULT=OK\n";
 '@
 
 try {

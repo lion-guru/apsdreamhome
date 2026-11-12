@@ -26,6 +26,7 @@ $rankConfig = [
 $rankDisplay = [
     'associate' => __('assoc_rank_associate', [], 'Associate'),
     'senior_associate' => __('assoc_mlm_sr_associate', [], 'Senior Associate'),
+    'sr_associate' => __('assoc_mlm_sr_associate', [], 'Senior Associate'),
     'bdm' => __('assoc_rank_bdm', [], 'BDM'),
     'sr_bdm' => __('assoc_mlm_sr_bdm', [], 'Sr. BDM'),
     'vice_president' => __('assoc_rank_vp', [], 'Vice President'),
@@ -36,6 +37,24 @@ $rankDisplay = [
 $currentConfig = $rankConfig[$currentRank] ?? $rankConfig['associate'];
 $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
 ?>
+
+<!-- Official Rank Rewards Promotion Banner -->
+<div class="alert alert-primary d-flex flex-wrap align-items-center justify-content-between p-3 mb-4 rounded-3 shadow-sm border-0" style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white;">
+    <div class="d-flex align-items-center mb-2 mb-md-0">
+        <div class="rounded-circle bg-white text-primary p-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px;">
+            <i class="fas fa-trophy fa-lg text-warning"></i>
+        </div>
+        <div>
+            <h5 class="mb-1 text-white fw-bold">Official Career Rank Rewards & Claims Desk</h5>
+            <p class="mb-0 text-white-50 small">Eligible for Mobile, Tablet, Laptop, Tour, Pulsar Bike, Bullet, or Luxury Car? Claim your physical reward or convert to wallet points.</p>
+        </div>
+    </div>
+    <div>
+        <a href="<?= BASE_URL ?>/associate/rewards" class="btn btn-warning fw-bold text-dark px-4 py-2 shadow-sm">
+            <i class="fas fa-gift me-2"></i>View & Claim Rewards
+        </a>
+    </div>
+</div>
 
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body p-4">
@@ -196,9 +215,9 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
                                 </div>
                             </td>
                             <td>₹<?= number_format($rank['min_qualifying_volume']) ?></td>
-                            <td><?= $rank['min_leg_count'] ?> <?= __('assoc_rank_members', [], 'members') ?></td>
+                            <td><?= $rank['min_leg_count'] > 0 ? ($rank['min_leg_count'] . ' Direct Legs') : 'Direct Sponsor' ?></td>
                             <td><?= $rank['direct_sale_pct'] ?>%</td>
-                            <td><span class="badge bg-light text-dark"><?= $config['reward'] ?></span></td>
+                            <td><span class="badge bg-light text-dark fw-bold"><i class="fas fa-gift text-warning me-1"></i><?= !empty($rank['reward_item']) ? htmlspecialchars($rank['reward_item']) : $config['reward'] ?></span></td>
                             <td>
                                 <?php if ($isCurrent): ?>
                                     <span class="badge bg-primary"><i class="fas fa-user me-1"></i><?= __('assoc_rank_current', [], 'Current') ?></span>

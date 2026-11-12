@@ -644,6 +644,7 @@ class LandAcquisitionService
     public function createBroker(array $data): array
     {
         return $this->withTransaction(function () use ($data) {
+            $refNo = "AGR-LB-" . date('Y') . "-" . str_pad((string)mt_rand(100, 9999), 4, '0', STR_PAD_LEFT);
             $payload = [
                 'broker_name'           => $this->str($data['broker_name'] ?? ''),
                 'phone'                 => $this->str($data['phone'] ?? null),
@@ -652,14 +653,222 @@ class LandAcquisitionService
                 'aadhaar_number'        => $this->str($data['aadhaar_number'] ?? null),
                 'rera_number'           => $this->str($data['rera_number'] ?? null),
                 'address'               => $this->str($data['address'] ?? null),
+                'specialization'        => $this->str($data['specialization'] ?? null),
+                'notes'                 => $this->str($data['notes'] ?? null),
                 'commission_percentage' => $this->decOrNull($data['commission_percentage'] ?? 2) ?? 2,
+                'brokerage_type'        => $this->str($data['brokerage_type'] ?? 'percentage'),
+                'brokerage_rate'        => $this->decOrNull($data['brokerage_rate'] ?? ($data['commission_percentage'] ?? 2.00)) ?? 2.00,
                 'bank_account'          => $this->str($data['bank_account'] ?? null),
                 'ifsc'                  => $this->str($data['ifsc'] ?? null),
                 'active'                => !empty($data['active']) ? 1 : 1,
+                'kyc_verified'          => !empty($data['kyc_verified']) ? 1 : 0,
+                'agreement_signed'      => !empty($data['agreement_signed']) ? 1 : 0,
+                'agreement_signed_at'   => !empty($data['agreement_signed']) ? date('Y-m-d H:i:s') : null,
+                'agreement_ref_number'  => $refNo,
             ];
             $id = $this->insert('land_brokers', $payload);
             return ['success' => true, 'id' => $id, 'data' => $payload];
         });
+    }
+
+    public function getBroker(int $brokerId): ?array
+    {
+        try {
+            return $this->db->fetchOne("SELECT * FROM land_brokers WHERE id = ?{$this->tenantSql()}", [$brokerId]) ?: null;
+        } catch (\Throwable $e) {
+            error_log('[LandAcquisitionService] getBroker error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function updateBroker(int $brokerId, array $data): array
+    {
+        return $this->withTransaction(function () use ($brokerId, $data) {
+            $existing = $this->getBroker($brokerId);
+            if (!$existing) {
+                return ['success' => false, 'error' => 'Broker not found'];
+            }
+
+            $payload = [];
+            if (isset($data['broker_name'])) $payload['broker_name'] = $this->str($data['broker_name']);
+            if (isset($data['phone'])) $payload['phone'] = $this->str($data['phone']);
+            if (isset($data['email'])) $payload['email'] = $this->str($data['email']);
+            if (isset($data['pan_number'])) $payload['pan_number'] = $this->str($data['pan_number']);
+            if (isset($data['aadhaar_number'])) $payload['aadhaar_number'] = $this->str($data['aadhaar_number']);
+            if (isset($data['rera_number'])) $payload['rera_number'] = $this->str($data['rera_number']);
+            if (isset($data['address'])) $payload['address'] = $this->str($data['address']);
+            if (isset($data['specialization'])) $payload['specialization'] = $this->str($data['specialization']);
+            if (isset($data['notes'])) $payload['notes'] = $this->str($data['notes']);
+            if (isset($data['kyc_verified'])) $payload['kyc_verified'] = !empty($data['kyc_verified']) ? 1 : 0;
+            if (isset($data['agreement_signed'])) {
+                $payload['agreement_signed'] = !empty($data['agreement_signed']) ? 1 : 0;
+                if ($payload['agreement_signed'] && empty($existing['agreement_signed_at'])) {
+                    $payload['agreement_signed_at'] = date('Y-m-d H:i:s');
+                }
+            }
+            if (isset($data['brokerage_type'])) $payload['brokerage_type'] = $this->str($data['brokerage_type']);
+            if (isset($data['brokerage_rate'])) {
+                $payload['brokerage_rate'] = (float)$data['brokerage_rate'];
+                $payload['commission_percentage'] = (float)$data['brokerage_rate'];
+            }
+            if (isset($data['bank_account'])) $payload['bank_account'] = $this->str($data['bank_account']);
+            if (isset($data['ifsc'])) $payload['ifsc'] = $this->str($data['ifsc']);
+            if (isset($data['active'])) $payload['active'] = !empty($data['active']) ? 1 : 0;
+
+            if (!empty($payload)) {
+                $payload['updated_at'] = date('Y-m-d H:i:s');
+                $this->update('land_brokers', $payload, 'id = ?', [$brokerId]);
+            }
+
+            return ['success' => true, 'id' => $brokerId, 'data' => $payload];
+        });
+    }
+
+    public function generateBrokerAgreementData(int $brokerId, ?int $dealId = null): array
+    {
+        $broker = $this->getBroker($brokerId);
+        if (!$broker) {
+            return ['success' => false, 'error' => 'Broker not found'];
+        }
+
+        $deal = null;
+        if ($dealId > 0) {
+            $deal = $this->fetchDeal($dealId);
+        }
+
+        $refNo = $broker['agreement_ref_number'] ?: ('AGR-LB-' . date('Y') . '-' . str_pad((string)$broker['id'], 4, '0', STR_PAD_LEFT));
+        if (empty($broker['agreement_ref_number'])) {
+            $this->update('land_brokers', ['agreement_ref_number' => $refNo], 'id = ?', [$brokerId]);
+        }
+
+        $type = $broker['brokerage_type'] ?? 'percentage';
+        $rate = (float)($broker['brokerage_rate'] ?? ($broker['commission_percentage'] ?? 2.0));
+
+        $rateDescription = '';
+        switch ($type) {
+            case 'per_bigha':
+                $rateDescription = "₹" . number_format($rate, 2) . " प्रति पक्का बीघा (27,225 वर्ग फीट = 20 कट्टा)";
+                break;
+            case 'per_kattha':
+                $rateDescription = "₹" . number_format($rate, 2) . " प्रति कट्टा (बिस्वा) (1,361.25 वर्ग फीट)";
+                break;
+            case 'per_decimil':
+                $rateDescription = "₹" . number_format($rate, 2) . " प्रति डेसिमिल / डिसमिल (435.60 वर्ग फीट)";
+                break;
+            case 'per_sqft':
+                $rateDescription = "₹" . number_format($rate, 2) . " प्रति वर्ग फीट";
+                break;
+            case 'fixed':
+                $rateDescription = "एकमुश्त निश्चित दलाली (Lump-sum Fixed): ₹" . number_format($rate, 2);
+                break;
+            case 'percentage':
+            default:
+                $rateDescription = "कुल भूमि क्रय प्रतिफल का " . number_format($rate, 2) . "% (प्रतिशत)";
+                break;
+        }
+
+        return [
+            'success'          => true,
+            'ref_number'       => $refNo,
+            'agreement_date'   => date('d-m-Y'),
+            'company'          => [
+                'name'         => 'APS Dream Homes Pvt. Ltd.',
+                'reg_address'  => 'Near Ganpati Lawn, Singhariya, Gorakhpur, Uttar Pradesh - 273008',
+                'cin_rera'     => 'UP RERA Approved Real Estate Developer',
+                'authorized'   => 'Authorized Director / Land Acquisition Manager'
+            ],
+            'broker'           => $broker,
+            'rate_type'        => $type,
+            'rate_value'       => $rate,
+            'rate_description' => $rateDescription,
+            'deal'             => $deal,
+        ];
+    }
+
+    /**
+     * Calculate Brokerage Commission for Land Acquisition.
+     * Supports:
+     *   - 'percentage' : e.g. 2% of total deal amount
+     *   - 'per_bigha'   : e.g. ₹25,000 per Bigha (27,225 sqft standard)
+     *   - 'per_kattha'  : e.g. ₹2,500 per Kattha (1,361.25 sqft)
+     *   - 'per_decimil' : e.g. ₹1,000 per Decimil / Dismil (435.6 sqft)
+     *   - 'per_sqft'    : e.g. ₹10 per sqft
+     *   - 'fixed'       : Lump-sum fixed brokerage
+     */
+    public function calculateBrokerage(int $brokerId, float $totalDealAmount, float $areaSqft, ?string $overrideType = null, ?float $overrideRate = null): array
+    {
+        try {
+            $broker = $this->db->fetchOne("SELECT * FROM land_brokers WHERE id = ?{$this->tenantSql()}", [$brokerId]);
+            $type = $overrideType ?? ($broker['brokerage_type'] ?? 'percentage');
+            $rate = $overrideRate ?? (float)($broker['brokerage_rate'] ?? ($broker['commission_percentage'] ?? 2.00));
+
+            // Standard regional land unit conversion constants (UP / Gorakhpur standards)
+            $SQFT_PER_BIGHA   = 27225.0; // 1 Pakka Bigha = 27,225 sqft (20 Kattha)
+            $SQFT_PER_KATTHA  = 1361.25; // 1 Kattha (Biswa) = 1,361.25 sqft
+            $SQFT_PER_DECIMIL = 435.6;   // 1 Decimil (Dismil) = 435.6 sqft (100 Dismil = 1 Acre)
+
+            $amount = 0.0;
+            $formula = '';
+            $unitQty = 0.0;
+
+            switch ($type) {
+                case 'per_bigha':
+                    $unitQty = $areaSqft / $SQFT_PER_BIGHA;
+                    $amount = round($unitQty * $rate, 2);
+                    $formula = round($unitQty, 3) . " Bigha @ ₹" . number_format($rate, 2) . " / Bigha";
+                    break;
+
+                case 'per_kattha':
+                    $unitQty = $areaSqft / $SQFT_PER_KATTHA;
+                    $amount = round($unitQty * $rate, 2);
+                    $formula = round($unitQty, 2) . " Kattha @ ₹" . number_format($rate, 2) . " / Kattha";
+                    break;
+
+                case 'per_decimil':
+                    $unitQty = $areaSqft / $SQFT_PER_DECIMIL;
+                    $amount = round($unitQty * $rate, 2);
+                    $formula = round($unitQty, 2) . " Decimil (Dismil) @ ₹" . number_format($rate, 2) . " / Decimil";
+                    break;
+
+                case 'per_sqft':
+                    $unitQty = $areaSqft;
+                    $amount = round($unitQty * $rate, 2);
+                    $formula = number_format($areaSqft, 2) . " Sq.Ft. @ ₹" . number_format($rate, 2) . " / Sq.Ft.";
+                    break;
+
+                case 'fixed':
+                    $amount = round($rate, 2);
+                    $formula = "Fixed Lump-sum Brokerage of ₹" . number_format($rate, 2);
+                    break;
+
+                case 'percentage':
+                default:
+                    $type = 'percentage';
+                    $amount = round($totalDealAmount * ($rate / 100.0), 2);
+                    $formula = "{$rate}% on Total Deal Amount ₹" . number_format($totalDealAmount, 2);
+                    break;
+            }
+
+            return [
+                'success'           => true,
+                'broker_id'         => $brokerId,
+                'broker_name'       => $broker['broker_name'] ?? 'Unknown Broker',
+                'brokerage_type'    => $type,
+                'brokerage_rate'    => $rate,
+                'total_deal_amount' => $totalDealAmount,
+                'area_sqft'         => $areaSqft,
+                'unit_quantity'     => round($unitQty, 4),
+                'amount'            => $amount,
+                'formula'           => $formula,
+                'description'       => "Brokerage for {$formula} = ₹" . number_format($amount, 2),
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'amount'  => 0.0,
+                'error'   => $e->getMessage()
+            ];
+        }
     }
 
     public function listBrokers(): array

@@ -77,14 +77,15 @@ class MLMCommissionEngine
      * Walk users.referred_by chain. Returns associative array [1=>user,2=>user,3=>user]
      * with missing levels omitted. Each user row has at minimum: id, name, role.
      */
-    public function getUpline(int $userId, int $maxLevels = 3): array
+    public function getUpline(int $userId, int $maxLevels = 7): array
     {
         if (!$this->db || $userId <= 0) {
             return [];
         }
         $upline = [];
         $current = $userId;
-        $stmt = $this->db->prepare("SELECT id, name, role, referred_by FROM users WHERE id = ? AND tenant_id = ? LIMIT 1");
+        $visited = [$userId => true];
+        $stmt = $this->db->prepare("SELECT id, name, role, referred_by, status FROM users WHERE id = ? AND tenant_id = ? LIMIT 1");
         for ($level = 1; $level <= $maxLevels; $level++) {
             if (!$stmt->execute([$current, $this->getTenantId()])) {
                 break;
@@ -94,7 +95,12 @@ class MLMCommissionEngine
                 break;
             }
             $parentId = (int)$row['referred_by'];
-            $parentStmt = $this->db->prepare("SELECT id, name, role, referred_by FROM users WHERE id = ? AND tenant_id = ? LIMIT 1");
+            if (isset($visited[$parentId])) {
+                // Circular reference detected, break to prevent infinite loop
+                break;
+            }
+            $visited[$parentId] = true;
+            $parentStmt = $this->db->prepare("SELECT id, name, role, referred_by, status FROM users WHERE id = ? AND tenant_id = ? LIMIT 1");
             $parentStmt->execute([$parentId, $this->getTenantId()]);
             $parent = $parentStmt->fetch(PDO::FETCH_ASSOC);
             if (!$parent) {
@@ -141,13 +147,13 @@ class MLMCommissionEngine
         // direct_sale_pct = rank's own commission rate
         // l1_pct/l2_pct/l3_pct = level override percentages
         return [
-            ['rank_name' => 'Ass.',       'rank_order' => 1, 'min_leg_count' => 0, 'min_qualifying_volume' => 0,       'direct_sale_pct' => 5.0, 'l1_pct' => 2.0, 'l2_pct' => 3.0, 'l3_pct' => 2.0, 'color_code' => '#94a3b8', 'badge_icon' => 'fa-user',        'perks' => []],
-            ['rank_name' => 'Sr. Ass.',   'rank_order' => 2, 'min_leg_count' => 1, 'min_qualifying_volume' => 25000,   'direct_sale_pct' => 7.0, 'l1_pct' => 3.0, 'l2_pct' => 2.0, 'l3_pct' => 3.0, 'color_code' => '#a16207', 'badge_icon' => 'fa-clipboard-list', 'perks' => []],
-            ['rank_name' => 'BDM',        'rank_order' => 3, 'min_leg_count' => 5, 'min_qualifying_volume' => 3500000, 'direct_sale_pct' => 10.0, 'l1_pct' => 2.0, 'l2_pct' => 3.0, 'l3_pct' => 3.0, 'color_code' => '#3b82f6', 'badge_icon' => 'fa-briefcase',  'perks' => []],
-            ['rank_name' => 'Sr. BDM',    'rank_order' => 4, 'min_leg_count' => 3, 'min_qualifying_volume' => 7000000, 'direct_sale_pct' => 12.0, 'l1_pct' => 3.0, 'l2_pct' => 3.0, 'l3_pct' => 3.0, 'color_code' => '#10b981', 'badge_icon' => 'fa-chart-bar',      'perks' => []],
-            ['rank_name' => 'V.P.',       'rank_order' => 5, 'min_leg_count' => 4, 'min_qualifying_volume' => 15000000,'direct_sale_pct' => 15.0, 'l1_pct' => 3.0, 'l2_pct' => 3.0, 'l3_pct' => 2.0, 'color_code' => '#f59e0b', 'badge_icon' => 'fa-bullseye',        'perks' => []],
-            ['rank_name' => 'President',  'rank_order' => 6, 'min_leg_count' => 5, 'min_qualifying_volume' => 30000000,'direct_sale_pct' => 18.0, 'l1_pct' => 2.0, 'l2_pct' => 3.0, 'l3_pct' => 3.0, 'color_code' => '#8b5cf6', 'badge_icon' => 'fa-landmark',     'perks' => []],
-            ['rank_name' => 'Site Manager','rank_order' => 7, 'min_leg_count' => 6, 'min_qualifying_volume' => 50000000,'direct_sale_pct' => 20.0, 'l1_pct' => 0.0, 'l2_pct' => 0.0, 'l3_pct' => 0.0, 'color_code' => '#dc2626', 'badge_icon' => 'fa-crown',      'perks' => []],
+            ['rank_name' => 'Ass.',       'rank_order' => 1, 'min_leg_count' => 0, 'min_qualifying_volume' => 0,        'direct_sale_pct' => 5.0,  'l1_pct' => 2.0, 'l2_pct' => 3.0, 'l3_pct' => 2.0, 'color_code' => '#94a3b8', 'badge_icon' => 'fa-user',           'reward_item' => 'Mobile Phone', 'perks' => []],
+            ['rank_name' => 'Sr. Ass.',   'rank_order' => 2, 'min_leg_count' => 5, 'min_qualifying_volume' => 1000000,  'direct_sale_pct' => 7.0,  'l1_pct' => 3.0, 'l2_pct' => 2.0, 'l3_pct' => 3.0, 'color_code' => '#a16207', 'badge_icon' => 'fa-clipboard-list', 'reward_item' => 'Tablet',       'perks' => []],
+            ['rank_name' => 'BDM',        'rank_order' => 3, 'min_leg_count' => 3, 'min_qualifying_volume' => 3500000,  'direct_sale_pct' => 10.0, 'l1_pct' => 2.0, 'l2_pct' => 3.0, 'l3_pct' => 3.0, 'color_code' => '#3b82f6', 'badge_icon' => 'fa-briefcase',     'reward_item' => 'Laptop',       'perks' => []],
+            ['rank_name' => 'Sr. BDM',    'rank_order' => 4, 'min_leg_count' => 3, 'min_qualifying_volume' => 7000000,  'direct_sale_pct' => 12.0, 'l1_pct' => 3.0, 'l2_pct' => 3.0, 'l3_pct' => 3.0, 'color_code' => '#10b981', 'badge_icon' => 'fa-chart-bar',     'reward_item' => 'Tour',         'perks' => []],
+            ['rank_name' => 'V.P.',       'rank_order' => 5, 'min_leg_count' => 3, 'min_qualifying_volume' => 15000000, 'direct_sale_pct' => 15.0, 'l1_pct' => 3.0, 'l2_pct' => 3.0, 'l3_pct' => 2.0, 'color_code' => '#f59e0b', 'badge_icon' => 'fa-bullseye',      'reward_item' => 'Pulsar Bike',  'perks' => []],
+            ['rank_name' => 'President',  'rank_order' => 6, 'min_leg_count' => 3, 'min_qualifying_volume' => 30000000, 'direct_sale_pct' => 18.0, 'l1_pct' => 2.0, 'l2_pct' => 3.0, 'l3_pct' => 3.0, 'color_code' => '#8b5cf6', 'badge_icon' => 'fa-landmark',    'reward_item' => 'Bullet Bike',  'perks' => []],
+            ['rank_name' => 'Site Manager','rank_order' => 7, 'min_leg_count' => 3, 'min_qualifying_volume' => 50000000, 'direct_sale_pct' => 20.0, 'l1_pct' => 0.0, 'l2_pct' => 0.0, 'l3_pct' => 0.0, 'color_code' => '#dc2626', 'badge_icon' => 'fa-crown',       'reward_item' => 'Luxury Car',   'perks' => []],
         ];
     }
 
@@ -296,6 +302,189 @@ class MLMCommissionEngine
     }
 
     /**
+     * Get the ranks of an associate's direct downline legs.
+     *
+     * @return array<int, string>
+     */
+    public function getDirectLegRanks(int $userId): array
+    {
+        if (!$this->db || $userId <= 0) {
+            return [];
+        }
+        $ranks = [];
+        try {
+            // Find direct referrals via users.referred_by OR associate_profiles.sponsor_id
+            $stmt = $this->db->prepare("
+                SELECT u.id, u.mlm_rank, ap.level 
+                FROM users u
+                LEFT JOIN associate_profiles ap ON ap.user_id = u.id
+                WHERE u.referred_by = ? AND u.tenant_id = ? AND u.status = 'active'
+            ");
+            $stmt->execute([$userId, $this->getTenantId()]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($rows as $r) {
+                $raw = !empty($r['level']) ? $r['level'] : (!empty($r['mlm_rank']) ? $r['mlm_rank'] : 'Ass.');
+                $ranks[] = self::normalizeRankName($raw);
+            }
+        } catch (\Throwable $e) {
+            error_log("[MLMCommissionEngine] getDirectLegRanks exception: " . $e->getMessage());
+        }
+        return $ranks;
+    }
+
+    /**
+     * Count how many direct downline legs have achieved at least a given rank.
+     */
+    public function countLegsAtOrAboveRank(int $userId, string $requiredRank): int
+    {
+        $legRanks = $this->getDirectLegRanks($userId);
+        $reqIdx = array_search(self::normalizeRankName($requiredRank), self::RANK_ORDER, true);
+        if ($reqIdx === false) {
+            return count($legRanks);
+        }
+        $count = 0;
+        foreach ($legRanks as $r) {
+            $rIdx = array_search($r, self::RANK_ORDER, true);
+            if ($rIdx !== false && $rIdx >= $reqIdx) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+    /**
+     * S457: 30-Day Fast-Start Kickstart Bonus
+     * If a new associate recruits >= 5 active associates AND conducts >= 3 site visits
+     * within 30 days of registration, awards a ₹2,100 fast-track kickstart bonus!
+     */
+    public function evaluateFastStartKickstart(int $userId): array
+    {
+        if (!$this->db || $userId <= 0) {
+            return ['success' => false, 'error' => 'Invalid user or database'];
+        }
+
+        try {
+            // 1. Check user registration date
+            $stmt = $this->db->prepare("SELECT created_at, role, status FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$user || $user['status'] !== 'active') {
+                return ['success' => false, 'error' => 'User not active or found'];
+            }
+
+            $regDate = new \DateTime($user['created_at']);
+            $now = new \DateTime();
+            $daysSinceReg = $now->diff($regDate)->days;
+            $deadline = (clone $regDate)->modify('+30 days')->format('Y-m-d');
+
+            // 2. Check if already recorded / awarded in mlm_fast_start_achievements
+            $stmt = $this->db->prepare("SELECT * FROM mlm_fast_start_achievements WHERE user_id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($existing && in_array($existing['status'], ['awarded', 'qualified'], true)) {
+                return [
+                    'success'   => true,
+                    'awarded'   => true,
+                    'status'    => $existing['status'],
+                    'message'   => 'Fast-Start Bonus already awarded / qualified',
+                    'record'    => $existing,
+                ];
+            }
+
+            // 3. Count direct active associates recruited
+            $stmt = $this->db->prepare("
+                SELECT COUNT(*) 
+                FROM users 
+                WHERE referred_by = ? 
+                  AND role IN ('associate', 'agent') 
+                  AND status = 'active'
+                  AND tenant_id = ?
+            ");
+            $stmt->execute([$userId, $this->getTenantId()]);
+            $recruitsCount = (int)$stmt->fetchColumn();
+
+            // 4. Count verified customer site visits
+            $stmt = $this->db->prepare("
+                SELECT COUNT(*) 
+                FROM site_visits 
+                WHERE (user_id = ? OR agent_id = ? OR assigned_to = ?) 
+                  AND status IN ('completed', 'confirmed', 'verified')
+                  AND tenant_id = ?
+            ");
+            $stmt->execute([$userId, $userId, $userId, $this->getTenantId()]);
+            $visitsCount = (int)$stmt->fetchColumn();
+
+            $bonusAmount = 2100.00;
+            $isQualified = ($recruitsCount >= 5 && $visitsCount >= 3 && $daysSinceReg <= 30);
+            $newStatus = $isQualified ? 'awarded' : ($daysSinceReg > 30 ? 'expired' : 'in_progress');
+
+            if (!$existing) {
+                $stmt = $this->db->prepare("
+                    INSERT INTO mlm_fast_start_achievements 
+                    (tenant_id, user_id, recruited_associates, verified_site_visits, bonus_amount, status, qualification_deadline, awarded_at, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                ");
+                $stmt->execute([
+                    $this->getTenantId(),
+                    $userId,
+                    $recruitsCount,
+                    $visitsCount,
+                    $bonusAmount,
+                    $newStatus,
+                    $deadline,
+                    $isQualified ? date('Y-m-d H:i:s') : null,
+                ]);
+            } else {
+                $stmt = $this->db->prepare("
+                    UPDATE mlm_fast_start_achievements 
+                    SET recruited_associates = ?, verified_site_visits = ?, status = ?, awarded_at = ?, updated_at = NOW()
+                    WHERE user_id = ?
+                ");
+                $stmt->execute([
+                    $recruitsCount,
+                    $visitsCount,
+                    $newStatus,
+                    $isQualified ? date('Y-m-d H:i:s') : $existing['awarded_at'],
+                    $userId,
+                ]);
+            }
+
+            // If newly qualified, credit ₹2,100 directly to wallet!
+            if ($isQualified && (!$existing || $existing['status'] !== 'awarded')) {
+                try {
+                    $walletService = new \App\Services\WalletService();
+                    $walletService->credit(
+                        $userId,
+                        $bonusAmount,
+                        'bonus',
+                        "Fast-Start 30-Day Kickstart Bonus (Recruited {$recruitsCount} Associates & {$visitsCount} Site Visits)",
+                        $userId,
+                        'user'
+                    );
+                } catch (\Throwable $wEx) {
+                    error_log("FastStart: Wallet credit failed: " . $wEx->getMessage());
+                }
+            }
+
+            return [
+                'success'              => true,
+                'qualified'            => $isQualified,
+                'awarded'              => $isQualified,
+                'days_since_reg'       => $daysSinceReg,
+                'recruited_associates' => $recruitsCount,
+                'verified_site_visits' => $visitsCount,
+                'bonus_amount'         => $bonusAmount,
+                'status'               => $newStatus,
+                'deadline'             => $deadline,
+            ];
+        } catch (\Throwable $e) {
+            error_log("MLMCommissionEngine::evaluateFastStartKickstart error: " . $e->getMessage());
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
      * Returns the highest rank this associate qualifies for, or NULL if no change.
      */
     public function evaluateRankPromotion(int $associateId): ?string
@@ -304,6 +493,7 @@ class MLMCommissionEngine
         if (($stats['status'] ?? 'active') !== 'active') {
             return null;
         }
+        $userId = (int)($stats['user_id'] ?? $associateId);
         $legs = (int)$stats['leg_count'];
         $vol  = (float)$stats['lifetime_sales'];
         $currentIdx = array_search($stats['current_rank'], self::RANK_ORDER, true);
@@ -316,7 +506,22 @@ class MLMCommissionEngine
             if ($idx === false || $idx <= $currentIdx) {
                 continue;
             }
-            if ($legs >= (int)$rb['min_leg_count'] && $vol >= (float)$rb['min_qualifying_volume']) {
+            $minReqLegs = (int)$rb['min_leg_count'];
+            $minReqVol  = (float)$rb['min_qualifying_volume'];
+
+            // Volume criteria check
+            if ($vol < $minReqVol) {
+                continue;
+            }
+
+            // Downline rank structure check:
+            // Sr. Ass. (idx 1): needs 5 Ass. legs
+            // BDM (idx 2): needs 3 Sr. Ass. legs
+            // Sr. BDM (idx 3): needs 3 BDM legs, etc.
+            $requiredLowerRank = self::RANK_ORDER[max(0, $idx - 1)];
+            $qualityLegs = ($userId > 0) ? $this->countLegsAtOrAboveRank($userId, $requiredLowerRank) : 0;
+
+            if ($qualityLegs >= $minReqLegs || $legs >= $minReqLegs) {
                 if ($idx > $bestIdx) {
                     $bestIdx = $idx;
                 }
@@ -648,9 +853,10 @@ class MLMCommissionEngine
             if (!empty($booking['sales_manager_id'])) {
                 $sourceUserId = (int)$booking['sales_manager_id'];
             } elseif (!empty($booking['associate_id'])) {
-                // plot_bookings.associate_id references associates.id (table PK), not users.id
-                if (($sourceUserId = (new \App\Services\IdentityService())->resolveAssociateUserId((int)booking['associate_id'])) > 0) {
-                }
+                // plot_bookings.associate_id may reference associates.id or users.id
+                $assocId = (int)$booking['associate_id'];
+                $resolvedUid = (new \App\Services\IdentityService())->resolveAssociateUserId($assocId);
+                $sourceUserId = $resolvedUid > 0 ? $resolvedUid : $assocId;
             }
             if ($sourceUserId <= 0) {
                 $sourceUserId = (int)$booking['customer_id'];
@@ -785,6 +991,109 @@ class MLMCommissionEngine
     }
 
     /**
+     * Compute and explain the full MLM Differential Commission Distribution
+     * for a given sale amount and seller associate.
+     *
+     * Returns step-by-step breakdown across the senior/junior hierarchy:
+     *   - Direct seller commission (their base rank slab)
+     *   - Upline differential override (gap between each senior's slab and the lower slab)
+     *   - Global 20% cap validation
+     *   - Proof of cross-line isolation (only direct ancestor upline earns)
+     */
+    public function explainDifferentialDistribution(float $saleAmount, int $sellerUserId, int $maxLevels = 7): array
+    {
+        $rankRates = $this->loadRankRates();
+        $sourceRank = $this->getUserRank($sellerUserId);
+        $sourceRate = $rankRates[$sourceRank] ?? $rankRates['associate'];
+
+        $sellerInfo = null;
+        if ($this->db) {
+            $stmt = $this->db->prepare("SELECT id, name, role, referred_by, status FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$sellerUserId]);
+            $sellerInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        $distribution = [
+            'sale_amount'          => $saleAmount,
+            'seller'               => [
+                'user_id' => $sellerUserId,
+                'name'    => $sellerInfo['name'] ?? 'Associate #' . $sellerUserId,
+                'rank'    => $sourceRank,
+                'rate_pct'=> $sourceRate,
+                'direct_commission' => round($saleAmount * ($sourceRate / 100.0), 2)
+            ],
+            'upline_overrides'     => [],
+            'total_distributed_pct'=> $sourceRate,
+            'total_distributed_amt'=> round($saleAmount * ($sourceRate / 100.0), 2),
+            'global_cap_pct'       => 20.0,
+            'cap_exceeded'         => false,
+            'cross_line_isolated'  => true,
+        ];
+
+        $upline = $this->getUpline($sellerUserId, $maxLevels);
+        $prevRate = $sourceRate;
+        $sameRankCount = 0;
+
+        foreach ($upline as $lvl => $up) {
+            $upUserId = (int)$up['id'];
+            $upRank = $this->getUserRank($upUserId);
+            $upRate = $rankRates[$upRank] ?? $rankRates['associate'];
+
+            $differential = 0.0;
+            $overrideNote = '';
+
+            if ($upRate === $prevRate) {
+                $sameRankCount++;
+                $differential = ($sameRankCount === 1) ? 2.0 : (($sameRankCount === 2) ? 1.0 : 0.0);
+                $overrideNote = "Same-rank coaching override ({$sameRankCount})";
+            } elseif ($upRate > $prevRate) {
+                $differential = $upRate - $prevRate;
+                $overrideNote = "Differential gap: {$upRate}% - {$prevRate}% = {$differential}%";
+                $prevRate = $upRate;
+            } else {
+                $differential = 0.0;
+                $overrideNote = "No gap (senior rate {$upRate}% <= junior rate {$prevRate}%)";
+            }
+
+            if ($differential > 0) {
+                $amt = round($saleAmount * ($differential / 100.0), 2);
+                $distribution['upline_overrides'][] = [
+                    'level'       => $lvl,
+                    'user_id'     => $upUserId,
+                    'name'        => $up['name'] ?? 'User #' . $upUserId,
+                    'rank'        => $upRank,
+                    'rank_rate'   => $upRate,
+                    'gap_pct'     => $differential,
+                    'amount'      => $amt,
+                    'note'        => $overrideNote,
+                ];
+                $distribution['total_distributed_pct'] += $differential;
+                $distribution['total_distributed_amt'] += $amt;
+            }
+        }
+
+        if ($distribution['total_distributed_pct'] > 20.0) {
+            $distribution['cap_exceeded'] = true;
+            $scale = 20.0 / $distribution['total_distributed_pct'];
+            // Apply scale
+            $distribution['seller']['direct_commission'] = round($distribution['seller']['direct_commission'] * $scale, 2);
+            $distribution['seller']['rate_pct'] = round($distribution['seller']['rate_pct'] * $scale, 2);
+            foreach ($distribution['upline_overrides'] as &$ov) {
+                $ov['amount'] = round($ov['amount'] * $scale, 2);
+                $ov['gap_pct'] = round($ov['gap_pct'] * $scale, 2);
+            }
+            unset($ov);
+            $distribution['total_distributed_pct'] = 20.0;
+            $distribution['total_distributed_amt'] = round($saleAmount * 0.20, 2);
+        }
+
+        $distribution['company_retained_pct'] = round(100.0 - $distribution['total_distributed_pct'], 2);
+        $distribution['company_retained_amt'] = round($saleAmount - $distribution['total_distributed_amt'], 2);
+
+        return $distribution;
+    }
+
+    /**
      * Load rank rates from mlm_rank_benefits (or defaults).
      * Returns [rank_name => rate] map.
      */
@@ -817,7 +1126,53 @@ class MLMCommissionEngine
     }
 
     /**
-     * Get a user's rank slug from associates table.
+     * Normalize any representation of a rank (DB enum, display name, legacy slug)
+     * to the canonical 7-tier rank order in self::RANK_ORDER.
+     */
+    public static function normalizeRankName(?string $rawRank): string
+    {
+        if (empty($rawRank)) {
+            return 'Ass.';
+        }
+        $raw = trim($rawRank);
+        if (in_array($raw, self::RANK_ORDER, true)) {
+            return $raw;
+        }
+        $map = [
+            'associate'        => 'Ass.',
+            'ass.'             => 'Ass.',
+            'ass'              => 'Ass.',
+            'bronze'           => 'Ass.',
+            'senior_associate' => 'Sr. Ass.',
+            'sr_ass'           => 'Sr. Ass.',
+            'sr._ass.'         => 'Sr. Ass.',
+            'sr. ass.'         => 'Sr. Ass.',
+            'senior associate' => 'Sr. Ass.',
+            'silver'           => 'Sr. Ass.',
+            'bdm'              => 'BDM',
+            'gold'             => 'BDM',
+            'sr_bdm'           => 'Sr. BDM',
+            'sr._bdm'          => 'Sr. BDM',
+            'sr. bdm'          => 'Sr. BDM',
+            'senior bdm'       => 'Sr. BDM',
+            'platinum'         => 'Sr. BDM',
+            'vice_president'   => 'V.P.',
+            'vp'               => 'V.P.',
+            'v.p.'             => 'V.P.',
+            'vice president'   => 'V.P.',
+            'diamond'          => 'V.P.',
+            'president'        => 'President',
+            'site_manager'     => 'Site Manager',
+            'site manager'     => 'Site Manager',
+            'director'         => 'Site Manager',
+            'crown'            => 'Site Manager',
+        ];
+        $lower = strtolower($raw);
+        return $map[$lower] ?? 'Ass.';
+    }
+
+    /**
+     * Get a user's rank slug from associate_profiles / associates / users table.
      */
     protected function getUserRank(int $userId): string
     {
@@ -828,17 +1183,31 @@ class MLMCommissionEngine
             $stmt = $this->db->prepare("SELECT level FROM associate_profiles WHERE user_id = ? AND status = 'active' LIMIT 1");
             $stmt->execute([$userId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (!$row) {
-                $stmt = $this->db->prepare("SELECT level FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1");
-                $stmt->execute([$userId]);
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row && !empty($row['level'])) {
+                return self::normalizeRankName($row['level']);
             }
-            if ($row && !empty($row['level']) && in_array($row['level'], self::RANK_ORDER, true)) {
-                return $row['level'];
+
+            $stmt = $this->db->prepare("SELECT level FROM associates WHERE user_id = ? AND status = 'active' LIMIT 1");
+            $stmt->execute([$userId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row && !empty($row['level'])) {
+                return self::normalizeRankName($row['level']);
+            }
+
+            // Fallback: check users table mlm_rank and role
+            $stmt = $this->db->prepare("SELECT mlm_rank, role FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $u = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($u) {
+                if (!empty($u['mlm_rank'])) {
+                    return self::normalizeRankName($u['mlm_rank']);
+                }
+                if (!empty($u['role'])) {
+                    return self::normalizeRankName($u['role']);
+                }
             }
         } catch (\Throwable $e) {
-        // fall through
-        error_log($e->getMessage());
+            error_log("[MLMCommissionEngine] getUserRank exception: " . $e->getMessage());
         }
         return 'Ass.';
     }

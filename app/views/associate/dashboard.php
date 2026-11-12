@@ -214,6 +214,15 @@ body {
         </div>
         <div class="col-md-5 text-md-end mt-4 mt-md-0">
             <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                <a href="<?= BASE_URL ?>/associate/salary" class="action-pill" style="background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4);">
+                    <i class="fas fa-hand-holding-usd text-warning"></i> Diwali Salary
+                </a>
+                <a href="<?= BASE_URL ?>/associate/allowances" class="action-pill">
+                    <i class="fas fa-gas-pump text-success"></i> Allowances
+                </a>
+                <a href="<?= BASE_URL ?>/associate/rewards" class="action-pill" style="background: rgba(124, 58, 237, 0.2); border: 1px solid rgba(124, 58, 237, 0.4);">
+                    <i class="fas fa-trophy text-warning"></i> Rewards
+                </a>
                 <a href="<?= BASE_URL ?>/associate/leads" class="action-pill">
                     <i class="fas fa-users"></i> Leads
                 </a>
@@ -249,6 +258,78 @@ $sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
         <?php endif; ?>
     </div>
 </div>
+
+<?php if (!empty($salary_data)): ?>
+<?php
+    $curTarget = $salary_data['current_target'] ?? [];
+    $balVol = (float)($salary_data['balanced_volume'] ?? 0.0);
+    $tarVol = (float)($curTarget['target_volume'] ?? 1500000.0);
+    $progPct = min(100.0, round(($balVol / max(1.0, $tarVol)) * 100.0, 1));
+    $maintAct = $salary_data['maintenance']['activity'] ?? [];
+    $isMaintOk = !empty($salary_data['maintenance']['is_qualified']);
+    $fastStart = $salary_data['fast_start'] ?? [];
+?>
+<!-- DIWALI DHAMAKA SALARY PROGRESS & PERFORMANCE MONITOR (S458) -->
+<div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; border-radius: 16px;">
+    <div class="card-body p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+            <div>
+                <span class="badge bg-warning text-dark px-2 py-1 fw-bold me-2">
+                    <i class="fas fa-gift me-1"></i> दीपावली धमाका सैलरी इनकम प्लान
+                </span>
+                <span class="text-white-50 small">Target: <strong><?= htmlspecialchars($curTarget['name'] ?? 'Target 1') ?> (₹<?= number_format($tarVol) ?>)</strong></span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <?php if ($isMaintOk): ?>
+                    <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Active Monthly Maintenance</span>
+                <?php else: ?>
+                    <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i> Action Needed (Hold Risk)</span>
+                <?php endif; ?>
+                <a href="<?= BASE_URL ?>/associate/salary" class="btn btn-warning btn-sm fw-bold">
+                    View Full Plan <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-3 align-items-center">
+            <div class="col-md-7">
+                <div class="d-flex justify-content-between small text-white-50 mb-1">
+                    <span>40:60 Balanced Volume: <strong>₹<?= number_format($balVol) ?></strong></span>
+                    <span>Goal: <strong>₹<?= number_format($tarVol) ?> (₹<?= number_format((float)($curTarget['monthly_payout'] ?? 5000)) ?>/mo)</strong></span>
+                </div>
+                <div class="progress" style="height: 10px; background: rgba(255,255,255,0.15);">
+                    <div class="progress-bar bg-warning" style="width: <?= $progPct ?>%;"></div>
+                </div>
+                <div class="d-flex justify-content-between text-white-50 small mt-1" style="font-size: 11px;">
+                    <span>Progress: <?= $progPct ?>%</span>
+                    <span><?= (int)($curTarget['days_left'] ?? 0) ?> days left in window</span>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="d-flex gap-2">
+                    <div class="p-2 rounded bg-white bg-opacity-10 flex-fill text-center">
+                        <small class="text-white-50 d-block" style="font-size: 11px;">इस माह की सेल</small>
+                        <strong class="text-white">₹<?= number_format((float)($maintAct['sales_volume'] ?? 0)) ?></strong>
+                        <small class="text-white-50 d-block" style="font-size: 10px;">/ ₹50,000</small>
+                    </div>
+                    <div class="p-2 rounded bg-white bg-opacity-10 flex-fill text-center">
+                        <small class="text-white-50 d-block" style="font-size: 11px;">वेरिफाइड विजिट्स</small>
+                        <strong class="text-white"><?= (int)($maintAct['verified_visits'] ?? 0) ?> / 2</strong>
+                        <small class="text-white-50 d-block" style="font-size: 10px;">साइट विजिट्स</small>
+                    </div>
+                    <?php if (!empty($fastStart['in_window']) && empty($fastStart['awarded'])): ?>
+                    <div class="p-2 rounded bg-warning bg-opacity-25 border border-warning flex-fill text-center">
+                        <small class="text-warning d-block fw-bold" style="font-size: 11px;">Fast-Start</small>
+                        <strong class="text-warning">₹2,100</strong>
+                        <small class="text-white-50 d-block" style="font-size: 10px;"><?= (int)($fastStart['days_remaining'] ?? 0) ?>d left</small>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- Primary Stats -->
 <div class="row g-4 mb-4">

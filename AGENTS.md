@@ -17,6 +17,77 @@
 
 > **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
 
+## Session 459: Career Rank Rewards Delivery & Logistics Desk Authored, Admin Dispatch / Handover & Cash Conversion Suite Grounded, Rank Eligibility Portal Aligned with 7-Tier Matrix, Curl Session Object Destructor Discovered & Withdrawal Probe Hardened, 34/34 Township Steps Passed, 11/11 Master Suites Green, 1508/1508 PHPStan Clean (2026-11-13)
+
+### Trigger
+Owner: "do next" / "do next all apne suggestion se kaam karo bina ruke" — Delivering the full Career Rank Rewards fulfillment system (Mobile Phone, Presentation Tablet, Core i5 Laptop, Tour Package, Pulsar Bike, Royal Enfield Bullet, Luxury Car), claim/dispatch/handover/wallet cash conversion desks, modernizing rank eligibility with official 7-tier benefits, resolving the withdrawal probe cURL session bug, and locking down 100% green tests with zero database drift.
+
+### The headline
+- **Career Rank Rewards Delivery & Fulfillment Engine (`App\Services\MLM\CareerRewardService`)**:
+  - Grounded the authentic 7-tier official matrix:
+    1. **Associate (₹0 volume)**: Smart 5G Mobile Phone (₹15,000)
+    2. **Sr. Associate (₹10L volume + 5 Direct Associates)**: Presentation Tablet (₹30,000)
+    3. **BDM (₹35L volume + 3 Sr. Associates)**: Executive Fast-Processing Laptop (₹50,000)
+    4. **Sr. BDM (₹70L volume + 3 BDMs)**: Domestic / Foreign Tour Package (₹100,000)
+    5. **Vice President (₹1.50 Cr volume + 3 Sr. BDMs)**: Pulsar Bike (₹175,000)
+    6. **President (₹3.00 Cr volume + 3 VPs)**: Royal Enfield Bullet Bike (₹275,000)
+    7. **Site Manager (₹5.00 Cr volume + 3 Presidents)**: Luxury Car (₹800,000)
+  - Full Lifecycle Workflow: `eligible` $\rightarrow$ `claimed` $\rightarrow$ `approved` $\rightarrow$ `dispatched` (courier / tracking / serial) $\rightarrow$ `delivered` (ceremony handover) or instant `converted_to_wallet` cash equivalent.
+  - Multi-channel delivery modes: Office Handover ceremony, Courier dispatch with tracking details, or 100% cash equivalent credited directly to `wallet_points`.
+- **Associate Career Rewards Dashboard (`/associate/rewards`)**:
+  - Controller: `App\Http\Controllers\Associate\RewardController` (`index`, `claim`).
+  - View: `app/views/associate/rewards.php`: Hero KPI counters, 7-tier interactive reward progression cards, volume and leg progress bars, 1-click claim modal with delivery preference selection, and live fulfillment tracking ledger.
+- **Admin Career Rank Rewards Logistics Desk (`/admin/mlm-realestate/rewards`)**:
+  - Controller: `App\Http\Controllers\Admin\MlmRealEstateRewardController` (`index`, `approve`, `dispatch`, `deliver`, `convertToCash`, `reject`).
+  - View: `app/views/admin/mlm-realestate/rewards.php`: Real-time KPI summary (Pending Claims, Approved, In Transit, Delivered, Converted to Wallet, Total Value Pool), filter pills, tracking/serial logistics table, and interactive action modals.
+- **Associate Rank Eligibility View Upgraded (`app/views/associate/rank_eligibility.php`)**:
+  - Controller updated in `App\Http\Controllers\Associate\CommissionController::rankEligibility`: queries `mlm_rank_benefits` directly with fallback to `mlm_rank_slabs` and leverages `CareerRewardService::getAssociateRewardDashboard` for live qualification metrics.
+  - Added official rewards callout banner linking to `/associate/rewards`, bilingual rank display (`sr_associate` mapped cleanly), and dynamic reward items.
+- **Admin MLM Hub Linkage**:
+  - Linked Career Rank Rewards Desk and Office & Travel Claims into `app/views/admin/mlm-realestate/dashboard.php` and `app/views/admin/mlm-rewards/rewards.php`.
+- **Deep Discovery: PHP 8.0+ cURL Object Destructor & Cookie Flushing**:
+  - Discovered root cause in `testing/withdrawal_lifecycle_probe.php`: In PHP 8.0+, `curl_close()` is a no-op stub function. The `CurlHandle` object flushes `CURLOPT_COOKIEJAR` only when its destructor runs. In global scope, `$ch` remains referenced, preventing cookie write-out.
+  - Hardened `testing/withdrawal_lifecycle_probe.php` with functional `http()` helper, ensuring proper session persistence and cookie flushing across admin test logins.
+- **Verification & Zero Leftovers**:
+  - `php testing/township_lifecycle_e2e_test.php` -> **34/34 Business Steps Passed (100% Green, 0 leftovers)**.
+  - `php testing/master_test_runner.php` -> **11/11 Test Suites Passed (100% Green, 30.4s)**.
+  - `vendor/bin/phpstan analyse --memory-limit=1G` -> **1508/1508 [OK] No errors (Exit 0)**.
+  - Database Baseline Assertion: Byte-identical row counts (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / plot_bookings 3 / payments 24 / colonies 7 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3).
+
+## Session 458: Associate Diwali Dhamaka Salary & Allowance Portals Delivered, Leadership Office Rent & Site Visit Travel Claim Engines Built, Broker WhatsApp Dispatch Integrated, 1505/1505 PHPStan Clean, 29/29 Lifecycle Steps Passed (2026-11-13)
+
+### Trigger
+Owner: "do next" — Operationalizing the complete Associate Diwali Dhamaka Salary Dashboard, Leadership Office Rent & Site Visit Fuel Allowances portal, Admin claim review & wallet disbursement pipeline, and Broker WhatsApp digital contract dispatch.
+
+### The headline
+- **Associate Diwali Dhamaka Salary & Maintenance Portal (`/associate/salary`)**:
+  - Controller: `App\Http\Controllers\Associate\SalaryController@index`.
+  - Backend Aggregator: `LeadershipSalaryService::getAssociateSalaryDashboardData($userId)` unifying user timeline, 40:60 Leg Balance, monthly maintenance, 5-tier Diwali Dhamaka targets, active grants, and fast-start kickstart bonuses.
+  - Interactive View (`app/views/associate/salary.php`):
+    - **Live 5 Diwali Dhamaka Targets**: Visual progression cards for Target 1 (₹15L/60d $\rightarrow$ ₹5k/mo), Target 2 (₹30L/100d $\rightarrow$ ₹5k/mo), Target 3 (₹50L/150d $\rightarrow$ ₹8k/mo), Target 4 (₹75L/200d $\rightarrow$ ₹12k/mo), and Target 5 (₹1 Cr/300d $\rightarrow$ ₹20k/mo).
+    - **40:60 Leg Balance Visualizer**: Details personal volume, strongest leg (capped at 60%), and secondary downline legs.
+    - **Active Monthly Maintenance Monitor**: Tracks current month sales volume vs ₹50,000 quota and verified site visits vs 2 visits quota, with real-time status ("Active & Eligible" vs "Action Needed").
+    - **30-Day Fast-Start Kickstart Bonus Widget**: Displays ₹2,100 cash bonus progress (5 associates, 3 visits, days remaining).
+    - **Grants & Payout History**: Ledger of active salary grants, installments paid, remaining tenure, and next payout dates.
+- **Leadership Office Support & Site Visit Allowance Portals (`/associate/allowances` & `/admin/mlm-realestate/allowances`)**:
+  - Controllers:
+    - `App\Http\Controllers\Associate\AllowanceController` (`index`, `claimOffice`, `claimVisit`)
+    - `App\Http\Controllers\Admin\AllowanceController` (`index`, `approve`, `reject`)
+  - Associate Allowances GUI (`app/views/associate/allowances.php`):
+    - **Office Rent Support**: Rank-gated qualification meter (BDM ₹10k, Sr BDM ₹20k, VP ₹35k, President/Site Manager ₹50k) with current month team volume tracking and 1-click claim modal.
+    - **Site Visit Fuel Allowance**: Flat ₹800 local Gorakhpur township visit / ₹1,800 Purvanchal outstation trip, with direct claim submission on verified `site_visits`.
+    - **Claims Ledger**: Live tracking of submitted claims, approval timestamps, and wallet credits.
+  - Admin Claims Desk (`app/views/admin/mlm-realestate/allowances.php`):
+    - Admin review desk with summary statistics (Pending, Paid, Office Total, Visit Total), type filters, 1-click wallet disbursement via `WalletService::credit()`, and rejection reason workflow.
+- **Broker Digital Agreement Dispatch via WhatsApp**:
+  - Upgraded `app/views/admin/land-inventory/brokers.php` action column with 1-click WhatsApp button generating pre-filled bilingual WhatsApp messages containing the broker contract link and commission terms.
+- **Navigation Integration**:
+  - Added "Diwali Salary Plan" and "Office & Travel Allowances" links into `app/views/associate/layouts/associate.php`.
+- **Verification & Zero Leftovers**:
+  - `php testing/township_lifecycle_e2e_test.php` -> **29/29 Business Steps Passed (100% Green, 0 leftovers)**.
+  - `vendor/bin/phpstan analyse --memory-limit=1G` -> **1505/1505 [OK] No errors (Exit 0)**.
+  - Database Baseline Assertion: Byte-identical row counts (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / plot_bookings 3 / payments 24 / colonies 7 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3).
+
 ## Session 457: Authentic Diwali Dhamaka Salary Plan Grounded, Anti-Free-Rider Monthly Maintenance & 40:60 Leg Balance Architecture Built, 30-Day Fast-Start Kickstart Engine, 1-Click Customer-to-Associate Upgrade Pipeline, Land Broker KYC & Legal Agreement Engine, 29/29 Lifecycle Steps Passed, 11/11 Master Suites Green (2026-11-12)
 
 ### Trigger

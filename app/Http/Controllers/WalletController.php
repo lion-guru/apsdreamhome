@@ -222,24 +222,32 @@ class WalletController extends BaseController
         $emiId = $_POST['emi_id'] ?? 0;
         $amount = floatval($_POST['amount'] ?? 0);
 
-        try {
-            // Get wallet
-            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1", [$userId]);
+        if ($amount <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid transfer amount']);
+            exit;
+        }
 
-            if (!$wallet || $wallet['points_balance'] < $amount) {
+        try {
+            $this->db->beginTransaction();
+
+            // Lock the wallet row to prevent concurrent overdraft / race conditions
+            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE", [$userId]);
+
+            if (!$wallet || (float)$wallet['points_balance'] < $amount) {
+                $this->db->rollBack();
                 echo json_encode(['success' => false, 'message' => 'Insufficient wallet balance']);
                 exit;
             }
 
-            // Deduct from wallet
-            $newBalance = $wallet['points_balance'] - $amount;
-            $newUsed = $wallet['total_used'] + $amount;
-            $newTransferred = $wallet['total_transferred_to_emi'] + $amount;
+            // Deduct from wallet atomically
+            $newBalance = (float)$wallet['points_balance'] - $amount;
+            $newUsed = (float)$wallet['total_used'] + $amount;
+            $newTransferred = (float)$wallet['total_transferred_to_emi'] + $amount;
 
             $tid = (int)$this->tenantId();
             $this->db->query(
-                "UPDATE wallet_points SET points_balance = ?, total_used = ?, total_transferred_to_emi = ?, updated_at = ? WHERE user_id = ? AND tenant_id = ?",
-                [$newBalance, $newUsed, $newTransferred, date('Y-m-d H:i:s'), $userId, $tid]
+                "UPDATE wallet_points SET points_balance = ?, total_used = ?, total_transferred_to_emi = ?, updated_at = NOW() WHERE user_id = ? AND tenant_id = ? AND points_balance >= ?",
+                [$newBalance, $newUsed, $newTransferred, $userId, $tid, $amount]
             );
 
             // Create transaction record
@@ -271,9 +279,11 @@ class WalletController extends BaseController
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 
+            $this->db->commit();
             echo json_encode(['success' => true, 'message' => 'EMI transfer successful']);
             exit;
         } catch (\Throwable $e) {
+            try { $this->db->rollBack(); } catch (\Throwable $ignored) {}
             echo json_encode(['success' => false, 'message' => 'Transfer failed: ' . $e->getMessage()]);
             exit;
         }
@@ -402,7 +412,7 @@ class WalletController extends BaseController
 
             // Deduct at request time (admin approve only flips status; reject refunds)
             $newBalance = (float)$wallet['points_balance'] - $amount;
-            $this->db->query("UPDATE wallet_points SET points_balance = ?, total_used = total_used + ? WHERE user_id = ?", [$newBalance, $amount, $userId]);
+            $this->db->query("UPDATE wallet_points SET points_balance = ?, total_used = total_used + ?, updated_at = NOW() WHERE user_id = ? AND points_balance >= ?", [$newBalance, $amount, $userId, $amount]);
 
             // Create withdrawal request
             $tid = (int)$this->tenantId();

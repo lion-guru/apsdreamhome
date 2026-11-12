@@ -39,7 +39,7 @@ $plotValue = (float)($booking['total_plot_value'] ?? 0);
             <p class="text-muted small mb-4">Please submit your preferred dates, jurisdiction SRO office, and 2 witness details for deed preparation.</p>
 
             <form method="POST" action="/customer/registry-appointments/book">
-                <?= \App\Core\Security::csrfField() ?>
+                <?= \App\Helpers\SecurityHelper::csrfField() ?>
                 <input type="hidden" name="booking_id" value="<?= $booking['id'] ?>">
 
                 <!-- Dates & SRO Selection -->

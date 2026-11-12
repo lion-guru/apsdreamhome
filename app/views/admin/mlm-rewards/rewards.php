@@ -10,6 +10,9 @@ $rewards = $rewards ?? [];
             <h1 class="h3 mb-2"><i class="fas fa-gift me-2"></i>Reward History</h1>
             <p class="text-muted">View all rewards given to users</p>
         </div>
+        <div>
+            <a href="<?= BASE_URL ?>/admin/mlm-realestate/rewards" class="btn btn-warning fw-bold shadow-sm"><i class="fas fa-trophy me-2"></i>Career Rank Rewards Desk</a>
+        </div>
     </div>
 
     <div class="card aps-cp-card">

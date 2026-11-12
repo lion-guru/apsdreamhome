@@ -25,19 +25,20 @@ $ok = function ($name, $cond, $detail = '') use (&$results) {
 $db = \App\Core\Database\Database::getInstance()->getConnection();
 $uid = $wid = $bid = $reqId = null;
 
-function http($method, $url, $params, $jar) {
+function http($method, $url, $params, $jar, $follow = false) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_COOKIEFILE, $jar);
     curl_setopt($ch, CURLOPT_COOKIEJAR, $jar);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $follow);
     curl_setopt($ch, CURLOPT_TIMEOUT, 20);
     if ($method === 'POST') { curl_setopt($ch, CURLOPT_POST, true); curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params)); }
     $body = curl_exec($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $redir = curl_getinfo($ch, CURLINFO_REDIRECT_URL);
     curl_close($ch);
-    return [$code, $body];
+    return [$code, $body, $redir];
 }
 function csrf($html) {
     if (preg_match('/name=["\']csrf_token["\']\s+value=["\']([^"\']+)/', $html, $m)) return $m[1];
@@ -56,8 +57,8 @@ try {
     $ok('setup synthetic customer+wallet+bank', $uid > 0 && $bid > 0);
 
     // ---- Customer login ----
-    $jar = 'C:/temp/probe_wd_' . $stamp . '.jar';
-    if (!is_dir('C:/temp')) @mkdir('C:/temp', 0777, true);
+    $tmp = sys_get_temp_dir();
+    $jar = "$tmp/probe_wd_{$stamp}.txt";
     [$c, $loginPage] = http('GET', "$BASE/login", [], $jar);
     $tok = csrf($loginPage);
     $ok('login page serves csrf', !empty($tok));
@@ -93,17 +94,18 @@ try {
 
     // ---- Admin reject → refund (only if request was created) ----
     if ($reqId) {
-    $ajar = 'C:/temp/probe_wd_admin_' . $stamp . '.jar';
-    if (!is_dir('C:/temp')) @mkdir('C:/temp', 0777, true);
-    http('GET', "$BASE/admin/login?test_login=1", [], $ajar);
-    [$c, $apage] = http('GET', "$BASE/admin/mlm/withdrawals", [], $ajar);
-    $atok = csrf($apage);
-    $ok('admin session + csrf', $c === 200 && !empty($atok), "code=$c");
-    http('POST', "$BASE/admin/mlm-rewards/withdrawals/$reqId/status", ['status' => 'rejected', 'admin_notes' => 'probe reject', 'csrf_token' => $atok], $ajar);
-    $bal2 = $db->query("SELECT points_balance FROM wallet_points WHERE user_id = $uid")->fetchColumn();
-    $st2 = $db->query("SELECT status FROM withdrawal_requests WHERE id = $reqId")->fetchColumn();
-    $ok('reject refunds in full', (float)$bal2 === 5000.00 && $st2 === 'rejected', "bal=$bal2 status=$st2");
-    @unlink($ajar);
+        $ajar = "$tmp/probe_wd_admin_{$stamp}.txt";
+        // test_login=2 logs in as super_admin
+        http('GET', "$BASE/admin/login?test_login=2", [], $ajar, true);
+        // Now fetch withdrawals page with established session
+        [$c, $apage, $aredir] = http('GET', "$BASE/admin/mlm/withdrawals", [], $ajar);
+        $atok = csrf($apage);
+        $ok('admin session + csrf', $c === 200 && !empty($atok), "code=$c redir=$aredir");
+        http('POST', "$BASE/admin/mlm-rewards/withdrawals/$reqId/status", ['status' => 'rejected', 'admin_notes' => 'probe reject', 'csrf_token' => $atok], $ajar);
+        $bal2 = $db->query("SELECT points_balance FROM wallet_points WHERE user_id = $uid")->fetchColumn();
+        $st2 = $db->query("SELECT status FROM withdrawal_requests WHERE id = $reqId")->fetchColumn();
+        $ok('reject refunds in full', (float)$bal2 === 5000.00 && $st2 === 'rejected', "bal=$bal2 status=$st2");
+        @unlink($ajar);
     } else {
         $ok('admin reject phase (skipped, no request)', false, 'request step failed');
     }

@@ -210,33 +210,85 @@ class CommissionController extends BaseController
             $params = [$userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
-            // Get current rank and GBV
+            // Get current rank and GBV from mlm_profiles
             $stmt = $db->prepare("SELECT current_level, lifetime_sales, direct_referrals, total_team_size FROM mlm_profiles WHERE user_id = ?{$tidSql} LIMIT 1");
             $stmt->execute($params);
             $profile = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             $currentRank = $profile['current_level'] ?? 'associate';
             $gbv = (float)($profile['lifetime_sales'] ?? 0);
+            $directLegs = (int)($profile['direct_referrals'] ?? 0);
+            $teamSize = (int)($profile['total_team_size'] ?? 0);
 
-            // Get rank slabs (slab query has no user placeholder — bind tenant only)
+            // Connect with CareerRewardService for live volume and qualification metrics
+            try {
+                $rewardService = new \App\Services\MLM\CareerRewardService();
+                $rewardData = $rewardService->getAssociateRewardDashboard($userId);
+                if (!empty($rewardData['user_rank_slug'])) {
+                    $currentRank = $rewardData['user_rank_slug'];
+                }
+                if (isset($rewardData['team_sales_volume'])) {
+                    $gbv = max($gbv, (float)$rewardData['team_sales_volume']);
+                }
+                if (isset($rewardData['direct_associates_count'])) {
+                    $directLegs = max($directLegs, (int)$rewardData['direct_associates_count']);
+                }
+                if (!empty($rewardData['downline_user_ids'])) {
+                    $teamSize = max($teamSize, count($rewardData['downline_user_ids']));
+                }
+            } catch (\Throwable $e) {
+                error_log('CareerRewardService in rankEligibility: ' . $e->getMessage());
+            }
+
+            // Fetch official 7-tier benefits from mlm_rank_benefits
             $slabParams = array_slice($params, 1);
-            $slabs = $db->fetchAll("SELECT * FROM mlm_rank_slabs{$tidSql} ORDER BY min_gbv", $slabParams) ?: [];
+            $benefits = [];
+            try {
+                $benefits = $db->fetchAll("SELECT * FROM mlm_rank_benefits{$tidSql} ORDER BY rank_order ASC", $slabParams) ?: [];
+            } catch (\Throwable $e) {
+                error_log('mlm_rank_benefits lookup failed: ' . $e->getMessage());
+            }
 
-            // Map slabs to the view contract (view reads rank_name / min_qualifying_volume / min_leg_count)
             $allRanks = [];
-            foreach ($slabs as $rank) {
-                $allRanks[] = [
-                    'rank_slug' => $rank['rank_slug'],
-                    'rank_name' => $rank['rank_name'] ?? $rank['rank_slug'],
-                    'min_qualifying_volume' => (float)($rank['min_gbv'] ?? 0),
-                    'min_leg_count' => 0,
-                    'direct_sale_pct' => (float)($rank['commission_rate'] ?? 0),
+            if (!empty($benefits)) {
+                $rankNameToSlug = [
+                    'Ass.'          => 'associate',
+                    'Sr. Ass.'      => 'sr_associate',
+                    'BDM'           => 'bdm',
+                    'Sr. BDM'       => 'sr_bdm',
+                    'V.P.'          => 'vice_president',
+                    'President'     => 'president',
+                    'Site Manager'  => 'site_manager',
                 ];
+                foreach ($benefits as $b) {
+                    $slug = $rankNameToSlug[$b['rank_name']] ?? strtolower(str_replace([' ', '.'], ['_', ''], $b['rank_name']));
+                    $allRanks[] = [
+                        'rank_slug'             => $slug,
+                        'rank_name'             => $b['rank_name'],
+                        'min_qualifying_volume' => (float)$b['min_qualifying_volume'],
+                        'min_leg_count'         => (int)$b['min_leg_count'],
+                        'direct_sale_pct'       => (float)$b['direct_sale_pct'],
+                        'reward_item'           => $b['reward_item'] ?? '',
+                    ];
+                }
+            } else {
+                // Fallback to mlm_rank_slabs
+                $slabs = $db->fetchAll("SELECT * FROM mlm_rank_slabs{$tidSql} ORDER BY min_gbv", $slabParams) ?: [];
+                foreach ($slabs as $rank) {
+                    $allRanks[] = [
+                        'rank_slug'             => $rank['rank_slug'],
+                        'rank_name'             => $rank['rank_name'] ?? $rank['rank_slug'],
+                        'min_qualifying_volume' => (float)($rank['min_gbv'] ?? 0),
+                        'min_leg_count'         => 0,
+                        'direct_sale_pct'       => (float)($rank['commission_rate'] ?? 0),
+                        'reward_item'           => '',
+                    ];
+                }
             }
 
             $nextRank = null;
-            foreach ($slabs as $rank) {
-                if ((float)($rank['min_gbv'] ?? 0) > $gbv) {
+            foreach ($allRanks as $rank) {
+                if ((float)$rank['min_qualifying_volume'] > $gbv) {
                     $nextRank = $rank['rank_slug'];
                     break;
                 }
@@ -257,8 +309,8 @@ class CommissionController extends BaseController
                 'all_ranks' => $allRanks,
                 'lifetime_volume' => $gbv,
                 'monthly_volume' => $monthVol,
-                'direct_legs' => (int)($profile['direct_referrals'] ?? 0),
-                'team_size' => (int)($profile['total_team_size'] ?? 0),
+                'direct_legs' => $directLegs,
+                'team_size' => $teamSize,
             ], 'layouts/associate');
         } catch (\Throwable $e) {
             error_log('Rank eligibility error: ' . $e->getMessage());

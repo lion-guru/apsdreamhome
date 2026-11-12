@@ -246,6 +246,20 @@ class BaseController
     }
 
     /**
+     * Is the current request an AJAX / XHR request?
+     *
+     * NOTE (S453): only App\Core\Controller had isAjax() - the front
+     * BaseController did not - so a front controller calling $this->isAjax()
+     * died with "Call to undefined method ...::isAjax()".  Mirrors
+     * App\Core\Controller::isAjax().
+     */
+    protected function isAjax(): bool
+    {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
+
+    /**
      * Public method to get request header
      */
     public function getHeader(string $name)

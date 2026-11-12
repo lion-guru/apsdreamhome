@@ -201,7 +201,7 @@ $pct = $order['completion_pct'] ?? 0;
                                     <div class="btn-group btn-group-sm">
                                         <?php if ($b['status'] === 'submitted'): ?>
                                             <form method="POST" action="/admin/work-orders/<?= $order['id'] ?>/bills/<?= $b['id'] ?>/approve" class="d-inline" onsubmit="return confirm('Approve this RA bill for payout?');">
-                                                <?= \App\Core\Security::csrfField() ?>
+                                                <?= \App\Helpers\SecurityHelper::csrfField() ?>
                                                 <button type="submit" class="btn btn-outline-success btn-sm">
                                                     <i class="fas fa-check me-1"></i>Approve
                                                 </button>
@@ -220,7 +220,7 @@ $pct = $order['completion_pct'] ?? 0;
                             <div class="modal fade" id="payModal<?= $b['id'] ?>" tabindex="-1" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <form method="POST" action="/admin/work-orders/<?= $order['id'] ?>/bills/<?= $b['id'] ?>/disburse" class="modal-content">
-                                        <?= \App\Core\Security::csrfField() ?>
+                                        <?= \App\Helpers\SecurityHelper::csrfField() ?>
                                         <div class="modal-header">
                                             <h5 class="modal-title fw-bold">Disburse Payout: Bill #<?= htmlspecialchars($b['bill_number']) ?></h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -272,7 +272,7 @@ $pct = $order['completion_pct'] ?? 0;
 <div class="modal fade" id="newBillModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form method="POST" action="/admin/work-orders/<?= $order['id'] ?>/bills/store" class="modal-content">
-            <?= \App\Core\Security::csrfField() ?>
+            <?= \App\Helpers\SecurityHelper::csrfField() ?>
             <div class="modal-header">
                 <h5 class="modal-title fw-bold"><i class="fas fa-file-invoice text-primary me-2"></i>Record Running Account (RA) Bill</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

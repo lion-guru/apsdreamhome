@@ -125,6 +125,8 @@
                         <a href="<?= BASE_URL ?>/admin/mlm-realestate/rera" class="btn btn-outline-warning btn-sm"><i class="fas fa-gavel me-1"></i>RERA Requests</a>
                         <a href="<?= BASE_URL ?>/admin/mlm-realestate/plots" class="btn btn-outline-success btn-sm"><i class="fas fa-th me-1"></i>Plot Inventory</a>
                         <a href="<?= BASE_URL ?>/admin/mlm-realestate/salary" class="btn btn-outline-danger btn-sm"><i class="fas fa-money-bill-wave me-1"></i>Salary Tracker</a>
+                        <a href="<?= BASE_URL ?>/admin/mlm-realestate/rewards" class="btn btn-outline-warning btn-sm fw-bold"><i class="fas fa-trophy me-1 text-warning"></i>Career Rank Rewards Desk</a>
+                        <a href="<?= BASE_URL ?>/admin/mlm-realestate/allowances" class="btn btn-outline-primary btn-sm fw-bold"><i class="fas fa-gas-pump me-1"></i>Office & Travel Claims</a>
                     </div>
                 </div>
             </div>

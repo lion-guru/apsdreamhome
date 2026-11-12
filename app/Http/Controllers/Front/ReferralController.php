@@ -146,6 +146,114 @@ class ReferralController extends BaseController
         ]);
     }
 
+    /**
+     * S457: 1-Click Customer-to-Associate Upgrade
+     * Converts a customer into an official Associate Partner:
+     * - Changes user.role to 'associate'
+     * - Generates or provisions associate_profiles
+     * - Credits ₹500 welcome bonus to wallet
+     * - Preserves customer's referral tree as their initial downline!
+     */
+    public function upgradeToAssociate()
+    {
+        if (empty($_SESSION['user_id'])) {
+            if ($this->isAjax()) {
+                return $this->json(['success' => false, 'error' => 'Please login to continue'], 401);
+            }
+            return $this->redirect('/login');
+        }
+
+        $userId = (int)$_SESSION['user_id'];
+        $user = $this->loadCurrentUser();
+
+        if (empty($user)) {
+            if ($this->isAjax()) {
+                return $this->json(['success' => false, 'error' => 'User not found'], 404);
+            }
+            return $this->redirect('/user/dashboard');
+        }
+
+        // Already associate?
+        if (($user['role'] ?? '') === 'associate') {
+            if ($this->isAjax()) {
+                return $this->json(['success' => true, 'already_associate' => true, 'message' => 'You are already an Associate Partner!']);
+            }
+            $this->setFlash('info', 'आप पहले से ही APS Dream Homes के एसोसिएट पार्टनर हैं।');
+            return $this->redirect('/associate/dashboard');
+        }
+
+        try {
+            $this->db->beginTransaction();
+
+            // 1. Update user role
+            $this->db->prepare("UPDATE users SET role = 'associate', mlm_rank = 'associate', updated_at = NOW() WHERE id = ?")
+                ->execute([$userId]);
+
+            // 2. Ensure associate profile
+            $stmt = $this->db->prepare("SELECT id FROM associate_profiles WHERE user_id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $existing = $stmt->fetch();
+
+            $service = new ReferralService();
+            $refCode = $service->getReferralCode($userId) ?: ('AP-' . str_pad((string)$userId, 5, '0', STR_PAD_LEFT));
+
+            if (!$existing) {
+                $this->db->prepare("
+                    INSERT INTO associate_profiles 
+                    (tenant_id, user_id, referral_code, level, status, created_at, updated_at)
+                    VALUES (1, ?, ?, 'associate', 'active', NOW(), NOW())
+                ")->execute([$userId, $refCode]);
+            } else {
+                $this->db->prepare("UPDATE associate_profiles SET status = 'active', updated_at = NOW() WHERE user_id = ?")
+                    ->execute([$userId]);
+            }
+
+            // 3. Ensure wallet & credit ₹500 welcome activation bonus
+            try {
+                $walletService = new \App\Services\WalletService();
+                $walletService->credit(
+                    $userId,
+                    500.0,
+                    'bonus',
+                    'Welcome bonus on upgrading to Official Associate Partner',
+                    $userId,
+                    'user'
+                );
+            } catch (\Throwable $wEx) {
+                error_log("upgradeToAssociate: Wallet bonus credit skipped: " . $wEx->getMessage());
+            }
+
+            $this->db->commit();
+
+            // Update active session roles
+            $_SESSION['user_role'] = 'associate';
+            $_SESSION['role'] = 'associate';
+
+            if ($this->isAjax()) {
+                return $this->json([
+                    'success'       => true,
+                    'message'       => 'बधाई हो! आप APS Dream Homes के आधिकारिक एसोसिएट पार्टनर बन चुके हैं। ₹500 वेलकम बोनस आपके वॉलेट में जमा कर दिया गया है।',
+                    'redirect_url'  => BASE_URL . '/associate/dashboard',
+                ]);
+            }
+
+            $this->setFlash('success', 'बधाई हो! आप APS Dream Homes के आधिकारिक एसोसिएट पार्टनर बन चुके हैं। ₹500 वेलकम बोनस आपके वॉलेट में जमा कर दिया गया है।');
+            return $this->redirect('/associate/dashboard');
+
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            error_log("ReferralController::upgradeToAssociate failed: " . $e->getMessage());
+
+            if ($this->isAjax()) {
+                return $this->json(['success' => false, 'error' => 'Upgrade failed: ' . $e->getMessage()], 500);
+            }
+            $this->setFlash('error', 'एसोसिएट अपग्रेड विफल रहा: ' . $e->getMessage());
+            return $this->redirect('/user/referral');
+        }
+    }
+
     private function loadCurrentUser(): array
     {
         $userId = (int)($_SESSION['user_id'] ?? 0);

@@ -189,6 +189,8 @@ class SalaryIncentiveService
 
     /**
      * Process monthly salary grants for all active grants
+     * Implements pause/resume logic: if monthly maintenance fails, salary is held (not forfeited)
+     * and released in the next month when the agent becomes active again.
      */
     public function processMonthlyGrants(string $monthYear): array
     {
@@ -197,7 +199,7 @@ class SalaryIncentiveService
             $stmt = $this->pdo->prepare("
                 SELECT id, user_id, monthly_amount, months_total, months_paid, activated_at
                 FROM mlm_salary_grants
-                WHERE status = 'active'
+                WHERE status IN ('active', 'paused')
                 AND tenant_id = ?
                 AND activated_at <= NOW()
                 AND DATE_ADD(activated_at, INTERVAL months_total MONTH) > NOW()
@@ -206,7 +208,7 @@ class SalaryIncentiveService
             $stmt->execute([$this->getTenantId()]);
             $grants = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            $results = ['processed' => 0, 'amount' => 0, 'errors' => []];
+            $results = ['processed' => 0, 'amount' => 0, 'paused' => 0, 'resumed' => 0, 'errors' => []];
 
             foreach ($grants as $grant) {
                 // Check if agent is still active
@@ -219,9 +221,39 @@ class SalaryIncentiveService
 
                 // Check monthly maintenance eligibility
                 $maintenance = $this->checkMonthlyMaintenance($grant['user_id'], $monthYear);
+
                 if (!$maintenance['success'] || !$maintenance['eligible']) {
-                    $results['errors'][] = "User {$grant['user_id']} failed monthly maintenance: " . ($maintenance['error'] ?? $maintenance['message']);
+                    // Maintenance failed: PAUSE the grant (do not forfeit).
+                    // Mark as paused so it can resume next month when active again.
+                    $this->pdo->prepare("UPDATE mlm_salary_grants SET status = 'paused' WHERE id = ?")->execute([$grant['id']]);
+
+                    // Log the pause
+                    try {
+                        $this->pdo->prepare("INSERT INTO mlm_salary_grant_logs (tenant_id, user_id, grant_id, action, payout_month, details, created_at) VALUES (?, ?, ?, 'paused', ?, ?, NOW())")->execute([
+                            $this->getTenantId(), $grant['user_id'], $grant['id'], $monthYear, "Salary grant PAUSED for $monthYear — " . ($maintenance['message'] ?? 'maintenance failed')
+                        ]);
+                    } catch (\Throwable $logEx) {
+                        error_log("[SalaryIncentiveService] pause log skipped: " . $logEx->getMessage());
+                    }
+
+                    $results['paused']++;
+                    $results['errors'][] = "User {$grant['user_id']} salary paused for $monthYear: " . ($maintenance['message'] ?? 'maintenance failed');
                     continue;
+                }
+
+                // Maintenance passed: if grant was previously paused, resume it.
+                if ($grant['status'] === 'paused') {
+                    $this->pdo->prepare("UPDATE mlm_salary_grants SET status = 'active' WHERE id = ?")->execute([$grant['id']]);
+
+                    try {
+                        $this->pdo->prepare("INSERT INTO mlm_salary_grant_logs (tenant_id, user_id, grant_id, action, payout_month, details, created_at) VALUES (?, ?, ?, 'resumed', ?, ?, NOW())")->execute([
+                            $this->getTenantId(), $grant['user_id'], $grant['id'], $monthYear, "Salary grant RESUMED for $monthYear — maintenance cleared"
+                        ]);
+                    } catch (\Throwable $logEx) {
+                        error_log("[SalaryIncentiveService] resume log skipped: " . $logEx->getMessage());
+                    }
+
+                    $results['resumed']++;
                 }
 
                 // Idempotency: never pay the same grant twice for one month.
@@ -272,38 +304,323 @@ class SalaryIncentiveService
     }
 
     /**
-     * Check monthly maintenance eligibility (agent must have ≥₹50K side volume)
+     * Check monthly maintenance eligibility (agent must have ≥₹50K side volume AND ≥2 site visits OR ≥₹50K booking)
+     * Implements 40:60 leg balance rule: max 60% from any single downline leg.
      */
     public function checkMonthlyMaintenance(int $agentId, string $monthYear): array
     {
         try {
-            // plot_bookings.associate_id stores users.id (not associates.id).
-            // Statuses are the live ENUM — cancelled/defaulted/transferred
-            // bookings do not count toward maintenance volume.
+            [$year, $month] = explode('-', $monthYear);
+
+            // ── 1. Count verified site visits this month ──
             $stmt = $this->pdo->prepare("
-                SELECT COALESCE(SUM(pb.booking_amount), 0) AS monthly_volume
+                SELECT COUNT(*) AS site_visit_count
+                FROM site_visits sv
+                WHERE sv.user_id = ?
+                  AND YEAR(sv.visit_date) = ?
+                  AND MONTH(sv.visit_date) = ?
+                  AND sv.status = 'completed'
+                  AND sv.tenant_id = ?
+            ");
+            $stmt->execute([$agentId, (int)$year, (int)$month, $this->getTenantId()]);
+            $siteVisitCount = (int)$stmt->fetchColumn();
+
+            // ── 2. Count plot bookings this month ──
+            $stmt = $this->pdo->prepare("
+                SELECT COALESCE(SUM(pb.booking_amount), 0) AS booking_volume
                 FROM plot_bookings pb
                 WHERE pb.associate_id = ?
-                AND YEAR(pb.created_at) = YEAR(CONCAT(?, '-01'))
-                AND MONTH(pb.created_at) = MONTH(CONCAT(?, '-01'))
-                AND pb.status NOT IN ('cancelled', 'defaulted', 'transferred')
+                  AND YEAR(pb.created_at) = ?
+                  AND MONTH(pb.created_at) = ?
+                  AND pb.status NOT IN ('cancelled', 'defaulted', 'transferred')
+                  AND pb.tenant_id = ?
             ");
-            $stmt->execute([$agentId, $monthYear, $monthYear]);
-            $volume = (float) $stmt->fetchColumn();
+            $stmt->execute([$agentId, (int)$year, (int)$month, $this->getTenantId()]);
+            $bookingVolume = (float)$stmt->fetchColumn();
 
-            if ($volume >= 50000) {
-                return ['success' => true, 'eligible' => true, 'volume' => $volume];
+            // ── Eligibility gate: 2 site visits OR ₹50k booking ──
+            $hasVisits = $siteVisitCount >= 2;
+            $hasBooking = $bookingVolume >= 50000;
+            $activityMet = $hasVisits || $hasBooking;
+
+            // ── 3. 40:60 Leg Balance Rule ──
+            $legCheck = $this->getLegBalanceCheck($agentId, (int)$year, (int)$month);
+            $legBalanceOk = $legCheck['balanced'];
+
+            // ── Final decision ──
+            $eligible = $activityMet && $legBalanceOk;
+
+            $details = [
+                'site_visit_count' => $siteVisitCount,
+                'required_visits' => 2,
+                'booking_volume' => $bookingVolume,
+                'required_booking' => 50000,
+                'activity_met' => $activityMet,
+                'leg_balanced' => $legBalanceOk,
+                'leg_check' => $legCheck,
+            ];
+
+            if (!$activityMet) {
+                return [
+                    'success' => true,
+                    'eligible' => false,
+                    'details' => $details,
+                    'message' => "Insufficient activity: {$siteVisitCount} site visits (need ≥2) and ₹" . number_format($bookingVolume) . " booking (need ≥₹50,000)"
+                ];
+            }
+
+            if (!$legBalanceOk) {
+                return [
+                    'success' => true,
+                    'eligible' => false,
+                    'details' => $details,
+                    'message' => "Leg balance rule violated: {$legCheck['message']}"
+                ];
             }
 
             return [
                 'success' => true,
-                'eligible' => false,
-                'volume' => $volume,
-                'required' => 50000,
-                'message' => "Monthly volume ₹" . number_format($volume) . " below ₹50,000 minimum"
+                'eligible' => true,
+                'volume' => $bookingVolume,
+                'details' => $details,
+                'message' => "Monthly maintenance cleared: {$siteVisitCount} visit(s) + ₹" . number_format($bookingVolume) . " booking, legs balanced"
             ];
         } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * 40:60 Leg Balance Check
+     * Returns true only if no single downline leg contributes more than 60%
+     * of the agent's total team volume for the given month.
+     */
+    private function getLegBalanceCheck(int $agentId, int $year, int $month): array
+    {
+        try {
+            // Get all direct downline members (level 1 in network tree)
+            $stmt = $this->pdo->prepare("
+                SELECT nt.associate_id AS downline_id
+                FROM mlm_network_tree nt
+                WHERE nt.parent_id = ?
+                  AND nt.level = 1
+                  AND nt.tenant_id = ?
+            ");
+            $stmt->execute([$agentId, $this->getTenantId()]);
+            $downlines = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+
+            if (empty($downlines)) {
+                // No downline → agent's own personal sales count as 100%, which is balanced
+                return [
+                    'balanced' => true,
+                    'total_legs' => 0,
+                    'legs' => [],
+                    'message' => 'No downline legs – personal sales count as 100%'
+                ];
+            }
+
+            // Compute volume per leg for the given month
+            $legVolumes = [];
+            $totalVolume = 0;
+
+            foreach ($downlines as $downlineId) {
+                $stmt = $this->pdo->prepare("
+                    SELECT COALESCE(SUM(pb.booking_amount), 0) AS leg_volume
+                    FROM plot_bookings pb
+                    WHERE pb.associate_id = ?
+                      AND YEAR(pb.created_at) = ?
+                      AND MONTH(pb.created_at) = ?
+                      AND pb.status NOT IN ('cancelled', 'defaulted', 'transferred')
+                      AND pb.tenant_id = ?
+                ");
+                $stmt->execute([$downlineId, $year, $month, $this->getTenantId()]);
+                $legVol = (float)$stmt->fetchColumn();
+                $legVolumes[$downlineId] = $legVol;
+                $totalVolume += $legVol;
+            }
+
+            if ($totalVolume <= 0) {
+                return [
+                    'balanced' => true,
+                    'total_legs' => count($downlines),
+                    'legs' => [],
+                    'message' => 'No team volume this month – leg balance not applicable'
+                ];
+            }
+
+            // Check: no single leg > 60%
+            $maxLegPct = 0;
+            $maxLegId = null;
+            $legDetails = [];
+
+            foreach ($legVolumes as $legId => $vol) {
+                $pct = $totalVolume > 0 ? ($vol / $totalVolume) * 100 : 0;
+                if ($pct > $maxLegPct) {
+                    $maxLegPct = $pct;
+                    $maxLegId = $legId;
+                }
+                $legDetails[] = [
+                    'leg_id' => $legId,
+                    'volume' => $vol,
+                    'percentage' => round($pct, 2)
+                ];
+            }
+
+            $balanced = $maxLegPct <= 60.0;
+
+            return [
+                'balanced' => $balanced,
+                'total_legs' => count($downlines),
+                'max_leg_percentage' => round($maxLegPct, 2),
+                'max_leg_id' => $maxLegId,
+                'legs' => $legDetails,
+                'total_volume' => $totalVolume,
+                'message' => $balanced
+                    ? "Leg balance OK: max leg {$maxLegPct}% (≤60%)"
+                    : "Leg balance VIOLATED: leg #{$maxLegId} contributes {$maxLegPct}% (>60%)"
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'balanced' => false,
+                'error' => $e->getMessage(),
+                'message' => 'Leg balance check failed: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Peer Rank Mentorship Royalty (1%)
+     * When a junior reaches the same rank as the senior, the senior earns
+     * a 1% override on that junior's team volume for the month.
+     * Prevents seniors from blocking juniors' growth.
+     */
+    public function processPeerRankRoyalty(string $monthYear): array
+    {
+        $results = [
+            'success' => false,
+            'processed' => 0,
+            'royalties_paid' => 0,
+            'total_amount' => 0.0,
+            'errors' => []
+        ];
+
+        try {
+            [$year, $month] = explode('-', $monthYear);
+            $startDate = "$year-$month-01";
+            $endDate = date('Y-m-t', strtotime($startDate));
+
+            // Get all active MLM ranks with their volume thresholds
+            $rankSlabs = $this->rankService->loadRankSlabsFromDb();
+
+            // Get all agents with their current rank and GBV for this month
+            $stmt = $this->pdo->prepare("
+                SELECT u.id AS user_id, u.name, mp.current_rank, mp.total_team_volume AS gbv
+                FROM users u
+                LEFT JOIN mlm_profiles mp ON mp.user_id = u.id
+                WHERE u.role IN ('associate', 'agent') AND u.status = 'active' AND u.tenant_id = ?
+            ");
+            $stmt->execute([$this->getTenantId()]);
+            $agents = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($agents as $agent) {
+                $seniorId = (int)$agent['user_id'];
+                $seniorRank = $agent['current_rank'] ?? '';
+                $seniorGbv = (float)($agent['gbv'] ?? 0);
+
+                if (empty($seniorRank)) {
+                    continue;
+                }
+
+                // Find juniors in this senior's downline with SAME rank
+                $stmt = $this->pdo->prepare("
+                    SELECT nt.associate_id AS junior_id, u.name AS junior_name, mp.current_rank AS junior_rank, mp.total_team_volume AS junior_gbv
+                    FROM mlm_network_tree nt
+                    JOIN users u ON u.id = nt.associate_id
+                    LEFT JOIN mlm_profiles mp ON mp.user_id = u.id
+                    WHERE nt.parent_id = ?
+                      AND nt.level = 1
+                      AND nt.tenant_id = ?
+                      AND u.tenant_id = ?
+                ");
+                $stmt->execute([$seniorId, $this->getTenantId(), $this->getTenantId()]);
+                $juniors = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+                foreach ($juniors as $junior) {
+                    $juniorId = (int)$junior['junior_id'];
+                    $juniorRank = $junior['junior_rank'] ?? '';
+                    $juniorGbv = (float)($junior['junior_gbv'] ?? 0);
+
+                    // Only if same rank
+                    if ($juniorRank !== $seniorRank) {
+                        continue;
+                    }
+
+                    // Check if royalty already paid for this junior this month
+                    $stmt = $this->pdo->prepare("
+                        SELECT COUNT(*) FROM mlm_peer_rank_royalties
+                        WHERE senior_id = ? AND junior_id = ? AND month_year = ? AND tenant_id = ?
+                    ");
+                    $stmt->execute([$seniorId, $juniorId, $monthYear, $this->getTenantId()]);
+                    if ((int)$stmt->fetchColumn() > 0) {
+                        continue; // Already paid
+                    }
+
+                    // 1% royalty on junior's team volume
+                    $royaltyAmount = round($juniorGbv * 0.01, 2);
+
+                    if ($royaltyAmount <= 0) {
+                        continue;
+                    }
+
+                    // Record royalty
+                    try {
+                        $this->pdo->beginTransaction();
+
+                        $stmt = $this->pdo->prepare("
+                            INSERT INTO mlm_peer_rank_royalties
+                                (tenant_id, senior_id, junior_id, junior_rank, junior_gbv, royalty_amount, month_year, status, created_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, 'paid', NOW())
+                        ");
+                        $stmt->execute([
+                            $this->getTenantId(),
+                            $seniorId,
+                            $juniorId,
+                            $juniorRank,
+                            $juniorGbv,
+                            $royaltyAmount,
+                            $monthYear
+                        ]);
+
+                        // Credit to senior's wallet
+                        $walletService = new \App\Services\WalletService();
+                        $walletService->credit(
+                            $seniorId,
+                            $royaltyAmount,
+                            'commission',
+                            "Peer rank mentorship royalty (1%) from junior {$junior['junior_name']} ({$juniorRank}) - month $monthYear",
+                            $juniorId,
+                            'user'
+                        );
+
+                        $this->pdo->commit();
+
+                        $results['processed']++;
+                        $results['royalties_paid']++;
+                        $results['total_amount'] += $royaltyAmount;
+                    } catch (\Throwable $e) {
+                        if ($this->pdo->inTransaction()) {
+                            $this->pdo->rollBack();
+                        }
+                        $results['errors'][] = "Royalty failed for senior {$seniorId} ← junior {$juniorId}: " . $e->getMessage();
+                    }
+                }
+            }
+
+            $results['success'] = true;
+            return $results;
+        } catch (\Throwable $e) {
+            $results['errors'][] = $e->getMessage();
+            return $results;
         }
     }
 

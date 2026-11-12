@@ -25,6 +25,29 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
     </div>
 </div>
 
+<!-- 1-CLICK CUSTOMER-TO-ASSOCIATE UPGRADE CALLOUT -->
+<?php if (($user['role'] ?? '') !== 'associate'): ?>
+<div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%); color: #fff; border-radius: 12px;">
+    <div class="card-body p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <span class="badge bg-warning text-dark px-2 py-1 mb-2"><i class="fas fa-rocket me-1"></i>CAREER UPGRADE OPPORTUNITY</span>
+            <h4 class="fw-bold mb-1 text-white">Become an Official APS Associate Partner</h4>
+            <p class="mb-0 text-white-50" style="font-size: 14px;">
+                Earn 5% to 20% direct plot commission, monthly Diwali Dhamaka salaries (₹5,000 to ₹20,000/mo), and luxury rewards. Your existing referrals become your starting downline team!
+            </p>
+        </div>
+        <div>
+            <form action="<?= BASE_URL ?>/user/upgrade-to-associate" method="POST" class="d-inline">
+                <?= \App\Helpers\SecurityHelper::csrfField(); ?>
+                <button type="submit" class="btn btn-warning btn-lg fw-bold px-4 shadow text-dark">
+                    <i class="fas fa-user-plus me-2"></i>1-Click Upgrade to Associate
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="row g-3 mb-4">
     <div class="col-md-3 col-sm-6">
         <div class="aps-cp-stat aps-cp-stat--blue">
@@ -82,8 +105,8 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                     <?php if ($tierInfo['next_tier']): ?>
                     <div class="text-end">
                         <small class="text-muted d-block"><?= $tierInfo['referrals_needed'] ?> more to <?= $tierInfo['next_tier'] ?></small>
-                        <div class="progress mt-1">
-                            <div class="progress-bar"></div>
+                        <div class="progress mt-1" style="height: 6px;">
+                            <div class="progress-bar bg-<?= $tierInfo['color'] ?? '#6c757d' ?>" style="width: <?= max(0, min(100, (int)($tierInfo['progress'] ?? 0))) ?>%"></div>
                         </div>
                     </div>
                     <?php else: ?>
@@ -311,6 +334,12 @@ $leaderboard = $leaderboard ?? [];
             </div>
         </div>
 
+        <?php
+        // Ensure defaults are set before rendering
+        $shareStats = $share_stats ?? ['total' => 0, 'by_platform' => [], 'recent' => []];
+        $leaderboard = $leaderboard ?? [];
+        ?>
+
         <!-- Share Analytics -->
         <?php if ($shareStats['total'] > 0): ?>
         <div class="aps-cp-card mt-4">
@@ -321,15 +350,25 @@ $leaderboard = $leaderboard ?? [];
             <div class="aps-cp-card-body">
                 <?php if (!empty($shareStats['by_platform'])): ?>
                 <div class="d-flex gap-3 flex-wrap mb-3">
-                    <?php foreach ($shareStats['by_platform'] as $p):
-                        $platformIcons = ['whatsapp'=>'fab fa-whatsapp text-success', 'sms'=>'fas fa-sms text-secondary', 'facebook'=>'fab fa-facebook-f text-primary', 'twitter'=>'fab fa-twitter text-info', 'email'=>'fas fa-envelope text-warning', 'telegram'=>'fab fa-telegram text-info', 'copy'=>'fas fa-copy text-muted'];
+                    <?php
+                    $platformIcons = [
+                        'whatsapp' => ['icon' => 'fab fa-whatsapp', 'color' => 'text-success'],
+                        'sms' => ['icon' => 'fas fa-sms', 'color' => 'text-secondary'],
+                        'facebook' => ['icon' => 'fab fa-facebook-f', 'color' => 'text-primary'],
+                        'twitter' => ['icon' => 'fab fa-twitter', 'color' => 'text-info'],
+                        'email' => ['icon' => 'fas fa-envelope', 'color' => 'text-warning'],
+                        'telegram' => ['icon' => 'fab fa-telegram', 'color' => 'text-info'],
+                        'copy' => ['icon' => 'fas fa-copy', 'color' => 'text-muted'],
+                    ];
+                    foreach ($shareStats['by_platform'] as $p):
+                        $iconInfo = $platformIcons[$p['share_method']] ?? ['icon' => 'fas fa-share', 'color' => 'text-muted'];
                     ?>
                     <div class="text-center">
-                        <div >
-                            <i class="<?= $platformIcons[$p['share_method']] ?? 'fas fa-share text-muted' ?>"></i>
+                        <div class="<?= $iconInfo['color'] ?> fs-4">
+                            <i class="<?= $iconInfo['icon'] ?>"></i>
                         </div>
                         <div class="fw-bold mt-1"><?= $p['cnt'] ?></div>
-                        <small class="text-muted"><?= ucfirst($p['share_method']) ?></small>
+                        <small class="text-muted d-block"><?= ucfirst($p['share_method']) ?></small>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -339,7 +378,10 @@ $leaderboard = $leaderboard ?? [];
                 <?php foreach (array_slice($shareStats['recent'], 0, 5) as $rs): ?>
                 <div class="d-flex justify-content-between align-items-center py-1">
                     <div>
-                        <i class="<?= $platformIcons[$rs['share_method']] ?? 'fas fa-share' ?> me-2 text-muted"></i>
+                        <?php
+                        $rsIconInfo = $platformIcons[$rs['share_method']] ?? ['icon' => 'fas fa-share', 'color' => 'text-muted'];
+                        ?>
+                        <i class="<?= $rsIconInfo['icon'] ?> <?= $rsIconInfo['color'] ?> me-2"></i>
                         <span ><?= ucfirst(htmlspecialchars($rs['share_method'] ?? '')) ?></span>
                         <?php if (!empty($rs['lead_name'])): ?>
                             <small class="text-muted"> — <?= htmlspecialchars($rs['lead_name'] ?? '') ?></small>
@@ -374,10 +416,15 @@ $leaderboard = $leaderboard ?? [];
                             <?php foreach ($leaderboard as $idx => $lb): ?>
                             <tr >
                                 <td>
-                                    <?php if ($idx === 0): ?><i class="fas fa-crown text-warning"></i>
-                                    <?php elseif ($idx === 1): ?><i class="fas fa-medal text-secondary"></i>
-                                    <?php elseif ($idx === 2): ?><i class="fas fa-medal"></i>
-                                    <?php else: ?><?= $idx + 1 ?><?php endif; ?>
+                                    <?php if ($idx === 0): ?>
+                                        <i class="fas fa-crown text-warning"></i>
+                                    <?php elseif ($idx === 1): ?>
+                                        <i class="fas fa-medal text-secondary"></i>
+                                    <?php elseif ($idx === 2): ?>
+                                        <i class="fas fa-medal"></i>
+                                    <?php else: ?>
+                                        <?= $idx + 1 ?>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <strong><?= htmlspecialchars($lb['name'] ?? '') ?></strong>

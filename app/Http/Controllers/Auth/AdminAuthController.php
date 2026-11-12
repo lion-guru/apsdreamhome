@@ -124,7 +124,6 @@ class AdminAuthController extends BaseController
             $roleLanding = ['ceo'=>'/admin/dashboard/ceo','cfo'=>'/admin/dashboard/cfo','cto'=>'/admin/dashboard/cto','coo'=>'/admin/dashboard/coo','cmo'=>'/admin/dashboard/cmo','chro'=>'/admin/dashboard/hr','sales_director'=>'/admin/dashboard/sales','finance_director'=>'/admin/dashboard/finance','hr_director'=>'/admin/dashboard/hr','it_manager'=>'/admin/dashboard/it','sales_manager'=>'/admin/dashboard/sales','hr_manager'=>'/admin/dashboard/hr','marketing_director'=>'/admin/dashboard/marketing','marketing_manager'=>'/admin/dashboard/marketing','finance_manager'=>'/admin/dashboard/finance'];
             $landing = $roleLanding[$admin['role'] ?? 'admin'] ?? '/admin/erp';
             error_log("test_login: role=" . ($admin['role'] ?? 'admin') . " redirecting to " . BASE_URL . $landing);
-            session_write_close();
             header('Location: ' . BASE_URL . $landing);
             error_log("test_login: after header call");
             exit;

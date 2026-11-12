@@ -174,7 +174,7 @@ $appointment = $appointment ?? [];
                     </div>
                     <div class="card-body">
                         <form method="POST" action="/admin/registry-appointments/<?= $appointment['id'] ?>/confirm">
-                            <?= \App\Core\Security::csrfField() ?>
+                            <?= \App\Helpers\SecurityHelper::csrfField() ?>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Confirmed SRO Date <span class="text-danger">*</span></label>
                                 <input type="date" name="confirmed_date" class="form-control" value="<?= $appointment['preferred_date_1'] ?>" required>
@@ -207,7 +207,7 @@ $appointment = $appointment ?? [];
                     </div>
                     <div class="card-body">
                         <form method="POST" action="/admin/registry-appointments/<?= $appointment['id'] ?>/complete" enctype="multipart/form-data">
-                            <?= \App\Core\Security::csrfField() ?>
+                            <?= \App\Helpers\SecurityHelper::csrfField() ?>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Official Deed / Bahi # <span class="text-danger">*</span></label>
                                 <input type="text" name="deed_registration_number" class="form-control" placeholder="e.g. 2026/04/SADAR/8942" required>

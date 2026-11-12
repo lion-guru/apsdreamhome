@@ -45,7 +45,12 @@ class PerformanceService
         $params[] = $limit; $params[] = $offset;
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute(array_merge([$this->tenantId()], $params));
+        // NOTE (S453): the tenant id is ALREADY the first element of $params
+        // (it seeds the 'eg.tenant_id = ?' placeholder above).  Merging it in
+        // again here added a second, unmatched parameter and every call died
+        // with "SQLSTATE[HY093]: Invalid parameter number" -> /admin/performance
+        // was a hard 500.
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -199,7 +204,9 @@ class PerformanceService
                 $whereSql
                 ORDER BY pr.created_at DESC LIMIT ? OFFSET ?";
         $params[] = $limit; $params[] = $offset;
-        $params[] = $this->tenantId();
+        // NOTE (S453): the tenant id is already $params[0] (it seeds the
+        // 'pr.tenant_id = ?' placeholder), so appending it again made the
+        // parameter count one too many -> HY093.
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($params);

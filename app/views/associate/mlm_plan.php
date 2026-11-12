@@ -239,21 +239,117 @@ foreach ($rank_benefits as $rb) {
     </div>
 </div>
 
+<!-- DIWALI DHAMAKA SALARY INCOME PLAN -->
+<div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-left: 5px solid #d97706 !important;">
+    <div class="card-header bg-transparent border-0 py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+            <span class="badge bg-danger text-white px-2 py-1 mb-1"><i class="fas fa-fire me-1"></i>DIWALI DHAMAKA SPECIAL</span>
+            <h5 class="card-title mb-0 fw-bold text-dark"><i class="fas fa-calendar-check text-warning me-2"></i>Diwali Dhamaka Salary Income Plan (दीपावली धमाका सैलरी इनकम प्लान)</h5>
+        </div>
+        <span class="badge bg-warning text-dark px-3 py-2 fs-6 fw-bold">Permanent Target Salary</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered mb-0 bg-white">
+                <thead class="table-warning text-dark">
+                    <tr class="text-center">
+                        <th>Business Target</th>
+                        <th>Time Duration</th>
+                        <th>Monthly Salary</th>
+                        <th>Duration</th>
+                        <th>Total Salary Benefit</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center align-middle">
+                    <tr>
+                        <td><strong class="text-primary fs-6">₹15,00,000</strong> (15 Lakhs)</td>
+                        <td><span class="badge bg-secondary">60 Days</span></td>
+                        <td><strong class="text-success fs-6">₹5,000</strong> / Month</td>
+                        <td>6 Months</td>
+                        <td><span class="badge bg-success fs-6">₹30,000</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong class="text-primary fs-6">₹30,00,000</strong> (30 Lakhs)</td>
+                        <td><span class="badge bg-secondary">100 Days</span></td>
+                        <td><strong class="text-success fs-6">₹5,000</strong> / Month</td>
+                        <td>12 Months (1 Year)</td>
+                        <td><span class="badge bg-success fs-6">₹60,000</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong class="text-primary fs-6">₹50,00,000</strong> (50 Lakhs)</td>
+                        <td><span class="badge bg-secondary">150 Days</span></td>
+                        <td><strong class="text-success fs-6">₹8,000</strong> / Month</td>
+                        <td>12 Months (1 Year)</td>
+                        <td><span class="badge bg-success fs-6">₹96,000</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong class="text-primary fs-6">₹75,00,000</strong> (75 Lakhs)</td>
+                        <td><span class="badge bg-secondary">200 Days</span></td>
+                        <td><strong class="text-success fs-6">₹12,000</strong> / Month</td>
+                        <td>12 Months (1 Year)</td>
+                        <td><span class="badge bg-success fs-6">₹1,44,000</span></td>
+                    </tr>
+                    <tr class="table-light">
+                        <td><strong class="text-danger fs-6">₹1,00,00,000</strong> (1 Crore)</td>
+                        <td><span class="badge bg-dark">300 Days</span></td>
+                        <td><strong class="text-danger fs-5">₹20,000</strong> / Month</td>
+                        <td>12 Months (1 Year)</td>
+                        <td><span class="badge bg-danger fs-6">₹2,40,000</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="p-3 bg-white border-top text-muted small">
+            <i class="fas fa-info-circle text-primary me-1"></i>
+            यह सैलरी प्लान एसोसिएट्स के नियमित प्लॉट कमीशन के <strong>अतिरिक्त (Extra Incentive)</strong> है। जब आप तय समय सीमा में अपना बिजनेस टारगेट पूरा करते हैं, तो आपकी मासिक सैलरी सीधे आपके बैंक खाते / ई-वॉलेट में क्रेडिट की जाती है।
+        </div>
+        <!-- S457: PERFORMANCE ACCELERATION & MAINTENANCE RULES -->
+        <div class="p-3 bg-light border-top">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="p-2 bg-white rounded border h-100">
+                        <h6 class="fw-bold text-dark small mb-1"><i class="fas fa-running text-success me-1"></i>मासिक सक्रियता शर्त (Active Maintenance)</h6>
+                        <p class="text-muted small mb-0" style="font-size: 11.5px;">
+                            सैलरी रिलीज के लिए एसोसिएट को उस माह में न्यूनतम <strong>2 सत्यापित साइट विजिट</strong> या <strong>₹50,000 की नई बुकिंग</strong> दिखाना अनिवार्य है। ड्राई मंथ होने पर सैलरी लैप्स नहीं होती, बल्कि होल्ड रहती है और अगले माह एक्टिव होते ही रिलीज हो जाती है।
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-2 bg-white rounded border h-100">
+                        <h6 class="fw-bold text-dark small mb-1"><i class="fas fa-balance-scale text-primary me-1"></i>40:60 लेग बैलेंस नियम (Leg Balance Rule)</h6>
+                        <p class="text-muted small mb-0" style="font-size: 11.5px;">
+                            सैलरी और रैंक टारगेट में किसी भी एकल मजबूत लेग से अधिकतम <strong>60% वॉल्यूम</strong> मान्य होगा। शेष <strong>40% बिजनेस</strong> अन्य लेग्स या पर्सनल डायरेक्ट सेल से होना चाहिए, जिससे संतुलित टीम का निर्माण हो।
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-2 bg-white rounded border h-100">
+                        <h6 class="fw-bold text-dark small mb-1"><i class="fas fa-bolt text-warning me-1"></i>30-दिन फास्ट-स्टार्ट बोनस (₹2,100)</h6>
+                        <p class="text-muted small mb-0" style="font-size: 11.5px;">
+                            नए एसोसिएट के पहले 30 दिनों में <strong>5 डायरेक्ट एसोसिएट जोड़ने</strong> एवं <strong>3 कस्टमर साइट विजिट</strong> कराने पर कंपनी की तरफ से <strong>₹2,100 का फास्ट-ट्रैक किकस्टार्ट बोनस</strong> सीधे वॉलेट में तुरंत मिलता है।
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-0 py-3">
         <h5 class="card-title mb-0 fw-bold"><i class="fas fa-layer-group text-primary me-2"></i><?= __('assoc_mlm_rank_ladder', [], 'Rank Ladder — Your Path to the Top') ?></h5>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
                         <th><?= __('assoc_mlm_rank', [], 'Rank') ?></th>
-                        <th><?= __('assoc_mlm_min_legs', [], 'Min Leg Count') ?></th>
-                        <th><?= __('assoc_mlm_min_qual_vol', [], 'Min Qualifying Vol.') ?></th>
-                        <th><?= __('assoc_mlm_direct_sale_pct', [], 'Direct Sale %') ?></th>
-                        <th><?= __('assoc_mlm_override_pct', [], 'Override %') ?></th>
-                        <th><?= __('assoc_mlm_perks', [], 'Perks') ?></th>
+                        <th>Downline Legs</th>
+                        <th>Business Target</th>
+                        <th>Commission %</th>
+                        <th>Reward (उपहार)</th>
+                        <th>Override %</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -266,7 +362,7 @@ foreach ($rank_benefits as $rb) {
                         $rowClass = $isCurrent ? 'table-primary fw-bold' : '';
                         $colorCode = $rb['color_code'] ?? '#6c757d';
                         $perks = json_decode($rb['perks'] ?? '{}', true);
-                        $perkText = $perks['training'] ?? '';
+                        $reward = $rb['reward_item'] ?? '—';
                     ?>
                         <tr class="<?= $rowClass ?>">
                             <td>
@@ -282,11 +378,11 @@ foreach ($rank_benefits as $rb) {
                                     </div>
                                 </div>
                             </td>
-                            <td><?= (int)($rb['min_leg_count'] ?? 0) ?> <?= __('assoc_mlm_legs', [], 'legs') ?></td>
+                            <td><?= (int)($rb['min_leg_count'] ?? 0) ?> <?= (int)($rb['min_leg_count'] ?? 0) === 5 ? 'Associates' : ((int)($rb['min_leg_count'] ?? 0) > 0 ? 'Qualifying Legs' : 'Direct') ?></td>
                             <td>₹<?= number_format((float)($rb['min_qualifying_volume'] ?? 0)) ?></td>
-                            <td><strong><?= number_format((float)($rb['direct_sale_pct'] ?? 0), 1) ?>%</strong></td>
+                            <td><strong class="text-primary"><?= number_format((float)($rb['direct_sale_pct'] ?? 0), 1) ?>%</strong></td>
+                            <td><span class="badge bg-warning text-dark"><i class="fas fa-gift me-1"></i><?= htmlspecialchars($reward) ?></span></td>
                             <td><?= number_format((float)($rb['l1_pct'] ?? 0), 1) ?>%</td>
-                            <td><small class="text-muted"><?= htmlspecialchars($perkText ?? '') ?></small></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

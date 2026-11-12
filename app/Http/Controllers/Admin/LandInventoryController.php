@@ -750,6 +750,125 @@ class LandInventoryController extends AdminController
         return $this->redirect('/admin/land-inventory/brokers');
     }
 
+    public function brokerUpdate($id)
+    {
+        $this->requireAdmin();
+        $this->verifyCsrfOrDie();
+        $id = (int)$id;
+        $r = $this->service->updateBroker($id, $_POST);
+        if (!empty($r['success'])) {
+            $this->setFlash('success', 'Broker profile & terms updated successfully');
+        } else {
+            $this->setFlash('error', 'Failed to update broker: ' . ($r['error'] ?? 'unknown'));
+        }
+        return $this->redirect('/admin/land-inventory/brokers');
+    }
+
+    public function brokerAgreement($id)
+    {
+        $this->requireAdmin();
+        $id = (int)$id;
+        $dealId = !empty($_GET['deal_id']) ? (int)$_GET['deal_id'] : null;
+        $contract = $this->service->generateBrokerAgreementData($id, $dealId);
+
+        if (empty($contract['success'])) {
+            $this->setFlash('error', $contract['error'] ?? 'Broker not found');
+            return $this->redirect('/admin/land-inventory/brokers');
+        }
+
+        $this->render('admin/land-inventory/broker-agreement', [
+            'page_title'   => 'Land Broker Agreement — ' . ($contract['broker']['name'] ?? 'Contract'),
+            'page_heading' => 'Land Broker Engagement & Indemnity Agreement',
+            'contract'     => $contract,
+            'broker'       => $contract['broker'],
+            'company'      => $contract['company'],
+            'clauses'      => $contract['clauses'],
+            'deal'         => $contract['deal'] ?? null,
+        ]);
+    }
+
+    public function brokerSendAgreement($id)
+    {
+        $this->requireAdmin();
+        $this->verifyCsrfOrDie();
+        $id = (int)$id;
+        $dealId = !empty($_POST['deal_id']) ? (int)$_POST['deal_id'] : null;
+        $channel = $_POST['channel'] ?? 'whatsapp';
+        $contract = $this->service->generateBrokerAgreementData($id, $dealId);
+
+        if (empty($contract['success'])) {
+            $this->setFlash('error', $contract['error'] ?? 'Broker not found');
+            return $this->redirect('/admin/land-inventory/brokers');
+        }
+
+        $broker = $contract['broker'];
+        $refNo = $contract['agreement_ref'];
+        $rateDesc = $contract['rate_description'];
+
+        $msg = "नमस्ते " . $broker['name'] . " जी,\n\n"
+             . "APS Dream Homes Pvt. Ltd., Gorakhpur की तरफ से आपका भूमि दलाली एवं विधिक क्षतिपूर्ति अनुबंध पत्र (Ref: {$refNo}) तैयार है।\n\n"
+             . "• अनुबंधित दर: {$rateDesc}\n"
+             . "• विधिक दायित्व: 100% निर्विवादित टाइटल, 30-वर्षीय सर्च गारंटी एवं धोखाधड़ी पर क्षतिपूर्ति की पूर्ण व्यक्तिगत जिम्मेदारी।\n"
+             . "• ऑफिस पता: Singhariya, AIIMS Road, Gorakhpur, UP.\n\n"
+             . "कृपया अनुबंध पत्र की हस्ताक्षरित प्रति जमा करें।\nधन्यवाद!";
+
+        if ($channel === 'whatsapp') {
+            try {
+                $waService = new \App\Services\Communication\WhatsAppService();
+                if ($waService->isConfigured() && !empty($broker['phone'])) {
+                    $waService->sendTextMessage($broker['phone'], $msg);
+                }
+            } catch (\Throwable $e) {
+                error_log("WhatsApp API send error: " . $e->getMessage());
+            }
+
+            $cleanPhone = preg_replace('/\D/', '', $broker['phone'] ?? '');
+            if (strlen($cleanPhone) === 10) {
+                $cleanPhone = '91' . $cleanPhone;
+            }
+            $waUrl = 'https://api.whatsapp.com/send?phone=' . $cleanPhone . '&text=' . rawurlencode($msg);
+
+            try {
+                $this->db->prepare("UPDATE land_brokers SET agreement_signed_at = COALESCE(agreement_signed_at, NOW()) WHERE id = ?")
+                    ->execute([$id]);
+            } catch (\Throwable $e) {}
+
+            $this->setFlash('success', 'Broker Agreement prepared for WhatsApp dispatch');
+            return $this->redirect($waUrl);
+        }
+
+        if ($channel === 'email') {
+            $email = $broker['email'] ?? '';
+            if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $this->setFlash('error', 'Broker does not have a valid email address');
+                return $this->redirect('/admin/land-inventory/brokers/' . $id . '/agreement');
+            }
+
+            try {
+                $emailService = new \App\Services\Communication\EmailService();
+                $subject = "Land Broker Engagement & Indemnity Contract — Ref: " . $refNo;
+                $bodyHtml = "<h3>APS Dream Homes Pvt. Ltd.</h3>"
+                          . "<p>Dear <strong>" . htmlspecialchars($broker['name']) . "</strong>,</p>"
+                          . "<p>Your official Land Broker Engagement, Due Diligence & Indemnity Contract has been generated.</p>"
+                          . "<table border='1' cellpadding='8' style='border-collapse:collapse;'>"
+                          . "<tr><td><strong>Reference No</strong></td><td>" . htmlspecialchars($refNo) . "</td></tr>"
+                          . "<tr><td><strong>Agreed Terms</strong></td><td>" . htmlspecialchars($rateDesc) . "</td></tr>"
+                          . "<tr><td><strong>Company Office</strong></td><td>Singhariya, Gorakhpur (UP)</td></tr>"
+                          . "</table>"
+                          . "<p>Please sign and submit the agreement along with PAN/Aadhaar copies.</p>"
+                          . "<p>Regards,<br>APS Dream Homes Legal Desk</p>";
+
+                $emailService->send($email, $subject, $bodyHtml, $msg);
+                $this->setFlash('success', 'Agreement summary sent via Email to ' . $email);
+            } catch (\Throwable $e) {
+                $this->setFlash('error', 'Email sending failed: ' . $e->getMessage());
+            }
+            return $this->redirect('/admin/land-inventory/brokers/' . $id . '/agreement');
+        }
+
+        return $this->redirect('/admin/land-inventory/brokers/' . $id . '/agreement');
+    }
+
     // ============================================================
     //  Helpers
     // ============================================================

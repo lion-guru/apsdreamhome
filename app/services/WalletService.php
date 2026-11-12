@@ -68,17 +68,20 @@ class WalletService
             return false;
         }
         try {
-            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
-            if (!$wallet) {
-                $this->ensureWallet($userId);
-                $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
-                if (!$wallet) return false;
-            }
-            $newBalance = (float)$wallet['points_balance'] + $amount;
-            $newTotalEarned = (float)$wallet['total_earned'] + $amount;
-            $field = $category === 'referral' ? 'referral_earnings' : ($category === 'commission' ? 'commission_earnings' : 'bonus_earnings');
+            $this->ensureWallet($userId);
             $this->db->beginTransaction();
             try {
+                // S455: Lock row with FOR UPDATE inside transaction to prevent race conditions & double-credit overwrite
+                $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
+                if (!$wallet) {
+                    $this->db->rollBack();
+                    return false;
+                }
+                $balanceBefore = (float)$wallet['points_balance'];
+                $newBalance = $balanceBefore + $amount;
+                $newTotalEarned = (float)$wallet['total_earned'] + $amount;
+                $field = $category === 'referral' ? 'referral_earnings' : ($category === 'commission' ? 'commission_earnings' : 'bonus_earnings');
+
                 $this->db->query(
                     "UPDATE wallet_points SET points_balance = ?, total_earned = ?, {$field} = {$field} + ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql(),
                     array_merge([$newBalance, $newTotalEarned, $amount, $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
@@ -88,7 +91,7 @@ class WalletService
                     'transaction_type' => 'credit',
                     'transaction_category' => $category,
                     'amount' => $amount,
-                    'balance_before' => $wallet['points_balance'],
+                    'balance_before' => $balanceBefore,
                     'balance_after' => $newBalance,
                     'description' => $description,
                     'status' => 'completed',
@@ -97,15 +100,19 @@ class WalletService
                 if ($referenceId) {
                     $txn['reference_id'] = $referenceId;
                     $txn['reference_type'] = $referenceType;
-                    $txn['related_user_id'] = $referenceId;
+                    if ($referenceType === 'user') {
+                        $txn['related_user_id'] = $referenceId;
+                    }
                 }
                 $this->db->insert('wallet_transactions', $txn);
                 $this->db->commit();
+                return true;
             } catch (\Throwable $e) {
-                $this->db->rollBack();
+                if ($this->db->inTransaction()) {
+                    $this->db->rollBack();
+                }
                 throw $e;
             }
-            return true;
         } catch (\Throwable $e) {
             error_log("WalletService::credit error: " . $e->getMessage());
             return false;
@@ -126,33 +133,42 @@ class WalletService
             return false;
         }
         try {
-            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
-            if (!$wallet || (float)$wallet['points_balance'] < $amount) return false;
-            $newBalance = (float)$wallet['points_balance'] - $amount;
-            $newTotalUsed = (float)$wallet['total_used'] + $amount;
             $this->db->beginTransaction();
             try {
+                // S455: Lock row with FOR UPDATE inside transaction to prevent concurrent overdraft / race conditions
+                $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
+                if (!$wallet || (float)$wallet['points_balance'] < $amount) {
+                    $this->db->rollBack();
+                    return false;
+                }
+                $balanceBefore = (float)$wallet['points_balance'];
+                $newBalance = $balanceBefore - $amount;
+                $newTotalUsed = (float)$wallet['total_used'] + $amount;
+
+                // Atomic conditional debit prevents negative balance under all circumstances
                 $this->db->query(
-                    "UPDATE wallet_points SET points_balance = ?, total_used = ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql(),
-                    array_merge([$newBalance, $newTotalUsed, $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
+                    "UPDATE wallet_points SET points_balance = ?, total_used = ?, updated_at = NOW() WHERE user_id = ? AND points_balance >= ?" . $this->tenantSql(),
+                    array_merge([$newBalance, $newTotalUsed, $userId, $amount], $this->tenantId() > 1 ? [$this->tenantId()] : [])
                 );
                 $this->db->insert('wallet_transactions', array_merge([
                     'user_id' => $userId,
                     'transaction_type' => 'debit',
                     'transaction_category' => $category,
                     'amount' => $amount,
-                    'balance_before' => $wallet['points_balance'],
+                    'balance_before' => $balanceBefore,
                     'balance_after' => $newBalance,
                     'description' => $description,
                     'status' => 'completed',
                     'created_at' => date('Y-m-d H:i:s')
                 ], $this->tenantInsertData()));
                 $this->db->commit();
+                return true;
             } catch (\Throwable $e) {
-                $this->db->rollBack();
+                if ($this->db->inTransaction()) {
+                    $this->db->rollBack();
+                }
                 throw $e;
             }
-            return true;
         } catch (\Throwable $e) {
             error_log("WalletService::debit error: " . $e->getMessage());
             return false;
@@ -173,34 +189,41 @@ class WalletService
 
     public function transferToEmi(int $userId, float $amount, int $bookingId, string $description = ''): bool
     {
+        // Fail closed: reject non-positive amounts to prevent balance inflation
+        if ($amount <= 0) {
+            error_log("WalletService::transferToEmi rejected: non-positive amount {$amount} for user {$userId}");
+            return false;
+        }
         try {
-            // S264: atomic (was: crash between UPDATE and INSERT = balance moved
-            // with no ledger row — sibling credit()/debit() both already txn).
+            // S264 + S455: atomic + FOR UPDATE + conditional balance check
             $this->db->beginTransaction();
             try {
-            $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
-            if (!$wallet || (float)$wallet['points_balance'] < $amount) { $this->db->rollBack(); return false; }
-            $newBalance = (float)$wallet['points_balance'] - $amount;
-            $newEmiTransfer = (float)$wallet['total_transferred_to_emi'] + $amount;
-            $this->db->query(
-                "UPDATE wallet_points SET points_balance = ?, total_transferred_to_emi = ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql(),
-                array_merge([$newBalance, $newEmiTransfer, $userId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
-            );
-            $this->db->insert('wallet_transactions', array_merge([
-                'user_id' => $userId,
-                'transaction_type' => 'debit',
-                'transaction_category' => 'emi_transfer',
-                'amount' => $amount,
-                'balance_before' => $wallet['points_balance'],
-                'balance_after' => $newBalance,
-                'description' => $description ?: "Transferred to EMI for booking #{$bookingId}",
-                'reference_id' => $bookingId,
-                'reference_type' => 'booking',
-                'status' => 'completed',
-                'created_at' => date('Y-m-d H:i:s')
-            ], $this->tenantInsertData()));
-            $this->db->commit();
-            return true;
+                $wallet = $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ? LIMIT 1 FOR UPDATE" . $this->tenantSql(), array_merge([$userId], $this->tenantId() > 1 ? [$this->tenantId()] : []));
+                if (!$wallet || (float)$wallet['points_balance'] < $amount) {
+                    $this->db->rollBack();
+                    return false;
+                }
+                $newBalance = (float)$wallet['points_balance'] - $amount;
+                $newEmiTransfer = (float)$wallet['total_transferred_to_emi'] + $amount;
+                $this->db->query(
+                    "UPDATE wallet_points SET points_balance = ?, total_transferred_to_emi = ?, updated_at = NOW() WHERE user_id = ? AND points_balance >= ?" . $this->tenantSql(),
+                    array_merge([$newBalance, $newEmiTransfer, $userId, $amount], $this->tenantId() > 1 ? [$this->tenantId()] : [])
+                );
+                $this->db->insert('wallet_transactions', array_merge([
+                    'user_id' => $userId,
+                    'transaction_type' => 'debit',
+                    'transaction_category' => 'emi_transfer',
+                    'amount' => $amount,
+                    'balance_before' => $wallet['points_balance'],
+                    'balance_after' => $newBalance,
+                    'description' => $description ?: "Transferred to EMI for booking #{$bookingId}",
+                    'reference_id' => $bookingId,
+                    'reference_type' => 'booking',
+                    'status' => 'completed',
+                    'created_at' => date('Y-m-d H:i:s')
+                ], $this->tenantInsertData()));
+                $this->db->commit();
+                return true;
             } catch (\Throwable $e) {
                 try { $this->db->rollBack(); } catch (\Throwable $ignored) {}
                 throw $e;

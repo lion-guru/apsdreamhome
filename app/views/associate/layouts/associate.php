@@ -98,9 +98,24 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
                     <i class="fas fa-users"></i> My Team
                 </a>
             </li>
-<li class="sidebar-item">
-                <a href="<?php echo e($base); ?>/associate/commissions" class="sidebar-link <?php echo $current_page == 'commissions' ? 'active' : ''; ?>">
+            <li class="sidebar-item">
+                <a href="<?php echo e($base); ?>/associate/commissions" class="sidebar-link <?php echo ($current_page ?? '') == 'commissions' ? 'active' : ''; ?>">
                     <i class="fas fa-rupee-sign"></i> Commissions
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo e($base); ?>/associate/salary" class="sidebar-link <?php echo ($current_page ?? '') == 'salary' ? 'active' : ''; ?>">
+                    <i class="fas fa-hand-holding-usd text-warning"></i> Diwali Salary Plan
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo e($base); ?>/associate/allowances" class="sidebar-link <?php echo ($current_page ?? '') == 'allowances' ? 'active' : ''; ?>">
+                    <i class="fas fa-gas-pump text-success"></i> Office & Travel Allowances
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="<?php echo e($base); ?>/associate/rewards" class="sidebar-link <?php echo ($current_page ?? '') == 'rewards' ? 'active' : ''; ?>">
+                    <i class="fas fa-trophy text-warning"></i> Rank Rewards
                 </a>
             </li>
             <li class="sidebar-item">
