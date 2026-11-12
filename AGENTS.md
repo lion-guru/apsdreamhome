@@ -21,6 +21,77 @@
 
 > **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
 
+## Session 466: The "Schema Mismatch Scan" Gate Was A No-Op (Scanner File Did Not Exist) - A Real Scanner Written, 237 Phantom Tables/Columns Found, and a Salary Advance / Leave Encashment That NEVER Reached the Employee's Wallet (2026-11-13)
+
+### Trigger
+Owner: "do next bina ruke kaam karo" — with all five workflows green, the next question was: *are the green gates measuring anything?* Two of them were not.
+
+### The headline
+
+**1. THE "SCHEMA MISMATCH SCAN" JOB WAS A NO-OP THAT WENT GREEN**
+The job in `ci.yml` read:
+```
+    - name: Import database schema
+      run: mysql ... < database/schema.sql 2>/dev/null || echo "Schema import skipped"
+    - name: Run schema scanner
+      run: |
+        if [ -f testing/scan_schema_mismatches.php ]; then
+          php testing/scan_schema_mismatches.php
+        else
+          echo "Schema scanner not found, skipping"
+        fi
+```
+Two defects in one job:
+  - **`testing/scan_schema_mismatches.php` DID NOT EXIST.** The job printed "Schema scanner not found, skipping" and passed. A gate that cannot fail is not a gate.
+  - it imported **`database/schema.sql`** - a 17 KB, 15-table fragment from April 2026 that contains none of the tables the app uses (`users`, `plots`, `properties`, `leads`, `wallet_points` are all missing). Even a working scanner would have compared the app's SQL against fiction.
+Both are fixed: the scanner exists, and the job imports the real schema (1043 tables).
+
+**2. THE SCANNER, AND WHAT IT FOUND: 237 REAL MISMATCHES**
+`testing/scan_schema_mismatches.php` reports the two highest-confidence signals:
+  - a **table** named in FROM / JOIN / INTO / UPDATE that the schema does not have;
+  - a **column** listed in `INSERT INTO t (c1, c2)` that `t` does not have.
+**237 findings: 133 phantom tables + 104 phantom columns.** A sample, every one verified directly against `information_schema`:
+`wallet_transactions.type` / `.wallet_id` / `.reference` (the real columns are `transaction_type`, `transaction_category`, `reference_id`, `reference_type`), `users.department`, `notifications.sender_id` / `.reference_id` / `.reference_type`, `tasks.assigned_by`, `team_messages.recipients` / `.type`, `lead_activities.user_id` / `.action` / `.type`, `colonies.city` / `.state` / `.pincode` / `.address`, `auction_bids.*`, `pwa_installations.*`, `property_purchases.*`, `property_loans.*`, `property_market_data.*`, `telecaller_daily_tasks.*`, `ai_feedback.*`, `blog_comments.*`.
+This is the family that has produced most of this project's 500s - and where the call sits inside a try/catch it is **worse than a 500: a silent feature failure.**
+
+**3. THE RATCHET - A GATE THAT IS GREEN TODAY AND PREVENTS THE NEXT ONE**
+The 237 pre-existing findings are recorded in `database/schema_mismatch_baseline.txt`, and the job fails **only on a NEW mismatch**. That turns "a list of 237 problems" into a gate that is green today and blocks the 238th. Fixing a real one means removing its line from the baseline in the same commit - the baseline is a ratchet, not a suppression list. (The three entries fixed below were removed in the same commit that fixed them.)
+Proven by simulation: a deliberately added `SELECT * FROM zzz_new_phantom_table` is reported as NEW and exits 1; the file is restored byte-identically and the scanner is green again.
+
+**4. THE MONEY BUG THE SCANNER FOUND IMMEDIATELY: A SALARY ADVANCE NEVER REACHED THE WALLET**
+`SalaryAdvanceService::creditWallet()` and `LeaveEncashmentService::creditWallet()` both wrote:
+```
+    UPDATE user_wallets SET balance = ?, total_earned = total_earned + ?
+    INSERT INTO wallet_transactions (wallet_id, type, amount, balance_after,
+                                     description, reference, status, ...)
+```
+  - `user_wallets` is a **second, parallel wallet table** and its column is `total_credited`, not `total_earned` -> **1054**;
+  - `wallet_transactions` has **no** `wallet_id`, `type` or `reference` column -> **1054**.
+Both statements sat inside a `catch (\Throwable)` that only wrote `error_log("Wallet credit failed: ...")`. So an **approved salary advance never reached the employee's wallet** - the money simply did not move, and neither the employee nor the admin who approved it saw an error; and in the shape where the balance update had succeeded, the money would have moved with **no ledger row to show for it**.
+Both now go through the canonical `App\Services\WalletService::credit()`: FOR UPDATE lock, fail-closed on a non-positive amount, balance **and** ledger row in ONE transaction, real columns. The ledger category is `adjustment` (the enum has no `salary_advance` member) and the advance / encashment id is recorded as `reference_id` with `reference_type` = `salary_advance` / `leave_encashment`.
+Proven on a sacrificial employee (the real, private `creditWallet()`): `points_balance` 0.00 -> 5000.00, `total_earned` 0.00 -> 5000.00, **exactly one** `wallet_transactions` row of 5000.00 with `transaction_type=credit`, `transaction_category=adjustment`, `reference_id=4242` - and every table byte-identical afterwards.
+
+### Verification
+- **CI**: the Schema Mismatch Scan job ran the new scanner against the real 1043-table schema and **passed** (it was a no-op before).
+- **phpstan** -> `[OK] No errors` (exit 0).
+- **Master test suite** -> **10/10 PASSED** (100% HEALTHY, ~21 s).
+- **Schema ratchet** -> 234 known / **0 new** -> exit 0; and exit 1 when a phantom table is injected into the code.
+- **Money probe** -> 7 functional assertions + 4 count assertions, all passing, 0 leftovers.
+- **Live DB byte-identical**: users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / employee_profiles 8.
+- Commits: `d4539b49a` (the scanner + the baseline + the CI job), `5992fe0fe` (the wallet fix + the baseline ratchet) - both pushed.
+
+### Key Lessons (carried, continued)
+_870. **A gate whose script does not exist is a gate that cannot fail.** The CI job printed "Schema scanner not found, skipping" and went GREEN for months. A CI step must fail when its tool is missing - the check for the tool's existence has to be the inverse of what makes the step green.
+_871. **A gate that compares against a STALE fixture measures fiction.** `database/schema.sql` had 15 tables from April 2026 while the app needs 1043; every "schema is fine" conclusion drawn from it was worthless. The fixture a gate compares against has to be regenerated with the code.
+_872. **Extract SQL with the language's TOKENIZER, not with regexes over source text.** Three whole classes of false positive came from regex extraction: prose in views, `ON DUPLICATE KEY UPDATE col = ...` read as a TABLE, and doc-comments whose quoted words look like string literals. `token_get_all()` knows exactly what is a literal, a comment and inline HTML.
+_873. **Composing two regex fragments needs a group - the delimiters do not travel.** `'/\bFROM\s+`?(\w+)`?' . '/\s*`?(WHERE|...)/i'` concatenated into a pattern containing the literal text `?/`, so the FROM and JOIN branches **never matched** and the scanner silently reported only a fraction of what it should. The scanner had to be re-verified against a case it was supposed to catch.
+_874. **A missing column inside a try/catch is a silent money failure, not an error.** `INSERT INTO wallet_transactions (wallet_id, type, ...)` died with 1054 on every single salary-advance approval, and the catch wrote one log line that nobody reads. The employee's wallet never received the money and no screen ever said so.
+_875. **A balance without a ledger row is worse than a failed balance.** When the UPDATE succeeded and the INSERT did not, the money moved with no transaction to show for it - the wallet and the ledger silently disagree. The two writes belong in ONE transaction with the canonical helper, not in two hand-rolled statements.
+_876. **A ratchet baseline turns a backlog into a gate.** 237 known mismatches would be an unusable red build; a baseline file that lists them and fails only on a NEW one keeps the gate meaningful, keeps the debt visible, and makes every fix visible in the diff.
+
+### Owner actions still open (carried forward)
+Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) - voice/S3/scheduler/Redis credentials - `bohisawagar-banner.jpg` owner asset drop - `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED; ~32 GB) - the `package:material_ui` migration if the Flutter pin is ever raised above 3.47.9 (281 imports, and `flutter_localizations` has to move with it) - **the 15 destructive GET routes still have no POST twin** (the cross-origin guard stops the CSRF; the durable fix is a POST + CSRF token per route, ~15 views) - **the visual baselines should be regenerated as one consistent set** if a real pixel gate is ever wanted - **234 pre-existing schema mismatches remain** (`database/schema_mismatch_baseline.txt`); the highest-value ones to fix next are `team_messages.recipients` / `.type`, `lead_activities.user_id` / `.action` / `.type`, `notifications.sender_id` / `.reference_id` / `.reference_type` and `auction_bids.*` - and `user_wallets` vs `wallet_points` is a SECOND, parallel wallet system that the codebase still mixes.
+
 ## Session 465: Visual Regression Job Made Runnable (Real 1043-Table Schema + Seeded Users + CDP Capture), pubspec.lock Drift That Red 3 Workflows Fixed, .gitignore `*.sql` Trap + UTF-16 Junk Repaired, All 5 Workflows Green (2026-11-13)
 
 ### Trigger
