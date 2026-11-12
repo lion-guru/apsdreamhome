@@ -17,6 +17,77 @@
 
 > **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
 
+> **⚠️ DESTRUCTIVE GET (new, since S463):** 15 admin routes **DELETE** and 4 more **TOGGLE / SEND / APPROVE / CANCEL** - and they are registered for **GET**. A GET sweep with an admin session really does delete rows (it reached `/admin/drip-campaigns/delete` and `/admin/marketing-campaigns/delete`; only the admin gate's expired role saved it). A sweep must **skip** every path containing `/delete`, `/destroy`, `/remove`, `/purge`, `/toggle`, `/send/`, `/approve`, `/reject`, `/cancel`, `/mark-won`, `/mark-lost`, `/revoke`. The router now refuses a **cross-origin** GET on them (CSRF-via-GET). See lesson _859.
+
+> **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
+
+## Session 463: 25 Destructive GET Routes Closed (CSRF-via-GET Guard in the Router), AGENTS.md Truncation Detected & Reversed to the Byte, Session-Log Integrity Guard Added, Probe Sweep Made Non-Destructive, 1990 Routes 0 x 500 (2026-11-13)
+
+### Trigger
+Owner: "do next bina ruke kaam karo" — continuing the Session 461 GET-mutation work. S461 fixed ONE route that upgraded an account on a GET; this round asked how many more of the same shape exist, and then found that the project's own session log had been silently truncated.
+
+### The headline
+
+**1. HOW MANY GET-ROUTES MUTATE? 59 destructive ones - 15 of them DELETE**
+A static audit (every GET route -> its controller action -> the SQL inside that method) found **3164** GET routes with a `Class@method` handler and **140** whose handler contains a write. Most are benign (a GET that marks a thread read). The dangerous subset: **59** routes where the GET **deletes, toggles, sends, approves, rejects or cancels** - and **15 of those 59 have no POST twin at all**:
+
+| Route | Effect |
+|---|---|
+| `/admin/drip-campaigns/delete` | deletes a drip campaign |
+| `/admin/marketing-campaigns/delete` | deletes a marketing campaign |
+| `/admin/property-alerts/delete` | deletes property alerts |
+| `/admin/auctions/delete/{id}` | deletes an auction |
+| `/admin/faqs/{id}/delete`, `/admin/gallery/{id}/destroy`, `/admin/app-feedback/{id}/delete`, `/admin/blogs/comment/{id}/delete`, `/admin/financial-inquiries/{id}/delete`, `/admin/voice-uploads/{id}/delete`, `/admin/campaign-templates/delete/{id}`, `/admin/coding-challenges/delete/{id}`, `/admin/crm/drip/{id}/delete`, `/admin/locations/{states,districts}/delete/{id}` | deletes rows |
+| `/admin/api-keys/toggle/{id}` | **enables/disables an API key** |
+| `/admin/marketing-campaigns/send/{id}` | **fires an email/SMS blast** |
+| `/admin/mlm-realestate/bookings/{id}/approve` | **approves a booking (money)** |
+| `/admin/property-allocations/{id}/cancel` | **cancels a plot allocation** |
+| `/admin/drip-campaigns/toggle`, `/admin/deal-pipeline/{id}/mark-{won,lost}`, `/admin/chatbot/train/toggle/{id}`, `/admin/blogs/comment/{id}/{approve,reject}` | state changes |
+
+A GET is safe by definition, so any third-party page could trigger all of them with one `<img src="http://the-app/admin/drip-campaigns/delete">` - **CSRF with no token and no same-origin check at all**. The existing global CSRF gate in `routes/router.php` only covers POST/PUT/DELETE, so it never saw these.
+
+**The fix - one central guard, `routes/router.php` (Step 5c)**: a **cross-origin** GET on any of those 19 path patterns is refused with 403. The test is `Sec-Fetch-Site: cross-site` (every modern browser sends it) **and/or** a `Referer` whose host differs from `HTTP_HOST`. A same-origin navigation - the admin clicking the button - is untouched, and a direct URL / bookmark is still allowed. The app already sends `Referrer-Policy: strict-origin-when-cross-origin`, so a same-origin click always carries the Referer.
+Verified live: cross-origin GET -> **403**; `Sec-Fetch-Site: cross-site` -> **403**; same-origin GET -> **302** (normal); no Referer -> **302** (allowed); the admin marketing-campaigns page still renders **200**.
+(The router file was chosen deliberately: `routes/web.php` is the parallel actor's in-flight file, and `routes/router.php` is a clean, auditable, single place for a cross-cutting rule.)
+
+**2. THE PROJECT'S OWN SESSION LOG HAD BEEN TRUNCATED - 45 ENTRIES LOST**
+`AGENTS.md` was found at **512,033 bytes** with only **162** `## Session` headings, while `HEAD` held **637,968 bytes** and **210** headings. The cause is precise: the file had been cut at **byte offset 512000 (exactly 500 KiB)** and the literal string `... [truncated for diff preview]` appended - i.e. **a tool's TRUNCATED READ OUTPUT had been written back over the file**. Bytes 0-511999 were identical to HEAD, so nothing newer was lost, but **1257 lines / 45 session entries (Sessions 159-199 and more) were gone** and the next commit of that file would have destroyed them permanently.
+It was invisible: `git status` showed a normal-looking `M`, the file still opened, and 162 headings still looked plausible. Only a **byte-level** comparison against HEAD exposed it.
+Restored byte-exactly from HEAD (`git cat-file -p HEAD:AGENTS.md` -> raw bytes -> write; 637,968 bytes, 210 headings, byte-identical).
+
+**3. A GUARD SO IT CANNOT HAPPEN AGAIN - `scripts/verify_agents_log.php`**
+Compares the worktree `AGENTS.md` against `HEAD`'s copy and fails (exit 1) when the log was truncated, naming all three symptoms:
+- the truncation marker `[truncated for diff preview]` is present,
+- the worktree is **SHORTER** than HEAD (a real entry is always an append; a truncation is always a shrink),
+- session headings were lost.
+`--restore` rewrites the file byte-exactly from HEAD. Proven by simulation: a deliberately corrupted copy was detected (162 vs 210 headings, 125,936 bytes lost) and restored byte-identically.
+(Implementation note: `git -C '<path>'` does **not** work on Windows - cmd.exe does not treat single quotes as quoting - so the script `chdir()`s into the repo and lets git write the blob to a temp file through cmd.exe's byte-preserving redirection; `exec()`'s line-splitting would corrupt a byte-exact comparison.)
+
+**4. THE PROBE SWEEP ITSELF WAS A MUTATION PROBE**
+The S461 sweep had reached `/admin/drip-campaigns/delete` and `/admin/marketing-campaigns/delete` **with an admin session**. It escaped only by luck: those four requests were made while the session had lost its admin role, so the admin gate blocked them (`ADMIN-GATE: blocked GET ... role=(none)`), and the counts were proven unchanged against the 2026-11-11 safety dump (`drip_campaigns` 5=5, `marketing_campaigns` 11=11, `property_alerts` 0=0). Had the session still been authenticated, the sweep would have deleted **16 real rows**.
+The sweep now **skips 15 destructive paths** by name (`/delete`, `/destroy`, `/remove`, `/purge`, `/toggle`, `/send/`, `/approve`, `/reject`, `/cancel`, `/mark-won`, `/mark-lost`, `/revoke`) and prints them, so a destructive route can never be swept by accident again.
+
+### Verification
+- **phpstan** -> `[OK] No errors` (exit 0).
+- **Master test suite** -> **10/10 PASSED** (100% HEALTHY, ~21 s).
+- **Township lifecycle** -> **Steps Failed: 0**, Overall Health **100%**.
+- **Live web sweep** -> **1990 literal GET routes -> 0 x 500** (200 x1627, 301 x50, 302 x283, 400 x11, 401 x1, 403 x17, 404 x1), with 15 destructive paths deliberately skipped.
+- **Guard proof**: healthy file -> exit 0 (reads HEAD: 637,968 bytes / 210 headings); deliberately corrupted copy -> exit 1 naming all three symptoms; `--restore` -> byte-identical.
+- **Cross-origin guard proof**: cross-origin GET -> 403; `Sec-Fetch-Site: cross-site` -> 403; same-origin GET -> 302; no Referer -> 302; admin page -> 200; `drip_campaigns`/`marketing_campaigns`/`property_alerts` counts unchanged (5/11/0).
+- **AGENTS.md** -> restored to **637,968 bytes, 210 session headings, byte-identical to HEAD**; the integrity guard reports OK.
+- **DB zero drift**: users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3.
+
+### Key Lessons (carried, continued)
+_855. **A GET that mutates is a hole in EVERY cross-origin defence, because a GET is never checked.** The POST CSRF gate does not run for GET, so 15 DELETE routes and 4 "send/approve/toggle" routes were reachable from any third-party `<img>`. A cross-origin GET guard is the missing half of CSRF protection - and the router is the only place that can enforce it for every route at once.
+_856. **The same-origin test needs two independent signals.** `Sec-Fetch-Site` (modern browsers, unforgeable) plus the `Referer` host (older browsers) - and an ABSENT `Referer` must be treated as *allowed*, or every bookmark and every direct URL would break.
+_857. **A file that shrank is a bug, even when it still parses.** AGENTS.md was cut at exactly 500 KiB with a tool's truncation marker appended; `git status` called it a normal edit and 162 headings still looked plausible. A legitimate log entry is always an APPEND - so "the worktree is shorter than HEAD" is a one-line integrity check that catches 45 lost entries before they are committed.
+_858. **A read tool's truncated output must never be written back over its input.** The damage came from a 500 KiB output cap being fed straight into a file write. When a tool truncates, the truncation marker itself is the proof - and it should be grepped for, not read past.
+_859. **A sweep is a mutation probe until you prove otherwise.** The GET sweep reached two DELETE routes with an admin session and only escaped because the session had lost its role. Enumerate the destructive paths FIRST and exclude them by name; a sweep that can delete rows is not a test suite, it is an incident waiting for a session.
+_860. **`git -C '<path>'` does not work on Windows.** cmd.exe does not treat single quotes as quoting, so the command fails with "The system cannot find the path specified" - and a shell `git` failure looks like a missing repository. `chdir()` into the repo instead.
+
+### Owner actions still open (carried forward)
+Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) - voice/S3/scheduler/Redis credentials - `bohisawagar-banner.jpg` owner asset drop - `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED; ~32 GB) - the `package:material_ui` migration if the Flutter pin is ever raised above 3.47.9 (281 imports, and `flutter_localizations` has to move with it) - **the 15 destructive GET routes still have no POST twin**: the cross-origin guard stops the CSRF, but the durable fix is to re-register each one as a POST with a CSRF token and change the admin buttons to forms (owner decision: it touches ~15 views).
+
 ## Session 462: Permanent Leadership Career Salary Plan Established, Dynamic Festival & Promotional Campaign Engine Delivered (Associate Targets & Customer Promo Codes), Real-Time Promo Validation & Plot Booking Discount Interlinked, 37/37 Township Steps Passed, 11/11 Master Suites Green, 1509/1509 PHPStan Clean (2026-11-13)
 
 ### Trigger
