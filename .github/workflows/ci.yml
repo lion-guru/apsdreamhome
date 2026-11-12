@@ -45,14 +45,26 @@ jobs:
       - name: Import database schema
         run: |
           sleep 10
-          mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/schema.sql 2>/dev/null || echo "Schema import skipped - using existing"
+          # S465: database/schema.sql is a 17 KB, 15-table fragment from
+          # April 2026 and does NOT contain a single table the app uses
+          # (users, plots, properties, leads, wallet_points ... all missing).
+          # The scanner compares the app's SQL against the schema, so against
+          # that fragment it was comparing against fiction.  Use the real
+          # schema (1043 tables, no rows).
+          mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/schema_current.sql \
+            || echo "Schema import failed - using whatever the service created"
       - name: Run schema scanner
         run: |
-          if [ -f testing/scan_schema_mismatches.php ]; then
-            php testing/scan_schema_mismatches.php
-          else
-            echo "Schema scanner not found, skipping"
+          # S465: testing/scan_schema_mismatches.php DID NOT EXIST, so this
+          # job printed "Schema scanner not found, skipping" and went GREEN -
+          # a no-op gate.  The scanner now exists and the job FAILS if it is
+          # missing again.
+          if [ ! -f testing/scan_schema_mismatches.php ]; then
+            echo "::error::testing/scan_schema_mismatches.php is missing - the schema gate would be a no-op"
+            exit 1
           fi
+          php testing/scan_schema_mismatches.php \
+            --baseline=database/schema_mismatch_baseline.txt
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
