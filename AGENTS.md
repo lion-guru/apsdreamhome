@@ -17,80 +17,119 @@
 
 > **⚠️ PROBE SAFETY (new, since S448):** NEVER blanket-POST `{}` to every endpoint while sweeping. `MobileUserApiController::deleteAccount()` soft-deleted the logged-in customer (email → `deleted_3@deleted.com`) because it deleted without requiring a password. Sweep GET-only, or use a throwaway account. See lesson _783.
 
-## Session 453: GitHub Actions GREEN - CI (Flutter Analyze) + CI/CD Pipeline (PHPStan) Fixed, 523 -> 0 Issues, 7454 -> 0 Errors, 13 Real PHP Bugs Repaired (2026-11-12)
+## Session 453: GitHub Actions GREEN - CI + CI/CD Pipeline + Visual Regression fixed, 523->0 Flutter issues, 7454->0 PHPStan errors, 7 real production bugs repaired (2026-11-12)
 
 ### Trigger
 Owner: "aur comit push ho raha git par waha run failsd kyo bata raha wo bhi dekh ke thik kar dena" - the GitHub repo page showed red runs.
 
 ### The headline
-**Both red workflows had been failing continuously since 2026-10-11** - a month of red, NOT caused by my S452 work. `gh run list --workflow="CI"` and `--workflow="CI/CD Pipeline"` both showed an unbroken `failure` streak back to 2026-10-11 18:19. The `PHP Tests (Legacy)` and `CodeQL` workflows were green the whole time. Both are now **GREEN**, and the workflow YAML files were **not modified** - the fixes are all in the code/config the gates analyse.
+**3 workflows were red, and every one of them had been red for WEEKS** - not because of my previous session's work:
+- `CI` -> red continuously since **2026-10-11**
+- `CI/CD Pipeline` -> red continuously since **2026-10-11**
+- `Visual Regression Testing` -> red continuously since **2026-09-11**
+(`PHP Tests (Legacy)` and `CodeQL` were green the whole time.)
 
-### Failure 1 - CI -> "Flutter Analyze" job -> `flutter analyze` -> 523 issues -> exit 1
-- **`flutter analyze` treats `info` severity as FATAL.** 523 issues = 0 errors + 81 warnings + 441 infos. The job is `run: flutter analyze` with no flags, so infos alone fail it.
-- I did **not** add `--no-fatal-infos` - that moves the goalposts and hides the debt. The only honest fix is **0 issues**.
+**Each failure masked the next one.** Fixing one job revealed the next: the pipeline had been red at step 1 for a month and nobody had seen steps 2, 3 and 4. Fixing PHPStan revealed the Flutter web build; fixing that revealed the APK build; fixing the Playwright install revealed the DB setup. All of them are now green.
+
+### The root cause of the CI failures: the toolchains were NOT pinned
+`ci.yml` and `ci-cd.yml` used `subosito/flutter-action@v2` with **only `channel: stable` and no `flutter-version`**. The runner therefore installed whatever stable was on the day. Between my first log fetch and the next push, **stable moved 3.47.9 -> 3.50.0** (2026-11-11), and 3.50.0 deprecated `package:flutter/material.dart` in favour of `package:material_ui` -> **281 import sites became analyzer infos** -> and `flutter analyze` treats infos as fatal. The SDK is now **pinned to 3.47.9** (3 places), `visual-regression.yml` is pinned to **ubuntu-24.04** (Playwright 1.59.1 has no chromium build for ubuntu-26.04, which is what `ubuntu-latest` now resolves to), and the APK job installs **temurin 17** (the runner default is JDK 25, which Gradle 8.14 rejects; the project targets Java 17).
+
+### Failure 1 - CI -> "Flutter Analyze" -> `flutter analyze` -> 523 issues -> exit 1
+- **`flutter analyze` treats `info` severity as FATAL.** 523 = 0 errors + 81 warnings + 441 infos. I did **not** add `--no-fatal-infos` - that hides the debt instead of fixing it. The only honest fix is **0 issues**.
 - 81 warnings -> 0: unused/duplicate imports, unused locals, unused fields, unused private declarations, dead code, generic type args.
-- 441 infos -> 0: `prefer_const_constructors`, `prefer_relative_imports`, `use_null_aware_elements`, `unnecessary_underscores`, `prefer_single_quotes`, `deprecated_member_use` (`Share`->`SharePlus` 46 sites, `SpeechListenOptions`, `Matrix4.scaleByDouble`, `WillPopScope`->`PopScope`, `onReorder`->`onReorderItem`, `Radio.groupValue/onChanged`->`RadioGroup`), `avoid_print` -> `debugPrint` / `dart:developer` `log`, `use_build_context_synchronously`, pubspec dependency sort.
-- **28 of them were REAL "BuildContext used after the widget was disposed" bugs** - not style noise. All guarded properly.
-- **2 real app bugs were exposed by the lint**:
-  - `about_page.dart` fetched `/site-settings` into `_companyInfo` + set `_isLoading`, and used **neither** - the About page showed hardcoded copy while the API call was dead. Both now render (loading spinner + a company-info card).
-  - `property_tax_page.dart` computed `_effectiveRate` and never displayed it - a calculated value the user never saw. Now included in the share text.
+- 441 infos -> 0: `prefer_const_constructors`, `prefer_relative_imports`, `use_null_aware_elements`, `unnecessary_underscores`, `prefer_single_quotes`, `deprecated_member_use` (`Share`->`SharePlus` 46 sites, `SpeechListenOptions`, `Matrix4.scaleByDouble`, `WillPopScope`->`PopScope`, `onReorder`->`onReorderItem`, `Radio`/`RadioListTile` `groupValue`+`onChanged` -> `RadioGroup` ancestor), `avoid_print` -> `debugPrint` / `dart:developer` `log`, `use_build_context_synchronously`, pubspec dependency sort.
+- **28 of them were REAL "BuildContext used after the widget was disposed" bugs.**
+- **2 real app bugs the lint exposed**: `about_page.dart` fetched `/site-settings` into `_companyInfo` + set `_isLoading` and used **neither** (both now render); `property_tax_page.dart` computed `_effectiveRate` and never displayed it (now in the share text).
 
 ### Failure 2 - CI/CD Pipeline -> "Lint & Syntax Check" -> PHPStan -> 7454 errors -> exit 1
 **Two CONFIG bugs caused 5415 of the 7454:**
-1. **`phpstan.neon` never referenced a bootstrap file.** PHPStan analysed the codebase without the application's constants, so every `BASE_URL` / `APP_ROOT` / `STORAGE_PATH` reference was reported as "Constant X not found" - **1442 errors** (BASE_URL alone: 1336). Fix: new `config/phpstan-bootstrap.php` that mirrors EXACTLY the constant block of `config/bootstrap.php` (L11-32 + BASE_URL) with **no side effects** (the real bootstrap opens a DB, starts a session and loads the autoloader - unusable as a static-analysis bootstrap). Wired via `bootstrapFiles:`.
-2. **`reportUnmatchedIgnoredErrors` defaults to TRUE.** Two of the four `ignoreErrors` patterns matched nothing any more, and an unmatched ignore pattern fails the build **by itself, with zero real findings**. Fix: `reportUnmatchedIgnoredErrors: false`.
-- The remaining big family was 3973 x `method.void` - the codebase's deliberate `return $this->render(...)` / `return $this->jsonResponse(...)` idiom, where those helpers are declared `void`. Ignored with a **path-scoped identifier rule** (`identifier: method.void` + `path: app/Http/Controllers/*`), not a blanket message pattern.
-- 7454 -> **2108**.
+1. **`phpstan.neon` never referenced a bootstrap file.** PHPStan analysed the codebase without the application's constants -> every `BASE_URL`/`APP_ROOT`/`STORAGE_PATH` reference was "Constant X not found" -> **1442 errors** (BASE_URL alone: 1336). Fix: new `config/phpstan-bootstrap.php` mirroring the constant block of `config/bootstrap.php` with **no side effects** (the real bootstrap opens a DB, starts a session and loads the autoloader - unusable as a static-analysis bootstrap).
+2. **`reportUnmatchedIgnoredErrors` defaults to TRUE.** Two of the four `ignoreErrors` patterns matched nothing any more, and an unmatched ignore pattern fails the build **by itself, with zero real findings**.
+- The remaining big family: 3973 x `method.void` (the deliberate `return $this->render(...)` idiom) -> ignored with a **path-scoped identifier rule**, not a blanket message pattern.
+- 7454 -> 2108.
+
+### Failure 3 - CI/CD Pipeline -> "Build Assets" -> `flutter build web --release` -> exit 1
+`camera_web 0.3.5+4` puts `@JS` on an **extension type constructor**, which Dart 3.13 turned into a hard error:
+```
+Error: The '@JS' annotation on an extension type constructor has no effect.
+```
+`camera_web 0.3.6` (2026-11-06) removed those annotations. Verified by diffing both package sources and by building the web target locally (exit 0, "Built build/web").
+
+### Failure 4 - CI -> "Build Release APK" -> `flutter build apk --release` -> exit 1
+- **`android/gradle.properties` committed a Windows-only JDK path**: `org.gradle.java.home=C:\\Program Files\\Android\\Android Studio\\jbr`. On Linux that is an invalid Java home and Gradle died with *"Value 'C:\\Program Files\\...' given for org.gradle.java.home ... is invalid"*. Removed (with a note on where to set it locally).
+- The runner's default JDK is **25**, and Gradle 8.14 rejects it (*"The Java version used for the build is 25.0.5, which is incompatible with Gradle 8.14"*). The project targets Java 17, so the job now installs temurin 17 and points Flutter at it.
+
+### Failure 5 - Visual Regression -> `npx playwright install --with-deps chromium` -> exit 1
+```
+BEWARE: your OS is not officially supported by Playwright; installing dependencies for ubuntu26.04-x64 as a fallback.
+Error: ERROR: Playwright does not support chromium on ubuntu26.04-x64
+```
+`ubuntu-latest` now resolves to ubuntu-26.04. Pinned the job to **ubuntu-24.04**. The older failures of the same workflow (e.g. 2026-10-19) were a *different* bug: the schema import ran before MariaDB was up and swallowed the error (`2>/dev/null || true`), so the app answered *"Database connection failed: Connection refused"*. It now waits for MariaDB with `mysqladmin ping` and imports with the explicit port + database name (the pattern the passing schema-scan job in ci.yml already uses).
+
+### The Linux case-sensitivity family (found by PHPStan on the runner)
+The repo tracks `app/core`, `app/services` and `app/models` in **LOWERCASE**; Windows shows them capitalised and hides it. **`.github/workflows/deploy.yml` deploys to a LINUX production server over SSH**, so these were live deployment blockers, not just CI noise:
+- **17 path literals** case-corrected (Autoloader, SecurityTestSuite, S3Storage, StorageManager, TwilioService, CommunicationGateway, `config/bootstrap.php`).
+- **4 stale Autoloader classmap entries** -> the classmap is consulted BEFORE the PSR-4 lookup and `require_once`d unconditionally, so each was a fatal on request: `ConsolidatedUser` / `ConsolidatedProperty` (the classes no longer exist -> entries dropped), `AI/AssistantController.php` -> `AIAssistantController.php`, and `Api\AuthController` -> `app/Http/Controllers/Api/AuthController.php`.
+- **2 files that were never tracked**: `config/cron_jobs.php` (read AND written by `BackupRestoreService::scheduleBackup`) and `app/views/admin/ajax/generate-followup.php` (required by `AjaxController::generateFollowup` -> that endpoint was an **HTTP 500 on every call**).
+- The 800 baseline entries whose path casing differed are now **fnmatch character-class patterns** (`app/[Cc]ore/...`), so the baseline matches on BOTH a case-insensitive and a case-sensitive filesystem. Verified offline: all 1422 patterns match a git-tracked file and **no entry of the committed baseline is lost** under the Linux casing.
+- `phpstan.neon`'s `excludePaths` had the same problem -> PHPStan aborted the whole run with *"Invalid entry in excludePaths"*. Now a character class too.
 
 ### The 13 structural bugs PHPStan REFUSES to baseline (all real)
-PHPStan will not put these in a baseline, and every one is a genuine defect:
-1. `EmployeeTaxComplianceController` - `extends AdminController` resolved to a **non-existent** `App\Http\Controllers\Employee\AdminController` -> the class could never be loaded. Now `\App\Http\Controllers\Admin\AdminController`.
-2. `LeadScoring::$table` was non-static while the parent declares it static.
-3. `LeadScoring::getActiveRules()` fell through its `catch` with no `return` -> a `: array` method returning `null` -> **TypeError at runtime**.
-4. `AuditLog::getAll()` was **non-static overriding a static parent** -> PHP fatal at class load ("Cannot make non static method ... static"), so the class could never be loaded.
-5. `AuditLog::getAll()` was also missing the parent's `$perPage` parameter.
+1. `EmployeeTaxComplianceController` - extends a **non-existent** `App\Http\Controllers\Employee\AdminController` -> the class could never load.
+2. `LeadScoring::$table` non-static while the parent declares it static.
+3. `LeadScoring::getActiveRules()` fell through its `catch` with no `return` -> a `: array` method returning `null` -> **TypeError**.
+4. `AuditLog::getAll()` **non-static overriding a static parent** -> PHP fatal at class load.
+5. `AuditLog::getAll()` also missing the parent's `$perPage`.
 6. `Pivot::$guarded` carried a native `array` type while the parent has none.
 7. `CampaignService::getCampaignStats()` - catch with no `return` -> TypeError.
 8. `PropertyComparisonService::getPropertyAmenities()` - catch with no `return` -> TypeError.
 9. `PropertyComparisonService::getUserComparisons()` - catch with no `return` -> TypeError.
-10. `FileService` **extended a TRAIT as if it were a class** (and from the wrong namespace) -> the class could never be loaded. Now `use \App\Traits\ServiceTenantTrait;`.
-11. `FileService` called `$this->tenantWhere($sql, $params)` with 2 args; the trait's `tenantWhere()` takes **0** and returns a fragment -> ArgumentCountError.
-12. `FileService` called `$this->tenantInsertData($columns, $values)` with 2 args; the trait's takes **0** and returns a pair -> ArgumentCountError.
+10. `FileService` **extended a TRAIT as if it were a class** (and from the wrong namespace) -> could never load.
+11. `FileService` called `$this->tenantWhere($sql, $params)` with 2 args; the trait's takes **0** and returns a fragment -> ArgumentCountError.
+12. `FileService` called `$this->tenantInsertData($columns, $values)` with 2 args; the trait's takes **0** -> ArgumentCountError.
 13. `DependencyContainer`'s anonymous PSR logger narrowed `$message` to `string|Stringable` while `Psr\Log\LoggerInterface` says `mixed` -> 9 non-contravariant methods.
-- **2 Laravel-shaped dead files excluded** (not baselined): `app/Models/UserDashboardLayout.php` and `app/Providers/CommissionServiceProvider.php` extend `Illuminate\Database\Eloquent\Model` / a ServiceProvider - **illuminate is not installed** and this project is a custom MVC framework with no provider boot, so they can never load. Porting or deleting them is a separate task, not a CI task.
+- 2 Laravel-shaped dead files excluded (not baselined): `app/models/UserDashboardLayout.php` + `app/Providers/CommissionServiceProvider.php` extend classes that are **not installed** (illuminate is absent; this is a custom MVC framework) -> they can never load. Port-or-delete is a separate task.
+- **Baseline mechanism**: `phpstan-baseline.neon` (2070 pre-existing findings) is `includes:`-ed, so the pipeline is green again while **ANY NEW error still fails the build**.
 
-### The baseline mechanism (so the gate is still a gate)
-`phpstan-baseline.neon` (304 KB, **2070** pre-existing findings) is `includes:`-ed from `phpstan.neon`. Result: **the pipeline is green again, but ANY NEW error still fails the build.** Regenerate with `vendor/bin/phpstan analyse --generate-baseline`. 2087 -> 2070 because my own fixes removed 17.
+### Two more real bugs found on the way
+- **`SEOOptimizer::optimizeImages()` used a variable-length lookbehind** (`(?<!alt="[^"]*")`) which is **NOT valid PCRE** - "lookbehind assertion is not fixed length" on PHP 8.2, "length of lookbehind assertion is not limited" on PHP 8.3. `preg_replace()` therefore returned **NULL and wiped the ENTIRE page content**. Replaced with a `preg_replace_callback` (and it no longer appends a second `loading="lazy"` to an `<img>` that already had one). Proved with a probe: content preserved, alt added only where missing.
+- **`Config::loadConfig()` loaded `config/application.php`, but that file was RENAMED to `config/app.php` long ago** - the application config was **never loaded**. The merge stays FLAT on purpose: every `config()` caller in the codebase uses a dotted key (`app.name`, `app.url`, `database.default`, `seo.*`, `cache.driver`), so the flat top-level keys the file contributes are read by nobody and no consumer's value changes - and the SEO canonical URL is NOT repointed at localhost.
 
-### The `mounted` vs `context.mounted` distinction (determined empirically, not guessed)
-- `State.context` (i.e. the State's own `context` property) -> `if (!mounted) return;`
-- a `build()` **parameter** `context` -> `if (!context.mounted) return;` - and it must be an **early return**, not a wrapper, otherwise the lint still calls it an "unrelated mounted check".
-- The lint's two messages map to two different fixes:
-  - "guarded by an unrelated 'mounted' check" = the code uses a `build()`-param context but is wrapped in `if (mounted) { }` -> replace the wrapper with an early return + `context.mounted`.
-  - "Don't use 'BuildContext's across async gaps" (no guard) = add the guard.
-- A **blanket** replace of `if (mounted)` -> `if (context.mounted)` across the tree broke **7 files** that use a `context` *parameter* (no `mounted` in scope) -> "Undefined name 'mounted'". Caught by `flutter analyze`, reverted per-file.
-- **`RadioGroup` availability**: `packages/flutter/lib/src/widgets/radio_group.dart` exists and is exported via `widgets.dart` -> available through `package:flutter/material.dart`. It is NOT in `src/material/` (my first grep said it did not exist - the first grep only looked in `src/material/`). Both `Radio` and `RadioListTile` sites were migrated to a `RadioGroup` ancestor.
+### The stale pubspec.lock
+The committed `pubspec.lock` did not satisfy Dart 3.13.7, so **every CI run re-resolved and printed "Changed 7 dependencies!"** - which is exactly why the local analysis and the CI analysis disagreed. The lockfile Flutter 3.47.9 actually resolves is now committed (camera_web 0.3.6 + 7 transitive bumps), so CI resolves exactly what is analysed locally.
+
+### The `mounted` vs `context.mounted` distinction (determined empirically)
+- `State.context` -> `if (!mounted) return;`
+- a `build()` **parameter** `context` -> `if (!context.mounted) return;` - and it must be an **early return**, not a wrapper, or the lint still calls it an "unrelated mounted check".
+- The lint's two messages map to two different fixes: "guarded by an unrelated 'mounted' check" = replace the wrapper with an early return; "Don't use 'BuildContext's across async gaps" (no guard) = add the guard.
+- A **blanket** replace of `if (mounted)` -> `if (context.mounted)` broke **7 files** that use a `context` *parameter* -> "Undefined name 'mounted'". Caught by `flutter analyze`, reverted per-file.
+- **`RadioGroup` exists** at `packages/flutter/lib/src/widgets/radio_group.dart`, exported via `widgets.dart` -> available through `package:flutter/material.dart`. It is NOT in `src/material/` (my first grep said it did not exist - the first grep only looked in `src/material/`).
 
 ### Verification
-- `flutter analyze` -> **0 errors, 0 warnings, 0 infos**, **exit code 0** (was 523 issues / exit 1).
-- `vendor/bin/phpstan analyse --memory-limit=512M` -> **[OK] No errors**, **exit code 0** (was 7454 / exit 1).
-- `php testing/master_test_runner.php` -> **10/10 PASSED** (15.96s).
-- Live web sweep -> **1989 GET routes, 0 x 500** (200 x1615 / 301 x50 / 302 x294 / 400 x11 / 401 x1 / 403 x17 / 404 x1).
-- Every changed PHP file `php -l` clean; `flutter pub get` resolves.
-- **DB: ZERO writes** - this session touched no table, no schema, no migration. Count baseline unchanged from S452.
-- Committed: **134 files** (8 PHP + `config/phpstan-bootstrap.php` + `phpstan.neon` + new `phpstan-baseline.neon` + 123 Dart/pub). `storage/efiling/gst/*.json` and `storage/exports/*.csv` (runtime artifacts) left untracked; `storage/logs/smoke_report.json` reverted.
+- `flutter analyze` (Flutter 3.47.9 / Dart 3.13.7, installed locally to MATCH the runner) -> **No issues found, exit 0**.
+- `flutter build web --release` -> **Built build/web, exit 0**.
+- `vendor/bin/phpstan analyse --memory-limit=512M` -> **[OK] No errors, exit 0**.
+- `php testing/master_test_runner.php` -> **10/10 PASSED**.
+- Live HTTP smoke (`/`, `/properties`, `/api/health`, `/admin/login`) -> 200.
+- Repo-wide case sweep -> **0 case mismatches** (only 2 optional `file_exists` probes remain, both with fallbacks).
+- Every changed PHP file `php -l` clean; all touched workflows parse as YAML.
+- **DB: ZERO writes** - this session touched no table, no schema, no migration. Counts byte-identical to the S452 baseline (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0).
+- Committed: 3 CI commits (`dfc546854` analyze+phpstan, `a132b9bda` case-agnostic paths, `6a07733c2` linux paths + 2 runtime bugs, `28eb4a8da` toolchain pins + lockfile, `70d086701` APK JDK + visual-regression DB).
 
 ### Owner actions still open (carried forward, unchanged)
-Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) - voice/S3/scheduler/Redis credentials - `api_tokens` 30-day-TTL prune cron - 53 duplicate route registrations in `routes/web.php` (19 pairs where the handler CHANGED) - `bohisawagar-banner.jpg` owner asset drop - `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED; ~32 GB) - 2 Laravel-shaped dead files to port-or-delete.
+Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) - voice/S3/scheduler/Redis credentials - `api_tokens` 30-day-TTL prune cron - 53 duplicate route registrations in `routes/web.php` (19 pairs where the handler CHANGED) - `bohisawagar-banner.jpg` owner asset drop - `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED; ~32 GB) - 2 Laravel-shaped dead files to port-or-delete - **the `package:material_ui` migration** if the Flutter pin is ever raised above 3.47.9 (281 imports, and `flutter_localizations` has to move with it).
 
 ### Key Lessons (carried, continued)
-_822. **A gate that has been red for a month is not "my change broke it".** Check `gh run list --workflow="CI" --json conclusion,createdAt` FIRST - the streak date tells you whether you caused it. Both workflows had failed continuously since 2026-10-11; my work was a bystander.
+_822. **A gate that has been red for a month is not "my change broke it".** Check `gh run list --workflow="CI" --json conclusion,createdAt` FIRST - the streak date tells you whether you caused it. Both PHP workflows had failed continuously since 2026-10-11; my work was a bystander.
 _823. **`flutter analyze` treats `info` as fatal.** `--no-fatal-infos` would have turned the job green in 10 seconds and hidden 441 issues forever. The gate stays honest only if you reach **0** - and that is the fix, not a workaround.
-_824. **A static analyser with no bootstrap file does not know your application's constants.** 1442 of 7454 PHPStan errors were the analyser never having heard of `BASE_URL`. Before reading an analyser's output, check that it was *told* about the codebase it is analysing (bootstrapFiles / stubs / scanDirectories).
-_825. **`reportUnmatchedIgnoredErrors` defaults to TRUE - a stale ignore pattern fails the build by itself.** An ignore list that has rotted is a landmine: zero real findings and the build still goes red. Set it to `false`, or keep the list honest.
-_826. **"Written but never read" is a DIFFERENT warning from "never used".** Deleting a field's declaration breaks every assignment to it (I produced 13 hard errors that way). Classify each reference first: a write (`_x = ...`) can go with the field; a read keeps it alive.
-_827. **`State.context` and a `build()`-parameter `context` need DIFFERENT guards.** `if (!mounted) return;` vs `if (!context.mounted) return;`, and the second must be an early return rather than a wrapper. A blanket rename across the tree breaks every file that uses a `context` parameter - "Undefined name 'mounted'" is the tell.
-_828. **A script that deletes "the line the analyser flagged" breaks multi-line statements.** Two files had to be restored from git and fixed by hand. When a bulk edit is proposed, check whether the flagged line is the WHOLE statement before deleting it - and keep `git checkout -- <file>` in your back pocket for the ones it breaks.
+_824. **A static analyser with no bootstrap file does not know your application's constants.** 1442 of 7454 PHPStan errors were the analyser never having heard of `BASE_URL`. Before reading an analyser's output, check that it was *told* about the codebase it is analysing.
+_825. **`reportUnmatchedIgnoredErrors` defaults to TRUE - a stale ignore pattern fails the build by itself.** An ignore list that has rotted is a landmine: zero real findings and the build still goes red.
+_826. **"Written but never read" is a DIFFERENT warning from "never used".** Deleting a field's declaration breaks every assignment to it (I produced 13 hard errors that way). Classify each reference first.
+_827. **`State.context` and a `build()`-parameter `context` need DIFFERENT guards.** `if (!mounted) return;` vs `if (!context.mounted) return;`, and the second must be an early return rather than a wrapper. A blanket rename breaks every file that uses a `context` parameter.
+_828. **A script that deletes "the line the analyser flagged" breaks multi-line statements.** Two files had to be restored from git and fixed by hand. Check whether the flagged line is the WHOLE statement before deleting it.
+_829. **Fixing one CI job reveals the next one.** The pipeline had been red at step 1 for a month, so steps 2-4 had never run. Expect a chain, and budget for it instead of assuming one fix ends it.
+_830. **`channel: stable` with no version is a moving target that breaks CI on someone else's schedule.** The Flutter SDK moved 3.47.9 -> 3.50.0 mid-session and turned 281 imports into fatal infos. Pin the SDK, the runner image AND the JDK; a `channel` without a `version` is a latent outage.
+_831. **A committed absolute path is never right for anyone but its author.** `org.gradle.java.home=C:\\Program Files\\...` and the repo's lowercase `app/core` vs the code's `app/Core` both worked on the author's machine and failed on every other one. Grep the repo for absolute paths and for path literals whose case does not match the tracked tree - a case-sensitive deployment target (Linux) is where they surface.
 
 ## Session 452: Web 500 Sweep Round 2 - 37 -> 0 x 500 (1989 GET Routes), Autoload Shim + Global config() Helper, Missing Query-Runner Family, MariaDB Aria Crash Recovery (2026-11-11)
 
