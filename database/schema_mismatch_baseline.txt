@@ -248,8 +248,5 @@ telecaller_daily_tasks.updated_at
 user_points.action
 user_points.reason
 users.department
-wallet_transactions.reference
-wallet_transactions.type
-wallet_transactions.wallet_id
 work_schedules.is_active
 work_schedules.work_days

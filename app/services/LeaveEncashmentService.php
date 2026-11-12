@@ -256,7 +256,7 @@ class LeaveEncashmentService
             ", array_merge([$payerId, $paymentRef, $requestId], $this->tVal()));
 
             // Credit to wallet
-            $this->creditWallet($req['employee_id'], $req['net_amount'], 'Leave encashment', 'leave_encashment_' . $req['id']);
+            $this->creditWallet($req['employee_id'], $req['net_amount'], 'Leave encashment', (int)$req['id'], 'leave_encashment');
 
             $this->db->commit();
             return ['success' => true, 'message' => 'Leave encashment paid successfully'];
@@ -318,23 +318,45 @@ class LeaveEncashmentService
     /**
      * Credit to employee wallet
      */
-    private function creditWallet(int $employeeId, float $amount, string $description, string $reference): void
+    private function creditWallet(int $employeeId, float $amount, string $description, int $referenceId, string $referenceType = 'leave_encashment'): void
     {
         try {
-            // Phase 4/7: use IdentityService for legacy-id → user_id resolution
+            // Phase 4/7: use IdentityService for legacy-id -> user_id resolution
             $empUserId = (new \App\Services\IdentityService())->resolveEmployeeUserId($employeeId);
-            if ($empUserId <= 0) return;
+            if ($empUserId <= 0) {
+                error_log("LeaveEncashmentService: no users.id for employee {$employeeId} - wallet NOT credited");
+                return;
+            }
 
-            $wallet = $this->db->fetchOne("SELECT * FROM user_wallets WHERE user_id = ?", [$empUserId]);
-            if (!$wallet) return;
-
-            $newBalance = (float)$wallet['balance'] + $amount;
-            $this->execute("UPDATE user_wallets SET balance = ?, total_earned = total_earned + ? WHERE id = ?", [$newBalance, $amount, $wallet['id']]);
-
-            $this->execute("
-                INSERT INTO wallet_transactions (wallet_id, type, amount, balance_after, description, reference, status, tenant_id, created_at)
-                VALUES (?, 'credit', ?, ?, ?, ?, 'completed', 1, NOW())
-            ", [$wallet['id'], $amount, $newBalance, $reference, $reference]);
+            // S466: the wallet movement below used two statements that could
+            // NOT succeed:
+            //   UPDATE user_wallets SET balance = ?, total_earned = total_earned + ?
+            //       - `user_wallets` is a SECOND, parallel wallet table and its
+            //         column is `total_credited`, not `total_earned` -> 1054
+            //   INSERT INTO wallet_transactions (wallet_id, type, ..., reference)
+            //       - none of `wallet_id`, `type` or `reference` exists on that
+            //         table (it has user_id / transaction_type /
+            //         transaction_category / reference_id / reference_type) -> 1054
+            // Both died inside a try/catch that only wrote to the error log,
+            // so an APPROVED leave encashment never reached the employee's
+            // wallet - and where the balance update had succeeded, the money
+            // would have moved with NO ledger row to show for it.
+            //
+            // The canonical path is App\Services\WalletService::credit():
+            // FOR UPDATE lock, fail-closed on a non-positive amount, the
+            // balance and the ledger row in ONE transaction, real columns.
+            $walletService = new \App\Services\WalletService();
+            $credited = $walletService->credit(
+                $empUserId,
+                $amount,
+                'adjustment',
+                $description,
+                $referenceId > 0 ? $referenceId : null,
+                $referenceType
+            );
+            if (!$credited) {
+                error_log("LeaveEncashmentService: wallet credit REJECTED for user {$empUserId} (amount {$amount})");
+            }
         } catch (\Throwable $e) {
             error_log("Wallet credit failed: " . $e->getMessage());
         }

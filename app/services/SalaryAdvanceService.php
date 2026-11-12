@@ -222,7 +222,7 @@ class SalaryAdvanceService
         // If advance, create wallet credit entry
         if ($advance['type'] === 'advance') {
             // Credit to employee wallet
-            $this->creditWallet($advance['employee_id'], $advance['amount'], "Salary advance approved", 'salary_advance_' . $advanceId);
+            $this->creditWallet($advance['employee_id'], $advance['amount'], "Salary advance approved", (int)$advanceId, 'salary_advance');
         }
 
         return ['success' => true, 'message' => 'Advance approved'];
@@ -246,7 +246,7 @@ class SalaryAdvanceService
             ", array_merge([$disburserId, $disbursementRef, $advanceId], $this->tVal()));
 
             // Credit to wallet
-            $this->creditWallet($advance['employee_id'], $advance['amount'], $advance['type'] === 'loan' ? 'Loan disbursed' : 'Salary advance disbursed', $advance['type'] . '_' . $advanceId);
+            $this->creditWallet($advance['employee_id'], $advance['amount'], $advance['type'] === 'loan' ? 'Loan disbursed' : 'Salary advance disbursed', (int)$advanceId, 'salary_advance');
 
             $this->db->commit();
             return ['success' => true, 'message' => 'Amount disbursed successfully'];
@@ -314,21 +314,55 @@ class SalaryAdvanceService
     /**
      * Credit to employee wallet
      */
-    private function creditWallet(int $employeeId, float $amount, string $description, string $reference): void
+    /**
+     * Credit the employee's wallet after an advance is approved / disbursed.
+     *
+     * S466: this used to do its own money movement, and EVERY statement it
+     * wrote was wrong:
+     *   UPDATE user_wallets SET balance = ?, total_earned = total_earned + ?
+     *       - `user_wallets` is a SECOND, parallel wallet table, and its
+     *         column is `total_credited`, not `total_earned` -> 1054
+     *   INSERT INTO wallet_transactions (wallet_id, type, ..., reference)
+     *       - none of `wallet_id`, `type` or `reference` exists on that
+     *         table (it has user_id, transaction_type, transaction_category,
+     *         reference_id, reference_type) -> 1054
+     * Both statements were inside a try/catch that swallowed the error into
+     * `error_log("Wallet credit failed: ...")`, so an APPROVED salary advance
+     * never reached the employee's wallet at all - and the failure was
+     * invisible to the user and to the admin who approved it.
+     *
+     * The canonical path is App\Services\WalletService::credit(), which
+     * locks the wallet row FOR UPDATE, fails closed on a non-positive
+     * amount, writes the balance AND the ledger row in ONE transaction and
+     * uses the real column names.
+     */
+    private function creditWallet(int $employeeId, float $amount, string $description, int $referenceId, string $referenceType = 'salary_advance'): void
     {
         try {
-            // Get wallet (user_id via profile legacy bridge — handles legacy/user/profile PK spaces)
-            $wallet = $this->fetchOne("SELECT * FROM user_wallets WHERE user_id = (SELECT user_id FROM employee_profiles WHERE legacy_id = ? OR user_id = ? OR id = ? LIMIT 1)", [(int)$employeeId, (int)$employeeId, (int)$employeeId]);
-            if (!$wallet) return; 
+            // employees live in `users`; employee_profiles only carries the
+            // legacy bridge (legacy_id / user_id / id).
+            $row = $this->fetchOne(
+                "SELECT user_id FROM employee_profiles WHERE legacy_id = ? OR user_id = ? OR id = ? LIMIT 1",
+                [(int)$employeeId, (int)$employeeId, (int)$employeeId]
+            );
+            $userId = (int)($row['user_id'] ?? 0);
+            if ($userId <= 0) {
+                error_log("SalaryAdvanceService: no users.id for employee {$employeeId} - wallet NOT credited");
+                return;
+            }
 
-            $newBalance = (float)$wallet['balance'] + $amount;
-            $this->execute("UPDATE user_wallets SET balance = ?, total_earned = total_earned + ? WHERE id = ?", [$newBalance, $amount, $wallet['id']]);
-
-            // Log transaction
-            $this->execute("
-                INSERT INTO wallet_transactions (wallet_id, type, amount, balance_after, description, reference, status, tenant_id, created_at)
-                VALUES (?, 'credit', ?, ?, ?, ?, 'completed', 1, NOW())
-            ", [$wallet['id'], $amount, $newBalance, $description, 'advance_' . $reference]);
+            $walletService = new \App\Services\WalletService();
+            $credited = $walletService->credit(
+                $userId,
+                $amount,
+                'adjustment',
+                $description,
+                $referenceId > 0 ? $referenceId : null,
+                $referenceType
+            );
+            if (!$credited) {
+                error_log("SalaryAdvanceService: wallet credit REJECTED for user {$userId} (amount {$amount})");
+            }
         } catch (\Throwable $e) {
             error_log("Wallet credit failed: " . $e->getMessage());
         }
