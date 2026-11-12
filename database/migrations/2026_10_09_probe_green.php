@@ -243,7 +243,14 @@ run($pdo, 'notifications.action_url', "ALTER TABLE `notifications` ADD COLUMN IF
 
 // ── 12. seed users (admin kept; workflow customer added) ──
 $hash = password_hash('Aps@2026', PASSWORD_DEFAULT);
-$stmt = $pdo->prepare("INSERT IGNORE INTO `users` (`tenant_id`, `name`, `email`, `phone`, `password`, `role`, `status`) VALUES (1, 'Workflow Probe', 'testuser@example.com', '9999990001', ?, 'customer', 'active')");
+// S468: INSERT IGNORE only protects a UNIQUE key, and `users.email` has
+// only a NON-unique index - so this seeded a SECOND testuser@example.com
+// on every run.  Guard it with NOT EXISTS instead.
+$stmt = $pdo->prepare("
+    INSERT INTO `users` (`tenant_id`, `name`, `email`, `phone`, `password`, `role`, `status`)
+    SELECT 1, 'Workflow Probe', 'testuser@example.com', '9999990001', ?, 'customer', 'active'
+    WHERE NOT EXISTS (SELECT 1 FROM `users` WHERE `email` = 'testuser@example.com')
+");
 $stmt->execute([$hash]);
 echo "OK   testuser seed\n";
 

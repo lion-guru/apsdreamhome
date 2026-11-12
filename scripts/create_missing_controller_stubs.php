@@ -89,7 +89,11 @@ $createdModels = 0;
 
 // Create controllers
 foreach ($controllers as $filePath => $config) {
-    $fullPath = __DIR__ . '/' . $filePath;
+    // S468: the path was __DIR__ . '/' . $filePath, so it wrote into
+    // database/migrations/app/... - it could never create the app file it
+    // intended, and it littered the migrations folder with 13 stub
+    // controllers.  The project root is two levels up.
+    $fullPath = dirname(__DIR__, 2) . '/' . $filePath;
     $dir = dirname($fullPath);
     
     echo "📁 Creating Controller: " . basename($filePath) . "\n";
@@ -125,6 +129,14 @@ foreach ($controllers as $filePath => $config) {
     
     $content .= "}\n";
     
+    // S468: never OVERWRITE an existing controller/model - this migration
+    // exists to CREATE MISSING files, and an unconditional write would
+    // replace a real controller with a TODO stub.
+    if (file_exists($fullPath)) {
+        echo "   - {$filePath} already exists - skipped\n";
+        continue;
+    }
+
     // Write file
     if (file_put_contents($fullPath, $content)) {
         echo "   ✅ Controller created successfully\n";
@@ -140,7 +152,11 @@ echo "🔧 Creating missing model files...\n\n";
 
 // Create models
 foreach ($models as $filePath => $config) {
-    $fullPath = __DIR__ . '/' . $filePath;
+    // S468: the path was __DIR__ . '/' . $filePath, so it wrote into
+    // database/migrations/app/... - it could never create the app file it
+    // intended, and it littered the migrations folder with 13 stub
+    // controllers.  The project root is two levels up.
+    $fullPath = dirname(__DIR__, 2) . '/' . $filePath;
     $dir = dirname($fullPath);
     
     echo "📁 Creating Model: " . basename($filePath) . "\n";
@@ -198,6 +214,14 @@ foreach ($models as $filePath => $config) {
     
     $content .= "}\n";
     
+    // S468: never OVERWRITE an existing controller/model - this migration
+    // exists to CREATE MISSING files, and an unconditional write would
+    // replace a real controller with a TODO stub.
+    if (file_exists($fullPath)) {
+        echo "   - {$filePath} already exists - skipped\n";
+        continue;
+    }
+
     // Write file
     if (file_put_contents($fullPath, $content)) {
         echo "   ✅ Model created successfully\n";
