@@ -97,7 +97,10 @@ class MLMService {
         );
       }
       // Fallback: try to derive from payouts endpoint
-      return _buildSummaryFromPayouts(associateId);
+      // NOTE (S453): the `await` is required - returning a Future from inside
+      // a try block without awaiting it means the catch below can never see
+      // an error from this call (lint: unawaited_return_in_try_block).
+      return await _buildSummaryFromPayouts(associateId);
     } catch (e, stackTrace) {
       AppLogger.error('Error getting commission summary', e, stackTrace);
       return CommissionSummary(

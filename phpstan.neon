@@ -16,7 +16,12 @@ parameters:
         # neither Illuminate nor a service-provider boot (it is a custom MVC
         # framework).  They extend classes that are not installed, so they can
         # never be loaded - porting or deleting them is a separate task.
-        - app/Models/UserDashboardLayout.php
+        #
+        # The repo tracks app/models in LOWERCASE.  On a case-sensitive
+        # filesystem (the Linux CI runner) a capitalised path does not exist
+        # and PHPStan aborts the whole run with "Invalid entry in
+        # excludePaths".  The [Mm] character class matches BOTH casings.
+        - 'app/[Mm]odels/UserDashboardLayout.php'
         - app/Providers/CommissionServiceProvider.php
 
     # S453: without a bootstrap file PHPStan cannot see the application's
