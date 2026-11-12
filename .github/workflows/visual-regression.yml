@@ -11,6 +11,11 @@ on:
       - 'public/assets/css/**'
       - 'public/assets/js/**'
       - 'testing/visual_tests/**'
+  # S453: the push trigger only fires when a view/asset/test file changes, so
+  # the workflow could not be re-run on demand - which is exactly what you
+  # need when it is red for an environment reason (a runner image move, a
+  # browser download failure).
+  workflow_dispatch:
 
 jobs:
   visual-regression:
