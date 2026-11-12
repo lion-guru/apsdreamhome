@@ -164,9 +164,9 @@ class DashboardController extends BaseController
                     $vSql = "SELECT COUNT(DISTINCT pb.id) AS deals, COALESCE(SUM(p.area_sqft),0) AS sqft, COALESCE(SUM(pb.total_plot_value),0) AS value
                              FROM plot_bookings pb
                              LEFT JOIN plots p ON p.id = pb.plot_id
-                             WHERE pb.user_id IN ($ph2) AND pb.status NOT IN ('cancelled')
+                             WHERE (pb.associate_id IN ($ph2) OR pb.user_id IN ($ph2)) AND pb.status NOT IN ('cancelled')
                                AND YEAR(pb.created_at) = YEAR(CURDATE()) AND MONTH(pb.created_at) = MONTH(CURDATE())";
-                    $vp = $genIds;
+                    $vp = array_merge($genIds, $genIds);
                     $vStmt = $db->prepare($vSql);
                     $vStmt->execute($vp);
                     $vr = $vStmt->fetch(\PDO::FETCH_ASSOC) ?: [];

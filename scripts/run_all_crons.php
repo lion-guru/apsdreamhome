@@ -109,6 +109,7 @@ if ($statusOnly || $dryRun) {
         echo "   11. Leave Accrual" . PHP_EOL;
         echo "   12. Payroll Auto-Lock/Close" . PHP_EOL;
         echo "   13. API Token Prune (expired > 30d)" . PHP_EOL;
+        echo "   14. Fast-Start 30-Day Bonus Evaluation" . PHP_EOL;
     }
     if (in_array($mode, ['monthly', 'all'])) {
         echo "  MONTHLY:" . PHP_EOL;
@@ -118,6 +119,7 @@ if ($statusOnly || $dryRun) {
         echo "   13. Matching Bonus" . PHP_EOL;
         echo "   14. Salary Incentive Grants" . PHP_EOL;
         echo "   15. Leadership Salary Payouts" . PHP_EOL;
+        echo "   16. Peer-Rank Mentorship Royalties" . PHP_EOL;
     }
     if ($statusOnly) {
         // Also show DB status
@@ -544,6 +546,26 @@ try {
             $errors[] = 'api_token_prune: ' . $e->getMessage();
         }
         echo PHP_EOL;
+
+        // 14. FAST-START 30-DAY KICKSTART BONUS EVALUATION
+        $taskNum++;
+        echo "===============================================================" . PHP_EOL;
+        echo "{$taskNum}/14  Fast-Start 30-Day Kickstart Bonus Evaluation" . PHP_EOL;
+        echo "===============================================================" . PHP_EOL;
+        try {
+            $mlmEngine = new \App\Services\MLM\MLMCommissionEngine();
+            $fastResult = $mlmEngine->processAllFastStartBonuses();
+            if ($fastResult['success']) {
+                echo "  [OK] {$fastResult['total_evaluated']} evaluated, {$fastResult['awarded']} awarded (Rs" . number_format($fastResult['total_amount'], 2) . "), {$fastResult['expired']} expired" . PHP_EOL;
+                $log['fast_start_bonuses'] = $fastResult;
+            } else {
+                echo "  [FAIL] " . json_encode($fastResult['errors'] ?? []) . PHP_EOL;
+            }
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'fast_start_bonuses: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
     }
 
     // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
@@ -702,6 +724,27 @@ echo PHP_EOL;
 } catch (\Throwable $e) {
             echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
             $errors[] = 'leadership_salary: ' . $e->getMessage();
+        }
+        echo PHP_EOL;
+
+        // 16. PEER-RANK MENTORSHIP ROYALTIES (1% on junior's team volume)
+        $taskNum++;
+        echo "==========================================================================================================" . PHP_EOL;
+        echo "{$taskNum}/16  Peer-Rank Mentorship Royalties" . PHP_EOL;
+        echo "==========================================================================================================" . PHP_EOL;
+        try {
+            $salaryService = new \App\Services\MLM\SalaryIncentiveService($pdo);
+            $monthYear   = date('Y-m');
+            $royaltyResult = $salaryService->processPeerRankRoyalties($monthYear);
+            if ($royaltyResult['success']) {
+                echo "  [OK] {$royaltyResult['royalties_paid']} royalties paid, Rs" . number_format($royaltyResult['total_amount'], 2) . PHP_EOL;
+                $log['peer_rank_royalties'] = $royaltyResult;
+            } else {
+                echo "  [FAIL] " . json_encode($royaltyResult['errors'] ?? []) . PHP_EOL;
+            }
+        } catch (\Throwable $e) {
+            echo "  [FAIL] " . $e->getMessage() . PHP_EOL;
+            $errors[] = 'peer_rank_royalties: ' . $e->getMessage();
         }
         echo PHP_EOL;
     }

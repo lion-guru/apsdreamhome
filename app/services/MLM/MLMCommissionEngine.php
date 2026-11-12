@@ -485,6 +485,63 @@ class MLMCommissionEngine
     }
 
     /**
+     * Batch process Fast-Start 30-Day Kickstart Bonus for all qualifying or active associates.
+     * Evaluates recruits count (>=5) and verified site visits (>=3) within 30 days of registration.
+     * Credits ₹2,100 directly to associate's wallet upon qualification.
+     */
+    public function processAllFastStartBonuses(): array
+    {
+        $results = [
+            'success'         => true,
+            'total_evaluated' => 0,
+            'awarded'         => 0,
+            'expired'         => 0,
+            'in_progress'     => 0,
+            'total_amount'    => 0.0,
+            'errors'          => [],
+        ];
+
+        try {
+            // Find associates who either:
+            // 1. Have an 'in_progress' record in mlm_fast_start_achievements
+            // 2. Or registered within the last 35 days and have no record yet
+            $stmt = $this->db->prepare("
+                SELECT u.id 
+                FROM users u
+                LEFT JOIN mlm_fast_start_achievements fs ON fs.user_id = u.id
+                WHERE u.role IN ('associate', 'agent')
+                  AND u.status = 'active'
+                  AND u.tenant_id = ?
+                  AND (fs.status = 'in_progress' OR (fs.id IS NULL AND u.created_at >= DATE_SUB(CURDATE(), INTERVAL 35 DAY)))
+                ORDER BY u.id ASC
+            ");
+            $stmt->execute([$this->getTenantId()]);
+            $userIds = $stmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+
+            foreach ($userIds as $uid) {
+                $uid = (int)$uid;
+                $res = $this->evaluateFastStartKickstart($uid);
+                $results['total_evaluated']++;
+
+                if (!empty($res['awarded'])) {
+                    $results['awarded']++;
+                    $results['total_amount'] += (float)($res['bonus_amount'] ?? 2100.00);
+                } elseif (($res['status'] ?? '') === 'expired') {
+                    $results['expired']++;
+                } else {
+                    $results['in_progress']++;
+                }
+            }
+
+            return $results;
+        } catch (\Throwable $e) {
+            $results['success'] = false;
+            $results['errors'][] = $e->getMessage();
+            return $results;
+        }
+    }
+
+    /**
      * Returns the highest rank this associate qualifies for, or NULL if no change.
      */
     public function evaluateRankPromotion(int $associateId): ?string

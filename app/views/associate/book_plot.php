@@ -143,6 +143,40 @@ $colonies = $colonies ?? [];
                 </div>
             </div>
 
+            <h6 class="text-primary mb-3"><i class="fas fa-gift text-danger me-2"></i>Festival Concession / Promo Code (त्योहारी ऑफर व कूपन कोड)</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Customer Promo Code (कूपन कोड)</label>
+                    <div class="input-group">
+                        <input type="text" name="promo_code_applied" id="assoc_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5">
+                        <button type="button" class="btn btn-primary" id="btn_assoc_apply_promo">
+                            <i class="fas fa-check me-1"></i>Apply
+                        </button>
+                    </div>
+                    <input type="hidden" name="promotional_offer_id" id="assoc_promo_offer_id" value="0">
+                    <input type="hidden" name="discount_amount" id="assoc_discount_amount" value="0">
+                    <div id="assoc_promo_msg" class="small mt-1 text-muted">
+                        Enter customer coupon code to apply festive concession (e.g. <code>FESTIVE21</code> for ₹21,000 flat off, <code>SUBHLABH5</code> for 5% off).
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-light border p-3 rounded h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small text-muted">Plot Value:</span>
+                            <strong class="text-dark" id="disp_total_price">₹0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small text-success">Festive Concession:</span>
+                            <strong class="text-success" id="disp_discount_amount">- ₹0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                            <span class="fw-bold text-primary">Final Agreement Value:</span>
+                            <strong class="fw-bold text-primary fs-5" id="disp_net_agreement">₹0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <h6 class="text-primary mb-3"><i class="fas fa-upload me-2"></i><?= __('assoc_bp_upload_docs', [], 'Upload Documents (Optional)') ?></h6>
             <div class="row g-3 mb-4">
                 <div class="col-md-4">
@@ -241,9 +275,68 @@ document.getElementById('plotSelect').addEventListener('change', function() {
         document.getElementById('plotNumber').textContent = selected.text.split(' - ')[0];
         document.getElementById('plotArea').textContent = selected.dataset.area ? Number(selected.dataset.area).toLocaleString() : '-';
         document.getElementById('plotPrice').textContent = selected.dataset.price ? Number(selected.dataset.price).toLocaleString() : '-';
-        document.getElementById('bookingAmount').value = selected.dataset.price || '';
+        document.getElementById('bookingAmount').value = '51000';
+        const price = Number(selected.dataset.price || 0);
+        document.getElementById('disp_total_price').textContent = '₹' + price.toLocaleString();
+        const curDisc = parseFloat(document.getElementById('assoc_discount_amount').value) || 0;
+        document.getElementById('disp_net_agreement').textContent = '₹' + Math.max(0, price - curDisc).toLocaleString();
     } else {
         document.getElementById('plotInfo').classList.add('d-none');
+        document.getElementById('disp_total_price').textContent = '₹0';
+        document.getElementById('disp_net_agreement').textContent = '₹0';
     }
 });
+
+const btnAssocApply = document.getElementById('btn_assoc_apply_promo');
+if (btnAssocApply) {
+    btnAssocApply.addEventListener('click', function() {
+        const promoInput = document.getElementById('assoc_promo_code');
+        const code = promoInput ? promoInput.value.trim() : '';
+        const msgDiv = document.getElementById('assoc_promo_msg');
+        const offerIdField = document.getElementById('assoc_promo_offer_id');
+        const discField = document.getElementById('assoc_discount_amount');
+        const plotSelect = document.getElementById('plotSelect');
+        const selectedPlot = plotSelect ? plotSelect.options[plotSelect.selectedIndex] : null;
+        const plotPrice = selectedPlot && selectedPlot.dataset.price ? parseFloat(selectedPlot.dataset.price) : 0;
+        const colonyId = document.getElementById('colonyFilter') ? document.getElementById('colonyFilter').value : '';
+
+        if (!code) {
+            if (msgDiv) msgDiv.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Please enter a promo code</span>';
+            return;
+        }
+
+        btnAssocApply.disabled = true;
+        btnAssocApply.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Checking...';
+
+        fetch('<?= BASE_URL ?>/api/promo/validate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'promo_code=' + encodeURIComponent(code) + '&plot_value=' + encodeURIComponent(plotPrice) + '&colony_id=' + encodeURIComponent(colonyId)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            btnAssocApply.disabled = false;
+            btnAssocApply.innerHTML = '<i class="fas fa-check me-1"></i>Apply';
+
+            if (data.valid) {
+                if (offerIdField) offerIdField.value = data.offer_id;
+                if (discField) discField.value = data.discount_amount;
+                if (msgDiv) msgDiv.innerHTML = '<span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>' + data.message + '</span>';
+                document.getElementById('disp_discount_amount').textContent = '- ₹' + Number(data.discount_amount).toLocaleString();
+                document.getElementById('disp_net_agreement').textContent = '₹' + Number(Math.max(0, plotPrice - data.discount_amount)).toLocaleString();
+            } else {
+                if (offerIdField) offerIdField.value = '0';
+                if (discField) discField.value = '0';
+                if (msgDiv) msgDiv.innerHTML = '<span class="text-danger fw-bold"><i class="fas fa-exclamation-triangle me-1"></i>' + (data.message || 'Invalid promo code') + '</span>';
+                document.getElementById('disp_discount_amount').textContent = '- ₹0';
+                document.getElementById('disp_net_agreement').textContent = '₹' + Number(plotPrice).toLocaleString();
+            }
+        })
+        .catch(function(err) {
+            btnAssocApply.disabled = false;
+            btnAssocApply.innerHTML = '<i class="fas fa-check me-1"></i>Apply';
+            if (msgDiv) msgDiv.innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Failed to validate promo code</span>';
+        });
+    });
+}
 </script>

@@ -374,7 +374,7 @@ $sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
     <div class="col-6 col-lg-3">
         <div class="stat-card-glass">
             <div class="d-flex align-items-center gap-3">
-                <div ><i class="fas fa-user-plus"></i></div>
+                <div class="stat-icon-wrapper mb-0" style="width:44px;height:44px;font-size:1.15rem;background:#f1f5f9;color:#2563eb;"><i class="fas fa-user-plus"></i></div>
                 <div>
                     <div class="stat-value"><?= number_format($directReferrals) ?></div>
                     <div class="stat-label">Direct Referrals</div>
@@ -385,7 +385,7 @@ $sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
     <div class="col-6 col-lg-3">
         <div class="stat-card-glass">
             <div class="d-flex align-items-center gap-3">
-                <div ><i class="fas fa-calendar-check"></i></div>
+                <div class="stat-icon-wrapper mb-0" style="width:44px;height:44px;font-size:1.15rem;background:#f1f5f9;color:#16a34a;"><i class="fas fa-calendar-check"></i></div>
                 <div>
                     <div class="stat-value">₹<?= number_format($monthEarnings) ?></div>
                     <div class="stat-label">This Month</div>
@@ -396,7 +396,7 @@ $sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
     <div class="col-6 col-lg-3">
         <div class="stat-card-glass">
             <div class="d-flex align-items-center gap-3">
-                <div ><i class="fas fa-address-book"></i></div>
+                <div class="stat-icon-wrapper mb-0" style="width:44px;height:44px;font-size:1.15rem;background:#f1f5f9;color:#ea580c;"><i class="fas fa-address-book"></i></div>
                 <div>
                     <div class="stat-value"><?= number_format($activeLeads) ?></div>
                     <div class="stat-label">Active Leads</div>
@@ -407,7 +407,7 @@ $sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
     <div class="col-6 col-lg-3">
         <div class="stat-card-glass">
             <div class="d-flex align-items-center gap-3">
-                <div ><i class="fas fa-file-contract"></i></div>
+                <div class="stat-icon-wrapper mb-0" style="width:44px;height:44px;font-size:1.15rem;background:#f1f5f9;color:#7c3aed;"><i class="fas fa-file-contract"></i></div>
                 <div>
                     <div class="stat-value"><?= number_format($pendingBookings) ?></div>
                     <div class="stat-label">Pending Bookings</div>

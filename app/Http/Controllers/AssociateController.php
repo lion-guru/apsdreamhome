@@ -612,6 +612,25 @@ class AssociateController extends BaseController
                 if (!$convLead) $convLeadId = 0;
             }
 
+            $discountAmount = (float)($_POST['discount_amount'] ?? 0.0);
+            $promotionalOfferId = !empty($_POST['promotional_offer_id']) ? (int)$_POST['promotional_offer_id'] : null;
+            $promoCodeApplied = !empty($_POST['promo_code_applied']) ? strtoupper(trim((string)$_POST['promo_code_applied'])) : null;
+            $totalPlotVal = (float)($plot['total_price'] ?? $bookingAmount);
+
+            // Auto-resolve promo code if supplied
+            if ($promoCodeApplied !== null && $discountAmount <= 0) {
+                try {
+                    $festSvc = new \App\Services\FestivalOfferService($db->getConnection());
+                    $valRes = $festSvc->validateCustomerPromo($promoCodeApplied, $totalPlotVal, $colonyId);
+                    if (!empty($valRes['valid'])) {
+                        $promotionalOfferId = (int)$valRes['offer_id'];
+                        $discountAmount = (float)$valRes['discount_amount'];
+                    }
+                } catch (\Throwable $e) {}
+            }
+
+            $agreementValue = max(0.0, $totalPlotVal - $discountAmount);
+
             $db->beginTransaction();
             try {
                 // Insert into plot_bookings
@@ -625,9 +644,12 @@ class AssociateController extends BaseController
                     'customer_address' => $customerAddress,
                     'booking_number' => $bookingNumber,
                     'booking_date' => date('Y-m-d'),
-                    'total_plot_value' => (float)($plot['total_price'] ?? $bookingAmount),
+                    'total_plot_value' => $totalPlotVal,
                     'booking_amount' => $bookingAmount,
-                    'agreement_value' => (float)($plot['total_price'] ?? $bookingAmount),
+                    'discount_amount' => $discountAmount,
+                    'promotional_offer_id' => $promotionalOfferId,
+                    'promo_code_applied' => $promoCodeApplied,
+                    'agreement_value' => $agreementValue,
                     'status' => 'pending',
                     'approval_status' => 'pending',
                     'associate_id' => $userId,
@@ -637,6 +659,14 @@ class AssociateController extends BaseController
                     'created_by' => $userId,
                     'created_at' => date('Y-m-d H:i:s'),
                 ]);
+
+                // Interlink promotional offer redemption counter
+                if ($promotionalOfferId && $bookingId) {
+                    try {
+                        $festSvc = new \App\Services\FestivalOfferService($db->getConnection());
+                        $festSvc->applyOfferToBooking((int)$bookingId, $promotionalOfferId, $discountAmount, (string)$promoCodeApplied);
+                    } catch (\Throwable $e) {}
+                }
 
                 // Update plot status to booked
                 // NOTE: Database::update() builds NAMED set-placeholders — the

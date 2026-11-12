@@ -21,6 +21,45 @@
 
 > **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
 
+## Session 464: Fast-Start 30-Day Kickstart Bonus & Peer-Rank Mentorship Royalty Cron Integration, Associate Plot Booking Festive Concession & Promo Engine Interlinked, Nested-Transaction Wallet Credit Bug Resolved, 39/39 Township Lifecycle Steps Green (100%), 11/11 Master Suites Passed, 1509/1509 PHPStan Clean (2026-11-13)
+
+### Trigger
+Owner: "jo jo pending work hai sab kar do bina ruke aur apne suggestion se jo jo improve karna ho impliment karna ho kamiya thik karna ho sab kar do mujhse puchne ki jarurat nhi hai apne se continuslly kaam karo khud ke dimag se tum hi seniour software devloper aur ceo ho ok fill power dete hai"
+
+### The headline
+1. **Batch Fast-Start 30-Day Kickstart Bonus Engine (`App\Services\MLM\MLMCommissionEngine`)**:
+   - Implemented `processAllFastStartBonuses(): array`: automates 30-day evaluation window across all active associates. When an associate achieves $\ge 5$ verified recruits and $\ge 3$ verified site visits within 30 days of registration, ₹2,100 is credited to their wallet, updating `mlm_fast_start_achievements` status to `awarded` or `expired`.
+   - Wired as **Daily Task 14** in `scripts/run_all_crons.php` and scheduled step 4 in `scripts/cron_salary_grants.php`.
+
+2. **Peer-Rank Mentorship Royalty Pipeline & Nested-Transaction Bug Resolved (`App\Services\MLM\SalaryIncentiveService`)**:
+   - Added robust rank normalization `normalizeRankSlug()` handling diverse rank slugs/abbreviations (`ass`, `sr_ass`, `senior_associate`, `site_manager`, `bdm`).
+   - Fixed SQL error 1054 (`Unknown column 'mp.current_rank'`): replaced with `COALESCE(u.mlm_rank, ap.level, 'associate')` and `COALESCE(mp.lifetime_sales, 0.00)` joined with `associate_profiles`.
+   - Resolved nested transaction collision (Lesson _846): `SalaryIncentiveService` commits the `mlm_peer_rank_royalties` record first before delegating to `WalletService::credit()`, eliminating "There is already an active transaction" exceptions.
+   - Added alias `processPeerRankRoyalties(string $monthYear)` and wired as **Monthly Task 16** in `scripts/run_all_crons.php` and scheduled step 2 in `scripts/cron_salary_grants.php`.
+
+3. **Associate Plot Booking Festive Concession & Promo Code Interlink**:
+   - Updated `app/views/associate/book_plot.php` with real-time AJAX coupon validation against `/api/promo/validate`, displaying festival discounts and automatically recalculating agreement values.
+   - Updated `AssociateController::bookPlot()`: captures `discount_amount`, `promotional_offer_id`, and `promo_code_applied`, stores net agreement values in `plot_bookings`, and calls `FestivalOfferService::applyOfferToBooking()` to increment campaign redemption counters.
+
+4. **Associate Dashboard L1/L2/L3 Volume Resolution & UI Refinement**:
+   - Fixed `DashboardController.php` L1/L2/L3 team volume query to check `(pb.associate_id IN (...) OR pb.user_id IN (...))` with properly merged parameter tuples.
+   - Fixed icon wrapper badge styling on secondary stats in `app/views/associate/dashboard.php`.
+
+5. **Visual Regression CI Workflow Hardened**:
+   - Updated `.github/workflows/visual-regression.yml` to import `database/schema_current.sql` (1043 tables) and `database/seed_visual_test_users.sql` instead of legacy 15-table fragment.
+   - Hardened `testing/visual_tests/visual_regression.spec.js` to distinguish new pages without baselines from true regressions.
+
+6. **Database Integrity & Zero Drift Verification**:
+   - Fully restored and verified exact 11 baseline table counts with zero drift:
+     `users`: 75 / `plots`: 756 / `leads`: 994 / `properties`: 627 / `employees`: 15 / `plot_bookings`: 3 / `payments`: 24 / `colonies`: 7 / `associate_profiles`: 5 / `wallet_points`: 76 / `wallet_transactions`: 3.
+   - Pre-restore safety dump taken at `backups/db/apsdreamhome_pre-restore_2026-11-13_02-06.sql` (124 MB).
+
+### Verification
+- **Township Lifecycle Full Chain**: `php testing/township_lifecycle_e2e_test.php` -> **39/39 Business Steps Passed (100% Green, 0 leftovers)**.
+- **Master Test Suite**: `php testing/master_test_runner.php` -> **11/11 Test Suites Passed (100% Green, 25.46s)**.
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> **1509/1509 [OK] No errors (Exit 0)**.
+- **AGENTS.md Log Integrity**: `php scripts/verify_agents_log.php` -> **OK (Integrity verified)**.
+
 ## Session 463: 25 Destructive GET Routes Closed (CSRF-via-GET Guard in the Router), AGENTS.md Truncation Detected & Reversed to the Byte, Session-Log Integrity Guard Added, Probe Sweep Made Non-Destructive, 1990 Routes 0 x 500 (2026-11-13)
 
 ### Trigger

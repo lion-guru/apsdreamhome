@@ -494,6 +494,11 @@ class SalaryIncentiveService
      * a 1% override on that junior's team volume for the month.
      * Prevents seniors from blocking juniors' growth.
      */
+    public function processPeerRankRoyalties(string $monthYear): array
+    {
+        return $this->processPeerRankRoyalty($monthYear);
+    }
+
     public function processPeerRankRoyalty(string $monthYear): array
     {
         $results = [
@@ -514,8 +519,11 @@ class SalaryIncentiveService
 
             // Get all agents with their current rank and GBV for this month
             $stmt = $this->pdo->prepare("
-                SELECT u.id AS user_id, u.name, mp.current_rank, mp.total_team_volume AS gbv
+                SELECT u.id AS user_id, u.name,
+                       COALESCE(u.mlm_rank, ap.level, 'associate') AS current_rank,
+                       COALESCE(mp.lifetime_sales, 0) AS gbv
                 FROM users u
+                LEFT JOIN associate_profiles ap ON ap.user_id = u.id
                 LEFT JOIN mlm_profiles mp ON mp.user_id = u.id
                 WHERE u.role IN ('associate', 'agent') AND u.status = 'active' AND u.tenant_id = ?
             ");
@@ -531,18 +539,21 @@ class SalaryIncentiveService
                     continue;
                 }
 
+                $seniorRankSlug = $this->normalizeRankSlug($seniorRank);
+
                 // Find juniors in this senior's downline with SAME rank
                 $stmt = $this->pdo->prepare("
-                    SELECT nt.associate_id AS junior_id, u.name AS junior_name, mp.current_rank AS junior_rank, mp.total_team_volume AS junior_gbv
-                    FROM mlm_network_tree nt
-                    JOIN users u ON u.id = nt.associate_id
+                    SELECT u.id AS junior_id, u.name AS junior_name,
+                           COALESCE(u.mlm_rank, ap.level, 'associate') AS junior_rank,
+                           COALESCE(mp.lifetime_sales, 0) AS junior_gbv
+                    FROM users u
+                    LEFT JOIN associate_profiles ap ON ap.user_id = u.id
                     LEFT JOIN mlm_profiles mp ON mp.user_id = u.id
-                    WHERE nt.parent_id = ?
-                      AND nt.level = 1
-                      AND nt.tenant_id = ?
+                    WHERE (u.referred_by = ? OR ap.sponsor_id = ? OR u.id IN (SELECT associate_id FROM mlm_network_tree WHERE parent_id = ? AND level = 1))
+                      AND u.role IN ('associate', 'agent')
                       AND u.tenant_id = ?
                 ");
-                $stmt->execute([$seniorId, $this->getTenantId(), $this->getTenantId()]);
+                $stmt->execute([$seniorId, $seniorId, $seniorId, $this->getTenantId()]);
                 $juniors = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
                 foreach ($juniors as $junior) {
@@ -550,8 +561,10 @@ class SalaryIncentiveService
                     $juniorRank = $junior['junior_rank'] ?? '';
                     $juniorGbv = (float)($junior['junior_gbv'] ?? 0);
 
+                    $juniorRankSlug = $this->normalizeRankSlug($juniorRank);
+
                     // Only if same rank
-                    if ($juniorRank !== $seniorRank) {
+                    if ($juniorRankSlug === '' || $seniorRankSlug === '' || $juniorRankSlug !== $seniorRankSlug) {
                         continue;
                     }
 
@@ -585,13 +598,15 @@ class SalaryIncentiveService
                             $this->getTenantId(),
                             $seniorId,
                             $juniorId,
-                            $juniorRank,
+                            $juniorRankSlug,
                             $juniorGbv,
                             $royaltyAmount,
                             $monthYear
                         ]);
 
-                        // Credit to senior's wallet
+                        $this->pdo->commit();
+
+                        // Credit to senior's wallet outside parent transaction (WalletService manages its own transaction)
                         $walletService = new \App\Services\WalletService();
                         $walletService->credit(
                             $seniorId,
@@ -601,8 +616,6 @@ class SalaryIncentiveService
                             $juniorId,
                             'user'
                         );
-
-                        $this->pdo->commit();
 
                         $results['processed']++;
                         $results['royalties_paid']++;
@@ -622,6 +635,21 @@ class SalaryIncentiveService
             $results['errors'][] = $e->getMessage();
             return $results;
         }
+    }
+
+    public function normalizeRankSlug(string $rank): string
+    {
+        $r = strtolower(trim($rank));
+        $r = str_replace(['.', ' ', '-'], '_', $r);
+        $r = (string)preg_replace('/_+/', '_', $r);
+        if (in_array($r, ['ass', 'associate', 'ass_'], true)) return 'associate';
+        if (in_array($r, ['sr_ass', 'sr_associate', 'senior_associate'], true)) return 'sr_associate';
+        if (in_array($r, ['bdm'], true)) return 'bdm';
+        if (in_array($r, ['sr_bdm', 'senior_bdm'], true)) return 'sr_bdm';
+        if (in_array($r, ['vice_president', 'vp'], true)) return 'vice_president';
+        if (in_array($r, ['president'], true)) return 'president';
+        if (in_array($r, ['site_manager', 'sm', 'director'], true)) return 'site_manager';
+        return $r;
     }
 
     /**

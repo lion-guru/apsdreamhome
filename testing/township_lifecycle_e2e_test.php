@@ -786,6 +786,18 @@ try {
     $bookingDiscountOk = $promoCodeOk && !empty($promoBookingRes['success']) && ((float)($bookingDiscountCheck['discount_amount'] ?? 0) === 21000.00) && ($bookingDiscountCheck['promo_code_applied'] === 'FESTIVE21');
     $recordStep('Stage 4: Commissions, Payouts & Staff Payroll', 'Customer Festival Promo Code & Plot Booking Discount Application', $bookingDiscountOk, "Promo Code 'FESTIVE21' validated -> Booking #$promoBookingId saved with ₹21,000 concession (Net Agreement: ₹14,79,000)");
 
+    // 4.17 Fast-Start 30-Day Kickstart Batch Evaluator Engine
+    $fastStartEngine = new \App\Services\MLM\MLMCommissionEngine($pdo);
+    $batchFastRes = $fastStartEngine->processAllFastStartBonuses();
+    $fastStartBatchOk = (!empty($batchFastRes['success']) && isset($batchFastRes['total_evaluated']));
+    $recordStep('Stage 4: Commissions, Payouts & Staff Payroll', 'Fast-Start 30-Day Kickstart Batch Evaluator Engine', $fastStartBatchOk, "Evaluated {$batchFastRes['total_evaluated']} associates in window -> {$batchFastRes['awarded']} awarded, {$batchFastRes['in_progress']} active in-progress");
+
+    // 4.18 Peer-Rank Mentorship Royalty Pipeline Execution
+    $salaryIncentiveService = new \App\Services\MLM\SalaryIncentiveService($pdo);
+    $royaltyRes = $salaryIncentiveService->processPeerRankRoyalties(date('Y-m'));
+    $royaltyOk = (!empty($royaltyRes['success']));
+    $recordStep('Stage 4: Commissions, Payouts & Staff Payroll', 'Peer-Rank Mentorship Royalty Pipeline Execution', $royaltyOk, "Mentorship Royalty pipeline processed for " . date('Y-m') . " -> {$royaltyRes['royalties_paid']} royalties paid (₹" . number_format($royaltyRes['total_amount'] ?? 0, 2) . ")");
+
     echo "\n";
 
     // =========================================================================
@@ -908,6 +920,7 @@ try {
     }
     if (!empty($created['user_ids'])) {
         $ids = implode(',', $created['user_ids']);
+        $pdo->exec("DELETE FROM mlm_peer_rank_royalties WHERE senior_id IN ($ids) OR junior_id IN ($ids)");
         $pdo->exec("DELETE FROM mlm_fast_start_achievements WHERE user_id IN ($ids)");
         $pdo->exec("DELETE FROM wallet_transactions WHERE user_id IN ($ids)");
         $pdo->exec("DELETE FROM wallet_points WHERE user_id IN ($ids)");

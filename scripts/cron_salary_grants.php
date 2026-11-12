@@ -24,10 +24,19 @@ try {
     $result1 = $service->processMonthlyGrants($month);
     echo "1. mlm_salary_grants Result: " . json_encode($result1) . "\n";
 
-    // 2. Process Leadership & Diwali Dhamaka salary_tracker pipeline
+    // 2. Process Peer-Rank Mentorship Royalties (1% on junior's team volume)
+    $resultRoyalty = $service->processPeerRankRoyalties($month);
+    echo "2. Peer-Rank Mentorship Royalty Result: " . json_encode($resultRoyalty) . "\n";
+
+    // 3. Process Leadership Permanent Salary Tracker pipeline
     $leaderService = new LeadershipSalaryService();
     $result2 = $leaderService->processMonthlyPayouts();
-    echo "2. Leadership Salary Tracker Result: " . json_encode($result2) . "\n";
+    echo "3. Leadership Salary Tracker Result: " . json_encode($result2) . "\n";
+
+    // 4. Process Fast-Start 30-Day Kickstart Bonuses
+    $mlmEngine = new \App\Services\MLM\MLMCommissionEngine();
+    $resultFastStart = $mlmEngine->processAllFastStartBonuses();
+    echo "4. Fast-Start 30-Day Bonus Result: " . json_encode($resultFastStart) . "\n";
 
     echo "✅ All Monthly Salary Grants & Diwali Dhamaka payouts completed successfully\n";
     
