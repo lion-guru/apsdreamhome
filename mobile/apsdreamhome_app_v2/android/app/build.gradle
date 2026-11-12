@@ -80,12 +80,24 @@ android {
                 keyAlias keyProps['keyAlias']
                 keyPassword keyProps['keyPassword']
             }
+            // S453: key.properties holds the UPLOAD KEYSTORE and is a
+            // secret, so it is not on the CI runner.  Without it the release
+            // build died with
+            //   SigningConfig "release" is missing required property "storeFile"
+            // even though everything else compiled.  The release build type
+            // below falls back to the debug signing config in that case, so
+            // CI can produce a smoke APK; the real release APK is signed
+            // locally with the upload keystore.
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // S453: sign with the upload keystore when it is available,
+            // otherwise with the debug keystore (see signingConfigs above).
+            signingConfig rootProject.file('key.properties').exists()
+                ? signingConfigs.release
+                : signingConfigs.debug
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
