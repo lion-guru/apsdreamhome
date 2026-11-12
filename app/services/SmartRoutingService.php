@@ -321,7 +321,7 @@ class SmartRoutingService
         // Add to lead_activities
         $associate = $this->db->fetch("SELECT name FROM users WHERE id = ?", [$associateId]);
         $this->db->execute(
-            "INSERT INTO lead_activities (lead_id, type, description, user_id, created_at) VALUES (?, 'assignment', ?, ?, NOW())",
+            "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'assignment', ?, ?, NOW())",
             [$leadId, "Lead assigned to {$associate['name']}", $assignedBy]
         );
     }
@@ -340,7 +340,7 @@ class SmartRoutingService
         );
 
         $this->db->execute(
-            "INSERT INTO lead_activities (lead_id, type, description, user_id, created_at) VALUES (?, 'reassignment', ?, ?, NOW())",
+            "INSERT INTO lead_activities (lead_id, activity_type, description, created_by, created_at) VALUES (?, 'reassignment', ?, ?, NOW())",
             [$leadId, "Lead reassigned from {$oldAssociate['name']} to {$newAssociate['name']}", $reassignedBy]
         );
     }
@@ -354,7 +354,7 @@ class SmartRoutingService
         $lead = $this->db->fetch("SELECT name, phone FROM leads WHERE id = ?", [$leadId]);
         
         $this->db->execute(
-            "INSERT INTO notifications (user_id, type, title, message, reference_id, reference_type, created_at) VALUES (?, 'lead_assigned', ?, ?, ?, 'lead', NOW())",
+            "INSERT INTO notifications (user_id, type, title, message, related_id, related_type, created_at) VALUES (?, 'lead_assigned', ?, ?, ?, 'lead', NOW())",
             [
                 $associateId,
                 'New Lead Assigned',

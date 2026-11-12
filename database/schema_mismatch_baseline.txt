@@ -148,18 +148,13 @@ user_theme_preferences
 visit_reminders
 wallet_configurati
 #
-# --- phantom columns (104) ---
+# --- phantom columns (86) ---
 ai_feedback.agent_id
 ai_feedback.feedback
 alerts.data
 alerts.priority
 alerts.status
 alerts.type
-auction_bids.bid_type
-auction_bids.bidder_name
-auction_bids.ip_address
-auction_bids.max_auto_bid
-auction_bids.status
 backup_schedules.backup_file
 backup_schedules.schedule_time
 batch_jobs.batch_id
@@ -186,18 +181,10 @@ employee_fnf_settlements.notes
 employee_fnf_settlements.processed_by
 employee_fnf_settlements.settlement_amount
 employee_fnf_settlements.settlement_date
-lead_activities.action
-lead_activities.details
-lead_activities.type
-lead_activities.user_id
 map_cache.response_data
 map_cache.tenant_id
 marketing_campaigns.budget
 mlm_payout_requests.remarks
-notifications.recipient_type
-notifications.reference_id
-notifications.reference_type
-notifications.sender_id
 payments.order_id
 payments.payment_method
 pricing_plans.tenant_id
@@ -233,8 +220,6 @@ referral_tracking.referred_user_id
 remember_tokens.token
 system_config_audit.tenant_id
 tasks.assigned_by
-team_messages.recipients
-team_messages.type
 telecaller_daily_tasks.calls_connected
 telecaller_daily_tasks.calls_made
 telecaller_daily_tasks.leads_callback

@@ -583,9 +583,12 @@ $allowedActions = [
         // Create notification
         $tid = TenantContext::getId();
         $this->db->execute(
-            "INSERT INTO notifications (title, message, sender_id, recipient_type, tenant_id, created_at)
-             VALUES (?, ?, ?, ?, ?, NOW())",
-            [$title, $message, $userId, $recipients, $tid > 1 ? $tid : 1]
+            // S466: `type` is NOT NULL with no default, and the insert did not
+            // provide it -> 1364 "Field 'type' doesn't have a default value",
+            // so an executive-AI notification could never be created.
+            "INSERT INTO notifications (type, title, message, sender_id, recipient_type, tenant_id, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, NOW())",
+            [$params['type'] ?? 'executive_ai', $title, $message, $userId, $recipients, $tid > 1 ? $tid : 1]
         );
 
         return ['success' => true, 'message' => 'Notification sent to ' . $recipients];

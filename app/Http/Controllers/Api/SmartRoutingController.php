@@ -579,7 +579,7 @@ class SmartRoutingController extends BaseController
         $stmt->execute([$associateId, $leadId]);
 
         // Log activity
-        $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, user_id, action, details, created_at) VALUES (?, ?, 'assigned', ?, NOW())");
+        $stmt = $this->db->prepare("INSERT INTO lead_activities (lead_id, created_by, activity_type, description, created_at) VALUES (?, ?, 'assigned', ?, NOW())");
         $stmt->execute([$leadId, $assignedBy, json_encode(['assigned_to' => $associateId])]);
     }
 
