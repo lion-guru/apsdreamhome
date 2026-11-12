@@ -9,6 +9,12 @@ use App\Core\Auth;
 use App\Core\Database\Database;
 use App\Core\Session\SessionManager;
 use App\Core\Routing\Router;
+// NOTE (S453): validate() does `new Validator($data, $rules, $messages)`, but
+// nothing imported it, so it resolved to App\Core\Validator - which does not
+// exist.  The class lives in App\Services\Validator (a proxy for
+// ValidatorService).  Without this import every call to validate() was a
+// fatal "Class not found".
+use App\Services\Validator;
 
 // Include App class from Legacy
 require_once __DIR__ . '/Legacy/AppCoreService.php';
@@ -333,6 +339,16 @@ class Controller
     /**
      * Validate request data
      *
+     * NOTE (S453): this used the LARAVEL validator API
+     * (`new Validator($data, $rules, $messages)`, `->fails()`, `->errors()`),
+     * but Laravel is not installed here - and nothing imported Validator
+     * either, so it resolved to a non-existent App\Core\Validator and the
+     * method was an instant fatal.  It now uses this project's own
+     * App\Services\Validator (a proxy for ValidatorService).
+     *
+     * Rule format is the pipe-string one ValidatorService understands:
+     *   ['email' => 'required|email', 'amount' => 'required|numeric']
+     *
      * @param array $data The data to validate
      * @param array $rules The validation rules
      * @param array $messages Custom error messages
@@ -340,18 +356,21 @@ class Controller
      */
     public function validate($data, $rules, $messages = [])
     {
-        $validator = new Validator($data, $rules, $messages);
+        $validator = new Validator($data);
+        $result   = $validator->validatePayloadSchema($data, $rules);
 
-        if ($validator->fails()) {
+        if (empty($result['valid'])) {
+            $errors = $result['errors'];
+
             if ($this->request->expectsJson()) {
                 return $this->json([
                     'message' => 'The given data was invalid.',
-                    'errors' => $validator->errors()
+                    'errors' => $errors
                 ], 422);
             }
 
             // For non-JSON requests, redirect back with errors
-            $this->session->getFlashBag()->add('errors', $validator->errors());
+            $this->session->getFlashBag()->add('errors', $errors);
             $this->session->getFlashBag()->add('old', $this->request->all());
 
             return $this->back()->withInput();

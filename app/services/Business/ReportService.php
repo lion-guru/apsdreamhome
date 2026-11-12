@@ -24,7 +24,7 @@ class ReportService
     public function __construct()
     {
         $this->db = Database::getInstance();
-        $this->sessionManager = SessionManager::getInstance();
+        $this->sessionManager = new SessionManager();
         $this->logger = new Logger();
     }
 

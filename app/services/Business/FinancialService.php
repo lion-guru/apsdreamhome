@@ -9,10 +9,18 @@ namespace App\Services\Business;
 
 use App\Core\Database;
 use App\Core\Middleware\TenantContext;
-use App\Core\Security\CSRFProtection;
-use App\Core\Security\InputValidation;
 use App\Core\Session\SessionManager;
-use App\Core\Logger\Logger;
+// NOTE (S453): all three of these referenced classes that do not exist
+// under the namespace that was imported:
+//   App\Core\Security\CSRFProtection -> App\Services\Security\CSRFProtection
+//   App\Core\Security\InputValidation -> App\Core\Security\InputValidation
+//                                            (created - see the file)
+//   App\Core\Logger\Logger           -> App\Core\Log\Logger
+// The constructor did `new CSRFProtection(); new InputValidation(); new
+// Logger();`, so constructing this service was an instant fatal.
+use App\Core\Security\InputValidation;
+use App\Services\Security\CSRFProtection;
+use App\Core\Log\Logger;
 use \App\Traits\ServiceTenantTrait;
 
 class FinancialService
@@ -30,7 +38,7 @@ class FinancialService
         $this->db = Database::getInstance();
         $this->csrfProtection = new CSRFProtection();
         $this->inputValidation = new InputValidation();
-        $this->sessionManager = SessionManager::getInstance();
+        $this->sessionManager = new SessionManager();
         $this->logger = new Logger();
     }
 

@@ -5,7 +5,11 @@ namespace App\Services\AI;
 use App\Core\Database\Database;
 use App\Core\Middleware\TenantContext;
 use App\Traits\ServiceTenantTrait;
-use App\Services\Communication\CommunicationGateway;
+// NOTE (S453): the gateway lives in App\Services\Gateway, not
+// App\Services\Communication - the wrong namespace meant
+// `new CommunicationGateway()` raised "Class not found", which the surrounding
+// catch swallowed, so EVERY campaign email was silently marked 'failed'.
+use App\Services\Gateway\CommunicationGateway;
 
 /**
  * Unified VoiceService

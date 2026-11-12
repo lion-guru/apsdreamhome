@@ -146,7 +146,10 @@ class ValidatorService
 /**
  * Legacy Validator proxy class - redirects calls to the modern Validator Service.
  */
-require_once __DIR__ . '/../../../vendor/autoload.php';
+// NOTE (S453): __DIR__ is app/Services, so the project root is two levels
+// up - the old '/../../../vendor/autoload.php' pointed at C:/xampp/vendor
+// (outside the project) and the require always failed.
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 class Validator
 {

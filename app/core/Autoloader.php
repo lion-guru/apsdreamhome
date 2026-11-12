@@ -120,15 +120,48 @@ class Autoloader
                     require_once $file;
                     return;
                 }
-                // Case-sensitivity fallback for Linux (e.g. Services/... -> services/..., Core/... -> core/..., Models/... -> models/...)
-                // Only try fallback if exact case file doesn't exist
-                $parts = explode('\\', $relativeClass);
-                if (!empty($parts)) {
+                // Case-sensitivity fallback for a case-sensitive filesystem
+                // (the Linux CI runner and the production server that
+                // .github/workflows/deploy.yml targets).
+                //
+                // NOTE (S453): $relativeClass keeps the leading separator
+                // ("\Services\X"), so explode() gave parts[0] === '' and
+                // strtolower('') was a no-op - this fallback rebuilt the EXACT
+                // same path and could never fix the case.  The repo tracks
+                // app/core, app/services and app/models in LOWERCASE while the
+                // namespace spelling is App\Core\ / App\Services\ / App\Models\
+                // -> on Linux 477 of the 526 referenced App\ classes could not
+                // be autoloaded at all ("Class not found" -> HTTP 500).
+                //
+                // ltrim the leading separator first, so parts[0] is the real
+                // first path segment and lower-casing it actually does
+                // something.  The exact-case path is still tried first, so
+                // nothing changes on a case-insensitive filesystem.
+                $parts = explode('\\', ltrim($relativeClass, '\\'));
+                if (!empty($parts) && $parts[0] !== '') {
                     $parts[0] = strtolower($parts[0]);
-                    $altFile = $baseDir . implode('/', $parts) . '.php';
-                    if (file_exists($altFile)) {
-                        require_once $altFile;
-                        return;
+                    $dir  = $baseDir . implode('/', array_slice($parts, 0, -1));
+                    $name = $parts[count($parts) - 1] . '.php';
+
+                    // a) the directory case may differ too
+                    if (is_dir($dir)) {
+                        $candidate = $dir . '/' . $name;
+                        if (file_exists($candidate)) {
+                            require_once $candidate;
+                            return;
+                        }
+                    }
+
+                    // b) PHP class names are case-insensitive, so the FILE may
+                    //    differ in case as well (App\Services\Communication\
+                    //    SMSService lives in SmsService.php)
+                    if (is_dir($dir)) {
+                        foreach (scandir($dir) as $entry) {
+                            if (strcasecmp($entry, $name) === 0) {
+                                require_once $dir . '/' . $entry;
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -187,6 +220,11 @@ if (defined('APP_ROOT')) {
     // require_once'd unconditionally, so a stale entry is a fatal the
     // moment anything asks for that class.
     $autoloader->addClassMap('UnifiedModel', \APP_ROOT . '/app/core/UnifiedModel.php');
+
+    // NOTE (S453): the Validator class is declared in ValidatorService.php, so
+    // PSR-4 (App\Services\Validator -> app/services/Validator.php) can never
+    // find it.  Core\Controller::validate() instantiates it by that name.
+    $autoloader->addClassMap('App\Services\Validator', \APP_ROOT . '/app/services/ValidatorService.php');
 
     // PropertyFavorite class lives in Property/Favorite.php but is declared
     // in the App\Models namespace — PSR-4 can't resolve it, so map explicitly.
