@@ -53,6 +53,26 @@ jobs:
           # schema (1043 tables, no rows).
           mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/schema_current.sql \
             || echo "Schema import failed - using whatever the service created"
+      - name: Apply migrations on top of the imported schema
+        # S467: the schema dump is a SNAPSHOT, so a column added by a migration
+        # after the dump was taken is missing in CI - and the scanner then
+        # reports it as a phantom column and fails the gate (that is exactly
+        # what happened with the 9 columns of migration S466).  Running the
+        # idempotent migrations makes the CI schema converge on the live one.
+        # A migration that fails is reported but does not fail the job: the
+        # scanner below is the real gate.
+        run: |
+          for f in database/migrations/*.php; do
+            [ -e "$f" ] || continue
+            php "$f" > /dev/null 2>&1 || echo "  (skipped: $f)"
+          done
+          echo "migrations applied"
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: apsdreamhome
+          DB_USERNAME: root
+          DB_PASSWORD: root
       - name: Run schema scanner
         run: |
           # S465: testing/scan_schema_mismatches.php DID NOT EXIST, so this
