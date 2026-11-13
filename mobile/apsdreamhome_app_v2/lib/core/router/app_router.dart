@@ -1539,6 +1539,13 @@ isDisclaimer ||
         builder: (context, state) => const AgentSiteVisitsPage(),
       ),
       GoRoute(
+        path: '/agent/site-visit/:id',
+        builder: (context, state) {
+          final visitId = int.tryParse(state.pathParameters['id'] ?? '');
+          return SiteVisitPage(visitId: visitId);
+        },
+      ),
+      GoRoute(
         path: '/agent/my-team',
         builder: (context, state) => const AgentMyTeamPage(),
       ),

@@ -7227,3 +7227,40 @@ _931. **JOIN-type mismatch is silent failure in manual DB probes.** When a `JOIN
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **511** (this session; S510 logged above, S509 correction now supersedes the S508 finding).
+
+## Session 511: Customer Investment Plans Activation & Modal CSRF, Mobile Agent GPS Site Visit Tracking & WCAG Heading Hierarchy (2026-11-14)
+
+### Trigger
+User instruction: "do next amd aur koi suggestion ho iss peoject ko ko best banane me imorove jarne me" & "aur koi suggestion tumhara deeply delh ke batao" & "ok do next all" — continuing autonomous CEO/Senior Software Developer execution across full stack (Web & Flutter Mobile).
+
+### The headline
+
+**1. CUSTOMER INVESTMENT PLANS FULL-STACK ACTIVATION & MODAL CSRF SECURITY**
+- **Customer Investment Desk (`UserController.php`)**: Wired `UserController::investmentPlans()` to live `InvestmentService`. Dynamically queries active investment plans, user-specific investments, and real investment statistics (`total_invested`, `current_value`, `total_returns`, tier level, progress percentage, next tier threshold) rather than rendering empty states.
+- **Investment Desk UI & CSRF Protection (`views/pages/user/investment_plans.php`)**:
+  - Bound Investor Level tier progress bar width dynamically: `style="width: <?= min(100, max(0, (float)($stats['progress_pct'] ?? 0))) ?>%"`.
+  - Added real CSRF token to `#investForm` modal dialog (`\App\Core\Security\CsrfProtection::getToken()`), eliminating 403 Forbidden errors when customers submit investment requests.
+- **Customer Dashboard Investor Card (`views/pages/user_dashboard.php`)**:
+  - Bound Investor Level progress bar width: `style="width: <?= $invProgress ?>%"`.
+  - Cleaned up unclosed/stray `</strong>` markup tag in the investor progress text.
+- **Service Gamification Parity (`InvestmentService.php`)**: Added `'progress_pct' => $level['progress_pct']` in `getStats()` to guarantee backward and forward compatibility across all dashboard and mobile consumers.
+
+**2. MOBILE APP — FIELD AGENT GPS SITE VISIT ACTIVATION & ROUTE REGISTRATION**
+- **Field Agent Visit Start (`agent_site_visits_page.dart`)**: Replaced empty stub `_startVisit()` with live navigation launching `SiteVisitPage(visitId, propertyName, destLat, destLng)`. Tapping "Start Visit" on scheduled visits now activates device GPS tracking, verifies location distance to site, and enables on-site photo capture and check-in submission.
+- **GoRouter Route Alignment (`app_router.dart`)**: Registered `/agent/site-visit/:id` in `app_router.dart` mapping directly to `SiteVisitPage`, preventing GoRouter runtime routing exceptions when navigating or deep-linking to specific site visit IDs.
+
+**3. PUBLIC PROJECT DETAILS HEADING HIERARCHY & BROCHURE URL SANITIZATION (`project_detail.php`)**
+- Normalized `<h6 class="mb-0">` in project highlights to semantic `<h4 class="fs-6 fw-bold mb-0">`.
+- Replaced unsemantic `<h6>` elements across all related project cards with structured `<h4 class="card-title fs-6 fw-bold">` tags, eliminating heading skips (WCAG 1.3.1).
+- Sanitized relative brochure URL concatenation (`rtrim(BASE_URL, '/') . '/' . ltrim(..., '/')`), preventing malformed download URLs when stored without a leading slash.
+
+### Verification
+- **Flutter Analyze**: `flutter analyze mobile/apsdreamhome_app_v2/` -> `No issues found! (ran in 9.7s)`.
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> `1508/1508 [OK] No errors`.
+- **Master Test Runner**: `php testing/master_test_runner.php` -> `11/11 PASSED (100% HEALTHY, 34s)`.
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **512** (this session; S511 logged above).

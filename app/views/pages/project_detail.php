@@ -239,7 +239,7 @@ $related_projects = $normRelated;
                         <div class="d-flex align-items-center p-3 bg-light rounded">
                             <i class="fas <?= $hlIcon ?> fa-2x text-<?= $hlColor ?> me-3"></i>
                             <div>
-                                <h6 class="mb-0"><?php echo htmlspecialchars($highlight ?? ''); ?></h6>
+                                <h4 class="fs-6 fw-bold mb-0"><?php echo htmlspecialchars($highlight ?? ''); ?></h4>
                             </div>
                         </div>
                     </div>
@@ -503,7 +503,7 @@ $related_projects = $normRelated;
                                 </span>
                             </div>
                             <?php if (!empty($project->brochure_path)): ?>
-                            <a href="<?= (strpos($project->brochure_path, 'http') === 0) ? htmlspecialchars($project->brochure_path) : BASE_URL . htmlspecialchars($project->brochure_path) ?>" target="_blank" class="btn btn-danger btn-lg d-flex align-items-center justify-content-center gap-2 shadow-sm" download>
+                            <a href="<?= (strpos($project->brochure_path, 'http') === 0) ? htmlspecialchars($project->brochure_path) : rtrim(BASE_URL, '/') . '/' . ltrim(htmlspecialchars($project->brochure_path), '/') ?>" target="_blank" class="btn btn-danger btn-lg d-flex align-items-center justify-content-center gap-2 shadow-sm" download>
                                 <i class="fas fa-file-pdf"></i> Download Official Brochure
                             </a>
                             <?php endif; ?>
@@ -800,7 +800,7 @@ $related_projects = $normRelated;
                     <div class="card h-100 shadow-sm project-card">
                         <img src="<?= $relIsExternal ? $relImg : BASE_URL . $relImg ?>" class="card-img-top img-fluid" alt="<?php echo htmlspecialchars($related->site_name); ?>" onerror="this.src='<?= $baseUrl ?>/assets/images/projects/placeholder/property.svg'">
                         <div class="card-body aps-cp-card-body">
-                            <h6 class="card-title"><?php echo htmlspecialchars($related->site_name); ?></h6>
+                            <h4 class="card-title fs-6 fw-bold"><?php echo htmlspecialchars($related->site_name); ?></h4>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($related->district ?? ''); ?></p>
                             <a href="<?php echo e($baseUrl); ?>/projects/<?php echo e($relSlug); ?>" class="btn btn-sm btn-primary"><?= __('featured_view_details') ?></a>
                         </div>
@@ -812,7 +812,7 @@ $related_projects = $normRelated;
                     <div class="card h-100 shadow-sm project-card">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Suryoday Colony" />
                         <div class="card-body aps-cp-card-body">
-                            <h6 class="card-title">Suryoday Colony</h6>
+                            <h4 class="card-title fs-6 fw-bold">Suryoday Colony</h4>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <a href="<?php echo e($baseUrl); ?>/projects/suryoday-colony" class="btn btn-sm btn-primary">View Details</a>
                         </div>
@@ -822,7 +822,7 @@ $related_projects = $normRelated;
                     <div class="card h-100 shadow-sm project-card">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Raghunath Nagri" loading="lazy">
                         <div class="card-body aps-cp-card-body">
-                            <h6 class="card-title">Raghunath Nagri</h6>
+                            <h4 class="card-title fs-6 fw-bold">Raghunath Nagri</h4>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <a href="<?php echo e($baseUrl); ?>/projects/raghunath-nagri-motiram" class="btn btn-sm btn-primary">View Details</a>
                         </div>
@@ -832,7 +832,7 @@ $related_projects = $normRelated;
                     <div class="card h-100 shadow-sm project-card">
                         <img src="<?= BASE_URL ?>/assets/images/projects/gorakhpur/suryoday.jpg" class="card-img-top" alt="Braj Radha Nagri" />
                         <div class="card-body aps-cp-card-body">
-                            <h6 class="card-title">Braj Radha Nagri</h6>
+                            <h4 class="card-title fs-6 fw-bold">Braj Radha Nagri</h4>
                             <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>Gorakhpur</p>
                             <a href="<?php echo e($baseUrl); ?>/projects/braj-radha-nagri" class="btn btn-sm btn-primary">View Details</a>
                         </div>

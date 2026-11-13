@@ -8,6 +8,7 @@ import '../../../core/services/api_service.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../widgets/app_widgets.dart';
 import '../../widgets/glass_card.dart';
+import '../site_visit/site_visit_page.dart';
 
 /// Agent Site Visits Page - View and manage site visit schedules
 class AgentSiteVisitsPage extends ConsumerWidget {
@@ -377,7 +378,7 @@ class AgentSiteVisitsPage extends ConsumerWidget {
               ),
               if (isUpcoming && status.toLowerCase() == 'scheduled')
                 ElevatedButton.icon(
-                  onPressed: () => _startVisit(visitId),
+                  onPressed: () => _startVisit(context, visitId, visit),
                   icon: const Icon(Icons.play_arrow_rounded, size: 16, color: Colors.white),
                   label: const Text('Start Visit', style: TextStyle(fontSize: 12)),
                   style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor, foregroundColor: Colors.white),
@@ -405,7 +406,26 @@ class AgentSiteVisitsPage extends ConsumerWidget {
     }
   }
 
-  void _startVisit(String visitId) {}
+  void _startVisit(BuildContext context, String visitId, Map<String, dynamic> visit) {
+    final id = int.tryParse(visitId);
+    final propName = visit['colony_name']?.toString() ??
+        visit['property_title']?.toString() ??
+        'Site Visit';
+    final lat = double.tryParse(
+        visit['colony_lat']?.toString() ?? visit['latitude']?.toString() ?? '');
+    final lng = double.tryParse(
+        visit['colony_lng']?.toString() ?? visit['longitude']?.toString() ?? '');
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => SiteVisitPage(
+          visitId: id,
+          propertyName: propName,
+          destLat: lat,
+          destLng: lng,
+        ),
+      ),
+    );
+  }
 
   Future<void> _sendPin(BuildContext context, WidgetRef ref, String visitId, int userId) async {
     try {

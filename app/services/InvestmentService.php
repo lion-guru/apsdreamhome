@@ -73,6 +73,7 @@ class InvestmentService
             'active_count' => $active,
             'level' => $level['name'],
             'level_progress_pct' => $level['progress_pct'],
+            'progress_pct' => $level['progress_pct'],
             'next_level' => $level['next'],
             'next_threshold' => $level['next_threshold'],
         ];

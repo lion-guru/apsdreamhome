@@ -464,6 +464,7 @@ $dashBookingCount = count($dashBookings);
         $invStats = $investor_stats ?? ['level' => 'Bronze', 'next_level' => 'Silver', 'progress_pct' => 0, 'next_threshold' => 50000, 'total_invested' => 0];
         $lvl = $invStats['level'] ?? 'Bronze';
         $lvlColor = match($lvl) { 'Diamond' => 'indigo', 'Platinum' => 'purple', 'Gold' => 'orange', 'Silver' => 'secondary', default => 'primary' };
+        $invProgress = min(100, max(0, (float)($invStats['progress_pct'] ?? $invStats['level_progress_pct'] ?? 0)));
         ?>
         <div class="aps-cp-card mb-4">
             <div class="aps-cp-card-header">
@@ -473,9 +474,9 @@ $dashBookingCount = count($dashBookings);
                 <div class="display-5 fw-bold mb-1"><?= htmlspecialchars($lvl ?? '') ?></div>
                 <small class="text-muted d-block mb-3"><?= __('dash_total_invested', null, 'Total Invested') ?>: ₹<?= number_format((float)($invStats['total_invested'] ?? 0)) ?></small>
                 <div class="aps-cp-progress">
-                    <div class="aps-cp-progress-bar"></div>
+                    <div class="aps-cp-progress-bar" style="width: <?= $invProgress ?>%"></div>
                 </div>
-                <p class="text-muted small mt-2 mb-0"><?= sprintf(__('dash_invest_more_format', null, 'Invest ₹%%s more to reach %%s'), number_format((float)($invStats['next_threshold'] ?? 50000)), htmlspecialchars($invStats['next_level'] ?? 'Silver')) ?></strong></p>
+                <p class="text-muted small mt-2 mb-0"><?= sprintf(__('dash_invest_more_format', null, 'Invest ₹%%s more to reach %%s'), number_format((float)($invStats['next_threshold'] ?? 50000)), htmlspecialchars($invStats['next_level'] ?? 'Silver')) ?></p>
                 <a href="<?= BASE_URL ?>/user/investment-plans" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-primary mt-3"><i class="fas fa-arrow-up"></i> <?= __('dash_btn_upgrade', null, 'Upgrade') ?></a>
             </div>
         </div>

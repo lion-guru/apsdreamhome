@@ -50,7 +50,7 @@ ob_start();
             </div>
             <div >
                 <div class="aps-cp-progress">
-                    <div class="aps-cp-progress-bar"></div>
+                    <div class="aps-cp-progress-bar" style="width: <?= min(100, max(0, (float)($stats['progress_pct'] ?? 0))) ?>%"></div>
                 </div>
                 <p class="aps-cp-muted mt-1 mb-0"><?= __('user_investment_plans_progress_text', null, 'Invest ₹') ?><?= number_format((float)$stats['next_threshold']) ?> <?= __('user_investment_plans_progress_more', null, 'more to reach') ?> <strong><?= htmlspecialchars($stats['next_level'] ?? '') ?></strong></p>
             </div>
@@ -130,7 +130,7 @@ ob_start();
             <button class="aps-cp-modal-close" onclick="closeInvestModal()">&times;</button>
         </div>
         <form id="investForm" class="aps-cp-form" data-ajax="true" action="<?= BASE_URL ?>/user/investment-plans/invest" method="POST">
-            <input type="hidden" name="csrf_token" value="">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(\App\Core\Security\CsrfProtection::getToken() ?? ($_SESSION['csrf_token'] ?? '')) ?>">
             <input type="hidden" name="plan_id" id="investPlanId" value="">
             <div class="aps-cp-modal-body">
                 <div class="aps-cp-form-section">
