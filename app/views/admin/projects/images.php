@@ -63,9 +63,7 @@
                                         <?php endif; ?>
                                         <form method="POST" action="<?= BASE_URL ?>/admin/projects/images/delete/<?php echo $image['id'] ?? 0; ?>" class="position-absolute top-0 end-0 m-2">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                            <button type="submit" class="btn btn-sm btn-danger shadow-sm" data-aps-confirm="Delete this image?">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            <button type="submit" class="btn btn-sm btn-danger shadow-sm" data-aps-confirm="Delete this image?" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                         </form>
                                         <div class="d-flex justify-content-between align-items-center mt-1">
                                             <small class="text-muted"><?php echo number_format((int)($image['file_size'] ?? 0) / 1024, 1); ?> KB</small>
