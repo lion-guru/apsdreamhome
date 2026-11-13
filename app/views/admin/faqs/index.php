@@ -122,7 +122,7 @@ $topCat = array_key_first($categories) ?? '';
                             <div class="btn-group btn-group-sm">
                                 <a href="<?= BASE_URL ?>/admin/faqs/<?= e($faq['id']) ?>" class="btn btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
                                 <a href="<?= BASE_URL ?>/admin/faqs/<?= e($faq['id']) ?>/edit" class="btn btn-outline-warning" title="Edit"><i class="fas fa-edit"></i></a>
-                                <a href="<?= BASE_URL ?>/admin/faqs/<?= e($faq['id']) ?>/delete" class="btn btn-outline-danger" data-aps-confirm="Delete this FAQ?" title="Delete"><i class="fas fa-trash"></i></a>
+                                <form action="<?= BASE_URL ?>/admin/faqs/<?= e($faq['id']) ?>/delete" method="POST" class="d-inline" data-aps-confirm="Delete this FAQ?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button></form>
                             </div>
                         </td>
                     </tr>

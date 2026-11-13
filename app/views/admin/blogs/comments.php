@@ -11,7 +11,7 @@ $statusLabels = [
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2"><i class="fas fa-comments"></i> Blog Comments</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="<?= BASE_URL ?>/admin/blogs" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Back to Blogs</a>
+        <a href="<?= BASE_URL ?>/admin/blog" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Back to Blogs</a>
     </div>
 </div>
 
@@ -127,12 +127,12 @@ $statusLabels = [
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <?php if ($c['status'] !== 'approved'): ?>
-                                            <a href="<?= BASE_URL ?>/admin/blogs/comment/<?= $c['id'] ?>/approve" class="btn btn-outline-success" title="Approve"><i class="fas fa-check"></i></a>
+                                            <form action="<?= BASE_URL ?>/admin/blogs/comment/<?= $c['id'] ?>/approve" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-success" title="Approve"><i class="fas fa-check"></i></button></form>
                                         <?php endif; ?>
                                         <?php if ($c['status'] !== 'spam'): ?>
-                                            <a href="<?= BASE_URL ?>/admin/blogs/comment/<?= $c['id'] ?>/reject" class="btn btn-outline-warning" title="Mark Spam"><i class="fas fa-ban"></i></a>
+                                            <form action="<?= BASE_URL ?>/admin/blogs/comment/<?= $c['id'] ?>/reject" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-warning" title="Mark Spam"><i class="fas fa-ban"></i></button></form>
                                         <?php endif; ?>
-                                        <a href="<?= BASE_URL ?>/admin/blogs/comment/<?= $c['id'] ?>/delete" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this comment permanently?')"><i class="fas fa-trash"></i></a>
+                                        <form action="<?= BASE_URL ?>/admin/blogs/comment/<?= $c['id'] ?>/delete" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this comment permanently?')"><i class="fas fa-trash"></i></button></form>
                                     </div>
                                 </td>
                             </tr>

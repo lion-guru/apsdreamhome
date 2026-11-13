@@ -382,7 +382,11 @@ document.addEventListener('DOMContentLoaded', function() {
     window.deleteNode = function(id) {
         if (confirm('Delete this position?')) {
             fetch('<?= BASE_URL ?>/admin/org-chart/delete/' + id, {
-                method: 'GET'
+                method: 'POST',
+                headers: {
+                    'X-CSRF-Token': (window.APS && APS.getCsrfToken) ? APS.getCsrfToken() : (document.querySelector('meta[name="csrf-token"]') || {getAttribute: function () { return ''; }}).getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             }).then(r => r.json()).then(data => {
                 if (data.success) location.reload();
                 else alert(data.message);

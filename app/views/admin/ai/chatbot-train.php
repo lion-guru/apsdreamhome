@@ -67,8 +67,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <td><?php echo $item['frequency'] ?? 0; ?></td>
                                         <td><?php echo !empty($item['is_active']) ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>'; ?></td>
                                         <td>
-                                            <a href="<?php echo e($base); ?>/admin/chatbot/train/toggle/<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-warning" title="Toggle"><i class="fas fa-toggle-on"></i></a>
-                                            <a href="<?php echo e($base); ?>/admin/chatbot/train/delete/<?php echo $item['id']; ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this entry?" title="Delete"><i class="fas fa-trash"></i></a>
+                                            <form action="<?php echo e($base); ?>/admin/chatbot/train/toggle/<?php echo $item['id']; ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-warning" title="Toggle"><i class="fas fa-toggle-on"></i></button></form>
+                                            <form action="<?php echo e($base); ?>/admin/chatbot/train/delete/<?php echo $item['id']; ?>" method="POST" class="d-inline" data-aps-confirm="Delete this entry?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fas fa-trash"></i></button></form>
                                         </td>
                                     </tr>
                                     <?php endforeach; ?>

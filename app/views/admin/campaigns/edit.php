@@ -122,10 +122,31 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     
     
     <script>
+        // S471: a destructive action is a POST - it used to be a GET, which any
+        // third-party page could trigger with a single <img>.
+        function apsPostAction(url) {
+            var token = '';
+            if (window.APS && APS.getCsrfToken) { token = APS.getCsrfToken(); }
+            if (!token) {
+                var meta = document.querySelector('meta[name="csrf-token"]');
+                if (meta) { token = meta.getAttribute('content') || ''; }
+            }
+            var f = document.createElement('form');
+            f.method = 'POST';
+            f.action = url;
+            f.style.display = 'none';
+            var t = document.createElement('input');
+            t.type = 'hidden';
+            t.name = 'csrf_token';
+            t.value = token;
+            f.appendChild(t);
+            document.body.appendChild(f);
+            f.submit();
+        }
         function deleteCampaign(campaignId) {
             apsConfirm('Are you sure you want to delete this campaign? This action cannot be undone.').then(function(ok) {
                 if (!ok) return;
-                window.location.href = '<?php echo e($base); ?>/admin/campaigns/' + campaignId + '/delete';
+                apsPostAction('<?php echo e($base); ?>/admin/campaigns/' + campaignId + '/delete');
             });
         }
         

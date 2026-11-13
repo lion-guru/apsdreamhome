@@ -21,6 +21,72 @@
 
 > **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
 
+## Session 471: 42 More Destructive GET Routes Converted to POST+CSRF, 34 Admin Buttons Rewired as Forms, The Admin Blogs Desk (A Whole Module) Was Unrouted and 404'd on 3 of Its 4 Buttons, All Gates Green (2026-11-13)
+
+### Trigger
+Owner: "do next" - continuing the S461/S463/S469 CSRF-via-GET work. The parallel actor had converted the 9 highest-impact routes; the durable fix for the remaining destructive GETs was still open.
+
+### The headline
+
+**1. THE AUDIT HAD TO RESOLVE EACH ROUTE TO ITS HANDLER - A PATH GREP IS NOT AN AUDIT**
+A grep for `delete|destroy|toggle|approve` in the route table found **51** candidates. Resolving each one to its controller method and reading the body (brace-matched, not a regex window) split them cleanly:
+- **42 routes MUTATE** (they run `DELETE FROM` / `UPDATE ... SET` / a mutating service call).
+- **9 are read-only form pages** - `/admin/sms/send`, `/admin/push-notifications/send`, `/admin/notifications/manage/send-test`, `/admin/sales/bookings/{id}/cancel` (a `...Form` action), `/admin/crm/bulk-send`, `/admin/delete-approvals`, `/admin/commission-manage/approve/{id}`, `/legal/cancellation-policy`. Converting one of those to POST would have **made the page unreachable**, so they were left alone.
+
+**2. ALL 42 CONVERTED: GET -> POST, AND EVERY BUTTON REWIRED AS A FORM**
+- `routes/web.php`: 42 `$router->get(...)` registrations became `$router->post(...)`; the **duplicate** GET registration of `/user/saved-searches/{id}/delete` (a POST twin already existed) was removed.
+- **34 admin views**: the `<a href="...">` became a real `<form method="POST">` carrying `\App\Helpers\SecurityHelper::csrfField()`.
+- **5 controllers** now read their parameter from POST first: `NpsController::delete` (`$_GET['id']`), `AuctionController::cancel` (`$_GET['reason']`), `VisitController::cancel` (`$_GET['id']`), `ReviewController` x3 (`$_GET['id'] ?? $_POST['id']` flipped), `VoiceUploadController::delete` (`isset($_GET['hard'])`).
+- **`data-aps-confirm` moved to the FORM**, not the button: `frontend-enhancements.js` has an explicit FORM branch (`preventDefault -> confirm -> removeAttribute -> native submit`), while the non-FORM branch does `el.closest('form').submit()` - which on a button inside the *bulk* form would have fired the **wrong** form. Where a link had both `onclick="return confirm(...)"` and `data-aps-confirm`, the `onclick` was dropped so the user is not asked twice.
+
+**3. TWO DELETE BUTTONS SAT INSIDE A BULK-ACTION FORM - THE NESTED-FORM TRAP**
+`/admin/locations/states` and `/admin/locations/districts` wrap their whole table in `<form method="POST" action=".../bulk-action">`. A `<form>` inside a `<form>` is **dropped by the browser** (lesson _613), so the converted button would have fired the bulk-action form instead of the delete. The fix uses HTML5's **`form` attribute**: the button becomes `<button type="submit" form="apsDelForm" data-aps-del-url="...">` and ONE hidden form, placed **outside** the bulk form, carries the action and the CSRF token. No JS change was needed - the confirm dialog lives on the hidden FORM, so the button must NOT carry `data-aps-confirm` (the JS would then submit the outer form).
+
+**4. THREE JS-DRIVEN CALLS WERE GETs**
+- `admin/campaigns/edit.php`: `window.location.href = '.../admin/campaigns/' + id + '/delete'` -> a `apsPostAction(url)` helper that builds and submits a hidden POST form with the token.
+- `admin/saved_searches/index.php`: `window.location = '.../admin/saved-searches/delete/' + id` -> the same helper - **and its confirm was a no-op**: `apsConfirm(...).then(function(ok) { if (!ok) return; })` sat in a callback whose result was thrown away, so the delete **never asked** and never honoured a "no".
+- `admin/org_chart/index.php`: `fetch(..., { method: 'GET' })` -> `method: 'POST'` + `X-CSRF-Token` + `X-Requested-With`.
+
+**5. THE ORG-CHART DELETE BUTTON HAD NEVER WORKED**
+`HRController::orgChartDelete()` answered a **302 redirect** while the JS awaited JSON - so `r.json()` threw and the button silently did nothing. The controller now answers JSON to an AJAX caller (`$this->isAjax()` -> `$this->jsonResponse($result)`), the same pattern `orgChartReorder` already used.
+
+**6. THE ADMIN BLOGS DESK WAS A WHOLE MODULE THAT 404'd (found while checking the converted links)**
+The controller and all four views exist. The **routes are singular** (`/admin/blog`) and the **views link to the plural** (`/admin/blogs`). On the one page that did load, `/admin/blog`, **three of the four per-row buttons were dead links**:
+```
+/admin/blogs/{id}          -> 404   (the eye)
+/admin/blogs/{id}/edit    -> 404   (the pencil)
+/admin/blogs/{id}/delete  -> 404   (the trash)
+```
+The controller even had the handler - `BlogController::destroy($id)` - it was simply **not routed**. Fixed:
+- a new `GET /admin/blog/{id}` -> `BlogController@show($id)` + a new read-only admin preview view `app/views/admin/blogs/show.php`. It shows a **DRAFT** too, which the public `/blog/{slug}` page cannot (that route only serves `status = 'published'`);
+- the eye/pencil links repointed to `/admin/blog/{id}` and `/admin/blog/{id}/edit`;
+- the trash is now a POST form for `/admin/blog/{id}/destroy` (the handler's real name);
+- every "back to list" link now points at `/admin/blog`.
+`/admin/projects/images/delete/{id}` was checked too and deliberately **not** wired: `ProjectsAdminController::destroy()` deletes the **whole project**, not an image, and the `project_images` table does not exist - the images page renders an honest "No images uploaded yet." and no button. Wiring it would have been a data-loss trap.
+
+### Verification
+- **Probe `probe_s471.php` - ALL ASSERTIONS PASSED**:
+  - all 42 destructive paths are **POST-only** in the route table (0 GET registrations);
+  - the 42 GETs changed **no row in 127 tables** (the row counts of every table the actions touch, before and after);
+  - a POST **without** a CSRF token changes nothing (the sacrificial FAQ survives, the request is redirected away);
+  - a POST **with** a valid token works (the sacrificial FAQ is deleted);
+  - all 26 affected admin pages render 200; the delete renders as a POST form and **no** GET delete link remains;
+  - the sacrificial row is gone and the table count is byte-identical.
+- **Probe `probe_s471b.php` (the blogs desk) - ALL ASSERTIONS PASSED**: all 28 admin-blog links on the list page resolve; all 13 form actions are POST routes; the preview shows a draft; a GET on `/destroy` is refused; POST without a token keeps the post; POST with a token deletes it; the count is byte-identical.
+- **PHPStan** -> `[OK] No errors` (exit 0). **Master** -> ALL TEST SUITES PASSED (100% HEALTHY). **Township lifecycle** -> Steps Failed 0, Overall Health 100%. **Schema ratchet** -> 243 known / **0 new** -> exit 0.
+- **Live DB byte-identical**: users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0; faqs 6 / blog_posts 12 / states 37 / districts 781 unchanged.
+
+### Key Lessons (carried, continued)
+_890. **A path grep is a candidate list, not an audit - resolve each route to its handler and read the body.** 51 candidates became 42 real mutations and 9 read-only form pages; converting one of those 9 to POST would have made an admin page unreachable. A name like `...Form` (`cancelBookingForm`) is itself a hint.
+_891. **"The controller has the method" is not "the route exists" - and the two halves can disagree on the NAME.** `BlogController::destroy()` was correct and tenant-scoped, but no route pointed at it, and the views used a different spelling than the routes (`/admin/blogs` vs `/admin/blog`). A whole admin desk can sit behind a working list page while three of its four buttons 404.
+_892. **A nested `<form>` is dropped by the browser, so a button inside a bulk-action form fires the BULK form.** HTML5's `form` attribute is the clean fix - a button may name a form anywhere in the document - and the confirm dialog must live on that named form, never on the button (the JS would otherwise submit the outer form).
+_893. **A wildcard route silently swallows a literal path, so "the GET answered 200" is NOT proof that the action is reachable.** `/admin/visits/cancel` matched `/admin/visits/{id}` and rendered a read-only page - the destructive action was NOT reachable, but a status-code assertion fails. The honest test is the row counts: 42 GETs, 127 tables, zero drift.
+_894. **A confirm dialog whose result is thrown away is no confirm at all.** `apsConfirm(...).then(function(ok) { if (!ok) return; })` followed by code **outside** the callback means the user is never asked and a "no" is never honoured. The early return has to be the last statement of the callback that owns the action.
+_895. **A fetch that awaits JSON against a controller that redirects is a button that silently does nothing.** The org-chart delete answered a 302, so `r.json()` threw and the error was invisible. A JSON contract has to be honoured on BOTH ends - and the controller must answer JSON when the caller is an AJAX one.
+
+### Owner actions still open (carried forward)
+Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) - voice/S3/scheduler/Redis credentials - `bohisawagar-banner.jpg` owner asset drop - `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED; ~32 GB) - the `package:material_ui` migration if the Flutter pin is ever raised above 3.47.9 - the visual baselines should be regenerated as one consistent set - **243 schema mismatches remain** (`database/schema_mismatch_baseline.txt`); the next most-used are `php_optimization_log` (4), `slow_queries_log` (4), `middleware_rules` (4), `user_quick_actions` (4), `agent_state` (4), `mlm_associate_registrations` (4), `lead_assignment_log` (4), `user_theme_preferences` (4), `rate_limit` (3), `monthly_salary_payments` (3) - **`user_wallets` vs `wallet_points` is a SECOND, parallel wallet system** - and **`project_images` does not exist**: the admin projects images desk is a hollow feature (it renders an honest empty state) - the owner call is whether to build it or drop the link.
+
 ## Session 470: MLM Commission Engine Fatal Bug & Diagnostics Resolved, SonarLint Compliance, Master Test Suite 11/11 Green (2026-11-13)
 
 ### Trigger

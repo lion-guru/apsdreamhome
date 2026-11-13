@@ -285,13 +285,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(d => { if (d.success) location.reload(); });
         });
     });
+        // S471: a destructive action is a POST - it used to be a GET, which any
+        // third-party page could trigger with a single <img>.
+        function apsPostAction(url) {
+            var token = '';
+            if (window.APS && APS.getCsrfToken) { token = APS.getCsrfToken(); }
+            if (!token) {
+                var meta = document.querySelector('meta[name="csrf-token"]');
+                if (meta) { token = meta.getAttribute('content') || ''; }
+            }
+            var f = document.createElement('form');
+            f.method = 'POST';
+            f.action = url;
+            f.style.display = 'none';
+            var t = document.createElement('input');
+            t.type = 'hidden';
+            t.name = 'csrf_token';
+            t.value = token;
+            f.appendChild(t);
+            document.body.appendChild(f);
+            f.submit();
+        }
     document.querySelectorAll('.delete-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
+        const self = this;
             apsConfirm('Delete this saved search?').then(function(ok) {
                 if (!ok) return;
+                apsPostAction('<?php echo BASE_URL; ?>/admin/saved-searches/delete/' + self.getAttribute('data-id'));
             });
-            const id = this.getAttribute('data-id');
-            window.location = '<?php echo BASE_URL; ?>/admin/saved-searches/delete/' + id;
         });
     });
 });

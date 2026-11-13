@@ -150,7 +150,7 @@ $filters = $filters ?? [];
                                 <div class="btn-group btn-group-sm">
                                     <a href="<?= BASE_URL ?>/admin/training/courses/edit/<?= $course['id'] ?>" class="btn btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
                                     <a href="<?= BASE_URL ?>/admin/training/assignments?course_id=<?= $course['id'] ?>" class="btn btn-outline-info" title="View Assignments"><i class="fas fa-users"></i></a>
-                                    <a href="<?= BASE_URL ?>/admin/training/courses/delete/<?= $course['id'] ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this course?')"><i class="fas fa-trash"></i></a>
+                                    <form action="<?= BASE_URL ?>/admin/training/courses/delete/<?= $course['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this course?')"><i class="fas fa-trash"></i></button></form>
                                 </div>
                             </td>
                         </tr>

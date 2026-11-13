@@ -119,7 +119,7 @@ class NpsController extends AdminController
 
     public function delete()
     {
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if ($this->service && $id) {
             $this->service->deleteSurvey($id);
             $this->setFlash('success', 'Survey deleted');

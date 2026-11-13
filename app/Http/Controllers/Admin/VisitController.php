@@ -132,7 +132,7 @@ class VisitController extends AdminController
     public function edit()
     {
         $this->requireAdmin();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         $visit = $this->service ? $this->service->getById($id) : null;
         if (!$visit) {
             $this->setFlash('error', 'Visit not found');
@@ -211,7 +211,7 @@ class VisitController extends AdminController
     public function confirm()
     {
         $this->requireAdmin();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if ($this->service && $id) {
             $this->service->updateStatus($id, 'confirmed');
             if ($this->audit) $this->audit->log('visit.confirm', (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0), $_SESSION['role'] ?? 'admin', 'visit', $id, "Confirmed visit #$id");

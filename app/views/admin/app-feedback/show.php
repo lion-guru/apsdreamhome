@@ -237,9 +237,9 @@ $typeColors = ['bug' => 'danger', 'feature' => 'primary', 'improvement' => 'info
                 <div class="card-body">
                     <h6 class="text-danger mb-2"><i class="fas fa-trash me-1"></i> Danger Zone</h6>
                     <p class="text-muted small mb-2">Permanently delete this feedback. This action cannot be undone.</p>
-                    <a href="<?= e($base) ?>/admin/app-feedback/<?= (int)$item['id'] ?>/delete" class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('Are you sure you want to permanently delete this feedback?')">
+                    <form action="<?= e($base) ?>/admin/app-feedback/<?= (int)$item['id'] ?>/delete" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('Are you sure you want to permanently delete this feedback?')">
                         <i class="fas fa-trash me-1"></i> Delete Feedback
-                    </a>
+                    </button></form>
                 </div>
             </div>
         </div>

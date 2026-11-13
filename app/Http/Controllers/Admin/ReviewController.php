@@ -46,7 +46,7 @@ class ReviewController extends AdminController
     public function approve()
     {
         $this->requireAdmin();
-        $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if ($this->reviews && $id) {
             $this->reviews->approve($id);
             if ($this->audit) $this->audit->log('review.approve', $this->getUserId(), $this->getUserRole(), 'review', $id, "Approved review #$id");
@@ -58,7 +58,7 @@ class ReviewController extends AdminController
     public function reject()
     {
         $this->requireAdmin();
-        $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if ($this->reviews && $id) {
             $this->reviews->reject($id);
             if ($this->audit) $this->audit->log('review.reject', $this->getUserId(), $this->getUserRole(), 'review', $id, "Rejected review #$id");
@@ -83,7 +83,7 @@ class ReviewController extends AdminController
     public function delete()
     {
         $this->requireAdmin();
-        $id = (int)($_GET['id'] ?? $_POST['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if ($this->reviews && $id) {
             $this->reviews->delete($id);
             if ($this->audit) $this->audit->log('review.delete', $this->getUserId(), $this->getUserRole(), 'review', $id, "Deleted review #$id");

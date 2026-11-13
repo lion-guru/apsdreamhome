@@ -649,7 +649,6 @@ $router->put('/user/saved-searches/{id}', 'Front\\SavedSearchController@update')
 $router->post('/user/saved-searches/{id}/update', 'Front\\SavedSearchController@update');
 $router->delete('/user/saved-searches/{id}', 'Front\\SavedSearchController@destroy');
 $router->post('/user/saved-searches/{id}/delete', 'Front\\SavedSearchController@destroy');
-$router->get('/user/saved-searches/{id}/delete', 'Front\\SavedSearchController@destroy');
 $router->get('/user/saved-searches/{id}/execute', 'Front\\SavedSearchController@execute');
 $router->post('/user/saved-searches/{id}/alerts', 'Front\\SavedSearchController@toggleAlerts');
 $router->get('/user/saved-searches/manage-alerts', 'Front\\SavedSearchController@manageAlerts');
@@ -717,7 +716,7 @@ $router->post('/marketing/followup-pack', 'Front\\MarketingToolkitController@fol
 $router->get('/admin/saved-searches', 'App\\Http\\Controllers\\Admin\\SavedSearchController@index');
 $router->post('/admin/saved-searches/store', 'App\\Http\\Controllers\\Admin\\SavedSearchController@store');
 $router->post('/admin/saved-searches/update/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@update');
-$router->get('/admin/saved-searches/delete/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@delete');
+$router->post('/admin/saved-searches/delete/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@delete');
 $router->post('/admin/saved-searches/favorite/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@favorite');
 $router->get('/admin/saved-searches/apply/{id}', 'App\\Http\\Controllers\\Admin\\SavedSearchController@apply');
 
@@ -778,8 +777,8 @@ $router->post('/admin/nps/store', 'App\\Http\\Controllers\\Admin\\NpsController@
 $router->get('/admin/nps/show/{id}', 'App\\Http\\Controllers\\Admin\\NpsController@show');
 $router->get('/admin/nps/edit/{id}', 'App\\Http\\Controllers\\Admin\\NpsController@edit');
 $router->post('/admin/nps/update', 'App\\Http\\Controllers\\Admin\\NpsController@update');
-$router->get('/admin/nps/delete', 'App\\Http\\Controllers\\Admin\\NpsController@delete');
-$router->get('/admin/nps/send', 'App\\Http\\Controllers\\Admin\\NpsController@send');
+$router->post('/admin/nps/delete', 'App\\Http\\Controllers\\Admin\\NpsController@delete');
+$router->post('/admin/nps/send', 'App\\Http\\Controllers\\Admin\\NpsController@send');
 $router->get('/admin/nps/process-triggers', 'App\\Http\\Controllers\\Admin\\NpsController@processTriggers');
 
 $router->get('/admin/auctions', 'App\\Http\\Controllers\\Admin\\AuctionController@index');
@@ -788,7 +787,7 @@ $router->post('/admin/auctions/store', 'App\\Http\\Controllers\\Admin\\AuctionCo
 $router->get('/admin/auctions/show/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@show');
 $router->get('/admin/auctions/start/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@start');
 $router->get('/admin/auctions/end/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@end');
-$router->get('/admin/auctions/cancel', 'App\\Http\\Controllers\\Admin\\AuctionController@cancel');
+$router->post('/admin/auctions/cancel', 'App\\Http\\Controllers\\Admin\\AuctionController@cancel');
 $router->post('/admin/auctions/delete/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@delete');
 $router->get('/admin/auctions/process-ending', 'App\\Http\\Controllers\\Admin\\AuctionController@processEnding');
 
@@ -806,19 +805,19 @@ $router->get('/api/chat/widget', 'App\\Http\\Controllers\\Front\\LiveChatWidgetC
 $router->get('/api/chat/history', 'App\\Http\\Controllers\\Front\\LiveChatWidgetController@history');
 
 $router->get('/admin/reviews', 'App\\Http\\Controllers\\Admin\\ReviewController@index');
-$router->get('/admin/reviews/approve', 'App\\Http\\Controllers\\Admin\\ReviewController@approve');
-$router->get('/admin/reviews/reject', 'App\\Http\\Controllers\\Admin\\ReviewController@reject');
+$router->post('/admin/reviews/approve', 'App\\Http\\Controllers\\Admin\\ReviewController@approve');
+$router->post('/admin/reviews/reject', 'App\\Http\\Controllers\\Admin\\ReviewController@reject');
 $router->post('/admin/reviews/respond', 'App\\Http\\Controllers\\Admin\\ReviewController@respond');
-$router->get('/admin/reviews/delete', 'App\\Http\\Controllers\\Admin\\ReviewController@delete');
+$router->post('/admin/reviews/delete', 'App\\Http\\Controllers\\Admin\\ReviewController@delete');
 $router->get('/admin/reviews/feature-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@featureTestimonial');
-$router->get('/admin/reviews/approve-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@approveTestimonial');
-$router->get('/admin/reviews/reject-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@rejectTestimonial');
-$router->get('/admin/reviews/delete-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@deleteTestimonial');
+$router->post('/admin/reviews/approve-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@approveTestimonial');
+$router->post('/admin/reviews/reject-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@rejectTestimonial');
+$router->post('/admin/reviews/delete-testimonial', 'App\\Http\\Controllers\\Admin\\ReviewController@deleteTestimonial');
 
 // /admin/visits is also defined at line 463 (Admin\VisitController@index) - the LATER route wins
 $router->get('/admin/visits/confirm', 'App\\Http\\Controllers\\Admin\\VisitController@confirm');
 $router->get('/admin/visits/complete', 'App\\Http\\Controllers\\Admin\\VisitController@complete');
-$router->get('/admin/visits/cancel', 'App\\Http\\Controllers\\Admin\\VisitController@cancel');
+$router->post('/admin/visits/cancel', 'App\\Http\\Controllers\\Admin\\VisitController@cancel');
 $router->get('/admin/visits/noshow', 'App\\Http\\Controllers\\Admin\\VisitController@noshow');
 
 $router->get('/visit/book', 'App\\Http\\Controllers\\Front\\VisitController@book');
@@ -2100,7 +2099,7 @@ $router->get('/admin/locations/states/create', 'App\Http\Controllers\Admin\Locat
 $router->post('/admin/locations/states/create', 'App\Http\Controllers\Admin\LocationAdminController@createState');
 $router->get('/admin/locations/states/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editState');
 $router->post('/admin/locations/states/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editState');
-$router->get('/admin/locations/states/delete/{id}', 'App\Http\Controllers\Admin\LocationAdminController@deleteState');
+$router->post('/admin/locations/states/delete/{id}', 'App\Http\Controllers\Admin\LocationAdminController@deleteState');
 $router->get('/admin/locations/states/export', 'App\Http\Controllers\Admin\LocationAdminController@exportStates')
     ->middleware('App\\Middleware\\AjaxRateLimitMiddleware');
 $router->post('/admin/locations/states/import', 'App\Http\Controllers\Admin\LocationAdminController@importStates');
@@ -2112,7 +2111,7 @@ $router->get('/admin/locations/districts/create', 'App\Http\Controllers\Admin\Lo
 $router->post('/admin/locations/districts/create', 'App\Http\Controllers\Admin\LocationAdminController@createDistrict');
 $router->get('/admin/locations/districts/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editDistrict');
 $router->post('/admin/locations/districts/edit/{id}', 'App\Http\Controllers\Admin\LocationAdminController@editDistrict');
-$router->get('/admin/locations/districts/delete/{id}', 'App\Http\Controllers\Admin\LocationAdminController@deleteDistrict');
+$router->post('/admin/locations/districts/delete/{id}', 'App\Http\Controllers\Admin\LocationAdminController@deleteDistrict');
 $router->get('/admin/locations/districts/export', 'App\Http\Controllers\Admin\LocationAdminController@exportDistricts')
     ->middleware('App\\Middleware\\AjaxRateLimitMiddleware');
 $router->post('/admin/locations/districts/import', 'App\Http\Controllers\Admin\LocationAdminController@importDistricts');
@@ -2139,6 +2138,9 @@ $router->post('/admin/news/{id}/delete', 'App\\Http\\Controllers\\Admin\\NewsCon
 
 // Admin Blog Management
 $router->get('/admin/blog', 'App\\Http\\Controllers\\Admin\\BlogController@index');
+// S471: the admin blogs desk had no single-post route - the list page's
+// "eye" button pointed at /admin/blogs/{id}, which does not exist.
+$router->get('/admin/blog/{id}', 'App\\Http\\Controllers\\Admin\\BlogController@show');
 $router->get('/admin/blog/create', 'App\\Http\\Controllers\\Admin\\BlogController@create');
 $router->post('/admin/blog/store', 'App\\Http\\Controllers\\Admin\\BlogController@store');
 $router->get('/admin/blog/{id}/edit', 'App\\Http\\Controllers\\Admin\\BlogController@edit');
@@ -2148,15 +2150,15 @@ $router->post('/admin/blog/{id}/destroy', 'App\\Http\\Controllers\\Admin\\BlogCo
 // Blog Comment Routes (public submit + admin moderation)
 $router->post('/blog/comment/{id}', 'App\\Http\\Controllers\\Front\\BlogController@submitComment');
 $router->get('/admin/blogs/comments', 'App\\Http\\Controllers\\Admin\\BlogController@comments');
-$router->get('/admin/blogs/comment/{id}/approve', 'App\\Http\\Controllers\\Admin\\BlogController@approveComment');
-$router->get('/admin/blogs/comment/{id}/reject', 'App\\Http\\Controllers\\Admin\\BlogController@rejectComment');
-$router->get('/admin/blogs/comment/{id}/delete', 'App\\Http\\Controllers\\Admin\\BlogController@deleteComment');
+$router->post('/admin/blogs/comment/{id}/approve', 'App\\Http\\Controllers\\Admin\\BlogController@approveComment');
+$router->post('/admin/blogs/comment/{id}/reject', 'App\\Http\\Controllers\\Admin\\BlogController@rejectComment');
+$router->post('/admin/blogs/comment/{id}/delete', 'App\\Http\\Controllers\\Admin\\BlogController@deleteComment');
 
 // Financial Inquiries
 $router->get('/admin/financial-inquiries', 'App\\Http\\Controllers\\Admin\\FinancialInquiryController@index');
 $router->get('/admin/financial-inquiries/{id}', 'App\\Http\\Controllers\\Admin\\FinancialInquiryController@show');
 $router->post('/admin/financial-inquiries/{id}/status', 'App\\Http\\Controllers\\Admin\\FinancialInquiryController@updateStatus');
-$router->get('/admin/financial-inquiries/{id}/delete', 'App\\Http\\Controllers\\Admin\\FinancialInquiryController@destroy');
+$router->post('/admin/financial-inquiries/{id}/delete', 'App\\Http\\Controllers\\Admin\\FinancialInquiryController@destroy');
 
 // Admin Campaigns
 $router->get('/admin/campaigns', 'App\\Http\\Controllers\\Admin\\CampaignController@index');
@@ -2164,7 +2166,7 @@ $router->get('/admin/campaigns/create', 'App\\Http\\Controllers\\Admin\\Campaign
 $router->post('/admin/campaigns/store', 'App\\Http\\Controllers\\Admin\\CampaignController@store');
 $router->get('/admin/campaigns/{id}/edit', 'App\\Http\\Controllers\\Admin\\CampaignController@edit');
 $router->post('/admin/campaigns/{id}/update', 'App\\Http\\Controllers\\Admin\\CampaignController@update');
-$router->get('/admin/campaigns/{id}/delete', 'App\\Http\\Controllers\\Admin\\CampaignController@delete');
+$router->post('/admin/campaigns/{id}/delete', 'App\\Http\\Controllers\\Admin\\CampaignController@delete');
 $router->get('/admin/campaigns/{id}/analytics', 'App\\Http\\Controllers\\Admin\\CampaignController@analytics');
 $router->get('/admin/campaigns/{id}/launch', 'App\\Http\\Controllers\\Admin\\CampaignController@launch');
 
@@ -2174,7 +2176,7 @@ $router->get('/admin/gallery/create', 'App\\Http\\Controllers\\Admin\\GalleryCon
 $router->post('/admin/gallery', 'App\\Http\\Controllers\\Admin\\GalleryController@store');
 $router->get('/admin/gallery/{id}/edit', 'App\\Http\\Controllers\\Admin\\GalleryController@edit');
 $router->post('/admin/gallery/{id}/update', 'App\\Http\\Controllers\\Admin\\GalleryController@update');
-$router->get('/admin/gallery/{id}/destroy', 'App\\Http\\Controllers\\Admin\\GalleryController@destroy');
+$router->post('/admin/gallery/{id}/destroy', 'App\\Http\\Controllers\\Admin\\GalleryController@destroy');
 
 // Admin About CMS
 $router->get('/admin/about-cms', 'App\\Http\\Controllers\\Admin\\AboutCmsController@index');
@@ -2360,7 +2362,7 @@ $router->get('/admin/projects/edit/{id}', 'App\Http\Controllers\Admin\ProjectsAd
 $router->post('/admin/projects/update/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@update');
 $router->get('/admin/projects/view/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@detail');
 $router->get('/admin/projects/images/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@images');
-$router->get('/admin/projects/delete/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@delete');
+$router->post('/admin/projects/delete/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@delete');
 $router->post('/admin/projects/status/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@status');
 
 // Commission Management Routes
@@ -2883,7 +2885,7 @@ $router->post('/admin/faqs/store', 'App\\Http\\Controllers\\Admin\\FaqController
 $router->get('/admin/faqs/{id}', 'App\\Http\\Controllers\\Admin\\FaqController@show');
 $router->get('/admin/faqs/{id}/edit', 'App\\Http\\Controllers\\Admin\\FaqController@edit');
 $router->post('/admin/faqs/{id}/update', 'App\\Http\\Controllers\\Admin\\FaqController@update');
-$router->get('/admin/faqs/{id}/delete', 'App\\Http\\Controllers\\Admin\\FaqController@delete');
+$router->post('/admin/faqs/{id}/delete', 'App\\Http\\Controllers\\Admin\\FaqController@delete');
 
 // Admin Settings Company
 $router->get('/admin/settings/company', 'App\\Http\\Controllers\\Admin\\SiteSettingsController@index');
@@ -3565,7 +3567,7 @@ $router->get('/admin/coding-challenges/create', 'App\\Http\\Controllers\\Admin\\
 $router->post('/admin/coding-challenges/store', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@store');
 $router->get('/admin/coding-challenges/edit/{id}', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@edit');
 $router->post('/admin/coding-challenges/update/{id}', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@update');
-$router->get('/admin/coding-challenges/delete/{id}', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@destroy');
+$router->post('/admin/coding-challenges/delete/{id}', 'App\\Http\\Controllers\\Admin\\CodingChallengeController@destroy');
 
 // ============================================================
 // ADMIN CAMPAIGN TEMPLATES
@@ -3576,7 +3578,7 @@ $router->get('/admin/campaign-templates/create', 'App\\Http\\Controllers\\Admin\
 $router->post('/admin/campaign-templates/store', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@store');
 $router->get('/admin/campaign-templates/edit/{id}', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@edit');
 $router->post('/admin/campaign-templates/update/{id}', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@update');
-$router->get('/admin/campaign-templates/delete/{id}', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@destroy');
+$router->post('/admin/campaign-templates/delete/{id}', 'App\\Http\\Controllers\\Admin\\CampaignTemplateController@destroy');
 
 // ============================================================
 // ADMIN VOICE UPLOADS
@@ -3585,7 +3587,7 @@ $router->get('/admin/campaign-templates/delete/{id}', 'App\\Http\\Controllers\\A
 $router->get('/admin/voice-uploads', 'App\\Http\\Controllers\\Admin\\VoiceUploadController@index');
 $router->get('/admin/voice-uploads/{id}', 'App\\Http\\Controllers\\Admin\\VoiceUploadController@show');
 $router->post('/admin/voice-uploads/{id}/process', 'App\\Http\\Controllers\\Admin\\VoiceUploadController@process');
-$router->get('/admin/voice-uploads/{id}/delete', 'App\\Http\\Controllers\\Admin\\VoiceUploadController@delete');
+$router->post('/admin/voice-uploads/{id}/delete', 'App\\Http\\Controllers\\Admin\\VoiceUploadController@delete');
 
 // ============================================================
 // ADMIN APP FEEDBACK
@@ -3595,7 +3597,7 @@ $router->get('/admin/app-feedback', 'App\\Http\\Controllers\\Admin\\AppFeedbackC
 $router->get('/admin/app-feedback/{id}', 'App\\Http\\Controllers\\Admin\\AppFeedbackController@show');
 $router->post('/admin/app-feedback/{id}/status', 'App\\Http\\Controllers\\Admin\\AppFeedbackController@updateStatus');
 $router->post('/admin/app-feedback/{id}/respond', 'App\\Http\\Controllers\\Admin\\AppFeedbackController@respond');
-$router->get('/admin/app-feedback/{id}/delete', 'App\\Http\\Controllers\\Admin\\AppFeedbackController@delete');
+$router->post('/admin/app-feedback/{id}/delete', 'App\\Http\\Controllers\\Admin\\AppFeedbackController@delete');
 
 // ============================================================
 // ADMIN SEARCH HISTORY
@@ -3961,8 +3963,8 @@ $router->post('/admin/chatbot/settings', 'App\\Http\\Controllers\\Admin\\AIChatb
 $router->get('/admin/chatbot/analytics', 'App\\Http\\Controllers\\Admin\\AIChatbotController@analytics');
 $router->get('/admin/chatbot/train', 'App\\Http\\Controllers\\Admin\\AIChatbotController@train');
 $router->post('/admin/chatbot/train/store', 'App\\Http\\Controllers\\Admin\\AIChatbotController@storeTraining');
-$router->get('/admin/chatbot/train/toggle/{id}', 'App\\Http\\Controllers\\Admin\\AIChatbotController@toggleTraining');
-$router->get('/admin/chatbot/train/delete/{id}', 'App\\Http\\Controllers\\Admin\\AIChatbotController@deleteTraining');
+$router->post('/admin/chatbot/train/toggle/{id}', 'App\\Http\\Controllers\\Admin\\AIChatbotController@toggleTraining');
+$router->post('/admin/chatbot/train/delete/{id}', 'App\\Http\\Controllers\\Admin\\AIChatbotController@deleteTraining');
 $router->get('/admin/ai-analytics', 'App\\Http\\Controllers\\Admin\\AIAnalyticsController@index');
 
 // AI Calling
@@ -4181,7 +4183,7 @@ $router->post('/admin/crm/drip/store', 'App\\Http\\Controllers\\Admin\\DripCampa
 $router->get('/admin/crm/drip/{id}', 'App\\Http\\Controllers\\Admin\\DripCampaignController@show');
 $router->get('/admin/crm/drip/{id}/edit', 'App\\Http\\Controllers\\Admin\\DripCampaignController@create');
 $router->post('/admin/crm/drip/{id}/update', 'App\\Http\\Controllers\\Admin\\DripCampaignController@store');
-$router->get('/admin/crm/drip/{id}/delete', 'App\\Http\\Controllers\\Admin\\DripCampaignController@delete');
+$router->post('/admin/crm/drip/{id}/delete', 'App\\Http\\Controllers\\Admin\\DripCampaignController@delete');
 
 // CRM - Share Analytics
 $router->get('/admin/crm/shares', 'App\\Http\\Controllers\\Front\\ShareController@shareStats');
@@ -4201,7 +4203,7 @@ $router->get('/admin/ads/create', 'App\\Http\\Controllers\\Admin\\AdManagerContr
 $router->post('/admin/ads/create', 'App\\Http\\Controllers\\Admin\\AdManagerController@create');
 $router->get('/admin/ads/edit/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerController@edit');
 $router->post('/admin/ads/edit/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerController@edit');
-$router->get('/admin/ads/delete/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerController@delete');
+$router->post('/admin/ads/delete/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerController@delete');
 
 // Ad click tracking
 $router->get('/ad-click/{id}', 'App\\Http\\Controllers\\Admin\\AdManagerController@trackClick');
@@ -4214,20 +4216,20 @@ $router->post('/admin/ads/save-settings', 'App\\Http\\Controllers\\Admin\\AdMana
 $router->get('/admin/directory', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@index');
 $router->get('/admin/directory/categories', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@categories');
 $router->post('/admin/directory/categories', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@categories');
-$router->get('/admin/directory/delete-category/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteCategory');
+$router->post('/admin/directory/delete-category/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteCategory');
 $router->get('/admin/directory/listings', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@listings');
 $router->get('/admin/directory/listing-form/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@listingForm');
 $router->post('/admin/directory/listing-form/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@listingForm');
 $router->get('/admin/directory/listing-form', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@listingForm');
 $router->post('/admin/directory/listing-form', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@listingForm');
-$router->get('/admin/directory/delete-listing/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteListing');
+$router->post('/admin/directory/delete-listing/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteListing');
 $router->get('/admin/directory/reviews', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@reviews');
-$router->get('/admin/directory/approve-review/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@approveReview');
-$router->get('/admin/directory/reject-review/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@rejectReview');
+$router->post('/admin/directory/approve-review/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@approveReview');
+$router->post('/admin/directory/reject-review/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@rejectReview');
 $router->get('/admin/directory/jobs', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@jobs');
-$router->get('/admin/directory/delete-job/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteJob');
+$router->post('/admin/directory/delete-job/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteJob');
 $router->get('/admin/directory/materials', 'App\Http\Controllers\Admin\AdminDirectoryController@materials');
-$router->get('/admin/directory/delete-material/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteMaterial');
+$router->post('/admin/directory/delete-material/{id}', 'App\\Http\\Controllers\\Admin\\AdminDirectoryController@deleteMaterial');
 
 // Listing Settings (Monetization)
 $router->get('/admin/listing-settings', 'App\\Http\\Controllers\\Admin\\ListingSettingsController@index');
@@ -4490,7 +4492,7 @@ $router->get('/admin/hr/users/create', 'App\\Http\\Controllers\\Admin\\HRControl
 $router->post('/admin/hr/users/store', 'App\\Http\\Controllers\\Admin\\HRController@storeEmployee');
 $router->get('/admin/hr/users/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@editEmployee');
 $router->post('/admin/hr/users/update/{id}', 'App\\Http\\Controllers\\Admin\\HRController@updateEmployee');
-$router->get('/admin/hr/users/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@deleteEmployee');
+$router->post('/admin/hr/users/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@deleteEmployee');
 $router->get('/admin/hr/users/view/{id}', 'App\\Http\\Controllers\\Admin\\HRController@viewEmployee');
 $router->get('/admin/hr/attendance', 'App\\Http\\Controllers\\Admin\\HRController@attendance');
 $router->post('/admin/hr/attendance/mark', 'App\\Http\\Controllers\\Admin\\HRController@markAttendance');
@@ -5171,8 +5173,8 @@ $router->post('/admin/deal-pipeline/store', 'App\\Http\\Controllers\\Admin\\Deal
 $router->get('/admin/deal-pipeline/{id}', 'App\\Http\\Controllers\\Admin\\DealPipelineController@show');
 $router->post('/admin/deal-pipeline/{id}/move-stage', 'App\\Http\\Controllers\\Admin\\DealPipelineController@moveStage');
 $router->post('/admin/deal-pipeline/{id}/update-probability', 'App\\Http\\Controllers\\Admin\\DealPipelineController@updateProbability');
-$router->get('/admin/deal-pipeline/{id}/mark-won', 'App\\Http\\Controllers\\Admin\\DealPipelineController@markWon');
-$router->get('/admin/deal-pipeline/{id}/mark-lost', 'App\\Http\\Controllers\\Admin\\DealPipelineController@markLost');
+$router->post('/admin/deal-pipeline/{id}/mark-won', 'App\\Http\\Controllers\\Admin\\DealPipelineController@markWon');
+$router->post('/admin/deal-pipeline/{id}/mark-lost', 'App\\Http\\Controllers\\Admin\\DealPipelineController@markLost');
 $router->get('/admin/deal-pipeline/{id}/timeline', 'App\\Http\\Controllers\\Admin\\DealPipelineController@timeline');
 
 // ============================================================
@@ -6751,7 +6753,7 @@ $router->get('/admin/training/courses/create', 'App\\Http\\Controllers\\Admin\\H
 $router->post('/admin/training/courses/create', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseCreate');
 $router->get('/admin/training/courses/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseEdit');
 $router->post('/admin/training/courses/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseEdit');
-$router->get('/admin/training/courses/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseDelete');
+$router->post('/admin/training/courses/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@trainingCourseDelete');
 $router->get('/admin/training/assignments', 'App\\Http\\Controllers\\Admin\\HRController@trainingAssignments');
 $router->post('/admin/training/assign', 'App\\Http\\Controllers\\Admin\\HRController@trainingAssign');
 $router->post('/admin/training/assignments/progress', 'App\\Http\\Controllers\\Admin\\HRController@trainingUpdateProgress');
@@ -6766,7 +6768,7 @@ $router->get('/admin/org-chart/create', 'App\\Http\\Controllers\\Admin\\HRContro
 $router->post('/admin/org-chart/create', 'App\\Http\\Controllers\\Admin\\HRController@orgChartCreate');
 $router->get('/admin/org-chart/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@orgChartEdit');
 $router->post('/admin/org-chart/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@orgChartEdit');
-$router->get('/admin/org-chart/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@orgChartDelete');
+$router->post('/admin/org-chart/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@orgChartDelete');
 $router->post('/admin/org-chart/reorder', 'App\\Http\\Controllers\\Admin\\HRController@orgChartReorder');
 $router->post('/admin/org-chart/sync', 'App\\Http\\Controllers\\Admin\\HRController@orgChartSync');
 $router->get('/admin/org-chart/export', 'App\\Http\\Controllers\\Admin\\HRController@orgChartExport');
@@ -6779,7 +6781,7 @@ $router->get('/admin/engagement/surveys/create', 'App\\Http\\Controllers\\Admin\
 $router->post('/admin/engagement/surveys/create', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyCreate');
 $router->get('/admin/engagement/surveys/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyEdit');
 $router->post('/admin/engagement/surveys/edit/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyEdit');
-$router->get('/admin/engagement/surveys/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyDelete');
+$router->post('/admin/engagement/surveys/delete/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyDelete');
 $router->get('/admin/engagement/surveys/activate/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyActivate');
 $router->get('/admin/engagement/surveys/close/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyClose');
 $router->get('/admin/engagement/surveys/analytics/{id}', 'App\\Http\\Controllers\\Admin\\HRController@engagementSurveyAnalytics');

@@ -163,7 +163,7 @@ protected function pdo(): \PDO
     {
         $this->requireAdmin();
 
-        $hard = isset($_GET['hard']);
+        $hard = isset($_POST['hard']) || isset($_GET['hard']);
 
         try {
             $pdo = $this->pdo();

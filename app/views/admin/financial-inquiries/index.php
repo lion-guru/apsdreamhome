@@ -124,7 +124,7 @@ $statusLabels = [
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <a href="<?= BASE_URL ?>/admin/financial-inquiries/<?= $inq['id'] ?>" class="btn btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
-                                        <a href="<?= BASE_URL ?>/admin/financial-inquiries/<?= $inq['id'] ?>/delete" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this inquiry?')"><i class="fas fa-trash"></i></a>
+                                        <form action="<?= BASE_URL ?>/admin/financial-inquiries/<?= $inq['id'] ?>/delete" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this inquiry?')"><i class="fas fa-trash"></i></button></form>
                                     </div>
                                 </td>
                             </tr>

@@ -44,7 +44,7 @@ class BlogController extends AdminController
         } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
-        $this->redirect('/admin/blogs');
+        $this->redirect('/admin/blog');
     }
 
     public function edit($id)
@@ -59,7 +59,7 @@ class BlogController extends AdminController
         }
         if (!$blog) {
             $_SESSION['error'] = 'Post not found';
-            $this->redirect('/admin/blogs');
+            $this->redirect('/admin/blog');
             return;
         }
         $this->render("admin/blogs/edit", ['page_title' => 'Edit Blog Post', 'blog' => $blog]);
@@ -79,7 +79,36 @@ class BlogController extends AdminController
         } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
-        $this->redirect('/admin/blogs');
+        $this->redirect('/admin/blog');
+    }
+
+    /**
+     * S471: the admin blogs desk had NO single-post route - the list page
+     * rendered an "eye" button that 404'd.  This is the preview the admin
+     * actually wanted: it shows a DRAFT too, which the public page cannot
+     * (the public route only serves published posts).
+     */
+    public function show($id)
+    {
+        $this->requireAdmin();
+        $blog = null;
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM blog_posts WHERE id = ?");
+            $stmt->execute([$id]);
+            $blog = $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            $blog = null;
+        }
+        if (!$blog) {
+            $_SESSION['error'] = 'Post not found';
+            $this->redirect('/admin/blog');
+            return;
+        }
+        $this->render("admin/blogs/show", [
+            'page_title' => 'Blog Post',
+            'active_page' => 'blogs',
+            'blog' => $blog,
+        ]);
     }
 
     public function destroy($id)
@@ -93,7 +122,7 @@ class BlogController extends AdminController
         } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
         }
-        $this->redirect('/admin/blogs');
+        $this->redirect('/admin/blog');
     }
 
     public function comments()
@@ -161,7 +190,7 @@ class BlogController extends AdminController
             ]);
         } catch (\Throwable $e) {
             $_SESSION['error'] = 'Error: ' . $e->getMessage();
-            $this->redirect('/admin/blogs');
+            $this->redirect('/admin/blog');
         }
     }
 

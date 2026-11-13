@@ -109,8 +109,8 @@
                         <button type="submit" class="btn btn-primary btn-sm w-100">Move Stage</button>
                     </form>
                     <hr>
-                    <a href="<?= BASE_URL ?>/admin/deal-pipeline/<?= $deal['id'] ?>/mark-won" class="btn btn-success btn-sm w-100 mb-1" data-aps-confirm="Mark this deal as won?">Mark as Won</a>
-                    <a href="<?= BASE_URL ?>/admin/deal-pipeline/<?= $deal['id'] ?>/mark-lost" class="btn btn-danger btn-sm w-100" data-aps-confirm="Mark this deal as lost?">Mark as Lost</a>
+                    <form action="<?= BASE_URL ?>/admin/deal-pipeline/<?= $deal['id'] ?>/mark-won" method="POST" class="d-inline" data-aps-confirm="Mark this deal as won?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-success btn-sm w-100 mb-1">Mark as Won</button></form>
+                    <form action="<?= BASE_URL ?>/admin/deal-pipeline/<?= $deal['id'] ?>/mark-lost" method="POST" class="d-inline" data-aps-confirm="Mark this deal as lost?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-danger btn-sm w-100">Mark as Lost</button></form>
                 </div>
             </div>
             <?php endif; ?>

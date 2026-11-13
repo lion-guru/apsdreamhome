@@ -199,9 +199,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                             <a href="<?= e($base) ?>/admin/app-feedback/<?= (int)$item['id'] ?>" class="btn btn-outline-primary" title="View">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="<?= e($base) ?>/admin/app-feedback/<?= (int)$item['id'] ?>/delete" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this feedback? This cannot be undone.')">
+                                            <form action="<?= e($base) ?>/admin/app-feedback/<?= (int)$item['id'] ?>/delete" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this feedback? This cannot be undone.')">
                                                 <i class="fas fa-trash"></i>
-                                            </a>
+                                            </button></form>
                                         </div>
                                     </td>
                                 </tr>

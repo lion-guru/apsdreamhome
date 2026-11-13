@@ -136,9 +136,9 @@
                                             <a href="<?= BASE_URL ?>/admin/locations/districts/edit/<?= e($district['id']) ?>" class="btn btn-outline-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="<?= BASE_URL ?>/admin/locations/districts/delete/<?= e($district['id']) ?>" class="btn btn-outline-danger" title="Delete" data-aps-confirm="Are you sure? This will also delete all associated colonies.">
+                                            <button type="submit" form="apsDelForm" data-aps-del-url="<?= BASE_URL ?>/admin/locations/districts/delete/<?= e($district['id']) ?>" class="btn btn-outline-danger" title="Delete">
                                                 <i class="fas fa-trash"></i>
-                                            </a>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -238,4 +238,19 @@ function confirmBulkAction() {
 }
 </script>
 
-
+<!-- S471: the delete action is its own form, placed OUTSIDE the
+     bulk-action form - a nested <form> would be dropped by the browser
+     and the button would fire the bulk form instead. -->
+<form id="apsDelForm" method="POST" action="" class="d-none" data-aps-confirm="Are you sure? This will also delete all associated colonies.">
+  <?= \App\Helpers\SecurityHelper::csrfField() ?>
+</form>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll("[data-aps-del-url]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var f = document.getElementById("apsDelForm");
+      if (f) { f.action = this.getAttribute("data-aps-del-url"); }
+    });
+  });
+});
+</script>

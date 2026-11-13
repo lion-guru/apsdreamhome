@@ -178,7 +178,7 @@ $filters = $filters ?? [];
                                     <?php elseif ($isActive): ?>
                                         <a href="<?= BASE_URL ?>/admin/engagement/surveys/close/<?= $survey['id'] ?>" class="btn btn-outline-warning" title="Close" onclick="return confirm('Close this survey?')"><i class="fas fa-stop"></i></a>
                                     <?php endif; ?>
-                                    <a href="<?= BASE_URL ?>/admin/engagement/surveys/delete/<?= $survey['id'] ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this survey?')"><i class="fas fa-trash"></i></a>
+                                    <form action="<?= BASE_URL ?>/admin/engagement/surveys/delete/<?= $survey['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this survey?')"><i class="fas fa-trash"></i></button></form>
                                 </div>
                             </td>
                         </tr>

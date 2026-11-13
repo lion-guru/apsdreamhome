@@ -126,7 +126,7 @@ class AuctionController extends AdminController
         $this->requireAdmin();
         $id = is_numeric($id) ? (int)$id : (int)($_GET['id'] ?? 0);
         if ($this->service && $id) {
-            $this->service->cancelAuction($id, $_GET['reason'] ?? null);
+            $this->service->cancelAuction($id, $_POST['reason'] ?? $_GET['reason'] ?? null);
             $this->setFlash('success', 'Auction cancelled');
         }
         return $this->redirect(BASE_URL . '/admin/auctions');

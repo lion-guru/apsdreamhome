@@ -194,9 +194,9 @@ $totalCategories = count($categories);
                         <a href="<?= BASE_URL ?>/admin/gallery/<?= (int)$img['id'] ?>/edit" class="btn btn-outline-primary" title="Edit Photo Details">
                             <i class="fas fa-edit me-1"></i>Edit
                         </a>
-                        <a href="<?= BASE_URL ?>/admin/gallery/<?= (int)$img['id'] ?>/destroy" class="btn btn-outline-danger" data-aps-confirm="Are you sure you want to delete this photo?" title="Delete Photo">
+                        <form action="<?= BASE_URL ?>/admin/gallery/<?= (int)$img['id'] ?>/destroy" method="POST" class="d-inline" data-aps-confirm="Are you sure you want to delete this photo?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-danger" title="Delete Photo">
                             <i class="fas fa-trash"></i>
-                        </a>
+                        </button></form>
                     </div>
                 </div>
             </div>

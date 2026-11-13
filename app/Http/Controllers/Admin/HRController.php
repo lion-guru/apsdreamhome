@@ -1673,6 +1673,12 @@ public function viewEmployee($id)
     {
         $this->requireAdmin();
         $result = (new \App\Services\OrgChartService())->deleteNode($id);
+        // S471: the org-chart desk deletes through fetch() and awaits JSON -
+        // a 302 redirect made r.json() throw, so the button silently did
+        // nothing.  An AJAX caller now gets the result as JSON.
+        if ($this->isAjax()) {
+            return $this->jsonResponse($result);
+        }
         $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
         header('Location: ' . BASE_URL . '/admin/org-chart');
         exit;

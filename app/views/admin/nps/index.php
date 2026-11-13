@@ -96,7 +96,7 @@ ob_start();
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/nps/show/<?= $s['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                                         <a href="<?= BASE_URL ?>/admin/nps/edit/<?= $s['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
-                                        <a href="<?= BASE_URL ?>/admin/nps/delete?id=<?= $s['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this survey and all its responses?"><i class="fas fa-trash"></i></a>
+                                        <form action="<?= BASE_URL ?>/admin/nps/delete?id=<?= $s['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete this survey and all its responses?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

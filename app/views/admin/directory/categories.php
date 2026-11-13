@@ -67,7 +67,7 @@
                                     <td><span class="badge bg-<?= $c['is_active'] ? 'success' : 'danger' ?>"><?= $c['is_active'] ? 'Yes' : 'No' ?></span></td>
                                     <td><?= $c['sort_order'] ?></td>
                                     <td>
-                                        <a href="<?= BASE_URL ?>/admin/directory/delete-category/<?= $c['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete category?"><i class="fas fa-trash"></i></a>
+                                        <form action="<?= BASE_URL ?>/admin/directory/delete-category/<?= $c['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete category?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

@@ -55,7 +55,7 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Update Post</button>
-                        <a href="<?php echo BASE_URL; ?>/admin/blogs" class="btn btn-secondary">Cancel</a>
+                        <a href="<?php echo BASE_URL; ?>/admin/blog" class="btn btn-secondary">Cancel</a>
                     </form>
                 </div>
             </div>

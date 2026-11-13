@@ -49,7 +49,7 @@
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/directory/listing-form/<?= $l['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                                         <a href="<?= BASE_URL ?>/services/listing/<?= $l['id'] ?>" target="_blank" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i></a>
-                                        <a href="<?= BASE_URL ?>/admin/directory/delete-listing/<?= $l['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this listing? All reviews will also be deleted."><i class="fas fa-trash"></i></a>
+                                        <form action="<?= BASE_URL ?>/admin/directory/delete-listing/<?= $l['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete this listing? All reviews will also be deleted."><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

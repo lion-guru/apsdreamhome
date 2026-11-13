@@ -114,16 +114,16 @@ ob_start();
                                     <td><small><?= date('M j', strtotime($r['created_at'])) ?></small></td>
                                     <td>
                                         <?php if ($r['status'] === 'pending'): ?>
-                                            <a href="<?= BASE_URL ?>/admin/reviews/approve?id=<?= $r['id'] ?>" class="btn btn-sm btn-success" title="Approve">
+                                            <form action="<?= BASE_URL ?>/admin/reviews/approve?id=<?= $r['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-success" title="Approve">
                                                 <i class="fas fa-check"></i>
-                                            </a>
-                                            <a href="<?= BASE_URL ?>/admin/reviews/reject?id=<?= $r['id'] ?>" class="btn btn-sm btn-warning" title="Reject">
+                                            </button></form>
+                                            <form action="<?= BASE_URL ?>/admin/reviews/reject?id=<?= $r['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-warning" title="Reject">
                                                 <i class="fas fa-times"></i>
-                                            </a>
+                                            </button></form>
                                         <?php endif; ?>
-                                        <a href="<?= BASE_URL ?>/admin/reviews/delete?id=<?= $r['id'] ?>" class="btn btn-sm btn-outline-danger" title="Delete" data-aps-confirm="Delete this review?">
+                                        <form action="<?= BASE_URL ?>/admin/reviews/delete?id=<?= $r['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete this review?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                             <i class="fas fa-trash"></i>
-                                        </a>
+                                        </button></form>
                                     </td>
                                 </tr>
                                 <?php if (!empty($r['admin_response'])): ?>
@@ -223,10 +223,10 @@ ob_start();
                                             <i class="fas fa-star"></i>
                                         </a>
                                         <?php if ($t['status'] === 'pending'): ?>
-                                            <a href="<?= BASE_URL ?>/admin/reviews/approve-testimonial?id=<?= $t['id'] ?>" class="btn btn-sm btn-success"><i class="fas fa-check"></i></a>
-                                            <a href="<?= BASE_URL ?>/admin/reviews/reject-testimonial?id=<?= $t['id'] ?>" class="btn btn-sm btn-warning"><i class="fas fa-times"></i></a>
+                                            <form action="<?= BASE_URL ?>/admin/reviews/approve-testimonial?id=<?= $t['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i></button></form>
+                                            <form action="<?= BASE_URL ?>/admin/reviews/reject-testimonial?id=<?= $t['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-warning"><i class="fas fa-times"></i></button></form>
                                         <?php endif; ?>
-                                        <a href="<?= BASE_URL ?>/admin/reviews/delete-testimonial?id=<?= $t['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete?"><i class="fas fa-trash"></i></a>
+                                        <form action="<?= BASE_URL ?>/admin/reviews/delete-testimonial?id=<?= $t['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

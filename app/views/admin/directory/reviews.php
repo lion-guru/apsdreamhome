@@ -26,10 +26,10 @@
                                     <td><?= date('d M Y', strtotime($r['created_at'])) ?></td>
                                     <td>
                                         <?php if ($r['status'] !== 'approved'): ?>
-                                            <a href="<?= BASE_URL ?>/admin/directory/approve-review/<?= $r['id'] ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i></a>
+                                            <form action="<?= BASE_URL ?>/admin/directory/approve-review/<?= $r['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i></button></form>
                                         <?php endif; ?>
                                         <?php if ($r['status'] !== 'rejected'): ?>
-                                            <a href="<?= BASE_URL ?>/admin/directory/reject-review/<?= $r['id'] ?>" class="btn btn-sm btn-outline-danger"><i class="fas fa-times"></i></a>
+                                            <form action="<?= BASE_URL ?>/admin/directory/reject-review/<?= $r['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times"></i></button></form>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

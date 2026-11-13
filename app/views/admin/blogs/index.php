@@ -26,7 +26,7 @@ foreach ($blogList as $b) {
         <a href="<?= BASE_URL ?>/admin/pages"        class="btn btn-outline-secondary btn-sm"><i class="fas fa-file me-1"></i>Pages</a>
         <a href="<?= BASE_URL ?>/admin/news"          class="btn btn-outline-secondary btn-sm"><i class="fas fa-newspaper me-1"></i>News</a>
         <a href="<?= BASE_URL ?>/admin/gallery"       class="btn btn-outline-info btn-sm"><i class="fas fa-images me-1"></i>Gallery</a>
-        <a href="<?= BASE_URL ?>/admin/blogs/create"  class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Post</a>
+        <a href="<?= BASE_URL ?>/admin/blog/create"  class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Post</a>
     </div>
 </div>
 
@@ -134,18 +134,18 @@ foreach ($blogList as $b) {
                         <td class="small text-muted"><?= !empty($blog['created_at']) ? date('d M Y', strtotime($blog['created_at'])) : '—' ?></td>
                         <td class="text-end pe-4">
                             <div class="btn-group btn-group-sm">
-                                <a href="<?= BASE_URL ?>/admin/blogs/<?= e($blog['id']) ?>" class="btn btn-outline-primary" title="View">
+                                <a href="<?= BASE_URL ?>/admin/blog/<?= e($blog['id']) ?>" class="btn btn-outline-primary" title="View">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="<?= BASE_URL ?>/admin/blogs/<?= e($blog['id']) ?>/edit" class="btn btn-outline-warning" title="Edit">
+                                <a href="<?= BASE_URL ?>/admin/blog/<?= e($blog['id']) ?>/edit" class="btn btn-outline-warning" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <a href="<?= BASE_URL ?>/blog/<?= e($blog['slug'] ?? $blog['id']) ?>" class="btn btn-outline-info" title="View Public" target="_blank">
                                     <i class="fas fa-external-link-alt"></i>
                                 </a>
-                                <a href="<?= BASE_URL ?>/admin/blogs/<?= e($blog['id']) ?>/delete" class="btn btn-outline-danger" data-aps-confirm="Delete this post?" title="Delete">
+                                <form action="<?= BASE_URL ?>/admin/blog/<?= e($blog['id']) ?>/destroy" method="POST" class="d-inline" data-aps-confirm="Delete this post?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-danger" title="Delete">
                                     <i class="fas fa-trash"></i>
-                                </a>
+                                </button></form>
                             </div>
                         </td>
                     </tr>
@@ -156,7 +156,7 @@ foreach ($blogList as $b) {
                             <i class="fas fa-newspaper fa-3x text-muted mb-3 d-block opacity-50"></i>
                             <h5 class="text-muted">No blog posts yet</h5>
                             <p class="text-muted small mb-3">Publish your first blog post to engage customers and boost SEO.</p>
-                            <a href="<?= BASE_URL ?>/admin/blogs/create" class="btn btn-primary btn-sm">
+                            <a href="<?= BASE_URL ?>/admin/blog/create" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus me-1"></i>Create First Post
                             </a>
                         </td>

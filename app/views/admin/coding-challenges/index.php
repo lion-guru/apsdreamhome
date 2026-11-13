@@ -123,7 +123,7 @@ $difficultyLabels = [
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <a href="<?= BASE_URL ?>/admin/coding-challenges/edit/<?= $ch['id'] ?>" class="btn btn-outline-primary" title="Edit"><i class="fas fa-edit"></i></a>
-                                        <a href="<?= BASE_URL ?>/admin/coding-challenges/delete/<?= $ch['id'] ?>" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this challenge?')"><i class="fas fa-trash"></i></a>
+                                        <form action="<?= BASE_URL ?>/admin/coding-challenges/delete/<?= $ch['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-outline-danger" title="Delete" onclick="return confirm('Delete this challenge?')"><i class="fas fa-trash"></i></button></form>
                                     </div>
                                 </td>
                             </tr>
