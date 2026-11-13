@@ -141,6 +141,15 @@ class ProjectsAdminController extends AdminController
         $images     = json_decode($project['images'] ?? '[]', true) ?: [];
         $milestones = json_decode($project['milestone_json'] ?? '[]', true) ?: [];
 
+        try {
+            $dbImages = $db->fetchAll("SELECT * FROM project_images WHERE project_id = ? ORDER BY display_order ASC", [$id]) ?: [];
+            if (!empty($dbImages)) {
+                $images = $dbImages;
+            }
+        } catch (\Throwable $ie) {
+            error_log('ProjectsAdminController::show project_images: ' . $ie->getMessage());
+        }
+
         $this->data['project']    = $project;
         $this->data['amenities']  = $amenities;
         $this->data['images']     = $images;

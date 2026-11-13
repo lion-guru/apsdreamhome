@@ -152,6 +152,9 @@ $stats = $stats ?? ['total' => 0, 'under_construction' => 0, 'completed' => 0, '
                                     <a href="<?= BASE_URL ?>/admin/projects/edit/<?= $p['id'] ?>" class="btn btn-outline-warning" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
+                                    <a href="<?= BASE_URL ?>/admin/projects/images/<?= $p['id'] ?>" class="btn btn-outline-secondary" title="Project Gallery & Images">
+                                        <i class="fas fa-images"></i>
+                                    </a>
                                     <a href="<?= BASE_URL ?>/admin/projects/progress/<?= $p['id'] ?>" class="btn btn-outline-info" title="Progress">
                                         <i class="fas fa-tasks"></i>
                                     </a>

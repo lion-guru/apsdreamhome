@@ -39,6 +39,9 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
             <i class="fas fa-city me-1"></i>View Colony
         </a>
         <?php endif; ?>
+        <a href="<?= BASE_URL ?>/admin/projects/images/<?= $pId ?>" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-images me-1"></i>Gallery (<?= count($images) ?>)
+        </a>
         <a href="<?= BASE_URL ?>/admin/projects/progress/<?= $pId ?>" class="btn btn-outline-info btn-sm">
             <i class="fas fa-tasks me-1"></i>Progress Tracker
         </a>
@@ -186,6 +189,49 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
             </div>
         </div>
         <?php endif; ?>
+
+        <!-- Project Photo Gallery -->
+        <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
+            <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-images text-primary me-2"></i>Project Gallery &amp; Photos</h6>
+                <a href="<?= BASE_URL ?>/admin/projects/images/<?= $pId ?>" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-upload me-1"></i>Manage Photos
+                </a>
+            </div>
+            <div class="card-body px-4">
+                <?php if (empty($images)): ?>
+                    <div class="text-center py-4">
+                        <i class="fas fa-camera fa-2x text-muted mb-2 opacity-50"></i>
+                        <p class="text-muted small mb-2">No photos uploaded for this project yet.</p>
+                        <a href="<?= BASE_URL ?>/admin/projects/images/<?= $pId ?>" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus me-1"></i>Upload Project Photos
+                        </a>
+                    </div>
+                <?php else: ?>
+                    <div class="row g-3">
+                        <?php foreach (array_slice($images, 0, 8) as $img):
+                            $imgPath = is_array($img) ? ($img['image_path'] ?? '') : $img;
+                            $imgName = is_array($img) ? ($img['image_name'] ?? 'Project Photo') : 'Project Photo';
+                        ?>
+                        <div class="col-6 col-md-3">
+                            <div class="position-relative rounded overflow-hidden shadow-sm" style="height: 120px;">
+                                <img src="<?= BASE_URL ?><?= htmlspecialchars($imgPath) ?>"
+                                     alt="<?= htmlspecialchars($imgName) ?>"
+                                     class="w-100 h-100" style="object-fit: cover;">
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php if (count($images) > 8): ?>
+                    <div class="text-center mt-3">
+                        <a href="<?= BASE_URL ?>/admin/projects/images/<?= $pId ?>" class="small text-primary fw-bold">
+                            View all <?= count($images) ?> images &rarr;
+                        </a>
+                    </div>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 
     <!-- Right Column: Sidebar -->

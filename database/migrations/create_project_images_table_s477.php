@@ -82,3 +82,4 @@ try {
     echo "❌ Migration FAILED: " . $e->getMessage() . "\n";
     exit(1);
 }
+

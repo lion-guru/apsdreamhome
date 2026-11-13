@@ -48,6 +48,19 @@ class ProjectController extends PageController
                 if (is_array($decoded)) $images = $decoded;
             }
 
+            try {
+                $pImgStmt = $db->prepare("SELECT image_path, image_name, alt_text FROM project_images WHERE project_id = ? AND tenant_id = ? ORDER BY is_primary DESC, display_order ASC");
+                $pImgStmt->execute([(int)$project['id'], $tid]);
+                $dbImgs = $pImgStmt->fetchAll(\PDO::FETCH_ASSOC);
+                if (!empty($dbImgs)) {
+                    foreach ($dbImgs as $di) {
+                        $images[] = $di['image_path'];
+                    }
+                }
+            } catch (\Throwable $pie) {
+                error_log('Front\ProjectController project_images: ' . $pie->getMessage());
+            }
+
             $milestones = [];
             if (!empty($project['milestone_json'])) {
                 $mDecoded = json_decode($project['milestone_json'], true);

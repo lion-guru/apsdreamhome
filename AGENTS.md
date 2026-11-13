@@ -6178,4 +6178,32 @@ User instructions: "do next all with your suggestion" — Tech lead / CEO autono
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **479** (next session).
+Next-free = **479** (this session; S478 logged above).
+
+## Session 479: Full-Stack Project Gallery Interlinking, Admin Desk Visual Previews & Public Showcase, 1508/1508 Clean (2026-11-13)
+
+### Trigger
+User instructions: "do next" — Continuing autonomous tech lead / CEO improvements: activate project images end-to-end from admin management to public project showcases.
+
+### The headline
+
+**1. FULL-STACK PROJECT GALLERY INTERLINKING & PUBLIC SHOWCASE**
+- **Public Project Controller (`Front\ProjectController.php`)**: Updated `projectDetails()` to fetch real uploaded photos directly from canonical `project_images` ordered by primary status and sequential display order, ensuring uploaded assets dynamically populate `$images`.
+- **Public Project Detail View (`pages/project_detail.php`)**: Hero image banner and gallery previews now display actual uploaded project photos with automatic fallback.
+
+**2. ADMIN PROJECTS DESK ACTION ACCESS & SHOWCASE CARD**
+- **Table Action Access (`views/admin/projects/index.php`)**: Added dedicated "Project Gallery & Images" button (`/admin/projects/images/{id}`) in the table action group so admins can manage and upload gallery photos directly with a single click.
+- **Detailed Project View (`views/admin/projects/show.php`)**:
+  - Added Gallery action button with live image counter `Gallery (N)` in the page header actions.
+  - Added a dedicated "Project Gallery & Photos" visual card displaying thumbnail previews of all uploaded photos with direct "Manage Photos" and "Upload Project Photos" shortcuts.
+- **Controller Data Resolution (`ProjectsAdminController.php`)**: Updated `show($id)` to resolve both legacy JSON image arrays and canonical `project_images` table records.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 25.18s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1209 tables, 15554 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **480** (next session).
