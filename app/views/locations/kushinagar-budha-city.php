@@ -7,29 +7,19 @@
 // init.php not found — helpers.php already loaded from bootstrap
 
 // --- Dynamic Data Section ---
-$amenities = [];
-
-// 1. Try to fetch amenities from DB
-try {
-    if (class_exists('\App\Core\App')) {
-        $db = \App\Core\App::database();
-        $result = $db->fetchAll("SELECT title, image, alt_text FROM amenities_kushinagar ORDER BY id ASC");
-        if ($result) {
-            $amenities = $result;
-        }
-    }
-} catch (\Throwable $e) { error_log('kushinagar-budha-city amenities fetch: ' . $e->getMessage()); }
-
-// Fallback static amenities
-if (empty($amenities)) {
-    for ($i = 1; $i <= 4; $i++) {
-        $amenities[] = [
-            'title' => 'Top Amenity ' . $i,
-            'image' => 'amenities/' . $i . '.jpg',
-            'alt_text' => 'Budha City Amenity ' . $i
-        ];
-    }
-}
+// Budha City amenities: shared verified township imagery (public/assets/images/amenities/1..7.jpg,
+// contents verified on disk). The old DB branch (amenities_kushinagar) was always dead — its table
+// never received the title/image/alt_text columns, so every visit 1054'd inside a catch and fell
+// back to "Top Amenity i" placeholders. Kept as static, real content.
+$amenities = [
+    ['title' => 'Site Development & Drainage', 'image' => 'amenities/1.jpg', 'alt_text' => 'Site development and drainage at Budha City'],
+    ['title' => 'Hospital & Healthcare',       'image' => 'amenities/2.jpg', 'alt_text' => 'Hospital and healthcare facilities at Budha City'],
+    ['title' => 'Landscaped Parks & Walkways', 'image' => 'amenities/3.jpg', 'alt_text' => 'Landscaped parks and walkways at Budha City'],
+    ['title' => 'Wide Roads & Parking',        'image' => 'amenities/4.jpg', 'alt_text' => 'Wide roads and covered parking at Budha City'],
+    ['title' => 'Street Lighting',             'image' => 'amenities/5.jpg', 'alt_text' => 'Street lighting across Budha City colony'],
+    ['title' => 'School & Education',          'image' => 'amenities/6.jpg', 'alt_text' => 'School and education facilities at Budha City'],
+    ['title' => '24x7 Security',               'image' => 'amenities/7.jpg', 'alt_text' => '24x7 security vigilance at Budha City'],
+];
 
 $page_title = 'Budha City Kushinagar | APS Dream Homes';
 
@@ -94,7 +84,7 @@ ob_start();
                     <?php foreach ($amenities as $amenity): ?>
                         <div class="col-lg-3 col-md-6">
                             <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-lift h-100">
-                                <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" alt="<?= h($amenity['alt_text']) ?>" >
+                                <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($amenity['image'], ENT_QUOTES, 'UTF-8') ?>" class="card-img-top" alt="<?= htmlspecialchars($amenity['alt_text'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
                                 <div class="card-body text-center p-3">
                                     <h6 class="fw-bold mb-0"><?= h($amenity['title']) ?></h6>
                                 </div>
