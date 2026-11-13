@@ -10,11 +10,11 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
+                                <label class="form-label fw-bold" for="propVal"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" min="0" placeholder="<?php echo __('enter_property_value', [], 'Enter property value'); ?>">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('property_type', [], 'Property Type'); ?></label>
+                                <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>
                                 <select class="form-select" id="propType" onchange="calcStamp()">
                                     <option value="residential"><?php echo __('residential', [], 'Residential'); ?></option>
                                     <option value="commercial"><?php echo __('commercial', [], 'Commercial'); ?></option>
@@ -23,7 +23,7 @@
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('state', [], 'State'); ?></label>
+                                <label class="form-label fw-bold" for="stateSel"><?php echo __('state', [], 'State'); ?></label>
                                 <select class="form-select" id="stateSel" onchange="calcStamp()">
                                     <option value="up" data-stamp="5" data-reg="1" data-regcap="30000">Uttar Pradesh</option>
                                     <option value="bihar" data-stamp="6" data-reg="2" data-regcap="50000">Bihar</option>
@@ -36,7 +36,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('buyer_type', [], 'Buyer Type'); ?></label>
+                                <label class="form-label fw-bold" for="buyerType"><?php echo __('buyer_type', [], 'Buyer Type'); ?></label>
                                 <select class="form-select" id="buyerType" onchange="calcStamp()">
                                     <option value="individual"><?php echo __('individual', [], 'Individual'); ?></option>
                                     <option value="female"><?php echo __('woman_buyer_rebate', [], 'Woman Buyer (0.1% rebate in UP)'); ?></option>
@@ -48,32 +48,32 @@
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('stamp_duty', [], 'Stamp Duty'); ?></small>
-                                    <h5 class="text-primary mb-0" id="stampDuty">₹2,50,000</h5>
+                                    <h2 class="text-primary fs-4 mb-0" id="stampDuty">₹2,50,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('registration_fee', [], 'Registration Fee'); ?></small>
-                                    <h5 class="text-success mb-0" id="regFee">₹30,000</h5>
+                                    <h2 class="text-success fs-5 mb-0" id="regFee">₹30,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('property_value', [], 'Property Value'); ?></small>
-                                    <h6 class="text-secondary mb-0" id="baseVal">₹50,00,000</h6>
+                                    <h3 class="fs-6 text-secondary mb-0" id="baseVal">₹50,00,000</h3>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-primary text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('total_cost', [], 'Total Cost'); ?></small>
-                                    <h5 class="mb-0" id="totalCost">₹52,80,000</h5>
+                                    <h2 class="fs-4 mb-0" id="totalCost">₹52,80,000</h2>
                                 </div>
                             </div>
                         </div>
 
                         <div class="card bg-light border-0 mt-3">
                             <div class="card-body p-3">
-                                <h6 class="fw-bold"><i class="fas fa-receipt me-1"></i><?php echo __('cost_breakdown', [], 'Cost Breakdown'); ?></h6>
+                                <h3 class="fs-6 fw-bold"><i class="fas fa-receipt me-1"></i><?php echo __('cost_breakdown', [], 'Cost Breakdown'); ?></h3>
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <small class="text-muted"><?php echo __('stamp_duty_rate', [], 'Stamp Duty Rate:'); ?></small>

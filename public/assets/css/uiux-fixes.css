@@ -312,3 +312,18 @@ footer ul li a,
 .btn-warning:hover {
   color: #ffffff !important;
 }
+
+/* Colored result tiles INSIDE light cards (premium-theme forcing rule
+   would repaint them slate). Keep white text + white-on-dark => AA */
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white p,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white span,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white strong,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white small,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h1,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h2,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h3,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h4,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h5,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h6 {
+  color: #ffffff !important;
+}

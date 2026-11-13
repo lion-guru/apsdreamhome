@@ -1950,7 +1950,7 @@ section[style*="linear-gradient"] .bg-light .form-control::placeholder {
 }
 
 /* Preserve light-colored elements inside dark sections — but NOT dark-themed cards */
-section[style*="linear-gradient"] .card:not(.bg-dark):not(.glass-dark),
+section[style*="linear-gradient"] .card:not(.bg-dark):not(.glass-dark):not(.bg-primary):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary),
 section[style*="linear-gradient"] .card.bg-white,
 section[style*="linear-gradient"] .card.bg-light,
 section[style*="linear-gradient"] .bg-light,
@@ -1963,7 +1963,7 @@ section[style*="linear-gradient"] div[style*="background: linear-gradient"] {
   color: var(--color-text-primary) !important;
 }
 
-section[style*="linear-gradient"] .card:not(.bg-dark):not(.glass-dark) *,
+section[style*="linear-gradient"] .card:not(.bg-dark):not(.glass-dark):not(.bg-primary):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) *,
 section[style*="linear-gradient"] .card.bg-white *,
 section[style*="linear-gradient"] .card.bg-light *,
 section[style*="linear-gradient"] .bg-light *,

@@ -9,11 +9,11 @@
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('base_price_rs', [], 'Base Price (₹)'); ?></label>
+                            <label class="form-label fw-bold" for="basePrice"><?php echo __('base_price_rs', [], 'Base Price (₹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="basePrice" value="5000000">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('property_type', [], 'Property Type'); ?></label>
+                            <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>
                             <select class="form-select" id="propType">
                                 <option value="affordable"><?php echo __('affordable_housing', [], 'Affordable Housing (Up to ₹45L, ≤60 sqm)'); ?></option>
                                 <option value="under_construction"><?php echo __('under_construction', [], 'Under Construction'); ?></option>
@@ -22,7 +22,7 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('input_tax_credit', [], 'Input Tax Credit (ITC)?'); ?></label>
+                            <label class="form-label fw-bold" for="itcOpt"><?php echo __('input_tax_credit', [], 'Input Tax Credit (ITC)?'); ?></label>
                             <select class="form-select" id="itcOpt">
                                 <option value="yes"><?php echo __('yes_with_itc', [], 'Yes - ITC Available (1% without ITC)'); ?></option>
                                 <option value="no"><?php echo __('no_itc', [], 'No - Without ITC (5% without ITC)'); ?></option>
@@ -32,13 +32,13 @@
                             <div class="col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('gst_amount', [], 'GST Amount'); ?></small>
-                                    <h4 class="text-danger mb-0" id="gstAmt">₹2,50,000</h4>
+                                    <h2 class="text-danger fs-4 mb-0" id="gstAmt">₹2,50,000</h2>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="bg-primary text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('total_price', [], 'Total Price (incl. GST)'); ?></small>
-                                    <h4 class="mb-0" id="totalPrice">₹52,50,000</h4>
+                                    <h2 class="fs-4 mb-0" id="totalPrice">₹52,50,000</h2>
                                 </div>
                             </div>
                         </div>

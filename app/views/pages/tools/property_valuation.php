@@ -10,7 +10,7 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('property_type', [], 'Property Type'); ?></label>
+                                <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>
                                 <select class="form-select" id="propType" onchange="calcVal()">
                                     <option value="plot"><?php echo __('plot', [], 'Plot'); ?></option>
                                     <option value="house" selected><?php echo __('house', [], 'House'); ?></option>
@@ -19,13 +19,13 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('area_sqft', [], 'Area (sq ft)'); ?></label>
+                                <label class="form-label fw-bold" for="area"><?php echo __('area_sqft', [], 'Area (sq ft)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="area" value="1500" min="100" oninput="calcVal()">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('location', [], 'Location'); ?></label>
+                                <label class="form-label fw-bold" for="locSel"><?php echo __('location', [], 'Location'); ?></label>
                                 <select class="form-select" id="locSel" onchange="calcVal()">
                                     <option value="gorakhpur"><?php echo __('gorakhpur', [], 'Gorakhpur'); ?></option>
                                     <option value="lucknow"><?php echo __('lucknow', [], 'Lucknow'); ?></option>
@@ -36,13 +36,13 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('property_age_years', [], 'Property Age (Years)'); ?></label>
+                                <label class="form-label fw-bold" for="age"><?php echo __('property_age_years', [], 'Property Age (Years)'); ?></label>
                                 <input type="number" class="form-control" id="age" value="0" min="0" max="50" oninput="calcVal()">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('bedrooms', [], 'Bedrooms'); ?></label>
+                                <label class="form-label fw-bold" for="beds"><?php echo __('bedrooms', [], 'Bedrooms'); ?></label>
                                 <select class="form-select" id="beds" onchange="calcVal()">
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -52,7 +52,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('bathrooms', [], 'Bathrooms'); ?></label>
+                                <label class="form-label fw-bold" for="baths"><?php echo __('bathrooms', [], 'Bathrooms'); ?></label>
                                 <select class="form-select" id="baths" onchange="calcVal()">
                                     <option value="1">1</option>
                                     <option value="2" selected>2</option>
@@ -61,7 +61,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('furnished_status', [], 'Furnished?'); ?></label>
+                                <label class="form-label fw-bold" for="furn"><?php echo __('furnished_status', [], 'Furnished?'); ?></label>
                                 <select class="form-select" id="furn" onchange="calcVal()">
                                     <option value="unfurnished"><?php echo __('unfurnished', [], 'Unfurnished'); ?></option>
                                     <option value="semi"><?php echo __('semi_furnished', [], 'Semi-Furnished'); ?></option>
@@ -80,19 +80,19 @@
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('estimated_value', [], 'Estimated Value'); ?></small>
-                                    <h4 class="text-primary mb-0" id="estVal">₹75,00,000</h4>
+                                    <h2 class="text-primary fs-4 mb-0" id="estVal">₹75,00,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('price_per_sqft', [], 'Price per sq ft'); ?></small>
-                                    <h4 class="text-success mb-0" id="ppsf">₹5,000</h4>
+                                    <h2 class="text-success fs-5 mb-0" id="ppsf">₹5,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-primary text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('range', [], 'Range'); ?></small>
-                                    <h5 class="mb-0" id="valRange">₹67L — ₹83L</h5>
+                                    <h3 class="fs-5 mb-0" id="valRange">₹67L — ₹83L</h3>
                                 </div>
                             </div>
                         </div>

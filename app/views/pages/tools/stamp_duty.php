@@ -9,11 +9,11 @@
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
+                            <label class="form-label fw-bold" for="propVal"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcStamp()">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('state', [], 'State'); ?></label>
+                            <label class="form-label fw-bold" for="stateSel"><?php echo __('state', [], 'State'); ?></label>
                             <select class="form-select" id="stateSel" onchange="calcStamp()">
                                 <option value="7"><?php echo __('up_stamp', [], 'Uttar Pradesh (7% Stamp Duty)'); ?></option>
                                 <option value="6"><?php echo __('bihar', [], 'Bihar'); ?> (6%)</option>
@@ -27,19 +27,19 @@
                             <div class="col-4">
                                 <div class="bg-light rounded p-3">
                                     <small class="text-muted"><?php echo __('stamp_duty', [], 'Stamp Duty'); ?></small>
-                                    <h5 class="text-primary mb-0" id="stampDuty">₹3,50,000</h5>
+                                    <h2 class="text-primary fs-4 mb-0" id="stampDuty">₹3,50,000</h2>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="bg-light rounded p-3">
                                     <small class="text-muted"><?php echo __('registration_1pct', [], 'Registration (1%)'); ?></small>
-                                    <h5 class="text-success mb-0" id="regFee">₹50,000</h5>
+                                    <h2 class="text-success fs-5 mb-0" id="regFee">₹50,000</h2>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="bg-light rounded p-3">
                                     <small class="text-muted"><?php echo __('total_cost', [], 'Total Cost'); ?></small>
-                                    <h5 class="text-danger mb-0" id="totalCost">₹55,50,000</h5>
+                                    <h2 class="text-danger fs-4 mb-0" id="totalCost">₹55,50,000</h2>
                                 </div>
                             </div>
                         </div>

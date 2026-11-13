@@ -1,7 +1,7 @@
 <div class="py-4" style="background: linear-gradient(135deg, #0f172a, #1e3a5f);">
     <div class="container">
         <div class="text-center mb-3">
-            <h5 class="text-white-50"><i class="fas fa-tools me-2"></i>Explore More Tools</h5>
+            <h2 class="fs-6 text-white-50"><i class="fas fa-tools me-2"></i>Explore More Tools</h2>
         </div>
         <div class="row g-2 justify-content-center">
             <div class="col-auto"><a href="<?= BASE_URL ?>/calc" class="btn btn-outline-light btn-sm rounded-pill">EMI Calculator</a></div>
