@@ -107,19 +107,19 @@ document.addEventListener('DOMContentLoaded', function(){
                 <div class="col-lg-5">
                     <div class="hero-search-glass glass-panel hover-lift premium-reveal">
                         <div class="card-header text-center py-4 border-bottom">
-                            <h5 class="mb-0 fw-semibold text-dark"><i class="fas fa-search me-2"></i><?= __('search') ?> <?= __('properties') ?></h5>
+                            <h2 class="fs-5 mb-0 fw-semibold text-dark"><i class="fas fa-search me-2"></i><?= __('search') ?> <?= __('properties') ?></h2>
                         </div>
                         <div class="card-body p-4">
                             <form action="<?php echo BASE_URL; ?>/properties" method="GET">
                                 <div class="mb-3">
-                                    <select name="listing" class="form-select">
+                                    <select name="listing" class="form-select" aria-label="<?= __('home_buy_rent') ?>">
                                         <option value=""><?= __('home_buy_rent') ?></option>
                                         <option value="sell"><?= __('home_buy') ?></option>
                                         <option value="rent"><?= __('home_rent') ?></option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <select name="type" class="form-select">
+                                    <select name="type" class="form-select" aria-label="<?= __('home_property_type') ?>">
                                         <option value=""><?= __('home_property_type') ?></option>
                                         <option value="residential"><?= __('home_residential') ?></option>
                                         <option value="commercial"><?= __('home_commercial') ?></option>
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <select name="location" class="form-select">
+                                    <select name="location" class="form-select" aria-label="<?= __('home_select_location') ?>">
                                         <option value=""><?= __('home_select_location') ?></option>
                                         <option value="Gorakhpur"><?= __('loc_gorakhpur') ?></option>
                                         <option value="Lucknow"><?= __('loc_lucknow') ?></option>
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <select name="budget" class="form-select">
+                                    <select name="budget" class="form-select" aria-label="<?= __('home_budget') ?>">
                                         <option value=""><?= __('home_budget') ?></option>
                                         <option value="under_5l"><?= __('home_budget_under_5l') ?></option>
                                         <option value="5_10l"><?= __('home_budget_5_10l') ?></option>
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             </div>
                         </div>
                         <div class="p-4">
-                            <h5 class="fw-bold text-dark mb-2"><?= __('home_colony_suryoday') ?></h5>
+                            <h3 class="fs-5 fw-bold text-dark mb-2"><?= __('home_colony_suryoday') ?></h3>
                             <p class="text-muted small mb-3"><?= __('home_colony_suryoday_desc') ?></p>
                             <div class="d-flex gap-3 small text-muted">
                                 <span><i class="fas fa-map-marker-alt me-1 text-success"></i><?= __('loc_gorakhpur') ?></span>
@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             </div>
                         </div>
                         <div class="p-4">
-                            <h5 class="fw-bold text-dark mb-2"><?= __('home_colony_braj_radha') ?></h5>
+                            <h3 class="fs-5 fw-bold text-dark mb-2"><?= __('home_colony_braj_radha') ?></h3>
                             <p class="text-muted small mb-3"><?= __('home_colony_braj_radha_desc') ?></p>
                             <div class="d-flex gap-3 small text-muted">
                                 <span><i class="fas fa-map-marker-alt me-1 text-warning"></i><?= __('loc_gorakhpur') ?></span>
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             </div>
                         </div>
                         <div class="p-4">
-                            <h5 class="fw-bold text-dark mb-2"><?= __('home_colony_budh_bihar') ?></h5>
+                            <h3 class="fs-5 fw-bold text-dark mb-2"><?= __('home_colony_budh_bihar') ?></h3>
                             <p class="text-muted small mb-3"><?= __('home_colony_budh_bihar_desc') ?></p>
                             <div class="d-flex gap-3 small text-muted">
                                 <span><i class="fas fa-map-marker-alt me-1 text-primary"></i><?= __('loc_kushinagar') ?></span>
@@ -454,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="ps-card-location-chip"><i class="fas fa-map-marker-alt"></i> <?= $p['city'] ?></div>
                         </div>
                         <div class="ps-card-body">
-                            <h5 class="ps-card-title"><?= $p['title'] ?></h5>
+                            <h3 class="fs-5 ps-card-title"><?= $p['title'] ?></h3>
                             <div class="ps-card-stats">
                                 <span><i class="fas fa-vector-square"></i> <?= $p['plots'] ?> <?= __('plots') ?></span>
                                 <span><i class="fas fa-expand-arrows-alt"></i> <?= $p['area'] ?></span>
@@ -503,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="ps-card-location-chip"><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($project['city'] ?? '') ?></div>
                         </div>
                         <div class="ps-card-body">
-                            <h5 class="ps-card-title"><?= htmlspecialchars($projectTitle ?? '') ?></h5>
+                            <h3 class="fs-5 ps-card-title"><?= htmlspecialchars($projectTitle ?? '') ?></h3>
                             <div class="ps-card-stats">
                                 <?php if (!empty($project['plots'])): ?>
                                 <span><i class="fas fa-vector-square"></i> <?= $project['plots'] ?> <?= __('plots') ?></span>
@@ -551,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-calculator fa-2x text-primary"></i>
                             </div>
-                            <h5 class="fw-bold"><?= __('home_tool_emi') ?></h5>
+                            <h3 class="fs-5 fw-bold"><?= __('home_tool_emi') ?></h3>
                             <p class="text-muted small mb-0"><?= __('home_tool_emi_desc') ?></p>
                         </div>
                     </div>
@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-arrow-trend-up fa-2x text-success"></i>
                             </div>
-                            <h5 class="fw-bold"><?= __('home_tool_investment') ?></h5>
+                            <h3 class="fs-5 fw-bold"><?= __('home_tool_investment') ?></h3>
                             <p class="text-muted small mb-0"><?= __('home_tool_investment_desc') ?></p>
                         </div>
                     </div>
@@ -573,7 +573,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-file-contract fa-2x text-warning"></i>
                             </div>
-                            <h5 class="fw-bold"><?= __('home_tool_stamp') ?></h5>
+                            <h3 class="fs-5 fw-bold"><?= __('home_tool_stamp') ?></h3>
                             <p class="text-muted small mb-0"><?= __('home_tool_stamp_desc') ?></p>
                         </div>
                     </div>
@@ -584,7 +584,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-vector-square fa-2x text-info"></i>
                             </div>
-                            <h5 class="fw-bold"><?= __('home_tool_converter') ?></h5>
+                            <h3 class="fs-5 fw-bold"><?= __('home_tool_converter') ?></h3>
                             <p class="text-muted small mb-0"><?= __('home_tool_converter_desc') ?></p>
                         </div>
                     </div>
@@ -595,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-hand-holding-dollar fa-2x text-danger"></i>
                             </div>
-                            <h5 class="fw-bold"><?= __('home_tool_eligibility') ?></h5>
+                            <h3 class="fs-5 fw-bold"><?= __('home_tool_eligibility') ?></h3>
                             <p class="text-muted small mb-0"><?= __('home_tool_eligibility_desc') ?></p>
                         </div>
                     </div>
@@ -606,7 +606,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-house-chimney fa-2x text-secondary"></i>
                             </div>
-                            <h5 class="fw-bold"><?= __('home_tool_valuation') ?></h5>
+                            <h3 class="fs-5 fw-bold"><?= __('home_tool_valuation') ?></h3>
                             <p class="text-muted small mb-0"><?= __('home_tool_valuation_desc') ?></p>
                         </div>
                     </div>
@@ -632,7 +632,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                 <div class="col-md-7">
                                     <div class="mb-4">
                                         <label class="form-label fw-bold"><?= __('home_loan_amount') ?> <span
-                                                id="loanAmtDisplay" class="text-warning">₹50,00,000</span></label>
+                                                id="loanAmtDisplay" class="text-warning-on-dark">₹50,00,000</span></label>
                                         <input type="range" class="form-range" id="loanAmount" min="100000"
                                             max="50000000" step="100000" value="5000000" oninput="calcEMI()" title="<?= __('home_loan_amount') ?>">
                                         <div class="d-flex justify-content-between small text-white-50">
@@ -642,7 +642,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label fw-bold" for="interestRate"><?= __('home_interest_rate') ?> <span
-                                                id="rateDisplay" class="text-warning">8.5%</span></label>
+                                                id="rateDisplay" class="text-warning-on-dark">8.5%</span></label>
                                         <input type="range" class="form-range" id="interestRate" min="5" max="20"
                                             step="0.1" value="8.5" oninput="calcEMI()">
                                         <div class="d-flex justify-content-between small text-white-50">
@@ -652,7 +652,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label fw-bold" for="loanTenure"><?= __('home_loan_tenure') ?> <span
-                                                id="tenureDisplay" class="text-warning">20
+                                                id="tenureDisplay" class="text-warning-on-dark">20
                                                 <?= __('home_years') ?></span></label>
                                         <input type="range" class="form-range" id="loanTenure" min="1" max="30" step="1"
                                             value="20" oninput="calcEMI()">
@@ -772,9 +772,9 @@ document.addEventListener('DOMContentLoaded', function(){
                 <div class="card-body p-5">
                     <div class="row align-items-center">
                         <div class="col-lg-7">
-                            <h4 class="fw-bold mb-3"><i
+                            <h3 class="fs-4 fw-bold mb-3"><i
                                     class="fas fa-calculator me-2 text-warning"></i><?= __('home_growth_calculator_title') ?>
-                            </h4>
+                            </h3>
                             <p class="text-white-50 mb-4"><?= __('home_growth_calculator_subtitle') ?></p>
                             <div class="row g-3">
                                 <div class="col-md-4">
@@ -995,7 +995,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="service-icon icon-green">
                             <i class="fas fa-hand-holding-usd fa-2x iu-emerald"></i>
                         </div>
-                        <h5 class="fw-bold mb-2"><?= __('home_service_home_loan') ?></h5>
+                        <h3 class="fs-5 fw-bold mb-2"><?= __('home_service_home_loan') ?></h3>
                         <p class="text-muted small mb-3"><?= __('home_service_home_loan_desc') ?></p>
                         <span class="badge px-3 py-2 rounded-pill capsule-green"><?= __('home_service_home_loan_badge') ?></span>
                     </div>
@@ -1005,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="service-icon icon-indigo">
                             <i class="fas fa-gavel fa-2x"></i>
                         </div>
-                        <h5 class="fw-bold mb-2"><?= __('home_service_legal') ?></h5>
+                        <h3 class="fs-5 fw-bold mb-2"><?= __('home_service_legal') ?></h3>
                         <p class="text-muted small mb-3"><?= __('home_service_legal_desc') ?></p>
                         <span class="badge px-3 py-2 rounded-pill"><?= __('home_service_legal_badge') ?></span>
                     </div>
@@ -1015,7 +1015,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="service-icon icon-amber">
                             <i class="fas fa-couch fa-2x iu-amber"></i>
                         </div>
-                        <h5 class="fw-bold mb-2"><?= __('home_service_interior') ?></h5>
+                        <h3 class="fs-5 fw-bold mb-2"><?= __('home_service_interior') ?></h3>
                         <p class="text-muted small mb-3"><?= __('home_service_interior_desc') ?></p>
                         <span class="badge px-3 py-2 rounded-pill capsule-amber"><?= __('home_interior_badge') ?></span>
                     </div>
@@ -1025,7 +1025,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="service-icon icon-red">
                             <i class="fas fa-file-signature fa-2x iu-red"></i>
                         </div>
-                        <h5 class="fw-bold mb-2"><?= __('home_service_registry') ?></h5>
+                        <h3 class="fs-5 fw-bold mb-2"><?= __('home_service_registry') ?></h3>
                         <p class="text-muted small mb-3"><?= __('home_service_registry_desc') ?></p>
                         <span class="badge px-3 py-2 rounded-pill"><?= __('home_service_registry_badge') ?></span>
                     </div>
@@ -1035,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="service-icon icon-teal">
                             <i class="fas fa-file-contract fa-2x iu-teal-light"></i>
                         </div>
-                        <h5 class="fw-bold mb-2"><?= __('home_service_rental') ?></h5>
+                        <h3 class="fs-5 fw-bold mb-2"><?= __('home_service_rental') ?></h3>
                         <p class="text-muted small mb-3"><?= __('home_service_rental_desc') ?></p>
                         <span class="badge px-3 py-2 rounded-pill"><?= __('home_service_rental_badge') ?></span>
                     </div>
@@ -1045,7 +1045,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="service-icon icon-cyan">
                             <i class="fas fa-file-invoice-dollar fa-2x"></i>
                         </div>
-                        <h5 class="fw-bold mb-2"><?= __('home_service_tax') ?></h5>
+                        <h3 class="fs-5 fw-bold mb-2"><?= __('home_service_tax') ?></h3>
                         <p class="text-muted small mb-3"><?= __('home_service_tax_desc') ?></p>
                         <span class="badge px-3 py-2 rounded-pill"><?= __('home_service_tax_badge') ?></span>
                     </div>
@@ -1064,8 +1064,8 @@ document.addEventListener('DOMContentLoaded', function(){
                             <i class="fas fa-hand-holding-usd text-white fa-xl" id="serviceModalIcon"></i>
                         </div>
                         <div>
-                            <h5 class="modal-title text-white fw-bold mb-1" id="serviceModalTitle">
-                                <?= __('home_service') ?></h5>
+                            <h3 class="fs-5 modal-title text-white fw-bold mb-1" id="serviceModalTitle">
+                                <?= __('home_service') ?></h3>
                             <p class="text-white-50 small mb-0" id="serviceModalSubtitle">
                                 <?= __('home_complete_real_estate_services') ?></p>
                         </div>
@@ -1309,9 +1309,9 @@ document.addEventListener('DOMContentLoaded', function(){
         subtitle.textContent = svc.subtitle;
 
         var featuresHtml =
-            '<div class="row g-4"><div class="col-md-7"><h6 class="fw-bold mb-3"><i class="fas fa-check-circle text-' +
+            '<div class="row g-4"><div class="col-md-7"><h4 class="fs-6 fw-bold mb-3"><i class="fas fa-check-circle text-' +
             svc.ctaColor + ' me-2"></i>' + (t.why_choose_us || t.services_include || t.what_we_offer || t.we_handle || t
-                .rental_services || t.tax_services) + '</h6><ul class="list-unstyled">';
+                .rental_services || t.tax_services) + '</h4><ul class="list-unstyled">';
         svc.features.forEach(function(f) {
             featuresHtml += '<li class="mb-2"><i class="fas fa-check text-' + svc.ctaColor + ' me-2"></i>' + f +
                 '</li>';
@@ -1319,8 +1319,8 @@ document.addEventListener('DOMContentLoaded', function(){
         featuresHtml += '</ul>';
 
         if (svc.rates) {
-            featuresHtml += '<div class="bg-light rounded p-3 mt-3"><h6 class="fw-bold mb-2">' + t.current_rates +
-                '</h6>';
+            featuresHtml += '<div class="bg-light rounded p-3 mt-3"><h4 class="fs-6 fw-bold mb-2">' + t.current_rates +
+                '</h4>';
             svc.rates.forEach(function(r) {
                 featuresHtml += '<div class="d-flex justify-content-between mb-1"><span>' + r.b +
                     '</span><span class="fw-bold text-success">' + r.r + '</span></div>';
@@ -1328,8 +1328,8 @@ document.addEventListener('DOMContentLoaded', function(){
             featuresHtml += '</div>';
         }
         if (svc.prices) {
-            featuresHtml += '<div class="bg-light rounded p-3 mt-3"><h6 class="fw-bold mb-2">' + t.starting_prices +
-                '</h6>';
+            featuresHtml += '<div class="bg-light rounded p-3 mt-3"><h4 class="fs-6 fw-bold mb-2">' + t.starting_prices +
+                '</h4>';
             svc.prices.forEach(function(p) {
                 featuresHtml += '<div class="d-flex justify-content-between mb-1"><span>' + p.tier +
                     '</span><span class="fw-bold text-warning">' + p.price + '</span></div>';
@@ -1339,7 +1339,7 @@ document.addEventListener('DOMContentLoaded', function(){
         featuresHtml += '</div>';
 
         featuresHtml += '<div class="col-md-5"><div class="card border-0 shadow-sm p-4 h-100">';
-        featuresHtml += '<h5 class="fw-bold mb-3"><i class="fas fa-paper-plane text-' + svc.ctaColor + ' me-2"></i><?= __("enquire_services", null, "Quick Inquiry") ?></h5>';
+        featuresHtml += '<h3 class="fs-5 fw-bold mb-3"><i class="fas fa-paper-plane text-' + svc.ctaColor + ' me-2"></i><?= __("enquire_services", null, "Quick Inquiry") ?></h3>';
         featuresHtml += '<form id="modalServiceInquiryForm" class="small">';
         featuresHtml += '<input type="hidden" name="service_type" value="' + service + '">';
         featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("your_name", null, "Name") ?> *</label><input type="text" class="form-control form-control-sm" name="name" required></div>';
@@ -1407,7 +1407,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <i class="fas fa-check"></i>
                         </div>
                         <div>
-                            <h6 class="fw-bold mb-1"><?= __('why_choose_15_years') ?></h6>
+                            <h3 class="fs-6 fw-bold mb-1"><?= __('why_choose_15_years') ?></h3>
                             <p class="text-muted small mb-0"><?= __('why_choose_15_years_desc') ?></p>
                         </div>
                     </div>
@@ -1416,7 +1416,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <i class="fas fa-check"></i>
                         </div>
                         <div>
-                            <h6 class="fw-bold mb-1"><?= __('why_choose_rera') ?></h6>
+                            <h3 class="fs-6 fw-bold mb-1"><?= __('why_choose_rera') ?></h3>
                             <p class="text-muted small mb-0"><?= __('why_choose_rera_desc') ?></p>
                         </div>
                     </div>
@@ -1425,7 +1425,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <i class="fas fa-check"></i>
                         </div>
                         <div>
-                            <h6 class="fw-bold mb-1"><?= __('why_choose_transparent') ?></h6>
+                            <h3 class="fs-6 fw-bold mb-1"><?= __('why_choose_transparent') ?></h3>
                             <p class="text-muted small mb-0"><?= __('why_choose_transparent_desc') ?></p>
                         </div>
                     </div>
@@ -1434,7 +1434,7 @@ document.addEventListener('DOMContentLoaded', function(){
                             <i class="fas fa-check"></i>
                         </div>
                         <div>
-                            <h6 class="fw-bold mb-1"><?= __('why_choose_support') ?></h6>
+                            <h3 class="fs-6 fw-bold mb-1"><?= __('why_choose_support') ?></h3>
                             <p class="text-muted small mb-0"><?= __('why_choose_support_desc') ?></p>
                         </div>
                     </div>
@@ -1444,7 +1444,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="float-slow">
                             <i class="fas fa-headset fa-3x iu-teal"></i>
                         </div>
-                        <h4 class="fw-bold"><?= __('need_help') ?></h4>
+                        <h3 class="fs-4 fw-bold"><?= __('need_help') ?></h3>
                         <p class="text-muted mb-4"><?= __('need_help_desc') ?></p>
                         <div class="d-grid gap-3">
                             <a href="tel:<?= $phoneRaw ?>" class="btn btn-lg btn-glow btn-shine">
@@ -1477,7 +1477,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="icon-circle ic-green">
                             <i class="fas fa-vector-square fa-2x iu-emerald"></i>
                         </div>
-                        <h5 class="fw-bold iu-emerald"><?= __('home_invest_real_estate') ?></h5>
+                        <h3 class="fs-5 fw-bold iu-emerald"><?= __('home_invest_real_estate') ?></h3>
                         <div class="return-pct iu-emerald">15-25%</div>
                         <p class="text-muted small"><?= __('home_avg_annual_returns') ?></p>
                         <div class="progress mb-2 progress-thin">
@@ -1491,7 +1491,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="icon-circle ic-amber">
                             <i class="fas fa-coins fa-2x iu-amber"></i>
                         </div>
-                        <h5 class="fw-bold iu-amber"><?= __('home_invest_fd') ?></h5>
+                        <h3 class="fs-5 fw-bold iu-amber"><?= __('home_invest_fd') ?></h3>
                         <div class="return-pct text-dark">5-7%</div>
                         <p class="text-muted small"><?= __('home_avg_annual_returns') ?></p>
                         <div class="progress mb-2 progress-thin">
@@ -1505,7 +1505,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="icon-circle ic-red">
                             <i class="fas fa-chart-line fa-2x iu-red"></i>
                         </div>
-                        <h5 class="fw-bold iu-red"><?= __('home_invest_stock') ?></h5>
+                        <h3 class="fs-5 fw-bold iu-red"><?= __('home_invest_stock') ?></h3>
                         <div class="return-pct text-dark">10-14%</div>
                         <p class="text-muted small"><?= __('home_high_risk') ?></p>
                         <div class="progress mb-2 progress-thin">
@@ -1519,7 +1519,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         <div class="icon-circle ic-teal">
                             <i class="fas fa-ring fa-2x iu-teal"></i>
                         </div>
-                        <h5 class="fw-bold iu-teal"><?= __('home_invest_gold') ?></h5>
+                        <h3 class="fs-5 fw-bold iu-teal"><?= __('home_invest_gold') ?></h3>
                         <div class="return-pct iu-teal">8-10%</div>
                         <p class="text-muted small"><?= __('home_gold_desc') ?></p>
                         <div class="progress mb-2 progress-thin">
@@ -1546,7 +1546,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     <i class="fas fa-shield-halved"></i>
                                 </div>
                                 <div>
-                                    <h6><?= __('home_capital_appreciation') ?></h6>
+                                    <h4 class="fs-6"><?= __('home_capital_appreciation') ?></h4>
                                     <p><?= __('home_capital_appreciation_desc') ?></p>
                                 </div>
                             </div>
@@ -1557,7 +1557,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     <i class="fas fa-hand-holding-dollar"></i>
                                 </div>
                                 <div>
-                                    <h6><?= __('home_passive_income') ?></h6>
+                                    <h4 class="fs-6"><?= __('home_passive_income') ?></h4>
                                     <p><?= __('home_passive_income_desc') ?></p>
                                 </div>
                             </div>
@@ -1568,7 +1568,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     <i class="fas fa-building-columns"></i>
                                 </div>
                                 <div>
-                                    <h6><?= __('home_loan_against_property') ?></h6>
+                                    <h4 class="fs-6"><?= __('home_loan_against_property') ?></h4>
                                     <p><?= __('home_loan_against_property_desc') ?></p>
                                 </div>
                             </div>
@@ -1579,7 +1579,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     <i class="fas fa-flag-checkered"></i>
                                 </div>
                                 <div>
-                                    <h6><?= __('home_inflation_hedge') ?></h6>
+                                    <h4 class="fs-6"><?= __('home_inflation_hedge') ?></h4>
                                     <p><?= __('home_inflation_hedge_desc') ?></p>
                                 </div>
                             </div>
@@ -1625,8 +1625,8 @@ document.addEventListener('DOMContentLoaded', function(){
                             <i class="fas fa-calculator text-white fa-xl" id="toolModalIcon"></i>
                         </div>
                         <div>
-                            <h5 class="modal-title text-white fw-bold mb-1" id="toolModalTitle"><?= __('home_tool') ?>
-                            </h5>
+                            <h3 class="fs-5 modal-title text-white fw-bold mb-1" id="toolModalTitle"><?= __('home_tool') ?>
+                            </h3>
                             <p class="text-white-50 small mb-0" id="toolModalSubtitle">
                                 <?= __('home_calculate_instantly') ?></p>
                         </div>
@@ -1854,7 +1854,7 @@ document.addEventListener('DOMContentLoaded', function(){
             '<div class="progress"><div class="progress-bar bg-primary" id="mInvGoldBar" ></div></div></div></div>' +
             '<div class="col-md-5 text-center d-flex flex-column justify-content-center">' +
             '<div class="bg-success bg-opacity-10 rounded-4 p-4"><i class="fas fa-trophy fa-3x text-success mb-3"></i>' +
-            '<h4 class="fw-bold text-success">' + T.reWins + '</h4>' +
+            '<h3 class="fs-4 fw-bold text-success">' + T.reWins + '</h3>' +
             '<p class="text-muted small mb-1"><i class="fas fa-check-circle text-success me-1"></i>' + T.highestRet +
             '</p>' +
             '<p class="text-muted small mb-1"><i class="fas fa-check-circle text-success me-1"></i>' + T.tangible +
@@ -1905,7 +1905,7 @@ document.addEventListener('DOMContentLoaded', function(){
             '<div class="alert alert-success mb-0"><i class="fas fa-exchange-alt me-2"></i>' + T.result +
             ' <strong id="mConvResult">0.0913 Acre</strong></div></div>' +
             '<div class="col-md-5"><div class="bg-light rounded-4 p-4 h-100">' +
-            '<h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2 text-info"></i>' + T.quickRef + '</h6>' +
+            '<h4 class="fs-6 fw-bold mb-3"><i class="fas fa-info-circle me-2 text-info"></i>' + T.quickRef + '</h4>' +
             '<div class="small"><strong>1 '+T.bigha+'</strong> = 27,000 '+T.sqft+'<br><strong>1 '+T.gaj+'</strong> = 9 '+T.sqft+'<br><strong>1 '+T.acre+'</strong> = 43,560 '+T.sqft+'<br><strong>1 '+T.hectare+'</strong> = 2.47 '+T.acre+'<br><strong>1 '+T.katha+'</strong> = 1,361 '+T.sqft+'<br><strong>1 '+T.marla+'</strong> = 272 '+T.sqft+'</div>' +
             '</div></div></div>';
     }
@@ -2138,7 +2138,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                 alt="<?= __('home_testimonial_1_name') ?>"
                                 class="rounded-circle me-3" width="50" height="50" >
                             <div>
-                                <h6 class="mb-0 fw-bold"><?= __('home_testimonial_1_name') ?></h6>
+                                <h3 class="fs-6 mb-0 fw-bold"><?= __('home_testimonial_1_name') ?></h3>
                                 <small class="testimonial-location"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_1_location') ?></small>
                             </div>
                         </div>
@@ -2155,7 +2155,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                 alt="<?= __('home_testimonial_2_name') ?>"
                                 class="rounded-circle me-3" width="50" height="50" >
                             <div>
-                                <h6 class="mb-0 fw-bold"><?= __('home_testimonial_2_name') ?></h6>
+                                <h3 class="fs-6 mb-0 fw-bold"><?= __('home_testimonial_2_name') ?></h3>
                                 <small class="testimonial-location"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_2_location') ?></small>
                             </div>
                         </div>
@@ -2172,7 +2172,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                 alt="<?= __('home_testimonial_3_name') ?>"
                                 class="rounded-circle me-3" width="50" height="50" >
                             <div>
-                                <h6 class="mb-0 fw-bold"><?= __('home_testimonial_3_name') ?></h6>
+                                <h3 class="fs-6 mb-0 fw-bold"><?= __('home_testimonial_3_name') ?></h3>
                                 <small class="testimonial-location"><i class="fas fa-map-marker-alt me-1"></i><?= __('home_testimonial_3_location') ?></small>
                             </div>
                         </div>
@@ -2276,7 +2276,7 @@ window.addEventListener('scroll', function() {
                 <div class="d-flex align-items-center gap-3">
                     <img src="<?= BASE_URL ?>/assets/images/logo/apslogo.svg" alt="APS Dream Home" style="height: 38px;">
                     <div>
-                        <h5 class="modal-title text-white fw-bold mb-0" id="apsCorporateVideoModalLabel">APS Dream Homes Pvt. Ltd.</h5>
+                        <h3 class="fs-5 modal-title text-white fw-bold mb-0" id="apsCorporateVideoModalLabel">APS Dream Homes Pvt. Ltd.</h3>
                         <small class="text-white-50">Corporate Presentation & Project Highlights</small>
                     </div>
                 </div>

@@ -259,3 +259,9 @@ footer ul li a,
 .bg-primary .aps-cp-stat-label {
   color: rgba(255, 255, 255, 0.95) !important;
 }
+
+/* Amber display text on dark navy card (EMI calculator) - #b45309 is 3.5:1 on
+   #0a192f; #fbbf24 (amber-400) is 7.4:1 and passes 4.5:1 AA for 16px bold. */
+.text-warning-on-dark {
+  color: #fbbf24 !important;
+}

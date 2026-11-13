@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apsdreamhome-v4';
+const CACHE_NAME = 'apsdreamhome-v5';
 
 // Web-Push handlers. Subscriptions are stored via /api/push/subscribe;
 // delivery (VAPID sender) is pending server keys — until then pushes
@@ -37,7 +37,6 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 const STATIC_ASSETS = [
-    '/apsdreamhome/',
     '/apsdreamhome/assets/css/bootstrap.min.css',
     '/apsdreamhome/assets/js/bootstrap.bundle.min.js',
     '/apsdreamhome/assets/fonts/fontawesome/css/all.min.css'

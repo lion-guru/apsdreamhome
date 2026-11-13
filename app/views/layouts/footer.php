@@ -39,7 +39,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         <!-- Newsletter Signup -->
         <div class="row mb-5 pb-4 border-bottom border-secondary">
             <div class="col-lg-6">
-                <h5 class="text-white mb-2"><i class="fas fa-envelope me-2"></i><?= __('newsletter') ?></h5>
+                <h3 class="text-white mb-2 fs-5"><i class="fas fa-envelope me-2"></i><?= __('newsletter') ?></h3>
                 <p class="text-light mb-0">Get latest property updates and exclusive offers delivered to your inbox</p>
             </div>
             <div class="col-lg-6">
@@ -57,7 +57,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
         <div class="row">
             <!-- Company Info -->
             <div class="col-lg-4 col-md-6 mb-4">
-                <h5 class="mb-3 text-white"><?= htmlspecialchars($sc('company_name', 'APS Dream Homes Pvt Ltd')) ?></h5>
+                <h3 class="mb-3 text-white fs-5"><?= htmlspecialchars($sc('company_name', 'APS Dream Homes Pvt Ltd')) ?></h3>
                 <p class="text-light"><?= $sc('footer_about', __('footer_company_desc')) ?></p>
                 <div class="social-links mt-3">
                     <?php if ($sc('social_facebook')): ?>
@@ -99,7 +99,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
             <!-- Quick Links -->
             <div class="col-lg-2 col-md-6 mb-4">
-                <h6 class="text-uppercase mb-3"><?= __('quick_links') ?></h6>
+                <h4 class="text-uppercase mb-3 fs-6"><?= __('quick_links') ?></h4>
                 <ul class="list-unstyled">
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/" class="text-light text-decoration-none"><?= __('home') ?></a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/offers" class="text-light text-decoration-none"><i class="fas fa-gift text-warning me-1"></i><?= __('festive_offers', 'Festive Offers & Deals') ?></a></li>
@@ -114,7 +114,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
             <!-- Services -->
             <div class="col-lg-3 col-md-6 mb-4">
-                <h6 class="text-uppercase mb-3"><?= __('our_services') ?></h6>
+                <h4 class="text-uppercase mb-3 fs-6"><?= __('our_services') ?></h4>
                 <ul class="list-unstyled">
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/services" class="text-light text-decoration-none"><?= __('property_sales') ?></a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/services" class="text-light text-decoration-none"><?= __('property_valuation') ?></a></li>
@@ -126,7 +126,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
 
             <!-- Contact Info -->
             <div class="col-lg-3 col-md-6 mb-4">
-                <h6 class="text-uppercase mb-3"><?= __('contact_info') ?></h6>
+                <h4 class="text-uppercase mb-3 fs-6"><?= __('contact_info') ?></h4>
                 <ul class="list-unstyled">
                     <li class="mb-3">
                         <i class="fas fa-map-marker-alt me-2 text-primary"></i>

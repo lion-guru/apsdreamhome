@@ -47,12 +47,12 @@ if (!isset($GLOBALS['_html_doc_started'])) {
     <!-- Font Awesome -->
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <!-- CSS Load Order (standalone mode only) -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/style.css?v=7" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/style.css?v=9" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/frontend.css?v=7" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/header.css?v=8" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/premium-theme.css?v=10" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/uiux-fixes.css?v=3" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/uiux-fixes.css?v=5" rel="stylesheet">
 
     <?php if ($ga4_enabled): ?>
     <!-- Google Analytics 4 -->

@@ -820,7 +820,7 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 .ps-badge-status {
   top: 10px;
   right: 10px;
-  background: #10b981;
+  background: #047857;
   color: #fff;
 }
 
@@ -828,7 +828,7 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   top: 10px;
   left: 10px;
   background: rgba(255, 255, 255, 0.92);
-  color: #0d9488;
+  color: #0f766e;
   backdrop-filter: blur(6px);
 }
 
@@ -905,14 +905,14 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   flex-direction: column;
   font-size: 0.95rem;
   font-weight: 800;
-  color: #0d9488;
+  color: #0f766e;
   line-height: 1.2;
 }
 
 .ps-price small {
   font-size: 0.62rem;
   font-weight: 500;
-  color: #94a3b8;
+  color: #475569;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -1172,6 +1172,7 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   padding: 4px 12px;
   border-radius: 50px;
   color: #fff;
+  background: #0f172a;
   display: inline-block;
 }
 .capsule-badge.badge-delivered {
@@ -1781,13 +1782,13 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 
 /* ===== UTILITY: Icon Colors (replaces inline style="color:..." on <i> elements) ===== */
 .iu-emerald {
-  color: #10b981;
+  color: #047857;
 }
 .iu-amber {
-  color: #f59e0b;
+  color: #b45309;
 }
 .iu-teal {
-  color: #0d9488;
+  color: #0f766e;
 }
 .iu-teal-light {
   color: #14b8a6;
@@ -1796,7 +1797,7 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   color: var(--premium-navy);
 }
 .iu-red {
-  color: #ef4444;
+  color: #b91c1c;
 }
 .iu-blue {
   color: #3b82f6;
