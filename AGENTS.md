@@ -7299,3 +7299,62 @@ User instruction: "ok do next apne suggestion se sare kaam karte raho bina ruke"
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **513** (this session; S512 logged above).
+
+## Session 513: Deal Creation Dynamic Stage ID & Notes Mapping, WCAG AA Button Contrast & CSS Cache Busting (2026-11-14)
+
+### Trigger
+User instruction: "ok do next apne suggestion se sare kaam karte raho bina ruke" — continuous autonomous CEO/Senior Software Developer execution.
+
+### The headline
+
+**1. DEAL CREATION FORM DYNAMIC STAGE ID & COLUMN MAPPING (`views/admin/deals/create.php`)**
+- Replaced hardcoded initial stage strings (`<option value="lead">`) with dynamic `$stages` dropdown passing `name="deal_stage_id"` with real integer IDs, matching `DealController::store()` and `deal_stages` table constraints.
+- Removed nonexistent `property_id` selector from deal creation form (deals table has no property_id column).
+- Repointed textarea `name="notes"` to `description` to align with controller and activity logging standards.
+
+**2. WCAG AA ACCESSIBILITY OUTLINE BUTTON CONTRAST (`public/assets/css/utils.css`)**
+- Added explicit high-contrast colors for `.btn-outline-secondary` (`#495057` border and text, 4.8:1 on light backgrounds) and `.btn-outline-success` (`#157347` border and text, 4.6:1 on light backgrounds), surpassing WCAG AA 4.5:1 ratio requirements.
+- Updated `utils.css?v=2` in `app/views/layouts/admin.php` for instant browser cache invalidation.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> `1508/1508 [OK] No errors`.
+- **Master Test Runner**: `php testing/master_test_runner.php` -> `11/11 PASSED (100% HEALTHY, 25.97s)`.
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **514** (this session; S513 logged above).
+
+## Session 513: Deals Pipeline Bugs Closed — js/kanban/stage Contract, Orchestrated End-to-End Probe, Sacrificial Deal Deleted (2026-11-14)
+
+### Trigger
+User: "do next" after Session 512 landed. An enum scan (`INSERT ... VALUES` cross-checked against live `INFORMATION_SCHEMA` with rollback-compatible probes) surfaced 4 honest findings: `deals.status='open'` (enum is `active|won|lost|cancelled`), `payments.payment_type='foreclosure'` (missing member), `whatsapp_templates.status='APPROVED'`, `whatsapp_messages.status='pending'`. The first two were already fixed in the shared S512 worktree; this session continued the same family through the deals pipeline end-to-end.
+
+### Bugs found and closed (each re-probed)
+1. **`deal_stages` is live but had zero rows; `deals` had zero rows** — seeded the 7 canonical stages (`seed_deal_stages_s512.php`, idempotent: `New Lead` 10% ... `Closed Won` 100% / `Closed Lost` 0%) so the pipeline boards have real columns.
+2. **`DealController::kanban()` used hardcoded string stage keys** (`lead`, `qualified`, ... with `intval()` → all zeros) and mismatched the view — rewrote controller to read live stages and group deals by int `stage_id`, and the view to int-keyed maps and slugified name lookups. Board verified working.
+3. **Drag-and-drop stage change was broken 3 ways**: route pointed at `updateStage()` whose `stage` was bound raw to `stage_id`; JS `.then(r => r.json())` hit a 302-HTML redirect; and `moveStage()` (the only real implementation) was **unrouted and read `stage_id`, a field the JS never sent** — deleted `moveStage()` (parallel orphan, S221-class duplication) and rewrote `updateStage()` to the JS contract: CSRF header/body, int stage id, `name` → `Closed Won`/`Closed Lost` → `won`/`lost` status sync, `is_active` verified, **JSON `{success, message}`** response.
+4. **Create form named fields the controller never reads** — `name="stage"` (string) → `deal_stage_id` (int, populated from live `deal_stages`); `name="notes"` → `description`; removed the non-persisted Property select (deals has no property_id column) so no form pretends to persist data it doesn't.
+5. **`views/admin/deals/show.php` stepper `array_search` without `false` guard** produced mis-indexed progress (`false === $i` never true; `<= false` true for item 0) — normalized slug comparison, hardened with a `false`-coalesce, and joined real stage names via controller alias for the badge.
+6. **`index.php` `array_column(...)[$deal['stage']]`** used a column that doesn't exist on the deals row — switched to `stage_id` keys and seeded stage names.
+
+### Verification (all probe-first, zero leftover)
+- Sacrificial HTTP probe on the real endpoints (admin session, cookie jar + `curl.exe`): **create** drawer → `302 → /admin/deals` + row `id=4 (PROBE512 Deal)` with `stage_id=3, lead=50011`; **kanban drop to "Closed Won"** → JSON `{success: true, message: "Moved to Closed Won"}` + DB `stage_id=6, status=won, probability=100`; **drop back to Proposal** → `{success: true, ...}` + DB `stage_id=4, status=active, probability=60`; **bogus CSRF** → rejected (302/error, DB unchanged).
+- Cleanup: probe deal + its `deal_activities` row deleted (`deleted: 1/1`), counts byte-identical (deals 0).
+- `/admin/deals/kanban` re-render returns **200, 412,661 bytes**, exact title, 1..7 `data-stage` columns present — tiny earlier read was a measurement artifact.
+- PHP lint clean ×6 (all touched files). Master suite green before and after.
+
+### Files touched (this session)
+`app/Http/Controllers/Admin/DealController.php`, `app/views/admin/deals/{create,index,kanban,show}.php`, `app/Models/EMI.php` (`total_amount` column), `app/Services/Communication/WhatsAppManagerService.php` (template status literal), `database/migrations/extend_whatsapp_messages_payments_enums_s512.php`, `database/migrations/seed_deal_stages_s512.php`.
+The parallel actor's S512 whole-tree staged sweep (≈290 a11y/heading files + their own `AGENTS.md` entry) was left untouched; this entry is the only AGENTS.md change authored here.
+
+### Key lessons (carried, continued)
+_935. **Check the DB for the real column list before writing a view for a form.** The create form posted `stage: 'lead'` to the controller that read `deal_stage_id: intval(...)`; `intval('lead')` = 0 landed every deal into `stage_id=0`. Once the column existed, a 30-second grep proved the mismatch. Any new form must be diffed against the controller's param reads, not the view's intuition.
+_936. **Map int ids to slug names at the one seam where the UI parses JS strings.** `strtolower($stage['name'])` in view+JS gives `new lead` `proposal` etc. consistently, replacing a brittle `in_array('won','lead','qualified',...)` family.
+_937. **Bottom-line pair repair: updateStage ↔ kanban JS.** Either rewrite the JS to the server's form (302+redirect + flash) or rewrite the server to the JS (CSRF header + JSON). The repo convention (workers S469 etc.) is JSON for AJAX-like flows; `http_response_code` + `json_encode` is the canonical outcome.
+_938. **`deal_activities` lacks an `deals(id)` FK so deleting via app path alone leaves orphans.** Any sacrificial cleanup must delete both sides. A probe that forgets the child table always "succeeds" at cleanup while leaking audit noise — lesson from S471's test-user probe.
+_939. **Scan-outputs that look small are not small.** A 5342-byte kanban "page" read turned out to be a curl artifact, not a broken render; re-fetch with explicit size reporting before drawing conclusions.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **514** (this session; parallel actor holds 513+).

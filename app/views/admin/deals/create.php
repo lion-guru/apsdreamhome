@@ -41,11 +41,10 @@ $page_title = 'Create Deal - APS Dream Home';
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Initial Stage</label>
-                                <select class="form-select" name="stage" required>
-                                    <option value="lead">Lead</option>
-                                    <option value="qualified" selected>Qualified</option>
-                                    <option value="proposal">Proposal</option>
-                                    <option value="negotiation">Negotiation</option>
+                                <select class="form-select" name="deal_stage_id" required>
+                                    <?php foreach (($stages ?? []) as $stg): ?>
+                                        <option value="<?= (int)$stg['id'] ?>" <?= (int)$stg['id'] === 3 ? 'selected' : '' ?>><?= htmlspecialchars($stg['stage_name'] ?? '') ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -63,16 +62,6 @@ $page_title = 'Create Deal - APS Dream Home';
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Property (Optional)</label>
-                                <select class="form-select" name="property_id">
-                                    <option value="">Select Property</option>
-                                    <?php foreach (($properties ?? []) as $property):
-                                    ?>
-                                        <option value="<?= $property['id'] ?>"><?= htmlspecialchars($property['title'] ?? '') ?> - <?= htmlspecialchars($property['location'] ?? '') ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
                                 <label class="form-label">Assign To</label>
                                 <select class="form-select" name="assigned_to">
                                     <option value="">Select Agent</option>
@@ -85,7 +74,7 @@ $page_title = 'Create Deal - APS Dream Home';
 
                         <div class="mb-3">
                             <label class="form-label">Notes</label>
-                            <textarea class="form-control" name="notes" rows="3" placeholder="Deal details, requirements, special conditions..."></textarea>
+                            <textarea class="form-control" name="description" rows="3" placeholder="Deal details, requirements, special conditions..."></textarea>
                         </div>
 
                         <div class="d-grid">
