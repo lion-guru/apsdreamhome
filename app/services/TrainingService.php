@@ -95,8 +95,7 @@ class TrainingService
                 $v = $r['course_category'] ?? null;
                 if ($v !== null) $map[$v] = ucwords(str_replace('_', ' ', $v));
             }
-        } catch (\Throwable $e) {
-        }
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         return $map;
     }
 

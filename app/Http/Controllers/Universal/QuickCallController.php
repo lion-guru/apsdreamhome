@@ -48,7 +48,7 @@ class QuickCallController extends \App\Http\Controllers\BaseController
                     l.created_at DESC
                 LIMIT 100
             ", [$userId, $userId]);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         try {
             $recentCalls = $this->db->fetchAll("
@@ -59,7 +59,7 @@ class QuickCallController extends \App\Http\Controllers\BaseController
                 ORDER BY cl.call_time DESC
                 LIMIT 20
             ", [$userId]);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         $this->data = [
             'page_title' => 'Quick Call & SMS Desk — Jio Fiber Free Calling',

@@ -42,7 +42,7 @@ class ManualCallingDeskController extends \App\Http\Controllers\BaseController
                     l.created_at DESC
                 LIMIT 50
             ", [$employeeId, $employeeId]);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         try {
             $todayFollowups = $this->db->fetchAll("
@@ -55,7 +55,7 @@ class ManualCallingDeskController extends \App\Http\Controllers\BaseController
                 ORDER BY f.followup_date ASC
                 LIMIT 20
             ", [$employeeId]);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         try {
             $recentCalls = $this->db->fetchAll("
@@ -66,7 +66,7 @@ class ManualCallingDeskController extends \App\Http\Controllers\BaseController
                 ORDER BY cl.call_time DESC
                 LIMIT 10
             ", [$employeeId]);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         
         $this->data = [
             'page_title' => 'Manual Calling Desk — Jio Fiber Free Calling',

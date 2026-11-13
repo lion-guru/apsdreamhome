@@ -39,7 +39,7 @@ class VoiceCallingController extends AdminController
             $stats['today_interested'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE DATE(created_at) = CURDATE() AND (customer_response = 'interested' OR interest_level IN ('hot','warm'))")['c'] ?? 0;
             $stats['today_leads'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_extracted_leads WHERE auto_created_lead_id IS NOT NULL AND DATE(created_at) = CURDATE()")['c'] ?? 0;
             $stats['avg_duration'] = $this->db->fetch("SELECT AVG(duration) as avg FROM ai_call_sessions WHERE DATE(created_at) = CURDATE() AND duration > 0")['avg'] ?? 0;
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         $stats['conversion_rate'] = $stats['today_calls'] > 0 ? round(($stats['today_interested'] / $stats['today_calls']) * 100, 1) : 0;
 
@@ -56,7 +56,7 @@ class VoiceCallingController extends AdminController
                 GROUP BY DATE(created_at)
                 ORDER BY date ASC
             ");
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         // Provider status
         $providers = $this->getProviderStatus();
@@ -73,7 +73,7 @@ class VoiceCallingController extends AdminController
                 ORDER BY s.created_at DESC
                 LIMIT 10
             ");
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         $this->data = [
             'page_title' => 'AI Voice Calling Dashboard',
@@ -98,7 +98,7 @@ class VoiceCallingController extends AdminController
                 WHERE group_name = 'ai_voice'
                 ORDER BY service_name, config_key
             ");
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         $providerList = ['voice_exotel', 'voice_twilio', 'voice_plivo', 'voice_knowlarity'];
         foreach ($providerList as $svc) {

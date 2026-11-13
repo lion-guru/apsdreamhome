@@ -831,7 +831,7 @@ class LandInventoryController extends AdminController
             try {
                 $this->db->prepare("UPDATE land_brokers SET agreement_signed_at = COALESCE(agreement_signed_at, NOW()) WHERE id = ?")
                     ->execute([$id]);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
             $this->setFlash('success', 'Broker Agreement prepared for WhatsApp dispatch');
             return $this->redirect($waUrl);

@@ -153,7 +153,7 @@ class RedisAdapter
                     'used_memory' => $info['used_memory_human'] ?? 'unknown',
                     'keys' => $this->redis->dbSize(),
                 ];
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         }
         return array_merge(['driver' => 'file', 'available' => false], $this->fallback->getStats());
     }

@@ -28,7 +28,7 @@ class IVRFlowController extends AdminController
                 FROM ivr_flows f
                 ORDER BY f.created_at DESC
             ");
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         $this->data = [
             'page_title' => 'IVR Flows',
@@ -81,7 +81,7 @@ class IVRFlowController extends AdminController
         try {
             $flow = $this->db->fetchOne("SELECT * FROM ivr_flows WHERE id = ?", [$id]);
             $steps = $this->db->fetchAll("SELECT * FROM ivr_flow_steps WHERE flow_id = ? ORDER BY step_order", [$id]);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         if (!$flow) {
             $this->setFlash('error', 'Flow not found');
@@ -149,7 +149,7 @@ class IVRFlowController extends AdminController
         $steps = [];
         try {
             $steps = $this->db->fetchAll("SELECT * FROM ivr_flow_steps WHERE flow_id = ? ORDER BY step_order", [$flowId]);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         $this->data = [
             'page_title' => 'IVR Steps: ' . $flow['name'],

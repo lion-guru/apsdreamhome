@@ -27,7 +27,7 @@ class EmployeeTaxComplianceController extends \App\Http\Controllers\Admin\AdminC
                 WHERE employee_id = ? 
                 ORDER BY financial_year DESC
             ", [$employeeId]);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         $this->data = [
             'page_title' => 'TDS & GST Compliance',

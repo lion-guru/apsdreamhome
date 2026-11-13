@@ -71,7 +71,7 @@ class CacheService
             try {
                 $val = $this->redis->get($this->prefix . $key);
                 if ($val !== false && $val !== null) return $val;
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         }
 
         // File fallback
@@ -98,7 +98,7 @@ class CacheService
         if ($this->redis) {
             try {
                 $ok = (bool)$this->redis->set($this->prefix . $key, $value, $ttl);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         }
 
         // Store file copy as well (ensures persistence across restarts)
@@ -115,7 +115,7 @@ class CacheService
     public function delete(string $key): bool
     {
         if ($this->redis) {
-            try { @$this->redis->del($this->prefix . $key); } catch (\Throwable $e) {}
+            try { @$this->redis->del($this->prefix . $key); } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         }
         $file = $this->getFileCacheDir() . '/' . md5($this->prefix . $key) . '.cache';
         if (file_exists($file)) @unlink($file);
@@ -131,7 +131,7 @@ class CacheService
             try {
                 $keys = $this->redis->keys($this->prefix . '*');
                 if (!empty($keys)) $this->redis->del($keys);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         }
         $files = glob($this->getFileCacheDir() . '/*.cache') ?: [];
         foreach ($files as $f) @unlink($f);

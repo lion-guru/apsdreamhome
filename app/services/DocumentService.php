@@ -344,7 +344,7 @@ class DocumentService
             if (file_exists($configFile)) {
                 $engines = require $configFile;
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         if (empty($engines)) {
             $engines = [
                 ['id' => 'tesseract', 'name' => 'Tesseract OCR', 'type' => 'ocr'],
@@ -420,7 +420,7 @@ class DocumentService
             foreach ($rows as $r) {
                 $types[] = ['value' => $r['document_type'], 'label' => ucwords(str_replace('_', ' ', $r['document_type']))];
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         if (empty($types)) {
             $types = [
                 ['value' => 'general', 'label' => 'General'],

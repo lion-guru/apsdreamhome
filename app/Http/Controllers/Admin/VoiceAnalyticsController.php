@@ -69,7 +69,7 @@ class VoiceAnalyticsController extends AdminController
             $stats['avg_duration'] = $this->db->fetch("SELECT AVG(duration) as avg FROM ai_call_sessions WHERE $where AND duration > 0")['avg'] ?? 0;
             $stats['total_leads'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_extracted_leads WHERE $where AND auto_created_lead_id IS NOT NULL")['c'] ?? 0;
             $stats['conversion_rate'] = $stats['total_calls'] > 0 ? round(($stats['total_leads'] / $stats['total_calls']) * 100, 2) : 0;
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         return $stats;
     }

@@ -33,7 +33,7 @@ if ($employeeId) {
                 ];
             }
         }
-    } catch (\Throwable $e) {}
+    } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 }
 ?>
 

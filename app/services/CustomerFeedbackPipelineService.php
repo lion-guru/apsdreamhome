@@ -115,7 +115,6 @@ class CustomerFeedbackPipelineService
         ];
         try {
             $gateway->sendMulti($user, [$data['channel'] ?? 'email'], 'Customer Feedback Survey', $body, []);
-        } catch (\Throwable $e) {
-        }
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
     }
 }

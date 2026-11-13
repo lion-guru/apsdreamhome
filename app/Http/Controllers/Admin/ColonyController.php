@@ -35,7 +35,7 @@ class ColonyController extends AdminController
             // User dashboards (all roles) — full data refresh on next load
             $cache->delete('colonies_list');
             // Legacy colonies_list is string-cache (different service) — also bust it
-            try { (new \App\Services\CacheService())->delete('colonies_list'); } catch (\Throwable $e) {}
+            try { (new \App\Services\CacheService())->delete('colonies_list'); } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         } catch (\Throwable $e) {
             error_log('ColonyController::bustColonyCaches: ' . $e->getMessage());
         }

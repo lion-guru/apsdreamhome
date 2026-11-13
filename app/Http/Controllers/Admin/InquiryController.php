@@ -105,7 +105,7 @@ class InquiryController extends AdminController
             $this->db->prepare("UPDATE inquiries SET is_read = 1 WHERE id = ?")->execute([$id]);
             \App\Core\Cache::delete('admin_notify_inquiries_pending');
             \App\Core\Cache::delete('admin_notify_inquiries_today');
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         // Mark as contacted if new
         if ($inquiry['status'] === 'new') {
@@ -124,14 +124,14 @@ class InquiryController extends AdminController
                 $uStmt = $this->db->prepare("SELECT id, name, email, phone, role FROM users WHERE id = ?");
                 $uStmt->execute([$inquiry['assigned_to']]);
                 $assignedUser = $uStmt->fetch(\PDO::FETCH_ASSOC);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
         }
 
         // Fetch active staff list for assignment dropdown
         $staffList = [];
         try {
             $staffList = $this->db->query("SELECT id, name, role FROM users WHERE role IN ('employee', 'agent', 'telecaller', 'manager', 'admin') ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         $data = [
             'inquiry'      => $inquiry,
