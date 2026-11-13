@@ -15,7 +15,7 @@
     <div class="row g-4">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Recent Applicants</h6><a href="<?= BASE_URL ?>admin/careers/applications" class="btn btn-outline-primary btn-sm">View All</a></div>
+                <div class="card-header bg-white d-flex justify-content-between"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Recent Applicants</h2><a href="<?= BASE_URL ?>admin/careers/applications" class="btn btn-outline-primary btn-sm">View All</a></div>
                 <div class="card-body p-0">
                     <?php if (empty($recentApplicants)): ?>
                     <div class="text-center py-4"><p class="text-muted mb-0">No applications yet</p></div>
@@ -29,7 +29,7 @@
         </div>
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Departments</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-pie me-2"></i>Departments</h2></div>
                 <div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center"><p class="text-muted mb-0"><i class="fas fa-chart-pie me-2"></i>Department chart</p></div></div>
             </div>
         </div>

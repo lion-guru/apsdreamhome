@@ -4,7 +4,7 @@
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>By Status</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>By Status</h2></div>
                 <div class="card-body p-0">
                     <?php if (empty($statuses)): ?>
                         <p class="text-muted text-center py-3">No data</p>
@@ -26,7 +26,7 @@
         </div>
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-filter me-2"></i>By Source</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-filter me-2"></i>By Source</h2></div>
                 <div class="card-body p-0">
                     <?php if (empty($sources)): ?>
                         <p class="text-muted text-center py-3">No data</p>
@@ -48,7 +48,7 @@
         </div>
     </div>
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-list me-2"></i>All Leads</h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>All Leads</h2></div>
         <div class="card-body p-0">
             <?php if (empty($leads)): ?>
                 <p class="text-muted text-center py-4">No leads</p>

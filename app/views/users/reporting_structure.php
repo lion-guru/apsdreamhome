@@ -64,7 +64,7 @@ function rpLevelBadge($role) {
         <!-- Org Chart: Manager →' You →' Subordinates -->
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-transparent border-bottom-0 pt-3">
-                <h6 class="fw-bold mb-0"><i class="fas fa-project-diagram me-2 text-primary"></i>Org Chart</h6>
+                <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-project-diagram me-2 text-primary"></i>Org Chart</h2>
             </div>
             <div class="card-body">
                 <div class="emp-rp-org">
@@ -113,7 +113,7 @@ function rpLevelBadge($role) {
                 <div class="col-lg-6">
                     <div class="card shadow-sm border-0 h-100">
                         <div class="card-header bg-transparent border-bottom-0 pt-3">
-                            <h6 class="fw-bold mb-0"><i class="fas fa-user-tie me-2 text-primary"></i>My Manager</h6>
+                            <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-user-tie me-2 text-primary"></i>My Manager</h2>
                         </div>
                         <div class="card-body">
                             <div class="d-flex align-items-start gap-3 mb-3">
@@ -155,7 +155,7 @@ function rpLevelBadge($role) {
             <div class="col-lg-6">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-header bg-transparent border-bottom-0 pt-3">
-                        <h6 class="fw-bold mb-0"><i class="fas fa-id-card me-2 text-primary"></i>My Position</h6>
+                        <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-id-card me-2 text-primary"></i>My Position</h2>
                     </div>
                     <div class="card-body">
                         <div class="d-flex align-items-start gap-3 mb-3">
@@ -205,7 +205,7 @@ function rpLevelBadge($role) {
         <?php if (!empty($subordinates)): ?>
             <div class="card shadow-sm border-0 mt-4">
                 <div class="card-header bg-transparent border-bottom-0 pt-3">
-                    <h6 class="fw-bold mb-0"><i class="fas fa-users me-2 text-primary"></i>My Team (<?= count($subordinates) ?> members)</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-users me-2 text-primary"></i>My Team (<?= count($subordinates) ?> members)</h2>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
@@ -256,7 +256,7 @@ function rpLevelBadge($role) {
         <?php if (!empty($department_members)): ?>
             <div class="card shadow-sm border-0 mt-4">
                 <div class="card-header bg-transparent border-bottom-0 pt-3">
-                    <h6 class="fw-bold mb-0"><i class="fas fa-building me-2 text-primary"></i>Department Colleagues (<?= count($department_members) ?>)</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-building me-2 text-primary"></i>Department Colleagues (<?= count($department_members) ?>)</h2>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

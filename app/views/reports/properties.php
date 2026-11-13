@@ -10,7 +10,7 @@
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><small class="text-muted">Pending</small><h4 class="text-warning mb-0"><?= number_format($summary['pending'] ?? 0) ?></h4></div></div></div>
     </div>
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Property Inventory</h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Property Inventory</h2></div>
         <div class="card-body p-0">
             <?php if (empty($propertiesData)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No property data available</p></div>

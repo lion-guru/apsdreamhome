@@ -110,7 +110,7 @@ $status = $trip['status'] ?? 'scheduled';
 
     <!-- Passenger Manifest List -->
     <div class="d-flex justify-content-between align-items-center mb-2 px-1">
-        <h6 class="fw-bold mb-0 text-muted text-uppercase">Passengers (<?= count($passengers) ?>)</h6>
+        <h2  class="fs-6 fw-semibold fw-bold mb-0 text-muted text-uppercase">Passengers (<?= count($passengers) ?>)</h2>
         <span class="small text-muted">Tap to update status</span>
     </div>
 
@@ -128,7 +128,7 @@ $status = $trip['status'] ?? 'scheduled';
             <div class="passenger-card <?= htmlspecialchars($ps) ?>">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div>
-                        <h6 class="fw-bold mb-0"><?= htmlspecialchars($p['visitor_name'] ?? 'Visitor') ?></h6>
+                        <h2  class="fs-6 fw-semibold fw-bold mb-0"><?= htmlspecialchars($p['visitor_name'] ?? 'Visitor') ?></h2>
                         <small class="text-muted"><i class="fas fa-map-pin me-1"></i><?= htmlspecialchars($p['pickup_location'] ?? 'Pickup Point') ?></small>
                     </div>
                     <!-- Call & WA Buttons -->

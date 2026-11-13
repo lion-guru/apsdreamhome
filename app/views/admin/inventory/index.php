@@ -21,7 +21,7 @@
             <div class="col-md-6 col-xl-4 mb-4">
                 <div class="card shadow-sm h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($col['colony_name'] ?? 'Unknown'); ?></h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold"><?php echo htmlspecialchars($col['colony_name'] ?? 'Unknown'); ?></h2>
                         <span class="badge bg-info"><?php echo e($col['total_plots_actual']); ?> plots</span>
                     </div>
                     <div class="card-body aps-cp-card-body">

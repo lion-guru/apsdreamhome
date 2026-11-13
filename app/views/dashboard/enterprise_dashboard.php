@@ -23,7 +23,7 @@
     <div class="row g-3">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3"><h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Analytics Overview</h6></div>
+                <div class="card-header bg-white py-3"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-line me-2"></i>Analytics Overview</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($analytics ?? [])): ?>
                     <canvas id="enterpriseChart" height="250"></canvas>
@@ -35,7 +35,7 @@
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3"><h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h6></div>
+                <div class="card-header bg-white py-3"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
                         <a href="<?= ($base ?? BASE_URL) ?>admin/users" class="btn btn-outline-primary btn-sm"><i class="fas fa-users me-1"></i>Manage Users</a>

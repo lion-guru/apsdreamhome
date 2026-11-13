@@ -39,7 +39,7 @@ $localCount = (int) ($info['local_count'] ?? 0);
         .alert-warning { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
         .alert-info { background:#dbeafe; color:#1e40af; border:1px solid #93c5fd; }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
 <div class="admin-wrap">

@@ -155,7 +155,7 @@ $variantNames = array_keys($results);
 
             <?php if ($status === 'running'): ?>
                 <div class="card border-warning shadow-sm">
-                    <div class="card-header bg-warning bg-opacity-25"><h6 class="mb-0"><i class="fas fa-flag-checkered me-1"></i> End Experiment</h6></div>
+                    <div class="card-header bg-warning bg-opacity-25"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-flag-checkered me-1"></i> End Experiment</h2></div>
                     <div class="card-body aps-cp-card-body">
                         <form method="POST" action="<?= $baseUrl ?>/admin/experiments/<?= (int)$experiment['id'] ?>/end"
                               data-aps-confirm="End this experiment? You can still view results afterwards.">

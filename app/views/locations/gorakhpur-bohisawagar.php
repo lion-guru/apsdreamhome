@@ -63,7 +63,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
 
         /* ... rest of the CSS same as Minua ... */
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 
 <body>

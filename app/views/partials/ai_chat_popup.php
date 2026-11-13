@@ -14,7 +14,7 @@ $base = $base ?? BASE_URL;
             <div class="d-flex align-items-center">
                 <span class="ai-popup-avatar me-2">ðŸ¤–</span>
                 <div>
-                    <h6 class="mb-0 text-white">APS AI Helper</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 text-white">APS AI Helper</h2>
                     <small class="text-white-50">Online</small>
                 </div>
             </div>

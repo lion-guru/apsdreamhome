@@ -11,7 +11,7 @@
             <div class="card border-0 shadow-sm bg-gradient-success text-white">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div><h6 class="fw-light mb-1">Paid This Month</h6><h3 class="mb-0">₹<?= number_format($total_paid ?? 0, 2) ?></h3></div>
+                        <div><h2  class="fs-6 fw-semibold fw-light mb-1">Paid This Month</h2><h3 class="mb-0">₹<?= number_format($total_paid ?? 0, 2) ?></h3></div>
                         <div><i class="fas fa-check-circle fa-3x opacity-50"></i></div>
                     </div>
                 </div>
@@ -21,7 +21,7 @@
             <div class="card border-0 shadow-sm bg-gradient-warning text-white">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div><h6 class="fw-light mb-1">Pending Payments</h6><h3 class="mb-0"><?= (int)($pending_count ?? 0) ?></h3></div>
+                        <div><h2  class="fs-6 fw-semibold fw-light mb-1">Pending Payments</h2><h3 class="mb-0"><?= (int)($pending_count ?? 0) ?></h3></div>
                         <div><i class="fas fa-clock fa-3x opacity-50"></i></div>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
             <div class="card border-0 shadow-sm bg-gradient-info text-white">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div><h6 class="fw-light mb-1">Active users</h6><h3 class="mb-0"><?= (int)($employee_count ?? 0) ?></h3></div>
+                        <div><h2  class="fs-6 fw-semibold fw-light mb-1">Active users</h2><h3 class="mb-0"><?= (int)($employee_count ?? 0) ?></h3></div>
                         <div><i class="fas fa-users fa-3x opacity-50"></i></div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
             <div class="card border-0 shadow-sm bg-gradient-danger text-white">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div><h6 class="fw-light mb-1">Pending Amount</h6><h3 class="mb-0">₹<?= number_format($pending_amount ?? 0, 2) ?></h3></div>
+                        <div><h2  class="fs-6 fw-semibold fw-light mb-1">Pending Amount</h2><h3 class="mb-0">₹<?= number_format($pending_amount ?? 0, 2) ?></h3></div>
                         <div><i class="fas fa-exclamation-triangle fa-3x opacity-50"></i></div>
                     </div>
                 </div>

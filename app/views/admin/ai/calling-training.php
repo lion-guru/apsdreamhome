@@ -22,7 +22,7 @@ $page_title = $page_title ?? 'AI Calling Training';
             <div class="card bg-primary text-white shadow-sm border-0">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <div><h6 class="text-uppercase small mb-1">Voice Models</h6><h3 class="mb-0"><?= $totalVoiceModels ?? 0 ?></h3></div>
+                        <div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Voice Models</h2><h3 class="mb-0"><?= $totalVoiceModels ?? 0 ?></h3></div>
                         <i class="fas fa-microphone fa-2x opacity-50"></i>
                     </div>
                     <small class="opacity-75"><?= $activeVoiceModels ?? 0 ?> active</small>
@@ -33,7 +33,7 @@ $page_title = $page_title ?? 'AI Calling Training';
             <div class="card bg-success text-white shadow-sm border-0">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <div><h6 class="text-uppercase small mb-1">Scripts</h6><h3 class="mb-0"><?= $totalScripts ?? 0 ?></h3></div>
+                        <div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Scripts</h2><h3 class="mb-0"><?= $totalScripts ?? 0 ?></h3></div>
                         <i class="fas fa-comments fa-2x opacity-50"></i>
                     </div>
                     <small class="opacity-75"><?= $activeScripts ?? 0 ?> active</small>
@@ -44,7 +44,7 @@ $page_title = $page_title ?? 'AI Calling Training';
             <div class="card bg-warning text-dark shadow-sm border-0">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <div><h6 class="text-uppercase small mb-1">Intents</h6><h3 class="mb-0"><?= $totalIntents ?? 0 ?></h3></div>
+                        <div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Intents</h2><h3 class="mb-0"><?= $totalIntents ?? 0 ?></h3></div>
                         <i class="fas fa-brain fa-2x opacity-50"></i>
                     </div>
                     <small class="opacity-75"><?= $activeIntents ?? 0 ?> active</small>
@@ -55,7 +55,7 @@ $page_title = $page_title ?? 'AI Calling Training';
             <div class="card bg-info text-white shadow-sm border-0">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <div><h6 class="text-uppercase small mb-1">Total Calls</h6><h3 class="mb-0"><?= $perfTotalCalls ?? 0 ?></h3></div>
+                        <div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Total Calls</h2><h3 class="mb-0"><?= $perfTotalCalls ?? 0 ?></h3></div>
                         <i class="fas fa-phone fa-2x opacity-50"></i>
                     </div>
                     <small class="opacity-75"><?= $perfAvgDuration ?? 0 ?>s avg duration</small>

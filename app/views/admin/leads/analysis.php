@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-lg-6 mb-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-funnel-dollar me-2"></i>Conversion by Source</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-funnel-dollar me-2"></i>Conversion by Source</h2></div>
                 <div class="card-body p-0">
                     <?php if (empty($by_source)): ?>
                         <p class="text-muted text-center py-3">No data</p>
@@ -34,7 +34,7 @@
         </div>
         <div class="col-lg-6 mb-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-calendar me-2"></i>Monthly Trend (6 Months)</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-calendar me-2"></i>Monthly Trend (6 Months)</h2></div>
                 <div class="card-body p-0">
                     <?php if (empty($monthly)): ?>
                         <p class="text-muted text-center py-3">No data</p>
@@ -59,7 +59,7 @@
     </div>
     <?php if (!empty($by_city)): ?>
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Top Cities</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-map-marker-alt me-2"></i>Top Cities</h2></div>
             <div class="card-body p-0">
                 <div class="table-responsive"><table class="table table-sm mb-0">
                     <thead><tr><th>City</th><th>Count</th></tr></thead>

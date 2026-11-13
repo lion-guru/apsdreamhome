@@ -18,7 +18,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0"><?php echo htmlspecialchars($lang['name'] ?? $code); ?></h6>
+                            <h2  class="fs-6 fw-semibold mb-0"><?php echo htmlspecialchars($lang['name'] ?? $code); ?></h2>
                             <span class="badge bg-<?php echo ($lang['completion'] ?? 0) >= 80 ? 'success' : (($lang['completion'] ?? 0) >= 50 ? 'warning' : 'danger'); ?>">
                                 <?php echo round($lang['completion'] ?? 0); ?>%
                             </span>

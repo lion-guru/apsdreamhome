@@ -17,7 +17,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Type Distribution</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-bar me-2"></i>Type Distribution</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -43,7 +43,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-tags me-2"></i>Price Distribution</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-tags me-2"></i>Price Distribution</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -70,7 +70,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-location-dot me-2"></i>Location Performance</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-location-dot me-2"></i>Location Performance</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -98,7 +98,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Property Age</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-clock me-2"></i>Property Age</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

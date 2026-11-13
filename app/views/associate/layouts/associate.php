@@ -69,7 +69,7 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
     <?php if (!empty($extra_css)): ?>
     <link rel="stylesheet" href="<?= e($extra_css) ?>">
     <?php endif; ?>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
     <!-- Associate Sidebar -->

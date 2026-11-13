@@ -83,7 +83,7 @@ $controlSplit = (float)($e['traffic_allocation']['control_split_pct'] ?? 0);
             <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #64748b;">
                 <div class="card-body p-3">
                     <span class="text-muted small fw-semibold text-uppercase">Colony</span>
-                    <h6 class="fw-bold mb-0 text-dark"><?= htmlspecialchars($e['colony_name'] ?? '—') ?></h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark"><?= htmlspecialchars($e['colony_name'] ?? '—') ?></h2>
                 </div>
             </div>
         </div>
@@ -91,7 +91,7 @@ $controlSplit = (float)($e['traffic_allocation']['control_split_pct'] ?? 0);
             <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #0ea5e9;">
                 <div class="card-body p-3">
                     <span class="text-muted small fw-semibold text-uppercase">Control Base</span>
-                    <h6 class="fw-bold mb-0 text-dark">Rs.<?= number_format((float)$e['control_base_pps'], 0) ?>/sqft (<?= number_format($controlSplit, 1) ?>%)</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark">Rs.<?= number_format((float)$e['control_base_pps'], 0) ?>/sqft (<?= number_format($controlSplit, 1) ?>%)</h2>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@ $controlSplit = (float)($e['traffic_allocation']['control_split_pct'] ?? 0);
             <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #8b5cf6;">
                 <div class="card-body p-3">
                     <span class="text-muted small fw-semibold text-uppercase">Confidence / Min N</span>
-                    <h6 class="fw-bold mb-0 text-dark"><?= number_format(((float)$e['confidence_level']) * 100, 0) ?>% / <?= (int)$e['min_sample_size'] ?></h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark"><?= number_format(((float)$e['confidence_level']) * 100, 0) ?>% / <?= (int)$e['min_sample_size'] ?></h2>
                 </div>
             </div>
         </div>
@@ -107,7 +107,7 @@ $controlSplit = (float)($e['traffic_allocation']['control_split_pct'] ?? 0);
             <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #f59e0b;">
                 <div class="card-body p-3">
                     <span class="text-muted small fw-semibold text-uppercase">Window</span>
-                    <h6 class="fw-bold mb-0 text-dark"><?= $e['start_date'] ? htmlspecialchars($e['start_date']) : 'not started' ?><?= $e['end_date'] ? ' → ' . htmlspecialchars($e['end_date']) : '' ?></h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark"><?= $e['start_date'] ? htmlspecialchars($e['start_date']) : 'not started' ?><?= $e['end_date'] ? ' → ' . htmlspecialchars($e['end_date']) : '' ?></h2>
                 </div>
             </div>
         </div>

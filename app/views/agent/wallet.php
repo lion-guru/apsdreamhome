@@ -50,7 +50,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 <?php else: ?>
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-transparent border-0">
-        <h6 class="mb-0"><i class="fas fa-history me-2"></i>Transaction History</h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-history me-2"></i>Transaction History</h2>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">

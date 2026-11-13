@@ -127,7 +127,7 @@ $stored = $health['stored_models'] ?? [];
     <!-- Stored model composition -->
     <?php if ($stored): ?>
     <div class="card mb-3">
-        <div class="card-header"><h6 class="mb-0">Stored chunk composition</h6></div>
+        <div class="card-header"><h2  class="fs-6 fw-semibold mb-0">Stored chunk composition</h2></div>
         <div class="card-body py-2">
             <?php foreach ($stored as $model => $n): ?>
                 <span class="badge <?= str_contains((string)$model, 'hash-placeholder') ? 'bg-warning text-dark' : 'bg-success' ?> me-1">

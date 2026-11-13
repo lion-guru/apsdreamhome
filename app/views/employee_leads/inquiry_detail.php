@@ -71,7 +71,7 @@ $priorityBadge = ($priorityKey === 'high') ? 'badge bg-danger' : (($priorityKey 
             <!-- Customer Contact Card -->
             <div class="card border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-header bg-white py-3 border-0">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-address-card text-primary me-2"></i>Customer Profile</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-address-card text-primary me-2"></i>Customer Profile</h2>
                 </div>
                 <div class="card-body pt-0">
                     <div class="row g-3">
@@ -107,7 +107,7 @@ $priorityBadge = ($priorityKey === 'high') ? 'badge bg-danger' : (($priorityKey 
             <?php if (!empty($inquiry['property_title']) || !empty($inquiry['project_name'])): ?>
                 <div class="card border-0 shadow-sm rounded-3 mb-4">
                     <div class="card-header bg-white py-3 border-0">
-                        <h6 class="mb-0 fw-bold"><i class="fas fa-building text-info me-2"></i>Interested Property / Project</h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-building text-info me-2"></i>Interested Property / Project</h2>
                     </div>
                     <div class="card-body pt-0">
                         <?php if (!empty($inquiry['property_title'])): ?>
@@ -135,7 +135,7 @@ $priorityBadge = ($priorityKey === 'high') ? 'badge bg-danger' : (($priorityKey 
             <!-- Customer Message Card -->
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-comment-alt text-warning me-2"></i>Inquiry Message</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-comment-alt text-warning me-2"></i>Inquiry Message</h2>
                     <span class="text-muted small"><?= date('d M Y, h:i A', strtotime($inquiry['created_at'])) ?></span>
                 </div>
                 <div class="card-body pt-0">
@@ -151,7 +151,7 @@ $priorityBadge = ($priorityKey === 'high') ? 'badge bg-danger' : (($priorityKey 
             <!-- Update Status Card -->
             <div class="card border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-header bg-white py-3 border-0">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-sync-alt text-primary me-2"></i>Update Inquiry Status</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-sync-alt text-primary me-2"></i>Update Inquiry Status</h2>
                 </div>
                 <div class="card-body pt-0">
                     <form method="POST" action="<?= $base ?>/employee/inquiries/<?= (int)$inquiry['id'] ?>/status">
@@ -175,7 +175,7 @@ $priorityBadge = ($priorityKey === 'high') ? 'badge bg-danger' : (($priorityKey 
             <!-- Follow-up Log Action Card -->
             <div class="card border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-header bg-white py-3 border-0">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-history text-success me-2"></i>Log Follow-up Call / Interaction</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-history text-success me-2"></i>Log Follow-up Call / Interaction</h2>
                 </div>
                 <div class="card-body pt-0">
                     <div class="mb-3 p-2 bg-light rounded text-muted small d-flex justify-content-between">
@@ -202,7 +202,7 @@ $priorityBadge = ($priorityKey === 'high') ? 'badge bg-danger' : (($priorityKey 
             <!-- Quick Communication Templates -->
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-header bg-white py-3 border-0">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h2>
                 </div>
                 <div class="card-body pt-0 d-grid gap-2">
                     <a href="tel:<?= htmlspecialchars($inquiry['phone']) ?>" class="btn btn-light text-start border">

@@ -84,7 +84,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-users me-2 text-primary"></i>User Registrations</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-users me-2 text-primary"></i>User Registrations</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <canvas id="userChart" height="200"></canvas>
@@ -94,7 +94,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-calendar-check me-2 text-success"></i>Monthly Bookings</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-calendar-check me-2 text-success"></i>Monthly Bookings</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <canvas id="bookingChart" height="200"></canvas>
@@ -104,7 +104,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="col-md-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-rupee-sign me-2 text-warning"></i>Revenue (₹)</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-rupee-sign me-2 text-warning"></i>Revenue (₹)</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <canvas id="revenueChart" height="200"></canvas>

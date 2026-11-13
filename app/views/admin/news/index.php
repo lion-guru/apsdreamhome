@@ -107,7 +107,7 @@ foreach ($newsList as $a) {
 <!-- News Table -->
 <div class="card border-0 shadow-sm" style="border-radius:12px;">
     <div class="card-header bg-white border-bottom py-3 px-4">
-        <h6 class="mb-0 fw-bold">All Articles</h6>
+        <h2  class="fs-6 fw-semibold mb-0 fw-bold">All Articles</h2>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">

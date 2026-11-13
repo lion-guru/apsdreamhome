@@ -56,7 +56,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-arrow-trend-up me-2"></i>User Growth</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-arrow-trend-up me-2"></i>User Growth</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -82,7 +82,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-activity me-2"></i>User Activity</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-activity me-2"></i>User Activity</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

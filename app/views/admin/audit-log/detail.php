@@ -8,7 +8,7 @@
     <div class="row g-4">
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0">Event</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Event</h2></div>
                 <div class="card-body">
                     <table class="table table-sm mb-0">
                         <tr><th style="width:35%">Action</th><td><span class="badge bg-primary"><?= htmlspecialchars($log['action'] ?? '') ?></span> <small class="text-muted"><?= htmlspecialchars($log['action_type'] ?? '') ?></small></td></tr>
@@ -26,7 +26,7 @@
         </div>
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0">Actor & Request</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Actor & Request</h2></div>
                 <div class="card-body">
                     <table class="table table-sm mb-0">
                         <tr><th style="width:35%">User</th><td>#<?= (int)($log['user_id'] ?? 0) ?> (<?= htmlspecialchars($log['user_role'] ?? '') ?>)
@@ -45,7 +45,7 @@
         <?php if (!empty($log['old_values']) || !empty($log['new_values'])): ?>
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0">Value Changes</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Value Changes</h2></div>
                 <div class="card-body row">
                     <div class="col-md-6"><h6 class="small text-muted">Before</h6><pre class="bg-light p-2 rounded small"><?= htmlspecialchars($log['old_values'] ?? '') ?></pre></div>
                     <div class="col-md-6"><h6 class="small text-muted">After</h6><pre class="bg-light p-2 rounded small"><?= htmlspecialchars($log['new_values'] ?? '') ?></pre></div>
@@ -56,7 +56,7 @@
         <?php if (!empty($related)): ?>
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0">Same-entity history (<?= count($related) ?>)</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Same-entity history (<?= count($related) ?>)</h2></div>
                 <div class="card-body p-0">
                     <table class="table table-sm table-hover mb-0">
                         <thead><tr><th>Time</th><th>Action</th><th>User</th><th>Status</th><th></th></tr></thead>

@@ -44,7 +44,7 @@
     <div class="row g-3">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3"><h6 class="mb-0"><i class="fas fa-chart-area me-2"></i>Performance Trends</h6></div>
+                <div class="card-header bg-white py-3"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-area me-2"></i>Performance Trends</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="text-center py-4 text-muted">
                         <i class="fas fa-chart-line fa-3x mb-3"></i>
@@ -55,7 +55,7 @@
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3"><h6 class="mb-0"><i class="fas fa-bell me-2"></i>Alerts</h6></div>
+                <div class="card-header bg-white py-3"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-bell me-2"></i>Alerts</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="text-center py-4 text-muted">
                         <i class="fas fa-check-circle fa-2x text-success mb-2"></i>

@@ -154,7 +154,7 @@ include __DIR__ . '/../layouts/base.php';
                     <div class="d-flex align-items-center gap-3 mb-4">
                         <img src="<?= BASE_URL ?>/assets/images/placeholder/hero.svg" class="rounded-circle shadow" alt="Contact person" >
                         <div class="w-100">
-                            <h6 class="text-white mb-0"><?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Verified Owner' : 'APS Sales Team'; ?></h6>
+                            <h2  class="fs-6 fw-semibold text-white mb-0"><?php echo !empty($property['source']) && $property['source'] == 'ai_fetched' ? 'Verified Owner' : 'APS Sales Team'; ?></h2>
 
                             <?php if (isset($_SESSION['user_id'])): ?>
                                 <!-- Logged In View: Show Contact & Track Lead -->

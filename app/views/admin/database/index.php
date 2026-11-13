@@ -20,7 +20,7 @@
 
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h6 class="mb-0"><i class="fas fa-table me-2"></i>Largest Tables</h6>
+            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-table me-2"></i>Largest Tables</h2>
             <form method="GET" action="<?= BASE_URL ?>/admin/database" class="d-flex gap-2">
                 <input type="text" name="search" class="form-control form-control-sm" placeholder="table name..." value="<?= htmlspecialchars($search ?? '') ?>">
                 <button type="submit" class="btn btn-sm btn-outline-primary">Go</button>

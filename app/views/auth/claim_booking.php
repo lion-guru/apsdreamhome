@@ -24,7 +24,7 @@ $base = BASE_URL;
         .card { max-width: 460px; width: 100%; border: none; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.2) }
         .card-body { padding: 2rem }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
     <div class="container">

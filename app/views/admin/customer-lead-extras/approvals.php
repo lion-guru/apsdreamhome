@@ -150,7 +150,7 @@ $page_description = 'Manage lead assignment and reassignment approval requests';
                                                 <img src="<?= BASE_URL ?>/assets/images/user/default-avatar.jpg" alt="Avatar" class="rounded-circle" width="32" height="32" />
                                             </div>
                                             <div class="flex-grow-1 ms-2">
-                                                <h6 class="mb-0"><?php echo htmlspecialchars($approval['lead_name'] ?? 'Unknown'); ?></h6>
+                                                <h2  class="fs-6 fw-semibold mb-0"><?php echo htmlspecialchars($approval['lead_name'] ?? 'Unknown'); ?></h2>
                                                 <small class="text-muted"><?php echo htmlspecialchars($approval['lead_email'] ?? ''); ?></small>
                                             </div>
                                         </div>

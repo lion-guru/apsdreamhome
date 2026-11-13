@@ -122,7 +122,7 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
         <!-- Project Details Card -->
         <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
             <div class="card-header bg-white border-bottom py-3 px-4">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-info-circle text-primary me-2"></i>Project Details</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-info-circle text-primary me-2"></i>Project Details</h2>
             </div>
             <div class="card-body px-4">
                 <div class="row g-3">
@@ -160,7 +160,7 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
         <!-- Milestones -->
         <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
             <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-flag text-warning me-2"></i>Milestones</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-flag text-warning me-2"></i>Milestones</h2>
                 <a href="<?= BASE_URL ?>/admin/projects/progress/<?= $pId ?>" class="btn btn-sm btn-outline-primary">
                     <i class="fas fa-edit me-1"></i>Manage
                 </a>
@@ -188,7 +188,7 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
         <?php if (!empty($amenities)): ?>
         <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
             <div class="card-header bg-white border-bottom py-3 px-4">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-star text-success me-2"></i>Amenities</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-star text-success me-2"></i>Amenities</h2>
             </div>
             <div class="card-body px-4">
                 <div class="d-flex flex-wrap gap-2">
@@ -203,7 +203,7 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
         <!-- Project Photo Gallery -->
         <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
             <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-images text-primary me-2"></i>Project Gallery &amp; Photos</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-images text-primary me-2"></i>Project Gallery &amp; Photos</h2>
                 <a href="<?= BASE_URL ?>/admin/projects/images/<?= $pId ?>" class="btn btn-sm btn-outline-primary">
                     <i class="fas fa-upload me-1"></i>Manage Photos
                 </a>
@@ -249,7 +249,7 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
         <!-- Budget Card -->
         <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
             <div class="card-header bg-white border-bottom py-3 px-4">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-rupee-sign text-warning me-2"></i>Budget Tracking</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-rupee-sign text-warning me-2"></i>Budget Tracking</h2>
             </div>
             <div class="card-body px-4">
                 <?php if ($budget > 0): ?>
@@ -273,7 +273,7 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
         <!-- Risk Flags -->
         <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
             <div class="card-header bg-white border-bottom py-3 px-4">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-exclamation-triangle text-danger me-2"></i>Risk Flags</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-exclamation-triangle text-danger me-2"></i>Risk Flags</h2>
             </div>
             <div class="card-body px-4">
                 <?php $riskFlags = trim($project['risk_flags'] ?? ''); ?>
@@ -288,7 +288,7 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
         <!-- Quick Actions -->
         <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
             <div class="card-header bg-white border-bottom py-3 px-4">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-bolt text-primary me-2"></i>Quick Actions</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-bolt text-primary me-2"></i>Quick Actions</h2>
             </div>
             <div class="card-body px-4 d-grid gap-2">
                 <a href="<?= BASE_URL ?>/admin/plots?colony_id=<?= (int)($project['colony_id'] ?? 0) ?>" class="btn btn-outline-success btn-sm text-start">
@@ -315,7 +315,7 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
         <?php if (!empty($project['tags'])): ?>
         <div class="card border-0 shadow-sm mb-4" style="border-radius:12px;">
             <div class="card-header bg-white border-bottom py-3 px-4">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-tags text-secondary me-2"></i>Tags</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-tags text-secondary me-2"></i>Tags</h2>
             </div>
             <div class="card-body px-4 d-flex flex-wrap gap-2">
                 <?php foreach (explode(',', $project['tags']) as $tag): $tag = trim($tag); if ($tag): ?>

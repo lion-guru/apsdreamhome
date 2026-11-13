@@ -21,7 +21,7 @@
                 <div class="card bg-primary text-white shadow-sm">
                     <div class="card-body text-center py-3">
                         <i class="fas fa-tags fa-2x mb-2"></i>
-                        <h6 class="mb-0">Categories</h6>
+                        <h2  class="fs-6 fw-semibold mb-0">Categories</h2>
                     </div>
                 </div>
             </a>
@@ -31,7 +31,7 @@
                 <div class="card bg-success text-white shadow-sm">
                     <div class="card-body text-center py-3">
                         <i class="fas fa-file-alt fa-2x mb-2"></i>
-                        <h6 class="mb-0">Document Types</h6>
+                        <h2  class="fs-6 fw-semibold mb-0">Document Types</h2>
                     </div>
                 </div>
             </a>
@@ -41,7 +41,7 @@
                 <div class="card bg-info text-white shadow-sm">
                     <div class="card-body text-center py-3">
                         <i class="fas fa-file-code fa-2x mb-2"></i>
-                        <h6 class="mb-0">Templates</h6>
+                        <h2  class="fs-6 fw-semibold mb-0">Templates</h2>
                     </div>
                 </div>
             </a>
@@ -51,7 +51,7 @@
                 <div class="card bg-warning text-white shadow-sm">
                     <div class="card-body text-center py-3">
                         <i class="fas fa-star fa-2x mb-2"></i>
-                        <h6 class="mb-0">Reviews</h6>
+                        <h2  class="fs-6 fw-semibold mb-0">Reviews</h2>
                     </div>
                 </div>
             </a>

@@ -27,7 +27,7 @@
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="fw-bold mb-0"><?= htmlspecialchars($f['name'] ?? '') ?></h6>
+                                <h2  class="fs-6 fw-semibold fw-bold mb-0"><?= htmlspecialchars($f['name'] ?? '') ?></h2>
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-light" data-bs-toggle="dropdown" aria-label="More options"><i class="fas fa-ellipsis-v"></i></button>
                                     <ul class="dropdown-menu dropdown-menu-end">

@@ -155,7 +155,7 @@ $completionPct = $stats['total'] > 0 ? round(($stats['completed'] / $stats['tota
     <?php else: ?>
       <div class="card border-0 shadow-sm">
         <div class="card-header bg-transparent border-0">
-          <h6 class="mb-0"><i class="fas fa-stream me-2"></i>Milestone Timeline</h6>
+          <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-stream me-2"></i>Milestone Timeline</h2>
         </div>
         <div class="card-body">
           <div class="timeline">

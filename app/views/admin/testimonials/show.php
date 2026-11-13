@@ -73,7 +73,7 @@
                         <div class="col-md-6">
                             <div class="card h-100">
                                 <div class="card-header aps-cp-card-header">
-                                    <h6 class="mb-0">Testimonial Content</h6>
+                                    <h2  class="fs-6 fw-semibold mb-0">Testimonial Content</h2>
                                 </div>
                                 <div class="card-body aps-cp-card-body">
                                     <p class="mb-0"><?php echo nl2br(htmlspecialchars($testimonial['content'] ?? '')); ?></p>

@@ -378,7 +378,7 @@ function timeAgo($dt) {
                     <!-- Assignment History -->
                     <?php if (!empty($assignments)): ?>
                     <div class="card border-0 shadow-sm mt-3">
-                        <div class="card-header bg-light py-2"><h6 class="mb-0 fw-bold"><i class="fas fa-user-tag me-2"></i>Assignment History</h6></div>
+                        <div class="card-header bg-light py-2"><h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-user-tag me-2"></i>Assignment History</h2></div>
                         <div class="card-body">
                             <?php foreach ($assignments as $a): ?>
                                 <div class="d-flex justify-content-between align-items-center py-1">
@@ -399,7 +399,7 @@ function timeAgo($dt) {
                     <!-- Source Details -->
                     <?php if (!empty($source_details)): ?>
                     <div class="card border-0 shadow-sm mb-3">
-                        <div class="card-header bg-light py-2"><h6 class="mb-0 fw-bold"><i class="fas fa-map-marker-alt me-2"></i>Lead Source Details</h6></div>
+                        <div class="card-header bg-light py-2"><h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-map-marker-alt me-2"></i>Lead Source Details</h2></div>
                         <div class="card-body">
                             <div class="row g-3">
                                 <?php foreach ($source_details as $sd): ?>
@@ -419,7 +419,7 @@ function timeAgo($dt) {
                     <!-- Recent Timeline (last 5) -->
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i>Recent Activity</h6>
+                            <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-history me-2"></i>Recent Activity</h2>
                             <a href="#tab-timeline" class="text-decoration-none" onclick="$('#tab-timeline-tab').tab('show')">View All <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                         <div class="card-body">
@@ -459,7 +459,7 @@ function timeAgo($dt) {
         <div class="tab-pane fade" id="tab-timeline">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i>Full Activity Timeline</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-history me-2"></i>Full Activity Timeline</h2>
                     <span class="badge bg-primary"><?= count($timeline) ?> activities</span>
                 </div>
                 <div class="card-body">
@@ -506,7 +506,7 @@ function timeAgo($dt) {
         <div class="tab-pane fade" id="tab-interactions">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-comments me-2"></i>Interactions</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-comments me-2"></i>Interactions</h2>
                     <div class="d-flex align-items-center gap-2">
                         <button class="btn btn-sm btn-primary" onclick="new bootstrap.Modal(document.getElementById('interactionModal')).show()"><i class="fas fa-plus me-1"></i> Log Interaction</button>
                         <span class="badge bg-primary"><?= count($interactions) ?> total</span>
@@ -616,7 +616,7 @@ function timeAgo($dt) {
         <div class="tab-pane fade" id="tab-tasks">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-tasks me-2"></i>Tasks</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-tasks me-2"></i>Tasks</h2>
                     <div class="d-flex align-items-center gap-2">
                         <button class="btn btn-sm btn-success" onclick="new bootstrap.Modal(document.getElementById('taskModal')).show()"><i class="fas fa-plus me-1"></i> Add Task</button>
                         <span class="badge bg-warning text-dark"><?= count(array_filter($tasks, fn($t) => ($t['status'] ?? '') === 'pending')) ?> pending</span>
@@ -659,7 +659,7 @@ function timeAgo($dt) {
         <div class="tab-pane fade" id="tab-notes">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-sticky-note me-2"></i>Notes</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-sticky-note me-2"></i>Notes</h2>
                     <button class="btn btn-sm btn-primary" onclick="addNote()"><i class="fas fa-plus me-1"></i> Add Note</button>
                 </div>
                 <div class="card-body">
@@ -685,7 +685,7 @@ function timeAgo($dt) {
             <div class="row g-4">
                 <div class="col-lg-6">
                     <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-light py-2"><h6 class="mb-0 fw-bold"><i class="fas fa-chart-bar me-2"></i>Score Breakdown</h6></div>
+                        <div class="card-header bg-light py-2"><h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-chart-bar me-2"></i>Score Breakdown</h2></div>
                         <div class="card-body">
                             <?php if (!empty($score_breakdown) && is_array($score_breakdown)): ?>
                                 <?php foreach ($score_breakdown as $factor => $data): ?>
@@ -717,7 +717,7 @@ function timeAgo($dt) {
                 </div>
                 <div class="col-lg-6">
                     <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-light py-2"><h6 class="mb-0 fw-bold"><i class="fas fa-info-circle me-2"></i>Score Factors</h6></div>
+                        <div class="card-header bg-light py-2"><h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-info-circle me-2"></i>Score Factors</h2></div>
                         <div class="card-body">
                             <div class="mb-3 p-3 bg-light rounded">
                                 <h6 class="fw-bold text-primary"><i class="fas fa-clock me-1"></i> Recency</h6>

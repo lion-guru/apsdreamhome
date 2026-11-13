@@ -51,7 +51,7 @@
 
 <div class="card aps-cp-card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h6 class="mb-0">All Listings (<?= $total ?>)</h6>
+        <h2  class="fs-6 fw-semibold mb-0">All Listings (<?= $total ?>)</h2>
         <form class="d-flex gap-2" method="GET" action="<?= $base ?>/admin/resell-properties">
     <?php echo CSRFProtection::csrfField(); ?>
             <input type="text" class="form-control form-control-sm" name="search" placeholder="Search..." value="<?= htmlspecialchars($search ?? '') ?>">

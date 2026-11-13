@@ -12,7 +12,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0 opacity-75">Total Sales</h6>
+                            <h2  class="fs-6 fw-semibold mb-0 opacity-75">Total Sales</h2>
                             <h3 class="mb-0 mt-1">₹<?= number_format($metrics['total_sales'] ?? 0) ?></h3>
                         </div>
                         <i class="fas fa-shopping-cart fa-2x opacity-50"></i>
@@ -25,7 +25,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0 opacity-75">Conversion Rate</h6>
+                            <h2  class="fs-6 fw-semibold mb-0 opacity-75">Conversion Rate</h2>
                             <h3 class="mb-0 mt-1"><?= number_format($metrics['conversion_rate'] ?? 0, 1) ?>%</h3>
                         </div>
                         <i class="fas fa-percentage fa-2x opacity-50"></i>
@@ -38,7 +38,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0 opacity-75">Avg Deal Size</h6>
+                            <h2  class="fs-6 fw-semibold mb-0 opacity-75">Avg Deal Size</h2>
                             <h3 class="mb-0 mt-1">₹<?= number_format($metrics['avg_deal_size'] ?? 0) ?></h3>
                         </div>
                         <i class="fas fa-chart-line fa-2x opacity-50"></i>
@@ -51,7 +51,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0 opacity-75">Team Size</h6>
+                            <h2  class="fs-6 fw-semibold mb-0 opacity-75">Team Size</h2>
                             <h3 class="mb-0 mt-1"><?= number_format($metrics['team_size'] ?? 0) ?></h3>
                         </div>
                         <i class="fas fa-users fa-2x opacity-50"></i>

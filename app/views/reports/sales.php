@@ -11,14 +11,14 @@
     </div>
     <div class="row g-4">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Revenue Trend</h6></div><div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center"><p class="text-muted mb-0"><i class="fas fa-chart-simple me-2"></i>Chart will render here</p></div></div></div>
+            <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-bar me-2"></i>Revenue Trend</h2></div><div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center"><p class="text-muted mb-0"><i class="fas fa-chart-simple me-2"></i>Chart will render here</p></div></div></div>
         </div>
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>By Category</h6></div><div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center"><p class="text-muted mb-0"><i class="fas fa-chart-pie me-2"></i>Pie chart placeholder</p></div></div></div>
+            <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-pie me-2"></i>By Category</h2></div><div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center"><p class="text-muted mb-0"><i class="fas fa-chart-pie me-2"></i>Pie chart placeholder</p></div></div></div>
         </div>
     </div>
     <div class="card border-0 shadow-sm mt-4">
-        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Sales Transactions</h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Sales Transactions</h2></div>
         <div class="card-body p-0">
             <?php if (empty($salesData)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No sales data available for the selected period</p></div>

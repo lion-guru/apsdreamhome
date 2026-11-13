@@ -104,7 +104,7 @@
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header">
-                    <h6 class="mb-0 fw-bold">Campaign Info</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold">Campaign Info</h2>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless mb-0">
@@ -157,7 +157,7 @@
 
             <div class="card border-0 shadow-sm">
                 <div class="card-header">
-                    <h6 class="mb-0 fw-bold">Message Preview</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold">Message Preview</h2>
                 </div>
                 <div class="card-body">
                     <div class="p-3 rounded">
@@ -176,7 +176,7 @@
             <?php if (in_array($campaign['status'], ['running', 'completed'])): ?>
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header">
-                        <h6 class="mb-0 fw-bold">Queue Status</h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold">Queue Status</h2>
                     </div>
                     <div class="card-body">
                         <div class="row g-3 text-center">
@@ -217,7 +217,7 @@
 
             <div class="card border-0 shadow-sm">
                 <div class="card-header">
-                    <h6 class="mb-0 fw-bold">Recent Activity</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold">Recent Activity</h2>
                 </div>
                 <div class="card-body p-0">
                     <?php if (empty($logs)): ?>

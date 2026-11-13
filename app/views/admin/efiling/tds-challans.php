@@ -73,7 +73,7 @@ ob_start();
 
 <!-- Challans Table -->
 <div class="card border-0 shadow-sm">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Challans</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Challans</h2></div>
     <div class="card-body p-0">
         <?php if (empty($challans)): ?>
             <div class="p-4 text-center text-muted">No challans found. <a href="<?= BASE_URL ?>/admin/efiling/tds/challans/create">Create one</a>.</div>

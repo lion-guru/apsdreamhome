@@ -86,7 +86,7 @@ class WhatsAppManager
         if ($row['count'] == 0) {
             foreach ($this->templates as $templateName => $template) {
                 $sql = "INSERT INTO whatsapp_templates (template_name, category, language, template_content, variables, status)
-                       VALUES (?, 'UTILITY', ?, ?, ?, 'APPROVED')";
+                       VALUES (?, 'UTILITY', ?, ?, ?, 'active')";
                 $componentsJson = json_encode($template['components']);
                 $variablesJson = json_encode(['name', 'location', 'price', 'contact']);
                 $this->db->execute($sql, [$templateName, $template['language'], $componentsJson, $variablesJson]);
@@ -428,7 +428,7 @@ class WhatsAppManager
      */
     public function getWhatsAppTemplates()
     {
-        $sql = "SELECT * FROM whatsapp_templates WHERE status = 'APPROVED' ORDER BY template_name";
+        $sql = "SELECT * FROM whatsapp_templates WHERE status = 'active' ORDER BY template_name";
         $templates = $this->db->fetchAll($sql);
         foreach ($templates as &$row) {
             $row['components'] = json_decode($row['components'] ?? '[]', true);
@@ -442,7 +442,7 @@ class WhatsAppManager
      */
     private function getWhatsAppTemplate($templateName)
     {
-        $sql = "SELECT * FROM whatsapp_templates WHERE template_name = ? AND status = 'APPROVED'";
+        $sql = "SELECT * FROM whatsapp_templates WHERE template_name = ? AND status = 'active'";
         $template = $this->db->fetch($sql, [$templateName]);
 
         if ($template) {

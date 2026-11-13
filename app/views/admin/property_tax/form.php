@@ -13,7 +13,7 @@ $data = $data ?? [];
     <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
     <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=13">
     <style>
         .calc-result { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: .375rem; padding: 1rem; margin-top: 1rem; }
         .calc-row { display: flex; justify-content: space-between; padding: .25rem 0; }

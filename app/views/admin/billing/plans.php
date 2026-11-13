@@ -64,7 +64,7 @@ $base    = BASE_URL ?? '';
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card plan-card shadow-sm">
                 <div class="card-header <?= ($plan['slug'] ?? '') === 'free' ? 'bg-secondary' : 'bg-primary' ?> text-white text-center">
-                    <h6 class="mb-0"><?= htmlspecialchars($plan['name'] ?? '') ?></h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><?= htmlspecialchars($plan['name'] ?? '') ?></h2>
                 </div>
                 <div class="card-body text-center">
                     <div class="plan-price <?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">
@@ -108,7 +108,7 @@ $base    = BASE_URL ?? '';
 
 <!-- Razorpay Config Status -->
 <div class="card shadow-sm mb-4">
-    <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-plug me-2"></i>Payment Gateway Status</h6></div>
+    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-plug me-2"></i>Payment Gateway Status</h2></div>
     <div class="card-body">
         <?php
         $razorpayConfigured = false;

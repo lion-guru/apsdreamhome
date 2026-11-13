@@ -6,7 +6,7 @@
     </div>
 
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white"><h6 class="mb-0">Change history (<?= count($timeline ?? []) ?> events)</h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Change history (<?= count($timeline ?? []) ?> events)</h2></div>
         <div class="card-body p-0">
             <?php if (empty($timeline)): ?>
                 <p class="text-muted text-center py-4">No recorded events for this entity.</p>

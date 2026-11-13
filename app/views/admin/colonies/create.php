@@ -4,7 +4,7 @@
     <form method="POST" action="<?php echo BASE_URL; ?>/admin/colonies/store" class="row g-4">
         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token ?? $_SESSION['csrf_token'] ?? ''; ?>">
         <div class="col-md-8">
-            <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Basic Info</h6></div>
+            <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Basic Info</h2></div>
             <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -43,7 +43,7 @@
                 </div>
             </div></div>
 
-            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Land & Pricing</h6></div>
+            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Land & Pricing</h2></div>
             <div class="card-body aps-cp-card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -77,7 +77,7 @@
                 </div>
             </div></div>
 
-            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Content & Media</h6></div>
+            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Content & Media</h2></div>
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Key Highlights (JSON array)</label>
@@ -126,7 +126,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h6 class="mb-0">Pricing & Plots</h6></div>
+            <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Pricing & Plots</h2></div>
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Total Plots</label>
@@ -157,7 +157,7 @@
                 </div>
             </div></div>
 
-            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Contact & SEO</h6></div>
+            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Contact & SEO</h2></div>
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Contact Phone</label>
@@ -177,7 +177,7 @@
                 </div>
             </div></div>
 
-            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h6 class="mb-0">Settings</h6></div>
+            <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Settings</h2></div>
             <div class="card-body aps-cp-card-body">
                 <div class="form-check mb-2">
                     <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked value="1">

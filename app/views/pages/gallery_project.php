@@ -60,7 +60,7 @@ $images = $images ?? [];
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content bg-dark">
             <div class="modal-header border-0">
-                <h6 class="text-white mb-0" id="lightboxTitle"></h6>
+                <h2  id="lightboxTitle" class="fs-6 fw-semibold text-white mb-0"></h2>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center p-0">

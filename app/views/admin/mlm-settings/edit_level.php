@@ -6,7 +6,7 @@
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0">Basic Info</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Basic Info</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Level Name</label>
@@ -30,7 +30,7 @@
 
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0">Commission Percentages</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Commission Percentages</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Direct Commission (%)</label>
@@ -62,7 +62,7 @@
 
         <div class="col-12">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0">Qualification Requirements</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Qualification Requirements</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="row">
                         <div class="col-md-4">

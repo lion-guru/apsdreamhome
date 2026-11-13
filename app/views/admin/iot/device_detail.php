@@ -12,7 +12,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 <div class="row">
     <div class="col-lg-5 mb-3">
         <div class="card">
-            <div class="card-header"><h6 class="mb-0">Device Info</h6></div>
+            <div class="card-header"><h2  class="fs-6 fw-semibold mb-0">Device Info</h2></div>
             <div class="card-body">
                 <div class="d-flex justify-content-between border-bottom py-2"><span>Status</span><span class="badge bg-<?= match($device['status'] ?? 'offline') { 'online'=>'success','fault'=>'danger','configuring'=>'warning',default=>'secondary' } ?>"><?= ucfirst($device['status'] ?? 'offline') ?></span></div>
                 <div class="d-flex justify-content-between border-bottom py-2"><span>Category</span><strong><?= ucfirst($device['category'] ?? 'smart') ?></strong></div>
@@ -23,7 +23,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         </div>
 
         <div class="card mt-3">
-            <div class="card-header"><h6 class="mb-0">Record Reading</h6></div>
+            <div class="card-header"><h2  class="fs-6 fw-semibold mb-0">Record Reading</h2></div>
             <div class="card-body">
                 <form method="POST" action="<?= BASE_URL ?>/admin/iot/device/reading" id="readingForm">
                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
@@ -41,7 +41,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
     <div class="col-lg-7 mb-3">
         <div class="card">
-            <div class="card-header"><h6 class="mb-0">Latest Readings</h6></div>
+            <div class="card-header"><h2  class="fs-6 fw-semibold mb-0">Latest Readings</h2></div>
             <div class="card-body p-0">
                 <?php if (empty($readings)): ?>
                     <p class="text-muted text-center py-3">No readings yet.</p>
@@ -56,7 +56,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         </div>
 
         <div class="card mt-3">
-            <div class="card-header"><h6 class="mb-0">History (last 50)</h6></div>
+            <div class="card-header"><h2  class="fs-6 fw-semibold mb-0">History (last 50)</h2></div>
             <div class="card-body p-0">
                 <?php if (empty($history)): ?>
                     <p class="text-muted text-center py-3">No history.</p>

@@ -85,7 +85,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                                 <a href="<?= BASE_URL ?>/stamp-duty-calculator" class="text-decoration-none">
                                     <div class="p-3 rounded-3 bg-light">
                                         <i class="fas fa-calculator text-primary fa-2x mb-2"></i>
-                                        <h6 class="fw-bold text-dark mb-0">Stamp Duty</h6>
+                                        <h2  class="fs-6 fw-semibold fw-bold text-dark mb-0">Stamp Duty</h2>
                                         <small class="text-muted">Calculator</small>
                                     </div>
                                 </a>
@@ -94,7 +94,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                                 <a href="<?= BASE_URL ?>/plot-converter" class="text-decoration-none">
                                     <div class="p-3 rounded-3 bg-light">
                                         <i class="fas fa-ruler-combined text-primary fa-2x mb-2"></i>
-                                        <h6 class="fw-bold text-dark mb-0">Plot Size</h6>
+                                        <h2  class="fs-6 fw-semibold fw-bold text-dark mb-0">Plot Size</h2>
                                         <small class="text-muted">Converter</small>
                                     </div>
                                 </a>
@@ -103,7 +103,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                                 <a href="<?= BASE_URL ?>/property-valuation" class="text-decoration-none">
                                     <div class="p-3 rounded-3 bg-light">
                                         <i class="fas fa-chart-line text-primary fa-2x mb-2"></i>
-                                        <h6 class="fw-bold text-dark mb-0">Property</h6>
+                                        <h2  class="fs-6 fw-semibold fw-bold text-dark mb-0">Property</h2>
                                         <small class="text-muted">Valuation</small>
                                     </div>
                                 </a>
@@ -112,7 +112,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                                 <a href="<?= BASE_URL ?>/home-loan-eligibility" class="text-decoration-none">
                                     <div class="p-3 rounded-3 bg-light">
                                         <i class="fas fa-university text-primary fa-2x mb-2"></i>
-                                        <h6 class="fw-bold text-dark mb-0">Home Loan</h6>
+                                        <h2  class="fs-6 fw-semibold fw-bold text-dark mb-0">Home Loan</h2>
                                         <small class="text-muted">Eligibility</small>
                                     </div>
                                 </a>

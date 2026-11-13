@@ -207,7 +207,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
     <!-- Hot-Path Cache Stats -->
     <div class="card shadow-sm mt-4">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h6 class="mb-0"><i class="fas fa-fire text-danger me-2"></i>Hot-Path Cache (per-path hit/miss)</h6>
+            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-fire text-danger me-2"></i>Hot-Path Cache (per-path hit/miss)</h2>
             <form method="POST" action="<?= htmlspecialchars((defined('BASE_URL') ? BASE_URL : '') . '/admin/cache/hotpath/flush') ?>" data-aps-confirm="Clear all hot-path cache keys?" class="d-inline">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -263,7 +263,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
     <!-- Hot-cache key reference -->
     <div class="card shadow-sm mt-4">
         <div class="card-header bg-white">
-            <h6 class="mb-0"><i class="fas fa-fire text-danger me-2"></i>Hot Cache Keys</h6>
+            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-fire text-danger me-2"></i>Hot Cache Keys</h2>
         </div>
         <div class="table-responsive">
             <table class="table table-sm mb-0 align-middle">
@@ -314,7 +314,7 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
     <!-- Session stats (in-process) -->
     <div class="card shadow-sm mt-4">
         <div class="card-header bg-white">
-            <h6 class="mb-0"><i class="fas fa-clock text-secondary me-2"></i>This-Page Statistics</h6>
+            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-clock text-secondary me-2"></i>This-Page Statistics</h2>
         </div>
         <div class="card-body aps-cp-card-body">
             <div class="row g-3 small">

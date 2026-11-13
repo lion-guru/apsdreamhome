@@ -16,7 +16,7 @@ ob_start();
 
 <!-- Submission Info -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Submission Details</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>Submission Details</h2></div>
     <div class="card-body aps-cp-card-body">
         <div class="row g-3">
             <div class="col-md-3">
@@ -58,7 +58,7 @@ ob_start();
 <!-- Portal Details -->
 <?php if ($submission['portal_reference'] || $submission['arn_number'] || $submission['acknowledgment_number']): ?>
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-check-double me-2"></i>Portal Details</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-check-double me-2"></i>Portal Details</h2></div>
     <div class="card-body aps-cp-card-body">
         <div class="row g-3">
             <?php if ($submission['portal_reference']): ?>
@@ -93,7 +93,7 @@ ob_start();
 <!-- Error Details -->
 <?php if ($submission['status'] === 'rejected' && $submission['error_message']): ?>
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2 text-danger"></i>Error Details</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-exclamation-triangle me-2 text-danger"></i>Error Details</h2></div>
     <div class="card-body aps-cp-card-body"><p class="mb-0 text-danger"><?= nl2br(htmlspecialchars($submission['error_message'] ?? '')) ?></p></div>
 </div>
 <?php endif; ?>
@@ -101,7 +101,7 @@ ob_start();
 <!-- Response JSON -->
 <?php if ($submission['portal_response_json']): ?>
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-code me-2"></i>Portal Response</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-code me-2"></i>Portal Response</h2></div>
     <div class="card-body aps-cp-card-body">
         <pre class="bg-light p-3 rounded small mb-0"><?= htmlspecialchars($submission['portal_response_json'] ?? '') ?></pre>
     </div>
@@ -111,7 +111,7 @@ ob_start();
 <!-- Actions -->
 <?php if (in_array($submission['status'], ['draft', 'prepared'])): ?>
 <div class="card border-0 shadow-sm">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-cogs me-2"></i>Actions</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-cogs me-2"></i>Actions</h2></div>
     <div class="card-body d-flex gap-2">
         <form method="POST" action="<?= BASE_URL ?>/admin/efiling/submissions/<?= $submission['id'] ?>/update-status" class="d-inline">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">

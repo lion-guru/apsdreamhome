@@ -7,7 +7,7 @@
     <title>404 - Page Not Found | APS Dream Home</title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body class="bg-light">
 <main>

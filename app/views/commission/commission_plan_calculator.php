@@ -312,7 +312,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
             color: white;
         }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 
 <body>

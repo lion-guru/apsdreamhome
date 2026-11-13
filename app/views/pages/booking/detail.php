@@ -38,7 +38,7 @@ $promoQuery = !empty($_GET['promo']) ? '?promo=' . urlencode(trim((string)$_GET[
 
                     <!-- 360° Quick Actions Bar -->
                     <div class="d-flex flex-wrap gap-2 mt-3" style="border-top: 1px solid #e9ecef; padding-top: 1rem;">
-                        <h6 class="fw-bold mb-0 me-3 align-self-center"><i class="fas fa-bolt me-1 text-warning"></i> Quick Actions:</h6>
+                        <h2  class="fs-6 fw-semibold fw-bold mb-0 me-3 align-self-center"><i class="fas fa-bolt me-1 text-warning"></i> Quick Actions:</h2>
                         <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/book<?= $promoQuery ?>" class="btn btn-sm btn-primary" title="Book This Plot">
                             <i class="fas fa-check-circle me-1"></i> Book Now
                         </a>

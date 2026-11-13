@@ -27,7 +27,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
             <div class="col-lg-3">
                 <div class="card border-0 shadow-sm sticky-top">
                     <div class="card-header bg-primary text-white">
-                        <h6 class="mb-0"><i class="fas fa-palette me-2"></i>Field Palette</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-palette me-2"></i>Field Palette</h2>
                     </div>
                     <div class="card-body p-3">
                         <div class="mb-3">
@@ -71,7 +71,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
             <div class="col-lg-6">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0 fw-bold"><i class="fas fa-edit me-2"></i>Form Canvas</h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-edit me-2"></i>Form Canvas</h2>
                         <span class="badge bg-primary" id="fieldCount"><?= count($fields) ?> fields</span>
                     </div>
                     <div class="card-body p-3">
@@ -115,7 +115,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
             <div class="col-lg-3">
                 <div class="card border-0 shadow-sm sticky-top">
                     <div class="card-header bg-secondary text-white">
-                        <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Field Settings</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-cog me-2"></i>Field Settings</h2>
                     </div>
                     <div class="card-body" id="fieldSettingsPanel">
                         <div class="text-center text-muted py-5" id="noFieldSelected">
@@ -167,7 +167,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                 <!-- Form Settings -->
                 <div class="card border-0 shadow-sm mt-3">
                     <div class="card-header bg-dark text-white">
-                        <h6 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Form Settings</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-sliders-h me-2"></i>Form Settings</h2>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">

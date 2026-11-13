@@ -98,7 +98,7 @@ if ($filter && $filter !== 'all') {
             <?php endif; ?>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start mb-2">
-                    <h6 class="card-title mb-0 fw-semibold"><?= htmlspecialchars($prop['title'] ?? 'Property') ?></h6>
+                    <h2  class="fs-6 fw-semibold card-title mb-0 fw-semibold"><?= htmlspecialchars($prop['title'] ?? 'Property') ?></h2>
                     <?php
                     $status = $prop['status'] ?? 'active';
                     $sColor = $status === 'sold' ? 'bg-danger' : ($status === 'active' ? 'bg-success' : 'bg-warning text-dark');

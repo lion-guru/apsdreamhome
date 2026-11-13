@@ -64,7 +64,7 @@ $steps = $steps ?? [];
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h6 class="mb-0">Flow Stats</h6>
+                <h2  class="fs-6 fw-semibold mb-0">Flow Stats</h2>
             </div>
             <div class="card-body">
                 <div class="row text-center">

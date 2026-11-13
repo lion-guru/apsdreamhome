@@ -71,7 +71,7 @@ $topCat = array_key_first($categories) ?? '';
 <!-- Table Card -->
 <div class="card border-0 shadow-sm" style="border-radius:12px;">
     <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <h6 class="mb-0 fw-bold">All FAQs</h6>
+        <h2  class="fs-6 fw-semibold mb-0 fw-bold">All FAQs</h2>
         <div class="d-flex gap-2">
             <input type="text" id="faqSearch" class="form-control form-control-sm" placeholder="Search FAQs..." style="width:180px;">
             <?php if (!empty($categories)): ?>

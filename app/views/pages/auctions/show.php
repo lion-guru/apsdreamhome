@@ -117,7 +117,7 @@ ob_start();
         <div class="col-md-4">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-white">
-                    <h6 class="mb-0"><?= __('auction_bid_history', [], 'Bid History') ?></h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><?= __('auction_bid_history', [], 'Bid History') ?></h2>
                 </div>
                 <div class="card-body aps-cp-card-body" id="bidHistory">
                     <?php if (empty($bids)): ?>
@@ -159,7 +159,7 @@ ob_start();
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white">
-                        <h6 class="mb-0"><?= __('auction_lots', [], 'Lots') ?></h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><?= __('auction_lots', [], 'Lots') ?></h2>
                     </div>
                     <div class="card-body aps-cp-card-body table-responsive">
                         <table class="table table-hover align-middle mb-0">

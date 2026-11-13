@@ -17,7 +17,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-arrow-trend-up me-2"></i>Revenue Trends</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-arrow-trend-up me-2"></i>Revenue Trends</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -42,7 +42,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-coins me-2"></i>Commission Analysis</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-coins me-2"></i>Commission Analysis</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php $comm = $finData['commission_analysis'] ?? []; ?>
@@ -58,7 +58,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment Methods</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-credit-card me-2"></i>Payment Methods</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -84,7 +84,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-percentage me-2"></i>Profit Margins</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-percentage me-2"></i>Profit Margins</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php $margins = $finData['profit_margins'] ?? []; ?>

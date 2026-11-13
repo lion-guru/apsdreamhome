@@ -150,7 +150,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <?php if ($t['reviewed_by_name'] ?? false): ?>
             <div class="card shadow-sm">
                 <div class="card-header bg-light">
-                    <h6 class="mb-0">Review History</h6>
+                    <h2  class="fs-6 fw-semibold mb-0">Review History</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <small class="text-muted">

@@ -71,7 +71,7 @@ $base = BASE_URL;
             .package-info .features{grid-template-columns:1fr}
         }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
     <div class="container">

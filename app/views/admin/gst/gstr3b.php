@@ -10,7 +10,7 @@ $csrf = $this->getCsrfToken();
     <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
     <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=13">
     <style>
         .gstr3b-table { font-size: .9rem; }
         .gstr3b-table th, .gstr3b-table td { padding: .5rem; }

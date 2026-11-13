@@ -53,7 +53,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="d-flex justify-content-between align-items-start mb-1">
-                                            <h6 class="fw-bold mb-0 text-dark"><?= h($note['title']) ?></h6>
+                                            <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark"><?= h($note['title']) ?></h2>
                                             <small class="text-muted"><?= date('d M, h:i A', strtotime($note['created_at'])) ?></small>
                                         </div>
                                         <p class="mb-0 text-secondary"><?= h($note['message']) ?></p>

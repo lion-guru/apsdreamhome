@@ -67,7 +67,7 @@ $csrf = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
 
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-lightbulb me-1"></i> Tips</h6></div>
+                    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-lightbulb me-1"></i> Tips</h2></div>
                     <div class="card-body small">
                         <ul class="mb-0 ps-3">
                             <li>Use <code>control</code> for the existing experience, <code>treatment</code> for the new one.</li>

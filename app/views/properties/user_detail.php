@@ -161,7 +161,7 @@
         <div class="modal-content">
             <div class="modal-header border-0 pb-0">
                 <div>
-                    <h6 class="fw-bold mb-0">I'm Interested</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0">I'm Interested</h2>
                     <small class="text-muted"><?php echo htmlspecialchars($property['name'] ?? ''); ?></small>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

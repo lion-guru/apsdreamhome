@@ -87,7 +87,7 @@ function perfLevelBadge($level) {
             <!-- Performance Meter -->
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-header bg-white border-bottom">
-                    <h6 class="mb-0 fw-semibold"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Performance Meter</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-semibold"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Performance Meter</h2>
                 </div>
                 <div class="card-body">
                     <?php
@@ -133,7 +133,7 @@ function perfLevelBadge($level) {
             <!-- Recent Tasks -->
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-bottom">
-                    <h6 class="mb-0 fw-semibold"><i class="fas fa-clipboard-list me-2 text-primary"></i>Recent Tasks</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-semibold"><i class="fas fa-clipboard-list me-2 text-primary"></i>Recent Tasks</h2>
                 </div>
                 <div class="card-body p-0">
                     <?php if (empty($recent_tasks)): ?>
@@ -165,7 +165,7 @@ function perfLevelBadge($level) {
         <div class="col-lg-5">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-semibold"><i class="fas fa-star-half-alt me-2 text-primary"></i>Performance Reviews</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-semibold"><i class="fas fa-star-half-alt me-2 text-primary"></i>Performance Reviews</h2>
                     <span class="badge bg-primary bg-opacity-10 text-primary"><?= count($reviews) ?> reviews</span>
                 </div>
                 <div class="card-body">

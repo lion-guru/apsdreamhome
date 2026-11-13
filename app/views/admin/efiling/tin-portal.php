@@ -84,7 +84,7 @@ ob_start();
 <div class="row g-4 mb-4">
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-invoice-dollar me-2 text-danger"></i>Submit Form 26Q (Domestic)</h6></div>
+            <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-invoice-dollar me-2 text-danger"></i>Submit Form 26Q (Domestic)</h2></div>
             <div class="card-body aps-cp-card-body">
                 <form id="tin26qForm">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
@@ -115,7 +115,7 @@ ob_start();
     </div>
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-invoice me-2 text-warning"></i>Submit Form 27Q (NRI)</h6></div>
+            <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-invoice me-2 text-warning"></i>Submit Form 27Q (NRI)</h2></div>
             <div class="card-body aps-cp-card-body">
                 <form id="tin27qForm">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
@@ -149,7 +149,7 @@ ob_start();
 <!-- TDS Filing History -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
-        <h6 class="mb-0"><i class="fas fa-history me-2"></i>TDS Filing History</h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-history me-2"></i>TDS Filing History</h2>
     </div>
     <div class="card-body p-0">
         <?php if (!empty($submissions)): ?>
@@ -181,7 +181,7 @@ ob_start();
 
 <!-- Form16A Download -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-download me-2"></i>Form 16A Download</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-download me-2"></i>Form 16A Download</h2></div>
     <div class="card-body aps-cp-card-body">
         <form id="form16aDownload" class="row g-2 align-items-end">
             <div class="col-md-6">

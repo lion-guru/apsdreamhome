@@ -35,7 +35,7 @@
                                         <i class="fas fa-<?= $color === 'primary' ? 'users' : ($color === 'success' ? 'check-circle' : ($color === 'warning' ? 'star' : 'filter')) ?> text-<?= $color ?>"></i>
                                     </div>
                                     <div>
-                                        <h6 class="fw-bold mb-0"><?= htmlspecialchars($seg['name'] ?? '') ?></h6>
+                                        <h2  class="fs-6 fw-semibold fw-bold mb-0"><?= htmlspecialchars($seg['name'] ?? '') ?></h2>
                                         <small class="text-muted"><?= htmlspecialchars($seg['description'] ?? '') ?></small>
                                     </div>
                                 </div>

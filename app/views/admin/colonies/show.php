@@ -56,7 +56,7 @@ $cid = (int)($colony['id'] ?? 0);
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-white"><h6 class="mb-0">Colony Information</h6></div>
+                        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Colony Information</h2></div>
                         <div class="card-body aps-cp-card-body">
                             <p><strong>Description:</strong> <?= nl2br(htmlspecialchars($colony['description'] ?? 'No description')) ?></p>
                             <p><strong>Location:</strong> <?= htmlspecialchars(($colony['district_name'] ?? '') . ', ' . ($colony['state_name'] ?? '')) ?></p>
@@ -70,7 +70,7 @@ $cid = (int)($colony['id'] ?? 0);
                 </div>
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-white"><h6 class="mb-0">Land & Pricing</h6></div>
+                        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Land & Pricing</h2></div>
                         <div class="card-body aps-cp-card-body">
                             <p><strong>Land Owner:</strong> <?= htmlspecialchars($colony['land_owner_name'] ?? 'Not specified') ?></p>
                             <p><strong>Land Cost:</strong> ₹<?= number_format((float)($colony['land_cost'] ?? 0)) ?></p>
@@ -108,7 +108,7 @@ $cid = (int)($colony['id'] ?? 0);
                 </div>
                 <div class="col-6">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-primary text-white"><h6 class="mb-0">Total Plots</h6></div>
+                        <div class="card-header bg-primary text-white"><h2  class="fs-6 fw-semibold mb-0">Total Plots</h2></div>
                         <div class="card-body text-center">
                             <h3 class="fw-bold"><?= count($plots) ?></h3>
                         </div>
@@ -116,7 +116,7 @@ $cid = (int)($colony['id'] ?? 0);
                 </div>
                 <div class="col-6">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-success text-white"><h6 class="mb-0">Available</h6></div>
+                        <div class="card-header bg-success text-white"><h2  class="fs-6 fw-semibold mb-0">Available</h2></div>
                         <div class="card-body text-center">
                             <h3 class="fw-bold text-success"><?= (int)($colony['available_plots'] ?? 0) ?></h3>
                         </div>
@@ -124,7 +124,7 @@ $cid = (int)($colony['id'] ?? 0);
                 </div>
                 <div class="col-6">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-warning text-dark"><h6 class="mb-0">Booked</h6></div>
+                        <div class="card-header bg-warning text-dark"><h2  class="fs-6 fw-semibold mb-0">Booked</h2></div>
                         <div class="card-body text-center">
                             <h3 class="fw-bold text-warning"><?= (int)($colony['booked_plots'] ?? 0) ?></h3>
                         </div>
@@ -132,7 +132,7 @@ $cid = (int)($colony['id'] ?? 0);
                 </div>
                 <div class="col-6">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-info text-white"><h6 class="mb-0">Registered</h6></div>
+                        <div class="card-header bg-info text-white"><h2  class="fs-6 fw-semibold mb-0">Registered</h2></div>
                         <div class="card-body text-center">
                             <h3 class="fw-bold text-info"><?= (int)($colony['registered_plots'] ?? 0) ?></h3>
                         </div>
@@ -216,7 +216,7 @@ $cid = (int)($colony['id'] ?? 0);
                 </div>
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0 h-100">
-                        <div class="card-header bg-white"><h6 class="mb-0">Current Layout</h6></div>
+                        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Current Layout</h2></div>
                         <div class="card-body">
                             <?php if (!empty($layout)): ?>
                                 <p><strong><?= htmlspecialchars($layout['layout_name'] ?? 'Layout') ?></strong>
@@ -232,7 +232,7 @@ $cid = (int)($colony['id'] ?? 0);
                 </div>
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0 h-100">
-                        <div class="card-header bg-white"><h6 class="mb-0">Pipeline Actions</h6></div>
+                        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Pipeline Actions</h2></div>
                         <div class="card-body d-grid gap-2">
                             <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= $cid ?>" class="btn btn-outline-primary btn-sm"><i class="fas fa-sitemap me-1"></i>Pipeline Dashboard</a>
                             <a href="<?= BASE_URL ?>/admin/colony-pipeline/<?= $cid ?>/layout" class="btn btn-outline-secondary btn-sm"><i class="fas fa-drafting-compass me-1"></i>Layout & Plot Cutting</a>
@@ -254,7 +254,7 @@ $cid = (int)($colony['id'] ?? 0);
                 </div>
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-primary text-white"><h6 class="mb-0">Project Valuation</h6></div>
+                        <div class="card-header bg-primary text-white"><h2  class="fs-6 fw-semibold mb-0">Project Valuation</h2></div>
                         <div class="card-body text-center">
                             <h3 class="fw-bold">₹<?= number_format(array_sum(array_map(function ($p) { return (float)($p['total_price'] ?? 0); }, $plots)), 2) ?></h3>
                             <p class="text-muted">Total Value of All Plots</p>
@@ -263,7 +263,7 @@ $cid = (int)($colony['id'] ?? 0);
                 </div>
                 <div class="col-md-6">
                     <div class="card shadow-sm border-0">
-                        <div class="card-header bg-success text-white"><h6 class="mb-0">Realized Revenue (est.)</h6></div>
+                        <div class="card-header bg-success text-white"><h2  class="fs-6 fw-semibold mb-0">Realized Revenue (est.)</h2></div>
                         <div class="card-body text-center">
                             <h3 class="fw-bold text-success">₹<?= number_format(array_sum(array_map(function ($p) { return (float)($p['total_price'] ?? 0); }, $plots)) * 0.7, 2) ?></h3>
                             <p class="text-muted">Estimated 70% realized (based on booking rate)</p>

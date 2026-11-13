@@ -79,7 +79,7 @@ $frequencyOptions = [
                                 <div class="mb-2">
                                     <i class="<?= $meta['icon'] ?> fa-2x text-<?= $meta['color'] ?>"></i>
                                 </div>
-                                <h6 class="mb-0"><?= htmlspecialchars($meta['label'] ?? '') ?></h6>
+                                <h2  class="fs-6 fw-semibold mb-0"><?= htmlspecialchars($meta['label'] ?? '') ?></h2>
                             </div>
                         </div>
                     </div>

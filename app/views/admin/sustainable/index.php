@@ -56,7 +56,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 <div class="row">
     <div class="col-md-6 mb-3">
         <div class="card">
-            <div class="card-header"><h6 class="mb-0">Recent Energy Audits</h6></div>
+            <div class="card-header"><h2  class="fs-6 fw-semibold mb-0">Recent Energy Audits</h2></div>
             <div class="card-body p-0">
                 <?php if (empty($audits)): ?>
                     <p class="text-muted text-center py-3">No audits yet.</p>
@@ -74,7 +74,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     </div>
     <div class="col-md-6 mb-3">
         <div class="card">
-            <div class="card-header"><h6 class="mb-0">Recent Carbon Credits</h6></div>
+            <div class="card-header"><h2  class="fs-6 fw-semibold mb-0">Recent Carbon Credits</h2></div>
             <div class="card-body p-0">
                 <?php if (empty($carbon)): ?>
                     <p class="text-muted text-center py-3">No credits yet.</p>

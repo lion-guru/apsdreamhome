@@ -79,7 +79,7 @@ $statusBadges = [
     <!-- Document List -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-            <h6 class="mb-0"><i class="fas fa-list me-2"></i><?= __('assoc_doc_list', [], 'Your Documents') ?></h6>
+            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i><?= __('assoc_doc_list', [], 'Your Documents') ?></h2>
             <span class="badge bg-primary"><?= count($documents) ?></span>
         </div>
         <div class="card-body p-0">

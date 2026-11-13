@@ -63,7 +63,7 @@ $days = $days ?? 30;
     <div class="row g-4 mb-4">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">Daily Call Volume</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Daily Call Volume</h2></div>
                 <div class="card-body">
                     <canvas id="dailyChart" height="120"></canvas>
                 </div>
@@ -71,7 +71,7 @@ $days = $days ?? 30;
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">Response Distribution</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Response Distribution</h2></div>
                 <div class="card-body">
                     <canvas id="responseChart" height="200"></canvas>
                 </div>
@@ -81,7 +81,7 @@ $days = $days ?? 30;
 
     <?php if (!empty($byAgent)): ?>
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-bottom"><h6 class="mb-0">Performance by AI Agent</h6></div>
+        <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Performance by AI Agent</h2></div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">

@@ -104,7 +104,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
     <!-- Real-time Notifications Panel -->
     <div id="notificationPanel" class="card shadow-lg d-none position-fixed">
         <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-            <h6 class="mb-0"><?= h($mlSupport->translate('Live AI Monitoring')) ?></h6>
+            <h2  class="fs-6 fw-semibold mb-0"><?= h($mlSupport->translate('Live AI Monitoring')) ?></h2>
             <button class="btn-close btn-close-white" onclick="toggleNotifications()"></button>
         </div>
         <div class="card-body p-0">
@@ -182,7 +182,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                                 foreach ($users as $agent): ?>
                                     <div class="list-group-item d-flex justify-content-between align-items-center">
                                         <div>
-                                            <h6 class="mb-0 small fw-bold"><?= h($agent['name']) ?></h6>
+                                            <h2  class="fs-6 fw-semibold mb-0 small fw-bold"><?= h($agent['name']) ?></h2>
                                             <small class="text-muted text-uppercase"><?= h($mlSupport->translate($agent['agent_type'])) ?></small>
                                         </div>
                                         <span class="badge rounded-pill bg-<?= $agent['status'] == 'active' ? 'success' : 'secondary' ?> small"><?= h($mlSupport->translate($agent['status'])) ?></span>
@@ -293,28 +293,28 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                 <div class="col-md-3">
                     <div class="card bg-primary text-white shadow-sm border-0">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Total Campaigns</h6><h3 class="mb-0"><?= count($campaigns_list ?? []) ?></h3></div><i class="fas fa-bullhorn fa-2x opacity-50"></i></div>
+                            <div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Total Campaigns</h2><h3 class="mb-0"><?= count($campaigns_list ?? []) ?></h3></div><i class="fas fa-bullhorn fa-2x opacity-50"></i></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-success text-white shadow-sm border-0">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Sent</h6><h3 class="mb-0"><?= count(array_filter($campaigns_list ?? [], fn($c) => in_array($c['status'] ?? '', ['sent','completed']))) ?></h3></div><i class="fas fa-paper-plane fa-2x opacity-50"></i></div>
+                            <div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Sent</h2><h3 class="mb-0"><?= count(array_filter($campaigns_list ?? [], fn($c) => in_array($c['status'] ?? '', ['sent','completed']))) ?></h3></div><i class="fas fa-paper-plane fa-2x opacity-50"></i></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark shadow-sm border-0">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Drafts</h6><h3 class="mb-0"><?= count(array_filter($campaigns_list ?? [], fn($c) => ($c['status'] ?? '') === 'draft')) ?></h3></div><i class="fas fa-file-alt fa-2x opacity-50"></i></div>
+                            <div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Drafts</h2><h3 class="mb-0"><?= count(array_filter($campaigns_list ?? [], fn($c) => ($c['status'] ?? '') === 'draft')) ?></h3></div><i class="fas fa-file-alt fa-2x opacity-50"></i></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-info text-white shadow-sm border-0">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Total Recipients</h6><h3 class="mb-0"><?= number_format(array_sum(array_column($campaigns_list ?? [], 'total_recipients'))) ?></h3></div><i class="fas fa-users fa-2x opacity-50"></i></div>
+                            <div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Total Recipients</h2><h3 class="mb-0"><?= number_format(array_sum(array_column($campaigns_list ?? [], 'total_recipients'))) ?></h3></div><i class="fas fa-users fa-2x opacity-50"></i></div>
                         </div>
                     </div>
                 </div>
@@ -359,22 +359,22 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
             <div class="row g-3 mb-4">
                 <div class="col-md-3">
                     <div class="card bg-success text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Active Channels</h6><h3 id="tc-channels" class="mb-0">—</h3></div><i class="fas fa-phone fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Active Channels</h2><h3 id="tc-channels" class="mb-0">—</h3></div><i class="fas fa-phone fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-primary text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Pending Calls</h6><h3 id="tc-pending" class="mb-0">—</h3></div><i class="fas fa-clock fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Pending Calls</h2><h3 id="tc-pending" class="mb-0">—</h3></div><i class="fas fa-clock fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-info text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Today's Calls</h6><h3 id="tc-today" class="mb-0">—</h3></div><i class="fas fa-calendar-day fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Today's Calls</h2><h3 id="tc-today" class="mb-0">—</h3></div><i class="fas fa-calendar-day fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Success Rate</h6><h3 id="tc-rate" class="mb-0">—</h3></div><i class="fas fa-chart-line fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Success Rate</h2><h3 id="tc-rate" class="mb-0">—</h3></div><i class="fas fa-chart-line fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
             </div>
@@ -439,22 +439,22 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
             <div class="row g-3 mb-4">
                 <div class="col-md-3">
                     <div class="card bg-primary text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Bot Status</h6><h3 id="bot-status" class="mb-0 small">Active</h3></div><i class="fas fa-robot fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Bot Status</h2><h3 id="bot-status" class="mb-0 small">Active</h3></div><i class="fas fa-robot fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-success text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Conversations Today</h6><h3 id="bot-convos" class="mb-0">—</h3></div><i class="fas fa-comments fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Conversations Today</h2><h3 id="bot-convos" class="mb-0">—</h3></div><i class="fas fa-comments fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-info text-white shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Satisfaction</h6><h3 id="bot-satisfaction" class="mb-0">—</h3></div><i class="fas fa-smile fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Satisfaction</h2><h3 id="bot-satisfaction" class="mb-0">—</h3></div><i class="fas fa-smile fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card bg-warning text-dark shadow-sm border-0">
-                        <div class="card-body"><div class="d-flex justify-content-between"><div><h6 class="text-uppercase small mb-1">Training Items</h6><h3 id="bot-training" class="mb-0">—</h3></div><i class="fas fa-graduation-cap fa-2x opacity-50"></i></div></div>
+                        <div class="card-body"><div class="d-flex justify-content-between"><div><h2  class="fs-6 fw-semibold text-uppercase small mb-1">Training Items</h2><h3 id="bot-training" class="mb-0">—</h3></div><i class="fas fa-graduation-cap fa-2x opacity-50"></i></div></div>
                     </div>
                 </div>
             </div>

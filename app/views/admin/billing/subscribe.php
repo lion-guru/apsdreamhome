@@ -87,7 +87,7 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
 <!-- New Subscription Form -->
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-white">
-        <h6 class="mb-0"><i class="fas fa-plus-circle me-2"></i><?= $current ? 'Change Plan' : 'Activate Subscription' ?></h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-plus-circle me-2"></i><?= $current ? 'Change Plan' : 'Activate Subscription' ?></h2>
     </div>
     <div class="card-body">
         <form method="POST" action="<?= $base ?>/admin/billing/subscribe/<?= $tenant['id'] ?>" id="subscribeForm">

@@ -17,10 +17,10 @@
         </div>
     </div>
     <div class="row g-4 mb-4">
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h6 class="text-muted">This Month</h6><h4 class="text-primary mb-0">₹<?= number_format($monthRevenue ?? 0, 2) ?></h4></div></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h6 class="text-muted">This Quarter</h6><h4 class="text-success mb-0">₹<?= number_format($quarterRevenue ?? 0, 2) ?></h4></div></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h6 class="text-muted">This Year</h6><h4 class="text-info mb-0">₹<?= number_format($yearRevenue ?? 0, 2) ?></h4></div></div></div>
-        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h6 class="text-muted">Growth</h6><h4 class="text-<?= ($growth ?? 0) >= 0 ? 'success' : 'danger' ?> mb-0"><?= ($growth ?? 0) >= 0 ? '+' : '' ?><?= number_format($growth ?? 0, 1) ?>%</h4></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h2  class="fs-6 fw-semibold text-muted">This Month</h2><h4 class="text-primary mb-0">₹<?= number_format($monthRevenue ?? 0, 2) ?></h4></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h2  class="fs-6 fw-semibold text-muted">This Quarter</h2><h4 class="text-success mb-0">₹<?= number_format($quarterRevenue ?? 0, 2) ?></h4></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h2  class="fs-6 fw-semibold text-muted">This Year</h2><h4 class="text-info mb-0">₹<?= number_format($yearRevenue ?? 0, 2) ?></h4></div></div></div>
+        <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h2  class="fs-6 fw-semibold text-muted">Growth</h2><h4 class="text-<?= ($growth ?? 0) >= 0 ? 'success' : 'danger' ?> mb-0"><?= ($growth ?? 0) >= 0 ? '+' : '' ?><?= number_format($growth ?? 0, 1) ?>%</h4></div></div></div>
     </div>
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3"><h5 class="mb-0"><i class="fas fa-table me-2"></i>Sales Data</h5></div>

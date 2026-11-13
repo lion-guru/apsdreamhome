@@ -66,7 +66,7 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-envelope me-2"></i>Email Queue</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-envelope me-2"></i>Email Queue</h2>
                     <div>
                         <a href="?email_status=pending" class="btn btn-sm <?= $email_filter === 'pending' ? 'btn-primary' : 'btn-outline-secondary' ?>">Pending</a>
                         <a href="?email_status=sent" class="btn btn-sm <?= $email_filter === 'sent' ? 'btn-primary' : 'btn-outline-secondary' ?>">Sent</a>
@@ -120,7 +120,7 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-sms me-2"></i>SMS Queue</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-sms me-2"></i>SMS Queue</h2>
                     <div>
                         <a href="?sms_status=pending" class="btn btn-sm <?= $sms_filter === 'pending' ? 'btn-primary' : 'btn-outline-secondary' ?>">Pending</a>
                         <a href="?sms_status=sent" class="btn btn-sm <?= $sms_filter === 'sent' ? 'btn-primary' : 'btn-outline-secondary' ?>">Sent</a>

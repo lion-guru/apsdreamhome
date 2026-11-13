@@ -611,7 +611,7 @@ $current_page = 'navigation';
             }
         }
     </style>
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/uiux-fixes.css?v=13">
 
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         // Initialize AOS

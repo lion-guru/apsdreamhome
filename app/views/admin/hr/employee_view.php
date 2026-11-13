@@ -45,7 +45,7 @@ $e = $employee ?? [];
     <div class="col-md-8">
         <div class="card border-0 shadow-sm mb-3">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-calendar-check me-2 text-success"></i>Recent Attendance</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-calendar-check me-2 text-success"></i>Recent Attendance</h2>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -75,7 +75,7 @@ $e = $employee ?? [];
         </div>
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-umbrella-beach me-2 text-warning"></i>Recent Leaves</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-umbrella-beach me-2 text-warning"></i>Recent Leaves</h2>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

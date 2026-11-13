@@ -51,7 +51,7 @@ $savedLayout = $savedLayout ?? [];
     <div class="col-md-6 col-lg-4 mb-3 widget-item" draggable="true" data-widget="<?= $widgetId ?>">
         <div class="card h-100 widget-card" style="cursor: move;">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h6 class="mb-0"><i class="fas <?= $w['icon'] ?> me-2 text-<?= $w['color'] ?>"></i><?= $w['title'] ?></h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas <?= $w['icon'] ?> me-2 text-<?= $w['color'] ?>"></i><?= $w['title'] ?></h2>
                 <i class="fas fa-grip-vertical text-muted"></i>
             </div>
             <div class="card-body">

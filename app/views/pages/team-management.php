@@ -41,7 +41,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-primary mb-2"><?= htmlspecialchars(number_format($team_stats['total_members'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0"><?= __('team_total_members', [], 'Total Members') ?></h6>
+                        <h2  class="fs-6 fw-semibold text-muted mb-0"><?= __('team_total_members', [], 'Total Members') ?></h2>
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-success mb-2"><?= htmlspecialchars(number_format($team_stats['active_members'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0"><?= __('team_active_members', [], 'Active (30d)') ?></h6>
+                        <h2  class="fs-6 fw-semibold text-muted mb-0"><?= __('team_active_members', [], 'Active (30d)') ?></h2>
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-warning mb-2"><?= htmlspecialchars(number_format($team_stats['new_members'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0"><?= __('team_new_members', [], 'New This Month') ?></h6>
+                        <h2  class="fs-6 fw-semibold text-muted mb-0"><?= __('team_new_members', [], 'New This Month') ?></h2>
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-info mb-2">&#8377; <?= htmlspecialchars($team_stats['total_commission'] ?? 0) ?></div>
-                        <h6 class="text-muted mb-0"><?= __('team_total_commission', [], 'Total Commission') ?></h6>
+                        <h2  class="fs-6 fw-semibold text-muted mb-0"><?= __('team_total_commission', [], 'Total Commission') ?></h2>
                     </div>
                 </div>
             </div>

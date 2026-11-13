@@ -24,7 +24,7 @@ $automations = $automations ?? [];
 <div class="row">
     <div class="col-lg-7 mb-3">
         <div class="card">
-            <div class="card-header d-flex justify-content-between"><h6 class="mb-0">Recent Devices</h6><a href="<?= BASE_URL ?>/admin/iot/devices" class="small">View all</a></div>
+            <div class="card-header d-flex justify-content-between"><h2  class="fs-6 fw-semibold mb-0">Recent Devices</h2><a href="<?= BASE_URL ?>/admin/iot/devices" class="small">View all</a></div>
             <div class="card-body p-0">
                 <?php if (empty($devices)): ?>
                     <p class="text-muted text-center py-3">No devices registered.</p>
@@ -43,7 +43,7 @@ $automations = $automations ?? [];
     </div>
     <div class="col-lg-5 mb-3">
         <div class="card">
-            <div class="card-header d-flex justify-content-between"><h6 class="mb-0">Active Automations</h6><a href="<?= BASE_URL ?>/admin/iot/automations" class="small">View all</a></div>
+            <div class="card-header d-flex justify-content-between"><h2  class="fs-6 fw-semibold mb-0">Active Automations</h2><a href="<?= BASE_URL ?>/admin/iot/automations" class="small">View all</a></div>
             <div class="card-body p-0">
                 <?php if (empty($automations)): ?>
                     <p class="text-muted text-center py-3">No automations yet.</p>

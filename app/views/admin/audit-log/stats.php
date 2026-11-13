@@ -19,7 +19,7 @@
     <div class="row g-4">
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0">By Action</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">By Action</h2></div>
                 <div class="card-body p-0">
                     <table class="table table-sm mb-0">
                         <tbody>
@@ -33,7 +33,7 @@
         </div>
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0">By Role</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">By Role</h2></div>
                 <div class="card-body p-0">
                     <table class="table table-sm mb-0">
                         <tbody>
@@ -47,7 +47,7 @@
         </div>
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0">By Status</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">By Status</h2></div>
                 <div class="card-body p-0">
                     <table class="table table-sm mb-0">
                         <tbody>

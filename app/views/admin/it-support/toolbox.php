@@ -14,7 +14,7 @@
     <div class="row g-4">
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-wrench me-2"></i>Fixer Tools (no coding needed)</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-wrench me-2"></i>Fixer Tools (no coding needed)</h2></div>
                 <div class="card-body">
                     <div class="row g-3">
                         <?php foreach (($tools ?? []) as $t): ?>
@@ -36,7 +36,7 @@
         </div>
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-terminal me-2"></i>Latest Error Log (tail)</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-terminal me-2"></i>Latest Error Log (tail)</h2></div>
                 <div class="card-body p-0">
                     <?php if (empty($logTail)): ?>
                         <p class="text-muted text-center py-4">Log file not readable from web user.</p>

@@ -81,7 +81,7 @@ $GLOBALS['_html_doc_started'] = true;
             .content-wrapper { padding: 16px; }
         }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
     <?php include __DIR__ . '/../components/impersonation-banner.php'; ?>

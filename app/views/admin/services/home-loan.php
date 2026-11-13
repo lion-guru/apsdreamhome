@@ -6,7 +6,7 @@
         <div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center"><h3 class="text-warning"><?= $pending ?></h3><small class="text-muted"><?= __('admin_pending') ?></small></div></div></div>
     </div>
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-list me-2"></i><?= __('admin_home_loan_inquiries') ?></h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i><?= __('admin_home_loan_inquiries') ?></h2></div>
         <div class="card-body p-0">
             <?php if (empty($services)): ?>
                 <p class="text-muted text-center py-4"><?= __('admin_no_home_loan') ?></p>

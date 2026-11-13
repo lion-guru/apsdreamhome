@@ -71,7 +71,7 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
     <!-- Info Cards -->
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Account Info</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>Account Info</h2></div>
             <div class="card-body">
                 <table class="table table-sm mb-0">
                     <tr><td class="text-muted">Phone</td><td><?= htmlspecialchars($user['phone'] ?? 'N/A') ?></td></tr>
@@ -88,7 +88,7 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
     </div>
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-link me-2"></i>Referral & Sponsor</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-link me-2"></i>Referral & Sponsor</h2></div>
             <div class="card-body">
                 <table class="table table-sm mb-0">
                     <tr><td class="text-muted">Referral Code</td><td><code class="fs-6"><?= htmlspecialchars($user['referral_code'] ?? 'N/A') ?></code></td></tr>
@@ -109,7 +109,7 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
     <!-- Avatar Section -->
     <div class="col-md-4">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-user-circle me-2"></i>Profile Picture</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-user-circle me-2"></i>Profile Picture</h2></div>
             <div class="card-body text-center">
                 <div class="mb-3">
                     <?php if (!empty($user['profile_image'])): ?>
@@ -236,7 +236,7 @@ function deleteAvatar() {
 <div class="row g-4">
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Change Sponsor / Referrer</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-exchange-alt me-2"></i>Change Sponsor / Referrer</h2></div>
             <div class="card-body">
                 <p class="text-muted small">Changes sponsor in: users, mlm_profiles, associates, mlm_network_tree, network_tree (5 tables)</p>
                 <form id="sponsorForm">
@@ -252,7 +252,7 @@ function deleteAvatar() {
     </div>
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-code me-2"></i>Change Referral Code</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-code me-2"></i>Change Referral Code</h2></div>
             <div class="card-body">
                 <p class="text-muted small">Updates: users.referral_code + mlm_profiles.referral_code</p>
                 <form id="referralForm">

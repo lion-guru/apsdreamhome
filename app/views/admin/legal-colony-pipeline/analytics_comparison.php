@@ -94,7 +94,7 @@ foreach ($colonies as $c) {
     <div class="col-md-4">
       <div class="card border-0 shadow-sm h-100">
         <div class="card-header bg-transparent border-0">
-          <h6 class="mb-0"><i class="fas fa-heartbeat me-2 text-danger"></i>Health Score Comparison</h6>
+          <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-heartbeat me-2 text-danger"></i>Health Score Comparison</h2>
         </div>
         <div class="card-body">
           <canvas id="healthChart" height="220"></canvas>
@@ -106,7 +106,7 @@ foreach ($colonies as $c) {
     <div class="col-md-4">
       <div class="card border-0 shadow-sm h-100">
         <div class="card-header bg-transparent border-0">
-          <h6 class="mb-0"><i class="fas fa-chart-pie me-2 text-info"></i>Pipeline Stage Distribution</h6>
+          <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-pie me-2 text-info"></i>Pipeline Stage Distribution</h2>
         </div>
         <div class="card-body d-flex align-items-center justify-content-center">
           <canvas id="stageChart" height="220"></canvas>
@@ -118,7 +118,7 @@ foreach ($colonies as $c) {
     <div class="col-md-4">
       <div class="card border-0 shadow-sm h-100">
         <div class="card-header bg-transparent border-0">
-          <h6 class="mb-0"><i class="fas fa-chart-bar me-2 text-success"></i>Profit Margin Comparison</h6>
+          <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-bar me-2 text-success"></i>Profit Margin Comparison</h2>
         </div>
         <div class="card-body">
           <canvas id="roiChart" height="220"></canvas>
@@ -130,7 +130,7 @@ foreach ($colonies as $c) {
   <!-- Colony Comparison Table -->
   <div class="card border-0 shadow-sm">
     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-      <h6 class="mb-0"><i class="fas fa-table me-2"></i>Colony-wise Comparison</h6>
+      <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-table me-2"></i>Colony-wise Comparison</h2>
     </div>
     <div class="card-body p-0">
       <?php if (empty($colonies)): ?>
@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
   <!-- Colony Comparison Table -->
   <div class="card border-0 shadow-sm">
     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-      <h6 class="mb-0"><i class="fas fa-table me-2"></i>Colony-wise Comparison</h6>
+      <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-table me-2"></i>Colony-wise Comparison</h2>
     </div>
     <div class="card-body p-0">
       <?php if (empty($colonies)): ?>

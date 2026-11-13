@@ -9,7 +9,7 @@
     <title><?= htmlspecialchars($page_title ?? 'Terms & Conditions') ?></title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?= BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #1a1a2e; line-height: 1.8; }
         .legal-container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }

@@ -44,7 +44,7 @@
                     <?php foreach ($goals as $key => $goal): if (!is_array($goal)) continue; ?>
                     <div class="mb-3 pb-3 border-bottom">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0"><?= ($goal['target'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h6>
+                            <h2  class="fs-6 fw-semibold mb-0"><?= ($goal['target'] ?? ucfirst(str_replace('_', ' ', $key))) ?></h2>
                             <span class="badge bg-<?= (int)($goal['current_progress'] ?? 0) >= 70 ? 'success' : 'warning' ?>"><?= ($goal['current_progress'] ?? '0%') ?></span>
                         </div>
                         <div class="progress mb-2"><div class="progress-bar bg-success"></div></div>

@@ -21,7 +21,7 @@ $booking_id = $booking_id ?? 0;
 <!-- Booking Selector -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom">
-        <h6 class="mb-0"><i class="fas fa-search me-2"></i><?= __('admin_select_booking_to_check') ?></h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-search me-2"></i><?= __('admin_select_booking_to_check') ?></h2>
     </div>
     <div class="card-body aps-cp-card-body">
         <form method="GET" action="<?= BASE_URL ?>/admin/noc-registry/eligibility" class="row g-3">
@@ -56,7 +56,7 @@ $booking_id = $booking_id ?? 0;
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i><?= __('admin_noc_eligibility') ?></h6>
+                            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-alt me-2"></i><?= __('admin_noc_eligibility') ?></h2>
                             <?php if ($result['noc']['eligible']): ?>
                                 <span class="badge bg-success fs-6"><i class="fas fa-check me-1"></i><?= __('admin_eligible') ?></span>
                             <?php else: ?>
@@ -121,7 +121,7 @@ $booking_id = $booking_id ?? 0;
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0"><i class="fas fa-landmark me-2"></i><?= __('admin_registry_eligibility') ?></h6>
+                            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-landmark me-2"></i><?= __('admin_registry_eligibility') ?></h2>
                             <?php if ($result['registry']['eligible']): ?>
                                 <span class="badge bg-success fs-6"><i class="fas fa-check me-1"></i><?= __('admin_eligible') ?></span>
                             <?php else: ?>

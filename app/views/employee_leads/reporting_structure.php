@@ -103,7 +103,7 @@ $department_members = $department_members ?? [];
                                     <div class="flex-grow-1">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
-                                                <h6 class="mb-0 fw-bold"><?= htmlspecialchars($sub['name'] ?? '') ?></h6>
+                                                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><?= htmlspecialchars($sub['name'] ?? '') ?></h2>
                                                 <small class="text-muted"><?= htmlspecialchars($sub['designation'] ?? '') ?></small>
                                             </div>
                                             <span class="level-badge bg-<?= $levelColor ?> bg-opacity-10 text-<?= $levelColor ?>"><?= ucfirst(htmlspecialchars($sub['designation'] ?? '')) ?></span>
@@ -142,7 +142,7 @@ $department_members = $department_members ?? [];
         <?php if (!empty($department_members)): ?>
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white border-bottom-0 pt-3">
-                    <h6 class="fw-bold mb-0"><i class="fas fa-building me-2 text-primary"></i>Department Members (<?= count($department_members) ?>)</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-building me-2 text-primary"></i>Department Members (<?= count($department_members) ?>)</h2>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

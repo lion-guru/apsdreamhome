@@ -11,14 +11,14 @@
     </div>
     <div class="row g-4">
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-arrow-up text-success me-2"></i>Income Breakdown</h6></div><div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center"><p class="text-muted mb-0"><i class="fas fa-chart-bar me-2"></i>Income chart placeholder</p></div></div></div>
+            <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-arrow-up text-success me-2"></i>Income Breakdown</h2></div><div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center"><p class="text-muted mb-0"><i class="fas fa-chart-bar me-2"></i>Income chart placeholder</p></div></div></div>
         </div>
         <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-arrow-down text-danger me-2"></i>Expense Breakdown</h6></div><div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center"><p class="text-muted mb-0"><i class="fas fa-chart-bar me-2"></i>Expense chart placeholder</p></div></div></div>
+            <div class="card border-0 shadow-sm h-100"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-arrow-down text-danger me-2"></i>Expense Breakdown</h2></div><div class="card-body aps-cp-card-body"><div class="bg-light rounded d-flex align-items-center justify-content-center"><p class="text-muted mb-0"><i class="fas fa-chart-bar me-2"></i>Expense chart placeholder</p></div></div></div>
         </div>
     </div>
     <div class="card border-0 shadow-sm mt-4">
-        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Transactions</h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Transactions</h2></div>
         <div class="card-body p-0">
             <?php if (empty($transactions)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No financial transactions found</p></div>

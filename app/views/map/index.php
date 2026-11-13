@@ -32,7 +32,7 @@
         </div>
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Properties (<?= count($properties ?? []) ?>)</h6></div>
+                <div class="card-header bg-white py-3"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Properties (<?= count($properties ?? []) ?>)</h2></div>
                 <div class="card-body p-0">
                     <?php if (!empty($properties ?? [])): ?>
                     <div class="list-group list-group-flush">
@@ -40,7 +40,7 @@
                         <a href="<?= ($base ?? BASE_URL) ?>properties/<?= ($p['id'] ?? '') ?>" class="list-group-item list-group-item-action border-0">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <h6 class="mb-0 small"><?= htmlspecialchars($p['title'] ?? '') ?></h6>
+                                    <h2  class="fs-6 fw-semibold mb-0 small"><?= htmlspecialchars($p['title'] ?? '') ?></h2>
                                     <small class="text-muted"><i class="fas fa-map-pin me-1"></i><?= htmlspecialchars($p['location'] ?? '') ?></small>
                                 </div>
                                 <span class="text-primary fw-bold small">₹<?= number_format($p['price'] ?? 0) ?></span>

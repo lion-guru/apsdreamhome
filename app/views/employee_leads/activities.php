@@ -104,7 +104,7 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-transparent border-bottom-0 pt-3">
-                    <h6 class="fw-bold mb-0"><i class="fas fa-stream me-2 text-primary"></i>Timeline</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-stream me-2 text-primary"></i>Timeline</h2>
                 </div>
                 <div class="card-body">
                     <?php if (empty($filtered)): ?>
@@ -177,7 +177,7 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 mb-3">
                 <div class="card-header bg-transparent border-bottom-0 pt-3">
-                    <h6 class="fw-bold mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>By Type</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>By Type</h2>
                 </div>
                 <div class="card-body">
                     <?php if (empty($stats['types'])): ?>
@@ -207,7 +207,7 @@ $maxTypeCount = max(array_values($stats['types'] ?: [1]));
             <!-- Quick Filter -->
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-transparent border-bottom-0 pt-3">
-                    <h6 class="fw-bold mb-0"><i class="fas fa-filter me-2 text-primary"></i>Quick Filter</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-filter me-2 text-primary"></i>Quick Filter</h2>
                 </div>
                 <div class="card-body d-flex flex-wrap gap-2">
                     <a href="/employee/activities" class="emp-act-type-btn <?= !$filter ? 'active' : '' ?>">All</a>

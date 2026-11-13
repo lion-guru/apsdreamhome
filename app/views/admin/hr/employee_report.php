@@ -43,7 +43,7 @@ $report = $report ?? null;
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-calendar-check me-2 text-success"></i>Attendance (Last 30 Records)</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-calendar-check me-2 text-success"></i>Attendance (Last 30 Records)</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0">
@@ -72,7 +72,7 @@ $report = $report ?? null;
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-umbrella-beach me-2 text-warning"></i>Leave History</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-umbrella-beach me-2 text-warning"></i>Leave History</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0">
@@ -99,7 +99,7 @@ $report = $report ?? null;
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-gift me-2 text-success"></i>Bonuses</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-gift me-2 text-success"></i>Bonuses</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0">

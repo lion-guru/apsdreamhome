@@ -31,7 +31,7 @@ $categories = ['festival' => 'Festival', 'offer' => 'Offer', 'launch' => 'Launch
                     <?php if ($t['subtitle_text']): ?><div class="text-white small"><?= htmlspecialchars($t['subtitle_text']) ?></div><?php endif; ?>
                 </div>
                 <div class="card-body">
-                    <h6 class="mb-0"><?= htmlspecialchars($t['name']) ?></h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><?= htmlspecialchars($t['name']) ?></h2>
                     <small class="text-muted"><?= ucfirst($t['category']) ?> • <?= (int)$t['canvas_w'] ?>×<?= (int)$t['canvas_h'] ?> • used <?= (int)$t['use_count'] ?>x</small>
                     <button class="btn btn-primary btn-sm w-100 mt-2" onclick="openCustomize('<?= htmlspecialchars($t['slug']) ?>','<?= htmlspecialchars($t['name']) ?>')">
                         <i class="fas fa-pen me-1"></i>Customize

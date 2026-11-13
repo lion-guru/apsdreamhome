@@ -29,7 +29,7 @@ $eligibility = $eligibility ?? [];
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-bottom">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0"><?= __('admin_noc_information') ?></h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><?= __('admin_noc_information') ?></h2>
                         <?php
                         $colors = ['pending'=>'warning','processing'=>'info','approved'=>'success','rejected'=>'danger','blocked'=>'dark'];
                         $color = $colors[$noc['status']] ?? 'secondary';
@@ -95,7 +95,7 @@ $eligibility = $eligibility ?? [];
             <!-- Eligibility Checks -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-bottom">
-                    <h6 class="mb-0"><i class="fas fa-check-double me-2"></i><?= __('admin_eligibility_checks') ?></h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-check-double me-2"></i><?= __('admin_eligibility_checks') ?></h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($eligibility['checks'])): ?>
@@ -128,7 +128,7 @@ $eligibility = $eligibility ?? [];
             <?php if (in_array($noc['status'], ['pending', 'processing'])): ?>
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom">
-                    <h6 class="mb-0"><i class="fas fa-cog me-2"></i><?= __('admin_actions_label') ?></h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-cog me-2"></i><?= __('admin_actions_label') ?></h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/noc-registry/nocs/approve" class="mb-2">

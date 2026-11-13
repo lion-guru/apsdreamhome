@@ -42,7 +42,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
 <!-- Wallet Transactions -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Wallet Transactions (Last 50)</h6></div>
+    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-exchange-alt me-2"></i>Wallet Transactions (Last 50)</h2></div>
     <div class="card-body p-0">
         <?php if (empty($transactions)): ?>
         <div class="text-center py-4 text-muted">No transactions yet</div>
@@ -70,7 +70,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
 <!-- Commission Ledger -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-coins me-2"></i>Commission Ledger (Last 50)</h6></div>
+    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-coins me-2"></i>Commission Ledger (Last 50)</h2></div>
     <div class="card-body p-0">
         <?php if (empty($commissions)): ?>
         <div class="text-center py-4 text-muted">No commissions yet</div>

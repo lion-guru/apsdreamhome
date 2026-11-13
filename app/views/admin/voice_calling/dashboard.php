@@ -39,7 +39,7 @@ $recentCalls = $recentCalls ?? [];
                 <div class="card h-100 <?= $p['configured'] ? 'border-success' : 'border-warning' ?>">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h6 class="mb-0"><?= htmlspecialchars($p['display_name']) ?></h6>
+                            <h2  class="fs-6 fw-semibold mb-0"><?= htmlspecialchars($p['display_name']) ?></h2>
                             <span class="badge bg-<?= $p['configured'] ? 'success' : 'warning' ?>">
                                 <?= $p['configured'] ? 'Configured' : 'Not Configured' ?>
                             </span>

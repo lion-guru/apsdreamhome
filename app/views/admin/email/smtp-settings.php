@@ -43,7 +43,7 @@ $smtp = $smtp ?? [
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white">
-                        <h6 class="mb-0"><i class="fas fa-server me-2"></i>SMTP Server</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-server me-2"></i>SMTP Server</h2>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="row g-3 mb-3">
@@ -83,7 +83,7 @@ $smtp = $smtp ?? [
                 </div>
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white">
-                        <h6 class="mb-0"><i class="fas fa-envelope-open-text me-2"></i>Default Sender</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-envelope-open-text me-2"></i>Default Sender</h2>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="row g-3">
@@ -104,7 +104,7 @@ $smtp = $smtp ?? [
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white">
-                        <h6 class="mb-0"><i class="fas fa-check-circle me-2"></i>Actions</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-check-circle me-2"></i>Actions</h2>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <button type="submit" class="btn btn-primary w-100 mb-3">
@@ -120,7 +120,7 @@ $smtp = $smtp ?? [
                 </div>
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white">
-                        <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Common Providers</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>Common Providers</h2>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <ul class="list-unstyled mb-0 small">

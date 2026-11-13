@@ -140,7 +140,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
     <div class="col-md-6 mb-3">
         <div class="card h-100">
             <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-users me-1"></i>Agent Performance</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-users me-1"></i>Agent Performance</h2>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($agent_performance)): ?>
@@ -173,7 +173,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
     <div class="col-md-6 mb-3">
         <div class="card h-100">
             <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-chart-pie me-1"></i>Interest Breakdown</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-pie me-1"></i>Interest Breakdown</h2>
             </div>
             <div class="card-body">
                 <?php if (empty($interest_breakdown)): ?>
@@ -191,7 +191,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
     <div class="col-md-6 mb-3">
         <div class="card h-100">
             <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-flag-checkered me-1"></i>Call Outcomes</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-flag-checkered me-1"></i>Call Outcomes</h2>
             </div>
             <div class="card-body">
                 <?php if (empty($call_outcomes)): ?>
@@ -206,7 +206,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
     <div class="col-md-6 mb-3">
         <div class="card h-100">
             <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-clock me-1"></i>Hourly Distribution</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-clock me-1"></i>Hourly Distribution</h2>
             </div>
             <div class="card-body">
                 <?php if (empty($hourly_distribution)): ?>
@@ -224,7 +224,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
     <div class="col-md-6 mb-3">
         <div class="card h-100">
             <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-funnel-dollar me-1"></i>Lead Conversion Funnel</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-funnel-dollar me-1"></i>Lead Conversion Funnel</h2>
             </div>
             <div class="card-body">
                 <?php if (empty($lead_conversion_funnel)): ?>
@@ -249,7 +249,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
     <div class="col-md-6 mb-3">
         <div class="card h-100">
             <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-cloud me-1"></i>Provider Comparison</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-cloud me-1"></i>Provider Comparison</h2>
             </div>
             <div class="card-body">
                 <?php if (empty($provider_comparison)): ?>

@@ -45,7 +45,7 @@ ob_start();
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white">
-                    <h6 class="mb-0">Response Statistics</h6>
+                    <h2  class="fs-6 fw-semibold mb-0">Response Statistics</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($stats)): ?>

@@ -10,7 +10,7 @@
         <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body aps-cp-card-body"><div class="d-flex justify-content-between"><div><small class="text-muted text-uppercase fw-bold">Registered</small><h3 class="mb-0 mt-1"><?= number_format($statistics['farmers_with_state'] ?? 0) ?></h3></div><div class="bg-primary-subtle p-3 rounded"><i class="fas fa-tractor fa-2x text-primary"></i></div></div></div></div></div>
     </div>
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Recent Farmers</h6><a href="<?= BASE_URL ?>farmers/list" class="btn btn-outline-primary btn-sm">View All</a></div>
+        <div class="card-header bg-white d-flex justify-content-between align-items-center"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Recent Farmers</h2><a href="<?= BASE_URL ?>farmers/list" class="btn btn-outline-primary btn-sm">View All</a></div>
         <div class="card-body p-0">
             <?php if (empty($farmers)): ?>
             <div class="text-center py-5"><i class="fas fa-tractor fa-3x text-muted mb-3"></i><p class="text-muted">No farmers registered yet</p><a href="<?= BASE_URL ?>farmers/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add First Farmer</a></div>

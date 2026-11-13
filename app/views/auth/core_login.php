@@ -138,7 +138,7 @@ $supportedRoles = [
         input[type="tel"] {font-size:16px !important;}
         input[type="text"] {font-size:16px !important;}
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
 <main aria-label="Account sign in">

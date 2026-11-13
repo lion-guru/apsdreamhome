@@ -38,7 +38,7 @@ $base = BASE_URL ?? '';
                     <!-- Basic Info -->
                     <div class="col-lg-8">
                         <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Basic Information</h6></div>
+                            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>Basic Information</h2></div>
                             <div class="card-body">
                                 <div class="row g-3">
                                     <div class="col-md-6">
@@ -67,7 +67,7 @@ $base = BASE_URL ?? '';
 
                         <!-- Contact Info -->
                         <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-user me-2"></i>Contact Information</h6></div>
+                            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-user me-2"></i>Contact Information</h2></div>
                             <div class="card-body">
                                 <div class="row g-3">
                                     <div class="col-md-4">
@@ -102,7 +102,7 @@ $base = BASE_URL ?? '';
                     <!-- Plan & Limits -->
                     <div class="col-lg-4">
                         <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-tags me-2"></i>Subscription Plan</h6></div>
+                            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-tags me-2"></i>Subscription Plan</h2></div>
                             <div class="card-body">
                                 <select name="plan_id" class="form-select mb-3" id="planSelect">
                                     <?php foreach ($plans as $plan): ?>
@@ -115,7 +115,7 @@ $base = BASE_URL ?? '';
                         </div>
 
                         <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Resource Limits</h6></div>
+                            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-sliders-h me-2"></i>Resource Limits</h2></div>
                             <div class="card-body">
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Max Users</label>
@@ -137,7 +137,7 @@ $base = BASE_URL ?? '';
                         </div>
 
                         <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-palette me-2"></i>Branding</h6></div>
+                            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-palette me-2"></i>Branding</h2></div>
                             <div class="card-body">
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Primary Color</label>

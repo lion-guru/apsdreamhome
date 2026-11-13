@@ -10,7 +10,7 @@ $csrf = $this->getCsrfToken();
     <title><?= htmlspecialchars($page_title) ?> - APS Dream Home</title>
     <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=13">
     <style>
         .stat-card { border-left: 4px solid; transition: transform .2s; }
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }

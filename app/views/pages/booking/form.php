@@ -85,7 +85,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                 <!-- 1. Customer Info Card -->
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0 fw-bold text-dark"><i class="fas fa-id-card text-primary me-2"></i><?= __('book_your_info', 'Applicant (Allottee) Particulars') ?></h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold text-dark"><i class="fas fa-id-card text-primary me-2"></i><?= __('book_your_info', 'Applicant (Allottee) Particulars') ?></h2>
                         <span class="badge bg-success bg-opacity-10 text-success fw-bold">Verified Account</span>
                     </div>
                     <div class="card-body p-3 p-md-4">
@@ -188,7 +188,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                 <!-- 3. Payment Plan & EMI Selection -->
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-white py-3 border-bottom">
-                        <h6 class="mb-0 fw-bold text-dark"><i class="fas fa-credit-card text-primary me-2"></i><?= __('book_payment_plan', 'Payment Plan & Consideration Schedule') ?></h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold text-dark"><i class="fas fa-credit-card text-primary me-2"></i><?= __('book_payment_plan', 'Payment Plan & Consideration Schedule') ?></h2>
                     </div>
                     <div class="card-body p-3 p-md-4">
                         <div class="row g-3">
@@ -245,7 +245,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                 <!-- 4. Notes & Remarks -->
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-white py-3 border-bottom">
-                        <h6 class="mb-0 fw-bold text-dark"><i class="fas fa-sticky-note text-primary me-2"></i><?= __('book_notes', 'Special Remarks & Preferences') ?></h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold text-dark"><i class="fas fa-sticky-note text-primary me-2"></i><?= __('book_notes', 'Special Remarks & Preferences') ?></h2>
                     </div>
                     <div class="card-body p-3 p-md-4">
                         <textarea class="form-control" name="notes" rows="2" placeholder="<?= __('book_notes_placeholder', 'Enter any preferred possession timeline, registry co-allottee details, or instructions...') ?>"></textarea>
@@ -255,7 +255,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                 <!-- 5. Master Deed Statutory Consent (Cleanly Nested) -->
                 <div class="card shadow-sm border-0 border-top border-3 border-danger mb-4">
                     <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0 fw-bold text-danger"><i class="fas fa-balance-scale text-danger me-2"></i>Tripartite Master Legal Deed (V8) Consent</h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold text-danger"><i class="fas fa-balance-scale text-danger me-2"></i>Tripartite Master Legal Deed (V8) Consent</h2>
                         <span class="badge bg-danger">Mandatory Statutory Gate</span>
                     </div>
                     <div class="card-body p-3 p-md-4">
@@ -335,7 +335,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                     <!-- Plot Details Card -->
                     <div class="card shadow-sm border-0 mb-4">
                         <div class="card-header bg-dark text-white py-3">
-                            <h6 class="mb-0 fw-bold"><i class="fas fa-building text-warning me-2"></i>Plot Specification Summary</h6>
+                            <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-building text-warning me-2"></i>Plot Specification Summary</h2>
                         </div>
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-start mb-2">

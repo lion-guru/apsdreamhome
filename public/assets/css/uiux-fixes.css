@@ -206,15 +206,26 @@ footer ul li a,
 }
 
 
-/* Outline success text green on white = 4.33:1 -> green-700 5.6:1 (AA) */
-.btn-outline-success {
-  color: #157347;
-  border-color: #157347;
+/* AA outline buttons: ensure text on faint-white borders >= 4.5:1 */
+.btn-outline-secondary {
+  color: #495057 !important;
+  border-color: #495057 !important;
 }
-.btn-outline-success:hover {
-  background-color: #157347;
-  border-color: #157347;
-  color: #fff;
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+  background-color: #495057 !important;
+  border-color: #495057 !important;
+  color: #fff !important;
+}
+.btn-outline-success {
+  color: #157347 !important;
+  border-color: #157347 !important;
+}
+.btn-outline-success:hover,
+.btn-outline-success:focus {
+  background-color: #157347 !important;
+  border-color: #157347 !important;
+  color: #fff !important;
 }
 
 /* Outline info text cyan on white = 1.9:1 -> cyan-700 4.9:1 */

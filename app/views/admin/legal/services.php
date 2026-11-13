@@ -70,7 +70,7 @@ $active = $active ?? 0;
                     <div class="card-body d-flex align-items-center justify-content-center">
                         <div class="text-center">
                             <i class="fas fa-plus-circle fa-2x text-primary mb-2"></i>
-                            <h6 class="mb-0 text-dark">Add New Service</h6>
+                            <h2  class="fs-6 fw-semibold mb-0 text-dark">Add New Service</h2>
                         </div>
                     </div>
                 </div>

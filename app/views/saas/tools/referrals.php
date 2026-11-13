@@ -40,7 +40,7 @@
     </div>
 
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3"><h6 class="mb-0">Referral History</h6></div>
+        <div class="card-header bg-white py-3"><h2  class="fs-6 fw-semibold mb-0">Referral History</h2></div>
         <div class="card-body p-0">
             <?php if (!empty($referrals ?? [])): ?>
             <div class="table-responsive">

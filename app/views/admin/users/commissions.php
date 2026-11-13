@@ -31,7 +31,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
 <!-- Commission Ledger -->
 <div class="card border-0 shadow-sm">
-    <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-list me-2"></i>All Commissions (<?= count($commissions) ?> entries)</h6></div>
+    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>All Commissions (<?= count($commissions) ?> entries)</h2></div>
     <div class="card-body p-0">
         <?php if (empty($commissions)): ?>
         <div class="text-center py-4 text-muted">No commission records found</div>

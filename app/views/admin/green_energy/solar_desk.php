@@ -134,7 +134,7 @@ $current_status = $current_status ?? null;
                                         </div>
                                     </td>
                                     <td>
-                                        <h6 class="fw-bold text-primary mb-0">₹<?= number_format($req['net_customer_payable']) ?></h6>
+                                        <h2  class="fs-6 fw-semibold fw-bold text-primary mb-0">₹<?= number_format($req['net_customer_payable']) ?></h2>
                                         <div class="small text-muted">Savings: ₹<?= number_format($req['estimated_annual_savings']) ?>/yr</div>
                                     </td>
                                     <td>

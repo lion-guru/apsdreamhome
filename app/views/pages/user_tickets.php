@@ -60,7 +60,7 @@ $extraHead = '<style>
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="flex-grow-1">
                         <div class="d-flex align-items-center gap-2 mb-2">
-                            <h6 class="mb-0"><?= htmlspecialchars($t['subject'] ?? 'No Subject') ?></h6>
+                            <h2  class="fs-6 fw-semibold mb-0"><?= htmlspecialchars($t['subject'] ?? 'No Subject') ?></h2>
                             <span class="badge bg-<?= $statusClass ?>"><?= ucfirst(str_replace('_', ' ', $t['status'] ?? 'open')) ?></span>
                             <span class="badge <?= $priorityClass ?> priority-badge"><?= ucfirst($t['priority'] ?? 'medium') ?></span>
                         </div>

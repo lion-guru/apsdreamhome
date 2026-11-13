@@ -56,7 +56,7 @@ $properties = $properties ?? [];
                     <?php endif; ?>
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h6 class="card-title fw-bold mb-0"><?= htmlspecialchars($p['title'] ?? __('assoc_prop_untitled', [], 'Untitled')) ?></h6>
+                            <h2  class="fs-6 fw-semibold card-title fw-bold mb-0"><?= htmlspecialchars($p['title'] ?? __('assoc_prop_untitled', [], 'Untitled')) ?></h2>
                             <span class="badge bg-<?= e($statusClass) ?>"><?= e(ucfirst($p['status'] ?? 'pending')) ?></span>
                         </div>
                         <div class="mb-2">

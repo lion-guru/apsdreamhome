@@ -119,7 +119,7 @@ function lvDays($d) { return (int)$d; }
     <!-- Leave History Table -->
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white border-bottom-0 pt-3">
-            <h6 class="fw-bold mb-0"><i class="fas fa-history me-1"></i>Leave History</h6>
+            <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-history me-1"></i>Leave History</h2>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">

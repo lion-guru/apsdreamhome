@@ -50,7 +50,7 @@ ob_start();
   <div class="row g-3">
     <div class="col-md-6">
       <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-1"></i> Key Details</h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-1"></i> Key Details</h2></div>
         <div class="card-body aps-cp-card-body">
           <div class="table-responsive"><table class="table table-sm mb-0">
             <tr><td class="text-muted">Key Preview</td><td><code><?= htmlspecialchars($test_result['key_preview'] ?? '') ?></code></td></tr>
@@ -63,7 +63,7 @@ ob_start();
     </div>
     <div class="col-md-6">
       <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-code me-1"></i> Usage Example</h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-code me-1"></i> Usage Example</h2></div>
         <div class="card-body aps-cp-card-body">
           <pre class="bg-light p-3 rounded mb-0 small"><code>curl -H "Authorization: Bearer <?= htmlspecialchars($test_result['key_preview'] ?? 'apk_...') ?>:YOUR_SECRET" \
      "<?= BASE_URL ?>/api/v2/leads?per_page=10"</code></pre>

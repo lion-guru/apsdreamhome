@@ -82,7 +82,7 @@ ob_start();
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-bottom">
-                <h6 class="mb-0"><i class="fas fa-exclamation-triangle text-danger me-2"></i>Overdue Deadlines</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-exclamation-triangle text-danger me-2"></i>Overdue Deadlines</h2>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($overdue_deadlines)): ?>
@@ -114,7 +114,7 @@ ob_start();
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-bottom">
-                <h6 class="mb-0"><i class="fas fa-clock text-warning me-2"></i>Upcoming (14 days)</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-clock text-warning me-2"></i>Upcoming (14 days)</h2>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($upcoming_deadlines)): ?>
@@ -146,7 +146,7 @@ ob_start();
 <!-- Recent Submissions -->
 <div class="card border-0 shadow-sm mt-4">
     <div class="card-header bg-white border-bottom d-flex justify-content-between">
-        <h6 class="mb-0"><i class="fas fa-history me-2"></i>Recent Submissions</h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-history me-2"></i>Recent Submissions</h2>
         <a href="<?= BASE_URL ?>/admin/efiling/submissions" class="btn btn-sm btn-outline-primary">View All</a>
     </div>
     <div class="card-body p-0">

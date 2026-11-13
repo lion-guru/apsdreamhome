@@ -155,7 +155,7 @@
       <?php if ($stats['next_emi_date']): ?>
         <div class="card aps-cp-card mb-4 border-warning">
           <div class="card-header bg-warning text-dark">
-            <h6 class="mb-0"><i class="fas fa-bell me-2"></i> Next EMI Due</h6>
+            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-bell me-2"></i> Next EMI Due</h2>
           </div>
           <div class="card-body">
             <div class="row align-items-center">
@@ -237,7 +237,7 @@
     <?php if (!empty($extras['agreement'])): ?>
       <div class="col-md-6">
         <div class="card aps-cp-card h-100">
-          <div class="aps-cp-card-header"><h6 class="mb-0"><i class="fas fa-file-contract me-1"></i> Agreement</h6></div>
+          <div class="aps-cp-card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-contract me-1"></i> Agreement</h2></div>
           <div class="card-body">
             <div class="d-flex justify-content-between">
               <span>Status</span>
@@ -257,7 +257,7 @@
     <?php if (!empty($extras['noc'])): ?>
       <div class="col-md-6">
         <div class="card aps-cp-card h-100">
-          <div class="aps-cp-card-header"><h6 class="mb-0"><i class="fas fa-shield-check me-1"></i> NOC</h6></div>
+          <div class="aps-cp-card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-shield-check me-1"></i> NOC</h2></div>
           <div class="card-body">
             <span class="badge bg-<?= ($extras['noc']['status'] ?? '') === 'approved' ? 'success' : 'warning' ?>"><?= ucfirst($extras['noc']['status'] ?? 'pending') ?></span>
           </div>
@@ -268,7 +268,7 @@
     <?php if (!empty($extras['deed'])): ?>
       <div class="col-md-6">
         <div class="card aps-cp-card h-100">
-          <div class="aps-cp-card-header"><h6 class="mb-0"><i class="fas fa-file-signature me-1"></i> Registry Deed</h6></div>
+          <div class="aps-cp-card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-signature me-1"></i> Registry Deed</h2></div>
           <div class="card-body">
             <?php if (!empty($extras['deed']['file_path'])): ?>
               <a href="<?= BASE_URL . '/' . ltrim($extras['deed']['file_path'], '/') ?>" target="_blank" class="btn btn-outline-primary">View Deed</a>
@@ -281,7 +281,7 @@
     <?php if (!empty($extras['possession'])): ?>
       <div class="col-md-6">
         <div class="card aps-cp-card h-100">
-          <div class="aps-cp-card-header"><h6 class="mb-0"><i class="fas fa-key me-1"></i> Possession</h6></div>
+          <div class="aps-cp-card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-key me-1"></i> Possession</h2></div>
           <div class="card-body">
             <span class="badge bg-<?= in_array($extras['possession']['status'] ?? '', ['handed_over','completed']) ? 'success' : 'warning' ?>"><?= ucfirst($extras['possession']['status'] ?? 'pending') ?></span>
             <?php if (!empty($extras['possession']['possession_date'])): ?>

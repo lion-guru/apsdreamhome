@@ -48,13 +48,13 @@ $leadQualified = $leadQualified ?? [];
     <div class="row g-4 mb-4">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">Lead Acquisition Trend (30 days)</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Lead Acquisition Trend (30 days)</h2></div>
                 <div class="card-body"><canvas id="leadsChart" height="100"></canvas></div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">Lead Sources</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Lead Sources</h2></div>
                 <div class="card-body">
                     <?php if (empty($conversionBySource)): ?>
                         <p class="text-muted text-center py-3">No source data</p>
@@ -79,7 +79,7 @@ $leadQualified = $leadQualified ?? [];
 
     <?php if (!empty($callsByScript)): ?>
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white border-bottom"><h6 class="mb-0">Call Script Performance</h6></div>
+        <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Call Script Performance</h2></div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">

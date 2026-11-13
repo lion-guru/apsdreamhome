@@ -41,7 +41,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-5 text-primary mb-2"><?= htmlspecialchars($security_stats['security_score'] ?? 0) ?><small class="fs-6">%</small></div>
-                        <h6 class="text-muted mb-0"><?= __('security_dash_score', [], 'Security Score') ?></h6>
+                        <h2  class="fs-6 fw-semibold text-muted mb-0"><?= __('security_dash_score', [], 'Security Score') ?></h2>
                         <div class="progress mt-2">
                             <div class="progress-bar bg-<?= ($security_stats['security_score'] ?? 0) >= 80 ? 'success' : (($security_stats['security_score'] ?? 0) >= 50 ? 'warning' : 'danger') ?>"></div>
                         </div>
@@ -52,7 +52,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-danger mb-2"><?= htmlspecialchars(number_format($security_stats['total_events'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0"><?= __('security_dash_total_events', [], 'Total Events (24h)') ?></h6>
+                        <h2  class="fs-6 fw-semibold text-muted mb-0"><?= __('security_dash_total_events', [], 'Total Events (24h)') ?></h2>
                         <small class="text-muted"><?= __('security_dash_all_events', [], 'All security events') ?></small>
                     </div>
                 </div>
@@ -61,7 +61,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-warning mb-2"><?= htmlspecialchars(number_format($security_stats['failed_logins'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0"><?= __('security_dash_failed_logins', [], 'Failed Logins') ?></h6>
+                        <h2  class="fs-6 fw-semibold text-muted mb-0"><?= __('security_dash_failed_logins', [], 'Failed Logins') ?></h2>
                         <small class="text-muted"><?= __('security_dash_unsuccessful', [], 'Unsuccessful attempts') ?></small>
                     </div>
                 </div>
@@ -70,7 +70,7 @@ $base = $base ?? BASE_URL;
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center">
                         <div class="display-6 text-info mb-2"><?= htmlspecialchars(number_format($security_stats['suspicious_activities'] ?? 0)) ?></div>
-                        <h6 class="text-muted mb-0"><?= __('security_dash_suspicious', [], 'Suspicious') ?></h6>
+                        <h2  class="fs-6 fw-semibold text-muted mb-0"><?= __('security_dash_suspicious', [], 'Suspicious') ?></h2>
                         <small class="text-muted"><?= __('security_dash_high_severity', [], 'High severity alerts') ?></small>
                     </div>
                 </div>

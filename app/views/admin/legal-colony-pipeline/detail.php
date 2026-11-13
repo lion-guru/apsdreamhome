@@ -184,7 +184,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
           <?php if (!empty($landLeads['data'])): ?>
             <hr class="border-secondary">
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <h6 class="text-warning mb-0"><i class="fas fa-search me-1"></i> Land Leads (<?= $landLeads['count'] ?>)</h6>
+              <h2  class="fs-6 fw-semibold text-warning mb-0"><i class="fas fa-search me-1"></i> Land Leads (<?= $landLeads['count'] ?>)</h2>
               <a href="/admin/land-inventory/leads" class="btn btn-sm btn-outline-warning">View All</a>
             </div>
             <div class="table-responsive">

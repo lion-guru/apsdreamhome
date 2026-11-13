@@ -156,7 +156,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="modal-content">
             <div class="modal-header border-0 pb-0">
                 <div>
-                    <h6 class="fw-bold mb-0"><?= __('assoc_browse_im_interested', [], "I'm Interested") ?></h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0"><?= __('assoc_browse_im_interested', [], "I'm Interested") ?></h2>
                     <small class="text-muted" id="interestPropertyName"></small>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

@@ -25,7 +25,7 @@ $recent_assignments = $recent_assignments ?? [];
         <!-- Assign Form -->
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-hand-pointer me-2"></i>Select Leads to Assign</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-hand-pointer me-2"></i>Select Leads to Assign</h2></div>
                 <div class="card-body">
                     <?php if (empty($unassigned)): ?>
                         <div class="text-center py-5">
@@ -101,7 +101,7 @@ $recent_assignments = $recent_assignments ?? [];
         <!-- Recent Assignments -->
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-history me-2"></i>Recent Assignments</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-history me-2"></i>Recent Assignments</h2></div>
                 <div class="card-body">
                     <?php if (empty($recent_assignments)): ?>
                         <p class="text-muted text-center py-3">No assignments yet</p>

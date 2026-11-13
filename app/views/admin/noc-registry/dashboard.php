@@ -91,7 +91,7 @@ $st = $stats ?? [];
 <!-- Pipeline Flow -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom">
-        <h6 class="mb-0"><i class="fas fa-project-diagram me-2"></i><?= __('admin_registration_pipeline_flow') ?></h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-project-diagram me-2"></i><?= __('admin_registration_pipeline_flow') ?></h2>
     </div>
     <div class="card-body py-4 px-4">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
@@ -133,7 +133,7 @@ $st = $stats ?? [];
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-bottom d-flex justify-content-between">
-                <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i><?= __('admin_recent_noc_requests') ?></h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-alt me-2"></i><?= __('admin_recent_noc_requests') ?></h2>
                 <a href="<?= BASE_URL ?>/admin/noc-registry/nocs" class="btn btn-sm btn-outline-primary"><?= __('admin_view_all') ?></a>
             </div>
             <div class="card-body p-0">
@@ -165,7 +165,7 @@ $st = $stats ?? [];
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-bottom d-flex justify-content-between">
-                <h6 class="mb-0"><i class="fas fa-landmark me-2"></i><?= __('admin_recent_registries') ?></h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-landmark me-2"></i><?= __('admin_recent_registries') ?></h2>
                 <a href="<?= BASE_URL ?>/admin/noc-registry/registries" class="btn btn-sm btn-outline-primary"><?= __('admin_view_all') ?></a>
             </div>
             <div class="card-body p-0">

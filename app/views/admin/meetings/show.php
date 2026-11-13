@@ -80,7 +80,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white"><h6 class="mb-0">Quick Info</h6></div>
+                    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Quick Info</h2></div>
                     <div class="card-body">
                         <p class="mb-2"><small class="text-muted">Created:</small><br><?php echo isset($meeting['created_at']) ? date('M d, Y h:i A', strtotime($meeting['created_at'])) : '-'; ?></p>
                         <?php if (!empty($meeting['updated_at'])): ?>
@@ -91,7 +91,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
                 <?php if (($meeting['status'] ?? '') !== 'completed' && ($meeting['status'] ?? '') !== 'cancelled'): ?>
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white"><h6 class="mb-0">Actions</h6></div>
+                    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Actions</h2></div>
                     <div class="card-body">
                         <form method="POST" action="<?php echo e($base); ?>/admin/meetings/<?php echo $meeting['id']; ?>/update" class="mb-2">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">

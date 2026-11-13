@@ -56,7 +56,7 @@ $merge_fields = $merge_fields ?? [];
                     <div class="aps-cp-card h-100">
                         <div class="aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="mb-0"><i class="<?= htmlspecialchars($t['category_icon'] ?? 'fas fa-file') ?> me-2 text-primary"></i><?= htmlspecialchars($t['name'] ?? '') ?></h6>
+                                <h2  class="fs-6 fw-semibold mb-0"><i class="<?= htmlspecialchars($t['category_icon'] ?? 'fas fa-file') ?> me-2 text-primary"></i><?= htmlspecialchars($t['name'] ?? '') ?></h2>
                                 <span class="badge bg-<?= $t['status'] === 'active' ? 'success' : ($t['status'] === 'draft' ? 'secondary' : 'warning') ?>"><?= $t['status'] ?></span>
                             </div>
                             <small class="text-muted d-block mb-2"><?= htmlspecialchars($t['category_name'] ?? 'Uncategorized') ?> | v<?= (int)($t['version'] ?? 1) ?> | Lang: <?= strtoupper($t['language'] ?? 'EN') ?></small>

@@ -9,7 +9,7 @@
     <div class="row g-4">
         <div class="col-lg-3">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-filter me-2"></i>Filter</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-filter me-2"></i>Filter</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <form method="get" action="<?= BASE_URL ?>careers">
     <?php echo CSRFProtection::csrfField(); ?>

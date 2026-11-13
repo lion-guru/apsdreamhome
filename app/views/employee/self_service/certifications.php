@@ -59,7 +59,7 @@ $certifications = $certifications ?? [];
                             <i class="fas fa-certificate"></i>
                         </div>
                         <div>
-                            <h6 class="mb-0 fw-semibold"><?= htmlspecialchars($cert['certification_name']) ?></h6>
+                            <h2  class="fs-6 fw-semibold mb-0 fw-semibold"><?= htmlspecialchars($cert['certification_name']) ?></h2>
                             <small class="text-muted"><?= htmlspecialchars($cert['course_title'] ?? 'Standalone Certification') ?></small>
                         </div>
                     </div>

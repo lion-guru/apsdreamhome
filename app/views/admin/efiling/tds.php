@@ -42,7 +42,7 @@ ob_start();
 <!-- TDS Summary by Section -->
 <?php if (!empty($summary['by_section'])): ?>
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-table me-2"></i>TDS Summary by Section</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-table me-2"></i>TDS Summary by Section</h2></div>
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
@@ -73,7 +73,7 @@ ob_start();
 
 <!-- Generate Form 26Q -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-cogs me-2"></i>Generate Form 26Q</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-cogs me-2"></i>Generate Form 26Q</h2></div>
     <div class="card-body aps-cp-card-body">
         <form method="POST" action="<?= BASE_URL ?>/admin/efiling/tds/generate" class="row g-2 align-items-end">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
@@ -103,7 +103,7 @@ ob_start();
 <!-- Submissions -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white border-bottom d-flex justify-content-between">
-        <h6 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Filing Submissions</h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-paper-plane me-2"></i>Filing Submissions</h2>
         <a href="<?= BASE_URL ?>/admin/efiling/submissions?type=tds_return&fy=<?= urlencode($fy) ?>" class="btn btn-sm btn-outline-primary">View All</a>
     </div>
     <div class="card-body p-0">

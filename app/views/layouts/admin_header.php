@@ -143,7 +143,7 @@ try {
             .navbar-icon .badge { font-size: 0.5rem; padding: 1px 4px; }
         }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
     <aside class="sidebar" id="sidebar">

@@ -16,7 +16,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-primary bg-opacity-10 text-primary rounded p-3"><i class="fas fa-clipboard-list fa-2x"></i></div></div>
-                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Total Requests</h6><h3 class="mb-0"><?= number_format($total_count ?? 0) ?></h3></div>
+                        <div class="flex-grow-1"><h2  class="fs-6 fw-semibold text-muted mb-1">Total Requests</h2><h3 class="mb-0"><?= number_format($total_count ?? 0) ?></h3></div>
                     </div>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-warning bg-opacity-10 text-warning rounded p-3"><i class="fas fa-exclamation-circle fa-2x"></i></div></div>
-                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Open</h6><h3 class="mb-0"><?= number_format($open_count ?? 0) ?></h3></div>
+                        <div class="flex-grow-1"><h2  class="fs-6 fw-semibold text-muted mb-1">Open</h2><h3 class="mb-0"><?= number_format($open_count ?? 0) ?></h3></div>
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-info bg-opacity-10 text-info rounded p-3"><i class="fas fa-spinner fa-2x"></i></div></div>
-                        <div class="flex-grow-1"><h6 class="text-muted mb-1">In Progress</h6><h3 class="mb-0"><?= number_format($in_progress_count ?? 0) ?></h3></div>
+                        <div class="flex-grow-1"><h2  class="fs-6 fw-semibold text-muted mb-1">In Progress</h2><h3 class="mb-0"><?= number_format($in_progress_count ?? 0) ?></h3></div>
                     </div>
                 </div>
             </div>
@@ -46,7 +46,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-success bg-opacity-10 text-success rounded p-3"><i class="fas fa-check-circle fa-2x"></i></div></div>
-                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Completed</h6><h3 class="mb-0"><?= number_format($completed_count ?? 0) ?></h3></div>
+                        <div class="flex-grow-1"><h2  class="fs-6 fw-semibold text-muted mb-1">Completed</h2><h3 class="mb-0"><?= number_format($completed_count ?? 0) ?></h3></div>
                     </div>
                 </div>
             </div>

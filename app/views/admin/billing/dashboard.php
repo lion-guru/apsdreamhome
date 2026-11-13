@@ -77,7 +77,7 @@ $base = BASE_URL ?? '';
 <div class="row mb-4">
     <div class="col-lg-6">
         <div class="card shadow-sm h-100">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-chart-bar me-2 text-primary"></i>Revenue by Plan</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-bar me-2 text-primary"></i>Revenue by Plan</h2></div>
             <div class="card-body">
                 <?php if (!empty($stats['by_plan'])): ?>
                     <?php foreach ($stats['by_plan'] as $bp): ?>
@@ -105,7 +105,7 @@ $base = BASE_URL ?? '';
     </div>
     <div class="col-lg-6">
         <div class="card shadow-sm h-100">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-chart-area me-2 text-success"></i>Revenue Trend (6 months)</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-area me-2 text-success"></i>Revenue Trend (6 months)</h2></div>
             <div class="card-body">
                 <?php if (!empty($trend)): ?>
                     <table class="table table-sm mb-0">
@@ -131,7 +131,7 @@ $base = BASE_URL ?? '';
 <!-- Active Subscriptions Table -->
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h6 class="mb-0"><i class="fas fa-list me-2"></i>Active Subscriptions</h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Active Subscriptions</h2>
         <span class="badge bg-primary"><?= count($subscriptions) ?></span>
     </div>
     <div class="card-body p-0">
@@ -184,7 +184,7 @@ $base = BASE_URL ?? '';
 
 <!-- Plan Cards -->
 <div class="card shadow-sm mb-4">
-    <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-tags me-2"></i>Available Plans</h6></div>
+    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-tags me-2"></i>Available Plans</h2></div>
     <div class="card-body">
         <div class="row">
             <?php foreach ($plans as $plan): ?>

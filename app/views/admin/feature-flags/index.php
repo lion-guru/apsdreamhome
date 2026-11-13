@@ -46,7 +46,7 @@
     </div>
 
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Flags (<?= count($flags ?? []) ?>)</h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Flags (<?= count($flags ?? []) ?>)</h2></div>
         <div class="card-body p-0">
             <?php if (empty($flags)): ?>
                 <p class="text-muted text-center py-4">No feature flags found. <a href="<?= BASE_URL ?>/admin/feature-flags/create">Create one</a>.</p>

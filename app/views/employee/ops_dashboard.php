@@ -52,7 +52,7 @@
     <div class="row g-3">
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-tasks me-2"></i>Pending Operations</h6></div>
+                <div class="card-header bg-white border-bottom-0"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-tasks me-2"></i>Pending Operations</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($pendingOperations)): ?>
                         <div class="table-responsive"><table class="table table-sm table-hover mb-0">
@@ -76,7 +76,7 @@
         </div>
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Project Status</h6></div>
+                <div class="card-header bg-white border-bottom-0"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-bar me-2"></i>Project Status</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($projectStatus)): ?>
                         <?php foreach ($projectStatus as $ps): ?>

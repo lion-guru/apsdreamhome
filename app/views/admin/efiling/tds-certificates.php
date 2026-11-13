@@ -45,7 +45,7 @@ ob_start();
 
 <!-- Certificates Table -->
 <div class="card border-0 shadow-sm">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Form 16A Certificates</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Form 16A Certificates</h2></div>
     <div class="card-body p-0">
         <?php if (empty($certificates)): ?>
             <div class="p-4 text-center text-muted">No certificates found for this period.</div>

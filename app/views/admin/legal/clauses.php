@@ -28,7 +28,7 @@ $categories = $categories ?? [];
                     <div class="aps-cp-card h-100">
                         <div class="aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="mb-0"><?= htmlspecialchars($cl['title'] ?? '') ?></h6>
+                                <h2  class="fs-6 fw-semibold mb-0"><?= htmlspecialchars($cl['title'] ?? '') ?></h2>
                                 <span class="badge bg-light text-dark"><?= htmlspecialchars($cl['category_name'] ?? 'Uncategorized') ?></span>
                             </div>
                             <div class="small text-muted mb-2 border-start border-3 border-primary ps-2"><?= nl2br(htmlspecialchars(substr($cl['content'] ?? '', 0, 300))) ?></div>

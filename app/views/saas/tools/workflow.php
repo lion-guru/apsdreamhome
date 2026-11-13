@@ -10,7 +10,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="card-title mb-0"><?= htmlspecialchars($wf['name'] ?? '') ?></h6>
+                        <h2  class="fs-6 fw-semibold card-title mb-0"><?= htmlspecialchars($wf['name'] ?? '') ?></h2>
                         <span class="badge bg-<?= ($wf['status'] ?? 'pending') === 'completed' ? 'success' : (($wf['status'] ?? '') === 'in_progress' ? 'warning' : 'secondary') ?>">
                             <?= ucfirst($wf['status'] ?? 'pending') ?>
                         </span>

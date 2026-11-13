@@ -106,7 +106,7 @@ $documents = $documents ?? $pending_documents ?? [];
     <div class="row g-3">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-file-alt me-2"></i>Document Review Queue</h6></div>
+                <div class="card-header bg-white border-bottom-0"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-alt me-2"></i>Document Review Queue</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($documents)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
@@ -131,7 +131,7 @@ $documents = $documents ?? $pending_documents ?? [];
         </div>
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-scale-balanced me-2"></i>Case Stats</h6></div>
+                <div class="card-header bg-white border-bottom-0"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-scale-balanced me-2"></i>Case Stats</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($caseStats)): ?>
                         <?php foreach ($caseStats as $stat): ?>

@@ -70,7 +70,7 @@ $provider = $provider ?? '';
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-info-circle me-1"></i>Provider Guide</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-1"></i>Provider Guide</h2>
             </div>
             <div class="card-body">
                 <h6>Exotel (Recommended for India)</h6>

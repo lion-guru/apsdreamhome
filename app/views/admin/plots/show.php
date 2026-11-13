@@ -74,7 +74,7 @@ $documents = $documents ?? [];
             <div class="card aps-cp-card mb-4" style="border-left: 4px solid #0d6efd;">
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex flex-wrap gap-2 align-items-center">
-                        <h6 class="fw-bold mb-0 me-3"><i class="fas fa-link me-1"></i> 360° Quick Links:</h6>
+                        <h2  class="fs-6 fw-semibold fw-bold mb-0 me-3"><i class="fas fa-link me-1"></i> 360° Quick Links:</h2>
                         <?php 
                         $plotId = $plot['id'] ?? 0;
                         $hasBooking = !empty($bookings);

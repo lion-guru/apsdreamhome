@@ -78,7 +78,7 @@
             <!-- Owner Info -->
             <div class="card mb-4">
                 <div class="card-header aps-cp-card-header">
-                    <h6 class="mb-0"><i class="fas fa-user me-2"></i>Owner Details</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-user me-2"></i>Owner Details</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <p class="mb-2">
@@ -101,7 +101,7 @@
             <?php if ($property['status'] === 'pending'): ?>
                 <div class="card aps-cp-card">
                     <div class="card-header aps-cp-card-header">
-                        <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Actions</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-cog me-2"></i>Actions</h2>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/user-properties/action">
@@ -129,7 +129,7 @@
             <?php elseif ($property['status'] === 'approved'): ?>
                 <div class="card aps-cp-card">
                     <div class="card-header aps-cp-card-header">
-                        <h6 class="mb-0"><i class="fas fa-check-circle me-2 text-success"></i>Approved</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-check-circle me-2 text-success"></i>Approved</h2>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <p class="text-muted mb-0">This property has been approved and is now visible to users.</p>
@@ -138,7 +138,7 @@
             <?php elseif ($property['status'] === 'rejected'): ?>
                 <div class="card aps-cp-card">
                     <div class="card-header aps-cp-card-header">
-                        <h6 class="mb-0"><i class="fas fa-times-circle me-2 text-danger"></i>Rejected</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-times-circle me-2 text-danger"></i>Rejected</h2>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <p class="text-muted mb-0">This property has been rejected.</p>

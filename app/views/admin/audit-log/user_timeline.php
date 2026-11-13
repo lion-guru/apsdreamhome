@@ -7,7 +7,7 @@
     <p class="text-muted"><?= htmlspecialchars($user['email'] ?? '') ?> · <?= htmlspecialchars($user['role'] ?? '') ?></p>
 
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white"><h6 class="mb-0">Activity (<?= count($timeline ?? []) ?> events)</h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Activity (<?= count($timeline ?? []) ?> events)</h2></div>
         <div class="card-body p-0">
             <?php if (empty($timeline)): ?>
                 <p class="text-muted text-center py-4">No recorded activity for this user.</p>

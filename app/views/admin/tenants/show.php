@@ -62,7 +62,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
     <div class="col-lg-8">
         <!-- Usage Meters -->
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Resource Usage</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-bar me-2"></i>Resource Usage</h2></div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
@@ -83,7 +83,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
 
         <!-- Contact Info -->
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-address-card me-2"></i>Contact Information</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-address-card me-2"></i>Contact Information</h2></div>
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
@@ -136,7 +136,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
 
         <!-- Actions -->
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-cog me-2"></i>Actions</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-cog me-2"></i>Actions</h2></div>
             <div class="card-body d-grid gap-2">
                 <?php if (($tenant['status'] ?? '') === 'active' && ($_SESSION['admin_role'] ?? '') === 'super_admin'): ?>
                     <form method="POST" action="<?= $base ?>/admin/tenants/<?= $tenant['id'] ?>/switch">
@@ -173,7 +173,7 @@ function tenantUsageBar($used, $max, $color = 'primary') {
 
         <!-- Quick Links -->
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-link me-2"></i>Quick Links</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-link me-2"></i>Quick Links</h2></div>
             <div class="card-body d-grid gap-2">
                 <a href="<?= $base ?>/admin/tenants" class="btn btn-outline-secondary btn-sm"><i class="fas fa-list me-2"></i>All Tenants</a>
                 <a href="<?= $base ?>/admin/tenants/dashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-chart-line me-2"></i>Dashboard</a>

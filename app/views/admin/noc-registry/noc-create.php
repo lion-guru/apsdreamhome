@@ -18,7 +18,7 @@ $eligible_bookings = $eligible_bookings ?? [];
 
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white border-bottom">
-        <h6 class="mb-0"><?= __('admin_noc_request_details') ?></h6>
+        <h2  class="fs-6 fw-semibold mb-0"><?= __('admin_noc_request_details') ?></h2>
     </div>
     <div class="card-body aps-cp-card-body">
         <?php if (empty($eligible_bookings)): ?>

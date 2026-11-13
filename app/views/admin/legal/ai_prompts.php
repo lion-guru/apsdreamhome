@@ -16,7 +16,7 @@ $prompts = $prompts ?? [];
                     <div class="aps-cp-card h-100">
                         <div class="aps-cp-card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="mb-0"><i class="fas fa-magic me-2 text-primary"></i><?= htmlspecialchars($p['name'] ?? '') ?></h6>
+                                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-magic me-2 text-primary"></i><?= htmlspecialchars($p['name'] ?? '') ?></h2>
                                 <span class="badge bg-light text-dark"><?= htmlspecialchars($p['document_category'] ?? 'general') ?></span>
                             </div>
                             <p class="small text-muted mb-2"><?= htmlspecialchars(substr($p['description'] ?? '', 0, 150)) ?></p>

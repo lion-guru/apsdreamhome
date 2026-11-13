@@ -5,18 +5,19 @@
  */
 
 $page_title = 'Deal Pipeline - APS Dream Home';
-$stageColors = [
-    'lead' => 'secondary',
-    'qualified' => 'info',
-    'proposal' => 'primary',
-    'negotiation' => 'warning'
-];
+$byName  = [];
+foreach (($stages ?? []) as $s) {
+    $byName[strtolower($s['name'])] = count(($dealsByStage ?? [])[$s['id']] ?? []);
+}
 
 $stageIcons = [
-    'lead' => 'user',
-    'qualified' => 'check-circle',
-    'proposal' => 'file-alt',
-    'negotiation' => 'handshake'
+    'new lead'    => 'user',
+    'contacted'   => 'phone',
+    'qualified'   => 'check-circle',
+    'proposal'    => 'file-alt',
+    'negotiation' => 'handshake',
+    'closed won'  => 'trophy',
+    'closed lost' => 'times-circle'
 ];
 ?>
 
@@ -42,7 +43,7 @@ $stageIcons = [
             <div class="card bg-secondary text-white">
                 <div class="card-body text-center p-2">
                     <h6 class="mb-1">Leads</h6>
-                    <h4 class="mb-0"><?= count($deals['lead'] ?? []) ?></h4>
+                    <h4 class="mb-0"><?= $byName['new lead'] ?? 0 ?></h4>
                 </div>
             </div>
         </div>
@@ -50,7 +51,7 @@ $stageIcons = [
             <div class="card bg-info text-white">
                 <div class="card-body text-center p-2">
                     <h6 class="mb-1">Qualified</h6>
-                    <h4 class="mb-0"><?= count($deals['qualified'] ?? []) ?></h4>
+                    <h4 class="mb-0"><?= $byName['qualified'] ?? 0 ?></h4>
                 </div>
             </div>
         </div>
@@ -58,7 +59,7 @@ $stageIcons = [
             <div class="card bg-primary text-white">
                 <div class="card-body text-center p-2">
                     <h6 class="mb-1">Proposal</h6>
-                    <h4 class="mb-0"><?= count($deals['proposal'] ?? []) ?></h4>
+                    <h4 class="mb-0"><?= $byName['proposal'] ?? 0 ?></h4>
                 </div>
             </div>
         </div>
@@ -66,7 +67,7 @@ $stageIcons = [
             <div class="card bg-warning text-dark">
                 <div class="card-body text-center p-2">
                     <h6 class="mb-1">Negotiation</h6>
-                    <h4 class="mb-0"><?= count($deals['negotiation'] ?? []) ?></h4>
+                    <h4 class="mb-0"><?= $byName['negotiation'] ?? 0 ?></h4>
                 </div>
             </div>
         </div>
@@ -91,14 +92,14 @@ $stageIcons = [
     <!-- Kanban Board -->
     <div class="row kanban-board">
         <?php foreach ($stages as $stage):
-            if (in_array($stage['id'], ['won', 'lost'])) continue;
-            $stageDeals = $deals[$stage['id']] ?? [];
+            if (in_array(strtolower($stage['name']), ['closed won', 'closed lost'], true)) continue;
+            $stageDeals = ($dealsByStage ?? [])[$stage['id']] ?? [];
         ?>
             <div class="col-md-3">
                 <div class="card kanban-column" data-stage="<?= $stage['id'] ?>">
                     <div class="card-header bg-<?= $stage['color'] ?> text-white py-2">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span><i class="fas fa-<?= $stageIcons[$stage['id']] ?? 'circle' ?> me-2"></i><?= $stage['name'] ?></span>
+                            <span><i class="fas fa-<?= $stageIcons[strtolower($stage['name'])] ?? 'circle' ?> me-2"></i><?= $stage['name'] ?></span>
                             <span class="badge bg-white text-<?= $stage['color'] ?>"><?= count($stageDeals) ?></span>
                         </div>
                     </div>

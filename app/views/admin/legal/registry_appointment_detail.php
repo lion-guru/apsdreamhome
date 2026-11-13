@@ -148,7 +148,7 @@ $appointment = $appointment ?? [];
             <!-- Stamp Duty Card -->
             <div class="card border-0 shadow-sm mb-4 bg-white">
                 <div class="card-header bg-white py-3">
-                    <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-calculator text-primary me-2"></i>Stamp Duty & Govt Fees</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark"><i class="fas fa-calculator text-primary me-2"></i>Stamp Duty & Govt Fees</h2>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-2">
@@ -170,7 +170,7 @@ $appointment = $appointment ?? [];
             <?php if ($appointment['status'] === 'requested'): ?>
                 <div class="card border-0 shadow-sm mb-4 border-top border-4 border-primary">
                     <div class="card-header bg-white py-3">
-                        <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-check-circle text-primary me-2"></i>Confirm SRO Date Slot</h6>
+                        <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark"><i class="fas fa-check-circle text-primary me-2"></i>Confirm SRO Date Slot</h2>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="/admin/registry-appointments/<?= $appointment['id'] ?>/confirm">
@@ -203,7 +203,7 @@ $appointment = $appointment ?? [];
             <?php if ($appointment['status'] === 'slot_confirmed'): ?>
                 <div class="card border-0 shadow-sm mb-4 border-top border-4 border-success">
                     <div class="card-header bg-white py-3">
-                        <h6 class="fw-bold mb-0 text-dark"><i class="fas fa-stamp text-success me-2"></i>Record Registry Deed Completion</h6>
+                        <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark"><i class="fas fa-stamp text-success me-2"></i>Record Registry Deed Completion</h2>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="/admin/registry-appointments/<?= $appointment['id'] ?>/complete" enctype="multipart/form-data">

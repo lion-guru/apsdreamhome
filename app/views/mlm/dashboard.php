@@ -51,7 +51,7 @@
     <div class="row g-3">
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-star me-2"></i>Top Performers</h6></div>
+                <div class="card-header bg-white border-bottom-0"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-star me-2"></i>Top Performers</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($topPerformers)): ?>
                         <?php foreach ($topPerformers as $i => $p): ?>
@@ -69,7 +69,7 @@
         </div>
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Network Growth</h6></div>
+                <div class="card-header bg-white border-bottom-0"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-bar me-2"></i>Network Growth</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($growthData)): ?>
                         <?php foreach ($growthData as $g): ?>

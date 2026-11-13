@@ -107,7 +107,7 @@ function complianceBadgeClass($status) {
         <div class="col-md-8">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0"><i class="fas fa-clock me-2 text-muted"></i>Last Checked</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-clock me-2 text-muted"></i>Last Checked</h2>
                     <span class="text-muted"><?= $last_checked ? date('d M Y, h:i A', strtotime($last_checked)) : 'Never' ?></span>
                 </div>
                 <div class="row g-2">
@@ -168,7 +168,7 @@ function complianceBadgeClass($status) {
         <div class="col-lg-8">
             <div class="p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0"><i class="fas fa-lightbulb me-2 text-warning"></i>Top Recommendations</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-lightbulb me-2 text-warning"></i>Top Recommendations</h2>
                     <a href="<?= $base ?>/admin/compliance-scorecard/recommendations" >View All →'</a>
                 </div>
                 <?php if (empty($recommendations)): ?>

@@ -120,7 +120,7 @@ $totalValue = array_sum(array_column($plotList, 'total_price'));
 <!-- Plots Table Card -->
 <div class="card border-0 shadow-sm" style="border-radius:12px;">
     <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3 px-4">
-        <h6 class="mb-0 fw-bold">All Plots</h6>
+        <h2  class="fs-6 fw-semibold mb-0 fw-bold">All Plots</h2>
         <div class="btn-group btn-group-sm" role="group">
             <button type="button" class="btn btn-secondary plot-filter-btn active" data-status="all">All <span class="badge bg-white text-secondary ms-1"><?= $total ?></span></button>
             <button type="button" class="btn btn-outline-secondary plot-filter-btn" data-status="available">Available <span class="badge bg-success ms-1"><?= $availableCount ?></span></button>

@@ -58,7 +58,7 @@
                             </span>
                         </div>
                         <div class="ms-3">
-                            <h6 class="mb-0"><?php echo htmlspecialchars($nav->userName()); ?></h6>
+                            <h2  class="fs-6 fw-semibold mb-0"><?php echo htmlspecialchars($nav->userName()); ?></h2>
                             <small class="text-muted"><?php echo __($nav->userRole()); ?></small>
                         </div>
                     </div>

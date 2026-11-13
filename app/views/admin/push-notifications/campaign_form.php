@@ -28,7 +28,7 @@
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header">
-                        <h6 class="mb-0 fw-bold">Campaign Details</h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold">Campaign Details</h2>
                     </div>
                     <div class="card-body p-4">
                         <div class="mb-3">
@@ -66,7 +66,7 @@
 
                 <div class="card border-0 shadow-sm">
                     <div class="card-header">
-                        <h6 class="mb-0 fw-bold">Targeting</h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold">Targeting</h2>
                     </div>
                     <div class="card-body p-4">
                         <div class="row g-3">

@@ -23,7 +23,7 @@
     </div>
     <?php if (!empty($by_source)): ?>
         <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-filter me-2"></i><?= __('admin_status_by_source') ?></h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-filter me-2"></i><?= __('admin_status_by_source') ?></h2></div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">

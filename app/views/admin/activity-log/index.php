@@ -9,7 +9,7 @@
     <div class="row mb-4">
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-fire me-2"></i><?= __('admin_top_actions') ?></h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-fire me-2"></i><?= __('admin_top_actions') ?></h2></div>
                 <div class="card-body p-0">
                     <?php if (empty($top_actions)): ?>
                         <p class="text-muted text-center py-3"><?= __('admin_no_data') ?></p>
@@ -31,7 +31,7 @@
         </div>
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-list me-2"></i><?= __('admin_recent_activity') ?></h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i><?= __('admin_recent_activity') ?></h2></div>
                 <div class="card-body p-0">
                     <?php if (empty($logs)): ?>
                         <p class="text-muted text-center py-4"><?= __('admin_no_activity') ?></p>

@@ -10,7 +10,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <div class="card-body d-flex align-items-center gap-3 flex-wrap">
         <div style="font-size:2.5rem">🌅</div>
         <div class="flex-grow-1">
-            <h6 class="mb-0">Aaj Ka Post Taiyaar Hai!</h6>
+            <h2  class="fs-6 fw-semibold mb-0">Aaj Ka Post Taiyaar Hai!</h2>
             <small class="text-muted">Good Morning post tumhari branding ke saath — ek click me banao, status lagao.</small>
         </div>
         <div class="d-flex gap-2">

@@ -68,7 +68,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white">
-                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Upload Guidelines</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>Upload Guidelines</h2>
                 </div>
                 <div class="card-body">
                     <ul class="list-unstyled mb-0">

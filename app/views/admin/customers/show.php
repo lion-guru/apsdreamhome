@@ -301,7 +301,7 @@
                             <div class="col-12 col-md-6 col-lg-4 mb-3">
                                 <div class="card shadow-sm border-0">
                                     <div class="card-header bg-white py-3">
-                                        <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($doc['document_type'] ?? 'Document') ?></h6>
+                                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-alt me-2"></i><?= htmlspecialchars($doc['document_type'] ?? 'Document') ?></h2>
                                     </div>
                                     <div class="card-body aps-cp-card-body">
                                         <p class="text-muted small"><strong>Document No:</strong> <?= htmlspecialchars($doc['document_number'] ?? 'N/A') ?></p>

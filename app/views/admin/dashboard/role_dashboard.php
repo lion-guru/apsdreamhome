@@ -109,7 +109,7 @@ if ($role === 'associate') {
     <div class="col-lg-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h2>
             </div>
             <div class="card-body">
                 <div class="row g-2">
@@ -188,7 +188,7 @@ if ($role === 'associate') {
     <div class="col-lg-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white border-0">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-clock text-info me-2"></i>Recent Activity</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-clock text-info me-2"></i>Recent Activity</h2>
             </div>
             <div class="card-body">
                 <?php if (empty($recentItems)): ?>

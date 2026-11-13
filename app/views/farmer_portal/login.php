@@ -25,7 +25,7 @@ $GLOBALS['_html_doc_started'] = true;
         .btn-login:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(22,163,74,0.3); }
         .icon-leaf { color: #16a34a; font-size: 3rem; }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
     <div class="container">

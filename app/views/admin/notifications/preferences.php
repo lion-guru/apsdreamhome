@@ -84,7 +84,7 @@ $prefs = $prefs ?? [];
                                                         <i class="fas <?= htmlspecialchars($meta['icon']) ?>"></i>
                                                     </div>
                                                     <div>
-                                                        <h6 class="mb-0 fw-bold text-dark fs-6"><?= htmlspecialchars($meta['title']) ?></h6>
+                                                        <h2  class="fs-6 fw-semibold mb-0 fw-bold text-dark"><?= htmlspecialchars($meta['title']) ?></h2>
                                                         <small class="text-muted"><?= htmlspecialchars($meta['desc']) ?></small>
                                                     </div>
                                                 </div>
@@ -131,7 +131,7 @@ $prefs = $prefs ?? [];
             <!-- Web Push Browser Integration Card -->
             <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
                 <div class="card-header bg-white py-3 border-0 border-bottom">
-                    <h6 class="mb-0 fw-bold text-dark"><i class="fas fa-desktop text-success me-2"></i>Browser Web Push Status</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold text-dark"><i class="fas fa-desktop text-success me-2"></i>Browser Web Push Status</h2>
                 </div>
                 <div class="card-body p-3">
                     <p class="small text-muted mb-3">Web Push delivers high-priority alerts to your Windows / macOS desktop even when your browser tab is closed.</p>
@@ -154,7 +154,7 @@ $prefs = $prefs ?? [];
             <!-- Automated 90-Day Archive Card -->
             <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
                 <div class="card-header bg-white py-3 border-0 border-bottom d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold text-dark"><i class="fas fa-archive text-warning me-2"></i>Automated Notification Archive</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold text-dark"><i class="fas fa-archive text-warning me-2"></i>Automated Notification Archive</h2>
                     <span class="badge bg-light text-dark border">90 Days</span>
                 </div>
                 <div class="card-body p-3">

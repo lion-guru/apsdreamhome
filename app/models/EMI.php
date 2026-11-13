@@ -265,15 +265,16 @@ class EMI extends Model
 
             // 1. Create payment record in main payments table
             $sqlPay = "INSERT INTO payments (
-                            transaction_id, customer_id, property_id, amount, 
+                            transaction_id, customer_id, property_id, amount, total_amount,
                             payment_type, gateway, description, status, 
                             payment_date, created_by
-                        ) VALUES (?, ?, ?, ?, 'emi', ?, ?, 'completed', ?, ?)";
+                        ) VALUES (?, ?, ?, ?, ?, 'emi', ?, ?, 'completed', ?, ?)";
             $stmtPay = $db->prepare($sqlPay);
             $stmtPay->execute([
                 $transactionId,
                 $installment['customer_id'],
                 $installment['property_id'],
+                (float)($installment['amount'] ?? $totalAmount),
                 $totalAmount,
                 $paymentMethod,
                 $description . ($notes ? " - " . $notes : ""),
@@ -532,15 +533,16 @@ class EMI extends Model
             $description = "EMI Foreclosure Payment";
 
             $sqlPay = "INSERT INTO payments (
-                            transaction_id, customer_id, property_id, amount, 
+                            transaction_id, customer_id, property_id, amount, total_amount,
                             payment_type, gateway, description, status, 
                             payment_date, created_by
-                        ) VALUES (?, ?, ?, ?, 'foreclosure', ?, ?, 'completed', ?, ?)";
+                        ) VALUES (?, ?, ?, ?, ?, 'foreclosure', ?, ?, 'completed', ?, ?)";
             $stmtPay = $db->prepare($sqlPay);
             $stmtPay->execute([
                 $transactionId,
                 $plan['customer_id'],
                 $plan['property_id'],
+                $amount,
                 $amount,
                 $paymentMethod,
                 $description . ($notes ? " - " . $notes : ""),

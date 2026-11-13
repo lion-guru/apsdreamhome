@@ -199,7 +199,7 @@ $colonies = $colonies ?? [];
             <div class="mb-4">
                 <div class="card border-gold bg-light">
                     <div class="card-header bg-primary text-white py-2">
-                        <h6 class="mb-0"><i class="fas fa-file-contract me-2"></i>Master Deed & Agreement</h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-contract me-2"></i>Master Deed & Agreement</h2>
                     </div>
                     <div class="card-body">
                         <p class="text-muted small mb-2">The Master Deed governs all terms of the plot booking. Both the associate and customer must accept these terms. <strong>Booking token amount (₹51,000) is strictly non-refundable.</strong></p>

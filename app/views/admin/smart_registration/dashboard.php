@@ -188,7 +188,7 @@ $channels = $channels ?? [];
     <!-- Sessions Table -->
     <div class="card border-0 shadow-sm mt-4">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h6 class="mb-0 fw-bold"><i class="fas fa-list me-2"></i>Recent Sessions (Last 50)</h6>
+            <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-list me-2"></i>Recent Sessions (Last 50)</h2>
             <div class="d-flex gap-2">
                 <select class="form-select form-select-sm" id="filterStatus" onchange="filterSessions()">
                     <option value="">All Status</option>

@@ -31,15 +31,9 @@ class DealController extends AdminController
         $stats = ['total_deals' => 0, 'total_value' => 0, 'won_this_month' => ['count' => 0, 'total' => 0], 'lost_this_month' => ['count' => 0]];
 
         try {
-            $stageRows = [
-                ['id' => 'lead', 'stage_name' => 'New Lead'],
-                ['id' => 'contacted', 'stage_name' => 'Contacted'],
-                ['id' => 'qualified', 'stage_name' => 'Qualified'],
-                ['id' => 'proposal', 'stage_name' => 'Proposal'],
-                ['id' => 'negotiation', 'stage_name' => 'Negotiation'],
-                ['id' => 'closed_won', 'stage_name' => 'Closed Won'],
-                ['id' => 'closed_lost', 'stage_name' => 'Closed Lost']
-            ];
+            $stageRows = $this->db->fetchAll(
+                "SELECT id, name AS stage_name, stage_order FROM deal_stages WHERE is_active = 1 ORDER BY stage_order"
+            ) ?: [];
             foreach ($stageRows as $s) {
                 $sid = intval($s['id'] ?? 1);
                 $stages[] = ['id' => $sid, 'stage_name' => $s['stage_name'], 'stage_order' => $sid];
@@ -100,26 +94,27 @@ class DealController extends AdminController
     {
         $this->requireAdmin();
         $base = BASE_URL;
-        $deals = []; $stages = []; $stats = [];
+        $deals = []; $stages = []; $stats = ['total_deals' => 0, 'total_value' => 0.0, 'won_count' => 0, 'lost_count' => 0];
 
         try {
-            $stages = [
-                ['id' => 'lead', 'name' => 'New Lead', 'color' => 'info'],
-                ['id' => 'contacted', 'name' => 'Contacted', 'color' => 'primary'],
-                ['id' => 'qualified', 'name' => 'Qualified', 'color' => 'success'],
-                ['id' => 'proposal', 'name' => 'Proposal', 'color' => 'warning'],
-                ['id' => 'negotiation', 'name' => 'Negotiation', 'color' => 'orange'],
-                ['id' => 'closed_won', 'name' => 'Closed Won', 'color' => 'success'],
-                ['id' => 'closed_lost', 'name' => 'Closed Lost', 'color' => 'danger']
-            ];
+            $stages = $this->db->fetchAll("SELECT id, name, color FROM deal_stages WHERE is_active = 1 ORDER BY stage_order") ?: [];
+            $deals  = $this->db->fetchAll(
+                "SELECT d.*, u.name as assigned_to_name, l.name as lead_name, l.email as lead_email
+                 FROM deals d
+                 LEFT JOIN users u ON d.assigned_to = u.id
+                 LEFT JOIN leads l ON d.lead_id = l.id
+                 WHERE d.status = 'active'
+                 ORDER BY d.expected_close_date ASC"
+            ) ?: [];
 
-            $deals = $this->db->fetchAll("SELECT d.*, u.name as assigned_to_name FROM deals d LEFT JOIN users u ON d.assigned_to = u.id WHERE d.status = 'active' ORDER BY d.created_at DESC") ?: [];
+            $wonRow  = $this->db->fetch("SELECT COUNT(*) c, COALESCE(SUM(deal_value),0) t FROM deals WHERE status = 'won' AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())") ?: ['c' => 0, 't' => 0];
+            $lostRow = $this->db->fetch("SELECT COUNT(*) c FROM deals WHERE status = 'lost' AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())") ?: ['c' => 0];
 
             $stats = [
                 'total_deals' => count($deals),
-                'total_value' => array_sum(array_column($deals, 'deal_value')),
-                'won_this_month' => ['count' => 0, 'total' => 0],
-                'lost_this_month' => ['count' => 0]
+                'total_value' => array_sum(array_map('floatval', array_column($deals, 'deal_value'))),
+                'won_count'   => (int)($wonRow['c'] ?? 0),
+                'lost_count'  => (int)($lostRow['c'] ?? 0),
             ];
         } catch (\Throwable $e) {
             error_log("DealController kanban error: " . $e->getMessage());
@@ -127,11 +122,10 @@ class DealController extends AdminController
 
         $dealsByStage = [];
         foreach ($stages as $s) {
-            $dealsByStage[$s['id']] = [];
+            $dealsByStage[(int)$s['id']] = [];
         }
         foreach ($deals as $deal) {
-            $sid = $deal['stage_id'] ?? 'lead';
-            $sid = is_numeric($sid) ? $sid : $sid;
+            $sid = (int)($deal['stage_id'] ?? 0);
             if (isset($dealsByStage[$sid])) {
                 $dealsByStage[$sid][] = $deal;
             }
@@ -159,13 +153,13 @@ class DealController extends AdminController
         $leads = []; $users = []; $properties = []; $stages = []; $users = [];
 
         try {
-            $leads = $this->db->fetchAll("SELECT id, name, email, phone FROM leads WHERE status = 'open' ORDER BY created_at DESC LIMIT 50") ?: [];
+            $leads = $this->db->fetchAll("SELECT id, name, email, phone FROM leads WHERE status NOT IN ('closed_won','closed_lost','converted','not_interested') ORDER BY created_at DESC LIMIT 50") ?: [];
             $tid = (int)$this->tenantId();
             $tidWhere = $tid > 1 ? " WHERE tenant_id = ?" : "";
             $users = $this->db->fetchAll("SELECT id, name, email, phone FROM users{$tidWhere} ORDER BY created_at DESC LIMIT 50", $tid > 1 ? [$tid] : []) ?: [];
             [$tidSql, $tidParams] = $this->tenantWhere();
             $users = $this->db->fetchAll("SELECT id, name FROM users WHERE status = 'active'{$tidSql} ORDER BY name ASC", $tidParams) ?: [];
-            $stages = [['id' => 1, 'stage_name' => 'New'], ['id' => 2, 'stage_name' => 'Contacted'], ['id' => 3, 'stage_name' => 'Qualified'], ['id' => 4, 'stage_name' => 'Negotiation'], ['id' => 5, 'stage_name' => 'Closed Won']];
+            $stages = $this->db->fetchAll("SELECT id, name AS stage_name FROM deal_stages WHERE is_active = 1 ORDER BY stage_order") ?: [];
         } catch (\Throwable $e) {
             error_log("DealController create error: " . $e->getMessage());
         }
@@ -220,7 +214,7 @@ class DealController extends AdminController
                 "INSERT INTO deals (deal_name, deal_value, lead_id,
                                    stage_id, probability, expected_close_date, assigned_to,
                                    created_by, status, tenant_id)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'open', ?)"
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?)"
             );
 
             $stmt->execute([
@@ -273,6 +267,11 @@ class DealController extends AdminController
              WHERE d.id = ?",
             [$dealId]
         );
+
+        if ($deal && !empty($deal['stage_id'])) {
+            $stg = $this->db->fetch("SELECT name FROM deal_stages WHERE id = ?", [(int)$deal['stage_id']]);
+            $deal['stage_name'] = $stg['name'] ?? 'New Lead';
+        }
 
         if (!$deal) {
             $_SESSION['error'] = 'Deal not found';
@@ -406,63 +405,6 @@ class DealController extends AdminController
     /**
      * Move deal to new stage (AJAX)
      */
-    public function moveStage()
-    {
-        $this->requireAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-            exit;
-        }
-
-        $dealId = intval($_POST['deal_id'] ?? 0);
-        $newStageId = intval($_POST['stage_id'] ?? 0);
-
-        // Get current deal
-        $currentDeal = $this->db->fetch("SELECT * FROM deals WHERE id = ?", [$dealId]);
-        if (!$currentDeal) {
-            echo json_encode(['success' => false, 'message' => 'Deal not found']);
-            exit;
-        }
-
-        // Check if moving to closed stage
-        $newStage = $this->db->fetch("SELECT * FROM deal_stages WHERE id = ?", [$newStageId]);
-        if (!$newStage) {
-            echo json_encode(['success' => false, 'message' => 'Stage not found']);
-            exit;
-        }
-
-        try {
-            $status = 'open';
-            $closedAt = null;
-
-            if ($newStage['stage_name'] === 'Closed Won') {
-                $status = 'won';
-                $closedAt = date('Y-m-d H:i:s');
-            } elseif ($newStage['stage_name'] === 'Closed Lost') {
-                $status = 'lost';
-                $closedAt = date('Y-m-d H:i:s');
-            }
-
-            $stmt = $this->db->prepare(
-                "UPDATE deals
-                 SET stage_id = ?, probability = ?, status = ?, updated_at = NOW()
-                 WHERE id = ?"
-            );
-            $stmt->execute([$newStageId, $newStage['probability'], $status, $dealId]);
-
-            // Log activity
-            $this->logDealActivity(
-                $dealId,
-                'stage_change',
-                'Stage moved to ' . $newStage['stage_name']
-            );
-
-            echo json_encode(['success' => true, 'message' => 'Deal stage updated']);
-        } catch (\Throwable $e) {
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-        }
-    }
-
     /**
      * Delete deal
      */
@@ -562,7 +504,7 @@ class DealController extends AdminController
     protected function getStageName($stageId)
     {
         try {
-            $stage = $this->db->fetch("SELECT stage_name FROM deal_stages WHERE id = ?", [$stageId]);
+            $stage = $this->db->fetch("SELECT name AS stage_name FROM deal_stages WHERE id = ?", [$stageId]);
             return $stage ? $stage['stage_name'] : 'Unknown';
         } catch (\Throwable $e) {
             return 'Unknown';
@@ -580,8 +522,42 @@ class DealController extends AdminController
         }
     }
 
+    /**
+     * Move deal to a new pipeline stage (AJAX, routed: POST /admin/deals/{id}/stage).
+     * Contract consumed by the deals kanban JS: form field `stage` = deals stage id,
+     * X-CSRF-Token header, JSON {success, message} response.
+     */
     public function updateStage($id) {
         $this->requireAdmin();
-        try { $stage = $_POST['stage'] ?? 'new'; $tid = (int)$this->tenantId(); $this->db->query("UPDATE deals SET stage_id = ? WHERE id = ? AND tenant_id = ?", [$stage, $id, $tid]); $this->setFlash('success', 'Stage updated'); } catch (\Throwable $e) { $this->setFlash('error', $e->getMessage()); } return $this->redirect("/admin/deals/show/$id");
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+            exit;
+        }
+        try {
+            $this->validateCsrfOrFail();
+            $tid = (int)$this->tenantId();
+            $stageId = intval($_POST['stage'] ?? 0);
+            $stage = $this->db->fetch("SELECT id, name, probability FROM deal_stages WHERE id = ? AND is_active = 1", [$stageId]);
+            if (!$stage) {
+                echo json_encode(['success' => false, 'message' => 'Stage not found']);
+                exit;
+            }
+            $name = (string)$stage['name'];
+            $status = 'active';
+            if ($name === 'Closed Won') { $status = 'won'; }
+            elseif ($name === 'Closed Lost') { $status = 'lost'; }
+            $probability = max(0, min(100, (int)round((float)($stage['probability'] ?? 50))));
+            $this->db->query(
+                "UPDATE deals SET stage_id = ?, probability = ?, status = ?, updated_at = NOW() WHERE id = ? AND tenant_id = ?",
+                [$stageId, $probability, $status, intval($id), $tid]
+            );
+            echo json_encode(['success' => true, 'message' => 'Moved to ' . $name]);
+            exit;
+        } catch (\Throwable $e) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            exit;
+        }
     }
 }

@@ -209,7 +209,7 @@ $rateDesc = $contract['rate_description'] ?? 'As per agreed terms';
             </p>
             <hr class="my-2" style="border-color: #0f766e; opacity: 0.25;">
             <h5 class="contract-title mt-2 mb-1">LAND BROKER ENGAGEMENT, DUE DILIGENCE & INDEMNITY CONTRACT</h5>
-            <h6 class="fw-bold text-secondary mb-0">(भूमि दलाली, विधिक दायित्व एवं क्षतिपूर्ति अनुबंध पत्र)</h6>
+            <h2  class="fs-6 fw-semibold fw-bold text-secondary mb-0">(भूमि दलाली, विधिक दायित्व एवं क्षतिपूर्ति अनुबंध पत्र)</h2>
         </div>
 
         <!-- PREAMBLE & PARTIES -->

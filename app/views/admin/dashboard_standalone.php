@@ -130,7 +130,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <div class="card aps-cp-card">
             <div class="card-body aps-cp-card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="mb-0"><i class="fas fa-user-clock me-2"></i>Recent Leads</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-user-clock me-2"></i>Recent Leads</h2>
                     <a href="<?php echo e($base); ?>/admin/leads" class="btn btn-sm btn-primary">View All</a>
                 </div>
                 <?php if(!empty($recentLeads)): ?>

@@ -75,7 +75,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
     <!-- Logs Table -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3 border-0">
-            <h6 class="fw-bold mb-0"><i class="fas fa-leaf text-success me-2"></i>Park Horticulture Logs &amp; Tree Plantation Register</h6>
+            <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-leaf text-success me-2"></i>Park Horticulture Logs &amp; Tree Plantation Register</h2>
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">

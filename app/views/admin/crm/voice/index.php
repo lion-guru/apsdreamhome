@@ -18,7 +18,7 @@
 
     <div class="row g-3 mb-4">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm"><div class="card-header"><h6 class="mb-0"><i class="fas fa-terminal me-1"></i>Voice Commands (Hindi)</h6></div>
+            <div class="card border-0 shadow-sm"><div class="card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-terminal me-1"></i>Voice Commands (Hindi)</h2></div>
                 <div class="card-body">
                     <div class="row g-2">
                         <div class="col-6"><div class="p-2 bg-light rounded"><small class="fw-bold">“अगली बैठक”</small><br><span class="text-muted">Next meeting info</span></div></div>
@@ -32,7 +32,7 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm"><div class="card-header d-flex justify-content-between align-items-center"><h6 class="mb-0"><i class="fas fa-history me-1"></i>Recent Voice Activity</h6><a href="<?= BASE_URL ?>/admin/crm/voice/call" class="btn btn-sm btn-outline-primary"><i class="fas fa-plus me-1"></i>Start Call</a></div>
+            <div class="card border-0 shadow-sm"><div class="card-header d-flex justify-content-between align-items-center"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-history me-1"></i>Recent Voice Activity</h2><a href="<?= BASE_URL ?>/admin/crm/voice/call" class="btn btn-sm btn-outline-primary"><i class="fas fa-plus me-1"></i>Start Call</a></div>
                 <div class="card-body">
                 <?php if (empty($recent)): ?>
                     <div class="text-center py-4">

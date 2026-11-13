@@ -23,7 +23,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
             <!-- iframe Method -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-primary text-white">
-                    <h6 class="mb-0"><i class="fas fa-window-maximize me-2"></i>iframe Embed</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-window-maximize me-2"></i>iframe Embed</h2>
                 </div>
                 <div class="card-body">
                     <p class="text-muted mb-3">Copy this code and paste it wherever you want the form to appear:</p>
@@ -42,7 +42,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
             <!-- JavaScript Embed -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-dark text-white">
-                    <h6 class="mb-0"><i class="fas fa-code me-2"></i>JavaScript Embed (Recommended)</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-code me-2"></i>JavaScript Embed (Recommended)</h2>
                 </div>
                 <div class="card-body">
                     <p class="text-muted mb-3">Add this code to your website's HTML. The form will load in a popup/modal:</p>
@@ -56,7 +56,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
             <!-- Direct URL -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-success text-white">
-                    <h6 class="mb-0"><i class="fas fa-link me-2"></i>Direct URL</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-link me-2"></i>Direct URL</h2>
                 </div>
                 <div class="card-body">
                     <p class="text-muted mb-3">Share this link directly via email, WhatsApp, or social media:</p>
@@ -77,7 +77,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-warning">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-lightbulb me-2"></i>Embedding Tips</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-lightbulb me-2"></i>Embedding Tips</h2>
                 </div>
                 <div class="card-body">
                     <h6 class="fw-bold">For WordPress:</h6>
@@ -93,7 +93,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
 
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-info text-white">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-chart-bar me-2"></i>Form Stats</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-chart-bar me-2"></i>Form Stats</h2>
                 </div>
                 <div class="card-body">
                     <?php

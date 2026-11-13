@@ -64,7 +64,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                         <div class="card border-0 shadow-sm rounded-3 text-center p-3">
                             <div class="card-body">
                                 <i class="fas fa-university text-primary fa-2x mb-2"></i>
-                                <h6 class="fw-bold mb-0"><?= $bank ?></h6>
+                                <h2  class="fs-6 fw-semibold fw-bold mb-0"><?= $bank ?></h2>
                                 <small class="text-success">e-Mandate Supported</small>
                             </div>
                         </div>

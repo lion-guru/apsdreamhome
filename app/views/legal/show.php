@@ -72,7 +72,7 @@ $doc = $document ?? [];
                 <?php if (!empty($related)): ?>
                     <div class="card border-0 shadow-sm rounded-4 mb-4">
                         <div class="card-header bg-transparent border-0 pt-4 px-4">
-                            <h6 class="fw-bold mb-0"><i class="fas fa-file-alt text-warning me-2"></i><?= __('related_documents') ?: 'Related Documents' ?></h6>
+                            <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-file-alt text-warning me-2"></i><?= __('related_documents') ?: 'Related Documents' ?></h2>
                         </div>
                         <div class="list-group list-group-flush px-3 pb-3">
                             <?php foreach ($related as $rel): ?>

@@ -58,7 +58,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'pending' => 0, 'completed' => 
         .empty-state i { font-size: 48px; margin-bottom: 16px; color: <?= $dept_color ?>40; }
         .empty-state h5 { color: #475569; font-weight: 600; margin-bottom: 8px; }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
 

@@ -41,7 +41,7 @@ $recentCalls = $recentCalls ?? [];
     <div class="col-12">
         <div class="card border-warning">
             <div class="card-header bg-warning text-dark">
-                <h6 class="mb-0"><i class="fas fa-calendar-check me-1"></i>Today's Follow-ups (<?= count($todayFollowups) ?>)</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-calendar-check me-1"></i>Today's Follow-ups (<?= count($todayFollowups) ?>)</h2>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

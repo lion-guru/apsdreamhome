@@ -221,7 +221,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
                             <div class="timeline-step">
                                 <div class="timeline-step-dot <?= $e($m['status']) ?>"></div>
                                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-1">
-                                    <h6 class="fw-bold mb-0"><?= $e($m['title']) ?></h6>
+                                    <h2  class="fs-6 fw-semibold fw-bold mb-0"><?= $e($m['title']) ?></h2>
                                     <span class="badge bg-<?= $m['status'] === 'completed' ? 'success' : ($m['status'] === 'in_progress' ? 'warning text-dark' : 'secondary') ?>">
                                         <?= ucfirst(str_replace('_', ' ', $m['status'])) ?> (<?= (int)$m['completion_pct'] ?>%)
                                     </span>

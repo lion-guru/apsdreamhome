@@ -56,7 +56,7 @@
         </div>
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Flag Info</h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>Flag Info</h2></div>
                 <div class="card-body">
                     <p class="mb-1"><small class="text-muted">Key</small><br><code><?= htmlspecialchars($flag['key']) ?></code></p>
                     <p class="mb-1"><small class="text-muted">Status</small><br>

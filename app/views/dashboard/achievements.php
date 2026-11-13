@@ -116,7 +116,7 @@ $page_title = 'My Achievements - APS Dream Home';
                             <div class="d-flex align-items-center">
                                 <span class="badge bg-<?= $index < 3 ? 'warning' : 'secondary' ?> me-2">#<?= $index + 1 ?></span>
                                 <div>
-                                    <h6 class="mb-0"><?= htmlspecialchars($user['name'] ?? '') ?></h6>
+                                    <h2  class="fs-6 fw-semibold mb-0"><?= htmlspecialchars($user['name'] ?? '') ?></h2>
                                     <small class="text-muted"><?= $user['badge_count'] ?> badges</small>
                                 </div>
                             </div>
@@ -138,7 +138,7 @@ $page_title = 'My Achievements - APS Dream Home';
                         <div class="list-group-item">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="mb-0"><?= ucfirst(str_replace('_', ' ', $point['action'])) ?></h6>
+                                    <h2  class="fs-6 fw-semibold mb-0"><?= ucfirst(str_replace('_', ' ', $point['action'])) ?></h2>
                                     <small class="text-muted"><?= date('M d, h:i A', strtotime($point['created_at'])) ?></small>
                                 </div>
                                 <span class="badge bg-success">+<?= $point['points'] ?></span>
@@ -162,7 +162,7 @@ $page_title = 'My Achievements - APS Dream Home';
                     <div class="d-flex align-items-center">
                         <i class="fas fa-user-plus fa-2x text-primary me-3"></i>
                         <div>
-                            <h6 class="mb-0">Registration</h6>
+                            <h2  class="fs-6 fw-semibold mb-0">Registration</h2>
                             <small class="text-muted">+100 points</small>
                         </div>
                     </div>
@@ -171,7 +171,7 @@ $page_title = 'My Achievements - APS Dream Home';
                     <div class="d-flex align-items-center">
                         <i class="fas fa-home fa-2x text-info me-3"></i>
                         <div>
-                            <h6 class="mb-0">View Property</h6>
+                            <h2  class="fs-6 fw-semibold mb-0">View Property</h2>
                             <small class="text-muted">+10 points</small>
                         </div>
                     </div>
@@ -180,7 +180,7 @@ $page_title = 'My Achievements - APS Dream Home';
                     <div class="d-flex align-items-center">
                         <i class="fas fa-envelope fa-2x text-warning me-3"></i>
                         <div>
-                            <h6 class="mb-0">Submit Enquiry</h6>
+                            <h2  class="fs-6 fw-semibold mb-0">Submit Enquiry</h2>
                             <small class="text-muted">+25 points</small>
                         </div>
                     </div>
@@ -189,7 +189,7 @@ $page_title = 'My Achievements - APS Dream Home';
                     <div class="d-flex align-items-center">
                         <i class="fas fa-car fa-2x text-success me-3"></i>
                         <div>
-                            <h6 class="mb-0">Site Visit</h6>
+                            <h2  class="fs-6 fw-semibold mb-0">Site Visit</h2>
                             <small class="text-muted">+50 points</small>
                         </div>
                     </div>

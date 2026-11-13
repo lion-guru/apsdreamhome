@@ -123,7 +123,7 @@ $testLabels = [
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div class="d-flex align-items-center">
                             <i class="<?= $meta['icon'] ?> text-<?= $statusCls ?> me-2 fs-5"></i>
-                            <h6 class="fw-bold mb-0"><?= htmlspecialchars($meta['label'] ?? '') ?></h6>
+                            <h2  class="fs-6 fw-semibold fw-bold mb-0"><?= htmlspecialchars($meta['label'] ?? '') ?></h2>
                         </div>
                         <span class="badge bg-<?= $statusCls ?>"><?= strtoupper($result['status']) ?></span>
                     </div>

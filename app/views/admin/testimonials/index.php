@@ -89,7 +89,7 @@ $avgRating = $total > 0 ? round($avgRating / $total, 1) : 0;
 <!-- Table Card -->
 <div class="card border-0 shadow-sm" style="border-radius:12px;">
     <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <h6 class="mb-0 fw-bold">All Testimonials</h6>
+        <h2  class="fs-6 fw-semibold mb-0 fw-bold">All Testimonials</h2>
         <div class="d-flex gap-2">
             <input type="text" id="testimonialSearch" class="form-control form-control-sm" placeholder="Search..." style="width:180px;">
             <select id="testimonialStatusFilter" class="form-select form-select-sm" style="width:140px;">

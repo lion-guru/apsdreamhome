@@ -17,7 +17,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-arrow-trend-up me-2"></i>Registration Trends</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-arrow-trend-up me-2"></i>Registration Trends</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -42,7 +42,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-activity me-2"></i>Activity Analysis</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-activity me-2"></i>Activity Analysis</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php $activity = $userData['activity_analysis'] ?? []; ?>
@@ -59,7 +59,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-globe me-2"></i>Geographic Distribution</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-globe me-2"></i>Geographic Distribution</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -84,7 +84,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-user-clock me-2"></i>Retention Metrics</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-user-clock me-2"></i>Retention Metrics</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php $retention = $userData['retention_metrics'] ?? []; ?>

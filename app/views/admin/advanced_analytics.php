@@ -52,7 +52,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-arrow-trend-up me-2"></i>Growth Trends</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-arrow-trend-up me-2"></i>Growth Trends</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -79,7 +79,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-location-dot me-2"></i>Top Locations</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-location-dot me-2"></i>Top Locations</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -108,7 +108,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-user-group me-2"></i>User Engagement</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-user-group me-2"></i>User Engagement</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php $engagement = $analyticsData['user_engagement'] ?? []; ?>
@@ -122,7 +122,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-building me-2"></i>Property Performance</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-building me-2"></i>Property Performance</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php $perf = $analyticsData['property_performance'] ?? []; ?>

@@ -7264,3 +7264,38 @@ User instruction: "do next amd aur koi suggestion ho iss peoject ko ko best bana
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **512** (this session; S511 logged above).
+
+## Session 512: Deals Pipeline & WhatsApp Enums Alignment, EMI Payment Insert Fix, 1-Click Receipt Downloads & Platform-Wide Heading Normalization (2026-11-14)
+
+### Trigger
+User instruction: "ok do next apne suggestion se sare kaam karte raho bina ruke" — continuous autonomous CEO/Senior Software Developer execution. Eliminating MySQL strict-mode enum mismatches, fixing money insertion SQL queries, adding 1-click customer installment receipt downloads, and normalizing heading hierarchies across admin and user views.
+
+### The headline
+
+**1. DEALS PIPELINE STAGES & STATUS ENUM ALIGNMENT**
+- **Deals Pipeline Stages (`seed_deal_stages_s512.php`)**: Seeded the 7 canonical deals pipeline stages (`New Lead`, `Contacted`, `Qualified`, `Proposal`, `Negotiation`, `Closed Won`, `Closed Lost`) with assigned probabilities and status colors into `deal_stages`.
+- **Deal Status Enum (`DealController.php`)**: Repointed deal status from invalid `'open'` to live database enum `'active'`, preventing MySQL 1265 truncation errors under strict mode on deal creation and stage transitions. Refined lead fetch query to filter out closed/converted leads.
+
+**2. EMI PAYMENT SQL PLACEHOLDER & MONEY-FLOW REPAIR (`models/EMI.php`)**
+- **Payments Table Insert Fix**: In `EMI::recordPayment()`, fixed `payments` INSERT query which listed 11 columns (`transaction_id`, `customer_id`, `property_id`, `amount`, `total_amount`, `payment_type`, `gateway`, `description`, `status`, `payment_date`, `created_by`) but only provided 10 values, which caused `SQLSTATE[21S01]` column count mismatches. Bound both `amount` and `total_amount` with valid parameters.
+- **Foreclosure Payment Type Support (`extend_whatsapp_messages_payments_enums_s512.php`)**: Widened `payments.payment_type` enum to include `'foreclosure'`, allowing EMI foreclosures to be cleanly recorded.
+
+**3. WHATSAPP QUEUE & TEMPLATES ENUM SYNCHRONIZATION (`WhatsAppManagerService.php`)**
+- Appended `'pending'` to `whatsapp_messages.status` enum via migration `extend_whatsapp_messages_payments_enums_s512.php`, resolving 1265 truncation errors during message queueing.
+- Aligned template queries in `WhatsAppManagerService` from nonexistent `'APPROVED'` to live status enum `'active'`.
+
+**4. 1-CLICK EMI PAYMENT RECEIPT DOWNLOADS (`views/pages/user_installments.php`)**
+- Replaced the plain "Completed" text for paid installments on `/user/installments` with a direct 1-click **Receipt** PDF link (`/user/receipt/{id}`), allowing buyers to view and download their official payment receipts instantly.
+
+**5. PLATFORM-WIDE ACCESSIBILITY & HEADING NORMALIZATION (280+ Views)**
+- Normalized unsemantic `<h6>` card headers across admin, CRM, audit, billing, colonies, and user views to structured `<h2 class="fs-6 fw-semibold">` tags, resolving WCAG 1.3.1 heading hierarchy skips while maintaining pixel-perfect typography.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> `1508/1508 [OK] No errors`.
+- **Master Test Runner**: `php testing/master_test_runner.php` -> `11/11 PASSED (100% HEALTHY, 24.48s)`.
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **513** (this session; S512 logged above).

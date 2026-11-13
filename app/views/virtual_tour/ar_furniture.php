@@ -58,7 +58,7 @@
         <div class="col-lg-4">
             <?php foreach ($furniture_catalog as $room => $items): ?>
             <div class="card shadow-sm border-0 mb-3">
-                <div class="card-header bg-white border-0"><h6 class="mb-0"><i class="fas fa-<?= $room === 'living_room' ? 'tv' : ($room === 'bedroom' ? 'bed' : 'utensils') ?> me-2 text-info"></i><?= ucfirst(str_replace('_', ' ', $room)) ?></h6></div>
+                <div class="card-header bg-white border-0"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-<?= $room === 'living_room' ? 'tv' : ($room === 'bedroom' ? 'bed' : 'utensils') ?> me-2 text-info"></i><?= ucfirst(str_replace('_', ' ', $room)) ?></h2></div>
                 <div class="card-body p-2">
                     <div class="row g-2">
                         <?php foreach ($items as $item): ?>

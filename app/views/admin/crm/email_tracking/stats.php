@@ -20,7 +20,7 @@
 
     <div class="row g-3">
         <div class="col-md-8">
-            <div class="card border-0 shadow-sm"><div class="card-header"><h6 class="mb-0"><i class="fas fa-link me-1"></i>Top Clicked Links</h6></div>
+            <div class="card border-0 shadow-sm"><div class="card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-link me-1"></i>Top Clicked Links</h2></div>
                 <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>URL</th><th>Clicks</th><th>Unique</th></tr></thead><tbody>
                 <?php if (empty($top_links)): ?><tr><td colspan="3" class="text-center py-3 text-muted">No click data yet</td></tr>
                 <?php else: foreach ($top_links as $l): ?><tr><td><small><?= htmlspecialchars(substr($l['link_url'], 0, 60)) ?></small></td><td><span class="badge bg-primary"><?= $l['clicks'] ?></span></td><td><?= $l['unique_clicks'] ?></td></tr><?php endforeach; endif; ?>
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm"><div class="card-header"><h6 class="mb-0"><i class="fas fa-chart-line me-1"></i>Daily Activity</h6></div>
+            <div class="card border-0 shadow-sm"><div class="card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-line me-1"></i>Daily Activity</h2></div>
                 <div class="card-body">
                 <?php if (empty($daily)): ?><p class="text-muted text-center">No data</p>
                 <?php else: $grouped = []; foreach ($daily as $d) { $grouped[$d['day']][] = $d; } krsort($grouped); foreach (array_slice($grouped, 0, 14, true) as $day => $events): ?>

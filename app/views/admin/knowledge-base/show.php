@@ -54,7 +54,7 @@
                         <div class="col-12">
                             <div class="card aps-cp-card">
                                 <div class="card-header aps-cp-card-header">
-                                    <h6 class="mb-0">Content</h6>
+                                    <h2  class="fs-6 fw-semibold mb-0">Content</h2>
                                 </div>
                                 <div class="card-body aps-cp-card-body">
                                     <?php echo nl2br(htmlspecialchars($article['content'] ?? '')); ?>

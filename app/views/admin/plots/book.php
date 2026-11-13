@@ -84,7 +84,7 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
                 <!-- Plot Demarcation Card -->
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
-                        <h6 class="mb-0 fw-bold"><i class="fas fa-map-marked-alt text-warning me-2"></i>Plot Demarcation &amp; Specs</h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-map-marked-alt text-warning me-2"></i>Plot Demarcation &amp; Specs</h2>
                         <span class="badge bg-<?= ($plot['status'] ?? '') === 'available' ? 'success' : 'warning text-dark' ?>">
                             <?= strtoupper(htmlspecialchars((string)($plot['status'] ?? 'AVAILABLE'))) ?>
                         </span>
@@ -155,7 +155,7 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
                 <!-- Live Financial Summary Card -->
                 <div class="card shadow-sm border-0 border-top border-3 border-success mb-4">
                     <div class="card-header bg-white py-3">
-                        <h6 class="mb-0 fw-bold text-dark"><i class="fas fa-calculator text-success me-2"></i>Live Payment Breakdown</h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold text-dark"><i class="fas fa-calculator text-success me-2"></i>Live Payment Breakdown</h2>
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -188,7 +188,7 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
             <div class="col-lg-7">
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0 fw-bold"><i class="fas fa-edit me-2"></i>Customer &amp; Commercial Terms</h6>
+                        <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-edit me-2"></i>Customer &amp; Commercial Terms</h2>
                         <span class="badge bg-light text-primary">Official Booking Engine</span>
                     </div>
                     <div class="card-body p-4">

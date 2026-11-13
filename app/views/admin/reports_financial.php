@@ -47,7 +47,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-arrow-trend-up me-2"></i>Revenue</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-arrow-trend-up me-2"></i>Revenue</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -73,7 +73,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-hand-holding-usd me-2"></i>Commission</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-hand-holding-usd me-2"></i>Commission</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -101,7 +101,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-receipt me-2"></i>Expenses</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-receipt me-2"></i>Expenses</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -126,7 +126,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-percentage me-2"></i>Profit & Loss Summary</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-percentage me-2"></i>Profit & Loss Summary</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php $pl = $profit_loss ?? $finData['profit_loss'] ?? []; ?>

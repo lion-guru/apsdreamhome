@@ -10,7 +10,7 @@ $invoice = $invoice ?? [];
     <title><?= htmlspecialchars($invoice['invoice_number'] ?? 'Invoice') ?> - APS Dream Home</title>
     <link href="<?= $base ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= $base ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?= $base ?>/assets/css/uiux-fixes.css?v=13">
     <style>
         @media print {
             .no-print { display: none !important; }

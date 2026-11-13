@@ -111,7 +111,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                     </div>
                     <div>
                         <h6 class="text-muted mb-1">Newest</h6>
-                        <h6 class="mb-0 small"><?= htmlspecialchars($stats['newest'] ?? 'Never') ?></h6>
+                        <h2  class="fs-6 fw-semibold mb-0 small"><?= htmlspecialchars($stats['newest'] ?? 'Never') ?></h2>
                         <small class="text-muted">Oldest: <?= htmlspecialchars($stats['oldest'] ?? '-') ?></small>
                     </div>
                 </div>

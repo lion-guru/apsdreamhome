@@ -104,7 +104,7 @@ $perPage = $per_page ?? 20;
             <!-- Users by Role -->
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white"><h6 class="mb-0">Users by Role</h6></div>
+                    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Users by Role</h2></div>
                     <div class="card-body d-flex align-items-center justify-content-center p-4">
                         <canvas id="roleChart" width="250" height="250"></canvas>
                     </div>
@@ -114,7 +114,7 @@ $perPage = $per_page ?? 20;
             <!-- Users by Status -->
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white"><h6 class="mb-0">Users by Status</h6></div>
+                    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Users by Status</h2></div>
                     <div class="card-body d-flex align-items-center justify-content-center p-4">
                         <canvas id="statusChart" width="250" height="250"></canvas>
                     </div>
@@ -124,7 +124,7 @@ $perPage = $per_page ?? 20;
             <!-- Registrations Trend (Last 30 Days) -->
             <div class="col-md-4">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white"><h6 class="mb-0">Registrations (30 Days)</h6></div>
+                    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Registrations (30 Days)</h2></div>
                     <div class="card-body">
                         <canvas id="trendChart" width="250" height="200"></canvas>
                     </div>

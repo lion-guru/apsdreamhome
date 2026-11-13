@@ -51,7 +51,7 @@
     <div class="row g-3">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-list me-2"></i>Call Log</h6></div>
+                <div class="card-header bg-white border-bottom-0"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Call Log</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($callLog)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
@@ -76,7 +76,7 @@
         </div>
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom-0"><h6 class="mb-0"><i class="fas fa-chart-simple me-2"></i>Today's Stats</h6></div>
+                <div class="card-header bg-white border-bottom-0"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-simple me-2"></i>Today's Stats</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($todayStats)): ?>
                         <?php foreach ($todayStats as $key => $val): ?>

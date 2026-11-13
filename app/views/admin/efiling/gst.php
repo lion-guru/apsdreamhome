@@ -17,7 +17,7 @@ ob_start();
 <!-- Monthly Summary -->
 <?php if (!empty($summary['success']) && !empty($summary['summary'])): ?>
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Monthly GST Summary</h6></div>
+    <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-bar me-2"></i>Monthly GST Summary</h2></div>
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
@@ -54,7 +54,7 @@ ob_start();
 <div class="row g-4 mb-4">
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-export me-2 text-primary"></i>Generate GSTR-1</h6></div>
+            <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-export me-2 text-primary"></i>Generate GSTR-1</h2></div>
             <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?= BASE_URL ?>/admin/efiling/gst/gstr1">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
@@ -88,7 +88,7 @@ ob_start();
     </div>
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-file-invoice me-2 text-warning"></i>Generate GSTR-3B</h6></div>
+            <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-invoice me-2 text-warning"></i>Generate GSTR-3B</h2></div>
             <div class="card-body aps-cp-card-body">
                 <form method="POST" action="<?= BASE_URL ?>/admin/efiling/gst/gstr3b">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
@@ -125,7 +125,7 @@ ob_start();
 <!-- Submissions -->
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white border-bottom d-flex justify-content-between">
-        <h6 class="mb-0"><i class="fas fa-paper-plane me-2"></i>GST Filing Submissions</h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-paper-plane me-2"></i>GST Filing Submissions</h2>
         <a href="<?= BASE_URL ?>/admin/efiling/submissions?type=gstr1&fy=<?= urlencode($fy) ?>" class="btn btn-sm btn-outline-primary">View All</a>
     </div>
     <div class="card-body p-0">

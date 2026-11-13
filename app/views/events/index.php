@@ -43,7 +43,7 @@
 
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-            <h6 class="mb-0"><i class="fas fa-list me-2"></i>Recent Events</h6>
+            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-list me-2"></i>Recent Events</h2>
             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#publishEventModal"><i class="fas fa-plus me-1"></i>Publish Event</button>
         </div>
         <div class="card-body p-0">

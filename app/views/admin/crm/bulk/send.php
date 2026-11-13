@@ -14,7 +14,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-paper-plane me-2"></i>Compose & Send</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-paper-plane me-2"></i>Compose & Send</h2>
                 </div>
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/crm/bulk-send/send" id="bulkForm">
@@ -80,7 +80,7 @@
             <!-- Preview Panel -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-eye me-2"></i>Message Preview</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-eye me-2"></i>Message Preview</h2>
                 </div>
                 <div class="card-body">
                     <div id="messagePreview" class="p-3 bg-light rounded">
@@ -92,7 +92,7 @@
             <!-- Recipient Preview -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-users me-2"></i>Recipients</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-users me-2"></i>Recipients</h2>
                 </div>
                 <div class="card-body" id="recipientPreview">
                     <p class="text-muted text-center mb-0">Click "Preview Recipients" to see who will receive this</p>
@@ -103,7 +103,7 @@
             <?php if (!empty($recent_campaigns)): ?>
             <div class="card border-0 shadow-sm mt-4">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i>Recent Campaigns</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-history me-2"></i>Recent Campaigns</h2>
                 </div>
                 <div class="card-body p-0">
                     <?php foreach (array_slice($recent_campaigns, 0, 5) as $c): ?>

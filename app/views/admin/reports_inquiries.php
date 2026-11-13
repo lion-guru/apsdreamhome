@@ -56,7 +56,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Inquiry Trends</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-line me-2"></i>Inquiry Trends</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -82,7 +82,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Response Times</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-clock me-2"></i>Response Times</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -109,7 +109,7 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-users-gear me-2"></i>Agent Performance</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-users-gear me-2"></i>Agent Performance</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

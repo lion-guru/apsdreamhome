@@ -151,7 +151,7 @@ $statusColors = [
     <!-- Inquiries Table Card -->
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
         <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-            <h6 class="mb-0 fw-bold">Inquiries List (<?= $total ?> records)</h6>
+            <h2  class="fs-6 fw-semibold mb-0 fw-bold">Inquiries List (<?= $total ?> records)</h2>
             <span class="text-muted small">Showing page <?= $page ?> of <?= $totalPages ?></span>
         </div>
         <div class="table-responsive">

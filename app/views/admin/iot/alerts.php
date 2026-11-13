@@ -76,7 +76,7 @@ $typeLabel = [
             <div class="card border-0 shadow-sm h-100" style="border-radius:12px; border-left:4px solid #0d6efd;">
                 <div class="card-body p-3">
                     <span class="text-muted small fw-semibold text-uppercase">Offline Rule</span>
-                    <h6 class="fw-bold mb-0 text-dark mt-1"><?= (int)$offlineMinutes ?> min silence</h6>
+                    <h2  class="fs-6 fw-semibold fw-bold mb-0 text-dark mt-1"><?= (int)$offlineMinutes ?> min silence</h2>
                 </div>
             </div>
         </div>

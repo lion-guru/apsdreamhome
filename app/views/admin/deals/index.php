@@ -30,7 +30,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h6 class="card-title mb-0">Pipeline Value</h6>
+                            <h2  class="fs-6 fw-semibold card-title mb-0">Pipeline Value</h2>
                             <h3 class="mb-0">₹<?= number_format(floatval($stats['pipeline_value'] ?? 0), 0) ?>L</h3>
                         </div>
                         <i class="fas fa-funnel-dollar fa-2x opacity-50"></i>
@@ -43,7 +43,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h6 class="card-title mb-0">Won Deals</h6>
+                            <h2  class="fs-6 fw-semibold card-title mb-0">Won Deals</h2>
                             <h3 class="mb-0"><?= $stats['won_count'] ?? 0 ?></h3>
                         </div>
                         <i class="fas fa-trophy fa-2x opacity-50"></i>
@@ -56,7 +56,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h6 class="card-title mb-0">Total Revenue</h6>
+                            <h2  class="fs-6 fw-semibold card-title mb-0">Total Revenue</h2>
                             <h3 class="mb-0">₹<?= number_format(floatval($stats['total_revenue'] ?? 0), 0) ?>L</h3>
                         </div>
                         <i class="fas fa-rupee-sign fa-2x opacity-50"></i>
@@ -69,7 +69,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h6 class="card-title mb-0">Win Rate</h6>
+                            <h2  class="fs-6 fw-semibold card-title mb-0">Win Rate</h2>
                             <h3 class="mb-0">
                                 <?php
                                 $total = ($stats['won_count'] ?? 0) + ($stats['lost_count'] ?? 0);
@@ -152,7 +152,8 @@ $page_title = 'Deal Tracking - APS Dream Home';
                         </tr>
                         <?php else: ?>
                         <?php foreach ($deals as $deal):
-                            $stageColor = array_column($stages, 'color', 'id')[$deal['stage']] ?? 'secondary';
+                            $stageColor = array_column($stages, 'color', 'id')[$deal['stage_id']] ?? 'secondary';
+                            $stageName = array_column($stages, 'name', 'id')[$deal['stage_id']] ?? 'New Lead';
                         ?>
                             <tr>
                                 <td>
@@ -163,7 +164,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                                 <td><strong>₹<?= number_format(floatval($deal['deal_value'] ?? 0), 0) ?>L</strong></td>
                                 <td>
                                     <span class="badge bg-<?= $stageColor ?>">
-                                        <?= ucfirst($deal['stage']) ?>
+                                        <?= htmlspecialchars($stageName) ?>
                                     </span>
                                 </td>
                                 <td>

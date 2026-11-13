@@ -106,7 +106,7 @@ if (!function_exists('getTypeIconClass')) {
     <!-- Earnings by Type -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-            <h6 class="fw-bold mb-0"><i class="fas fa-chart-pie text-info me-2"></i>Earnings Breakdown</h6>
+            <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-chart-pie text-info me-2"></i>Earnings Breakdown</h2>
             <span class="badge bg-info bg-opacity-10 text-info small">All Sources</span>
         </div>
         <div class="card-body p-3">
@@ -154,7 +154,7 @@ if (!function_exists('getTypeIconClass')) {
     <!-- Recent Earnings -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
-            <h6 class="fw-bold mb-0"><i class="fas fa-history text-primary me-2"></i>Recent Activity</h6>
+            <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-history text-primary me-2"></i>Recent Activity</h2>
             <a href="<?= $base ?><?= $refUrl ?>" class="small text-decoration-none">View All</a>
         </div>
         <div class="card-body p-0">

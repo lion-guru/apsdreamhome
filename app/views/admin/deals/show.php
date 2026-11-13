@@ -8,8 +8,8 @@
         <div class="card mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><strong><?= htmlspecialchars($deal['name'] ?? $deal['deal_name'] ?? 'Untitled Deal') ?></strong></span>
-                <?php $stage = $deal['stage'] ?? 'lead'; $stageLower = strtolower($stage); ?>
-                <span class="badge bg-<?= in_array($stageLower, ['won', 'closed_won']) ? 'success' : (in_array($stageLower, ['lost', 'closed_lost']) ? 'danger' : ($stageLower === 'negotiating' ? 'warning' : ($stageLower === 'proposal' ? 'info' : 'primary'))) ?> fs-6">
+                <?php $stage = $deal['stage_name'] ?? 'New Lead'; $stageLower = str_replace(' ', '_', strtolower($stage)); ?>
+                <span class="badge bg-<?= in_array($stageLower, ['won', 'closed_won']) ? 'success' : (in_array($stageLower, ['lost', 'closed_lost']) ? 'danger' : (($stageLower === 'negotiating' || $stageLower === 'negotiation') ? 'warning' : ($stageLower === 'proposal' ? 'info' : 'primary'))) ?> fs-6">
                     <?= ucfirst($stage) ?>
                 </span>
             </div>
@@ -71,14 +71,14 @@
         <div class="card aps-cp-card">
             <div class="card-header aps-cp-card-header">Stage Progress</div>
             <div class="card-body aps-cp-card-body">
-                <?php $stages = ['lead', 'qualified', 'proposal', 'negotiating', 'closed_won']; $currentIdx = array_search($stageLower, $stages); ?>
+                <?php $stages = ['new_lead', 'contacted', 'qualified', 'proposal', 'negotiation', 'closed_won', 'closed_lost']; $currentIdx = array_search($stageLower, $stages); if ($currentIdx === false) { $currentIdx = 0; } ?>
                 <div class="list-group list-group-flush">
                     <?php foreach ($stages as $i => $s): ?>
                         <div class="list-group-item d-flex align-items-center border-0 ps-0">
                             <span class="badge bg-<?= $i <= $currentIdx ? 'success' : 'light text-muted' ?> me-2 rounded-circle">
                                 <i class="fas fa-<?= $i < $currentIdx ? 'check' : ($i === $currentIdx ? 'chevron-right' : 'circle') ?>"></i>
                             </span>
-                            <span class="<?= $i === $currentIdx ? 'fw-bold' : '' ?>"><?= ucfirst($s) ?></span>
+                            <span class="<?= $i === $currentIdx ? 'fw-bold' : '' ?>"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $s))) ?></span>
                         </div>
                     <?php endforeach; ?>
                 </div>

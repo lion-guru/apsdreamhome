@@ -628,7 +628,7 @@ $base = BASE_URL;
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
     <div class="bg-grid"></div>

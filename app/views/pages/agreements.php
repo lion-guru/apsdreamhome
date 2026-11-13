@@ -24,7 +24,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
                             <div class="card-header bg-primary text-white p-3">
-                                <h6 class="fw-bold mb-0"><i class="fas fa-file-contract me-2"></i>Sale Agreement</h6>
+                                <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-file-contract me-2"></i>Sale Agreement</h2>
                             </div>
                             <div class="card-body p-4">
                                 <p class="text-muted small">The primary agreement between buyer and seller outlining terms of the property sale, payment schedule, and possession timeline.</p>
@@ -35,7 +35,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
                             <div class="card-header bg-info text-white p-3">
-                                <h6 class="fw-bold mb-0"><i class="fas fa-hammer me-2"></i>Construction Agreement</h6>
+                                <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-hammer me-2"></i>Construction Agreement</h2>
                             </div>
                             <div class="card-body p-4">
                                 <p class="text-muted small">Applicable for under-construction properties. Defines construction specifications, material standards, and completion timeline.</p>
@@ -46,7 +46,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
                             <div class="card-header bg-success text-white p-3">
-                                <h6 class="fw-bold mb-0"><i class="fas fa-home me-2"></i>Allotment Letter</h6>
+                                <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-home me-2"></i>Allotment Letter</h2>
                             </div>
                             <div class="card-body p-4">
                                 <p class="text-muted small">Official letter allotting the specific property unit to the buyer with details of area, floor, and specifications.</p>
@@ -57,7 +57,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
                             <div class="card-header bg-warning text-dark p-3">
-                                <h6 class="fw-bold mb-0"><i class="fas fa-tools me-2"></i>Maintenance Agreement</h6>
+                                <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-tools me-2"></i>Maintenance Agreement</h2>
                             </div>
                             <div class="card-body p-4">
                                 <p class="text-muted small">Terms for ongoing property maintenance, common area upkeep, and society formation after possession.</p>
@@ -68,7 +68,7 @@ $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title'
                     <div class="col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
                             <div class="card-header bg-secondary text-white p-3">
-                                <h6 class="fw-bold mb-0"><i class="fas fa-key me-2"></i>Rental Agreement</h6>
+                                <h2  class="fs-6 fw-semibold fw-bold mb-0"><i class="fas fa-key me-2"></i>Rental Agreement</h2>
                             </div>
                             <div class="card-body p-4">
                                 <p class="text-muted small">For investors renting out their property. Standard rental agreement with security deposit and tenancy terms.</p>

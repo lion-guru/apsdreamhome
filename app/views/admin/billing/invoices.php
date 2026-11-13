@@ -73,7 +73,7 @@ $totalPaid     = array_sum(array_map(fn($s) => (float)($s['amount'] ?? 0), array
 <!-- Subscription History Table -->
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h6 class="mb-0"><i class="fas fa-history me-2"></i>Subscription History</h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-history me-2"></i>Subscription History</h2>
         <span class="badge bg-secondary"><?= count($subscriptions) ?></span>
     </div>
     <div class="card-body p-0">

@@ -98,7 +98,7 @@ $activityIcons = [
         <!-- Lead Info Card -->
         <div class="card lead-info-card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Lead Information</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>Lead Information</h2>
             </div>
             <div class="card-body">
                 <div class="row g-3">
@@ -153,7 +153,7 @@ $activityIcons = [
         <!-- Status Update -->
         <div class="card lead-info-card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0"><i class="fas fa-sync-alt me-2"></i>Update Status</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-sync-alt me-2"></i>Update Status</h2>
             </div>
             <div class="card-body">
                 <form method="POST" action="<?= $base ?>/agent/leads/<?= (int)$lead['id'] ?>/status" class="d-flex gap-2 align-items-end">
@@ -177,7 +177,7 @@ $activityIcons = [
         <!-- Add Note -->
         <div class="card lead-info-card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Add Note</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-sticky-note me-2"></i>Add Note</h2>
             </div>
             <div class="card-body">
                 <form method="POST" action="<?= $base ?>/agent/leads/<?= (int)$lead['id'] ?>/note">
@@ -194,7 +194,7 @@ $activityIcons = [
         <?php if (!empty($notes)): ?>
         <div class="card lead-info-card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notes (<?= count($notes) ?>)</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-sticky-note me-2"></i>Notes (<?= count($notes) ?>)</h2>
             </div>
             <div class="card-body">
                 <?php foreach ($notes as $n): ?>
@@ -215,7 +215,7 @@ $activityIcons = [
         <!-- Quick Actions -->
         <div class="card lead-info-card shadow-sm mb-4">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h2>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
@@ -241,7 +241,7 @@ $activityIcons = [
         <!-- Activity Timeline -->
         <div class="card lead-info-card shadow-sm">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0"><i class="fas fa-stream me-2"></i>Activity Timeline</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-stream me-2"></i>Activity Timeline</h2>
             </div>
             <div class="card-body">
                 <?php if (empty($activities)): ?>

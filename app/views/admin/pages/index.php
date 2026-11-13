@@ -69,7 +69,7 @@ $legalSlugs = ['terms-conditions','privacy-policy','refund-policy','disclaimer',
 <!-- Pages Table -->
 <div class="card border-0 shadow-sm" style="border-radius:12px;">
     <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
-        <h6 class="mb-0 fw-bold">All Pages</h6>
+        <h2  class="fs-6 fw-semibold mb-0 fw-bold">All Pages</h2>
         <input type="text" id="pageSearch" class="form-control form-control-sm" placeholder="Search pages..." style="width:200px;">
     </div>
     <div class="card-body p-0">

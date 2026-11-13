@@ -67,7 +67,7 @@ $base = BASE_URL ?? '';
 <div class="row">
     <div class="col-lg-4">
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-rupee-sign me-2 text-success"></i>Monthly Revenue</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-rupee-sign me-2 text-success"></i>Monthly Revenue</h2></div>
             <div class="card-body text-center">
                 <h2 >₹<?= number_format($stats['monthly_revenue'] ?? 0) ?></h2>
                 <small class="text-muted">from active subscriptions</small>
@@ -76,7 +76,7 @@ $base = BASE_URL ?? '';
     </div>
     <div class="col-lg-8">
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>Plan Distribution</h6></div>
+            <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>Plan Distribution</h2></div>
             <div class="card-body">
                 <?php if (!empty($stats['by_plan'])): ?>
                     <div class="d-flex flex-wrap gap-3">
@@ -98,7 +98,7 @@ $base = BASE_URL ?? '';
 <!-- Recent Tenants -->
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Tenants</h6>
+        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-clock me-2"></i>Recent Tenants</h2>
         <a href="<?= $base ?>/admin/tenants" class="btn btn-sm btn-outline-primary">View All</a>
     </div>
     <div class="card-body p-0">
@@ -143,7 +143,7 @@ $base = BASE_URL ?? '';
 
 <!-- Subscription Plans -->
 <div class="card shadow-sm mb-4">
-    <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-tags me-2"></i>Subscription Plans</h6></div>
+    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-tags me-2"></i>Subscription Plans</h2></div>
     <div class="card-body">
         <div class="row">
             <?php foreach ($plans as $plan): ?>

@@ -56,7 +56,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Property Trends</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-line me-2"></i>Property Trends</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -83,7 +83,7 @@
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h6 class="mb-0"><i class="fas fa-trophy me-2"></i>Top Performers</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-trophy me-2"></i>Top Performers</h2>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

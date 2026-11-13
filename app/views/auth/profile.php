@@ -26,7 +26,7 @@
         </div>
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-edit me-2"></i><?= __('auth_edit_profile') ?></h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-edit me-2"></i><?= __('auth_edit_profile') ?></h2></div>
                 <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>user/profile">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
@@ -66,7 +66,7 @@
                 </div>
             </div>
             <div class="card border-0 shadow-sm mt-4">
-                <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-info-circle me-2"></i><?= __('auth_account_info') ?></h6></div>
+                <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i><?= __('auth_account_info') ?></h2></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <tr><th><?= __('auth_member_since') ?></th><td><?= htmlspecialchars($user['created_at'] ?? 'N/A') ?></td></tr>

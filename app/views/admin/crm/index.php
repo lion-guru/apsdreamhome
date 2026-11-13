@@ -137,7 +137,7 @@ $kpis = [
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-0">
-                    <h6 class="crm-section-title mb-0"><i class="fas fa-bullseye"></i>Recent Leads</h6>
+                    <h2  class="fs-6 fw-semibold crm-section-title mb-0"><i class="fas fa-bullseye"></i>Recent Leads</h2>
                     <a href="<?= $base ?>/admin/leads" class="btn btn-sm btn-outline-primary">View All <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
                 <div class="card-body p-0">
@@ -211,7 +211,7 @@ $kpis = [
             <!-- Support Tickets -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-0">
-                    <h6 class="crm-section-title mb-0"><i class="fas fa-ticket-alt"></i>Support Tickets</h6>
+                    <h2  class="fs-6 fw-semibold crm-section-title mb-0"><i class="fas fa-ticket-alt"></i>Support Tickets</h2>
                     <a href="<?= $base ?>/admin/crm/support" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
                 <div class="card-body p-0">
@@ -239,7 +239,7 @@ $kpis = [
             <!-- Pending Follow-ups -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-0">
-                    <h6 class="crm-section-title mb-0"><i class="fas fa-clock"></i>Pending Follow-ups</h6>
+                    <h2  class="fs-6 fw-semibold crm-section-title mb-0"><i class="fas fa-clock"></i>Pending Follow-ups</h2>
                     <a href="<?= $base ?>/admin/leads/followups" class="btn btn-sm btn-outline-warning">View All</a>
                 </div>
                 <div class="card-body p-0">
@@ -273,7 +273,7 @@ $kpis = [
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3 border-0">
-                    <h6 class="crm-section-title mb-0"><i class="fas fa-project-diagram"></i>Pipeline Summary</h6>
+                    <h2  class="fs-6 fw-semibold crm-section-title mb-0"><i class="fas fa-project-diagram"></i>Pipeline Summary</h2>
                 </div>
                 <div class="card-body">
                     <?php $pipeline = $pipeline ?? []; ?>
@@ -306,7 +306,7 @@ $kpis = [
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3 border-0">
-                    <h6 class="crm-section-title mb-0"><i class="fas fa-filter"></i>Lead Status Distribution</h6>
+                    <h2  class="fs-6 fw-semibold crm-section-title mb-0"><i class="fas fa-filter"></i>Lead Status Distribution</h2>
                 </div>
                 <div class="card-body">
                     <?php $statusDist = $statusDist ?? []; $totalAll = array_sum(array_map(fn($s) => (int)$s['cnt'], $statusDist)) ?: 1; ?>

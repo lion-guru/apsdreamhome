@@ -62,7 +62,7 @@ $insights = $insights ?? [];
     <div class="row g-4 mb-4">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">Call Performance</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Call Performance</h2></div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-3"><span class="text-muted">Total Calls</span><strong><?= number_format($totalCalls) ?></strong></div>
                     <div class="d-flex justify-content-between mb-3"><span class="text-muted">Interested</span><strong class="text-success"><?= number_format($interestedCalls) ?></strong></div>
@@ -73,7 +73,7 @@ $insights = $insights ?? [];
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">Lead Pipeline Health</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Lead Pipeline Health</h2></div>
                 <div class="card-body">
                     <?php
                     $total = max($totalLeads, 1);
@@ -98,7 +98,7 @@ $insights = $insights ?? [];
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">New Leads This Week</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">New Leads This Week</h2></div>
                 <div class="card-body text-center py-4">
                     <div ><?= number_format($newLeadsWeek) ?></div>
                     <div class="text-muted mt-1">leads in the last 7 days</div>
@@ -109,7 +109,7 @@ $insights = $insights ?? [];
 
     <?php if (!empty($staleLeads)): ?>
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-clock text-warning me-2"></i>Stale Leads (No Activity &gt;7 days)</h6></div>
+        <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-clock text-warning me-2"></i>Stale Leads (No Activity &gt;7 days)</h2></div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
@@ -134,7 +134,7 @@ $insights = $insights ?? [];
 
     <?php if (!empty($topPerformingScripts)): ?>
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-trophy text-success me-2"></i>Top Performing Call Scripts</h6></div>
+        <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-trophy text-success me-2"></i>Top Performing Call Scripts</h2></div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
@@ -157,7 +157,7 @@ $insights = $insights ?? [];
 
     <?php if (!empty($sourcePerformance)): ?>
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-bottom"><h6 class="mb-0"><i class="fas fa-filter text-info me-2"></i>Lead Source Win Rates</h6></div>
+        <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-filter text-info me-2"></i>Lead Source Win Rates</h2></div>
         <div class="card-body">
             <?php foreach ($sourcePerformance as $src): ?>
             <div class="d-flex align-items-center mb-3">

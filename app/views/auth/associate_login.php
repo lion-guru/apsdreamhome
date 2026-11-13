@@ -136,7 +136,7 @@ $base = BASE_URL;
             .quick-stats{margin:1rem 1.25rem 0;padding:.7rem .5rem}
         }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
     <div class="login-wrapper">

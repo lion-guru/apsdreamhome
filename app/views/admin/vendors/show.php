@@ -80,7 +80,7 @@ $contracts = $contracts ?? [];
             <!-- Contact Card -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-light">
-                    <h6 class="mb-0"><i class="fas fa-address-card me-2"></i>Contact Details</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-address-card me-2"></i>Contact Details</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
@@ -109,7 +109,7 @@ $contracts = $contracts ?? [];
             <!-- Quick Actions -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light">
-                    <h6 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="d-grid gap-2">
@@ -136,7 +136,7 @@ $contracts = $contracts ?? [];
             <!-- Tax & Compliance -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-light">
-                    <h6 class="mb-0"><i class="fas fa-file-invoice me-2"></i>Tax & Compliance</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-invoice me-2"></i>Tax & Compliance</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="row">
@@ -155,7 +155,7 @@ $contracts = $contracts ?? [];
             <!-- Bank Details -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-light">
-                    <h6 class="mb-0"><i class="fas fa-university me-2"></i>Bank Details</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-university me-2"></i>Bank Details</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="row">
@@ -184,7 +184,7 @@ $contracts = $contracts ?? [];
             <!-- Contract Period -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-light">
-                    <h6 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Contract Period</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-calendar-alt me-2"></i>Contract Period</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="row">
@@ -204,7 +204,7 @@ $contracts = $contracts ?? [];
             <?php if (!empty($vendor['notes'])): ?>
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-light">
-                    <h6 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Notes</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-sticky-note me-2"></i>Notes</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <p class="mb-0"><?= nl2br(htmlspecialchars($vendor['notes'] ?? '')) ?></p>
@@ -215,7 +215,7 @@ $contracts = $contracts ?? [];
             <!-- Recent Contracts -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas fa-file-contract me-2"></i>Recent Contracts / Purchase Orders</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-contract me-2"></i>Recent Contracts / Purchase Orders</h2>
                     <a href="<?= BASE_URL ?>/admin/vendors/contracts/<?= $vendor['id'] ?>" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
                 <div class="card-body aps-cp-card-body">

@@ -25,7 +25,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
 <!-- Direct Referrals -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-user-friends me-2"></i>Direct Referrals (<?= count($directReferrals) ?>)</h6></div>
+    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-user-friends me-2"></i>Direct Referrals (<?= count($directReferrals) ?>)</h2></div>
     <div class="card-body p-0">
         <?php if (empty($directReferrals)): ?>
         <div class="text-center py-4 text-muted">No direct referrals yet</div>
@@ -53,7 +53,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
 <!-- Full Team (3 Levels) -->
 <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-project-diagram me-2"></i>Full Team — 3 Levels Deep (<?= count($team) ?>)</h6></div>
+    <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-project-diagram me-2"></i>Full Team — 3 Levels Deep (<?= count($team) ?>)</h2></div>
     <div class="card-body p-0">
         <?php if (empty($team)): ?>
         <div class="text-center py-4 text-muted">No team members found</div>

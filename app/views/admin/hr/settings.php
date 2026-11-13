@@ -9,7 +9,7 @@ $page_title = $page_title ?? 'HR Settings';
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-tags me-2 text-primary"></i>Leave Types</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-tags me-2 text-primary"></i>Leave Types</h2>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive"><table class="table table-sm mb-0">
@@ -38,7 +38,7 @@ $page_title = $page_title ?? 'HR Settings';
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-clock me-2 text-info"></i>Shift Types</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-clock me-2 text-info"></i>Shift Types</h2>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive"><table class="table table-sm mb-0">
@@ -71,7 +71,7 @@ $page_title = $page_title ?? 'HR Settings';
     <div class="col-12">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-info-circle me-2 text-secondary"></i>Quick Links</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-info-circle me-2 text-secondary"></i>Quick Links</h2>
             </div>
             <div class="card-body aps-cp-card-body">
                 <div class="row g-2">

@@ -120,7 +120,7 @@ function inr($n) { return '₹' . number_format($n); }
     <div class="col-md-6">
       <div class="card border-0 shadow-sm h-100">
         <div class="card-header bg-transparent border-0">
-          <h6 class="mb-0"><i class="fas fa-th-large me-2 text-primary"></i>Plot Distribution</h6>
+          <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-th-large me-2 text-primary"></i>Plot Distribution</h2>
         </div>
         <div class="card-body">
           <div class="row text-center">
@@ -163,7 +163,7 @@ function inr($n) { return '₹' . number_format($n); }
     <div class="col-md-6">
       <div class="card border-0 shadow-sm h-100">
         <div class="card-header bg-transparent border-0">
-          <h6 class="mb-0"><i class="fas fa-hard-hat me-2 text-warning"></i>Development Costs by Type</h6>
+          <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-hard-hat me-2 text-warning"></i>Development Costs by Type</h2>
         </div>
         <div class="card-body">
           <?php if (empty($devCosts)): ?>
@@ -200,7 +200,7 @@ function inr($n) { return '₹' . number_format($n); }
     <div class="col-md-6">
       <div class="card border-0 shadow-sm h-100">
         <div class="card-header bg-transparent border-0">
-          <h6 class="mb-0"><i class="fas fa-th me-2 text-info"></i>Block-wise Breakdown</h6>
+          <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-th me-2 text-info"></i>Block-wise Breakdown</h2>
         </div>
         <div class="card-body">
           <?php if (empty($blockBreakdown)): ?>
@@ -231,7 +231,7 @@ function inr($n) { return '₹' . number_format($n); }
     <div class="col-md-6">
       <div class="card border-0 shadow-sm h-100">
         <div class="card-header bg-transparent border-0">
-          <h6 class="mb-0"><i class="fas fa-layer-group me-2 text-purple"></i>Plot Type Breakdown</h6>
+          <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-layer-group me-2 text-purple"></i>Plot Type Breakdown</h2>
         </div>
         <div class="card-body">
           <?php if (empty($typeBreakdown)): ?>
@@ -277,7 +277,7 @@ function inr($n) { return '₹' . number_format($n); }
   <!-- ROI Projection -->
   <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-transparent border-0">
-      <h6 class="mb-0"><i class="fas fa-chart-area me-2 text-success"></i>ROI Projection</h6>
+      <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-chart-area me-2 text-success"></i>ROI Projection</h2>
     </div>
     <div class="card-body">
       <div class="row text-center">

@@ -85,7 +85,7 @@ function addEmailRow() {
     const html = `
     <div class="email-row border rounded p-3 mb-3 bg-light" data-row="${n}">
         <div class="d-flex justify-content-between mb-2">
-            <h6 class="mb-0">Email #${n}</h6>
+            <h2  class="fs-6 fw-semibold mb-0">Email #${n}</h2>
             <button type="button" class="btn btn-sm btn-outline-danger remove-email" data-row="${n}" aria-label="Email"><i class="fas fa-times"></i></button>
         </div>
         <div class="row g-2">

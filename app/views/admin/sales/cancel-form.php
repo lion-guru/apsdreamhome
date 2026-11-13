@@ -62,7 +62,7 @@ $refundPct = $plotPrice > 0 ? round($refundAmount / $plotPrice * 100, 1) : 0;
                     <i class="fas <?= $tierIcon ?> fa-lg"></i>
                 </div>
                 <div>
-                    <h6 class="fw-bold mb-0" style="color: <?= $tierColor ?>;"><?= $tierLabel ?></h6>
+                    <h2 style="color: <?= $tierColor ?>;" class="fs-6 fw-semibold fw-bold mb-0"><?= $tierLabel ?></h2>
                     <small class="text-muted">Booking date: <?= $bookingDate ? date('d M Y', $bookingTimestamp) : 'N/A' ?> — <?= $daysSinceBooking ?> days elapsed</small>
                 </div>
             </div>

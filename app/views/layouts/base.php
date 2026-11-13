@@ -194,7 +194,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Utility classes (display, min-width, visibility) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/utils.css?v=1" rel="stylesheet">
     <!-- Final UI/UX Polish (contrast, tap targets) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=12" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13" rel="stylesheet">
     <?php endif; ?>
     <!-- Shared widgets: load once globally (outside admin guard, version synced) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=6" rel="stylesheet">

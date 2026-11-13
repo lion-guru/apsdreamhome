@@ -112,7 +112,7 @@ $statusColors = [
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-transparent border-bottom">
-                    <h6 class="mb-0">Quick Actions</h6>
+                    <h2  class="fs-6 fw-semibold mb-0">Quick Actions</h2>
                 </div>
                 <div class="list-group list-group-flush">
                     <a href="<?= BASE_URL ?>/admin/company-credentials/<?= $credential['id'] ?>/edit" class="list-group-item list-group-item-action">

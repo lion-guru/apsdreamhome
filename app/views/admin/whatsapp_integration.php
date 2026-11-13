@@ -15,7 +15,7 @@ $page_title = $page_title ?? 'WhatsApp Integration';
     <div class="row g-4">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">Connection Status</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Connection Status</h2></div>
                 <div class="card-body">
                     <?php
                     $whatsappConnected = false;
@@ -64,7 +64,7 @@ $page_title = $page_title ?? 'WhatsApp Integration';
 
         <div class="col-md-6">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">API Configuration</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">API Configuration</h2></div>
                 <div class="card-body">
                     <form id="whatsappConfigForm">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
@@ -95,7 +95,7 @@ $page_title = $page_title ?? 'WhatsApp Integration';
     <div class="row g-4 mt-2">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">Quick Actions</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Quick Actions</h2></div>
                 <div class="card-body">
                     <a href="<?= BASE_URL ?>/admin/whatsapp-web" class="btn btn-outline-success btn-block mb-2">
                         <i class="fas fa-qrcode me-1"></i>Scan QR Code
@@ -111,7 +111,7 @@ $page_title = $page_title ?? 'WhatsApp Integration';
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">Message Templates</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Message Templates</h2></div>
                 <div class="card-body">
                     <ul class="list-unstyled mb-0">
                         <li class="d-flex justify-content-between align-items-center mb-2">
@@ -136,7 +136,7 @@ $page_title = $page_title ?? 'WhatsApp Integration';
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom"><h6 class="mb-0">Recent Messages</h6></div>
+                <div class="card-header bg-white border-bottom"><h2  class="fs-6 fw-semibold mb-0">Recent Messages</h2></div>
                 <div class="card-body text-center py-4 text-muted">
                     <i class="fab fa-whatsapp fa-3x mb-2"></i>
                     <p class="mb-0 small">No recent messages.<br>Connect WhatsApp and send a test message.</p>

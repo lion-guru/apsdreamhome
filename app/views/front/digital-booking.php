@@ -112,7 +112,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                         <div class="card h-100 border-<?= $statusClass ?>">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h6 class="card-title mb-0"><?= htmlspecialchars($doc['title'] ?? '') ?></h6>
+                                    <h2  class="fs-6 fw-semibold card-title mb-0"><?= htmlspecialchars($doc['title'] ?? '') ?></h2>
                                     <span class="badge bg-<?= $statusClass ?>"><i class="fas <?= $statusIcon ?> me-1"></i><?= $statusText ?></span>
                                 </div>
                                 <p class="card-text text-muted small"><?= htmlspecialchars($doc['category_name'] ?? 'General') ?></p>

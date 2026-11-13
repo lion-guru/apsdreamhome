@@ -16,7 +16,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-warning bg-opacity-10 text-warning rounded p-3"><i class="fas fa-star fa-2x"></i></div></div>
-                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Total Ratings</h6><h3 class="mb-0"><?= number_format($total_ratings ?? 0) ?></h3></div>
+                        <div class="flex-grow-1"><h2  class="fs-6 fw-semibold text-muted mb-1">Total Ratings</h2><h3 class="mb-0"><?= number_format($total_ratings ?? 0) ?></h3></div>
                     </div>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-info bg-opacity-10 text-info rounded p-3"><i class="fas fa-chart-line fa-2x"></i></div></div>
-                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Average Rating</h6><h3 class="mb-0"><?= number_format($avg_rating ?? 0, 2) ?> / 5</h3></div>
+                        <div class="flex-grow-1"><h2  class="fs-6 fw-semibold text-muted mb-1">Average Rating</h2><h3 class="mb-0"><?= number_format($avg_rating ?? 0, 2) ?> / 5</h3></div>
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3"><div class="bg-danger bg-opacity-10 text-danger rounded p-3"><i class="fas fa-clock fa-2x"></i></div></div>
-                        <div class="flex-grow-1"><h6 class="text-muted mb-1">Pending Reviews</h6><h3 class="mb-0"><?= number_format($pending_reviews ?? 0) ?></h3></div>
+                        <div class="flex-grow-1"><h2  class="fs-6 fw-semibold text-muted mb-1">Pending Reviews</h2><h3 class="mb-0"><?= number_format($pending_reviews ?? 0) ?></h3></div>
                     </div>
                 </div>
             </div>

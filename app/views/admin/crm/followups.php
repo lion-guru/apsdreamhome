@@ -3,7 +3,7 @@
     <h2 class="mb-4"><i class="fas fa-phone-alt me-2"></i>Follow-ups</h2>
     <?php if (!empty($pending)): ?>
         <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-warning text-dark"><h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Due This Week (<?= count($pending) ?>)</h6></div>
+            <div class="card-header bg-warning text-dark"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Due This Week (<?= count($pending) ?>)</h2></div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
@@ -25,7 +25,7 @@
         </div>
     <?php endif; ?>
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white"><h6 class="mb-0"><i class="fas fa-history me-2"></i>Recent Follow-up Activities</h6></div>
+        <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-history me-2"></i>Recent Follow-up Activities</h2></div>
         <div class="card-body p-0">
             <?php if (empty($followups)): ?>
                 <p class="text-muted text-center py-4">No follow-up activities recorded</p>

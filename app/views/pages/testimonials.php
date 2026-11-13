@@ -59,7 +59,7 @@
                                         </div>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-0 fw-bold"><?= htmlspecialchars($name ?? '') ?></h6>
+                                        <h2  class="fs-6 fw-semibold mb-0 fw-bold"><?= htmlspecialchars($name ?? '') ?></h2>
                                         <small class="text-muted"><?= htmlspecialchars($designation ?? '') ?></small>
                                     </div>
                                 </div>

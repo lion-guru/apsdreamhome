@@ -48,7 +48,7 @@ $page_title = $page_title ?? 'HR Dashboard';
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-user-tie me-2 text-primary"></i>Active users</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-user-tie me-2 text-primary"></i>Active users</h2>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -76,7 +76,7 @@ $page_title = $page_title ?? 'HR Dashboard';
     <div class="col-md-6">
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0 fw-bold"><i class="fas fa-link me-2 text-success"></i>Quick Actions</h6>
+                <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-link me-2 text-success"></i>Quick Actions</h2>
             </div>
             <div class="card-body aps-cp-card-body">
                 <div class="d-grid gap-2">

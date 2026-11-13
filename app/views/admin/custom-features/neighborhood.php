@@ -116,7 +116,7 @@ $base = BASE_URL;
                                 <div class="col-md-4 mb-3">
                                     <div class="card aps-cp-card h-100">
                                         <div class="card-header bg-light">
-                                            <h6 class="mb-0"><?= $label ?></h6>
+                                            <h2  class="fs-6 fw-semibold mb-0"><?= $label ?></h2>
                                         </div>
                                         <div class="card-body">
                                             <?php if (empty($nearbyAmenities[$key])): ?>

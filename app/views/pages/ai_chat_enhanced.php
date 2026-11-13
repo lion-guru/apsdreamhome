@@ -36,7 +36,7 @@ $base = $base ?? BASE_URL;
                                 <i class="fas fa-user fa-lg"></i>
                             </div>
                             <div>
-                                <h6 class="mb-0"><?= htmlspecialchars($user_name ?? '') ?></h6>
+                                <h2  class="fs-6 fw-semibold mb-0"><?= htmlspecialchars($user_name ?? '') ?></h2>
                                 <small class="text-muted"><?= htmlspecialchars(ucfirst($current_user_role ?? '')) ?></small>
                             </div>
                         </div>
@@ -64,7 +64,7 @@ $base = $base ?? BASE_URL;
                 </div>
                 <div class="card shadow-sm border-0 mt-3">
                     <div class="card-header bg-white">
-                        <h6 class="mb-0"><i class="fas fa-history me-2"></i><?= __('user_ai_chat_enhanced_quick_actions', 'Quick Actions') ?></h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-history me-2"></i><?= __('user_ai_chat_enhanced_quick_actions', 'Quick Actions') ?></h2>
                     </div>
                     <div class="list-group list-group-flush">
                         <button class="list-group-item list-group-item-action" onclick="sendEnhancedPrompt('Show me today\'s leads')">

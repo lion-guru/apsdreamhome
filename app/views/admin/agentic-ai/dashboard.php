@@ -103,7 +103,7 @@ $_ag = $agents ?? [];
                                         <i class="fas <?= $agent['icon'] ?>"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0"><?= $agent['name'] ?></h6>
+                                        <h2  class="fs-6 fw-semibold mb-0"><?= $agent['name'] ?></h2>
                                     </div>
                                 </div>
                                 <p class="small text-muted mb-2"><?= $agent['description'] ?></p>

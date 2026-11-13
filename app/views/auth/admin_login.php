@@ -290,7 +290,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
             }
         }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 
 <body>

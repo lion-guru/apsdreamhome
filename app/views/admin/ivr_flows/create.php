@@ -58,7 +58,7 @@ $page_title = $page_title ?? 'Create IVR Flow';
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h6 class="mb-0"><i class="fas fa-lightbulb me-1"></i>IVR Flow Tips</h6>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-lightbulb me-1"></i>IVR Flow Tips</h2>
             </div>
             <div class="card-body">
                 <ul class="small mb-0">

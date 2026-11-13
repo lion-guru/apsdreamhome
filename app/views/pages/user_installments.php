@@ -112,7 +112,11 @@ $installments = $installments ?? [];
                                             <i class="fas fa-credit-card me-1"></i>Pay
                                         </a>
                                     <?php else: ?>
-                                        <span class="text-muted small">Completed</span>
+                                        <a href="<?= BASE_URL ?>/user/receipt/<?= (int)($inst['id'] ?? 0) ?>"
+                                           class="btn btn-sm btn-outline-success" target="_blank"
+                                           title="Download Payment Receipt">
+                                            <i class="fas fa-file-invoice me-1"></i>Receipt
+                                        </a>
                                     <?php endif; ?>
                                 </td>
                             </tr>

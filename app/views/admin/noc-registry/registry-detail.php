@@ -29,7 +29,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-bottom">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0"><?= __('admin_registry_information') ?></h6>
+                        <h2  class="fs-6 fw-semibold mb-0"><?= __('admin_registry_information') ?></h2>
                         <?php
                         $colors = ['pending'=>'secondary','appointment_scheduled'=>'info','documents_submitted'=>'warning','in_progress'=>'primary','completed'=>'success','rejected'=>'danger','cancelled'=>'dark'];
                         $color = $colors[$registry['status']] ?? 'secondary';
@@ -80,7 +80,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
             <!-- Cost Breakdown -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-bottom">
-                    <h6 class="mb-0"><i class="fas fa-receipt me-2"></i><?= __('admin_cost_breakdown') ?></h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-receipt me-2"></i><?= __('admin_cost_breakdown') ?></h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm mb-0">
@@ -115,7 +115,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
         <div class="col-md-4">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-bottom">
-                    <h6 class="mb-0"><i class="fas fa-sync-alt me-2"></i><?= __('admin_update_status') ?></h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-sync-alt me-2"></i><?= __('admin_update_status') ?></h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/noc-registry/registries/update-status">
@@ -153,7 +153,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
             <!-- Stamp Duty Calculator -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom">
-                    <h6 class="mb-0"><i class="fas fa-calculator me-2"></i><?= __('admin_stamp_duty') ?> (UP)</h6>
+                    <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-calculator me-2"></i><?= __('admin_stamp_duty') ?> (UP)</h2>
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="d-flex justify-content-between mb-1">

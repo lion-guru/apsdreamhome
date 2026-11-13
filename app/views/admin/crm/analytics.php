@@ -94,7 +94,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-light py-3">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-filter me-2"></i>Conversion Funnel</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-filter me-2"></i>Conversion Funnel</h2>
                 </div>
                 <div class="card-body">
                     <?php
@@ -133,7 +133,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-light py-3">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-project-diagram me-2"></i>Pipeline by Stage</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-project-diagram me-2"></i>Pipeline by Stage</h2>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
@@ -166,7 +166,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-bullseye me-2"></i>Source Performance</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-bullseye me-2"></i>Source Performance</h2>
                     <span class="badge bg-primary"><?= count($source_analytics) ?> sources</span>
                 </div>
                 <div class="card-body">
@@ -213,7 +213,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-header bg-light py-3">
-                    <h6 class="mb-0 fw-bold"><i class="fas fa-users-cog me-2"></i>Agent Performance</h6>
+                    <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-users-cog me-2"></i>Agent Performance</h2>
                 </div>
                 <div class="card-body">
                     <?php if (!empty($agent_performance)): ?>
@@ -247,7 +247,7 @@ $periodLabels = ['7d'=>'Last 7 Days','30d'=>'Last 30 Days','90d'=>'Last 90 Days'
     <!-- Quick Insights -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-light py-3">
-            <h6 class="mb-0 fw-bold"><i class="fas fa-lightbulb me-2 text-warning"></i>Quick Insights</h6>
+            <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-lightbulb me-2 text-warning"></i>Quick Insights</h2>
         </div>
         <div class="card-body">
             <div class="row g-3">

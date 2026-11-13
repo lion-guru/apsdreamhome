@@ -50,7 +50,7 @@
     <!-- Pending Requests -->
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-warning text-dark">
-            <h6 class="mb-0"><i class="fas fa-clock me-1"></i>Pending Approval Requests</h6>
+            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-clock me-1"></i>Pending Approval Requests</h2>
         </div>
         <div class="card-body">
             <?php if (!empty($pending)): ?>
@@ -120,7 +120,7 @@
     <!-- History -->
     <div class="card shadow-sm">
         <div class="card-header bg-dark text-white">
-            <h6 class="mb-0"><i class="fas fa-history me-1"></i>Approval History</h6>
+            <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-history me-1"></i>Approval History</h2>
         </div>
         <div class="card-body">
             <?php if (!empty($history)): ?>

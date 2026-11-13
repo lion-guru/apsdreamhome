@@ -17,7 +17,7 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
     <title>Commission Reconciliation — APS Dream Home</title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/admin/css/admin.css">
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 <body>
 <div class="aps-cp-card">

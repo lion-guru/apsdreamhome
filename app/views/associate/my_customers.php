@@ -73,7 +73,7 @@ $customers = $customers ?? [];
                                             <i class="fas fa-<?= $isAssociate ? 'user-tie' : 'user' ?>"></i>
                                         </div>
                                         <div>
-                                            <h6 class="mb-0"><?= htmlspecialchars($c['name'] ?? __('assoc_cust_na', [], 'N/A')) ?></h6>
+                                            <h2  class="fs-6 fw-semibold mb-0"><?= htmlspecialchars($c['name'] ?? __('assoc_cust_na', [], 'N/A')) ?></h2>
                                             <small class="text-muted"><?= __('assoc_cust_since', [], 'Since') ?> <?= date('M Y', strtotime($c['registered_date'] ?? '')) ?></small>
                                         </div>
                                     </div>

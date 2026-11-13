@@ -484,7 +484,7 @@ $GLOBALS['_html_doc_started'] = true;
             .pipeline-mini .pm-item { min-width: 50px !important; padding: 4px 6px !important; font-size: 0.65rem !important; }
         }
     </style>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=3">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=13">
 </head>
 
 <body>
