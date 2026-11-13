@@ -43,37 +43,113 @@ class SiteVisitController extends BaseController
 
         try {
             $db = \App\Core\Database\Database::getInstance();
-            $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
+            $tidSql = TenantContext::getId() > 1 ? " AND sv.tenant_id = ?" : "";
             $params = [$userId];
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
+            $tab = $_GET['tab'] ?? 'upcoming';
             $status = $_GET['status'] ?? '';
-            $where = "WHERE sv.agent_id = ?{$tidSql}";
-            $params = [$userId];
-            if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
+            $today = date('Y-m-d');
 
-            if ($status) {
-                $where .= " AND sv.status = ?";
-                $params[] = $status;
-            }
-
-            $siteVisits = $db->fetchAll("
-                SELECT sv.*, pl.plot_number, u.name as customer_name, u.phone
+            // 1. Fetch all visits for this associate with complete details
+            $allVisits = $db->fetchAll("
+                SELECT sv.*,
+                       COALESCE(NULLIF(sv.visitor_name, ''), u.name, l.name, 'Valued Visitor') as visitor_name,
+                       COALESCE(NULLIF(sv.visitor_phone, ''), u.phone, l.phone, '') as visitor_phone,
+                       l.name as lead_name,
+                       c.name as colony_name,
+                       pl.plot_number,
+                       u.name as customer_name
                 FROM site_visits sv
-                JOIN plots pl ON pl.id = sv.plot_id
+                LEFT JOIN plots pl ON pl.id = sv.plot_id
+                LEFT JOIN colonies c ON c.id = sv.colony_id
                 LEFT JOIN users u ON u.id = sv.user_id
-                {$where}
+                LEFT JOIN leads l ON l.id = sv.lead_id
+                WHERE sv.agent_id = ?{$tidSql}
                 ORDER BY sv.visit_date DESC, sv.visit_time DESC
             ", $params) ?: [];
+
+            // 2. Compute accurate stats across all visits
+            $stats = [
+                'total' => count($allVisits),
+                'today' => 0,
+                'upcoming' => 0,
+                'completed' => 0,
+                'cancelled' => 0,
+                'overdue' => 0,
+            ];
+
+            foreach ($allVisits as $v) {
+                $vDate = $v['visit_date'] ?? '';
+                $vStatus = $v['status'] ?? 'scheduled';
+                $isCompleted = ($vStatus === 'completed');
+                $isCancelled = ($vStatus === 'cancelled');
+
+                if ($isCompleted) {
+                    $stats['completed']++;
+                }
+                if ($isCancelled) {
+                    $stats['cancelled']++;
+                }
+                if ($vDate === $today) {
+                    $stats['today']++;
+                }
+                if ($vDate >= $today && !$isCompleted && !$isCancelled) {
+                    $stats['upcoming']++;
+                }
+                if ($vDate < $today && !$isCompleted && !$isCancelled) {
+                    $stats['overdue']++;
+                }
+            }
+
+            // 3. Filter visits according to selected tab or explicit status
+            $filteredVisits = [];
+            foreach ($allVisits as $v) {
+                $vDate = $v['visit_date'] ?? '';
+                $vStatus = $v['status'] ?? 'scheduled';
+                $isCompleted = ($vStatus === 'completed');
+                $isCancelled = ($vStatus === 'cancelled');
+
+                if ($status && $vStatus !== $status) {
+                    continue;
+                }
+
+                if ($tab === 'today') {
+                    if ($vDate === $today) $filteredVisits[] = $v;
+                } elseif ($tab === 'completed') {
+                    if ($isCompleted) $filteredVisits[] = $v;
+                } elseif ($tab === 'overdue') {
+                    if ($vDate < $today && !$isCompleted && !$isCancelled) $filteredVisits[] = $v;
+                } elseif ($tab === 'all') {
+                    $filteredVisits[] = $v;
+                } else {
+                    // Default tab: 'upcoming'
+                    if ($vDate >= $today && !$isCompleted && !$isCancelled) {
+                        $filteredVisits[] = $v;
+                    }
+                }
+            }
 
             $this->render('associate/site_visits', [
                 'page_title' => 'Site Visits - Associate Portal',
                 'page_description' => 'Manage site visits',
-                'site_visits' => $siteVisits,
+                'visits' => $filteredVisits,
+                'site_visits' => $filteredVisits,
+                'stats' => $stats,
+                'active_tab' => $tab,
                 'status' => $status,
             ], 'layouts/associate');
         } catch (\Throwable $e) {
             error_log('AssociateSiteVisitController error: ' . $e->getMessage());
+            $this->render('associate/site_visits', [
+                'page_title' => 'Site Visits - Associate Portal',
+                'page_description' => 'Manage site visits',
+                'visits' => [],
+                'site_visits' => [],
+                'stats' => ['total'=>0,'today'=>0,'upcoming'=>0,'completed'=>0,'cancelled'=>0,'overdue'=>0],
+                'active_tab' => 'upcoming',
+                'status' => '',
+            ], 'layouts/associate');
         }
     }
 
@@ -148,7 +224,7 @@ class SiteVisitController extends BaseController
     }
 
     /**
-     * Schedule site visit
+     * Schedule site visit (GET form & POST submission)
      */
     public function scheduleSiteVisit()
     {
@@ -157,45 +233,117 @@ class SiteVisitController extends BaseController
         $tid = TenantContext::getId();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/associate/site-visits');
-            return;
+            try {
+                $db = \App\Core\Database\Database::getInstance();
+                $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = " . (int)$tid : "";
+
+                $leads = $db->fetchAll("
+                    SELECT id, name, phone, email, status
+                    FROM leads
+                    WHERE (assigned_to = ? OR created_by = ?){$tidSql}
+                    ORDER BY name ASC
+                ", [$userId, $userId]) ?: [];
+
+                $colonies = $db->fetchAll("
+                    SELECT id, name, location
+                    FROM colonies
+                    WHERE status = 'active'{$tidSql}
+                    ORDER BY name ASC
+                ") ?: [];
+
+                $selectedLead = (int)($_GET['lead_id'] ?? 0);
+
+                return $this->render('associate/schedule_site_visit', [
+                    'page_title' => 'Schedule Site Visit - Associate Portal',
+                    'leads' => $leads,
+                    'colonies' => $colonies,
+                    'selected_lead' => $selectedLead,
+                ], 'layouts/associate');
+            } catch (\Throwable $e) {
+                error_log('AssociateSiteVisitController::scheduleSiteVisit GET error: ' . $e->getMessage());
+                $this->redirect('/associate/site-visits');
+                return;
+            }
         }
 
         try {
             $db = \App\Core\Database\Database::getInstance();
 
+            $visitorName = trim($_POST['visitor_name'] ?? '');
+            $visitorPhone = trim($_POST['visitor_phone'] ?? '');
+            $visitDate = trim($_POST['visit_date'] ?? '');
+            $visitTime = trim($_POST['visit_time'] ?? '10:00:00');
+            $duration = (int)($_POST['duration'] ?? 60);
+            $colonyId = !empty($_POST['colony_id']) ? (int)$_POST['colony_id'] : null;
+            $plotId = !empty($_POST['plot_id']) ? (int)$_POST['plot_id'] : null;
+            $leadId = !empty($_POST['lead_id']) ? (int)$_POST['lead_id'] : null;
+            $customerId = !empty($_POST['customer_id']) ? (int)$_POST['customer_id'] : null;
+            $notes = trim($_POST['notes'] ?? '');
+
+            // Auto-fill from lead if selected
+            if ($leadId && (empty($visitorName) || empty($visitorPhone))) {
+                $lead = $db->fetchOne("SELECT name, phone FROM leads WHERE id = ? LIMIT 1", [$leadId]);
+                if ($lead) {
+                    if (empty($visitorName)) $visitorName = $lead['name'] ?? '';
+                    if (empty($visitorPhone)) $visitorPhone = $lead['phone'] ?? '';
+                }
+            }
+
+            if (empty($visitorName) && empty($customerId)) {
+                throw new Exception('Visitor or Customer name is required');
+            }
+            if (empty($visitorPhone) && empty($customerId)) {
+                throw new Exception('Phone number is required');
+            }
+            if (empty($visitDate)) {
+                throw new Exception('Visit date is required');
+            }
+
+            // Resolve linked user if visitor phone matches
+            $userIdForVisit = $customerId;
+            if ($userIdForVisit === null && $visitorPhone !== '') {
+                $matchedUser = $db->fetchOne("SELECT id, name FROM users WHERE phone = ? LIMIT 1", [$visitorPhone]);
+                if ($matchedUser) {
+                    $userIdForVisit = (int)$matchedUser['id'];
+                    if ($visitorName === '') {
+                        $visitorName = (string)$matchedUser['name'];
+                    }
+                }
+            }
+
             $data = [
                 'agent_id' => $userId,
-                'user_id' => (int)($_POST['customer_id'] ?? 0),
-                'plot_id' => (int)($_POST['plot_id'] ?? 0),
-                'visit_date' => $_POST['visit_date'] ?? '',
-                'visit_time' => $_POST['visit_time'] ?? '10:00:00',
+                'user_id' => $userIdForVisit,
+                'lead_id' => $leadId,
+                'colony_id' => $colonyId,
+                'plot_id' => $plotId,
+                'visitor_name' => $visitorName,
+                'visitor_phone' => $visitorPhone,
+                'visit_date' => $visitDate,
+                'visit_time' => $visitTime,
+                'duration_minutes' => $duration,
                 'status' => 'scheduled',
-                'notes' => trim($_POST['notes'] ?? ''),
+                'notes' => $notes,
                 'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s'),
             ];
 
-            // Validate
-            if (empty($data['customer_id'])) throw new Exception('Customer is required');
-            if (empty($data['plot_id'])) throw new Exception('Plot is required');
-            if (empty($data['visit_date'])) throw new Exception('Visit date is required');
-
-            // Check if plot exists
-            $stmt = $db->prepare("SELECT id FROM plots WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "") . " LIMIT 1");
-            $stmt->execute(array_merge([$data['plot_id']], $tid > 1 ? [$tid] : []));
-            if (!$stmt->fetch()) throw new Exception('Plot not found');
-
-            // Check if customer exists
-            $tidSql = TenantContext::getId() > 1 ? " AND tenant_id = ?" : "";
-            $params = [$data['user_id']];
-            if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
-            $stmt = $db->prepare("SELECT id FROM users WHERE id = ?{$tidSql} LIMIT 1");
-            $stmt->execute($params);
-            if (!$stmt->fetch()) throw new Exception('Customer not found');
-
             $db->insert('site_visits', $data);
             $visitId = (int)$db->lastInsertId();
+
+            if ($leadId) {
+                try {
+                    $db->insert('lead_activities', [
+                        'lead_id' => $leadId,
+                        'activity_type' => 'site_visit_scheduled',
+                        'description' => "Site visit scheduled for {$visitDate} {$visitTime}",
+                        'created_by' => $userId,
+                        'tenant_id' => $tid,
+                    ]);
+                } catch (\Throwable $e) {
+                    error_log('lead_activities insert skipped: ' . $e->getMessage());
+                }
+            }
 
             $this->logActivity('site_visit_scheduled', json_encode(['visit_id' => $visitId]));
 
@@ -204,7 +352,7 @@ class SiteVisitController extends BaseController
         } catch (\Throwable $e) {
             error_log('AssociateSiteVisitController::scheduleSiteVisit error: ' . $e->getMessage());
             $_SESSION['error'] = 'Failed to schedule: ' . $e->getMessage();
-            $this->redirect('/associate/site-visits');
+            $this->redirect('/associate/site-visits/schedule');
         }
     }
 
@@ -229,11 +377,11 @@ class SiteVisitController extends BaseController
             if (TenantContext::getId() > 1) $params[] = TenantContext::getId();
 
             $feedback = trim($_POST['feedback'] ?? '');
-            $rating = (int)($_POST['rating'] ?? 0);
-            $ratingSql = ($rating >= 1 && $rating <= 5) ? ", rating = $rating" : "";
+            $rating = (int)($_POST['rating'] ?? 5);
+            if ($rating < 1 || $rating > 5) $rating = 5;
 
-            $stmt = $db->prepare("UPDATE site_visits SET status = 'completed', feedback = ?, completed_at = NOW(){$ratingSql} WHERE id = ? AND agent_id = ?{$tidSql}");
-            $params = array_merge([$feedback, $id, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
+            $stmt = $db->prepare("UPDATE site_visits SET status = 'completed', feedback = ?, rating = ?, completed_at = NOW() WHERE id = ? AND agent_id = ?{$tidSql}");
+            $params = array_merge([$feedback, $rating, $id, $userId], TenantContext::getId() > 1 ? [TenantContext::getId()] : []);
             $stmt->execute($params);
 
             if ($stmt->rowCount() > 0) {

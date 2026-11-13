@@ -10,11 +10,11 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('built_area_sqft', [], 'Built-up Area (sq ft)'); ?></label>
+                                <label class="form-label fw-bold" for="builtArea"><?php echo __('built_area_sqft', [], 'Built-up Area (sq ft)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="builtArea" value="1500" oninput="calcConstr()">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('construction_quality', [], 'Construction Quality'); ?></label>
+                                <label class="form-label fw-bold" for="quality"><?php echo __('construction_quality', [], 'Construction Quality'); ?></label>
                                 <select class="form-select" id="quality" onchange="calcConstr()">
                                     <option value="basic"><?php echo __('basic', [], 'Basic (₹1,400/sqft)'); ?></option>
                                     <option value="standard" selected><?php echo __('standard', [], 'Standard (₹1,800/sqft)'); ?></option>
@@ -25,7 +25,7 @@
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('num_floors', [], 'Number of Floors'); ?></label>
+                                <label class="form-label fw-bold" for="floors"><?php echo __('num_floors', [], 'Number of Floors'); ?></label>
                                 <select class="form-select" id="floors" onchange="calcConstr()">
                                     <option value="1"><?php echo __('single', [], 'Single Floor'); ?></option>
                                     <option value="2" selected><?php echo __('double', [], 'Double Floor'); ?></option>
@@ -33,7 +33,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('finish_level', [], 'Finish Level'); ?></label>
+                                <label class="form-label fw-bold" for="finish"><?php echo __('finish_level', [], 'Finish Level'); ?></label>
                                 <select class="form-select" id="finish" onchange="calcConstr()">
                                     <option value="0.85"><?php echo __('basic_finish', [], 'Basic'); ?></option>
                                     <option value="1" selected><?php echo __('standard_finish', [], 'Standard'); ?></option>
@@ -41,7 +41,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('location_factor', [], 'Location Factor'); ?></label>
+                                <label class="form-label fw-bold" for="locFac"><?php echo __('location_factor', [], 'Location Factor'); ?></label>
                                 <select class="form-select" id="locFac" onchange="calcConstr()">
                                     <option value="0.9"><?php echo __('tier3', [], 'Tier-3 City / Village'); ?></option>
                                     <option value="1" selected><?php echo __('tier2', [], 'Tier-2 City'); ?></option>
@@ -54,25 +54,25 @@
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('construction_cost', [], 'Construction Cost'); ?></small>
-                                    <h5 class="text-primary mb-0" id="constrCost">₹48,60,000</h5>
+                                    <h2 class="text-primary mb-0 fs-5" id="constrCost">₹48,60,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('material_cost', [], 'Material Cost'); ?></small>
-                                    <h5 class="text-warning mb-0" id="materialCost">₹24,30,000</h5>
+                                    <h2 class="text-warning mb-0 fs-5" id="materialCost">₹24,30,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('labor_cost', [], 'Labor Cost'); ?></small>
-                                    <h5 class="text-info mb-0" id="laborCost">₹19,44,000</h5>
+                                    <h2 class="text-info mb-0 fs-5" id="laborCost">₹19,44,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
                                 <div class="bg-primary text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('total_estimated', [], 'Total Estimated'); ?></small>
-                                    <h5 class="mb-0" id="totalConstr">₹92,34,000</h5>
+                                    <h2 class="mb-0 fs-5" id="totalConstr">₹92,34,000</h2>
                                 </div>
                             </div>
                         </div>

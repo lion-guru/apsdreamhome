@@ -10,25 +10,25 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('monthly_income_rs', [], 'Monthly Income (₹)'); ?></label>
+                                <label class="form-label fw-bold" for="income"><?php echo __('monthly_income_rs', [], 'Monthly Income (₹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="income" value="80000" oninput="calcLoan()">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('monthly_emi_rs', [], 'Monthly Existing EMIs (₹)'); ?></label>
+                                <label class="form-label fw-bold" for="existEmi"><?php echo __('monthly_emi_rs', [], 'Monthly Existing EMIs (₹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="existEmi" value="0" oninput="calcLoan()">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('interest_rate', [], 'Interest Rate (%)'); ?></label>
+                                <label class="form-label fw-bold" for="intRate"><?php echo __('interest_rate', [], 'Interest Rate (%)'); ?></label>
                                 <input type="number" class="form-control" id="intRate" value="8.5" step="0.1" oninput="calcLoan()">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('tenure_years', [], 'Tenure (Years)'); ?></label>
+                                <label class="form-label fw-bold" for="tenure"><?php echo __('tenure_years', [], 'Tenure (Years)'); ?></label>
                                 <input type="number" class="form-control" id="tenure" value="20" min="1" max="30" oninput="calcLoan()">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('foir_limit', [], 'FOIR Limit (%)'); ?></label>
+                                <label class="form-label fw-bold" for="foir"><?php echo __('foir_limit', [], 'FOIR Limit (%)'); ?></label>
                                 <select class="form-select" id="foir" onchange="calcLoan()">
                                     <option value="50" selected>50%</option>
                                     <option value="60">60%</option>
@@ -40,26 +40,26 @@
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('max_loan', [], 'Max Loan Amount'); ?></small>
-                                    <h4 class="text-primary mb-0" id="maxLoan">₹53,00,000</h4>
+                                    <h2 class="text-primary mb-0 fs-4" id="maxLoan">₹53,00,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('max_monthly_emi', [], 'Max Monthly EMI'); ?></small>
-                                    <h4 class="text-danger mb-0" id="maxEmi">₹40,000</h4>
+                                    <h2 class="text-danger mb-0 fs-4" id="maxEmi">₹40,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-success text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('total_interest', [], 'Total Interest Payable'); ?></small>
-                                    <h5 class="mb-0" id="totalInt">₹45,20,000</h5>
+                                    <h2 class="mb-0 fs-5" id="totalInt">₹45,20,000</h2>
                                 </div>
                             </div>
                         </div>
 
                         <div class="card bg-light border-0 mt-3">
                             <div class="card-body p-3">
-                                <h6 class="fw-bold"><i class="fas fa-info-circle me-1"></i><?php echo __('emi_breakdown', [], 'EMI Breakdown'); ?></h6>
+                                <h3 class="fw-bold fs-6"><i class="fas fa-info-circle me-1"></i><?php echo __('emi_breakdown', [], 'EMI Breakdown'); ?></h3>
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <small class="text-muted"><?php echo __('net_monthly_income', [], 'Net Monthly Income:'); ?></small>

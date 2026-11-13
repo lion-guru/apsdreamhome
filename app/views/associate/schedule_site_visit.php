@@ -97,11 +97,23 @@ $selected_lead = $selected_lead ?? '';
 </div>
 
 <script>
-document.getElementById('leadSelect').addEventListener('change', function() {
-    var opt = this.options[this.selectedIndex];
-    if (opt.value) {
-        document.getElementById('visitorName').value = opt.dataset.name || '';
-        document.getElementById('visitorPhone').value = opt.dataset.phone || '';
+function syncLead() {
+    var sel = document.getElementById('leadSelect');
+    if (!sel) return;
+    var opt = sel.options[sel.selectedIndex];
+    if (opt && opt.value) {
+        var vName = document.getElementById('visitorName');
+        var vPhone = document.getElementById('visitorPhone');
+        if (vName && (!vName.value || vName.dataset.autoFilled === 'true')) {
+            vName.value = opt.dataset.name || '';
+            vName.dataset.autoFilled = 'true';
+        }
+        if (vPhone && (!vPhone.value || vPhone.dataset.autoFilled === 'true')) {
+            vPhone.value = opt.dataset.phone || '';
+            vPhone.dataset.autoFilled = 'true';
+        }
     }
-});
+}
+document.getElementById('leadSelect').addEventListener('change', syncLead);
+document.addEventListener('DOMContentLoaded', syncLead);
 </script>

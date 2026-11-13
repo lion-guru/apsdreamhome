@@ -10,16 +10,16 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="text-white mb-0"><i class="fas fa-vector-square me-2"></i>Land Area Converter</h4>
+                        <h2 class="text-white mb-0 fs-4"><i class="fas fa-vector-square me-2"></i>Land Area Converter</h2>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
-                                <label class="text-white-50">Value</label>
+                                <label class="text-white-50" for="areaValue">Value</label>
                                 <input type="number" id="areaValue" class="form-control" value="1000" oninput="convertArea()" >
                             </div>
                             <div class="col-md-3">
-                                <label class="text-white-50">From</label>
+                                <label class="text-white-50" for="areaFrom">From</label>
                                 <select id="areaFrom" class="form-select" onchange="convertArea()" >
                                     <option value="sqft">Square Feet (sqft)</option>
                                     <option value="sqm">Square Meter (sqm)</option>
@@ -56,23 +56,23 @@
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-header">
-                        <h4 class="text-white mb-0"><i class="fas fa-rupee-sign me-2"></i>Plot Price Calculator</h4>
+                        <h2 class="text-white mb-0 fs-4"><i class="fas fa-rupee-sign me-2"></i>Plot Price Calculator</h2>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="text-white-50">Plot Area (sqft)</label>
+                            <label class="text-white-50" for="priceArea">Plot Area (sqft)</label>
                             <input type="number" id="priceArea" class="form-control" value="1000" oninput="calcPrice()" >
                         </div>
                         <div class="mb-3">
-                            <label class="text-white-50">Rate per sqft (₹)</label>
+                            <label class="text-white-50" for="priceRate">Rate per sqft (₹)</label>
                             <input type="number" id="priceRate" class="form-control" value="2500" oninput="calcPrice()" >
                         </div>
                         <div class="mb-3">
-                            <label class="text-white-50">PLC Charges (₹, optional)</label>
+                            <label class="text-white-50" for="pricePLC">PLC Charges (₹, optional)</label>
                             <input type="number" id="pricePLC" class="form-control" value="0" oninput="calcPrice()" >
                         </div>
                         <div class="mb-3">
-                            <label class="text-white-50">Discount % (optional)</label>
+                            <label class="text-white-50" for="priceDiscount">Discount % (optional)</label>
                             <input type="number" id="priceDiscount" class="form-control" value="0" oninput="calcPrice()" >
                         </div>
                         <div >
@@ -102,15 +102,15 @@
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-header">
-                        <h4 class="text-white mb-0"><i class="fas fa-calculator me-2"></i>Commission Calculator</h4>
+                        <h2 class="text-white mb-0 fs-4"><i class="fas fa-calculator me-2"></i>Commission Calculator</h2>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="text-white-50">Sale Amount (₹)</label>
+                            <label class="text-white-50" for="commAmount">Sale Amount (₹)</label>
                             <input type="number" id="commAmount" class="form-control" value="2500000" oninput="calcCommission()" >
                         </div>
                         <div class="mb-3">
-                            <label class="text-white-50">Your Rank</label>
+                            <label class="text-white-50" for="commRank">Your Rank</label>
                             <select id="commRank" class="form-select" onchange="calcCommission()" >
                                 <option value="5">Associate (5%)</option>
                                 <option value="7">Sr. Associate (7%)</option>
@@ -151,15 +151,15 @@
             <div class="col-md-4">
                 <div class="card h-100">
                     <div class="card-header">
-                        <h5 class="text-white mb-0"><i class="fas fa-file-contract me-2"></i>Stamp Duty Quick Calc</h5>
+                        <h2 class="text-white mb-0 fs-5"><i class="fas fa-file-contract me-2"></i>Stamp Duty Quick Calc</h2>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="text-white-50">Property Value (₹)</label>
+                            <label class="text-white-50" for="stampValue">Property Value (₹)</label>
                             <input type="number" id="stampValue" class="form-control" value="2500000" oninput="calcStamp()" >
                         </div>
                         <div class="mb-3">
-                            <label class="text-white-50">State</label>
+                            <label class="text-white-50" for="stampState">State</label>
                             <select id="stampState" class="form-select" onchange="calcStamp()" >
                                 <option value="5">Uttar Pradesh (5%)</option>
                                 <option value="6">Delhi (6%)</option>
@@ -190,19 +190,19 @@
             <div class="col-md-4">
                 <div class="card h-100">
                     <div class="card-header">
-                        <h5 class="text-white mb-0"><i class="fas fa-calendar-alt me-2"></i>EMI Quick Calculator</h5>
+                        <h2 class="text-white mb-0 fs-5"><i class="fas fa-calendar-alt me-2"></i>EMI Quick Calculator</h2>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="text-white-50">Loan Amount (₹)</label>
+                            <label class="text-white-50" for="emiLoan">Loan Amount (₹)</label>
                             <input type="number" id="emiLoan" class="form-control" value="1500000" oninput="calcEMI()" >
                         </div>
                         <div class="mb-3">
-                            <label class="text-white-50">Interest Rate (% p.a.)</label>
+                            <label class="text-white-50" for="emiRate">Interest Rate (% p.a.)</label>
                             <input type="number" id="emiRate" class="form-control" value="8.5" step="0.1" oninput="calcEMI()" >
                         </div>
                         <div class="mb-3">
-                            <label class="text-white-50">Tenure (years)</label>
+                            <label class="text-white-50" for="emiTenure">Tenure (years)</label>
                             <input type="range" id="emiTenure" class="form-range" min="1" max="30" value="15" oninput="calcEMI()" >
                             <span class="text-white-50" id="emiTenureLabel">15 years</span>
                         </div>
@@ -228,7 +228,7 @@
             <div class="col-md-4">
                 <div class="card h-100">
                     <div class="card-header">
-                        <h5 class="text-white mb-0"><i class="fas fa-tasks me-2"></i>Land Deal Checklist</h5>
+                        <h2 class="text-white mb-0 fs-5"><i class="fas fa-tasks me-2"></i>Land Deal Checklist</h2>
                     </div>
                     <div class="card-body">
                         <div id="checklist">

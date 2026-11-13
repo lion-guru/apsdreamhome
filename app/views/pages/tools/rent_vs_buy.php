@@ -10,25 +10,25 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('property_price_rs', [], 'Property Price (₹)'); ?></label>
+                                <label class="form-label fw-bold" for="propPrice"><?php echo __('property_price_rs', [], 'Property Price (₹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="propPrice" value="5000000" oninput="calcRB()">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('monthly_rent_rs', [], 'Monthly Rent (₹)'); ?></label>
+                                <label class="form-label fw-bold" for="monthRent"><?php echo __('monthly_rent_rs', [], 'Monthly Rent (₹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="monthRent" value="15000" oninput="calcRB()">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('tenure_years', [], 'Tenure (Years)'); ?></label>
+                                <label class="form-label fw-bold" for="tenure"><?php echo __('tenure_years', [], 'Tenure (Years)'); ?></label>
                                 <input type="number" class="form-control" id="tenure" value="10" min="1" max="30" oninput="calcRB()">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('rent_growth', [], 'Rent Growth (%)'); ?></label>
+                                <label class="form-label fw-bold" for="rentGr"><?php echo __('rent_growth', [], 'Rent Growth (%)'); ?></label>
                                 <input type="number" class="form-control" id="rentGr" value="5" oninput="calcRB()">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('appreciation', [], 'Appreciation (%)'); ?></label>
+                                <label class="form-label fw-bold" for="appRate"><?php echo __('appreciation', [], 'Appreciation (%)'); ?></label>
                                 <input type="number" class="form-control" id="appRate" value="8" oninput="calcRB()">
                             </div>
                         </div>
@@ -37,13 +37,13 @@
                             <div class="col-md-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('total_rent_paid', [], 'Total Rent Paid'); ?></small>
-                                    <h4 class="text-danger mb-0" id="rentTotal">₹18,00,000</h4>
+                                    <h2 class="text-danger mb-0 fs-4" id="rentTotal">₹18,00,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('property_future_value', [], 'Property Future Value'); ?></small>
-                                    <h4 class="text-success mb-0" id="propFuture">₹10,80,000</h4>
+                                    <h2 class="text-success mb-0 fs-4" id="propFuture">₹10,80,000</h2>
                                 </div>
                             </div>
                         </div>

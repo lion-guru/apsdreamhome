@@ -10,24 +10,24 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Current Property Value (₹)</label>
+                                <label class="form-label fw-bold" for="paCurrent">Current Property Value (₹)</label>
                                 <input type="number" class="form-control" id="paCurrent" value="5000000" oninput="calcPA()">
                                 <small class="text-muted">Aaj ki market value</small>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Annual Appreciation Rate (%)</label>
+                                <label class="form-label fw-bold" for="paRate">Annual Appreciation Rate (%)</label>
                                 <input type="range" class="form-range" id="paRate" min="1" max="15" value="7" step="0.5" oninput="document.getElementById('paRateVal').textContent=this.value+'%'; calcPA()">
                                 <div class="d-flex justify-content-between"><small class="text-muted">1%</small><span class="badge bg-primary" id="paRateVal">7%</span><small class="text-muted">15%</small></div>
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Time Period (Years)</label>
+                                <label class="form-label fw-bold" for="paYears">Time Period (Years)</label>
                                 <input type="range" class="form-range" id="paYears" min="1" max="30" value="10" step="1" oninput="document.getElementById('paYearsVal').textContent=this.value+' yrs'; calcPA()">
                                 <div class="d-flex justify-content-between"><small class="text-muted">1 yr</small><span class="badge bg-success" id="paYearsVal">10 yrs</span><small class="text-muted">30 yrs</small></div>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Expected Rent Yield (%) <small class="text-muted">(optional)</small></label>
+                                <label class="form-label fw-bold" for="paRent">Expected Rent Yield (%) <small class="text-muted">(optional)</small></label>
                                 <input type="number" class="form-control" id="paRent" value="3" step="0.1" oninput="calcPA()">
                                 <small class="text-muted">Salana kiraya se return</small>
                             </div>
@@ -36,19 +36,19 @@
                             <div class="col-md-4">
                                 <div class="bg-primary text-white rounded-3 p-3">
                                     <small class="d-block opacity-75">Future Value</small>
-                                    <h4 class="mb-0" id="paFuture">₹98,35,756</h4>
+                                    <h2 class="mb-0 fs-4" id="paFuture">₹98,35,756</h2>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block">Total Gain</small>
-                                    <h4 class="text-success mb-0" id="paGain">₹48,35,756</h4>
+                                    <h2 class="text-success mb-0 fs-4" id="paGain">₹48,35,756</h2>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block">Rent Income (total)</small>
-                                    <h4 class="text-info mb-0" id="paRentTotal">₹15,00,000</h4>
+                                    <h2 class="text-info mb-0 fs-4" id="paRentTotal">₹15,00,000</h2>
                                 </div>
                             </div>
                         </div>

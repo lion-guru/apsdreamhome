@@ -9,15 +9,15 @@
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
+                            <label class="form-label fw-bold" for="propVal"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcTax()">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('area_sqft', [], 'Area (sq ft)'); ?></label>
+                            <label class="form-label fw-bold" for="area"><?php echo __('area_sqft', [], 'Area (sq ft)'); ?></label>
                             <input type="number" class="form-control" id="area" value="1500" oninput="calcTax()">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('property_type', [], 'Property Type'); ?></label>
+                            <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>
                             <select class="form-select" id="propType" onchange="calcTax()">
                                 <option value="residential"><?php echo __('residential', [], 'Residential'); ?></option>
                                 <option value="commercial"><?php echo __('commercial', [], 'Commercial'); ?></option>
@@ -27,13 +27,13 @@
                             <div class="col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('annual_tax', [], 'Annual Tax'); ?></small>
-                                    <h4 class="text-danger mb-0" id="annualTax">₹7,500</h4>
+                                    <h2 class="text-danger mb-0 fs-4" id="annualTax">₹7,500</h2>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('monthly_tax', [], 'Monthly Tax'); ?></small>
-                                    <h4 class="text-primary mb-0" id="monthlyTax">₹625</h4>
+                                    <h2 class="text-primary mb-0 fs-4" id="monthlyTax">₹625</h2>
                                 </div>
                             </div>
                         </div>

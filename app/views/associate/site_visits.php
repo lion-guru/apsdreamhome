@@ -1,7 +1,7 @@
 <?php
 $page_title = $page_title ?? __('assoc_sv_title', [], 'Site Visits');
 $current_page = 'site_visits';
-$visits = $visits ?? [];
+$visits = $visits ?? $site_visits ?? [];
 $stats = $stats ?? ['total'=>0,'today'=>0,'upcoming'=>0,'completed'=>0,'cancelled'=>0,'overdue'=>0];
 $active_tab = $active_tab ?? 'upcoming';
 
@@ -112,7 +112,18 @@ $statusMap = [
                         <i class="fas <?= $sv['icon'] ?> text-<?= $sv['color'] ?>"></i>
                     </div>
                     <div>
-                        <div class="visitor-name"><?= htmlspecialchars($v['visitor_name'] ?? '') ?></div>
+                        <div class="visitor-name">
+                            <?= htmlspecialchars($v['visitor_name'] ?? '') ?>
+                            <?php if (!empty($v['colony_name'])): ?>
+                                <span class="badge bg-secondary-subtle text-secondary border ms-1"><i class="fas fa-city me-1"></i><?= htmlspecialchars($v['colony_name']) ?></span>
+                            <?php endif; ?>
+                            <?php if (!empty($v['plot_number'])): ?>
+                                <span class="badge bg-primary-subtle text-primary border ms-1"><i class="fas fa-th me-1"></i>Plot <?= htmlspecialchars($v['plot_number']) ?></span>
+                            <?php endif; ?>
+                            <?php if (!empty($v['checkin_time'])): ?>
+                                <span class="badge bg-success-subtle text-success border border-success ms-1"><i class="fas fa-map-marker-alt me-1"></i>Checked-In (<?= date('h:i A', strtotime($v['checkin_time'])) ?>)</span>
+                            <?php endif; ?>
+                        </div>
                         <div class="visit-meta">
                             <i class="fas fa-phone me-1"></i><?= htmlspecialchars($v['visitor_phone'] ?? '') ?>
                             <?php if (!empty($v['lead_name'])): ?>
@@ -148,6 +159,9 @@ $statusMap = [
                         </form>
                     <?php endif; ?>
                     <?php if (!$isCompleted && !$isCancelled): ?>
+                        <a href="<?= BASE_URL ?>/site-visit/checkin/<?= $v['id'] ?>" class="btn btn-outline-info btn-sm" title="<?= __('assoc_sv_gps_checkin', [], 'GPS Check-In') ?>">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </a>
                         <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#completeModal<?= $v['id'] ?>" title="<?= __('assoc_sv_complete_with_feedback', [], 'Complete with Feedback') ?>">
                             <i class="fas fa-clipboard-check"></i>
                         </button>

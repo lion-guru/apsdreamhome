@@ -10,7 +10,7 @@
         <div class="card border-0 shadow h-100">
             <div class="card-body text-white text-center p-4 d-flex flex-column justify-content-center">
                 <i class="fas <?php echo e($tool['icon']); ?> fa-3x mb-3"></i>
-                <h5 class="fw-bold"><?php echo __($tool['title_key'], [], $tool['title_default']); ?></h5>
+                <h2 class="fw-bold fs-5"><?php echo __($tool['title_key'], [], $tool['title_default']); ?></h2>
                 <p class="small mb-0 text-white-50"><?php echo __($tool['desc_key'], [], $tool['desc_default']); ?></p>
             </div>
         </div>

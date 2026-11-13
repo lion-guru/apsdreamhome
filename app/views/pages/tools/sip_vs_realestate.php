@@ -10,25 +10,25 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('monthly_sip_rs', [], 'Monthly SIP (₹)'); ?></label>
+                                <label class="form-label fw-bold" for="sipAmt"><?php echo __('monthly_sip_rs', [], 'Monthly SIP (₹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="sipAmt" value="10000" oninput="calcSIP()">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('property_investment_rs', [], 'Property Investment (₹)'); ?></label>
+                                <label class="form-label fw-bold" for="propInv"><?php echo __('property_investment_rs', [], 'Property Investment (₹)'); ?></label>
                                 <input type="number" class="form-control form-control-lg" id="propInv" value="5000000" oninput="calcSIP()">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('tenure_years', [], 'Tenure (Years)'); ?></label>
+                                <label class="form-label fw-bold" for="sipTenure"><?php echo __('tenure_years', [], 'Tenure (Years)'); ?></label>
                                 <input type="number" class="form-control" id="sipTenure" value="10" min="1" max="30" oninput="calcSIP()">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('sip_return_pct', [], 'SIP Return (%)'); ?></label>
+                                <label class="form-label fw-bold" for="sipReturn"><?php echo __('sip_return_pct', [], 'SIP Return (%)'); ?></label>
                                 <input type="number" class="form-control" id="sipReturn" value="12" oninput="calcSIP()">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('property_appreciation', [], 'Property Appreciation (%)'); ?></label>
+                                <label class="form-label fw-bold" for="propApp"><?php echo __('property_appreciation', [], 'Property Appreciation (%)'); ?></label>
                                 <input type="number" class="form-control" id="propApp" value="8" oninput="calcSIP()">
                             </div>
                         </div>
@@ -36,13 +36,13 @@
                             <div class="col-md-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('sip_future_value', [], 'SIP Future Value'); ?></small>
-                                    <h4 class="text-success mb-0" id="sipFV">₹23,00,000</h4>
+                                    <h2 class="text-success mb-0 fs-4" id="sipFV">₹23,00,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('property_future_value', [], 'Property Future Value'); ?></small>
-                                    <h4 class="text-primary mb-0" id="propFV">₹10,80,000</h4>
+                                    <h2 class="text-primary mb-0 fs-4" id="propFV">₹10,80,000</h2>
                                 </div>
                             </div>
                         </div>

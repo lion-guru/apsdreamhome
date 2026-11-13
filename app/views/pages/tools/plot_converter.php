@@ -9,11 +9,11 @@
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('enter_value', [], 'Enter Value'); ?></label>
+                            <label class="form-label fw-bold" for="convVal"><?php echo __('enter_value', [], 'Enter Value'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="convVal" value="1000" oninput="convertAll()">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('select_unit', [], 'Select Unit'); ?></label>
+                            <label class="form-label fw-bold" for="convFrom"><?php echo __('select_unit', [], 'Select Unit'); ?></label>
                             <select class="form-select" id="convFrom" onchange="convertAll()">
                                 <option value="sqft"><?php echo __('sqft', [], 'Square Feet (sq ft)'); ?></option>
                                 <option value="gaj"><?php echo __('gaj', [], 'Gaj'); ?></option>
@@ -29,37 +29,37 @@
                             <div class="col-4 mb-3">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted"><?php echo __('sqft', [], 'Square Feet'); ?></small>
-                                    <h6 class="text-primary mb-0" id="rSqft">1,000</h6>
+                                    <h3 class="text-primary mb-0 fs-6" id="rSqft">1,000</h3>
                                 </div>
                             </div>
                             <div class="col-4 mb-3">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted"><?php echo __('gaj', [], 'Gaj'); ?></small>
-                                    <h6 class="text-success mb-0" id="rGaj">111</h6>
+                                    <h3 class="text-success mb-0 fs-6" id="rGaj">111</h3>
                                 </div>
                             </div>
                             <div class="col-4 mb-3">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted"><?php echo __('sq_yard', [], 'Square Yard'); ?></small>
-                                    <h6 class="text-info mb-0" id="rYard">111</h6>
+                                    <h3 class="text-info mb-0 fs-6" id="rYard">111</h3>
                                 </div>
                             </div>
                             <div class="col-4 mb-3">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted"><?php echo __('sq_meter', [], 'Square Meter'); ?></small>
-                                    <h6 class="text-warning mb-0" id="rMeter">93</h6>
+                                    <h3 class="text-warning mb-0 fs-6" id="rMeter">93</h3>
                                 </div>
                             </div>
                             <div class="col-4 mb-3">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted"><?php echo __('bigha', [], 'Bigha'); ?></small>
-                                    <h6 class="text-danger mb-0" id="rBigha">0.67</h6>
+                                    <h3 class="text-danger mb-0 fs-6" id="rBigha">0.67</h3>
                                 </div>
                             </div>
                             <div class="col-4 mb-3">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted"><?php echo __('katha', [], 'Katha'); ?></small>
-                                    <h6 class="text-secondary mb-0" id="rKatha">5.33</h6>
+                                    <h3 class="text-secondary mb-0 fs-6" id="rKatha">5.33</h3>
                                 </div>
                             </div>
                         </div>

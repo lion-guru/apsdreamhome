@@ -10,7 +10,7 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('location_district', [], 'Location / District'); ?></label>
+                                <label class="form-label fw-bold" for="valCity"><?php echo __('location_district', [], 'Location / District'); ?></label>
                                 <select class="form-select" id="valCity">
                                     <option value="">-- <?php echo __('select_district', [], 'Select District'); ?> --</option>
                                     <?php foreach (($districts ?? []) as $d): ?>
@@ -26,7 +26,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('property_type', [], 'Property Type'); ?></label>
+                                <label class="form-label fw-bold" for="valType"><?php echo __('property_type', [], 'Property Type'); ?></label>
                                 <select class="form-select" id="valType">
                                     <option value="plot"><?php echo __('residential_plot', [], 'Residential Plot'); ?></option>
                                     <option value="house"><?php echo __('house_villa', [], 'House / Villa'); ?></option>
@@ -38,11 +38,11 @@
                         </div>
                         <div class="row g-3 mb-3">
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('area_sqft', [], 'Area (sq ft)'); ?></label>
+                                <label class="form-label fw-bold" for="valArea"><?php echo __('area_sqft', [], 'Area (sq ft)'); ?></label>
                                 <input type="number" class="form-control" id="valArea" value="1200" min="0" placeholder="<?php echo __('eg_1200', [], 'e.g. 1200'); ?>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('bedrooms', [], 'Bedrooms'); ?></label>
+                                <label class="form-label fw-bold" for="valBedrooms"><?php echo __('bedrooms', [], 'Bedrooms'); ?></label>
                                 <select class="form-select" id="valBedrooms">
                                     <option value="0"><?php echo __('na_plot_land', [], 'N/A (Plot/Land)'); ?></option>
                                     <option value="1">1 BHK</option>
@@ -53,7 +53,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('age_of_property', [], 'Age of Property'); ?></label>
+                                <label class="form-label fw-bold" for="valAge"><?php echo __('age_of_property', [], 'Age of Property'); ?></label>
                                 <select class="form-select" id="valAge">
                                     <option value="0"><?php echo __('new_0_5', [], 'New (0-5 years)'); ?></option>
                                     <option value="5">5-10 <?php echo __('years', [], 'years'); ?></option>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('condition', [], 'Condition'); ?></label>
+                                <label class="form-label fw-bold" for="valCondition"><?php echo __('condition', [], 'Condition'); ?></label>
                                 <select class="form-select" id="valCondition">
                                     <option value="new"><?php echo __('new_well_maintained', [], 'New / Well-maintained'); ?></option>
                                     <option value="old"><?php echo __('old_needs_repair', [], 'Old / Needs Repair'); ?></option>
@@ -81,25 +81,25 @@
                                 <div class="col-md-3 col-6">
                                     <div class="bg-light rounded-3 p-3">
                                         <small class="text-muted d-block"><?php echo __('price_per_sqft', [], 'Price per Sq Ft'); ?></small>
-                                        <h5 class="text-primary mb-0" id="perSqft">&#8377;3,000</h5>
+                                        <h2 class="text-primary mb-0 fs-5" id="perSqft">&#8377;3,000</h2>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-6">
                                     <div class="bg-primary text-white rounded-3 p-3">
                                         <small class="d-block"><?php echo __('estimated_value', [], 'Estimated Value'); ?></small>
-                                        <h5 class="mb-0" id="totalValue">&#8377;36,00,000</h5>
+                                        <h2 class="mb-0 fs-5" id="totalValue">&#8377;36,00,000</h2>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-6">
                                     <div class="bg-light rounded-3 p-3">
                                         <small class="text-muted d-block"><?php echo __('low_range', [], 'Low Range'); ?></small>
-                                        <h5 class="text-success mb-0" id="lowRange">&#8377;32.4L</h5>
+                                        <h2 class="text-success mb-0 fs-5" id="lowRange">&#8377;32.4L</h2>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-6">
                                     <div class="bg-light rounded-3 p-3">
                                         <small class="text-muted d-block"><?php echo __('high_range', [], 'High Range'); ?></small>
-                                        <h5 class="text-danger mb-0" id="highRange">&#8377;39.6L</h5>
+                                        <h2 class="text-danger mb-0 fs-5" id="highRange">&#8377;39.6L</h2>
                                     </div>
                                 </div>
                             </div>

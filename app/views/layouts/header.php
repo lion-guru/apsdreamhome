@@ -50,9 +50,9 @@ if (!isset($GLOBALS['_html_doc_started'])) {
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/style.css?v=10" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/frontend.css?v=7" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/header.css?v=9" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/premium-theme.css?v=17" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/premium-theme.css?v=18" rel="stylesheet">
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/mobile-responsive.css?v=6" rel="stylesheet">
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/uiux-fixes.css?v=11" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : '/'; ?>/assets/css/uiux-fixes.css?v=12" rel="stylesheet">
 
     <?php if ($ga4_enabled): ?>
     <!-- Google Analytics 4 -->

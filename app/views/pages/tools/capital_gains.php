@@ -10,28 +10,28 @@
                     <div class="card-body p-4">
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('purchase_price_rs', [], 'Purchase Price (₹)'); ?></label>
+                                <label class="form-label fw-bold" for="purchasePrice"><?php echo __('purchase_price_rs', [], 'Purchase Price (₹)'); ?></label>
                                 <input type="number" class="form-control" id="purchasePrice" value="3000000">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold"><?php echo __('sale_price_rs', [], 'Sale Price (₹)'); ?></label>
+                                <label class="form-label fw-bold" for="salePrice"><?php echo __('sale_price_rs', [], 'Sale Price (₹)'); ?></label>
                                 <input type="number" class="form-control" id="salePrice" value="5000000">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('holding_period', [], 'Holding Period'); ?></label>
+                                <label class="form-label fw-bold" for="holdPeriod"><?php echo __('holding_period', [], 'Holding Period'); ?></label>
                                 <select class="form-select" id="holdPeriod">
                                     <option value="short"><?php echo __('short_term', [], 'Short Term (≤ 2 years)'); ?></option>
                                     <option value="long" selected><?php echo __('long_term', [], 'Long Term (> 2 years)'); ?></option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('improvement_cost_rs', [], 'Improvement Cost (₹)'); ?></label>
+                                <label class="form-label fw-bold" for="improveCost"><?php echo __('improvement_cost_rs', [], 'Improvement Cost (₹)'); ?></label>
                                 <input type="number" class="form-control" id="improveCost" value="200000">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold"><?php echo __('indexation', [], 'Indexation Benefit?'); ?></label>
+                                <label class="form-label fw-bold" for="indexation"><?php echo __('indexation', [], 'Indexation Benefit?'); ?></label>
                                 <select class="form-select" id="indexation">
                                     <option value="yes"><?php echo __('yes', [], 'Yes'); ?></option>
                                     <option value="no"><?php echo __('no', [], 'No'); ?></option>
@@ -42,19 +42,19 @@
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('taxable_gain', [], 'Taxable Gain'); ?></small>
-                                    <h4 class="text-danger mb-0" id="taxableGain">₹18,00,000</h4>
+                                    <h2 class="text-danger mb-0 fs-4" id="taxableGain">₹18,00,000</h2>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('tax_rate', [], 'Tax Rate'); ?></small>
-                                    <h4 class="text-warning mb-0" id="taxRate">20%</h4>
+                                    <h2 class="text-warning mb-0 fs-4" id="taxRate">20%</h2>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="bg-danger text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('capital_gains_tax', [], 'Capital Gains Tax'); ?></small>
-                                    <h4 class="mb-0" id="cgTax">₹3,60,000</h4>
+                                    <h2 class="mb-0 fs-4" id="cgTax">₹3,60,000</h2>
                                 </div>
                             </div>
                         </div>

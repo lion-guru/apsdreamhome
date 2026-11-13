@@ -313,8 +313,7 @@ footer ul li a,
   color: #ffffff !important;
 }
 
-/* Colored result tiles INSIDE light cards (premium-theme forcing rule
-   would repaint them slate). Keep white text + white-on-dark => AA */
+/* Colored result tiles INSIDE light cards (keep white text => AA) */
 .card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white p,
 .card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white span,
 .card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white strong,
@@ -324,6 +323,36 @@ footer ul li a,
 .card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h3,
 .card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h4,
 .card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h5,
-.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h6 {
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-primary.text-white h6,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-success.text-white p,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-success.text-white span,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-success.text-white strong,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-success.text-white small,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-success.text-white h1,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-success.text-white h2,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-success.text-white h3,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-success.text-white h4,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-success.text-white h5,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-success.text-white h6,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-danger.text-white p,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-danger.text-white span,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-danger.text-white strong,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-danger.text-white small,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-danger.text-white h1,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-danger.text-white h2,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-danger.text-white h3,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-danger.text-white h4,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-danger.text-white h5,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-danger.text-white h6,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-info.text-white p,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-info.text-white span,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-info.text-white strong,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-info.text-white small,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-info.text-white h1,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-info.text-white h2,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-info.text-white h3,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-info.text-white h4,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-info.text-white h5,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .bg-info.text-white h6 {
   color: #ffffff !important;
 }

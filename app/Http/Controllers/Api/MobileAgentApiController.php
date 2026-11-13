@@ -305,9 +305,19 @@ class MobileAgentApiController extends BaseController
             $visits = [];
             try {
                 $stmt = $this->db->prepare("
-                    SELECT sv.*, l.name as lead_name, l.phone as lead_phone
+                    SELECT sv.*,
+                           COALESCE(NULLIF(sv.visitor_name, ''), l.name, u.name, 'Valued Visitor') as visitor_name,
+                           COALESCE(NULLIF(sv.visitor_phone, ''), l.phone, u.phone, '') as visitor_phone,
+                           COALESCE(l.name, NULLIF(sv.visitor_name, ''), 'Valued Visitor') as lead_name,
+                           COALESCE(l.phone, NULLIF(sv.visitor_phone, ''), '') as lead_phone,
+                           c.name as colony_name,
+                           pl.plot_number,
+                           CONCAT(sv.visit_date, ' ', COALESCE(sv.visit_time, '10:00:00')) as scheduled_at
                     FROM site_visits sv
+                    LEFT JOIN colonies c ON c.id = sv.colony_id
+                    LEFT JOIN plots pl ON pl.id = sv.plot_id
                     LEFT JOIN leads l ON l.id = sv.lead_id
+                    LEFT JOIN users u ON u.id = sv.user_id
                     WHERE sv.agent_id = ?{$tidSql}
                     ORDER BY sv.visit_date DESC, sv.visit_time DESC
                 ");

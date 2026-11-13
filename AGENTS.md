@@ -6939,3 +6939,44 @@ User instructions: "aur koi suggetion sbhi suggestion diye ho sabhi kaam kar do"
 ### AGENTS.md numbering (Rule 4)
 Next-free = **503** (this session; S502 logged above).
 
+## Session 503: Associate Site Visit Scheduling & GPS Field Check-In Activation, Mobile Agent Parity & Financial Tools WCAG AA Polish (2026-11-14)
+
+### Trigger
+User instructions: "aur koi suggetion sbhi suggestion diye ho sabhi kaam kar do", "do next", "do next all", and "ok do next all": Continuous autonomous Senior Software Developer & CEO execution. Resolving broken site visit workflow, field GPS check-in activation, mobile API parity, and comprehensive accessibility polish.
+
+### The headline
+
+**1. ASSOCIATE SITE VISIT DESK RESTORATION & DYNAMIC STATS (`SiteVisitController.php` & `site_visits.php`)**
+- Fixed empty visit list bug: resolved missing `$visits` view binding with fully joined dataset (`site_visits` + `plots` + `colonies` + `leads` + `users`).
+- Fixed SQL filtering dropping plotless visits by replacing inner `JOIN plots` with `LEFT JOIN plots` and `LEFT JOIN colonies`.
+- Implemented real-time tab filtering (`upcoming`, `today`, `completed`, `overdue`, `all`) with accurate statistics counters (`total`, `today`, `upcoming`, `completed`, `cancelled`, `overdue`).
+- Enriched visit cards in `views/associate/site_visits.php` with colony name, plot number, verified check-in badges, and a direct 1-click "GPS Check-In" action button linking to `/site-visit/checkin/{id}`.
+
+**2. END-TO-END ASSOCIATE SITE VISIT SCHEDULER (`SiteVisitController.php` & `schedule_site_visit.php`)**
+- Activated `GET /associate/site-visits/schedule`: previously redirected immediately on non-POST, now properly queries associate leads and active colonies, and pre-fills selected lead.
+- Fixed `POST /associate/site-visits/schedule`: previously crashed with `Customer is required` when visitor info was entered; now natively accepts visitor name, mobile, date, time, duration, colony, plot, and notes. Auto-resolves linked customer user accounts and records `site_visit_scheduled` timeline events on linked leads.
+- Added auto-sync of lead data on page load or dropdown change in `schedule_site_visit.php`.
+- Enabled the schedule visit modal in `views/associate/lead_detail.php`, allowing 1-click scheduling directly from lead detail cards.
+
+**3. MOBILE AGENT API SITE VISIT PARITY (`MobileAgentApiController.php`)**
+- Upgraded `siteVisits()` API endpoint to join `colonies`, `plots`, `leads`, and `users`.
+- Resolved `'Unknown Lead'` issue in Flutter mobile app by aliasing `COALESCE(l.name, sv.visitor_name, 'Valued Visitor') as lead_name` and `COALESCE(l.phone, sv.visitor_phone, '') as lead_phone`.
+- Dynamically synthesized `scheduled_at` (`CONCAT(sv.visit_date, ' ', COALESCE(sv.visit_time, '10:00:00'))`) and `colony_name` so mobile cards display complete scheduled dates and project names.
+
+**4. FINANCIAL TOOLS WCAG AA ACCESSIBILITY & CONTRAST SUITE**
+- Associated explicit `<label for="...">` with input IDs across 12 financial calculation views (`capital_gains.php`, `construction_cost.php`, `loan_eligibility.php`, `partner_tools.php`, `plot_converter.php`, `property_appreciation.php`, `property_tax.php`, `rent_vs_buy.php`, `rental_yield.php`, `sip_vs_realestate.php`, `tool_card.php`, `valuation_calculator.php`).
+- Normalized heading hierarchies from unstructured `<h5>`/`<h6>` to structured `<h2 class="fs-4">` and `<h3 class="fs-6">` tags.
+- Enhanced `uiux-fixes.css` to guarantee `#ffffff` contrast on all colored status/result tiles inside light card bodies across all site themes.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 31.32s).
+- **Flutter Analyze**: `cd mobile/apsdreamhome_app_v2; flutter analyze` -> No issues found! (ran in 19.5s, Exit 0).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **504** (this session; S503 logged above).
+
+

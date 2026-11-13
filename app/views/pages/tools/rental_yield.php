@@ -9,28 +9,28 @@
                 <div class="card border-0 shadow">
                     <div class="card-body p-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
+                            <label class="form-label fw-bold" for="propVal"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcYield()">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('monthly_rent_rs', [], 'Monthly Rent (₹)'); ?></label>
+                            <label class="form-label fw-bold" for="rentAmt"><?php echo __('monthly_rent_rs', [], 'Monthly Rent (₹)'); ?></label>
                             <input type="number" class="form-control form-control-lg" id="rentAmt" value="15000" oninput="calcYield()">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold"><?php echo __('annual_expenses_pct', [], 'Annual Expenses (%)'); ?></label>
+                            <label class="form-label fw-bold" for="expPct"><?php echo __('annual_expenses_pct', [], 'Annual Expenses (%)'); ?></label>
                             <input type="number" class="form-control" id="expPct" value="10" oninput="calcYield()">
                         </div>
                         <div class="row g-3 text-center">
                             <div class="col-6">
                                 <div class="bg-light rounded-3 p-3">
                                     <small class="text-muted d-block"><?php echo __('gross_yield', [], 'Gross Yield'); ?></small>
-                                    <h4 class="text-primary mb-0" id="grossYield">3.6%</h4>
+                                    <h2 class="text-primary mb-0 fs-4" id="grossYield">3.6%</h2>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="bg-success text-white rounded-3 p-3">
                                     <small class="d-block"><?php echo __('net_yield', [], 'Net Yield'); ?></small>
-                                    <h4 class="mb-0" id="netYield">3.24%</h4>
+                                    <h2 class="mb-0 fs-4" id="netYield">3.24%</h2>
                                 </div>
                             </div>
                         </div>
