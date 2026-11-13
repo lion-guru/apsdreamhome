@@ -6376,4 +6376,42 @@ User instructions: "do next apne suugestion aur jo laga improve karne ke liye wo
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **486** (next session).
+Next-free = **486** (this session; S485 logged above).
+
+## Session 486: Project EMI & Loan Calculator, Free Site Visit Modal & Brochure Print, Customer Receipt Link & Associate Mini-Site (2026-11-13)
+
+### Trigger
+User instructions: "aur koi suggetion sbhi suggestion diye ho sabhi kaam kar do" — Autonomous Senior Developer & CEO execution: interactive EMI & down payment calculator on projects, quick free site-visit booking modal with cab pickup, print-ready project brochure styles, customer dashboard booking receipt shortcut, and associate visiting card integration.
+
+### The headline
+
+**1. INTERACTIVE EMI & LOAN CALCULATOR WIDGET ON PROJECT DETAIL (`/projects/{slug}`)**
+- In `app/views/pages/project_detail.php`:
+  - Added dedicated, responsive EMI & Loan Calculator card with real-time sliders for Property Price (₹5L - ₹1Cr), Down Payment (10% - 60%), Loan Tenure (1 - 15 Years), and Annual Interest Rate (7% - 14% p.a.).
+  - Added live JavaScript calculation engine dynamically computing monthly installment, principal loan, total interest payable, and total amount payable formatted in Indian currency notation.
+  - Added 1-click WhatsApp Loan Assistance button with pre-filled project details for instant bank financing inquiries.
+
+**2. FREE SITE VISIT QUICK MODAL & PRINT-READY BROCHURE STYLES (`/projects/{slug}`)**
+- In `app/views/pages/project_detail.php`:
+  - Added prominent "Schedule Free Site Visit" CTA in the sticky sidebar contact card with "Free Cab Pickup & Drop Included" highlight badge.
+  - Implemented responsive modal (`#quickSiteVisitModal`) allowing buyers and visitors to schedule site visits by picking a date, time slot, and home pickup location, submitting seamlessly via AJAX to `/quick-inquiry`.
+  - Added "Print / Save Brochure" button alongside dedicated `@media print` CSS rules, transforming the project showcase into a crisp, professional print-ready executive brochure (hiding navbars, footers, video modals, and overlays).
+
+**3. CUSTOMER DASHBOARD DIGITAL BOOKING RECEIPT SHORTCUT (`/user/dashboard`)**
+- In `app/views/pages/user_dashboard.php`:
+  - Added direct "View / Print Receipt" icon button (`/booking/{id}/receipt`) in the customer purchases table, allowing buyers to view and print official company receipts with one click.
+  - Hardened `app/views/pages/booking_receipt.php` with robust fallback contact numbers.
+
+**4. ASSOCIATE DASHBOARD DIGITAL VISITING CARD INTEGRATION (`/associate/dashboard`)**
+- In `app/views/associate/dashboard.php`:
+  - Added dedicated "My Visiting Card" action pill in the dashboard hero linking directly to the associate's public branded landing page and vCard (`/p/{code}`).
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 28.05s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 15541 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **487** (next session).

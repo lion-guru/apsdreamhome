@@ -235,6 +235,13 @@ body {
                 <a href="<?= BASE_URL ?>/properties" class="action-pill" target="_blank">
                     <i class="fas fa-images text-info"></i> Projects &amp; Gallery
                 </a>
+                <?php 
+                $myRefCode = $user['referral_code'] ?? $_SESSION['referral_code'] ?? '';
+                if (!empty($myRefCode)): ?>
+                <a href="<?= BASE_URL ?>/p/<?= urlencode($myRefCode) ?>" class="action-pill" target="_blank" style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4);">
+                    <i class="fas fa-id-card text-success"></i> My Visiting Card
+                </a>
+                <?php endif; ?>
                 <a href="<?= BASE_URL ?>/associate/book-plot" class="action-pill primary-pill">
                     <i class="fas fa-file-signature"></i> Book Plot
                 </a>

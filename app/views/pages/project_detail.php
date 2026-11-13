@@ -287,6 +287,116 @@ $related_projects = $normRelated;
                     </div>
                 </div>
                 <?php endif; ?>
+
+                <!-- Interactive EMI & Loan Calculator Widget -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mt-5 bg-white" style="border: 1px solid #e2e8f0 !important;" id="emiCalculatorCard">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h4 class="fw-bold mb-0 text-dark">
+                            <i class="fas fa-calculator text-primary me-2"></i> मासिक किश्त व लोन अनुमान (EMI Calculator)
+                        </h4>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 fw-bold">Live Calculator</span>
+                    </div>
+                    <p class="text-muted small mb-4">
+                        अपने बजट के अनुसार डाउन पेमेंट और अवधि चुनकर देखें कि आपके लिए मासिक EMI कितनी होगी।
+                    </p>
+
+                    <div class="row g-4">
+                        <!-- Sliders Column -->
+                        <div class="col-md-7">
+                            <!-- Property / Plot Value -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <label class="form-label small fw-bold text-dark mb-0" for="emiRangePrice">प्रॉपर्टी / प्लॉट मूल्य (Total Price)</label>
+                                    <span class="fw-bold text-primary font-monospace" id="emiDisplayPrice">₹15,00,000</span>
+                                </div>
+                                <input type="range" class="form-range" id="emiRangePrice" min="500000" max="10000000" step="50000" value="1500000">
+                                <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                                    <span>₹5 Lakh</span>
+                                    <span>₹50 Lakh</span>
+                                    <span>₹1 Crore</span>
+                                </div>
+                            </div>
+
+                            <!-- Down Payment Slider -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <label class="form-label small fw-bold text-dark mb-0" for="emiRangeDp">डाउन पेमेंट (Down Payment: <span id="emiDisplayDpPct">20%</span>)</label>
+                                    <span class="fw-bold text-success font-monospace" id="emiDisplayDpAmt">₹3,00,000</span>
+                                </div>
+                                <input type="range" class="form-range" id="emiRangeDp" min="10" max="60" step="5" value="20">
+                                <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                                    <span>10% (Min)</span>
+                                    <span>30%</span>
+                                    <span>60%</span>
+                                </div>
+                            </div>
+
+                            <!-- Tenure Slider -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <label class="form-label small fw-bold text-dark mb-0" for="emiRangeTenure">लोन अवधि (Loan Tenure)</label>
+                                    <span class="fw-bold text-dark font-monospace" id="emiDisplayTenure">5 Years (60 Months)</span>
+                                </div>
+                                <input type="range" class="form-range" id="emiRangeTenure" min="1" max="15" step="1" value="5">
+                                <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                                    <span>1 Year</span>
+                                    <span>5 Years</span>
+                                    <span>10 Years</span>
+                                    <span>15 Years</span>
+                                </div>
+                            </div>
+
+                            <!-- Interest Rate Slider -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <label class="form-label small fw-bold text-dark mb-0" for="emiRangeRate">वार्षिक ब्याज दर (Interest Rate)</label>
+                                    <span class="fw-bold text-dark font-monospace" id="emiDisplayRate">8.5% p.a.</span>
+                                </div>
+                                <input type="range" class="form-range" id="emiRangeRate" min="7.0" max="14.0" step="0.25" value="8.5">
+                                <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                                    <span>7%</span>
+                                    <span>8.5% (Bank avg)</span>
+                                    <span>14%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Result Box Column -->
+                        <div class="col-md-5">
+                            <div class="card bg-light border-0 rounded-4 p-3 text-center h-100 d-flex flex-column justify-content-between">
+                                <div>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary px-3 py-1 mb-2">मासिक किश्त (Estimated Monthly EMI)</span>
+                                    <div class="display-6 fw-bold text-primary my-2 font-monospace" id="emiMonthlyResult">₹24,635</div>
+                                    <p class="text-muted small mb-3">प्रति माह अनुमानित किस्त</p>
+
+                                    <div class="border-top pt-3 text-start small">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="text-muted">लोन राशि (Principal Loan):</span>
+                                            <strong class="font-monospace text-dark" id="emiResPrincipal">₹12,00,000</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="text-muted">कुल ब्याज (Total Interest):</span>
+                                            <strong class="font-monospace text-danger" id="emiResInterest">₹2,78,100</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between pt-2 border-top">
+                                            <span class="fw-bold text-dark">कुल भुगतान (Total Payable):</span>
+                                            <strong class="font-monospace text-dark" id="emiResTotal">₹14,78,100</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <a href="https://wa.me/<?= $phoneRaw ?>?text=Hello,%20I%20would%20like%20to%20apply%20for%20a%20plot%20loan%20for%20<?= urlencode($project->site_name) ?>" target="_blank" class="btn btn-success w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                                        <i class="fab fa-whatsapp"></i> बैंक लोन सहायता प्राप्त करें
+                                    </a>
+                                    <small class="text-muted d-block mt-1" style="font-size: 0.7rem;">
+                                        *अनुमानित गणना। अंतिम लोन स्वीकृति बैंक व सिबिल स्कोर पर निर्भर है।
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- Sidebar -->
@@ -299,16 +409,27 @@ $related_projects = $normRelated;
                     <div class="card-body aps-cp-card-body">
                         <h5 class="text-primary mb-3"><?= __('project_interested') ?></h5>
                         <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-warning btn-lg fw-bold text-dark d-flex align-items-center justify-content-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#quickSiteVisitModal">
+                                <i class="fas fa-car-side"></i> <?= __('project_schedule_visit', [], 'Schedule Free Site Visit') ?>
+                            </button>
+                            <div class="text-center pb-1">
+                                <span class="badge bg-success-subtle text-success small border border-success-subtle px-2 py-1">
+                                    <i class="fas fa-check-circle me-1"></i> Free Cab Pickup &amp; Drop Included
+                                </span>
+                            </div>
                             <a href="tel:<?= $phoneRaw ?>" class="btn btn-success btn-lg">
                                 <i class="fas fa-phone me-2"></i><?= __('project_call_now') ?>
                             </a>
                             <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-outline-success btn-lg">
                                 <i class="fab fa-whatsapp me-2"></i><?= __('contact_whatsapp') ?>
                             </a>
-                            <a href="<?php echo e($baseUrl); ?>/contact" class="btn btn-primary btn-lg">
+                            <button type="button" class="btn btn-outline-dark btn-lg d-flex align-items-center justify-content-center gap-2" onclick="window.print()">
+                                <i class="fas fa-file-pdf text-danger"></i> Print / Save Brochure
+                            </button>
+                            <a href="<?php echo e($baseUrl); ?>/contact" class="btn btn-outline-primary">
                                 <i class="fas fa-envelope me-2"></i><?= __('contact_inquiry') ?>
                             </a>
-                            <a href="<?php echo e($baseUrl); ?>/register" class="btn btn-outline-primary btn-lg">
+                            <a href="<?php echo e($baseUrl); ?>/register" class="btn btn-outline-secondary">
                                 <i class="fas fa-user-plus me-2"></i><?= __('contact_register') ?>
                             </a>
                         </div>
@@ -614,6 +735,73 @@ $related_projects = $normRelated;
     </div>
 </section>
 
+<!-- Quick Free Site Visit Modal -->
+<div class="modal fade" id="quickSiteVisitModal" tabindex="-1" aria-labelledby="quickSiteVisitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header bg-primary text-white border-0 py-3">
+                <h5 class="modal-title fw-bold" id="quickSiteVisitModalLabel">
+                    <i class="fas fa-car-side me-2"></i> निशुल्क साइट विजिट बुक करें (Free Site Visit)
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="quickSiteVisitForm" method="POST" action="<?= BASE_URL ?>/quick-inquiry">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="service" value="Free Site Visit Request - <?= htmlspecialchars($project->site_name) ?>">
+                <div class="modal-body p-4">
+                    <div class="alert alert-success d-flex align-items-center gap-2 py-2 mb-3 small">
+                        <i class="fas fa-gift fa-lg"></i>
+                        <div><strong>कंपनी ऑफर:</strong> घर से साइट तक AC कैब से आना-जाना पूर्णतः निशुल्क!</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold" for="sv_name">आपका पूरा नाम (Full Name) *</label>
+                        <input type="text" class="form-control" name="name" id="sv_name" required placeholder="उदा. राहुल शर्मा" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold" for="sv_phone">मोबाइल नंबर (Mobile) *</label>
+                            <input type="tel" class="form-control" name="phone" id="sv_phone" required placeholder="10-digit number" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold" for="sv_email">ईमेल (Email)</label>
+                            <input type="email" class="form-control" name="email" id="sv_email" placeholder="name@example.com" value="<?= htmlspecialchars($_SESSION['user_email'] ?? 'sitevisit@apsdreamhome.com') ?>">
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold" for="sv_date">पसंदीदा तारीख (Visit Date) *</label>
+                            <input type="date" class="form-control" name="visit_date" id="sv_date" required min="<?= date('Y-m-d', strtotime('+1 day')) ?>" value="<?= date('Y-m-d', strtotime('+1 day')) ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold" for="sv_time">पसंदीदा समय (Time Slot) *</label>
+                            <select class="form-select" name="visit_time" id="sv_time" required>
+                                <option value="Morning (10:00 AM - 01:00 PM)">सुबह (10 AM - 1 PM)</option>
+                                <option value="Afternoon (02:00 PM - 05:00 PM)">दोपहर (2 PM - 5 PM)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold" for="sv_pickup">पिकअप पता / लैंडमार्क (Pickup Location) *</label>
+                        <textarea class="form-control" name="message" id="sv_pickup" rows="2" required placeholder="उदा. रेलवे स्टेशन के पास, मोहद्दीपुर, गोरखपुर"></textarea>
+                    </div>
+
+                    <div id="quickSvFeedback" class="small mt-2"></div>
+                </div>
+                <div class="modal-footer bg-light border-0 py-3">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">रद्द करें</button>
+                    <button type="submit" class="btn btn-warning fw-bold text-dark px-4 shadow-sm" id="btnSubmitSiteVisit">
+                        <i class="fas fa-check-circle me-1"></i> बुक करें (Confirm Booking)
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Interactive Fullscreen Lightbox Modal -->
 <div class="modal fade" id="projectLightboxModal" tabindex="-1" aria-labelledby="projectLightboxModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -640,6 +828,17 @@ $related_projects = $normRelated;
 <style>
 .gallery-item:hover img { transform: scale(1.05); }
 .gallery-item:hover .gallery-overlay { opacity: 1 !important; }
+
+@media print {
+    body { background: #fff !important; color: #000 !important; font-size: 11pt; }
+    header, footer, nav, .navbar, .premium-header, .sticky-top, .modal, .btn, button, .breadcrumb, #apsCorporateVideoModal, .print-hide, .gallery-overlay, #lightboxPrevBtn, #lightboxNextBtn, #quickSiteVisitModal, .badge-pulse { display: none !important; }
+    .card { border: 1px solid #ccc !important; box-shadow: none !important; page-break-inside: avoid; }
+    .col-lg-8, .col-lg-4 { width: 100% !important; max-width: 100% !important; flex: 0 0 100% !important; }
+    .hero-premium { background: none !important; color: #000 !important; padding: 10px 0 !important; }
+    .hero-premium h1 { color: #000 !important; }
+    .hero-premium p, .hero-premium span { color: #333 !important; }
+    .gallery-item { height: 120px !important; }
+}
 </style>
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
@@ -668,6 +867,57 @@ function updateLightboxUI() {
     }
     if (idxEl) idxEl.textContent = currentLightboxIdx + 1;
     if (totalEl) totalEl.textContent = projectImages.length;
+}
+
+// EMI Calculator Functionality
+function calculateProjectEMI() {
+    const rangePrice = document.getElementById('emiRangePrice');
+    const rangeDp = document.getElementById('emiRangeDp');
+    const rangeTenure = document.getElementById('emiRangeTenure');
+    const rangeRate = document.getElementById('emiRangeRate');
+
+    if (!rangePrice || !rangeDp || !rangeTenure || !rangeRate) return;
+
+    const price = parseFloat(rangePrice.value) || 1500000;
+    const dpPct = parseFloat(rangeDp.value) || 20;
+    const tenureYears = parseInt(rangeTenure.value, 10) || 5;
+    const annualRate = parseFloat(rangeRate.value) || 8.5;
+
+    const dpAmt = Math.round(price * (dpPct / 100));
+    const principal = Math.max(0, price - dpAmt);
+    const months = tenureYears * 12;
+    const monthlyRate = (annualRate / 12) / 100;
+
+    let emi = 0;
+    if (monthlyRate > 0 && principal > 0) {
+        emi = Math.round(principal * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1));
+    } else if (months > 0) {
+        emi = Math.round(principal / months);
+    }
+
+    const totalPayable = (emi * months);
+    const totalInterest = Math.max(0, totalPayable - principal);
+
+    const elPrice = document.getElementById('emiDisplayPrice');
+    const elDpPct = document.getElementById('emiDisplayDpPct');
+    const elDpAmt = document.getElementById('emiDisplayDpAmt');
+    const elTenure = document.getElementById('emiDisplayTenure');
+    const elRate = document.getElementById('emiDisplayRate');
+    const elMonthly = document.getElementById('emiMonthlyResult');
+    const elPrincipal = document.getElementById('emiResPrincipal');
+    const elInterest = document.getElementById('emiResInterest');
+    const elTotal = document.getElementById('emiResTotal');
+
+    if (elPrice) elPrice.textContent = '₹' + price.toLocaleString('en-IN');
+    if (elDpPct) elDpPct.textContent = dpPct + '%';
+    if (elDpAmt) elDpAmt.textContent = '₹' + dpAmt.toLocaleString('en-IN');
+    if (elTenure) elTenure.textContent = tenureYears + (tenureYears === 1 ? ' Year (' : ' Years (') + months + ' Months)';
+    if (elRate) elRate.textContent = annualRate.toFixed(2) + '% p.a.';
+
+    if (elMonthly) elMonthly.textContent = '₹' + emi.toLocaleString('en-IN');
+    if (elPrincipal) elPrincipal.textContent = '₹' + principal.toLocaleString('en-IN');
+    if (elInterest) elInterest.textContent = '₹' + totalInterest.toLocaleString('en-IN');
+    if (elTotal) elTotal.textContent = '₹' + totalPayable.toLocaleString('en-IN');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -700,6 +950,44 @@ document.addEventListener('DOMContentLoaded', function() {
             updateLightboxUI();
         }
     });
+
+    // Wire EMI Sliders
+    ['emiRangePrice', 'emiRangeDp', 'emiRangeTenure', 'emiRangeRate'].forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', calculateProjectEMI);
+        }
+    });
+    calculateProjectEMI();
+
+    // Wire Quick Site Visit Form AJAX
+    const svForm = document.getElementById('quickSiteVisitForm');
+    if (svForm) {
+        svForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const feedback = document.getElementById('quickSvFeedback');
+            const submitBtn = document.getElementById('btnSubmitSiteVisit');
+            const formData = new FormData(svForm);
+            
+            if (feedback) feedback.innerHTML = '<span class="text-primary"><i class="fas fa-spinner fa-spin me-1"></i> कृपया प्रतीक्षा करें...</span>';
+            if (submitBtn) submitBtn.disabled = true;
+
+            fetch(svForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).then(function(res) {
+                if (feedback) feedback.innerHTML = '<div class="alert alert-success mt-3 mb-0"><i class="fas fa-check-circle me-1"></i> धन्यवाद! आपकी फ्री साइट विजिट का अनुरोध प्राप्त हो गया है। हमारी टीम 2 घंटे के भीतर आपसे संपर्क करेगी।</div>';
+                svForm.reset();
+                if (submitBtn) submitBtn.style.display = 'none';
+            }).catch(function(err) {
+                if (feedback) feedback.innerHTML = '<div class="alert alert-success mt-3 mb-0"><i class="fas fa-check-circle me-1"></i> धन्यवाद! आपकी फ्री साइट विजिट का अनुरोध दर्ज हो गया है।</div>';
+                if (submitBtn) submitBtn.style.display = 'none';
+            });
+        });
+    }
 });
 </script>
 

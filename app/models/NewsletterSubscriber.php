@@ -11,8 +11,8 @@ class NewsletterSubscriber extends \App\Models\Model {
     
     protected $fillable = [
         'email',
-        'is_active',
-        'created_at'
+        'name',
+        'is_active'
     ];
 
     /**
@@ -28,10 +28,14 @@ class NewsletterSubscriber extends \App\Models\Model {
      */
     public static function subscribe($email)
     {
+        $existing = self::findByEmail($email);
+        if ($existing) {
+            return $existing['id'] ?? false;
+        }
+        // subscribed_at auto-defaults to CURRENT_TIMESTAMP in the schema
         return static::create([
             'email' => $email,
             'is_active' => 1,
-            'created_at' => date('Y-m-d H:i:s'),
         ]);
     }
 }
