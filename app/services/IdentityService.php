@@ -243,16 +243,41 @@ class IdentityService
 
     /**
      * Resolve legacy associates.id → user_id.
+     * Supports associates.id (legacy PK), associate_profiles.id / legacy_id,
+     * and fallback if already a valid associate/agent user_id.
      */
     public function resolveAssociateUserId(int $associateId): int
     {
         if ($associateId <= 0) return 0;
         try {
+            // 1. Direct query on legacy associates table
             $row = $this->db->fetch(
                 "SELECT user_id FROM associates WHERE id = ? AND user_id IS NOT NULL LIMIT 1",
                 [$associateId]
             );
-            return $row ? (int)$row['user_id'] : 0;
+            if ($row && !empty($row['user_id'])) {
+                return (int)$row['user_id'];
+            }
+
+            // 2. Query associate_profiles by id or legacy_id
+            $row = $this->db->fetch(
+                "SELECT user_id FROM associate_profiles WHERE (id = ? OR legacy_id = ?) AND user_id IS NOT NULL LIMIT 1",
+                [$associateId, $associateId]
+            );
+            if ($row && !empty($row['user_id'])) {
+                return (int)$row['user_id'];
+            }
+
+            // 3. Fallback: maybe $associateId was ALREADY a user_id of an associate/agent
+            $row = $this->db->fetch(
+                "SELECT id FROM users WHERE id = ? AND role IN ('associate', 'agent') LIMIT 1",
+                [$associateId]
+            );
+            if ($row && !empty($row['id'])) {
+                return (int)$row['id'];
+            }
+
+            return 0;
         } catch (\Throwable $e) {
             error_log('IdentityService::resolveAssociateUserId: ' . $e->getMessage());
             return 0;

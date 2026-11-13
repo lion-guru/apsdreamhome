@@ -1022,6 +1022,19 @@ class MLMCommissionEngine
             ");
             foreach ($entries as &$e) {
                 try {
+                    $chk = $this->db->prepare("
+                        SELECT id FROM mlm_commission_ledger
+                        WHERE booking_id = ? AND beneficiary_user_id = ? AND commission_type = ? AND status != 'cancelled'
+                        LIMIT 1
+                    ");
+                    $chk->execute([$bookingId, $e['beneficiary_user_id'], $e['commission_type']]);
+                    $existingLedgerId = $chk->fetchColumn();
+                    if ($existingLedgerId) {
+                        $e['id'] = (int)$existingLedgerId;
+                        $result['total'] += $e['amount'];
+                        continue;
+                    }
+
                     $ins->execute([
                         $e['beneficiary_user_id'],
                         $e['source_user_id'],
@@ -1404,6 +1417,19 @@ class MLMCommissionEngine
             ");
             foreach ($entries as &$e) {
                 try {
+                    $chk = $this->db->prepare("
+                        SELECT id FROM mlm_commission_ledger
+                        WHERE booking_id = ? AND beneficiary_user_id = ? AND commission_type = ? AND status != 'cancelled'
+                        LIMIT 1
+                    ");
+                    $chk->execute([$bookingId, $e['beneficiary_user_id'], $e['commission_type']]);
+                    $existingLedgerId = $chk->fetchColumn();
+                    if ($existingLedgerId) {
+                        $e['id'] = (int)$existingLedgerId;
+                        $result['total'] += $e['amount'];
+                        continue;
+                    }
+
                     $ins->execute([
                         $e['beneficiary_user_id'],
                         $e['source_user_id'],

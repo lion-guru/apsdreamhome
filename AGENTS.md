@@ -21,6 +21,45 @@
 
 > **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
 
+## Session 472: Database Duplication & Merge Audit, IdentityService 3-Tier Associate Resolution, Commission Ledger Idempotency & Rate Limit Migration, Schema Ratchet Lowered to 241, 1509/1509 PHPStan Clean (2026-11-13)
+
+### Trigger
+User instruction: "dekhna dublicasi na ho bhut pahle database pat kaam hua tha table row merge huye the sayad kuch row ya rable mismatch bhi h" — performing deep database audit for duplicate tables, merged rows, ID resolution fallbacks, and single source of truth enforcement.
+
+### The headline
+
+**1. DATABASE DUPLICATION & MERGE AUDIT EXECUTED**
+- **Wallet Systems Grounded**: Probed live wallet tables. Confirmed `wallet_points` is the active, canonical wallet system holding live user balances (76 rows, 3 transactions); `user_wallets` has 0 rows.
+- **Associate Tables Mapped**: Audited `associates` (37 rows, legacy model) vs `associate_profiles` (5 rows, unified profile model). 32 legacy associate rows exist without an `associate_profiles` counterpart, meaning joining `associate_profiles` directly dropped legacy associates.
+- **Commission Ledger Re-run Duplication Traced**: Audit identified historical duplicated rows in `mlm_commission_ledger` for test bookings 9003-9008 due to lack of idempotency checks during batch re-runs.
+
+**2. MULTI-TIER ID RESOLUTION (IDENTITYSERVICE)**
+- In `app/Services/IdentityService::resolveAssociateUserId()`, enhanced resolution with 3-tier fallback:
+  1. `associates.user_id` by legacy `associates.id`
+  2. `associate_profiles.user_id` by `associate_profiles.id` or `legacy_id`
+  3. Direct verification if passed ID is already an associate/agent `users.id`
+- Callers passing legacy associate IDs, profile IDs, or user IDs now all resolve deterministically to the correct canonical user ID.
+
+**3. COMMISSION LEDGER IDEMPOTENCY LOCKS**
+- In `CommissionLedgerService::recordCommission()`: Added idempotency check verifying `(booking_id, receipt_id, beneficiary_user_id, commission_type)` before inserting, returning existing ledger ID if duplicate.
+- In `MLMCommissionEngine::calculateCommission()` and `calculateEmiCommissions()`: Added pre-check on `(booking_id, beneficiary_user_id, commission_type)` to avoid duplicate entries when recalculating EMI or legacy commissions.
+
+**4. LOGIN THROTTLE TIMESTAMP BUG & CONSOLIDATION**
+- In `AuthController::checkThrottle()`: `(int)($row['last'] ?? 0)` cast a DATETIME string to int `2026`, causing `strtotime(2026)` to parse as `20:26` today. `time() - strtotime(...)` evaluated to negative, triggering an erroneous 14-hour lockout after a single failed attempt. Fixed with proper string timestamp handling.
+- Consolidated brute-force logging in `AuthService` and `AuthenticationService` to canonical `login_attempts` table, eliminating 1054 errors on non-existent `activity_logs_unified.email` / `failed_activity_logs_unified`.
+- Added migration `database/migrations/fix_login_attempts_and_rate_limit_s472.php`: adds `user_id` index to `login_attempts` and creates `rate_limit` table (used by `MonitorService`).
+
+**5. SCHEMA CURRENT DUMP & MISMATCH RATCHET LOWERED TO 241**
+- `rate_limit` migrated; `testing/scan_schema_mismatches.php --write-baseline` lowered known mismatches from 243 to **241** (0 new).
+- `database/schema_current.sql` exported directly via mysqldump with `--result-file` and utf8mb4 (1077 tables, clean UTF-8, 0 NUL bytes).
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1509/1509 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 20.60s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 241 known, 0 NEW (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
 ## Session 471: 42 More Destructive GET Routes Converted to POST+CSRF, 34 Admin Buttons Rewired as Forms, The Admin Blogs Desk (A Whole Module) Was Unrouted and 404'd on 3 of Its 4 Buttons, All Gates Green (2026-11-13)
 
 ### Trigger

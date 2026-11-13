@@ -140,11 +140,20 @@ class AuthController extends BaseController
         $attempts = $this->getRecentAttempts($db, $identity);
         if ($attempts > 0 && $attempts <= count(self::THROTTLE_DELAY)) {
             $requiredDelay = self::THROTTLE_DELAY[$attempts - 1];
-            $lastAttempt = (int)($db->fetchOne(
+            // S472: this was `(int)(...['last'] ?? 0)` - casting the
+            // DATETIME string to an int gave 2026, and strtotime(2026)
+            // parses as 20:26 TODAY, so `time() - strtotime(...)` came out
+            // NEGATIVE and the throttle demanded a 14-HOUR wait ("Too many
+            // attempts. Please wait 50482 seconds.") after a SINGLE
+            // mistyped password.  Keep the string, and treat a missing or
+            // unparsable timestamp as "long enough ago".
+            $lastRow = $db->fetchOne(
                 "SELECT MAX(created_at) as last FROM login_attempts WHERE identifier = ? AND success = 0",
                 [$identity]
-            )['last'] ?? 0);
-            $elapsed = time() - strtotime($lastAttempt);
+            );
+            $lastAttempt = (string)($lastRow['last'] ?? '');
+            $lastTs = $lastAttempt !== '' ? strtotime($lastAttempt) : false;
+            $elapsed = ($lastTs === false) ? PHP_INT_MAX : (time() - $lastTs);
             if ($elapsed < $requiredDelay) {
                 $remaining = $requiredDelay - $elapsed;
                 $_SESSION['login_error'] = "Too many attempts. Please wait {$remaining} seconds.";

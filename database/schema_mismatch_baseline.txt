@@ -12,9 +12,9 @@
 # in the same commit - the baseline is a ratchet, not a suppression list.
 #
 # Format: one identifier per line - a table name, or table.column.
-# Total entries: 243 (157 tables + 86 columns)
+# Total entries: 241 (155 tables + 86 columns)
 #
-# --- phantom tables (157) ---
+# --- phantom tables (155) ---
 acquisitions
 active_sessions
 admin_error_log
@@ -64,7 +64,6 @@ employee_salary_structures
 employee_tax_compliance
 error_logs
 escalation_rules
-failed_activity_logs_unified
 farmer_activities
 farmer_commissions
 feature_usage
@@ -128,7 +127,6 @@ proposals
 query_log
 queue
 rank_requirements
-rate_limit
 reports
 request_logs
 review_helpful_votes

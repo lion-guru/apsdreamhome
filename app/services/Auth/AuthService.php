@@ -581,24 +581,27 @@ class AuthService
         $tid = $this->getTenantId();
         $tenantCol = $tid > 1 ? ", tenant_id" : "";
         $tenantVal = $tid > 1 ? ", ?" : "";
-        $sql = "INSERT INTO activity_logs_unified (user_type, action, description, ip_address, user_agent, created_at{$tenantCol}) 
-                VALUES (?, ?, ?, ?, ?, NOW(){$tenantVal})";
+        // S472: the same phantom columns - the INSERT died with 1054 too.
+        $sql = "INSERT INTO login_attempts (identifier, success, ip_address, user_agent, created_at, tenant_id) 
+                VALUES (?, ?, ?, ?, NOW(), ?)";
         
         $params = [
-            'customer',
-            $success ? 'login_success' : 'login_failed',
-            "Login attempt for email: {$email} - " . ($success ? 'success' : 'failed'),
-            $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-            $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+            $email,
+            $success ? 1 : 0,
+            $_SERVER['REMOTE_ADDR'] ?? '',
+            substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255),
+            $tid
         ];
-        if ($tid > 1) $params[] = $tid;
         $this->db->execute($sql, $params);
     }
 
     private function isAccountLocked(int $userId): bool
     {
-        $sql = "SELECT COUNT(*) as count FROM failed_activity_logs_unified 
-                WHERE user_id = ? AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
+        // S472: `failed_activity_logs_unified` was NEVER created, so this
+        // always threw and isAccountLocked() always answered false - the
+        // account lockout never happened.  The real table is login_attempts.
+        $sql = "SELECT COUNT(*) as count FROM login_attempts 
+                WHERE user_id = ? AND success = 0 AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)";
         
         $count = $this->db->fetchOne($sql, [$userId, $this->lockoutDuration / 60]) ?? 0;
         return $count >= $this->maxLoginAttempts;
@@ -606,13 +609,23 @@ class AuthService
 
     private function incrementFailedAttempts(int $userId): void
     {
-        $sql = "INSERT INTO failed_activity_logs_unified (user_id, created_at) VALUES (?, NOW())";
-        $this->db->execute($sql, [$userId]);
+        // S472: same table.  `identifier` is NOT NULL, so it is filled from
+        // the user's own email; the counter is per ACCOUNT (user_id).
+        $sql = "INSERT INTO login_attempts (identifier, user_id, success, ip_address, user_agent, created_at)
+                VALUES ((SELECT email FROM users WHERE id = ?), ?, 0, ?, ?, NOW())";
+        $this->db->execute($sql, [
+            $userId,
+            $userId,
+            $_SERVER['REMOTE_ADDR'] ?? '',
+            substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255)
+        ]);
     }
 
     private function clearFailedAttempts(int $userId): void
     {
-        $sql = "DELETE FROM failed_activity_logs_unified WHERE user_id = ?";
+        // S472: same table - and only the FAILURES are cleared, so the
+        // successful-attempt audit rows are kept.
+        $sql = "DELETE FROM login_attempts WHERE user_id = ? AND success = 0";
         $this->db->execute($sql, [$userId]);
     }
 

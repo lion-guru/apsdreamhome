@@ -65,6 +65,34 @@ class CommissionLedgerService
             }
         }
 
+        // Idempotency check: prevent duplicate insertion for the same booking + receipt + beneficiary + commission_type
+        if ($bookingId > 0 && $receiptId > 0 && $beneficiaryId > 0) {
+            $chk = $this->pdo->prepare("
+                SELECT id FROM mlm_commission_ledger
+                WHERE booking_id = ? AND receipt_id = ? AND beneficiary_user_id = ? AND commission_type = ? AND status != 'cancelled'
+                LIMIT 1
+            ");
+            $chk->execute([$bookingId, $receiptId, $beneficiaryId, $type]);
+            $existingId = $chk->fetchColumn();
+            if ($existingId) {
+                return (int)$existingId;
+            }
+        }
+
+        // Idempotency check: prevent duplicate insertion for the same booking + receipt + beneficiary + commission_type
+        if ($bookingId > 0 && $receiptId > 0 && $beneficiaryId > 0) {
+            $chk = $this->pdo->prepare("
+                SELECT id FROM mlm_commission_ledger
+                WHERE booking_id = ? AND receipt_id = ? AND beneficiary_user_id = ? AND commission_type = ? AND status != 'cancelled'
+                LIMIT 1
+            ");
+            $chk->execute([$bookingId, $receiptId, $beneficiaryId, $type]);
+            $existingId = $chk->fetchColumn();
+            if ($existingId) {
+                return (int)$existingId;
+            }
+        }
+
         $stmt = $this->pdo->prepare("
             INSERT INTO mlm_commission_ledger
                 (beneficiary_user_id, source_user_id, commission_type, amount,
@@ -200,7 +228,7 @@ class CommissionLedgerService
         if ($userId <= 0) {
             return [];
         }
-        
+
         $stmt = $this->pdo->prepare("
             SELECT id, beneficiary_user_id, amount, commission_type, booking_id, status, created_at
             FROM mlm_commission_ledger

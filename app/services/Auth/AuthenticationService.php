@@ -381,17 +381,16 @@ class AuthenticationService
     private function recordLoginAttempt($email, $success)
     {
         $tid = $this->getTenantId();
+        // S472: the same two phantom columns (email, success) - the INSERT
+        // died with 1054 too, so not even ONE attempt was ever recorded.
         $logData = [
-            'email' => $email,
+            'identifier' => $email,
             'success' => $success ? 1 : 0,
-            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
-            'created_at' => date('Y-m-d H:i:s')
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '',
+            'user_agent' => substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255),
+            'tenant_id' => $tid
         ];
-        if ($tid > 1) {
-            $logData['tenant_id'] = $tid;
-        }
-        $this->db->insert('activity_logs_unified', $logData);
+        $this->db->insert('login_attempts', $logData);
     }
 
     /**
