@@ -238,18 +238,22 @@ class PayoutController extends AdminController
 
                 // Wallet Integration: If payout method is 'wallet', credit the associate's wallet
                 if (strtolower($method) === 'wallet') {
-                    $walletSql = "UPDATE wallet_points 
-                                  SET points_balance = points_balance + ?, 
-                                      total_earned = total_earned + ?, 
+                    $walletSql = "UPDATE wallet_points
+                                  SET points_balance = points_balance + ?,
+                                      total_earned = total_earned + ?,
                                       commission_earnings = commission_earnings + ?,
                                       updated_at = NOW()
                                   WHERE user_id = ?";
-                    $this->db->prepare($walletSql)->execute([
+                    $walletStmt = $this->db->prepare($walletSql);
+                    $walletStmt->execute([
                         $payout['amount'],
                         $payout['amount'],
                         $payout['amount'],
                         $payout['associate_id']
                     ]);
+                    if ($walletStmt->rowCount() !== 1) {
+                        throw new \Exception('Payout wallet UPDATE matched 0 rows for user ' . $payout['associate_id'] . ' - payout aborted; no fake ledger row');
+                    }
 
                     // Fetch the updated balance to record in transactions accurately
                     $walletStmt = $this->db->prepare("SELECT points_balance FROM wallet_points WHERE user_id = ?");
