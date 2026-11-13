@@ -6124,3 +6124,27 @@ _906. **Debug with the exact same HTTP client as the test** — CLI curl and PHP
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **477** (next session; S476 logged above).
+
+## Session 477: Dual-Wallet Consolidation - user_wallets Is Dead Code, Consolidated to wallet_points (2026-11-13)
+
+### Trigger
+Owner: "do next aur koi suggestion tumhara" - continuing autonomous work.
+
+### The headline
+
+**1. THE DUAL WALLET SYSTEM IS CONSOLIDATED**
+- `user_wallets` has **0 rows** and is referenced only by `WalletActivationService`'s "try both" fallback logic.
+- `wallet_points` is the canonical wallet (76 rows, 3 transactions, the one `WalletService` credits).
+- Removed the `user_wallets` fallback from `isWalletActivated()` and `getWalletType()` - now checks only `wallet_points`.
+- `activatePurchaseUserWallet()` (the `user_wallets`-specific method) is now unreachable (never called anywhere) - left as dead code, harmless.
+- No data loss: `user_wallets` had 0 rows, so nothing was lost.
+
+### Verification
+- **PHPStan**: `[OK] No errors` (exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY).
+- **Live DB Zero Drift**: users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0.
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### Key Lessons (carried, continued)
+_907. **A second wallet table with 0 rows is dead code, not a feature** - `user_wallets` had 0 rows and was only referenced by `WalletActivationService`'s "try both" fallback. Removing the fallback (2 methods, ~20 lines) consolidates to the canonical `wallet_points` system without any behavior change. The `activatePurchaseUserWallet()` method is now unreachable but harmless.
+_908. **Grep before you refactor a "dual system"** - `user_wallets` was referenced in only 3 places, all in `WalletActivationService`. A 30-second grep would have told me the blast radius before I touched anything. The "dual wallet" turned out to be a single-wallet system with a dead fallback, not a real architectural conflict.

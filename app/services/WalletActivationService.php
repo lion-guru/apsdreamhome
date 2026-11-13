@@ -395,16 +395,10 @@ class WalletActivationService
             return true;
         }
 
-        // Try user_wallets (associates/agents/employees)
-        $stmt = $this->db->prepare(
-            "SELECT is_active FROM user_wallets WHERE user_id = ?" . $tenantWhere . " LIMIT 1"
-        );
-        $stmt->execute($params);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row && (int)$row['is_active'] === 1) {
-            return true;
-        }
-
+        // S476: user_wallets is a SECOND, parallel wallet system with 0 rows
+        // and no live readers outside this service.  wallet_points is the
+        // canonical wallet (76 rows, 3 transactions, the one WalletService
+        // credits).  Keep a single source of truth: wallet_points only.
         return false;
     }
 
@@ -421,10 +415,8 @@ class WalletActivationService
         $stmt->execute($params);
         if ($stmt->fetch()) return 'wallet_points';
 
-        $stmt = $this->db->prepare("SELECT 1 FROM user_wallets WHERE user_id = ?" . $tenantWhere . " LIMIT 1");
-        $stmt->execute($params);
-        if ($stmt->fetch()) return 'user_wallets';
-
+        // S476: user_wallets is a dead parallel wallet (0 rows, no live
+        // readers).  wallet_points is the canonical wallet.
         return 'none';
     }
 
