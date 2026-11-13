@@ -31,11 +31,14 @@ document.addEventListener('DOMContentLoaded', function(){
         <div class="container hero-content">
             <div class="row align-items-center g-5">
                 <div class="col-lg-7">
-                    <div class="premium-reveal hover-lift">
-                        <span class="badge px-3 py-2 mb-3 badge-pulse badge-premium">
+                    <div class="premium-reveal hover-lift d-flex flex-wrap gap-2 align-items-center mb-3">
+                        <span class="badge px-3 py-2 badge-pulse badge-premium">
                             <i class="fas fa-star me-1 iu-navy"></i>
                             <?= __('trusted_by') ?> <?= __('home_families_count') ?>
                         </span>
+                        <a href="<?= BASE_URL ?>/offers" class="badge px-3 py-2 bg-warning text-dark text-decoration-none fw-bold shadow-sm d-inline-flex align-items-center gap-1" style="font-size: 0.82rem; border-radius: 20px;">
+                            <i class="fas fa-gift text-danger me-1"></i> Festive Deals Live &mdash; Save up to ₹21,000+ &rarr;
+                        </a>
                     </div>
                     <h1 id="hero-title" class="fw-bold text-white premium-reveal hero-title">
                         <?= __('hero_title') ?>

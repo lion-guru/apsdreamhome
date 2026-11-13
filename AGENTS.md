@@ -6206,4 +6206,29 @@ User instructions: "do next" — Continuing autonomous tech lead / CEO improveme
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **480** (next session).
+Next-free = **480** (this session; S479 logged above).
+
+## Session 480: Home Page Festive Hero Alert Ribbon & Associate Desk Project Gallery Shortcut, 1508/1508 Clean (2026-11-13)
+
+### Trigger
+User instructions: "do next" / "do next all with your suggestion" — Continuing autonomous tech lead / CEO execution: public landing page festive deal discovery & associate sales pitch asset enablement.
+
+### The headline
+
+**1. PUBLIC HOME PAGE FESTIVE HERO ALERT RIBBON**
+- In `app/views/pages/home.php`: Enhanced hero trust badge row with a responsive, high-converting Festive Deals alert pill:
+  `<a href="<?= BASE_URL ?>/offers" class="badge px-3 py-2 bg-warning text-dark text-decoration-none fw-bold shadow-sm d-inline-flex align-items-center gap-1" style="font-size: 0.82rem; border-radius: 20px;"><i class="fas fa-gift text-danger me-1"></i> Festive Deals Live &mdash; Save up to ₹21,000+ &rarr;</a>`.
+  Provides prospective homebuyers direct 1-click access to active promotional discounts, cashback hampers, and per-sqft concession codes.
+
+**2. ASSOCIATE DESK PROJECT GALLERY SHORTCUT**
+- In `app/views/associate/dashboard.php`: Added dedicated "Projects & Gallery" quick action pill (`/properties`, opening in a new tab) alongside CRM and Book Plot tools, enabling field associates to instantly showcase colony photos, master layouts, and property specifications to walk-in clients.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 20.92s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1209 tables, 15554 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **481** (next session).

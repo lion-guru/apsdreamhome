@@ -232,6 +232,9 @@ body {
                 <a href="<?= BASE_URL ?>/associate/crm" class="action-pill">
                     <i class="fas fa-funnel-dollar"></i> CRM
                 </a>
+                <a href="<?= BASE_URL ?>/properties" class="action-pill" target="_blank">
+                    <i class="fas fa-images text-info"></i> Projects &amp; Gallery
+                </a>
                 <a href="<?= BASE_URL ?>/associate/book-plot" class="action-pill primary-pill">
                     <i class="fas fa-file-signature"></i> Book Plot
                 </a>
