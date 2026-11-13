@@ -36,16 +36,16 @@
 </div>
 
 <!-- Newsletter Section -->
-<section class="py-5 bg-navy text-white">
+<section class="py-5 text-white" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6 text-center">
-                <h3 class="mb-3 text-gold"><?= __('blog_newsletter_title') ?></h3>
-                <p class="mb-4 text-white-50"><?= __('blog_newsletter_desc') ?></p>
+                <h2 class="mb-3 fs-2" style="color: #f4c542;"><?= __('blog_newsletter_title') ?></h2>
+                <p class="mb-4" style="opacity: 0.8;"><?= __('blog_newsletter_desc') ?></p>
                 <form class="d-flex gap-2" id="blogNewsletterForm">
     <?php echo CSRFProtection::csrfField(); ?>
                     <input type="email" class="form-control" name="email" placeholder="<?= __('blog_newsletter_ph_email') ?>" required >
-                    <button type="submit" class="btn btn-gold px-4 fw-bold">
+                    <button type="submit" id="blogNewsletterSubmit" class="btn btn-navy-submit px-4 fw-bold" style="background: #f4c542; border: none; color: #1e293b;">
                         <i class="fas fa-envelope me-1"></i><?= __('subscribe') ?>
                     </button>
                 </form>
@@ -76,7 +76,7 @@
         <?php if (!empty($blog_posts)): ?>
             <div class="row mb-5">
                 <div class="col-12">
-                    <h3 class="mb-4"><?= __('blog_featured') ?></h3>
+                    <h2 class="fs-4 fw-bold"><?= __('blog_featured') ?></h2>
                 </div>
                 <div class="col-12">
                     <div class="card blog-card shadow-sm">
@@ -106,7 +106,7 @@
                             <h3 class="card-title mb-3"><?php echo htmlspecialchars($blog_posts[0]['title'] ?? ''); ?></h3>
                             <p class="card-text mb-3"><?php echo htmlspecialchars(substr($blog_posts[0]['excerpt'] ?? '', 0, 200)) . '...'; ?></p>
                             <a href="<?= BASE_URL ?>/blog/<?= htmlspecialchars($blog_posts[0]['slug'] ?? '') ?>" class="read-more-btn">
-                                <i class="fas fa-arrow-right me-1"></i><?= __('blog_read_more') ?>
+                                <i class="fas fa-arrow-right me-1"></i>Read article: <?= htmlspecialchars(mb_substr($blog_posts[0]['title'] ?? 'this post', 0, 60)) ?>
                             </a>
                         </div>
                     </div>
@@ -117,7 +117,7 @@
         <!-- All Posts -->
         <div class="row">
             <div class="col-12 mb-4">
-                <h3><?= __('blog_latest') ?></h3>
+                <h2 class="fs-4 fw-bold"><?= __('blog_latest') ?></h2>
             </div>
 
             <?php for ($i = 1; $i < count($blog_posts); $i++): ?>
@@ -144,12 +144,12 @@
                                     <?php echo htmlspecialchars($blog_posts[$i]['read_time'] ?? '5'); ?> min
                                 </small>
                             </div>
-                            <h6 class="card-title mb-2"><?php echo htmlspecialchars($blog_posts[$i]['title'] ?? ''); ?></h6>
+                            <h3 class="card-title fs-5 mb-2"><?php echo htmlspecialchars($blog_posts[$i]['title'] ?? ''); ?></h3>
                             <p class="card-text small text-muted mb-3">
                                 <?php echo htmlspecialchars(substr($blog_posts[$i]['excerpt'] ?? '', 0, 100)) . '...'; ?>
                             </p>
                             <a href="<?= BASE_URL ?>/blog/<?= htmlspecialchars($blog_posts[$i]['slug'] ?? '') ?>" class="read-more-btn btn-sm">
-                                <i class="fas fa-arrow-right me-1"></i><?= __('blog_read_more') ?>
+                                <i class="fas fa-arrow-right me-1"></i>Read article: <?= htmlspecialchars(mb_substr($blog_posts[$i]['title'] ?? 'this post', 0, 60)) ?>
                             </a>
                         </div>
                     </div>
@@ -175,7 +175,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12 text-center mb-5">
-                <h3 class="fw-bold"><?= __('blog_explore_title') ?></h3>
+                <h2 class="fs-4 fw-bold"><?= __('blog_explore_title') ?></h2>
                 <p class="lead text-muted"><?= __('blog_explore_desc') ?></p>
             </div>
         </div>
@@ -183,28 +183,28 @@
             <div class="col-lg-3 col-md-6">
                 <div class="card text-center p-4 h-100">
                     <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
-                    <h6><?= __('blog_cat_market') ?></h6>
+                    <h3 class="fs-6"><?= __('blog_cat_market') ?></h3>
                     <p class="small text-muted"><?= __('blog_cat_market_desc') ?></p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="card text-center p-4 h-100">
                     <i class="fas fa-coins fa-3x text-success mb-3"></i>
-                    <h6><?= __('blog_cat_investment') ?></h6>
+                    <h3 class="fs-6"><?= __('blog_cat_investment') ?></h3>
                     <p class="small text-muted"><?= __('blog_cat_investment_desc') ?></p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="card text-center p-4 h-100">
                     <i class="fas fa-home fa-3x text-info mb-3"></i>
-                    <h6><?= __('blog_cat_buying') ?></h6>
+                    <h3 class="fs-6"><?= __('blog_cat_buying') ?></h3>
                     <p class="small text-muted"><?= __('blog_cat_buying_desc') ?></p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="card text-center p-4 h-100">
                     <i class="fas fa-balance-scale fa-3x text-warning mb-3"></i>
-                    <h6><?= __('blog_cat_legal') ?></h6>
+                    <h3 class="fs-6"><?= __('blog_cat_legal') ?></h3>
                     <p class="small text-muted"><?= __('blog_cat_legal_desc') ?></p>
                 </div>
             </div>
@@ -254,7 +254,7 @@
                         msg.className = 'mt-2 small text-success';
                         msg.textContent = 'âœ" Subscribed successfully!';
                         btn.innerHTML = '<i class="fas fa-check me-1"></i>Subscribed!';
-                        btn.classList.replace('btn-gold', 'btn-success');
+                        btn.classList.replace('btn-navy-submit', 'btn-success');
                         nlForm.reset();
                     } else {
                         msg.className = 'mt-2 small text-danger';

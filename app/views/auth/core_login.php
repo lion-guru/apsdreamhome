@@ -22,6 +22,7 @@ $supportedRoles = [
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to APS Dream Home to browse verified plots and properties, book plots, track your applications, and manage your account. Trusted by 5000+ families across Uttar Pradesh.">
     <meta name="csrf-token" content="<?= htmlspecialchars($csrf_token ?? '') ?>">
     <title>Login - APS Dream Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -140,6 +141,7 @@ $supportedRoles = [
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=1">
 </head>
 <body>
+<main aria-label="Account sign in">
     <div class="login-wrapper">
         <!-- Benefits Panel -->
         <div class="benefits-panel d-none d-lg-block">
@@ -312,5 +314,6 @@ $supportedRoles = [
         }
     }
     </script>
+</main>
 </body>
 </html>

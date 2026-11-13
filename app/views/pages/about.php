@@ -61,19 +61,19 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     
                     <div class="glass-stats-grid">
                         <div class="glass-stat-item">
-                            <h3 class="hero-stat-number">4<span class="text-teal">+</span></h3>
+                            <div class="hero-stat-number">4<span class="text-teal">+</span></div>
                             <p class="stat-label">Active Projects</p>
                         </div>
                         <div class="glass-stat-item">
-                            <h3 class="hero-stat-number">5000<span class="text-teal">+</span></h3>
+                            <div class="hero-stat-number">5000<span class="text-teal">+</span></div>
                             <p class="stat-label">Plots Sold</p>
                         </div>
                         <div class="glass-stat-item">
-                            <h3 class="hero-stat-number">500<span class="text-teal">+</span></h3>
+                            <div class="hero-stat-number">500<span class="text-teal">+</span></div>
                             <p class="stat-label">Happy Families</p>
                         </div>
                         <div class="glass-stat-item">
-                            <h3 class="hero-stat-number">4<span class="text-teal">+</span></h3>
+                            <div class="hero-stat-number">4<span class="text-teal">+</span></div>
                             <p class="stat-label">Colonies</p>
                         </div>
                     </div>
@@ -258,7 +258,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 .about-story .story-title span{background:linear-gradient(135deg,#0d9488,#0f766e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .about-story .story-text{color:#475569;font-size:1rem;line-height:1.8}
 .about-story .story-detail{background:#f8fafc;border-radius:16px;padding:20px;border-left:4px solid #0d9488;margin-bottom:16px}
-.about-story .story-detail h6{font-weight:700;color:#1e293b;margin-bottom:6px;font-size:0.95rem}
+.about-story .story-detail h3{font-weight:700;color:#1e293b;margin-bottom:6px;font-size:0.95rem}
 .about-story .story-detail p{color:#64748b;font-size:0.88rem;margin:0;line-height:1.6}
 
 /* ---- Company Highlights ---- */
@@ -266,12 +266,12 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 .highlight-card{background:#fff;border-radius:16px;padding:28px;text-align:center;border:none;box-shadow:0 2px 12px rgba(0,0,0,0.04);transition:all 0.3s;height:100%}
 .highlight-card:hover{transform:translateY(-6px);box-shadow:0 12px 32px rgba(0,0,0,0.08)}
 .highlight-card .icon-wrap{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.4rem}
-.highlight-card h5{font-weight:700;color:#1e293b;margin-bottom:8px;font-size:1rem}
+.highlight-card h3{font-weight:700;color:#1e293b;margin-bottom:8px;font-size:1rem}
 .highlight-card p{color:#64748b;font-size:0.85rem;margin:0;line-height:1.6}
 
 /* ---- Leadership ---- */
 .about-leaders{padding:80px 0;background:#fff}
-.about-leaders .section-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px}
+.about-leaders .section-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color: #0f766e;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px}
 .about-leaders .section-title{font-size:2rem;font-weight:800;color:#1e293b;margin-bottom:12px;letter-spacing:-0.5px}
 .about-leaders .section-title span{background:linear-gradient(135deg,#0d9488,#0f766e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .about-leaders .section-sub{color:#64748b;font-size:0.95rem;margin-bottom:40px;max-width:600px}
@@ -282,10 +282,10 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 .leader-card .leader-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease}
 .leader-card:hover .leader-img-wrap img{transform:scale(1.08)}
 .leader-card .leader-img-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(transparent,rgba(0,0,0,0.5))}
-.leader-card .leader-badge{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);border-radius:10px;padding:6px 14px;font-size:0.72rem;font-weight:700;color:#0d9488;display:flex;align-items:center;gap:4px}
+.leader-card .leader-badge{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);border-radius:10px;padding:6px 14px;font-size:0.72rem;font-weight:700;color: #0f766e;display:flex;align-items:center;gap:4px}
 .leader-card .leader-body{padding:24px}
 .leader-card .leader-name{font-size:1.15rem;font-weight:800;color:#1e293b;margin-bottom:2px}
-.leader-card .leader-role{color:#0d9488;font-size:0.82rem;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
+.leader-card .leader-role{color: #0f766e;font-size:0.82rem;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
 .leader-card .leader-exp{color:#64748b;font-size:0.78rem;margin-bottom:10px;display:flex;align-items:center;gap:4px}
 .leader-card .leader-exp i{color:#f59e0b}
 .leader-card .leader-bio{color:#475569;font-size:0.88rem;line-height:1.6}
@@ -295,10 +295,10 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 .dept-card{background:#fff;border-radius:16px;padding:24px;text-align:center;border:none;box-shadow:0 2px 12px rgba(0,0,0,0.04);transition:all 0.3s;height:100%}
 .dept-card:hover{transform:translateY(-6px);box-shadow:0 12px 32px rgba(0,0,0,0.08)}
 .dept-card .dept-avatar{width:100px;height:100px;border-radius:50%;overflow:hidden;margin:0 auto 16px;border:4px solid #f1f5f9;transition:all 0.3s}
-.dept-card:hover .dept-avatar{border-color:#0d9488;transform:scale(1.05)}
+.dept-card:hover .dept-avatar{border-color: #0f766e;transform:scale(1.05)}
 .dept-card .dept-avatar img{width:100%;height:100%;object-fit:cover}
-.dept-card h5{font-weight:700;color:#1e293b;margin-bottom:4px;font-size:1rem}
-.dept-card .dept-role{color:#0d9488;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.dept-card h3{font-weight:700;color:#1e293b;margin-bottom:4px;font-size:1rem}
+.dept-card .dept-role{color: #0f766e;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
 .dept-card .dept-exp{color:#64748b;font-size:0.78rem;margin-bottom:10px}
 .dept-card p{color:#475569;font-size:0.85rem;line-height:1.6;margin:0}
 
@@ -311,7 +311,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 .mvv-card.values::before{background:linear-gradient(135deg,#f59e0b,#ef4444)}
 .mvv-card:hover{transform:translateY(-6px);box-shadow:0 12px 32px rgba(0,0,0,0.08)}
 .mvv-card .mvv-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:16px}
-.mvv-card h4{font-weight:800;color:#1e293b;margin-bottom:12px;font-size:1.15rem}
+.mvv-card h3{font-weight:800;color:#1e293b;margin-bottom:12px;font-size:1.15rem}
 .mvv-card p{color:#64748b;font-size:0.9rem;line-height:1.7;margin:0}
 
 /* ---- Stats Panel ---- */
@@ -328,13 +328,13 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 .office-card{background:#fff;border-radius:20px;overflow:hidden;border:none;box-shadow:0 4px 24px rgba(0,0,0,0.05);transition:all 0.3s;height:100%}
 .office-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,0.1)}
 .office-card .office-header{background:linear-gradient(135deg,#0d9488,#0f766e);padding:20px 24px;color:#fff}
-.office-card .office-header h5{font-weight:700;margin:0;font-size:1.05rem}
+.office-card .office-header .office-h3{font-weight:700;margin:0;font-size:1.05rem}
 .office-card .office-header small{opacity:0.8;font-size:0.8rem}
 .office-card .office-body{padding:24px}
 .office-card .office-body .info-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
-.office-card .office-body .info-row i{width:36px;height:36px;border-radius:10px;background:#f0fdfa;color:#0d9488;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem}
+.office-card .office-body .info-row i{width:36px;height:36px;border-radius:10px;background:#f0fdfa;color: #0f766e;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem}
 .office-card .office-body .info-row div{flex:1}
-.office-card .office-body .info-row .label{font-size:0.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:2px}
+.office-card .office-body .info-row .label{font-size:0.72rem;color: #475569;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:2px}
 .office-card .office-body .info-row .value{color:#1e293b;font-size:0.9rem;font-weight:600}
 
 /* ---- Certifications ---- */
@@ -348,7 +348,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 /* ---- Service Cards (clickable) ---- */
 .service-card{cursor:pointer;position:relative}
 .service-card:focus{outline:2px solid #0d9488;outline-offset:3px}
-.service-more{display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:#0d9488;font-size:0.8rem;font-weight:700;opacity:0;transform:translateX(-6px);transition:all 0.3s}
+.service-more{display:inline-flex;align-items:center;gap:6px;margin-top:14px;color: #0f766e;font-size:0.8rem;font-weight:700;opacity:0;transform:translateX(-6px);transition:all 0.3s}
 .service-card:hover .service-more{opacity:1;transform:translateX(0)}
 .service-card .icon-wrap{transition:transform 0.3s}
 .service-card:hover .icon-wrap{transform:scale(1.08)}
@@ -369,7 +369,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
 .service-modal-steps{margin:0;padding:0;list-style:none;counter-reset:step}
 .service-modal-steps li{counter-increment:step;position:relative;padding:10px 0 10px 44px;border-bottom:1px solid #f1f5f9;color:#475569;font-size:0.9rem;line-height:1.5}
 .service-modal-steps li:last-child{border-bottom:none}
-.service-modal-steps li::before{content:counter(step);position:absolute;left:0;top:8px;width:30px;height:30px;border-radius:50%;background:#f0fdfa;color:#0d9488;font-weight:800;font-size:0.85rem;display:flex;align-items:center;justify-content:center}
+.service-modal-steps li::before{content:counter(step);position:absolute;left:0;top:8px;width:30px;height:30px;border-radius:50%;background:#f0fdfa;color: #0f766e;font-weight:800;font-size:0.85rem;display:flex;align-items:center;justify-content:center}
 .service-modal-footer{display:flex;gap:12px;padding:0 32px 32px}
 .service-modal-btn-primary{display:inline-flex;align-items:center;gap:8px;flex:1;justify-content:center;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;padding:14px 24px;border-radius:12px;font-weight:700;text-decoration:none;font-size:0.9rem;transition:all 0.3s}
 .service-modal-btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(13,148,136,0.35);color:#fff}
@@ -412,23 +412,23 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             </div>
             <div class="col-lg-6 mt-4 mt-lg-0">
                 <div class="story-detail">
-                    <h6><i class="fas fa-calendar-alt me-2"></i> Founded</h6>
+                    <h3 class="fs-6"><i class="fas fa-calendar-alt me-2"></i> Founded</h3>
                     <p>April 26, 2022 &bull; Incorporated under the Companies Act, 2013</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-map-marker-alt me-2"></i> Headquarters</h6>
+                    <h3 class="fs-6"><i class="fas fa-map-marker-alt me-2"></i> Headquarters</h3>
                     <p>Virat Bhawan, Singhariya Kunraghat, Gorakhpur, UP 273008</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-briefcase me-2"></i> Industry</h6>
+                    <h3 class="fs-6"><i class="fas fa-briefcase me-2"></i> Industry</h3>
                     <p>Real Estate Activities (NIC Code: 7010) — Plot & Land, Residential Floors</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-chart-line me-2"></i> Capital</h6>
+                    <h3 class="fs-6"><i class="fas fa-chart-line me-2"></i> Capital</h3>
                     <p>Authorized & Paid-up Capital: ₹10,00,000</p>
                 </div>
                 <div class="story-detail">
-                    <h6><i class="fas fa-star me-2"></i> Rating</h6>
+                    <h3 class="fs-6"><i class="fas fa-star me-2"></i> Rating</h3>
                     <p>5.0/5 Stars on India Online &bull; Trusted by 500+ Families</p>
                 </div>
             </div>
@@ -458,7 +458,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                             <i class="fas fa-shield-alt text-teal"></i>
                         </div>
                         <div>
-                            <h6 class="mb-0 fw-bold text-white">RERA &amp; Transparent Registry</h6>
+                            <h3 class="mb-0 fw-bold text-white fs-6">RERA &amp; Transparent Registry</h3>
                             <small class="text-light opacity-75">100% verified mutation and registry documents</small>
                         </div>
                     </div>
@@ -467,7 +467,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                             <i class="fas fa-users text-info"></i>
                         </div>
                         <div>
-                            <h6 class="mb-0 fw-bold text-white">500+ Happy Families</h6>
+                            <h3 class="mb-0 fw-bold text-white fs-6">500+ Happy Families</h3>
                             <small class="text-light opacity-75">Customer trust, timely possession, and modern gated colonies</small>
                         </div>
                     </div>
@@ -485,7 +485,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1);">
                     <div class="card-header border-0 bg-transparent px-4 pt-3 pb-2 d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-teal text-white px-2 py-1" style="background: #0d9488 !important;"><i class="fas fa-play-circle me-1"></i> Official Video</span>
+                            <span class="badge bg-teal text-white px-2 py-1" style="background: #0f766e !important; color: #ffffff !important;"><i class="fas fa-play-circle me-1"></i> Official Video</span>
                             <span class="small text-light opacity-75">Gorakhpur &amp; UP Projects</span>
                         </div>
                         <a href="https://www.youtube.com/watch?v=uB63fG1n5sY" target="_blank" rel="noopener noreferrer" class="text-white-50 text-decoration-none small hover-light">
@@ -524,7 +524,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="icon-wrap">
                         <i class="fas fa-map-marked-alt"></i>
                     </div>
-                    <h5>Plot Selling</h5>
+                    <h3 class="fs-5">Plot Selling</h3>
                     <p>Residential & commercial plots in gated colonies across Gorakhpur, Lucknow, Kushinagar & Prayagraj. RERA registered with clear titles.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </button>
@@ -534,7 +534,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="icon-wrap">
                         <i class="fas fa-hard-hat"></i>
                     </div>
-                    <h5>Construction & Development</h5>
+                    <h3 class="fs-5">Construction & Development</h3>
                     <p>Complete colony development with roads, drainage, water supply, electricity, parks and community spaces. From raw land to livable neighborhoods.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </button>
@@ -544,7 +544,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="icon-wrap">
                         <i class="fas fa-file-contract"></i>
                     </div>
-                    <h5>Legal & Documentation</h5>
+                    <h3 class="fs-5">Legal & Documentation</h3>
                     <p>In-house legal team handles title verification, sale agreements, registry, mutation, and all paperwork. Every deal is legally airtight.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </button>
@@ -554,7 +554,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="icon-wrap">
                         <i class="fas fa-hand-holding-usd"></i>
                     </div>
-                    <h5>Flexible Payment Plans</h5>
+                    <h3 class="fs-5">Flexible Payment Plans</h3>
                     <p>EMI options, easy installment plans, and transparent pricing. No hidden charges — what you see is what you pay.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </button>
@@ -564,7 +564,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="icon-wrap">
                         <i class="fas fa-home"></i>
                     </div>
-                    <h5>Resale & Resale Assistance</h5>
+                    <h3 class="fs-5">Resale & Resale Assistance</h3>
                     <p>Want to sell your plot? We help you find genuine buyers, handle documentation, and ensure fair market value for your property.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </button>
@@ -574,7 +574,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="icon-wrap">
                         <i class="fas fa-car"></i>
                     </div>
-                    <h5>Free Site Visits</h5>
+                    <h3 class="fs-5">Free Site Visits</h3>
                     <p>Visit any of our colonies before you buy. Our team arranges guided site visits with transport from Gorakhpur, Lucknow or nearby areas.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </button>
@@ -584,7 +584,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="icon-wrap">
                         <i class="fas fa-couch"></i>
                     </div>
-                    <h5>Furnished Flats</h5>
+                    <h3 class="fs-5">Furnished Flats</h3>
                     <p>Ready-to-move flats in APS Heights, Prayagraj. 2BHK & 3BHK options with modern fittings, modular kitchen and parking.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </div>
@@ -594,7 +594,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="icon-wrap">
                         <i class="fas fa-users"></i>
                     </div>
-                    <h5>Community Building</h5>
+                    <h3 class="fs-5">Community Building</h3>
                     <p>We don't just sell plots — we build neighborhoods. Parks, temples, schools nearby, and community events for all residents.</p>
                     <span class="service-more">Explore <i class="fas fa-arrow-right"></i></span>
                 </button>
@@ -623,7 +623,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
         </div>
         <div class="service-modal-footer">
             <button class="service-modal-btn-secondary" id="serviceModalClose2">Close</button>
-            <a class="service-modal-btn-primary" id="serviceModalLink" href="javascript:void(0)" aria-label="Learn more about this service">Learn More &nbsp;<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            <a class="service-modal-btn-primary" id="serviceModalLink" href="<?= BASE_URL ?>/services" aria-label="Learn more about this service">Learn More &nbsp;<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </div>
     </div>
 </div>
@@ -662,7 +662,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                         <div class="leader-badge"><i class="fas fa-crown"></i> <?= e($i === 1 ? 'Founder' : ($role === 'Senior Property Advisor' ? 'Advisor' : 'Director')) ?></div>
                     </div>
                     <div class="leader-body">
-                        <h5 class="leader-name"><?= htmlspecialchars($name ?? '') ?></h5>
+                        <h3 class="leader-name fs-5"><?= htmlspecialchars($name ?? '') ?></h3>
                         <div class="leader-role"><?= htmlspecialchars($role ?? '') ?></div>
                         <div class="leader-exp"><i class="fas fa-briefcase"></i> <?= htmlspecialchars($exp ?? '') ?></div>
                         <p class="leader-bio"><?= htmlspecialchars($bio ?? '') ?></p>
@@ -738,7 +738,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                              src="<?= htmlspecialchars($dImgSrc) ?>" 
                              alt="<?= htmlspecialchars($dName ?? '') ?>">
                     </div>
-                    <h5><?= htmlspecialchars($dName ?? '') ?></h5>
+                    <h3 class="fs-6"><?= htmlspecialchars($dName ?? '') ?></h3>
                     <div class="dept-role"><?= htmlspecialchars($dRole ?? '') ?></div>
                     <div class="dept-exp"><i class="fas fa-briefcase me-1"></i> <?= htmlspecialchars($dExp ?? '') ?></div>
                     <p><?= htmlspecialchars($dBio ?? '') ?></p>
@@ -769,7 +769,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="mvv-icon">
                         <i class="fas fa-rocket"></i>
                     </div>
-                    <h4>Our Mission</h4>
+                    <h3 class="fs-4">Our Mission</h3>
                     <p>To provide affordable, quality housing solutions to families in Eastern Uttar Pradesh through 
                     transparent dealings, legal compliance, and customer-first approach. We aim to make the dream 
                     of homeownership a reality for every Indian family.</p>
@@ -780,7 +780,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="mvv-icon">
                         <i class="fas fa-eye"></i>
                     </div>
-                    <h4>Our Vision</h4>
+                    <h3 class="fs-4">Our Vision</h3>
                     <p>To become the most trusted real estate brand in Eastern UP, known for integrity, quality 
                     construction, and community development. We envision thriving neighborhoods where families 
                     grow, children play, and communities flourish.</p>
@@ -791,7 +791,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="mvv-icon">
                         <i class="fas fa-heart"></i>
                     </div>
-                    <h4>Our Values</h4>
+                    <h3 class="fs-4">Our Values</h3>
                     <p><strong>Trust</strong> in every transaction. <strong>Transparency</strong> in every deal. 
                     <strong>Quality</strong> in every plot. <strong>Community</strong> in every project. These are 
                     not just words — they are the foundation of every decision we make.</p>
@@ -856,7 +856,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <div class="col-lg-4 col-md-6">
                 <div class="office-card scroll-reveal">
                     <div class="office-header">
-                        <h5><i class="fas fa-building me-2"></i> Head Office</h5>
+                        <h3 class="fs-6 office-h3"><i class="fas fa-building me-2"></i> Head Office</h3>
                         <small>Gorakhpur, Uttar Pradesh</small>
                     </div>
                     <div class="office-body">
@@ -889,7 +889,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <div class="col-lg-4 col-md-6">
                 <div class="office-card scroll-reveal">
                     <div class="office-header">
-                        <h5><i class="fas fa-hard-hat me-2"></i> Working Office</h5>
+                        <h3 class="fs-6 office-h3"><i class="fas fa-hard-hat me-2"></i> Working Office</h3>
                         <small>Gorakhpur, Uttar Pradesh</small>
                     </div>
                     <div class="office-body">
@@ -922,7 +922,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <div class="col-lg-4 col-md-6">
                 <div class="office-card scroll-reveal">
                     <div class="office-header">
-                        <h5><i class="fas fa-store me-2"></i> Sehwan Office</h5>
+                        <h3 class="fs-6 office-h3"><i class="fas fa-store me-2"></i> Sehwan Office</h3>
                         <small>Pachrukhi, Gorakhpur</small>
                     </div>
                     <div class="office-body">
@@ -957,7 +957,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
             <div class="col-12">
                 <div >
                     <div >
-                        <h5 ><i class="fas fa-project-diagram me-2"></i> Our Projects Across Cities</h5>
+                        <h3 class="fs-5"><i class="fas fa-project-diagram me-2"></i> Our Projects Across Cities</h3>
                     </div>
                     <div >
                         <div class="row g-4">
@@ -966,7 +966,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                                     <div >
                                         <i class="fas fa-city"></i>
                                     </div>
-                                    <h6 >Gorakhpur</h6>
+                                    <h4 class="fs-6">Gorakhpur</h4>
                                     <p >Suryoday Colony (1050+)</p>
                                     <p >Braj Radha Nagri (1550+)</p>
                                     <p >Raghunath Nagri (780+)</p>
@@ -977,7 +977,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                                     <div >
                                         <i class="fas fa-city"></i>
                                     </div>
-                                    <h6 >Lucknow</h6>
+                                    <h4 class="fs-6">Lucknow</h4>
                                     <p >APS Valley (800+)</p>
                                     <p >Awadhpuri</p>
                                 </div>
@@ -987,7 +987,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                                     <div >
                                         <i class="fas fa-city"></i>
                                     </div>
-                                    <h6 >Kushinagar</h6>
+                                    <h4 class="fs-6">Kushinagar</h4>
                                     <p >Budh Bihar Colony (1280+)</p>
                                 </div>
                             </div>
@@ -996,7 +996,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                                     <div >
                                         <i class="fas fa-building"></i>
                                     </div>
-                                    <h6 >Prayagraj</h6>
+                                    <h4 class="fs-6">Prayagraj</h4>
                                     <p >APS Heights (200 Flats)</p>
                                     <p >Naini, ₹65 Lakh+</p>
                                 </div>
@@ -1027,7 +1027,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="cert-icon">
                         <i class="fas fa-file-alt"></i>
                     </div>
-                    <h6>CIN Number</h6>
+                    <h3 class="fs-6">CIN Number</h3>
                     <p>U70109UP2022PTC163047</p>
                 </div>
             </div>
@@ -1036,7 +1036,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="cert-icon">
                         <i class="fas fa-landmark"></i>
                     </div>
-                    <h6>ROC Kanpur</h6>
+                    <h3 class="fs-6">ROC Kanpur</h3>
                     <p>Registered with Registrar of Companies, Kanpur</p>
                 </div>
             </div>
@@ -1045,7 +1045,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="cert-icon">
                         <i class="fas fa-check-circle"></i>
                     </div>
-                    <h6>UP RERA</h6>
+                    <h3 class="fs-6">UP RERA</h3>
                     <p>Fully compliant with UP Real Estate Regulatory Authority</p>
                 </div>
             </div>
@@ -1054,7 +1054,7 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                     <div class="cert-icon">
                         <i class="fas fa-star"></i>
                     </div>
-                    <h6>5.0 Rating</h6>
+                    <h3 class="fs-6">5.0 Rating</h3>
                     <p>Top rated on India Online platform</p>
                 </div>
             </div>
@@ -1079,10 +1079,10 @@ function aboutContent($sc, $key, $fallbackKey = '') {
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-                <a href="<?= BASE_URL ?>/properties" >
+                <a href="<?= BASE_URL ?>/properties" class="btn btn-primary me-2 mb-2">
                     <i class="fas fa-search"></i> Browse Properties
                 </a>
-                <a href="<?= BASE_URL ?>/contact" >
+                <a href="<?= BASE_URL ?>/contact" class="btn btn-outline-dark mb-2">
                     <i class="fas fa-phone"></i> Contact Us
                 </a>
             </div>
