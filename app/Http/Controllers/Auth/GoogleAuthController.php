@@ -151,11 +151,15 @@ class GoogleAuthController extends BaseController
                     $updStmt = $db->prepare("UPDATE wallet_points SET points_balance = ?, total_earned = ?, referral_earnings = ?, updated_at = NOW() WHERE user_id = ? AND tenant_id = ?");
                     $updStmt->execute([$newBalance, $newTotalEarned, $newReferralEarnings, $referrerId, $tid]);
 
+                    if ($updStmt->rowCount() !== 1) {
+                        error_log('Google signup referral bonus: wallet UPDATE matched 0 rows for user ' . $referrerId . ' - ledger NOT recorded (no fake credit)');
+                    } else {
                     $txnStmt = $db->prepare("INSERT INTO wallet_transactions (user_id, transaction_type, transaction_category, amount, balance_before, balance_after, description, reference_id, reference_type, related_user_id, status, tenant_id, created_at) VALUES (?, 'credit', 'referral', ?, ?, ?, ?, ?, 'user', ?, 'completed', ?, NOW())");
                     $txnStmt->execute([$referrerId, $rewardPoints, $referrerWallet['points_balance'], $newBalance, "Google signup referral reward: " . $googleUserData['name'], $newUserId, $newUserId, $tid]);
 
                     $refStmt = $db->prepare("INSERT INTO referral_rewards (referrer_id, referred_id, reward_amount, reward_type, reward_percentage, referral_code, status, tenant_id, credited_at, created_at) VALUES (?, ?, ?, 'points', 0, ?, 'credited', ?, NOW(), NOW())");
                     $refStmt->execute([$referrerId, $newUserId, $rewardPoints, $referralCode, $tid]);
+                    }
                 }
             }
 
