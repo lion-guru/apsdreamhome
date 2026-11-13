@@ -7124,3 +7124,27 @@ User: "do next" — continuing after the parallel actor's Session 507 (public pr
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **509** (this session; S507 logged above).
+
+## Session 509: EMI Pipeline Already Wired, Live Tables Correctly Empty Because No Real Booking Executed Full Lifecycle (2026-11-14)
+
+### Trigger
+User: "tumhe jaise thik lage karo full power hai" — full autonomous authority with the standing money-proof rule in effect.
+
+### What was examined (read-only / no production-data writes)
+1. **Writer path for EMI schedules exists, is functional and has been proven by the lifecycle suite.** `BookingLifecycleService::calculateEmiSchedule()` (or equivalent) at `app\Services\Sales\BookingLifecycleService.php:462` actually issues `INSERT INTO booking_payment_schedules (booking_id, installment_no, due_date, amount, principal, interest, opening_balance, closing_balance, status, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)` per row — correct EMI math, last-installment adjust — and first deletes existing `pending/overdue` rows for the booking. The `/user/installments` page reads from this table correctly (FK `fk_bps_booking`, cols include `installment_no`, `principal`/`interest`).
+2. **Live tables are empty because no real customer booking has been made through the full lifecycle since the DB was restored** (the 20 `bookings` rows in the live DB are the S219/S468 accidental-seed rows that were deliberately reverted; the schedule seeding never ran). This is not a code defect. The lifecycle E2E harness was verified green multiple times in S455-S464; it writes and deletes EMI rows correctly in isolation.
+3. **The `/user/installments` empty state already renders a helpful customer CTA** ("You don't have any payment installments yet. Book a Plot") in `app\views\pages\user_installments.php` — no UX bug here.
+4. **Money-safety rule actively honored:** no EMI backfill was run because it would require deciding WHICH of the 20 historical `bookings` rows are real customer bookings to schedule for — a business decision, not a code change. Blindly backfilling would manufacture fake EMI liabilities for non-existent customers.
+
+### Verification (this round)
+- `php testing/master_test_runner.php` -> **11/11 PASSED** (22.66s) on current HEAD (pre-S506-3-file parallel-actor unstaged changes).
+- PHPStan [OK] No errors (HEAD).
+- `AGENTS.md integrity` OK for the round.
+- No code, schema, or live-data changes this round — confirmed by design: this round was examination-only under the standing money-safety rule.
+
+### Notes / Owner actions still open (carried forward)
+1. **EMI backfill decision is yours**: if you want the 20 historical `bookings` to reconstruct EMI schedules, I need your explicit sign-off per booking row (or a bulk "seed all historical bookings with default 12-month 0% EMI schedule" order). Money-impact: nothing moves until a real customer actually pays into an EMI row. The SQL would be one INSERT loop with preview-rowdump first and a pre-state snapshot.
+2. **`.env` Play Store build / AAB upload**, **`bohisawagar-banner.jpg` owner asset**, **S3/Voice keys**, **`.gitignore`/`scripts\cleanup_disk.ps1` master plan**, **snapshot regeneration** — all remain yours as noted since S440+.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **510** (this session; S508 logged above).
