@@ -6625,3 +6625,30 @@ _910. **Far-future cache headers belong on fingerprinted build assets only** - `
 _911. **Admin gates must be portal-aware, not login-aware.** Authenticated non-admin roles bounced to `/admin/login` cannot use it; redirect to their own portal home from BOTH the router Step 5b gate and the controller `requireAdmin()`, or the two drift (this session found exactly that drift).
 _912. **A page probe proves the page; a href sweep proves the portal.** Batch-fetch every internal `<a href>` after login, classify 200/redirect/404, and re-check console errors - that found 4 dead referral links in the customer widget and 1 dead employee link in minutes. Status 404 with a polite redirect target still means the link is wrong.
 _913. **Stale-while-revalidate means "works on second load"** - errors persisting after a fix usually mean the previous load had the old asset; reload twice, or bump SW/static versions, and verify on the second pass, not the first.
+
+## Session 493: Customer Portal Collapsible Sidebar Sections + Executive-Landing Zero-Dup Check (2026-11-14)
+
+### Trigger
+User: "do next" — continuing the S492 portal audit; the one leftover UX suggestion (customer sidebar) implemented, plus a re-check of remaining owner-call items.
+
+### Work
+1. **"Executive landing page" zero-dup check (not built)** — Headers route `/admin/dashboard/ceo|cfo|cro|coo|cmo|chro|hr|it|finance|operations` to `RoleBasedDashboardController` with real DB-backed role templates (`views/dashboard/*_dashboard.php`); admin login already redirects executive roles to their own dashboard. Building another "executive shell" would be a parallel module (S221-class). Nothing created.
+2. **Customer portal collapsible sidebar sections** - `app/views/layouts/customer.php`:
+   - All 7 sidebar groups (Main / Finance / Support / Resident Services / Explore / Account / Settings) are now interactive toggles with chevrons, `role="button"`, `tabindex`, `aria-expanded`/`aria-controls`, and Enter/Space keyboard support.
+   - First open collapses every section EXCEPT the one holding the active link (session state `aps_customer_collapsed` in `sessionStorage`, per-tab).
+   - Collapse persists client-side only; no server or menu DB changes; CSS pairs with the existing mobile off-canvas (`toggleSidebar`) — no conflict.
+   - Delivery verified by curl (markup + CSS + `initSidebarSections();` served, JS `node --check` clean).
+3. **Embedded desktop browser wedged mid-session** — after hours of role switching, EVERY navigation returned the admin ERP render, even fresh cachebusted URLs, while the same tab's `fetch('/apsdreamhome/user/dashboard', {cache:'no-store'})` returned the NEW file. `/auth/logout` + re-login reset the wedge. Symptom, fix and audit-path documented in lessons.
+4. **Verification** — `php -l` customer layout clean; master suite **11/11 PASSED** (28.78s); `node --check` on extracted inline script clean; `initSidebarSections()` invoked exactly once; markup present in served HTML (`data-section-toggle="1..7"`); commit `8d7c1b774` pushed by pre-commit hook (main == origin/main).
+
+### Note on browser-driven verification
+The in-app Chromium stopped executing top-level navigations mid-day (pinned to a stale render); authenticated flows were verified over curl with per-role jars instead of the embedded window. Visual pass remains for the user's next manual check in a clean browser profile.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **494** (this session; S492 logged above in the file).
+
+### Key Lessons (carried, continued)
+_914. **Check the route table before building "the missing dashboard"** — `/admin/dashboard/{ceo,cfo,cto,coo,cmo,chro}` already existed with DB-backed views; zero-dup audit beat a speculative greenfield build.
+_915. **A pinned embedded render is not evidence about the server** — curl + node --check + served-byte needles are the trustworthy channel when the desktop window wedges; stop the loop and log the wedge instead of fighting it.
+_916. **An authenticated embedded profile can wedge so that every navigation yields the admin render** — `/auth/logout` clears the cookie wedge; keep a one-liner recovery before opening new tabs.
+_917. **Collapse beats trim** — collapsible sections keep 100% of the navigation one click away while opening as short tiles: aria + sessionStorage + active-section-preservation is the recipe.
