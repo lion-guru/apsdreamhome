@@ -420,84 +420,9 @@ class WalletActivationService
         return 'none';
     }
 
-    /**
-     * Activate purchase for user_wallets system (associates/agents/employees)
-     */
-    public function activatePurchaseUserWallet(int $purchaseId, int $userId): array
-    {
-        $tid = $this->tenantId();
-        $tenantWhere = $tid > 1 ? " AND tenant_id = ?" : "";
-        $tenantParams = $tid > 1 ? [$tid] : [];
-
-        try {
-            $this->db->beginTransaction();
-
-            // Get purchase with package
-            $params = array_merge([$purchaseId], $tenantParams);
-            $stmt = $this->db->prepare(
-                "SELECT wap.*, wapk.price, wapk.referral_pct_l1, wapk.referral_pct_l2, wapk.features, wapk.name AS package_name
-                 FROM wallet_activation_purchases wap
-                 JOIN wallet_activation_packages wapk ON wap.package_id = wapk.id
-                 WHERE wap.id = ? AND wap.user_id = ?" . $tenantWhere . " LIMIT 1"
-            );
-            $params = array_merge([$purchaseId, $userId], $tenantParams);
-            $stmt->execute($params);
-            $purchase = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$purchase) {
-                $this->db->rollBack();
-                return ['success' => false, 'message' => 'Purchase not found'];
-            }
-
-            if ($purchase['status'] === 'completed') {
-                $this->db->rollBack();
-                return ['success' => false, 'message' => 'Already activated'];
-            }
-
-            // Update purchase status
-            $this->db->query(
-                "UPDATE wallet_activation_purchases SET status = 'completed', activated_at = NOW() WHERE id = ?",
-                [$purchaseId]
-            );
-
-            // Update user_wallets
-            $features = json_decode($purchase['features'] ?? '{}', true);
-            $this->db->query(
-                "UPDATE user_wallets 
-                 SET is_active = 1, 
-                     activation_package_id = ?, 
-                     activation_expires_at = DATE_ADD(NOW(), INTERVAL 1 YEAR),
-                     updated_at = NOW()
-                 WHERE user_id = ?" . $tenantWhere,
-                array_merge([(int)($purchase['package_id'] ?? 0), $userId], $tenantParams)
-            );
-
-            // Ensure wallet exists
-            try {
-                $walletService = new WalletService();
-                $walletService->ensureWallet($userId);
-            } catch (\Throwable $e) {
-                error_log("Wallet ensure failed: " . $e->getMessage());
-            }
-
-            // Pay L1 (+L2 chain) referral commission on package price
-            $this->payReferralCommission($userId, (float)($purchase['price'] ?? 0), $purchaseId, $purchase);
-
-            $this->db->commit();
-
-            return [
-                'success' => true,
-                'message' => 'Wallet activated successfully',
-                'package' => $purchase['name'] ?? 'Package',
-                'features' => $features,
-            ];
-
-        } catch (\Throwable $e) {
-            $this->db->rollBack();
-            error_log("WalletActivationService::activatePurchaseUserWallet error: " . $e->getMessage());
-            return ['success' => false, 'message' => 'Activation failed'];
-        }
-    }
+    // (S478: activatePurchaseUserWallet removed — was dead code writing to the
+    //  now-dropped user_wallets table. The canonical wallet_points system is
+    //  handled by the other activatePurchase* methods in this service.)
 
     public function checkFeatureAccess(int $userId, string $feature): bool
     {

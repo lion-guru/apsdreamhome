@@ -6283,4 +6283,33 @@ User instructions: "do next all aur koi suggestion tumhara" — Tech lead / CEO 
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **483** (next session).
+Next-free = **483** (this session; S482 logged above).
+
+## Session 483: Plot Booking Form Accessibility & Linter Hardening, Dead user_wallets Table Migration Cleanup, 1508/1508 Clean (2026-11-13)
+
+### Trigger
+User instructions: diagnostic report on `plot_booking.php` (undefined `$plot`, form label associations, nested ternaries, trailing whitespace) & completing autonomous codebase health sweep.
+
+### The headline
+
+**1. PLOT BOOKING FORM ACCESSIBILITY & DIAGNOSTICS RESOLUTION**
+- In `app/views/pages/plot_booking.php`:
+  - Added safe fallback initialization and type hints for `$plot`, `$user`, `$lead_id`, and `$userBookings`, resolving all Intelephense P1008 undefined variable errors.
+  - Resolved SonarLint `Web:S6853` & `Web:InputWithoutLabelCheck` by binding explicit `for` attributes on form labels and `id` attributes on form controls (`#booking_type`, `#booking_promo_code`, `#booking_notes`).
+  - Refactored nested ternary status badge expressions (`php:S3358`) into clean structured conditionals.
+  - Eliminated trailing whitespace (`php:S1131`).
+
+**2. PARALLEL WALLET DEAD CODE CLEANUP**
+- In `app/services/WalletActivationService.php` & `database/migrations/drop_user_wallets_table_s478.php`:
+  - Removed dead `activatePurchaseUserWallet` method which referenced the deprecated `user_wallets` table.
+  - All wallet activations and credits remain strictly routed to the canonical `wallet_points` system (76 rows, 3 live transactions).
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 18.15s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 15541 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **484** (next session).
