@@ -1,7 +1,12 @@
 <?php
 // app/views/pages/privacy.php
 $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title' => 'Privacy Policy', 'url' => '']];
+$pageContent = str_replace(['<h4', '</h4>', '<h5', '</h5>', '<h6', '</h6>'], ['<h2 class="fs-4"', '</h2>', '<h3 class="fs-5"', '</h3>', '<h3 class="fs-6"', '</h3>'], $pageContent ?? '');
 ?>
+<style>
+    .card-body a.text-primary { color: #0a58ca !important; }
+    .card-body a.text-primary:hover { color: #084298 !important; }
+</style>
 <!-- Hero Section -->
 <section class="privacy-hero-section section-padding bg-primary text-white text-center rounded-bottom-4 py-5" data-aos="fade-down">
     <div class="container py-4">

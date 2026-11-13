@@ -1,7 +1,12 @@
 <?php
 $pageContent = $pageContent ?? '';
 $breadcrumbs = $breadcrumbs ?? [['title' => 'Home', 'url' => BASE_URL], ['title' => 'Cancellation Policy', 'url' => '']];
+$pageContent = str_replace(['<h4', '</h4>', '<h5', '</h5>', '<h6', '</h6>'], ['<h2 class="fs-4"', '</h2>', '<h3 class="fs-5"', '</h3>', '<h3 class="fs-6"', '</h3>'], $pageContent);
 ?>
+<style>
+    .card-body a.text-primary { color: #0a58ca !important; }
+    .card-body a.text-primary:hover { color: #084298 !important; }
+</style>
 <section class="section-padding py-5 bg-light">
     <div class="container">
         <div class="row justify-content-center">
