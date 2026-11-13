@@ -587,6 +587,13 @@
     bottom: calc(65px + env(safe-area-inset-bottom) + 12px) !important;
   }
 
+  /* The WhatsApp contact float must sit ABOVE the chat widget (which is 60px
+     tall at bottom ~77px); otherwise the two overlap and the WA button is
+     only clickable in a 4px safe zone. */
+  .contact-float-wa {
+    bottom: calc(65px + env(safe-area-inset-bottom) + 150px) !important;
+  }
+
   /* Live chat widget has a different default position (90px) */
   .lcw-root {
     bottom: calc(65px + env(safe-area-inset-bottom) + 16px) !important;

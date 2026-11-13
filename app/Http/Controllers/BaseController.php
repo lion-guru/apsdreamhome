@@ -61,6 +61,37 @@ class BaseController
         'legal_advisor', 'chartered_accountant', 'senior_developer',
     ];
 
+    /**
+     * Where to send an authenticated non-admin user who hits an admin page.
+     * Anonymous visitors get the admin login; everyone else lands on their
+     * own portal home instead of a login they cannot use.
+     */
+    public static function portalHomeForRole(?string $role): string
+    {
+        $loggedIn = isset($_SESSION['user_id'])
+            || isset($_SESSION['admin_id'])
+            || isset($_SESSION['associate_id'])
+            || isset($_SESSION['agent_id'])
+            || isset($_SESSION['employee_id']);
+        if (!$loggedIn) {
+            return '/admin/login';
+        }
+        switch ($role) {
+            case 'associate':
+                return '/associate/dashboard';
+            case 'agent':
+                return '/agent/dashboard';
+            case 'employee':
+            case 'telecaller':
+                return '/employee/dashboard';
+            case 'customer':
+            case 'user':
+                return '/user/dashboard';
+            default:
+                return '/admin/login';
+        }
+    }
+
     protected array $models = [];
     protected string $layout = 'layouts/base';
     protected array $data = [];

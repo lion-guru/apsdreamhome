@@ -289,7 +289,9 @@ class Router
                 }
                 $_SESSION['error'] = 'Admin access required';
                 $base = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '/apsdreamhome';
-                header('Location: ' . $base . '/admin/login');
+                // Authenticated non-admin roles land on their own portal home
+                // instead of a login page they cannot use.
+                header('Location: ' . $base . \App\Http\Controllers\BaseController::portalHomeForRole($gateRole));
                 exit;
             }
         }

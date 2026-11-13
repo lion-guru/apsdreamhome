@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="card-body p-4 d-flex flex-column">
-                            <h4 class="card-title fw-bold text-dark mb-2"><?= htmlspecialchars((string)($colony['name'] ?? '')) ?></h4>
+                            <h2 class="card-title fw-bold text-dark mb-2 fs-4"><?= htmlspecialchars((string)($colony['name'] ?? '')) ?></h2>
                             <p class="card-text text-muted small flex-grow-1"><?= htmlspecialchars(substr(strip_tags((string)($colony['description'] ?? '')), 0, 120)) ?>...</p>
                             
                             <hr class="text-muted opacity-25 my-3">

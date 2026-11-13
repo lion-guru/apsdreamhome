@@ -190,7 +190,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=15" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=2" rel="stylesheet">
     <!-- Mobile Responsive Overrides -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=4" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=5" rel="stylesheet">
     <!-- Utility classes (display, min-width, visibility) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/utils.css?v=1" rel="stylesheet">
     <!-- Final UI/UX Polish (contrast, tap targets) -->

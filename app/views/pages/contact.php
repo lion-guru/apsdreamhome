@@ -54,7 +54,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
             <div class="col-lg-6">
                 <div class="card shadow-lg border-0 glass-card-premium">
                     <div class="card-header bg-primary text-white text-center py-3">
-                        <h4 class="mb-0 fw-bold text-white"><i class="fas fa-envelope me-2 text-white"></i><?php echo __('send_us_message'); ?></h4>
+                        <h2 class="mb-0 fw-bold text-white fs-4"><i class="fas fa-envelope me-2 text-white"></i><?php echo __('send_us_message'); ?></h2>
                     </div>
                     <div class="card-body p-3 p-md-4">
                         <p class="text-center text-muted small mb-3">
@@ -222,7 +222,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
 <!-- Floating WhatsApp Button for Mobile -->
 <style>
 .contact-bottom{padding:50px 0;background:#f8fafc}
-.contact-bottom .section-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0d9488;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px}
+.contact-bottom .section-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(13,148,136,0.08);color:#0f766e;font-size:0.75rem;font-weight:700;padding:6px 16px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px}
 .contact-bottom .section-title{font-size:1.8rem;font-weight:800;color:#1e293b;letter-spacing:-0.5px}
 
 .faq-glass{background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.6);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.06);overflow:hidden}
@@ -241,12 +241,12 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
 .office-card .office-body{padding:24px}
 .office-card .office-body h4{font-size:0.95rem;font-weight:700;color:#1e293b;margin-bottom:10px}
 .office-card .office-body address{color:#475569;font-size:0.85rem;line-height:1.8}
-.office-card .office-body address a{color:#0d9488;text-decoration:none;font-weight:600;transition:color 0.2s}
+.office-card .office-body address a{color:#0f766e;text-decoration:none;font-weight:600;transition:color 0.2s}
 .office-card .office-body address a:hover{color:#0f766e}
 .office-card .office-map{border-radius:12px;overflow:hidden;margin-top:16px;border:2px solid #f1f5f9}
 .office-card .office-map iframe{width:100%;height:200px;border:0;display:block}
 
-.contact-float-wa{position:fixed;bottom:80px;right:20px;z-index:1050;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(37,211,102,0.4);transition:all 0.3s;text-decoration:none}
+.contact-float-wa{position:fixed;bottom:152px;right:20px;z-index:1050;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(37,211,102,0.4);transition:all 0.3s;text-decoration:none}
 .contact-float-wa:hover{transform:scale(1.1);box-shadow:0 12px 32px rgba(37,211,102,0.5);color:#fff}
 </style>
 
@@ -331,6 +331,7 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
                         </address>
                         <div class="office-map">
                             <iframe
+                                title="APS Dream Home Office Location on Google Maps"
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3559.991144111075!2d83.30122467380973!3d26.840233976690463!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399149002e8a386b%3A0x907b565a09c02435!2sSuryoday%20Colony%20developed%20by%20APS%20Dream%20Homes!5e0!3m2!1sen!2sin!4v1775289074035!5m2!1sen!2sin"
                                 allowfullscreen
                                 loading="lazy">

@@ -1,4 +1,5 @@
 <?php
+/** cspell:ignore emis nach */
 $page_title = $page_title ?? __('dash_page_title', null, 'My Dashboard');
 $current_page = 'dashboard';
 
@@ -12,6 +13,14 @@ $recentPayments = $recentPayments ?? [];
 $savedCount = $savedCount ?? 0;
 $twoFactorEnabled = $twoFactorEnabled ?? false;
 $kycStatus = $kycStatus ?? 'not_started';
+$referral_code = $referral_code ?? '';
+$referral_count = $referral_count ?? 0;
+$referral_earnings = $referral_earnings ?? 0;
+$referral_tier = $referral_tier ?? [];
+$referral_link = $referral_link ?? '';
+$referral_earnings_breakdown = $referral_earnings_breakdown ?? [];
+$investor_stats = $investor_stats ?? [];
+$paymentSummary = $paymentSummary ?? [];
 ?>
 
 <div class="aps-cp-hero">
@@ -110,13 +119,13 @@ $kycStatus = $kycStatus ?? 'not_started';
 
 <?php
 $dashBookings = $bookings ?? [];
-$dashActiveEmis = 0;
+$dashActiveEmiCount = 0;
 $dashTotalPending = 0;
 $dashTotalPaid = 0;
 foreach ($dashBookings as $db) {
     $dbStatus = $db['status'] ?? '';
     if ($dbStatus === 'emi_active' || $dbStatus === 'partially_paid') {
-        $dashActiveEmis++;
+        $dashActiveEmiCount++;
     }
     $dbTotal = (float)($db['total_plot_value'] ?? $db['total_amount'] ?? 0);
     $dbPaid = (float)($db['amount'] ?? $db['token_paid'] ?? 0);
@@ -143,7 +152,7 @@ $dashBookingCount = count($dashBookings);
                     </div>
                     <div class="col-md-3 col-6">
                         <div class="bg-white rounded-3 p-3 border">
-                            <div class="fw-bold fs-4 text-amber" data-aps-count="<?= $dashActiveEmis ?>">0</div>
+                            <div class="fw-bold fs-4 text-amber" data-aps-count="<?= $dashActiveEmiCount ?>">0</div>
                             <small class="text-muted"><?= __('dash_active_emis', null, 'Active EMIs') ?></small>
                         </div>
                     </div>
@@ -422,13 +431,20 @@ $dashBookingCount = count($dashBookings);
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($inquiries as $inquiry): ?>
+                            <?php foreach ($inquiries as $inquiry): 
+                                $inqStatus = (string)($inquiry['status'] ?? 'pending');
+                                $inqBadgeClass = match($inqStatus) {
+                                    'replied' => 'success',
+                                    'pending' => 'warning',
+                                    default   => 'info',
+                                };
+                            ?>
                                 <tr>
                                     <td><?= htmlspecialchars($inquiry['subject'] ?? $inquiry['message'] ?? __('dash_fallback_inquiry', null, 'Inquiry')) ?></td>
                                     <td><?= htmlspecialchars($inquiry['type'] ?? __('dash_fallback_general', null, 'General')) ?></td>
                                     <td>
-                                        <span class="badge bg-<?= ($inquiry['status'] ?? '') === 'replied' ? 'success' : (($inquiry['status'] ?? '') === 'pending' ? 'warning' : 'info') ?>">
-                                            <?= ucfirst($inquiry['status'] ?? 'pending') ?>
+                                        <span class="badge bg-<?= $inqBadgeClass ?>">
+                                            <?= ucfirst($inqStatus) ?>
                                         </span>
                                     </td>
                                     <td><?= date('M d', strtotime($inquiry['created_at'] ?? 'now')) ?></td>
@@ -490,7 +506,7 @@ $dashBookingCount = count($dashBookings);
                 <div class="row text-center g-2 mb-3">
                     <div class="col-6">
                         <div class="bg-white rounded-3 p-2 border">
-                            <div class="fw-bold text-primary fs-5" data-aps-count="<?= (int)$referral_count ?>">0</div>
+                            <div class="fw-bold text-primary fs-5" data-aps-count="<?= (int)($referral_count ?? 0) ?>">0</div>
                             <small class="text-muted"><?= __('dash_referrals', null, 'Referrals') ?></small>
                         </div>
                     </div>
@@ -502,8 +518,9 @@ $dashBookingCount = count($dashBookings);
                     </div>
                 </div>
                 <?php if (!empty($referral_link)): ?>
+                <label for="refLink" class="visually-hidden"><?= __('dash_referral_link_label', null, 'Your Referral Link') ?></label>
                 <div class="input-group input-group-sm mb-2">
-                    <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($referral_link ?? '') ?>" readonly>
+                    <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($referral_link ?? '') ?>" aria-label="<?= __('dash_referral_link_label', null, 'Your Referral Link') ?>" readonly>
                     <button class="btn btn-outline-warning" type="button" onclick="dashCopyRef()" aria-label="<?= __('dash_copy_referral_link', null, 'Copy referral link') ?>">
                         <i class="fas fa-copy"></i>
                     </button>
@@ -531,9 +548,9 @@ $dashBookingCount = count($dashBookings);
 
         <!-- Referral Earnings Widget -->
         <?php if (!empty($referral_earnings_breakdown)): ?>
-            <?php 
+            <?php
                 $userId = $user['id'] ?? $_SESSION['user_id'] ?? 0;
-                include __DIR__ . '/../components/referral_earnings_widget.php';
+                include_once __DIR__ . '/../components/referral_earnings_widget.php';
             ?>
         <?php endif; ?>
 

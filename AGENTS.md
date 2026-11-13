@@ -6549,4 +6549,36 @@ User instruction: "do next all", "sbhi suggestion diye ho sabhi kaam kar do bina
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **491** (next session).
+Next-free = **491** (this session; S490 logged above).
+
+## Session 491: Customer Dashboard Diagnostic Resolution, Variable Defaults, Accessible Controls & SonarLint Standards (2026-11-13)
+
+### Trigger
+User report: Diagnostics in `app/views/pages/user_dashboard.php` (`$referral_count` undefined variable P1008, nested ternary S3358, unassociated input label Web:InputWithoutLabelCheck, trailing whitespace S1131, include -> include_once S2003, cSpell wordings).
+
+### The headline
+
+**1. COMPLETE VARIABLE INITIALIZATION & INTELEPHENSE P1008 RESOLUTION**
+- In `app/views/pages/user_dashboard.php`: Initialized `$referral_count`, `$referral_code`, `$referral_earnings`, `$referral_tier`, `$referral_link`, `$referral_earnings_breakdown`, `$investor_stats`, and `$paymentSummary` with safe fallback defaults at the top of the file.
+- Line 493: Standardized counter binding to `data-aps-count="<?= (int)($referral_count ?? 0) ?>"`, eliminating undefined variable warnings.
+
+**2. NESTED TERNARY REFACTORING VIA PHP 8 MATCH (`php:S3358`)**
+- Line 434: Refactored the inquiry status badge nested ternary into a clean, modern PHP 8 `match($inqStatus)` expression, improving code readability and satisfying SonarLint rules.
+
+**3. ACCESSIBLE FORM CONTROL & WCAG COMPLIANCE (`Web:InputWithoutLabelCheck`)**
+- Line 506: Added an accessible `<label for="refLink" class="visually-hidden">` and bound `aria-label` directly on the readonly referral link input, ensuring full screen-reader accessibility.
+
+**4. CODE HYGIENE & CSPELL COMPLIANCE**
+- Renamed `$dashActiveEmis` to `$dashActiveEmiCount` and added file-level cSpell ignore annotation (`cspell:ignore emis nach`) for financial terms (EMI and NACH mandate).
+- Replaced `include` with `include_once` on `referral_earnings_widget.php` (`php:S2003`) and stripped trailing whitespace (`php:S1131`).
+
+### Verification
+- **PHP Syntax (`php -l`)**: 0 syntax errors detected in `app/views/pages/user_dashboard.php`.
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 24.80s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 15541 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (`users: 75, plots: 756, leads: 994, properties: 627, employees: 15, documents: 27, inquiries: 10, notifications: 53, document_esign: 0, associate_profiles: 5, wallet_points: 76, wallet_transactions: 3, mlm_salary_grants: 0`).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **492** (next session).

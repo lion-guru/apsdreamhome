@@ -81,9 +81,9 @@ class AdminController extends BaseController
 
         // Check if admin is logged in — allow any role with RBAC menu permissions
         if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', self::ADMIN_ROLES)) {
-            error_log("enterpriseDashboard: FAILED auth check, redirecting to login");
+            error_log("enterpriseDashboard: FAILED auth check, redirecting");
             $_SESSION['error'] = 'Admin access required';
-            header('Location: ' . BASE_URL . '/admin/login');
+            header('Location: ' . BASE_URL . self::portalHomeForRole(RBACManager::getUserRole()));
             exit;
         }
 
@@ -689,7 +689,7 @@ class AdminController extends BaseController
         // Check if admin is logged in
         if (!isset($_SESSION['admin_id']) || empty($_SESSION['admin_id']) || !in_array($_SESSION['admin_role'] ?? $_SESSION['role'] ?? '', self::ADMIN_ROLES)) {
             $_SESSION['error'] = 'Admin access required';
-            header('Location: ' . BASE_URL . '/admin/login');
+            header('Location: ' . BASE_URL . self::portalHomeForRole(RBACManager::getUserRole()));
             exit;
         }
 
@@ -744,7 +744,7 @@ class AdminController extends BaseController
         $role = RBACManager::getUserRole() ?? '';
         if (!$this->isLoggedIn() || !in_array($role, self::ADMIN_ROLES)) {
             $this->setFlash('error', 'Admin access required');
-            $this->redirect('/admin/login');
+            $this->redirect(self::portalHomeForRole($role));
             return;
         }
 
