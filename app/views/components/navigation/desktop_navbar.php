@@ -90,15 +90,13 @@ if (!function_exists('navUrl')) {
                     <?php endif; ?>
 
                         <?php if ($hasChildren): ?>
-                            <a class="nav-link dropdown-toggle <?php echo $isActive ? 'active' : ''; ?>"
-                             href="javascript:void(0)"
+                            <button type="button" class="nav-link dropdown-toggle bg-transparent border-0 <?php echo $isActive ? 'active' : ''; ?>"
                                 id="navDrop<?= (int)$index ?>"
-                               role="button"
-                               data-bs-toggle="dropdown"
-                               aria-expanded="false"
-                               aria-haspopup="true">
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                aria-haspopup="true">
                                 <i class="<?php echo $item['icon']; ?> me-1"></i> <?php echo __($item['label']); ?>
-                            </a>
+                            </button>
 
                             <!-- Dropdown menu: right-aligned on align_right items -->
                             <ul class="dropdown-menu dropdown-menu-end <?php echo $alignRight ? 'dropdown-menu-end' : 'dropdown-menu-start'; ?>"
@@ -276,10 +274,8 @@ if (!function_exists('navUrl')) {
 
                 <li class="nav-item dropdown">
                     <?php if ($nav->isLoggedIn()): ?>
-                        <a class="nav-link dropdown-toggle"
-                           href="javascript:void(0)"
+                        <button type="button" class="nav-link dropdown-toggle bg-transparent border-0"
                            id="userDropdownDesktop"
-                           role="button"
                            data-bs-toggle="dropdown"
                            aria-expanded="false">
                             <div class="d-flex align-items-center">
@@ -293,7 +289,7 @@ if (!function_exists('navUrl')) {
                                 </div>
                                 <span class="d-none d-md-inline ms-2"><?php echo htmlspecialchars($nav->userName()); ?></span>
                             </div>
-                        </a>
+                        </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdownDesktop">
                             <?php foreach ($nav->getUserMenuItems() as $link): ?>
                                 <li>
@@ -334,10 +330,10 @@ if (!function_exists('navUrl')) {
 
                 <!-- Language Switcher -->
                 <li class="nav-item dropdown ms-1">
-                    <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown" title="<?= __('language') ?>" aria-label="<?= __('language') ?>">
+                    <button type="button" class="nav-link dropdown-toggle bg-transparent border-0" data-bs-toggle="dropdown" title="<?= __('language') ?>" aria-label="<?= __('language') ?>">
                         <i class="fas fa-globe" aria-hidden="true"></i>
                         <span class="d-none"><?= ($GLOBALS['app_lang'] ?? 'en') === 'hi' ? 'हिन्दी' : 'English' ?></span>
-                    </a>
+                    </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/en"><span class="me-2">🇬🇧</span> English</a></li>
                         <li><a class="dropdown-item" href="<?= BASE_URL ?>/language/set/hi"><span class="me-2">🇮🇳</span> Hindi</a></li>

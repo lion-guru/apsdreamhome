@@ -641,7 +641,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                         </div>
                                     </div>
                                     <div class="mb-4">
-                                        <label class="form-label fw-bold"><?= __('home_interest_rate') ?> <span
+                                        <label class="form-label fw-bold" for="interestRate"><?= __('home_interest_rate') ?> <span
                                                 id="rateDisplay" class="text-warning">8.5%</span></label>
                                         <input type="range" class="form-range" id="interestRate" min="5" max="20"
                                             step="0.1" value="8.5" oninput="calcEMI()">
@@ -651,7 +651,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                         </div>
                                     </div>
                                     <div class="mb-4">
-                                        <label class="form-label fw-bold"><?= __('home_loan_tenure') ?> <span
+                                        <label class="form-label fw-bold" for="loanTenure"><?= __('home_loan_tenure') ?> <span
                                                 id="tenureDisplay" class="text-warning">20
                                                 <?= __('home_years') ?></span></label>
                                         <input type="range" class="form-range" id="loanTenure" min="1" max="30" step="1"
@@ -1829,14 +1829,14 @@ document.addEventListener('DOMContentLoaded', function(){
     function getInvestmentCalculator() {
         return '<div class="row g-4">' +
             '<div class="col-md-7">' +
-            '<div class="mb-3"><label class="form-label fw-bold">' + T.invAmt + '</label>' +
+            '<div class="mb-3"><label class="form-label fw-bold" for="mInvAmt">' + T.invAmt + '</label>' +
             '<select class="form-select" id="mInvAmt" onchange="mCalcInv()">' +
             '<option value="500000">' + '<?= __("home_amount_5l") ?>' + '</option><option value="1000000" selected>' +
             '<?= __("home_amount_10l") ?>' + '</option>' +
             '<option value="2500000">' + '<?= __("home_amount_25l") ?>' + '</option><option value="5000000">' +
             '<?= __("home_amount_50l") ?>' + '</option><option value="10000000">' + '<?= __("home_amount_1cr") ?>' +
             '</option></select></div>' +
-            '<div class="mb-3"><label class="form-label fw-bold">' + T.timePeriod + '</label>' +
+            '<div class="mb-3"><label class="form-label fw-bold" for="mInvYrs">' + T.timePeriod + '</label>' +
             '<select class="form-select" id="mInvYrs" onchange="mCalcInv()">' +
             '<option value="5">' + '<?= __("home_years_5") ?>' + '</option><option value="10" selected>' +
             '<?= __("home_years_10") ?>' + '</option>' +
@@ -1868,12 +1868,12 @@ document.addEventListener('DOMContentLoaded', function(){
             '<div class="col-md-7">' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.propPrice + '</label>' +
             '<input type="number" class="form-control form-control-lg" id="mStampPrice" value="5000000" oninput="mCalcStamp()"></div>' +
-            '<div class="mb-3"><label class="form-label fw-bold">' + T.state + '</label>' +
+            '<div class="mb-3"><label class="form-label fw-bold" for="mStampState">' + T.state + '</label>' +
             '<select class="form-select" id="mStampState" onchange="mCalcStamp()">' +
             '<option value="up">' + T.up + '</option><option value="bihar">' + T.bihar + '</option>' +
             '<option value="mp">' + T.mp + '</option><option value="delhi">' + T.delhi + '</option>' +
             '<option value="maharashtra">' + T.maharashtra + '</option></select></div>' +
-            '<div class="mb-3"><label class="form-label fw-bold">' + T.propType + '</label>' +
+            '<div class="mb-3"><label class="form-label fw-bold" for="mStampType">' + T.propType + '</label>' +
             '<select class="form-select" id="mStampType" onchange="mCalcStamp()">' +
             '<option value="male">' + T.male + '</option><option value="female">' + T.female + '</option>' +
             '<option value="joint">' + T.joint + '</option></select></div></div>' +
@@ -1898,9 +1898,9 @@ document.addEventListener('DOMContentLoaded', function(){
             '<div class="col-md-7">' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.value + '</label>' +
             '<input type="number" class="form-control form-control-lg" id="mConvVal" value="1000" oninput="mCalcConv()"></div>' +
-            '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small">' + T.from + '</label>' +
+            '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small" for="mConvFrom">' + T.from + '</label>' +
             '<select class="form-select" id="mConvFrom" onchange="mCalcConv()">' + unitOptions + '</select></div>' +
-            '<div class="col-6"><label class="form-label small">' + T.to + '</label>' +
+            '<div class="col-6"><label class="form-label small" for="mConvTo">' + T.to + '</label>' +
             '<select class="form-select" id="mConvTo" onchange="mCalcConv()"><option value="0" selected>'+T.sqft+'</option><option value="1">'+T.sqm+'</option><option value="2">'+T.acre+'</option><option value="3">'+T.hectare+'</option><option value="4">'+T.bigha+'</option><option value="5">'+T.gaj+'</option><option value="6">'+T.sqYd+'</option><option value="7">'+T.katha+'</option><option value="8">'+T.marla+'</option></select></div></div>' +
             '<div class="alert alert-success mb-0"><i class="fas fa-exchange-alt me-2"></i>' + T.result +
             ' <strong id="mConvResult">0.0913 Acre</strong></div></div>' +
@@ -1917,10 +1917,10 @@ document.addEventListener('DOMContentLoaded', function(){
             '<input type="number" class="form-control form-control-lg" id="mEligIncome" value="60000" oninput="mCalcElig()" step="1000"></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.existEmi + '</label>' +
             '<input type="number" class="form-control" id="mEligEmi" value="0" oninput="mCalcElig()"></div>' +
-            '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small">' + T.intRate + '</label>' +
+            '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small" for="mEligRate">' + T.intRate + '</label>' +
             '<select class="form-select" id="mEligRate" onchange="mCalcElig()">' +
             '<option value="8.5">8.5%</option><option value="9.0" selected>9.0%</option><option value="9.5">9.5%</option><option value="10.0">10%</option></select></div>' +
-            '<div class="col-6"><label class="form-label small">' + T.tenureYrs + '</label>' +
+            '<div class="col-6"><label class="form-label small" for="mEligTenure">' + T.tenureYrs + '</label>' +
             '<select class="form-select" id="mEligTenure" onchange="mCalcElig()">' +
             '<option value="5">' + '<?= __("home_years_5") ?>' + '</option><option value="10">' +
             '<?= __("home_years_10") ?>' + '</option><option value="15">' + '<?= __("home_years_15") ?>' +
@@ -1940,19 +1940,19 @@ document.addEventListener('DOMContentLoaded', function(){
         return '<p class="text-center text-muted mb-3"><i class="fas fa-robot me-2"></i>' + T.aiEst + '</p>' +
             '<div class="row g-4">' +
             '<div class="col-md-7">' +
-            '<div class="mb-3"><label class="form-label fw-bold">' + T.propType + '</label>' +
+            '<div class="mb-3"><label class="form-label fw-bold" for="mValType">' + T.propType + '</label>' +
             '<select class="form-select" id="mValType" onchange="mCalcVal()">' +
             '<option value="plot">' + '<?= __("home_prop_plot") ?>' + '</option><option value="house">' + '<?= __("home_prop_house") ?>' + '</option><option value="flat">' + '<?= __("home_prop_flat") ?>' + '</option><option value="commercial">' + '<?= __("home_prop_commercial") ?>' + '</option></select></div>' +
-            '<div class="mb-3"><label class="form-label fw-bold">' + T.location + '</label>' +
+            '<div class="mb-3"><label class="form-label fw-bold" for="mValLoc">' + T.location + '</label>' +
             '<select class="form-select" id="mValLoc" onchange="mCalcVal()">' +
             '<option value="gorakhpur"><?= __("loc_gorakhpur") ?></option><option value="lucknow"><?= __("loc_lucknow") ?></option>' +
             '<option value="kushinagar"><?= __("loc_kushinagar") ?></option><option value="varanasi"><?= __("loc_varanasi") ?></option></select></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.areaSqft + '</label>' +
             '<input type="number" class="form-control form-control-lg" id="mValArea" value="1500" oninput="mCalcVal()" step="10"></div>' +
-            '<div class="d-flex gap-2"><div class="flex-fill"><label class="form-label small">' + T.bedrooms +
+            '<div class="d-flex gap-2"><div class="flex-fill"><label class="form-label small" for="mValBhk">' + T.bedrooms +
             '</label>' +
             '<select class="form-select" id="mValBhk" onchange="mCalcVal()"><option value="1">' + T.bhk1 + '</option><option value="2" selected>' + T.bhk2 + '</option><option value="3">' + T.bhk3 + '</option><option value="4">' + T.bhk4 + '</option></select></div>' +
-            '<div class="flex-fill"><label class="form-label small">' + T.furnishing + '</label>' +
+            '<div class="flex-fill"><label class="form-label small" for="mValFurn">' + T.furnishing + '</label>' +
             '<select class="form-select" id="mValFurn" onchange="mCalcVal()"><option value="0.9">' + T.unfurnished +
             '</option><option value="1" selected>' + T.semiFurn + '</option><option value="1.2">' + T.fullFurn +
             '</option></select></div></div></div>' +

@@ -6446,7 +6446,7 @@ User instruction: "do next" — Autonomous Senior Developer & CEO execution: sur
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **489** (next session).
+Next-free = **488** (this session; S487 logged above).
 
 ## Session 488: Security Sweep — eval() RCE, Three Shell-Injection Sites, Backup Restore Path Execution, LifeKit Removal (2026-11-13)
 
@@ -6473,4 +6473,34 @@ User: "do next" (x2) + "lifekit-privacy-policy.html ye dusre project ka tha isme
 - **phpstan** -> `[OK] No errors`. **Master suite** -> 11/11 PASSED. **php -l** clean. **app serves** -> all public pages 200 / tools serve. **AGENTS.md integrity** -> OK. DB untouched.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **489** (next session).
+Next-free = **489** (this session; S488 logged above).
+
+## Session 489: Desktop Navbar Semantic Button Hardening, DOM Tag Matching & Homepage Form Label Accessibility (2026-11-13)
+
+### Trigger
+User instruction: "do next" — Autonomous Senior Developer & CEO execution: resolving unassociated label linter warnings on homepage calculators, fixing mismatched DOM tags (`<a ...> </button>`) in desktop navbar, and ensuring WCAG/SonarLint semantic dropdown accessibility.
+
+### The headline
+
+**1. DESKTOP NAVBAR SEMANTIC BUTTON & TAG MATCHING (`desktop_navbar.php`)**
+- Corrected mismatched HTML tag where line 93 opened `<a class="nav-link dropdown-toggle ..."` and closed with `</button>`.
+- Replaced with standard semantic `<button type="button" class="nav-link dropdown-toggle bg-transparent border-0 ...">`, ensuring clean DOM nesting and valid accessibility hierarchy across all dropdown menus (main navigation, user avatar, and language switcher).
+
+**2. HOMEPAGE CALCULATORS & MODALS FORM ACCESSIBILITY (`app/views/pages/home.php`)**
+- Fixed missing and unassociated label associations (`Web:S6853` & `Web:InputWithoutLabelCheck`) across all interactive homepage widgets:
+  - EMI Calculator: bound `<label for="interestRate">` and `<label for="loanTenure">`.
+  - Investment Calculator: bound `<label for="mInvAmt">` and `<label for="mInvYrs">`.
+  - Stamp Duty Calculator: bound `<label for="mStampState">` and `<label for="mStampType">`.
+  - Unit Converter: bound `<label for="mConvTo">`.
+  - Loan Eligibility: bound `<label for="mEligRate">` and `<label for="mEligTenure">`.
+  - AI Valuation: bound `<label for="mValType">`, `<label for="mValLoc">`, `<label for="mValBhk">`, and `<label for="mValFurn">`.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 21.75s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 15541 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **490** (next session).
