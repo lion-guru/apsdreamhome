@@ -1474,7 +1474,7 @@ class EmployeeSelfServiceController extends BaseController
             "SELECT COUNT(*) AS total_days,
                     SUM(CASE WHEN status = 'present' THEN 1 ELSE 0 END) AS present_days,
                     SUM(CASE WHEN status = 'absent' THEN 1 ELSE 0 END) AS absent_days,
-                    SUM(CASE WHEN status = 'leave' THEN 1 ELSE 0 END) AS leave_days,
+                    SUM(CASE WHEN status = 'on_leave' THEN 1 ELSE 0 END) AS leave_days,
                     SUM(CASE WHEN status = 'half_day' THEN 1 ELSE 0 END) AS half_days,
                     COALESCE(SUM(hours_worked), 0) AS total_hours,
                     COALESCE(AVG(hours_worked), 0) AS avg_hours,
@@ -2250,7 +2250,7 @@ class EmployeeSelfServiceController extends BaseController
                 $stats['present_days']++;
             } elseif ($st === 'absent') {
                 $stats['absent_days']++;
-            } elseif ($st === 'leave') {
+            } elseif ($st === 'on_leave') {
                 $stats['leave_days']++;
             } elseif ($st === 'half_day') {
                 $stats['half_days']++;

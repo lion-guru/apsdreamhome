@@ -443,15 +443,14 @@ class PlotManagementController extends AdminController
                 if ($action === 'approve') {
                     // Update allocation status
                     $sql = "UPDATE plot_allocations 
-                            SET status = 'approved', notes = ?
+                            SET status = 'agreement_pending', notes = ?
                             WHERE id = ? AND tenant_id = ?";
                     $stmt = $this->db->prepare($sql);
                     $stmt->execute([$notes, $allocationId, $tid]);
 
-                    // Update plot status
-                    $sql = "UPDATE plots SET status = 'allocated', updated_at = NOW() WHERE id = ? AND tenant_id = ?";
-                    $stmt = $this->db->prepare($sql);
-                    $stmt->execute([$allocation['plot_id'], $tid]);
+                    // Allocation approval moves the paperwork funnel forward;
+                    // the plot stays 'booked' until the booking completes or the
+                    // deal collapses. No plots.status mutation here by design.
                 } elseif ($action === 'reject') {
                     // Update allocation status
                     $sql = "UPDATE plot_allocations 
@@ -653,7 +652,7 @@ class PlotManagementController extends AdminController
             $stats['developed_area'] = (float)($result['developed'] ?? 0);
 
             // Pending allocations
-            $sql = "SELECT COUNT(*) as total FROM plot_allocations WHERE status = 'pending'";
+            $sql = "SELECT COUNT(*) as total FROM plot_allocations WHERE status = 'booked'";
             $result = $this->db->fetchOne($sql);
             $stats['pending_allocations'] = (int)($result['total'] ?? 0);
 

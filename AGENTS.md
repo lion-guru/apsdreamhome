@@ -7384,3 +7384,52 @@ Next-free = **516** (this session; S513/S514 held by parallel actor).
 ### Key Lessons
 _940. **A whole-tree syntax sweep is the only verification a large mixed-authorship commit can be given without repeating the author's work.** 3988 files, 0 errors, master suite green — that is the real ceiling of what an independent verification can deliver on someone else's 286-file commit.
 _941. **In parallel-actor environments, name your own verification scope honestly.** "Lint + suite + live probe passed" is a different (true) claim than "I audited the whole change." Don't blur the two; the user deserves the precision.
+
+## Session 516: Whole-App Enum-Literal Audit — 39 Table-Specific Mismatches Resolved, 3 Enums Widened, Master 11/11 Green (2026-11-14)
+
+### Trigger
+User: "do next tumko full approval hai aur full power hai do mext" — full autonomous continuation of the S505+ family: every SQL `INSERT/UPDATE/SELECT ... = 'literal'` compared against live `INFORMATION_SCHEMA`.
+
+### Method (one scan, two passes)
+1. **Pass 1 (INSERT literals):** parsed every `INSERT INTO t (...) VALUES (...)` against the live enum definitions — 606 enum tables indexed. Found 4 (deals 'open', whatsapp_templates 'APPROVED', payments 'foreclosure', whatsapp_messages 'pending') — all fixed + rollback-probed in Sessions 505–512.
+2. **Pass 2 (comparisons):** matched `\w+ (=|!=|<>|IN (...)) 'literal'` occurrences, then re-checked each literal against the **enclosing statement's actual target table** (by `(FROM|INTO|UPDATE|TABLE) <table>` winow in the same SQL string), not the column name globally. 377 raw candidates collapsed to **39 table-specific mismatches**. Triage found:
+   - **25 false positives** (view code, PHP dispatch literals, varchar columns the scanner mis-grouped by shared column name — `site_content.section`, `transactions.type`, `property_alerts.alert_type`, `auction_bids.status`, `land_acquisitions.status`, `complaints` case-branch on a different table than the flag)
+   - **14 REAL bugs**, every one previously dead code hiding silently behind 1054/1265.
+
+### Real bugs fixed (each verified against `INFORMATION_SCHEMA` enum membership before and after)
+| Site | Code before | Fix |
+|---|---|---|
+| `AdminController.php` land leads dashboard | `status NOT IN ('acquired','rejected')` | `('rejected','dropped','registered')` |
+| `AdvancedReportController.php` warm-leads tile | `status IN ('warm','hot','interested')` | real pipeline: `('qualified','proposal','negotiation','site_visit')` |
+| `AICallingController.php` campaign funnel | `status = 'interested'` (sessions have no such status) | `customer_response = 'interested'` |
+| `DealPipelineController.php` assignable-users query | `role = 'sales'` | `role IN (agent, sales_director, sales_manager, sales_team_lead, senior_agent)` |
+| `ToolsAdminController.php` review desk (3 writes/reads) | `status IN ('completed','corrected')` + `status='corrected'` + `IN ('completed','approved','corrected')` | `status = 'completed'` + real `reviewed_at` predicate |
+| `VisitController.php` visit scheduling | `UPDATE leads SET status='visit_scheduled'` | `'site_visit'` |
+| `OffboardingService.php` completeOffboarding + list query | `employees.status='offboarded'`, `ep.status IN (...,'offboarded')` | `'terminated'`, `('active','inactive','terminated')` |
+| `RetroactiveRecalculationService.php` ledger insert | `'recalculated'` | `'pending'` |
+| `ReportService.php` client roll-up | `role = 'client'` | `'customer'` |
+| `EmployeeSelfServiceController.php` attendance | `status = 'leave'` (×2 sites) | `'on_leave'` |
+| `TelecallingController.php` follow-ups | `task_type = 'follow_up_call'` (×5 sites) | `'follow_up'` |
+| `EmailTrackingService.php` open/click tracking (×6 sites) | `event_type = 'open'` / `'click'` | `'opened'` / `'clicked'` |
+| `PlotManagementController.php` allocation desk | `status='approved'`, `plots.status='allocated'`, `WHERE status='pending'` | `'agreement_pending'`, plot left untouched by design, `'booked'` |
+**3 enums widened via idempotent migration `extend_plot_allocations_users_role_enums_s516.php`** (append-at-end, preserves indices, re-run → SKIP): `plot_allocations.status` + `'rejected'` (admin allocation-reject was silently dying), `users.role` + `'farmer'` (8 farmer_profiles already in DB but no role value can authenticate the farmer self-service portal), `employee_asset_assignments.condition_returned` + `'transferred'` (asset transfer flow 1265'd). Safety dump `enums_pre_s516.sql`.
+
+### False-positive hygiene
+The scanner initially flagged `OLNService.php` writes (`leads.status='dnd'|'interested'|'viewing'|'negotiated'`) — all would fail under strict mode, but the file is **unrouted dead code** (no controller references `OLNService`); left untouched, flagged for future cleanup decision. The `app/views/` + PHP-dispatch false positives were removed from the findings by requiring SQL context + table-attribution before reporting.
+
+### Verification
+- Whole-repo PHP syntax sweep: **3,988 files, 0 failures** (parallel actor's S515 claim independently re-verified).
+- PHPStan `[OK] No errors` · Master runner **11/11 PASSED** · `AGENTS.md` integrity OK.
+- Master suite re-run AFTER every fix: 11/11 stable throughout.
+- Rollback-integrity: migrations idempotent (run 1 = FIXED, run 2 = SKIP), zero row counts changed.
+
+### Files
+`app/Http/Controllers/Admin/{AdminController, AdvancedReportController, AICallingController, DealPipelineController, PlotManagementController, ToolsAdminController, VisitController}.php`, `app/Http/Controllers/Employee/{EmployeeSelfServiceController, TelecallingController}.php`, `app/services/{Business/ReportService, EmailTrackingService, OffboardingService, RetroactiveRecalculationService}.php`, `database/migrations/extend_plot_allocations_users_role_enums_s516.php`.
+
+### Key Lessons (carried, continued)
+_942. **Cross-check string literals in SQL comparisons against the target table's enum, not the column name.** A column named `status` lives in 500+ tables with different vocabularies; an “invalid” hit is only real when the literal is not in the *enclosing statement's* table's enum. Window-attribute the FROM/UPDATE/INTO clause, match (table, column), check membership — false positives collapse from 377 to 39 and the true rate rises 100%.
+_943. **A dead enum member inside a `NOT IN` is noise; a dead equality comparison is data loss.** `NOT IN ('closed','dead')` costs nothing (never matches), but `event_type = 'open'` silently returns 0 forever and `'visit_scheduled'` 1054/1265'd on every write. Penalise the two cases.\n_944. **Extension of enums is the right move when the code writes a real, absent business state — but only after proving 0 valid members exist.** `plot_allocations.status = 'rejected'` had no equivalent member; all 5 current members form a booking funnel. Append-preserved-indices migrations make it zero-risk.
+_945. **An enum miss is only as bad as its call site dispatches on it.** `viewing` also appeared in `<select>`s exactly as users see them — fixing DB-side alone would leave the UI rendering values the DB cannot store. Always grep the literal across views/controllers/services before choosing the target member.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **517** (parallel actor holds 515; their S515 entry renumbered before mine was appended).

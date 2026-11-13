@@ -559,7 +559,7 @@ class TelecallingController extends AdminController
                  FROM leads l
                  JOIN crm_tasks t ON l.id = t.lead_id
                  WHERE l.assigned_to = ?
-                 AND t.task_type = 'follow_up_call'
+                 AND t.task_type = 'follow_up'
                  AND t.status IN ('pending', 'in_progress')
                  AND t.due_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
                  ORDER BY t.due_date ASC
@@ -678,7 +678,7 @@ class TelecallingController extends AdminController
         try {
             $cancelQuery = "UPDATE crm_tasks 
                             SET status = 'cancelled', updated_at = NOW()
-                            WHERE lead_id = ? AND task_type = 'follow_up_call' 
+                            WHERE lead_id = ? AND task_type = 'follow_up' 
                             AND status IN ('pending', 'in_progress')";
             $this->db->execute($cancelQuery, [$leadId]);
         } catch (\Throwable $e) {
@@ -692,7 +692,7 @@ class TelecallingController extends AdminController
             
             $query = "INSERT INTO crm_tasks (
                         lead_id, assigned_to, task_type, title, due_date, status, created_at{$tidCol}
-                    ) VALUES (?, ?, 'follow_up_call', 'Telecalling follow-up', ?, 'pending', NOW(){$tidVal})";
+                    ) VALUES (?, ?, 'follow_up', 'Telecalling follow-up', ?, 'pending', NOW(){$tidVal})";
             
             $params = [$leadId, $this->employeeId, $followUpDate];
             if (!empty($tidData)) {
@@ -829,7 +829,7 @@ class TelecallingController extends AdminController
                      FROM leads l
                      JOIN crm_tasks t ON l.id = t.lead_id
                      WHERE t.assigned_to = ?
-                     AND t.task_type = 'follow_up_call'
+                     AND t.task_type = 'follow_up'
                      AND DATE(t.due_date) = CURDATE()
                      AND t.status IN ('pending', 'in_progress')
                      ORDER BY t.due_date ASC";
@@ -856,7 +856,7 @@ class TelecallingController extends AdminController
             $query = "UPDATE crm_tasks 
                       SET status = 'completed', completed_at = NOW(), completed_notes = ?
                       WHERE lead_id = ? AND assigned_to = ? 
-                      AND task_type = 'follow_up_call' 
+                      AND task_type = 'follow_up' 
                       AND status IN ('pending', 'in_progress')";
             
             $this->db->execute($query, [$result, $leadId, $this->employeeId]);

@@ -189,7 +189,7 @@ class AdminController extends BaseController
             $stats['system_health_pct'] = 99.9;
         }
         try {
-            $stats['land_active_leads'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM land_leads WHERE status NOT IN ('acquired','rejected')")['cnt'] ?? 0);
+            $stats['land_active_leads'] = (int) ($this->db->fetch("SELECT COUNT(*) AS cnt FROM land_leads WHERE status NOT IN ('rejected','dropped','registered')")['cnt'] ?? 0);
         } catch (\Throwable $e) { $stats['land_active_leads'] = 0; }
 
         try {

@@ -24,7 +24,7 @@ class AICallingController extends AdminController
                         COALESCE((SELECT COUNT(*) FROM ai_calling_schedule WHERE campaign_id = c.id), 0) as total_scheduled,
                         COALESCE((SELECT COUNT(*) FROM ai_calling_schedule WHERE campaign_id = c.id AND status = 'completed'), 0) as completed,
                         COALESCE((SELECT COUNT(*) FROM ai_call_sessions WHERE campaign_id = c.id), 0) as calls_made,
-                        COALESCE((SELECT COUNT(*) FROM ai_call_sessions WHERE campaign_id = c.id AND status = 'interested'), 0) as interested
+                        COALESCE((SELECT COUNT(*) FROM ai_call_sessions WHERE campaign_id = c.id AND customer_response = 'interested'), 0) as interested
                  FROM ai_calling_campaigns c ORDER BY c.created_at DESC"
             ) ?: [];
             $this->data['totalCampaigns'] = count($this->data['campaigns']);

@@ -103,7 +103,7 @@ class VisitController extends AdminController
                 $leadId = (int)($_POST['lead_id'] ?? 0);
                 if ($leadId > 0) {
                     list($tSql, $tParams) = $this->tenantWhere();
-                    $this->db->prepare("UPDATE leads SET status = 'visit_scheduled' WHERE id = ? $tSql")->execute(array_merge([$leadId], $tParams));
+                    $this->db->prepare("UPDATE leads SET status = 'site_visit' WHERE id = ? $tSql")->execute(array_merge([$leadId], $tParams));
                 }
             } catch (\Throwable $e) { error_log('VisitController::store error: ' . $e->getMessage()); }
             if ($this->audit) $this->audit->log('visit.create', (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0), $_SESSION['role'] ?? 'admin', 'visit', $result['visit_id'] ?? 0, "Scheduled visit for " . $data['customer_name']);

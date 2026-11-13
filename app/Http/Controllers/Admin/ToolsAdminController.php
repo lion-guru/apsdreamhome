@@ -53,10 +53,10 @@ class ToolsAdminController extends AdminController
 
         $stats = ['pending_review' => 0, 'approved_today' => 0, 'corrected_today' => 0, 'avg_confidence' => 0];
         try {
-            $stats['pending_review'] = (int)$db->query("SELECT COUNT(*) FROM document_extraction_jobs WHERE status IN ('completed','corrected') AND review_required = 1")->fetchColumn();
+            $stats['pending_review'] = (int)$db->query("SELECT COUNT(*) FROM document_extraction_jobs WHERE status = 'completed' AND review_required = 1")->fetchColumn();
             $stats['approved_today'] = (int)$db->query("SELECT COUNT(*) FROM document_extraction_jobs WHERE status = 'approved' AND DATE(reviewed_at) = CURDATE()")->fetchColumn();
-            $stats['corrected_today'] = (int)$db->query("SELECT COUNT(*) FROM document_extraction_jobs WHERE status = 'corrected' AND DATE(reviewed_at) = CURDATE()")->fetchColumn();
-            $avgRow = $db->query("SELECT AVG(confidence_score) FROM document_extraction_jobs WHERE status IN ('completed','approved','corrected')");
+            $stats['corrected_today'] = (int)$db->query("SELECT COUNT(*) FROM document_extraction_jobs WHERE reviewed_at IS NOT NULL AND DATE(reviewed_at) = CURDATE()")->fetchColumn();
+            $avgRow = $db->query("SELECT AVG(confidence_score) FROM document_extraction_jobs WHERE status = 'completed'");
             $stats['avg_confidence'] = round((float)$avgRow->fetchColumn());
         } catch (\Throwable $e) { error_log("ToolsAdminController::" . __FUNCTION__ . " query failed: " . $e->getMessage()); }
 

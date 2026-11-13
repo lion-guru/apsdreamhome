@@ -12,7 +12,7 @@ class AdvancedReportController extends \App\Http\Controllers\Admin\AdminControll
         try {
             $db = Database::getInstance()->getConnection();
             
-            $warmLeads = $db->query("SELECT COUNT(*) as total FROM leads WHERE status IN ('warm', 'hot', 'interested') AND deleted_at IS NULL")->fetch();
+            $warmLeads = $db->query("SELECT COUNT(*) as total FROM leads WHERE status IN ('qualified', 'proposal', 'negotiation', 'site_visit') AND deleted_at IS NULL")->fetch();
             $proposals = $db->query("SELECT COUNT(*) as total FROM proposals WHERE deleted_at IS NULL")->fetch();
             $negotiations = $db->query("SELECT COUNT(*) as total FROM deals WHERE status = 'negotiation' AND deleted_at IS NULL")->fetch();
             $closed = $db->query("SELECT COUNT(*) as total FROM deals WHERE status = 'closed' AND deleted_at IS NULL")->fetch();

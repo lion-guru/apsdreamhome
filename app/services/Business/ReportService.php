@@ -418,7 +418,7 @@ class ReportService
                 SELECT 
                     COUNT(*) as total_users,
                     COUNT(CASE WHEN status = 'active' THEN 1 END) as active_users,
-                    COUNT(CASE WHEN role = 'client' THEN 1 END) as client_users,
+                    COUNT(CASE WHEN role = 'customer' THEN 1 END) as client_users,
                     COUNT(CASE WHEN role = 'associate' THEN 1 END) as associate_users,
                     COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_users_month
                 FROM users

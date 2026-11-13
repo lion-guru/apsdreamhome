@@ -200,7 +200,7 @@ class OffboardingService
         if (!empty($pending)) return ['success' => false, 'message' => 'Complete all checklist items first'];
         $this->db->beginTransaction();
         try {
-            $this->execute("UPDATE employees SET status = 'offboarded', offboarded_at = NOW() WHERE id = ?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
+            $this->execute("UPDATE employees SET status = 'terminated', offboarded_at = NOW() WHERE id = ?{$this->tenantSql()}", array_merge([$employeeId], $this->tVal()));
             if (!empty($data['settlement_amount'])) {
                 $this->execute("INSERT INTO employee_fnf_settlements (employee_id, settlement_amount, settlement_date, processed_by, notes, status, tenant_id) VALUES (?, ?, CURDATE(), ?, ?, 'completed', ?)", [$employeeId, $data['settlement_amount'], $data['processed_by'] ?? 1, $data['notes'] ?? '', $this->tenantId()]);
             }
@@ -248,7 +248,7 @@ class OffboardingService
             FROM employee_profiles ep
             LEFT JOIN users u ON u.id = ep.user_id
             LEFT JOIN offboarding_checklists oc ON oc.employee_id = ep.legacy_id
-            WHERE ep.status IN ('active', 'terminated', 'offboarded')
+            WHERE ep.status IN ('active', 'inactive', 'terminated')
             GROUP BY ep.legacy_id, u.name, ep.employee_code, ep.department, ep.designation, ep.status
             ORDER BY u.name");
     }

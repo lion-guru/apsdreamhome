@@ -214,7 +214,7 @@ class RetroactiveRecalculationService
                  level, sale_amount, commission_percentage, status, notes,
                  booking_id, receipt_id, property_id, created_at,
                  plan_id, plan_version, plan_snapshot, calculation_engine{$extraCols})
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'recalculated', ?,
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?,
                     ?, ?, ?, NOW(),
                     ?, ?, ?, 'retroactive_recalc'{$extraVals})
         ");

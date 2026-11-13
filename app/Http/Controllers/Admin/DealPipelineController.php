@@ -108,7 +108,7 @@ class DealPipelineController extends AdminController
             $properties = $conn->query("SELECT id, title, location, price FROM properties WHERE status = 'available' ORDER BY title ASC")->fetchAll(\PDO::FETCH_ASSOC);
             
             // Get users for assignment
-            $users = $conn->query("SELECT id, name FROM users WHERE role = 'agent' OR role = 'sales' ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
+            $users = $conn->query("SELECT id, name FROM users WHERE role IN ('agent', 'sales_director', 'sales_manager', 'sales_team_lead', 'senior_agent') ORDER BY name ASC")->fetchAll(\PDO::FETCH_ASSOC);
             
             $data = [
                 'page_title' => 'Create New Deal',
