@@ -686,6 +686,19 @@ public function becomeAssociate()
         }
     }
 
+    public function offers()
+    {
+        $festivalService = new \App\Services\FestivalOfferService();
+        $offers = $festivalService->getActiveCustomerOffers();
+
+        $this->render('pages/offers', [
+            'page_title'       => 'त्योहार व विशेष ऑफर्स — Special Festival Booking Offers | APS Dream Home',
+            'page_description' => 'Explore current festival discounts, plot booking concessions, promo codes, and special gifts on your dream property.',
+            'offers'           => $offers,
+            'current_page'     => 'offers',
+        ]);
+    }
+
     /* ============================================================
        LANGUAGE SWITCHER
        ============================================================ */

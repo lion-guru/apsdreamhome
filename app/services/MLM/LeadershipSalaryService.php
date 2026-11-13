@@ -257,7 +257,7 @@ class LeadershipSalaryService
                 // Credit canonical wallet via WalletService (with fallback to user_wallets)
                 try {
                     $walletService = new \App\Services\WalletService();
-                    $walletService->credit($userId, $totalMonthlyPayout, 'bonus', "Monthly Leadership Salary payout (Diwali Dhamaka Plan) — {$activity['month']}");
+                    $walletService->credit($userId, $totalMonthlyPayout, 'bonus', "Monthly Leadership Salary payout (Corporate Performance Plan) — {$activity['month']}");
                 } catch (\Throwable $wEx) {
                     error_log("LeadershipSalary: WalletService credit fallback: " . $wEx->getMessage());
                 }

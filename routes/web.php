@@ -83,6 +83,8 @@ $router->get('/become_associate', function () {
     header('Location: ' . BASE_URL . '/become-associate', true, 301);
     exit;
 });
+$router->get('/offers', 'Front\\PageController@offers');
+$router->get('/festival-offers', 'Front\\PageController@offers');
 
 // Support
 $router->get('/support', 'Front\\SupportController@index');

@@ -102,6 +102,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
                 <h6 class="text-uppercase mb-3"><?= __('quick_links') ?></h6>
                 <ul class="list-unstyled">
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/" class="text-light text-decoration-none"><?= __('home') ?></a></li>
+                    <li class="mb-2"><a href="<?php echo BASE_URL; ?>/offers" class="text-light text-decoration-none"><i class="fas fa-gift text-warning me-1"></i><?= __('festive_offers', 'Festive Offers & Deals') ?></a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/properties" class="text-light text-decoration-none"><?= __('properties') ?></a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/company/projects" class="text-light text-decoration-none"><?= __('projects') ?></a></li>
                     <li class="mb-2"><a href="<?php echo BASE_URL; ?>/about" class="text-light text-decoration-none"><?= __('about_us') ?></a></li>

@@ -422,6 +422,7 @@ class NavigationHelper
         $submenu = [
             ['label' => __('browse_plots'),    'url' => '/plots/browse',                 'icon' => 'fas fa-search'],
             ['label' => __('nav_all_plots'),   'url' => '/plots',                        'icon' => 'fas fa-th-large'],
+            ['label' => 'Festive Offers & Deals', 'url' => '/offers',                    'icon' => 'fas fa-gift', 'badge' => 'NEW'],
         ];
 
         if (!empty($projects)) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Monthly Salary Grants & Diwali Dhamaka Payouts Processing Cron
+ * Permanent Monthly Salary Grants & Leadership Salary Payouts Processing Cron
  * Runs on 1st of each month at 02:00
  * Enforces Anti-Free-Rider Monthly Maintenance & 40:60 Leg Balance.
  */
@@ -11,7 +11,7 @@ use App\Core\Database\Database;
 use App\Services\MLM\SalaryIncentiveService;
 use App\Services\MLM\LeadershipSalaryService;
 
-echo "=== Monthly Salary Grants & Diwali Dhamaka Cron Started ===\n";
+echo "=== Permanent Monthly Salary Grants & Leadership Salary Cron Started ===\n";
 echo "Time: " . date('Y-m-d H:i:s') . "\n";
 
 try {
@@ -38,7 +38,7 @@ try {
     $resultFastStart = $mlmEngine->processAllFastStartBonuses();
     echo "4. Fast-Start 30-Day Bonus Result: " . json_encode($resultFastStart) . "\n";
 
-    echo "✅ All Monthly Salary Grants & Diwali Dhamaka payouts completed successfully\n";
+    echo "✅ All Permanent Monthly Salary Grants & Leadership Salary payouts completed successfully\n";
     
 } catch (\Throwable $e) {
     echo "❌ ERROR: " . $e->getMessage() . "\n";

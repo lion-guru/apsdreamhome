@@ -21,6 +21,38 @@
 
 > **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
 
+## Session 474: Customer Festival Offers Full-Stack Desk & Public Routes, Admin Menu Integration (Migration S474), Associate Multi-Alias Target Resolution, Zero Drift, 1509/1509 Clean (2026-11-13)
+
+### Trigger
+User instruction: "diwali dhamaka to banaye the but ab humesa ke liye soche hai kar diya jaye bus diwali dhamaka nhi aur diwali dhamaka likh ke na kuch kar dena namin aur ek aur chize kabhi koi offer laya jaye festival par assosiate ke liye cash reward ya koi aur rewards to wo banane aur apply karne ka option ho aur calculation etc sab bhi ho jaye aur coustomers ke liye bhi koib offer lana ho to wo sab sara system bhi ho aur interlin ho sab kuch jaise banta hai ye sab system etc tum soach samjh lena ki kya kaise hoga sara system workflow etc" & "do next".
+
+### The headline
+
+**1. CUSTOMER FESTIVAL & PROMOTIONAL OFFERS FULL-STACK SYSTEM**
+- **Public Routes Added**: Registered `GET /offers` and `GET /festival-offers` (`Front\PageController@offers`) in `routes/web.php`.
+- **Public Offers View**: Created rich, responsive bilingual view `app/views/pages/offers.php` displaying active festival booking offers (flat discounts, percentage off, per-sqft concessions, festive gift hampers). Features minimum booking values, colony/township applicability, expiration countdowns, 1-click clipboard promo code copy with live visual feedback, and direct "Book Plot with This Offer" CTA linking to `/plots?promo=...`.
+- **Navigation Interlinking**: Wired "Festive Offers & Deals" under the Plots dropdown submenu in `app/Helpers/NavigationHelper.php` with a "NEW" badge (auto-propagated to desktop navbar and mobile drawer accordion), and added to footer quick links in `app/views/layouts/footer.php`.
+
+**2. ADMIN FESTIVAL & PROMOTIONAL OFFERS MENU INTEGRATION (MIGRATION S474)**
+- Created and executed idempotent migration `database/migrations/add_festival_and_promotional_offers_menu_s474.php`:
+  1. Adds "Associate Festival Offers" (`/admin/associate-offers`, icon `fas fa-gift`) under the MLM sidebar section (order index 20, permission `mlm.offers`).
+  2. Adds "Promotional Offers" (`/admin/promotional-offers`, icon `fas fa-tags`) under the Marketing sidebar section (order index 11, permission `marketing.promotions`).
+  3. Grants RBAC permissions (`can_view`, `can_create`, `can_edit`, `can_delete`) across `super_admin`, `admin`, `sales_director`, and `marketing_director`. Re-runs skip safely.
+
+**3. MULTI-ALIAS ASSOCIATE ID RESOLUTION IN FESTIVALOFFERSERVICE**
+- In `app/Services/FestivalOfferService::calculateAssociateOfferProgress()`: Resolved all alias IDs (`users.id`, `associates.id`, `associate_profiles.id`) so associates receive full progress credit for their plot bookings and verified site visits regardless of which ID column was stored on the booking.
+- Fixed `claimAssociateOffer()` and wallet disbursal so claims cleanly link to canonical wallet credits (`wallet_points`).
+
+**4. PERMANENT CORPORATE LEADERSHIP SALARY PLAN BRANDING**
+- Cron output (`scripts/cron_salary_grants.php`), wallet notes (`LeadershipSalaryService::processMonthlySalaries()`), and referral copy (`app/views/pages/customer_referral.php`) updated to permanent "Corporate Performance Plan / नियमित मासिक लीडरशिप सैलरी".
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1509/1509 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 20.05s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 88 known / 0 new (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
 ## Session 473: The Login Lockout Was Dead (3 Layers), a 14-Hour Lockout from a Single Typo, the Schema Ratchet at 88, 85 Columns + 66 Tables Added, All Gates Green (2026-11-13)
 
 ### Trigger

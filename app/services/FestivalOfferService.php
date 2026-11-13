@@ -151,6 +151,26 @@ class FestivalOfferService
         $endDate = $offer['ends_at'] ?? '2026-12-31';
         $colonyId = !empty($offer['colony_id']) ? (int)$offer['colony_id'] : null;
 
+        // Resolve all possible ID aliases for this associate (user_id, associates.id, associate_profiles.id)
+        $idAliases = [$userId];
+        try {
+            $legacyAssoc = $this->db->prepare("SELECT id FROM associates WHERE user_id = ?");
+            $legacyAssoc->execute([$userId]);
+            while ($aid = $legacyAssoc->fetchColumn()) {
+                $idAliases[] = (int)$aid;
+            }
+            $profileAssoc = $this->db->prepare("SELECT id, legacy_id FROM associate_profiles WHERE user_id = ?");
+            $profileAssoc->execute([$userId]);
+            while ($prof = $profileAssoc->fetch(PDO::FETCH_ASSOC)) {
+                if (!empty($prof['id'])) $idAliases[] = (int)$prof['id'];
+                if (!empty($prof['legacy_id'])) $idAliases[] = (int)$prof['legacy_id'];
+            }
+        } catch (\Throwable $e) {
+            // fallback gracefully
+        }
+        $idAliases = array_values(array_unique(array_filter($idAliases)));
+        $inPlaceholders = implode(',', array_fill(0, count($idAliases), '?'));
+
         // Query plot bookings closed in date range
         $colonySql = $colonyId ? " AND pb.colony_id = $colonyId" : "";
         $bookingStmt = $this->db->prepare("
@@ -158,12 +178,13 @@ class FestivalOfferService
                 COUNT(*) AS total_bookings,
                 COALESCE(SUM(pb.total_plot_value), 0) AS total_sales_volume
             FROM plot_bookings pb
-            WHERE pb.associate_id = ?
+            WHERE (pb.associate_id IN ($inPlaceholders) OR pb.user_id = ?)
               AND pb.status NOT IN ('cancelled', 'rejected')
               AND pb.booking_date BETWEEN ? AND ?
               $colonySql
         ");
-        $bookingStmt->execute([$userId, $startDate, $endDate]);
+        $queryParams = array_merge($idAliases, [$userId, $startDate, $endDate]);
+        $bookingStmt->execute($queryParams);
         $bookingData = $bookingStmt->fetch(PDO::FETCH_ASSOC) ?: ['total_bookings' => 0, 'total_sales_volume' => 0];
 
         $currentVolume = (float)$bookingData['total_sales_volume'];
@@ -173,11 +194,11 @@ class FestivalOfferService
         $visitStmt = $this->db->prepare("
             SELECT COUNT(*) AS total_visits
             FROM site_visits sv
-            WHERE (sv.user_id = ? OR sv.agent_id = ? OR sv.assigned_to = ?)
+            WHERE (sv.user_id IN ($inPlaceholders) OR sv.agent_id IN ($inPlaceholders) OR sv.assigned_to IN ($inPlaceholders))
               AND sv.visit_date BETWEEN ? AND ?
               AND sv.status IN ('completed', 'verified')
         ");
-        $visitStmt->execute([$userId, $userId, $userId, $startDate, $endDate]);
+        $visitStmt->execute(array_merge($idAliases, $idAliases, $idAliases, [$startDate, $endDate]));
         $currentVisits = (int)$visitStmt->fetchColumn();
 
         $criteriaType = $offer['criteria_type'] ?? 'sale_volume';

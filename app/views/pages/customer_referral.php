@@ -33,7 +33,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
             <span class="badge bg-warning text-dark px-2 py-1 mb-2"><i class="fas fa-rocket me-1"></i>CAREER UPGRADE OPPORTUNITY</span>
             <h4 class="fw-bold mb-1 text-white">Become an Official APS Associate Partner</h4>
             <p class="mb-0 text-white-50" style="font-size: 14px;">
-                Earn 5% to 20% direct plot commission, monthly Diwali Dhamaka salaries (₹5,000 to ₹20,000/mo), and luxury rewards. Your existing referrals become your starting downline team!
+                Earn 5% to 20% direct plot commission, monthly leadership performance salaries (₹5,000 to ₹20,000/mo), and luxury rewards. Your existing referrals become your starting downline team!
             </p>
         </div>
         <div>
