@@ -6446,4 +6446,31 @@ User instruction: "do next" — Autonomous Senior Developer & CEO execution: sur
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **488** (next session).
+Next-free = **489** (next session).
+
+## Session 488: Security Sweep — eval() RCE, Three Shell-Injection Sites, Backup Restore Path Execution, LifeKit Removal (2026-11-13)
+
+### Trigger
+User: "do next" (x2) + "lifekit-privacy-policy.html ye dusre project ka tha isme ho gya hai" — LifeKit deletion (confirmed choice), then continuous vulnerability scan + elimination.
+
+### The headline
+
+**1. LIFEKIT PRIVACY POLICY REMOVED (owner decision)**
+- `public/lifekit-privacy-policy.html` deleted; `GET /lifekit-privacy-policy` route removed from `routes/web.php` (user confirmed "Remove it completely" after they re-created it as Session 487 + route). Zero references remain; `/lifekit-privacy-policy` -> 404; app serves all public pages. Committed `2f6976fe6`.
+
+**2. eval() RCE IN WORKFLOW ENGINE ELIMINATED**
+- `app/Services/AI/WorkflowEngine.php` `executeLogicNode()` ran `eval("return $condition;")` with trigger data string-interpolated unquoted — crafted lead/inquiry data could inject arbitrary PHP.
+- Replaced with a strict recursive-descent expression parser (`evaluateCondition`): numbers, double-quoted strings, booleans/null, parentheses, `&&`/`||`/`!`/comparisons. Trigger context substituted as `json_encode` atoms (injection-proof). Anything illegal throws and fails closed. Zero callers today (dead code) — primitive removed before wiring.
+- Probe: 15/15 assertions PASS (legit conditions work; `phpinfo()` injections rejected). Committed `2ce28b80a`.
+
+**3. THREE SHELL-INJECTION SITES CLOSED**
+- `TriggerSystem.php`: `shell_exec`/php -l with interpolated `$projectRoot`, `$commitMessage` -> all `escapeshellarg`'d (`669cb996c`).
+- `CronHealthController::run()`: `$_POST['mode']` interpolated into background `exec` -> whitelisted to {daily, monthly, all} + redirect rejection + `escapeshellarg` (`2a3a09d82`).
+- `AdminWorkflowController::restoreBackup()`: executed `$backup['file_path']` SQL straight into `exec` -> now requires realpath inside canonical `STORAGE_PATH/backups/` + `.sql` extension, forged-row/path-traversal refused before exec (`2a3a09d82`).
+
+**4. VERIFICATION**
+- No raw superglobals into SQL (0 sites), no direct superglobal include/read (0), all remaining `$pdo->exec` sites use validated names or hardcoded strings (BackupManager, DatabaseOptimizer, Sentinel).
+- **phpstan** -> `[OK] No errors`. **Master suite** -> 11/11 PASSED. **php -l** clean. **app serves** -> all public pages 200 / tools serve. **AGENTS.md integrity** -> OK. DB untouched.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **489** (next session).
