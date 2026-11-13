@@ -1,4 +1,12 @@
-<?php require_once __DIR__ . '/../../Helpers/TranslationHelper.php'; ?>
+<?php
+require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
+/** @var array<string, mixed> $plot */
+$plot = $plot ?? [];
+/** @var array<string, mixed> $user */
+$user = $user ?? [];
+$lead_id = $lead_id ?? 0;
+$userBookings = $userBookings ?? [];
+?>
 <style>
 .booking-form-section { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 24px; margin-bottom: 20px; }
 .plot-summary-card { background: linear-gradient(135deg, #0d9488, #0f766e); color: white; border-radius: 12px; padding: 24px; }
@@ -34,32 +42,32 @@
             <div class="booking-form-section">
                 <h5 class="fw-bold mb-3"><i class="fas fa-file-signature"></i> <?= __('plot_book_details', [], 'Booking Details') ?></h5>
                 <form method="POST" action="<?= BASE_URL ?>/plot/book">
-                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                    <input type="hidden" name="plot_id" value="<?= $plot['id'] ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                    <input type="hidden" name="plot_id" value="<?= (int)($plot['id'] ?? 0) ?>">
                     <?php if (!empty($lead_id)): ?>
                     <input type="hidden" name="lead_id" value="<?= (int)$lead_id ?>">
                     <?php endif; ?>
 
                     <div class="mb-3">
-                        <label class="form-label"><?= __('plot_book_proceed', [], 'How would you like to proceed?') ?></label>
-                        <select class="form-select" name="booking_type">
+                        <label class="form-label" for="booking_type"><?= __('plot_book_proceed', [], 'How would you like to proceed?') ?></label>
+                        <select class="form-select" name="booking_type" id="booking_type">
                             <option value="site_visit"><?= __('plot_book_visit_first', [], 'I want to visit the site first') ?></option>
                             <option value="online_consultation"><?= __('plot_book_direct', [], 'Online consultation / Direct booking') ?></option>
                         </select>
                     </div>
 
-                    <?php if (!empty($plot['negotiated_price']) && $plot['negotiated_price'] != $plot['total_price']): ?>
+                    <?php if (!empty($plot['negotiated_price']) && !empty($plot['total_price']) && $plot['negotiated_price'] != $plot['total_price']): ?>
                     <div class="alert alert-success">
                         <i class="fas fa-tag"></i> <strong><?= __('plot_book_special_deal', [], 'Special Deal Price Available!') ?></strong>
                         <?= __('plot_book_special_price', [], 'This plot has a special negotiated price of') ?> <strong>₹<?= number_format(intval($plot['negotiated_price'])) ?></strong>
                         (<?= __('plot_book_original', [], 'Original') ?>: ₹<?= number_format(intval($plot['total_price'])) ?>)
-                        <input type="hidden" name="negotiated_price" value="<?= $plot['negotiated_price'] ?>">
+                        <input type="hidden" name="negotiated_price" value="<?= htmlspecialchars((string)$plot['negotiated_price']) ?>">
                     </div>
                     <?php endif; ?>
 
                     <!-- Festive Promo Code / Concession -->
                     <div class="mb-3 p-3 rounded border bg-light">
-                        <label class="form-label fw-bold mb-1">
+                        <label class="form-label fw-bold mb-1" for="booking_promo_code">
                             <i class="fas fa-gift text-danger me-1"></i> <?= __('festive_promo_label', [], 'Festive Promo Code / Concession (त्योहारी छूट कोड)') ?>
                         </label>
                         <div class="input-group">
@@ -79,14 +87,14 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label"><?= __('plot_book_notes', [], 'Notes / Special Requests (optional)') ?></label>
-                        <textarea class="form-control" name="notes" rows="3" placeholder="<?= __('plot_book_notes_ph', [], 'Any specific requirements or questions...') ?>"></textarea>
+                        <label class="form-label" for="booking_notes"><?= __('plot_book_notes', [], 'Notes / Special Requests (optional)') ?></label>
+                        <textarea class="form-control" name="notes" id="booking_notes" rows="3" placeholder="<?= __('plot_book_notes_ph', [], 'Any specific requirements or questions...') ?>"></textarea>
                     </div>
 
                     <div class="emi-note mb-3" id="plot_payment_terms_box">
-                        <i class="fas fa-info-circle"></i> <strong><?= __('plot_book_payment_terms', [], 'Payment Terms:') ?></strong> 
+                        <i class="fas fa-info-circle"></i> <strong><?= __('plot_book_payment_terms', [], 'Payment Terms:') ?></strong>
                         <span id="terms_token_desc">
-                            <?= __('plot_book_token_required', [], '25% token amount') ?> (₹<?= number_format(intval(($plot['negotiated_price'] ?? $plot['total_price']) * 0.25)) ?>) <?= __('plot_book_token_within', [], 'required within 15 days of booking confirmation. Balance as per agreed schedule.') ?>
+                            <?= __('plot_book_token_required', [], '25% token amount') ?> (₹<?= number_format(intval(($plot['negotiated_price'] ?? $plot['total_price'] ?? 0) * 0.25)) ?>) <?= __('plot_book_token_within', [], 'required within 15 days of booking confirmation. Balance as per agreed schedule.') ?>
                         </span>
                     </div>
 
@@ -102,7 +110,7 @@
             <div class="plot-summary-card">
                 <h5 class="fw-bold mb-3"><?= htmlspecialchars($plot['colony_name'] ?? '') ?></h5>
                 <h4 class="fw-bold">Plot <?= htmlspecialchars($plot['plot_number'] ?? '') ?></h4>
-                <div class="price">₹<?= number_format(intval($plot['negotiated_price'] ?? $plot['total_price'])) ?></div>
+                <div class="price">₹<?= number_format(intval($plot['negotiated_price'] ?? $plot['total_price'] ?? 0)) ?></div>
                 <p class="detail mb-3">
                     <?= number_format(floatval($plot['area_sqft'] ?? 0)) ?> <?= __('plot_book_sqft', [], 'sqft') ?>
                     <?= !empty($plot['dimension_label']) ? '| ' . htmlspecialchars($plot['dimension_label'] ?? '') : '' ?>
@@ -117,20 +125,29 @@
                     </div>
                 </div>
                 <div class="mt-3 detail">
-                    <i class="fas fa-map-marker-alt"></i> 
-                    <?= htmlspecialchars(($plot['state_name'] ?? '') . ($plot['district_name'] ? ', ' . $plot['district_name'] : '')) ?>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <?= htmlspecialchars(($plot['state_name'] ?? '') . (!empty($plot['district_name']) ? ', ' . $plot['district_name'] : '')) ?>
                 </div>
             </div>
 
             <!-- Your Existing Bookings -->
-            <?php $userBookings = $userBookings ?? []; if (!empty($userBookings)): ?>
+            <?php if (!empty($userBookings)): ?>
             <div class="booking-form-section mt-3">
                 <h6 class="fw-bold"><i class="fas fa-history"></i> <?= __('plot_book_recent', [], 'Your Recent Bookings') ?></h6>
                 <?php foreach (array_slice($userBookings, 0, 3) as $ub): ?>
+                    <?php
+                        $bStatus = $ub['status'] ?? 'pending';
+                        $statusClass = 'warning';
+                        if ($bStatus === 'confirmed') {
+                            $statusClass = 'success';
+                        } elseif ($bStatus === 'cancelled') {
+                            $statusClass = 'danger';
+                        }
+                    ?>
                     <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                        <span>#<?= $ub['id'] ?> — ₹<?= number_format(intval($ub['total_amount'] ?? $ub['amount'] ?? 0)) ?></span>
-                        <span class="badge bg-<?= ($ub['status'] ?? '') === 'confirmed' ? 'success' : (($ub['status'] ?? '') === 'cancelled' ? 'danger' : 'warning') ?>">
-                            <?= ucfirst($ub['status'] ?? 'pending') ?>
+                        <span>#<?= (int)($ub['id'] ?? 0) ?> — ₹<?= number_format(intval($ub['total_amount'] ?? $ub['amount'] ?? 0)) ?></span>
+                        <span class="badge bg-<?= $statusClass ?>">
+                            <?= ucfirst($bStatus) ?>
                         </span>
                     </div>
                 <?php endforeach; ?>
@@ -147,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const feedback = document.getElementById('cust_promo_feedback');
     const discountHidden = document.getElementById('cust_discount_amount');
     const termsDesc = document.getElementById('terms_token_desc');
-    const basePrice = <?= (float)($plot['negotiated_price'] ?? $plot['total_price']) ?>;
+    const basePrice = <?= (float)($plot['negotiated_price'] ?? $plot['total_price'] ?? 0) ?>;
     const colonyId = <?= (int)($plot['colony_id'] ?? 0) ?>;
 
     function validatePromo(code) {
