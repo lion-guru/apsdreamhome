@@ -82,7 +82,7 @@
                             <thead>
                                 <tr>
                                     <th style="width: 50px;">
-                                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" aria-label="Select all rows">
                                     </th>
                                     <th>ID</th>
                                     <th>Name</th>
@@ -105,7 +105,7 @@
                                 <?php else: ?>
                                 <?php foreach ($districts as $district): ?>
                                 <tr>
-                                    <td><input type="checkbox" name="ids[]" value="<?= e($district['id']) ?>" class="rowCheckbox" onchange="updateSelectedCount()"></td>
+                                    <td><input type="checkbox" name="ids[]" value="<?= e($district['id']) ?>" class="rowCheckbox" onchange="updateSelectedCount()" aria-label="Select district <?= e($district['id']) ?>"></td>
                                     <td><?= e($district['id']) ?></td>
                                     <td>
                                         <strong><?= htmlspecialchars($district['name'] ?? '') ?></strong>

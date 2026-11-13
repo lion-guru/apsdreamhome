@@ -200,7 +200,7 @@ $active_page = 'bookings';
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th width="30"><input type="checkbox" id="selectAll" class="form-check-input"></th>
+                        <th width="30"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
                         <th>
                             <a href="?sort=booking_number&order=<?= $filters['order'] == 'ASC' ? 'DESC' : 'ASC' ?>&<?= http_build_query(array_diff_key($filters, ['sort' => '', 'order' => ''])) ?>">
                                 Booking # <i class="fas fa-sort"></i>
@@ -228,7 +228,7 @@ $active_page = 'bookings';
                     <?php else: ?>
                         <?php foreach ($bookings as $booking): ?>
                             <tr data-booking-id="<?= $booking['id'] ?>">
-                                <td><input type="checkbox" class="form-check-input booking-checkbox" value="<?= $booking['id'] ?>"></td>
+                                <td><input type="checkbox" class="form-check-input booking-checkbox" value="<?= $booking['id'] ?>" aria-label="Select booking <?= $booking['id'] ?>"></td>
                                 <td>
                                 <td>
                                     <strong><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></strong>

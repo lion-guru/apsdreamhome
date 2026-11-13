@@ -45,14 +45,14 @@
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th><input type="checkbox" id="selectAll" class="form-check-input"></th>
+                                <th><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
                                 <th>#</th><th>Name</th><th>Phone</th><th>Source</th><th>Status</th><th>Assigned</th>
                             </tr>
                         </thead>
                         <tbody>
                         <?php foreach ($leads as $l): ?>
                             <tr>
-                                <td><input type="checkbox" class="form-check-input bulk-check" value="<?= $l['id'] ?>"></td>
+                                <td><input type="checkbox" class="form-check-input bulk-check" value="<?= $l['id'] ?>" aria-label="Select lead <?= $l['id'] ?>"></td>
                                 <td><?= $l['id'] ?></td>
                                 <td><?= htmlspecialchars($l['name'] ?? '') ?></td>
                                 <td><?= htmlspecialchars($l['phone'] ?? '') ?></td>

@@ -60,7 +60,7 @@
                         <table class="table table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th><input type="checkbox" id="selectAll"></th>
+                                    <th><input type="checkbox" id="selectAll" aria-label="Select all rows"></th>
                                     <th>Lead</th>
                                     <th>Current Assignee</th>
                                     <th>Requested Assignee</th>
@@ -73,7 +73,7 @@
                             <tbody>
                                 <?php foreach ($pending as $req): ?>
                                     <tr>
-                                        <td><input type="checkbox" name="approval_ids[]" value="<?= $req['id'] ?>"></td>
+                                        <td><input type="checkbox" name="approval_ids[]" value="<?= $req['id'] ?>" aria-label="Select approval <?= $req['id'] ?>"></td>
                                         <td>
                                             <a href="<?= BASE_URL ?>/admin/leads/<?= $req['lead_id'] ?>" class="text-decoration-none">
                                                 <strong><?= htmlspecialchars($req['lead_name'] ?? 'Lead #' . $req['lead_id']) ?></strong>

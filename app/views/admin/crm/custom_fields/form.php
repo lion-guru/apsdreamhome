@@ -16,8 +16,8 @@
             </div>
             <div class="mb-3"><label class="form-label fw-bold">Options (one per line, for select fields)</label><textarea name="options" class="form-control" rows="4" placeholder="Option 1&#10;Option 2&#10;Option 3"><?= htmlspecialchars($field['options_list'] ?? '') ?></textarea></div>
             <div class="row mb-4">
-                <div class="col-md-4"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="is_required" value="1" <?= !empty($field['is_required']) ? 'checked' : '' ?>><label class="form-check-label">Required</label></div></div>
-                <div class="col-md-4"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="is_searchable" value="1" <?= !empty($field['is_searchable']) ? 'checked' : '' ?>><label class="form-check-label">Searchable</label></div></div>
+                <div class="col-md-4"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="is_required" id="is_required" value="1" <?= !empty($field['is_required']) ? 'checked' : '' ?>><label class="form-check-label" for="is_required">Required</label></div></div>
+                <div class="col-md-4"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="is_searchable" id="is_searchable" value="1" <?= !empty($field['is_searchable']) ? 'checked' : '' ?>><label class="form-check-label" for="is_searchable">Searchable</label></div></div>
             </div>
             <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-1"></i><?= $field ? 'Update' : 'Create' ?> Field</button>
         </form>

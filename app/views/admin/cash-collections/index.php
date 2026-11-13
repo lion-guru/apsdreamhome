@@ -107,7 +107,7 @@ ob_start();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th><input type="checkbox" id="selectAll" class="form-check-input"></th>
+                            <th><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
                             <th>ID</th>
                             <th>Collector</th>
                             <th>Customer</th>
@@ -124,7 +124,7 @@ ob_start();
                         <?php else: foreach ($collections as $c): ?>
                             <tr>
                                 <?php if (($c['status'] ?? '') === 'submitted'): ?>
-                                    <td><input type="checkbox" name="bulk_ids[]" value="<?= $c['id'] ?>" class="form-check-input bulk-check"></td>
+                                    <td><input type="checkbox" name="bulk_ids[]" value="<?= $c['id'] ?>" class="form-check-input bulk-check" aria-label="Select collection <?= $c['id'] ?>"></td>
                                 <?php else: ?>
                                     <td></td>
                                 <?php endif; ?>

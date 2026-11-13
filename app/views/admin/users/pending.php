@@ -30,7 +30,7 @@
                 <thead class="bg-light">
                     <tr>
                         <th class="border-0 ps-4">
-                            <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
+                            <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)" aria-label="Select all rows">
                         </th>
                         <th class="border-0">User</th>
                         <th class="border-0">Role</th>
@@ -44,7 +44,7 @@
                     <?php foreach ($users as $user): ?>
                     <tr id="row-<?php echo e($user['id']); ?>">
                         <td class="ps-4">
-                            <input type="checkbox" class="user-checkbox" value="<?php echo e($user['id']); ?>" onchange="updateBulkButton()">
+                            <input type="checkbox" class="user-checkbox" value="<?php echo e($user['id']); ?>" aria-label="Select user <?php echo e($user['id']); ?>" onchange="updateBulkButton()">
                         </td>
                         <td>
                             <div class="d-flex align-items-center">

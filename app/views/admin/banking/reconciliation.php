@@ -71,7 +71,7 @@ $page_title = 'Bank Reconciliation';
                     <table class="table table-striped table-hover mb-0">
                         <thead class="table-dark">
                             <tr>
-                                <th width="40"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                                <th width="40"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()" aria-label="Select all rows"></th>
                                 <th>Date</th>
                                 <th>Type</th>
                                 <th>Amount</th>
@@ -94,7 +94,7 @@ $page_title = 'Bank Reconciliation';
                             <?php else: ?>
                                 <?php foreach ($transactions as $t): ?>
                                     <tr>
-                                        <td><input type="checkbox" class="recon-checkbox" name="transaction_ids[]" value="<?php echo e($t['id']); ?>" onchange="updateBulkBtn()"></td>
+                                        <td><input type="checkbox" class="recon-checkbox" name="transaction_ids[]" value="<?php echo e($t['id']); ?>" aria-label="Select transaction <?php echo e($t['id']); ?>" onchange="updateBulkBtn()"></td>
                                         <td><?php echo isset($t['date']) ? date('d M Y', strtotime($t['date'])) : '-'; ?></td>
                                         <td>
                                             <span class="badge bg-<?php echo ($t['type'] ?? '') === 'credit' ? 'success' : 'danger'; ?>">
