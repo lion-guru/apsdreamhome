@@ -137,7 +137,7 @@ class PerformanceRankCalculator
         $legacyVolume = (float)$stmtLegacy->fetchColumn() ?: 0;
 
         // Sum sales from new plot_bookings (V2)
-        $sqlV2 = "SELECT SUM(booking_amount) FROM plot_bookings WHERE associate_id IN ($placeholders) AND status IN ('confirmed', 'completed') {$this->tenantSql()}";
+        $sqlV2 = "SELECT SUM(booking_amount) FROM plot_bookings WHERE associate_id IN ($placeholders) AND status IN ('token_paid','agreement_signed','emi_active','partially_paid','fully_paid','registration_done') {$this->tenantSql()}";
         $stmtV2 = $this->db->prepare($sqlV2);
         $stmtV2->execute($downline);
         $v2Volume = (float)$stmtV2->fetchColumn() ?: 0;

@@ -597,7 +597,7 @@ $allowedActions = [
     private function getReport(array $params): array
     {
         $reportType = $params['type'] ?? 'sales';
-        $period = $params['period'] ?? 'month';
+        $period = in_array(($params['period'] ?? 'month'), ['day','week','month','quarter','year'], true) ? $params['period'] : 'month';
         
         $reports = [
             'sales' => "SELECT COUNT(*) as bookings, COALESCE(SUM(total_plot_value),0) as revenue FROM plot_bookings WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 $period)",
@@ -626,12 +626,17 @@ $allowedActions = [
         }
 
         $tid = TenantContext::getId();
+        // Exec-AI review can only mark a human's approval decision; it cannot advance the
+        // real-world lifecycle (token -> agreement -> EMI -> registration), so the booking
+        // status stays at its real state. Recording approved_by/approved_at here is the honest
+        // audit trail — status='approved' is NOT a member of plot_bookings.status.
         $this->db->execute(
-            "UPDATE plot_bookings SET status = 'approved', approved_by = ?, approved_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+            "UPDATE plot_bookings SET approved_by = ?, approved_at = NOW() WHERE id = ? AND status = 'pending'"
+                . ($tid > 1 ? " AND tenant_id = ?" : ""),
             array_merge([$userId, $bookingId], $tid > 1 ? [$tid] : [])
         );
 
-        return ['success' => true, 'message' => "Booking #$bookingId approved"];
+        return ['success' => true, 'message' => "Exec-AI review recorded for Booking #$bookingId (lifecycle unchanged; tokens, agreements, and EMIs move through the normal flow)"];
     }
 
     private function createTask(array $params, int $userId): array

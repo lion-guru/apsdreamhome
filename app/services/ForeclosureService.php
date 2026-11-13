@@ -164,10 +164,9 @@ class ForeclosureService
             return ['success' => false, 'error' => 'Amount mismatch. Expected: ' . $foreclosure['final_amount']];
         }
 
-        // S264: idempotency — a completed foreclosure must never pay twice.
-        // (Re-running re-inserted booking_payments AND re-credited the bonus.)
+        // Idempotency: a completed foreclosure logs to foreclosure_logs (status=completed).
         try {
-            $done = $this->db->fetchOne("SELECT id FROM plot_bookings WHERE id = ? AND status = 'completed' LIMIT 1", [$bookingId]);
+            $done = $this->db->fetchOne("SELECT id FROM foreclosure_logs WHERE booking_id = ? AND status = 'completed' LIMIT 1", [$bookingId]);
         } catch (\Throwable $e) { $done = null; }
         if ($done) {
             return ['success' => true, 'message' => 'Foreclosure already completed (duplicate ignored)'];
@@ -176,14 +175,26 @@ class ForeclosureService
         try {
             $this->db->beginTransaction();
 
-            // 1. Record payment in booking_payments
-            $sql = "INSERT INTO booking_payments (booking_id, payment_amount, payment_method, 
-                        transaction_id, payment_date, payment_notes, payment_type)
-                    VALUES (?, ?, ?, ?, NOW(), ?, 'foreclosure')";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$bookingId, $amount, $data['payment_method'] ?? 'upi', 
-                           $data['transaction_id'] ?? 'FC' . time() . rand(1000, 9999), 
-                           'Foreclosure payoff with ' . $foreclosureData['rebate_percent'] . '% rebate']);
+            // 1. Record payment in booking_payment_receipts (canonical money ledger).
+            //    (The legacy `booking_payments` table has no `payment_type` column and its
+            //    `payment_id` PK has no auto-increment -> the old insert 1054/1364'd every run.)
+            $paymentMethod = strtolower(trim((string)($data['payment_method'] ?? 'upi')));
+            $allowedModes = ['cash','cheque','dd','neft','rtgs','upi','card','bank_transfer'];
+            if (!in_array($paymentMethod, $allowedModes, true)) {
+                $paymentMethod = 'upi';
+            }
+            $receiptNumber = 'FC-' . date('YmdHis') . '-' . random_int(1000, 9999);
+            $receiptSql = "INSERT INTO booking_payment_receipts
+                               (booking_id, installment_id, receipt_number, receipt_date, amount,
+                                payment_mode, transaction_ref, collected_by, status, notes, tenant_id)
+                           VALUES (?, NULL, ?, CURDATE(), ?, ?, ?, ?, 'cleared', ?, ?)";
+            $this->db->prepare($receiptSql)->execute([
+                $bookingId, $receiptNumber, $amount, $paymentMethod,
+                $data['transaction_id'] ?? ('FC' . time() . random_int(1000, 9999)),
+                (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 1),
+                'Foreclosure payoff with ' . $foreclosure['rebate_percent'] . '% rebate',
+                1,  // tenant_id (singleton tenant: 1)
+            ]);
 
             // 2. Mark all pending installments as paid
             $sql = "UPDATE booking_payment_schedules 
@@ -194,13 +205,23 @@ class ForeclosureService
             $rebateAmount = $this->calculateForeclosure($data['booking_id'])['rebate_amount'];
             $stmt->execute([$foreclosure['rebate_amount'], $bookingId]);
 
-            // 3. Update booking status to completed
-            $sql = "UPDATE plot_bookings SET status = 'completed', 
-                    foreclosure_date = NOW(), foreclosure_amount = ?,
-                    foreclosure_rebate = ?
-                    WHERE id = ?";
+            // 3. Update booking status to fully_paid; record the foreclosure event.
+            //    (plot_bookings has no `foreclosure_date/foreclosure_amount/foreclosure_rebate`
+            //    columns and 'completed' is not a status member -> the old UPDATE 1054'd.)
+            $sql = "UPDATE plot_bookings SET status = 'fully_paid', updated_at = NOW() WHERE id = ?";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$foreclosure['final_amount'], $rebateAmount, $bookingId]);
+            $stmt->execute([$bookingId]);
+            // Idempotency ledger: foreclosure_logs (status=completed) — written here so a re-run
+            // is detected and blocked by the duplicate check above.
+            $logSql = "INSERT INTO foreclosure_logs
+                           (booking_id, foreclosure_amount, discount_applied, status, tenant_id, created_at)
+                       VALUES (?, ?, ?, 'completed', ?, NOW())";
+            $this->db->prepare($logSql)->execute([
+                $bookingId,
+                (float)$foreclosure['final_amount'],
+                (float)($data['rebate_amount'] ?? $foreclosure['rebate_amount'] ?? 0.0),
+                1,  // tenant_id (singleton tenant: 1)
+            ]);
 
             // 4. Update wallet (points earned for early closure)
             $this->creditForeclosurePoints($bookingId, $data['customer_id'], $rebateAmount);
@@ -210,8 +231,8 @@ class ForeclosureService
             return [
                 'success' => true,
                 'rebate_amount' => $rebateAmount,
-                'final_amount' => $foreclosureData['final_amount'],
-                'message' => 'Foreclosure completed with ' . $this->calculateForeclosure($data['booking_id'])['rebate_percent'] . '% rebate'
+                'final_amount' => $foreclosure['final_amount'],
+                'message' => 'Foreclosure completed with ' . ($foreclosure['rebate_percent'] ?? 5.0) . '% rebate'
             ];
 
         } catch (\Throwable $e) {

@@ -408,7 +408,7 @@ class MobileFeatureEndpointsController extends BaseController
 
         $stmt = $this->pdo->prepare(
             "INSERT INTO foreclosure_logs (booking_id, foreclosure_amount, discount_applied, status, tenant_id, created_at)
-             VALUES (?, ?, ?, 'requested', 1, NOW())"
+             VALUES (?, ?, ?, 'pending', 1, NOW())"
         );
         $stmt->execute([$bookingId, $amount, $discount]);
 

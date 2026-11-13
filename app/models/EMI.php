@@ -122,7 +122,7 @@ class EMI extends Model
 
             $db->commit();
             return [
-                'success' => true,
+                'completed' => true,
                 'emi_plan_id' => $emiPlanId,
                 'emi_amount' => $emiAmount
             ];
@@ -574,23 +574,19 @@ class EMI extends Model
             // 4. Log to foreclosure_logs for audit/reporting
             // Check if table exists first to avoid errors during migration
             try {
-                $sqlLog = "INSERT INTO foreclosure_logs (
-                                emi_plan_id, status, message, foreclosure_amount, 
-                                original_amount, penalty_amount, waiver_amount, notes,
-                                attempted_at, attempted_by
-                           ) VALUES (?, 'success', 'Foreclosure successful', ?, ?, ?, ?, ?, NOW(), ?)";
+                // foreclosure_logs is booking-centric; emi_plan id is not its FK target.
+                // Record only what we know honestly.
+                $sqlLog = "INSERT INTO foreclosure_logs
+                               (booking_id, foreclosure_amount, discount_applied, status, tenant_id, created_at)
+                           VALUES (NULL, ?, ?, 'completed', ?, NOW())";
                 $stmtLog = $db->prepare($sqlLog);
                 $stmtLog->execute([
-                    $planId,
                     $amount,
-                    $data['original_amount'] ?? 0,
-                    $data['penalty_amount'] ?? 0,
-                    $data['waiver_amount'] ?? 0,
-                    $notes,
-                    $_SESSION['admin_id'] ?? 1
+                    (float)($data['waiver_amount'] ?? 0),
+                    (int)($data['tenant_id'] ?? 1),
                 ]);
             } catch (\Throwable $e) {
-                // Ignore log error if table missing, but log it
+                // Ignore log error if it occurs; the EMI payoff itself already committed.
                 error_log("Foreclosure logging failed: " . $e->getMessage());
             }
 
@@ -615,10 +611,10 @@ class EMI extends Model
         try {
             $sql = "SELECT 
                         COUNT(*) as total_attempts,
-                        SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as successful_attempts,
-                        SUM(CASE WHEN status != 'success' THEN 1 ELSE 0 END) as failed_attempts,
-                        COALESCE(SUM(CASE WHEN status = 'success' THEN foreclosure_amount ELSE 0 END), 0) as total_foreclosure_amount,
-                        COALESCE(AVG(CASE WHEN status = 'success' THEN foreclosure_amount ELSE NULL END), 0) as average_foreclosure_amount
+                        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as successful_attempts,
+                        SUM(CASE WHEN status != 'completed' THEN 1 ELSE 0 END) as failed_attempts,
+                        COALESCE(SUM(CASE WHEN status = 'completed' THEN foreclosure_amount ELSE 0 END), 0) as total_foreclosure_amount,
+                        COALESCE(AVG(CASE WHEN status = 'completed' THEN foreclosure_amount ELSE NULL END), 0) as average_foreclosure_amount
                     FROM foreclosure_logs";
 
             $stats = $db->query($sql)->fetch(\PDO::FETCH_ASSOC);
@@ -660,8 +656,8 @@ class EMI extends Model
             $sql = "SELECT 
                         DATE_FORMAT(attempted_at, '%Y-%m') as month,
                         COUNT(*) as total_attempts,
-                        SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as successful_attempts,
-                        SUM(CASE WHEN status = 'success' THEN foreclosure_amount ELSE 0 END) as total_foreclosure_amount
+                        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as successful_attempts,
+                        SUM(CASE WHEN status = 'completed' THEN foreclosure_amount ELSE 0 END) as total_foreclosure_amount
                     FROM foreclosure_logs 
                     WHERE attempted_at >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)
                     GROUP BY month
@@ -749,7 +745,7 @@ class EMI extends Model
                     ep.customer_id,
                     u.name as customer_name,
                     p.title as property_title,
-                    'success' as foreclosure_status,
+                    'completed' as foreclosure_status,
                     ep.foreclosure_amount,
                     ep.foreclosure_date as attempted_at,
                     pay.created_by as foreclosed_by_id,
