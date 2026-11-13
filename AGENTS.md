@@ -21,6 +21,41 @@
 
 > **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
 
+## Session 470: MLM Commission Engine Fatal Bug & Diagnostics Resolved, SonarLint Compliance, Master Test Suite 11/11 Green (2026-11-13)
+
+### Trigger
+User provided diagnostics for `app/Services/MLM/MLMCommissionEngine.php`:
+1. Intelephense P1011 / Fatal Error on line 1318: `Undefined constant 'App\Services\MLM\booking'`.
+2. SonarLint warnings:
+   - Line 1318: "Either remove or fill this block of code."
+   - Line 886: "Add curly braces around the nested statement(s)."
+   - Line 1488: "Remove the unused function parameter $associateId."
+   - Line 1641: "Remove this unused $cbId local variable."
+   - Lines 2160, 2172: "Add curly braces around the nested statement(s)."
+   - Line 326: "Extract this nested ternary operation into an independent statement."
+
+### The headline
+
+**1. CRITICAL MLM COMMISSION ENGINE FATAL ERROR RESOLVED**
+- In `app/Services/MLM/MLMCommissionEngine.php` line 1318, `(int)booking['associate_id']` lacked the `$` variable prefix. In PHP 8.0+, accessing an undefined bareword constant halts execution with a fatal `Error: Undefined constant "App\Services\MLM\booking"`.
+- Replaced the nested empty `if` condition with a clean fallback assignment:
+  `$sourceUserId = (new \App\Services\IdentityService())->resolveAssociateUserId((int)$booking['associate_id']);`
+  Correctly resolves the associate's underlying user account and falls back to customer ID if <= 0.
+
+**2. SONARLINT LINT & CODE QUALITY IMPROVEMENTS**
+- **Unused local variable `$cbId` (line 1641)**: Removed unused `$cbId = (int)$this->db->lastInsertId();` from clawback processing.
+- **Unused parameter `$associateId` (line 1488)**: In `awardRankBonus()`, added fallback resolution `if ($userId <= 0 && $associateId > 0) { $userId = (new \App\Services\IdentityService())->resolveAssociateUserId($associateId); }`, actively utilizing the parameter when caller provides only an associate ID.
+- **Nested ternary simplified (line 326)**: Flattened `$raw` extraction in `getDirectLegRanks()` into clear, maintainable conditional statements.
+- **Missing braces added**: Added standard curly braces on single-line conditionals (lines 886, 2160, 2172).
+
+### Verification
+- **PHP Syntax**: `php -l app/Services/MLM/MLMCommissionEngine.php` -> No syntax errors detected.
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1509/1509 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 22.07s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 243 known, 0 NEW, exit 0.
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
 ## Session 469: 9 Missing Domain Tables Migrated (Plot Locks Concurrency, Customer Routing, Alerts & Marketing), Schema Mismatch Baseline Ratchet Lowered to 243, Probe Fixture Moved Out of Migrations, Destructive Admin GET Routes Re-engineered to POST with CSRF, All Gates Green (2026-11-13)
 
 ### Trigger

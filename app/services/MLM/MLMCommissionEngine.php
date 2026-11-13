@@ -323,7 +323,12 @@ class MLMCommissionEngine
             $stmt->execute([$userId, $this->getTenantId()]);
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($rows as $r) {
-                $raw = !empty($r['level']) ? $r['level'] : (!empty($r['mlm_rank']) ? $r['mlm_rank'] : 'Ass.');
+                $raw = 'Ass.';
+                if (!empty($r['level'])) {
+                    $raw = $r['level'];
+                } elseif (!empty($r['mlm_rank'])) {
+                    $raw = $r['mlm_rank'];
+                }
                 $ranks[] = self::normalizeRankName($raw);
             }
         } catch (\Throwable $e) {
@@ -883,7 +888,9 @@ class MLMCommissionEngine
                         $qa->execute([(int)$booking['associate_id']]);
                         $qr = $qa->fetch(PDO::FETCH_ASSOC);
                     }
-                    if ($qr) $qUserId = (int)$qr['user_id'];
+                    if ($qr) {
+                        $qUserId = (int)$qr['user_id'];
+                    }
                 }
                 if ($qUserId > 0) {
                     // Sum this month's qualifying volume from mlm_commission_ledger (direct_sale only)
@@ -1315,8 +1322,7 @@ class MLMCommissionEngine
             if (!empty($booking['sales_manager_id'])) {
                 $sourceUserId = (int)$booking['sales_manager_id'];
             } elseif (!empty($booking['associate_id'])) {
-                if (($sourceUserId = (new \App\Services\IdentityService())->resolveAssociateUserId((int)booking['associate_id'])) > 0) {
-                }
+                $sourceUserId = (new \App\Services\IdentityService())->resolveAssociateUserId((int)$booking['associate_id']);
             }
             if ($sourceUserId <= 0) {
                 $sourceUserId = (int)$booking['customer_id'];
@@ -1487,6 +1493,9 @@ class MLMCommissionEngine
      */
     protected function awardRankBonus(int $associateId, string $fromRank, string $toRank, int $userId): void
     {
+        if ($userId <= 0 && $associateId > 0) {
+            $userId = (new \App\Services\IdentityService())->resolveAssociateUserId($associateId);
+        }
         if (!$this->db || $userId <= 0) {
             return;
         }
@@ -1638,7 +1647,6 @@ class MLMCommissionEngine
                             "EMI default {$daysOverdue}d on booking #{$bookingId}",
                             $this->getTenantId(),
                         ]);
-                        $cbId = (int)$this->db->lastInsertId();
 
                         // Debit user_wallets if a wallet row exists
                         try {
@@ -2157,7 +2165,9 @@ class MLMCommissionEngine
      */
     public function getActivePlanSnapshot(): ?array
     {
-        if (!$this->db) return null;
+        if (!$this->db) {
+            return null;
+        }
         try {
             $plan = $this->db->query("
                 SELECT p.id, p.plan_name, p.plan_code, p.version, p.plan_type, p.effective_date,
@@ -2169,7 +2179,9 @@ class MLMCommissionEngine
                 LIMIT 1
             ")->fetch(PDO::FETCH_ASSOC);
 
-            if (!$plan) return null;
+            if (!$plan) {
+                return null;
+            }
 
             $levels = $this->db->query("
                 SELECT level_name, direct_commission, team_commission, level_bonus,
