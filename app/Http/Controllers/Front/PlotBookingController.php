@@ -258,6 +258,15 @@ class PlotBookingController extends PlotBaseController
                 error_log('PlotBookingController::storeBooking notify: ' . $e->getMessage());
             }
 
+            if ($promoOfferId > 0 && $discountAmount > 0) {
+                try {
+                    $cNotif = new \App\Services\NotificationService($pdo);
+                    $cNotif->notify('booking', "You saved ₹" . number_format($discountAmount, 2) . " on your plot booking with promo code {$promoCode}.", (int)$user['id'], '/booking/' . $bookingId . '/confirmation', 'Festive Offer Applied');
+                } catch (\Throwable $e) {
+                    error_log('PlotBookingController promo notification: ' . $e->getMessage());
+                }
+            }
+
             // Lead-to-booking continuity: optional lead_id carries forward.
             try {
                 $leadId = (int)($_POST['lead_id'] ?? 0);

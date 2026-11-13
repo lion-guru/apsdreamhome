@@ -240,4 +240,127 @@ class ProjectsAdminController extends AdminController
         $stmt->execute([$id, $this->tenantId()]);
         $this->redirect('/admin/projects');
     }
+
+    /**
+     * Upload an image for a project
+     */
+    public function uploadImage($projectId)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/projects/images/' . $projectId);
+            return;
+        }
+
+        $this->validateCsrfOrFail();
+
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+            $this->setFlash('error', 'No file uploaded or upload failed');
+            $this->redirect('/admin/projects/images/' . $projectId);
+            return;
+        }
+
+        $file = $_FILES['image'];
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $maxSize = 5 * 1024 * 1024; // 5MB
+
+        if (!in_array($file['type'], $allowedTypes)) {
+            $this->setFlash('error', 'Invalid file type. Only JPEG, PNG, GIF, WebP allowed.');
+            $this->redirect('/admin/projects/images/' . $projectId);
+            return;
+        }
+
+        if ($file['size'] > $maxSize) {
+            $this->setFlash('error', 'File too large. Maximum 5MB allowed.');
+            $this->redirect('/admin/projects/images/' . $projectId);
+            return;
+        }
+
+        // Create upload directory
+        $uploadDir = __DIR__ . '/../../../public/assets/images/projects/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        // Generate unique filename
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'project_' . $projectId . '_' . uniqid() . '.' . $extension;
+        $filepath = $uploadDir . $filename;
+
+        if (move_uploaded_file($file['tmp_name'], $filepath)) {
+            $db = Database::getInstance();
+
+            // Get max display order
+            $maxOrder = $db->fetchOne("SELECT MAX(display_order) as max_order FROM project_images WHERE project_id = ?", [$projectId]);
+            $nextOrder = ($maxOrder && isset($maxOrder['max_order'])) ? (int)$maxOrder['max_order'] + 1 : 1;
+
+            // Check if this is the first image (set as primary)
+            $count = $db->fetchOne("SELECT COUNT(*) as cnt FROM project_images WHERE project_id = ?", [$projectId]);
+            $isPrimary = ($count && (int)$count['cnt'] === 0) ? 1 : 0;
+
+            // Insert into database
+            $db->insert('project_images', [
+                'tenant_id' => $this->tenantId(),
+                'project_id' => (int)$projectId,
+                'image_path' => '/assets/images/projects/' . $filename,
+                'image_name' => $file['name'],
+                'alt_text' => '',
+                'display_order' => $nextOrder,
+                'is_primary' => $isPrimary,
+                'file_size' => $file['size'],
+                'mime_type' => $file['type'],
+                'uploaded_by' => (int)($_SESSION['admin_id'] ?? $_SESSION['user_id'] ?? 0),
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            $this->setFlash('success', 'Image uploaded successfully');
+        } else {
+            $this->setFlash('error', 'Failed to save uploaded file');
+        }
+
+        $this->redirect('/admin/projects/images/' . $projectId);
+    }
+
+    /**
+     * Delete an image from a project
+     */
+    public function deleteImage($imageId)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/projects');
+            return;
+        }
+
+        $this->validateCsrfOrFail();
+
+        $db = Database::getInstance();
+
+        // Get image details
+        $image = $db->fetchOne("SELECT * FROM project_images WHERE id = ? AND tenant_id = ?", [$imageId, $this->tenantId()]);
+
+        if (!$image) {
+            $this->setFlash('error', 'Image not found');
+            $this->redirect('/admin/projects');
+            return;
+        }
+
+        // Delete physical file
+        $filepath = __DIR__ . '/../../../public' . $image['image_path'];
+        if (file_exists($filepath)) {
+            @unlink($filepath);
+        }
+
+        // Delete from database
+        $db->query("DELETE FROM project_images WHERE id = ? AND tenant_id = ?", [$imageId, $this->tenantId()]);
+
+        // If deleted image was primary, set another as primary
+        if ((int)$image['is_primary'] === 1) {
+            $nextImage = $db->fetchOne("SELECT id FROM project_images WHERE project_id = ? ORDER BY display_order LIMIT 1", [$image['project_id']]);
+            if ($nextImage) {
+                $db->query("UPDATE project_images SET is_primary = 1 WHERE id = ?", [$nextImage['id']]);
+            }
+        }
+
+        $this->setFlash('success', 'Image deleted successfully');
+        $this->redirect('/admin/projects/images/' . $image['project_id']);
+    }
 }

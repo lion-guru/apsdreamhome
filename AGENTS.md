@@ -6148,3 +6148,34 @@ Owner: "do next aur koi suggestion tumhara" - continuing autonomous work.
 ### Key Lessons (carried, continued)
 _907. **A second wallet table with 0 rows is dead code, not a feature** - `user_wallets` had 0 rows and was only referenced by `WalletActivationService`'s "try both" fallback. Removing the fallback (2 methods, ~20 lines) consolidates to the canonical `wallet_points` system without any behavior change. The `activatePurchaseUserWallet()` method is now unreachable but harmless.
 _908. **Grep before you refactor a "dual system"** - `user_wallets` was referenced in only 3 places, all in `WalletActivationService`. A 30-second grep would have told me the blast radius before I touched anything. The "dual wallet" turned out to be a single-wallet system with a dead fallback, not a real architectural conflict.
+
+## Session 478: Admin Project Images Desk Activation (Migration S477), Destructive GET to POST Conversion, Offer Category Filters, E2E Notifications Teardown, 1508/1508 Clean (2026-11-13)
+
+### Trigger
+User instructions: "do next all with your suggestion" — Tech lead / CEO autonomous improvements: resolve hollow features, convert destructive GETs, enhance customer offer filtering, and enforce zero-leftover teardown hygiene.
+
+### The headline
+
+**1. ADMIN PROJECT IMAGES DESK & SCHEMA REPAIR (MIGRATION S477)**
+- **Hollow Table Gaps Resolved**: Probed `project_images` which previously existed with only 4 default columns (`id, tenant_id, created_at, updated_at`), causing file uploads to fail with 1054 error.
+- **Idempotent Migration S477 (`database/migrations/create_project_images_table_s477.php`)**: Added all 9 missing columns (`project_id`, `image_path`, `image_name`, `alt_text`, `display_order`, `is_primary`, `file_size`, `mime_type`, `uploaded_by`) and indexes (`idx_project`, `idx_tenant`, `idx_display_order`). Re-runs skip safely.
+- **Projects Admin Controller (`ProjectsAdminController.php`)**: Implemented `uploadImage()` and `deleteImage()` with MIME validation, 5MB size limit, sequential display order, and primary image fallback assignment.
+- **Destructive GET Eliminated**: Converted image deletion link from raw GET to CSRF-protected POST in `views/admin/projects/images.php` and registered `POST /admin/projects/images/delete/{id}` in `routes/web.php`.
+
+**2. PUBLIC FESTIVAL OFFERS INTERACTIVE CATEGORY FILTERING**
+- In `views/pages/offers.php`: Added interactive pill tabs ("All Offers", "Flat Cash Off", "Percentage Off", "Per Sq.Ft. Concession") with instant client-side DOM filtering and smooth card visibility toggling.
+
+**3. FESTIVAL LIFECYCLE IN-APP NOTIFICATIONS & TEST TEARDOWN PURGE**
+- Added real-time in-app notifications on festival offer claim submissions, administrative approvals, cash disbursements to associate wallets, and physical gift handover deliveries (`FestivalOfferService.php`).
+- In `PlotBookingController.php` and `BookingController.php`, sent instantaneous confirmation notifications when promo discounts are redeemed on plot bookings.
+- In `testing/township_lifecycle_e2e_test.php`, added `$pdo->exec("DELETE FROM notifications WHERE user_id IN ($ids)");` ensuring complete zero-leftover hygiene across all 13 core tracking baseline tables.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 23.19s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1209 tables, 15554 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **479** (next session).

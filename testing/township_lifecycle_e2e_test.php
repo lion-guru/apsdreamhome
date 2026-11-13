@@ -922,6 +922,7 @@ try {
         $ids = implode(',', $created['user_ids']);
         $pdo->exec("DELETE FROM mlm_peer_rank_royalties WHERE senior_id IN ($ids) OR junior_id IN ($ids)");
         $pdo->exec("DELETE FROM mlm_fast_start_achievements WHERE user_id IN ($ids)");
+        $pdo->exec("DELETE FROM notifications WHERE user_id IN ($ids)");
         $pdo->exec("DELETE FROM wallet_transactions WHERE user_id IN ($ids)");
         $pdo->exec("DELETE FROM wallet_points WHERE user_id IN ($ids)");
         $pdo->exec("DELETE FROM associate_profiles WHERE user_id IN ($ids)");

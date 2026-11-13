@@ -317,6 +317,18 @@ class BookingController extends BaseController
                 error_log('[BookingController] notification failed: ' . $e->getMessage());
             }
 
+            if ($promoCode !== null && $discountAmount > 0) {
+                try {
+                    $notifSvc = new \App\Services\Communication\NotificationService();
+                    $notifSvc->sendNotification($user['id'], 'in_app', 'Festive Offer Applied: ' . $promoCode,
+                        "Congratulations! You saved ₹" . number_format($discountAmount, 2) . " on your booking with promo code {$promoCode}.",
+                        ['event_type' => 'promo_applied', 'booking_id' => $result['id'], 'action_url' => '/booking/confirmation/' . $result['id']]
+                    );
+                } catch (\Throwable $e) {
+                    error_log('[BookingController] promo notification: ' . $e->getMessage());
+                }
+            }
+
             $this->redirect('/booking/confirmation/' . $result['id']);
         } catch (\Throwable $e) {
             if ($this->db->getPdo()->inTransaction()) {

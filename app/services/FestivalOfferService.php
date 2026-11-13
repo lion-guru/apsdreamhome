@@ -294,6 +294,13 @@ class FestivalOfferService
 
         $claimId = (int)$this->db->lastInsertId();
 
+        try {
+            $notif = new \App\Services\NotificationService($this->db);
+            $notif->notify('festival_offer', "Your claim for festival reward '{$offer['title']}' has been submitted for review.", $userId, '/associate/offers', 'Festival Claim Submitted');
+        } catch (\Throwable $ne) {
+            error_log('claimAssociateOffer notification: ' . $ne->getMessage());
+        }
+
         return [
             'success'   => true,
             'claim_id'  => $claimId,
@@ -381,10 +388,23 @@ class FestivalOfferService
             WHERE id = ? AND claim_status = 'claimed'
         ");
         $stmt->execute([$adminId, $adminNotes, $claimId]);
+        $updated = $stmt->rowCount() > 0;
+
+        if ($updated) {
+            try {
+                $cl = $this->db->query("SELECT user_id FROM associate_offer_claims WHERE id = {$claimId} LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+                if ($cl && !empty($cl['user_id'])) {
+                    $notif = new \App\Services\NotificationService($this->db);
+                    $notif->notify('festival_offer', "Your festival reward claim #{$claimId} has been approved by admin.", (int)$cl['user_id'], '/associate/offers', 'Festival Claim Approved');
+                }
+            } catch (\Throwable $ne) {
+                error_log('approveAssociateOfferClaim notification: ' . $ne->getMessage());
+            }
+        }
 
         return [
-            'success' => $stmt->rowCount() > 0,
-            'message' => $stmt->rowCount() > 0 ? 'Claim approved successfully' : 'Claim not found or not in pending state',
+            'success' => $updated,
+            'message' => $updated ? 'Claim approved successfully' : 'Claim not found or not in pending state',
         ];
     }
 
@@ -444,6 +464,13 @@ class FestivalOfferService
         ");
         $upd->execute([number_format($amount, 2), $claimId]);
 
+        try {
+            $notif = new \App\Services\NotificationService($this->db);
+            $notif->notify('wallet_credit', "₹" . number_format($amount, 2) . " for '{$claim['offer_title']}' has been credited to your wallet.", $userId, '/associate/wallet', 'Festival Reward Credited');
+        } catch (\Throwable $ne) {
+            error_log('disburseAssociateOfferCash notification: ' . $ne->getMessage());
+        }
+
         return [
             'success' => true,
             'message' => "Successfully disbursed ₹" . number_format($amount, 2) . " directly into associate's wallet.",
@@ -466,10 +493,23 @@ class FestivalOfferService
             WHERE id = ?
         ");
         $stmt->execute([$notes, $claimId]);
+        $delivered = $stmt->rowCount() > 0;
+
+        if ($delivered) {
+            try {
+                $cl = $this->db->query("SELECT user_id FROM associate_offer_claims WHERE id = {$claimId} LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+                if ($cl && !empty($cl['user_id'])) {
+                    $notif = new \App\Services\NotificationService($this->db);
+                    $notif->notify('festival_offer', "Your festival gift reward for claim #{$claimId} has been marked as delivered.", (int)$cl['user_id'], '/associate/offers', 'Festival Reward Delivered');
+                }
+            } catch (\Throwable $ne) {
+                error_log('markAssociateOfferDelivered notification: ' . $ne->getMessage());
+            }
+        }
 
         return [
-            'success' => $stmt->rowCount() > 0,
-            'message' => $stmt->rowCount() > 0 ? 'Reward handover recorded as delivered' : 'Claim not found',
+            'success' => $delivered,
+            'message' => $delivered ? 'Reward handover recorded as delivered' : 'Claim not found',
         ];
     }
 

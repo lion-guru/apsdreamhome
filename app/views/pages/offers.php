@@ -30,8 +30,26 @@ $offers = $offers ?? [];
             </div>
         </div>
 
+        <!-- FILTER PILLS -->
+        <?php if (!empty($offers)): ?>
+        <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+            <button type="button" class="btn btn-sm btn-dark rounded-pill px-3 active offer-filter-btn" data-filter="all">
+                <i class="fas fa-th-large me-1"></i> सभी ऑफर्स (All Offers)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 offer-filter-btn" data-filter="flat_amount">
+                <i class="fas fa-rupee-sign me-1"></i> फ्लैट छूट (Flat Cash Off)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 offer-filter-btn" data-filter="percentage">
+                <i class="fas fa-percent me-1"></i> प्रतिशत छूट (% Off)
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3 offer-filter-btn" data-filter="per_sqft">
+                <i class="fas fa-ruler-combined me-1"></i> प्रति वर्गफुट छूट (Per Sq.Ft.)
+            </button>
+        </div>
+        <?php endif; ?>
+
         <!-- OFFERS GRID -->
-        <div class="row g-4 mb-5">
+        <div class="row g-4 mb-5" id="offersGridContainer">
             <?php if (empty($offers)): ?>
                 <div class="col-12 text-center py-5">
                     <div class="card border-0 shadow-sm p-5 rounded-4 mx-auto" style="max-width: 600px; background: #fff;">
@@ -67,7 +85,7 @@ $offers = $offers ?? [];
                     $validUntil = !empty($o['valid_until']) ? date('d M Y', strtotime($o['valid_until'])) : 'Limited Time';
                     $minBooking = (float)($o['min_booking_amount'] ?? 0);
                 ?>
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4 offer-card-item" data-type="<?= htmlspecialchars($discountType) ?>">
                     <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden position-relative" style="background: #ffffff; transition: transform 0.2s, box-shadow 0.2s;">
                         <!-- Festive Header Ribbon -->
                         <div class="p-3 text-white" style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);">
@@ -246,6 +264,7 @@ $offers = $offers ?? [];
 
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 document.addEventListener('DOMContentLoaded', function () {
+    // 1. Promo Code Clipboard Copy
     const copyBtns = document.querySelectorAll('.copy-code-btn');
     copyBtns.forEach(btn => {
         btn.addEventListener('click', function () {
@@ -263,6 +282,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 2000);
             }).catch(() => {
                 alert('Code: ' + code);
+            });
+        });
+    });
+
+    // 2. Offer Category Filtering
+    const filterBtns = document.querySelectorAll('.offer-filter-btn');
+    const offerItems = document.querySelectorAll('.offer-card-item');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const filter = this.getAttribute('data-filter');
+
+            filterBtns.forEach(b => {
+                b.classList.remove('btn-dark', 'active');
+                if (!b.classList.contains('btn-outline-primary') &&
+                    !b.classList.contains('btn-outline-success') &&
+                    !b.classList.contains('btn-outline-info')) {
+                    b.classList.add('btn-outline-dark');
+                }
+            });
+
+            this.classList.remove('btn-outline-dark', 'btn-outline-primary', 'btn-outline-success', 'btn-outline-info');
+            this.classList.add('btn-dark', 'active');
+
+            offerItems.forEach(item => {
+                const itemType = item.getAttribute('data-type');
+                if (filter === 'all' || itemType === filter) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
             });
         });
     });
