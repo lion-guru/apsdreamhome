@@ -149,14 +149,10 @@ if (file_exists(APP_ROOT . '/vendor/autoload.php')) {
     require_once APP_ROOT . '/vendor/autoload.php';
 }
 
-// Fallback for missing PSR log interface
-if (!interface_exists('Psr\Log\LoggerInterface')) {
-    if (file_exists(CORE_PATH . '/LoggerInterfaceFallback.php')) {
-        require_once CORE_PATH . '/LoggerInterfaceFallback.php';
-    } elseif (file_exists(APP_PATH . '/core/LoggerInterfaceFallback.php')) {
-        require_once APP_PATH . '/core/LoggerInterfaceFallback.php';
-    }
-}
+// Psr\Log\LoggerInterface is now a declared dependency (psr/log is in
+// composer.json's require), so the interface is always available.  The
+// old fallback shim (app/core/LoggerInterfaceFallback.php) was a PSR-4
+// compliance violation and is gone.
 
 // Include core system files
 require_once CORE_PATH . '/Autoloader.php';

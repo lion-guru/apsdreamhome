@@ -17,6 +17,7 @@
         "phpmailer/phpmailer": "^7.0",
         "phpoffice/phpspreadsheet": "^5.10",
         "predis/predis": "^3.7",
+        "psr/log": "^3.0",
         "symfony/messenger": "^7.4",
         "symfony/redis-messenger": "^7.4",
         "symfony/serializer": "^7.4",
