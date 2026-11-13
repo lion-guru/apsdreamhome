@@ -280,9 +280,9 @@ footer ul li a,
   color: #64748b;
 }
 
-/* Admin top-header user role chip #94a3b8 = 2.6:1 on white */
+/* Admin top-header user role chip #94a3b8 = 2.6:1 on white -> #475569 = 5.9:1 (AA) */
 .user-role {
-  color: #64748b !important;
+  color: #475569 !important; /* slate-600, 5.9:1 */
 }
 
 /* Admin MLM stat cards: bg-primary card but admin.css label overrides

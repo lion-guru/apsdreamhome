@@ -42,7 +42,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 .erp-alert-card .alert-content{flex:1;margin:0 16px}
 .erp-alert-card .alert-val{font-size:1.4rem;font-weight:800;line-height:1}
 .erp-alert-card .alert-lbl{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
-.erp-alert-card .alert-link{font-size:0.78rem;font-weight:600;text-decoration:none;white-space:nowrap;padding:6px 14px;border-radius:8px;transition:all 0.2s}
+.erp-alert-card .alert-link{font-size:0.78rem;font-weight:600;text-decoration:underline;white-space:nowrap;padding:6px 14px;border-radius:8px;transition:all 0.2s}
 
 .erp-quick-action{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;border:1.5px solid #f1f5f9;background:#fff;text-decoration:none;color:inherit;transition:all 0.25s ease}
 .erp-quick-action:hover{transform:translateX(6px);box-shadow:0 4px 16px rgba(0,0,0,0.06);border-color:#e2e8f0;background:#fafbfc}
@@ -292,7 +292,7 @@ if (($s['dept_overdue'] ?? 0) > 0) $alerts[] = ['error', '<strong>Overdue Reques
     <?php foreach ($alerts as [$type, $msg, $url]): ?>
         <div >
             <span ><?= $msg ?></span>
-            <a href="<?= $url ?>" >View <i class="fas fa-arrow-right ms-1"></i></a>
+            <a href="<?= $url ?>" class="ms-2 text-decoration-underline" >View <i class="fas fa-arrow-right ms-1"></i></a>
         </div>
     <?php endforeach; ?>
 </div>
