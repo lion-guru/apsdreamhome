@@ -7557,3 +7557,58 @@ Next-free = **520** (this session; S518 covered by S519 registration).
 _947. **A broken money path is only found by walking the path.** Static scan enumerates candidates; the probe is what turns "this branch exists in code" into "this action succeeds against the live DB." Every 1265 enum/FK class in this codebase was found by probing a real call path.
 _948. **The same stale-reference class recurs — don't assume it was fixed once.** Sessions 505/512/515/516/517 fixed sibling tables one at a time; this one survived because no customer actually submitted an UTR until owner said "test the money path."
 _949. **A payment record receipt and a payment transaction row are two different ledgers.** The app writes both; auditing only one misses drift between them.
+
+## Session 520: Foreclosure Pipeline Resurrected — 5 Stacked Failures Fixed, Sacrificial Transactional Probe Green (2026-11-14)
+
+### Trigger
+Owner: "ok do next all". Continuing the "untraversed code paths" audit family (caused by the S516/S517 enum sweep): every enum-restricted code path that was previously forced to 1054/1265 under strict mode.
+
+### What was found, what was broken
+`App\Services\ForeclosureService::processForeclosure()` was a **fully dead** path — every layer of it failed:
+
+1. **Idempotency was a lie** — `WHERE status = 'completed'` on `plot_bookings` matched 0 rows (status is 'token_paid'..'registration_done'), so the "already paid" check NEVER returned true and every re-run double-paid.
+2. **Legacy `booking_payments` table** — `payment_id INT NOT NULL` with **no AUTO_INCREMENT** and **no `payment_type` column** → every INSERT 1054/1364'd and rolled back step 2.
+3. **Phantom plot_bookings columns** (`foreclosure_date`, `foreclosure_amount`, `foreclosure_rebate`) — those were only on `emi_plans` — every UPDATE of the booking 1054'd and rolled back step 3.
+4. **`status = 'completed'` not a member** of `plot_bookings.status` enum → rejection at strict mode → whole transaction rolled back; wallet credit never ran.
+5. **`foreclosure_logs` insert pattern** in `app/Models/EMI.php` wrote to `emi_plan_id/message/original_amount/...` which **do not exist** on live `foreclosure_logs` (real columns: id, booking_id, foreclosure_amount, discount_applied, status, tenant_id) — every EMI foreclosure end-state log silently dropped.
+
+### Fix (ForeclosureService.php)
+- Canonical duplicate check: SELECT id FROM foreclosure_logs WHERE booking_id = ? AND status='completed'.
+- Payment recorded in booking_payment_receipts with full mode whitelist (cash/cheque/dd/neft/rtgs/upi/card/bank_transfer fallback upi), auto-number, cleared; the legacy booking_payments write removed entirely.
+- Booking status moved token_paid → fully_paid (valid enum member).
+- foreclosure_logs INSERT with live columns (status='completed', discount_applied=rebate_amount, tenant_id=1).
+- $tid (undefined) replaced with safe singleton tenant=1; $foreclosureData (undefined) replaced with $foreclosure['final_amount'].
+- calculateForeclosure() contract honoured (rebate_percent read at return time, not from a post-transaction recompute against empty pending rows).
+- PHPStan undefined $foreclosure in generateForeclosureUpiQr fixed (X2).
+
+### Fix (EMI.php)
+- foreclosure_logs INSERT rewritten to live shape with status='completed' (was writing to non-existent columns and to non-existent success enum member).
+- Bulk replace 'success' → 'completed' across EMI.php (the only foreclosure_logs.status enum-valid member analogous to a successful payoff).
+
+### Fix (ExecutiveAIService.php, MobileFeatureEndpointsController.php, PerformanceRankCalculator.php)
+- STATUS = 'approved' is not a member of plot_bookings.status — the Exec-AI "approve booking" path was a guaranteed 1265 silently hidden by the exception handler. Now records human review via approved_by/approved_at columns and leaves lifecycle unchanged; the message says so honestly.
+- Mobile foreclosure application wrote status='requested' (not in foreclosure_logs.status) — every mobile foreclosure request was dropped; writing 'pending', which is.
+- getReport() interpolates $period directly into SQL DDL; now whitelisted to ['day','week','month','quarter','year'] before the template is applied.
+
+### Verification (rollback-entire-transaction probe, zero leftovers)
+- Finished E2E foreclosure: booking #12 (12 × 73260 EMIs, total 879120, 5% rebate = 43956, final 835164) → receipt written (FC-...), installments flipped to paid, booking token_paid → fully_paid, foreclosure_logs row logged, wallet credit attempt issued. All reverts byte-identical on ROLLBACK afterwards.
+- Executing master suite: 11/11 PASSED
+- PHPStan: [OK] No errors
+- php -l clean on all 5 changed files
+
+### Commits pushed
+- f96d07c83 fix(foreclosure/communication/ai): foreclosure pipeline resurrected (5 files)
+
+### Note on debt carried forward (not touched this round)
+- 12 other tables still carry bookings → t.id-style stale legacy FK (noted by parallel actor in S519) — unused by live paths but will 1265 on first direct touch; NOT taken this round.
+- wallet_points / wallet_transactions rows for user 1 still 5000-credit leftovers from S449 probe — left alone (ownership decision).
+
+### AGENTS.md numbering (Rule 4)
+Next-free = 521 (this session; parallel actor holds 518-520).
+
+### Key Lessons
+_950. Enum mismatch in one row is fine; ENUM invalid in a batch path is death. Every one of these bugs was found one-by-one with a single INSERT/UPDATE against strict-MariaDB; any code review that only reads the service file (not the live table) misses them silently.
+_951. Read before you trust — 1054/1265 invalid-cell errors are always strict-write failures. When a live table returns an empty-set for expected rows, check the ENUM definition first; strict mode truncates values it does not know about before commit.
+_952. Foreclosure cannot be "completed" with a dead log. Idempotency logs must point at a table whose status enum contains a terminal/success member — or the check never returns true and the operation is non-idempotent.
+_953. Some foreclosure defects are post-transaction recomputes. The "0% rebate" display bug happened because calculateForeclosure ran again AFTER the commit marked installments paid — empty-row-set rebate becomes 0. Always return from the pre-transaction snapshot, never from a re-query against committed state.
+_954. Money receipt and per-ledger entry must match. Receipts written here; per-EMI owed rows re-queried with WHERE status='pending' would never see them after the flip. Query must include the paid state explicitly when it asserts "what is still owed".
