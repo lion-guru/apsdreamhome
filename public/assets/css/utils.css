@@ -133,3 +133,9 @@
 .invisible {
     visibility: hidden !important;
 }
+
+/* AA outline-button contrast: Bootstrap defaults #6c757d/#198754 are under 4.5:1 on near-white border text */
+.btn-outline-secondary { color:#495057 !important; border-color:#495057 !important; }
+.btn-outline-secondary:hover { background-color:#495057 !important; border-color:#495057 !important; color:#fff !important; }
+.btn-outline-success { color:#157347 !important; border-color:#157347 !important; }
+.btn-outline-success:hover { background-color:#157347 !important; border-color:#157347 !important; color:#fff !important; }

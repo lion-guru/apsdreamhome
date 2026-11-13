@@ -57,7 +57,7 @@ $GLOBALS['_html_doc_started'] = true;
     <!-- Shared aps-cp-* component system (systematic UI: cards, stats, empty, pills, wizard) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
     <!-- Utility classes (display, min-width, visibility) -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/utils.css?v=1" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/utils.css?v=2" rel="stylesheet">
     <!-- Notification system CSS (dropdowns, toasts, popups) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/notification-system.css" rel="stylesheet">
     <!-- Mobile Responsive (all pages) -->
