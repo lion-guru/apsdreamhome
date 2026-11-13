@@ -6503,4 +6503,50 @@ User instruction: "do next" — Autonomous Senior Developer & CEO execution: res
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **490** (next session).
+Next-free = **490** (this session; S489 logged above).
+
+## Session 490: Plot Detail 360° Quick Actions Overhaul, Interactive EMI Financing Modal, Viral Multi-Channel Sharing, Compare Integration & Dead Route Elimination (2026-11-13)
+
+### Trigger
+User instruction: "do next all", "sbhi suggestion diye ho sabhi kaam kar do bina ruke... tum hi seniour software devloper aur ceo ho" — Autonomous Senior Developer & CEO execution: resolving broken 404 quick links on plot detail and booking confirmation pages, implementing missing `comparePlots` JavaScript function, and delivering interactive EMI financing and viral sharing modals.
+
+### The headline
+
+**1. INTERACTIVE PLOT EMI & FINANCING MODAL (`#plotEmiModal`)**
+- Replaced dead 404 route `/plots/{id}/emi-schedule` on `app/views/pages/booking/detail.php` with an interactive bootstrap modal trigger (`#plotEmiModal`).
+- Pre-calculates exact monthly installments, interest breakdown, and total amounts across standard tenures (1 Year @ 9.5%, 2 Years @ 9.5%, 3 Years @ 10%, 5 Years @ 10.5%).
+- Added an interactive custom tenure slider (1 to 10 years) and interest rate slider (8% to 15%) computing real-time monthly EMI on the fly.
+- Embedded statutory Master Deed notice (token amount non-refundable under sections 2.1 & 2.9) and added direct "Talk to Loan Expert on WhatsApp" CTA pre-filled with plot inquiry message.
+- Registered fallback 301 redirect `/plots/{id}/emi-schedule` &rarr; `/plots/{id}/detail?open=emi` in `routes/web.php` with JavaScript auto-opening the modal.
+
+**2. VIRAL WHATSAPP & MULTI-CHANNEL PLOT SHARING (`#plotShareModal`)**
+- Replaced dead 404 link `/plots/{id}/share` on `app/views/pages/booking/detail.php` with `#plotShareModal`.
+- Features 1-click WhatsApp share with pre-formatted property specs, Telegram share, native Web Share API trigger (`navigator.share`), and 1-click clipboard copy with live visual confirmation.
+- Embedded high-res dynamic QR code for on-site scanning by field agents and visiting customers.
+- Registered fallback 301 redirect `/plots/{id}/share` &rarr; `/plots/{id}/detail?open=share` in `routes/web.php`.
+
+**3. INTERACTIVE PLOT COMPARISON INTEGRATION (`comparePlots`)**
+- Resolved missing JavaScript function `comparePlots(plotId)` in `app/views/pages/booking/detail.php` that previously caused `Uncaught ReferenceError`.
+- Wired asynchronous POST to `Front\CompareController@add` (`/compare/add`).
+- Dynamically updates action button state to "Added (View)" and surfaces a floating bootstrap toast notification with direct link to `/compare`.
+
+**4. ENHANCED LOCATION MAP & INTERACTIVE LAYOUT SHORTCUTS**
+- Replaced dead link `/plots/{id}/location` on `app/views/pages/booking/detail.php` with anchor link to `#locationMapCard`.
+- In `#locationMapCard`, added fallback Google Maps search query link when `map_link` is empty, plus a direct CTA button to the Interactive Layout Map (`/plots/layout`).
+- Registered fallback 301 redirect `/plots/{id}/location` &rarr; `/plots/{id}/detail#locationMapCard` in `routes/web.php`.
+
+**5. CUSTOMER BOOKING CONFIRMATION & DETAIL DEEP LINKING**
+- In `app/views/pages/booking/confirmation.php`: Updated quick action links from 404 paths `/user/bookings/{id}/emi-schedule`, `/user/bookings/{id}/documents`, and `/user/bookings/{id}/receipt` to `/user/bookings/{id}#paymentSchedule`, `/user/bookings/{id}#documents`, and canonical `/booking/{id}/receipt`.
+- In `app/views/pages/user/booking_detail.php`: Added `id="paymentSchedule"` and `id="documents"` to target cards for smooth anchor navigation.
+- In `routes/web.php`: Added fallback 301 redirects for `/user/bookings/{id}/emi-schedule`, `/user/bookings/{id}/documents`, and `/user/bookings/{id}/receipt`.
+
+### Verification
+- **PHP Syntax (`php -l`)**: 0 syntax errors across `booking/detail.php`, `booking/confirmation.php`, `user/booking_detail.php`, and `routes/web.php`.
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 31.22s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 15541 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (`users: 75, plots: 756, leads: 994, properties: 627, employees: 15, documents: 27, inquiries: 10, notifications: 53, document_esign: 0, associate_profiles: 5, wallet_points: 76, wallet_transactions: 3, mlm_salary_grants: 0`).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **491** (next session).

@@ -317,6 +317,32 @@ $router->get('/plots/{id}/book', 'Front\\BookingController@bookForm');
 $router->post('/plots/{id}/book', 'Front\\BookingController@submitBooking');
 $router->get('/booking/confirmation/{id}', 'Front\\BookingController@confirmation');
 
+// Plot detail quick link aliases (Session 490: prevent 404s on direct navigation)
+$router->get('/plots/{id}/emi-schedule', function ($id) {
+    header('Location: ' . BASE_URL . '/plots/' . (int)$id . '/detail?open=emi', true, 301);
+    exit;
+});
+$router->get('/plots/{id}/location', function ($id) {
+    header('Location: ' . BASE_URL . '/plots/' . (int)$id . '/detail#locationMapCard', true, 301);
+    exit;
+});
+$router->get('/plots/{id}/share', function ($id) {
+    header('Location: ' . BASE_URL . '/plots/' . (int)$id . '/detail?open=share', true, 301);
+    exit;
+});
+$router->get('/user/bookings/{id}/emi-schedule', function ($id) {
+    header('Location: ' . BASE_URL . '/user/bookings/' . (int)$id . '#paymentSchedule', true, 301);
+    exit;
+});
+$router->get('/user/bookings/{id}/documents', function ($id) {
+    header('Location: ' . BASE_URL . '/user/bookings/' . (int)$id . '#documents', true, 301);
+    exit;
+});
+$router->get('/user/bookings/{id}/receipt', function ($id) {
+    header('Location: ' . BASE_URL . '/booking/' . (int)$id . '/receipt', true, 301);
+    exit;
+});
+
 // â€”â€” E-Sign (Leegality) â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 $router->get('/user/bookings/{id}/esign',          'Front\\BookingController@esign');
 $router->post('/user/bookings/{id}/esign/initiate', 'Front\\BookingController@initiateEsign');

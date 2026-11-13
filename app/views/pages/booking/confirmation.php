@@ -78,13 +78,13 @@ foreach ($statusSteps as $i => $step) {
                 <a href="<?= $baseUrl ?>/user/profile" class="btn btn-sm btn-outline-info" title="My Profile">
                     <i class="fas fa-user me-1"></i> Profile
                 </a>
-                <a href="<?= $baseUrl ?>/user/bookings/<?= $bookingId ?>/emi-schedule" class="btn btn-sm btn-outline-dark" title="EMI Schedule">
+                <a href="<?= $baseUrl ?>/user/bookings/<?= $bookingId ?>#paymentSchedule" class="btn btn-sm btn-outline-dark" title="EMI & Payment Schedule">
                     <i class="fas fa-calendar-check me-1"></i> EMI Schedule
                 </a>
-                <a href="<?= $baseUrl ?>/user/bookings/<?= $bookingId ?>/documents" class="btn btn-sm btn-outline-dark" title="Documents">
+                <a href="<?= $baseUrl ?>/user/bookings/<?= $bookingId ?>#documents" class="btn btn-sm btn-outline-dark" title="Documents">
                     <i class="fas fa-file-alt me-1"></i> Documents
                 </a>
-                <a href="<?= $baseUrl ?>/user/bookings/<?= $bookingId ?>/receipt" class="btn btn-sm btn-outline-secondary" title="Download Receipt" target="_blank">
+                <a href="<?= $baseUrl ?>/booking/<?= $bookingId ?>/receipt" class="btn btn-sm btn-outline-secondary" title="Download Receipt" target="_blank">
                     <i class="fas fa-download me-1"></i> Receipt
                 </a>
             </div>

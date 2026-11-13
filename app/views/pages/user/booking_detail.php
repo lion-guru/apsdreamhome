@@ -240,7 +240,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
 </div>
 
 <?php if (!empty($payments)): ?>
-<div class="aps-cp-card mb-4">
+<div class="aps-cp-card mb-4" id="paymentSchedule">
     <div class="aps-cp-card-header">
         <h5><i class="fas fa-calendar-alt text-warning"></i> <?= __('user_booking_detail_payment_schedule', 'Payment Schedule') ?> (<?= count($payments) ?> <?= __('user_booking_detail_installments', 'installments') ?>)</h5>
     </div>
@@ -373,7 +373,7 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
 </div>
 
 <?php if (!empty($documents)): ?>
-<div class="aps-cp-card mb-4">
+<div class="aps-cp-card mb-4" id="documents">
     <div class="aps-cp-card-header">
         <h5><i class="fas fa-folder-open text-info"></i> <?= __('user_booking_detail_documents', 'Documents') ?> (<?= count($documents) ?>)</h5>
     </div>

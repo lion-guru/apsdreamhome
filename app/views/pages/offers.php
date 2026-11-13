@@ -104,7 +104,7 @@ $offers = $offers ?? [];
                         <div class="mb-3">
                             <i class="fas fa-gift fa-3x text-warning"></i>
                         </div>
-                        <h4 class="fw-bold text-dark mb-2">वर्तमान में नए फेस्टिव ऑफर्स तैयार हो रहे हैं</h4>
+                        <h2 class="h4 fw-bold text-dark mb-2">वर्तमान में नए फेस्टिव ऑफर्स तैयार हो रहे हैं</h2>
                         <p class="text-muted mb-4">
                             आगामी त्योहार व विशेष अभियानों पर नए बुकिंग ऑफर्स जल्द ही लाइव किए जाएंगे। आप हमारे सभी उपलब्ध टाउनशिप प्लॉट्स देख सकते हैं।
                         </p>
@@ -145,7 +145,7 @@ $offers = $offers ?? [];
                                     <i class="far fa-clock me-1"></i> वैध: <?= htmlspecialchars($validUntil) ?>
                                 </span>
                             </div>
-                            <h3 class="h5 fw-bold mb-0 text-white"><?= htmlspecialchars($o['title'] ?? 'Special Offer') ?></h3>
+                            <h2 class="h5 fw-bold mb-0 text-white"><?= htmlspecialchars($o['title'] ?? 'Special Offer') ?></h2>
                         </div>
 
                         <!-- Card Body -->
@@ -253,7 +253,7 @@ $offers = $offers ?? [];
                                     <i class="fas fa-tags fa-lg"></i>
                                 </div>
                                 <div>
-                                    <h5 class="fw-bold mb-1">प्रोमो कोड कैसे लागू करें?</h5>
+                                    <h4 class="fw-bold mb-1 fs-6">प्रोमो कोड कैसे लागू करें?</h4>
                                     <p class="text-muted small mb-0">
                                         प्लॉट चयन के बाद डिजिटल बुकिंग या चेकआउट स्क्रीन पर प्रोमो कोड दर्ज करें। सिस्टम वास्तविक समय में कुल प्लॉट मूल्य में से छूट काटकर शुद्ध देय राशि अपडेट कर देता है।
                                     </p>
@@ -267,7 +267,7 @@ $offers = $offers ?? [];
                                     <i class="fas fa-university fa-lg"></i>
                                 </div>
                                 <div>
-                                    <h5 class="fw-bold mb-1">क्या बैंक लोन या ईएमआई पर भी छूट मान्य है?</h5>
+                                    <h4 class="fw-bold mb-1 fs-6">क्या बैंक लोन या ईएमआई पर भी छूट मान्य है?</h4>
                                     <p class="text-muted small mb-0">
                                         हाँ, सभी फेस्टिव डिस्काउंट्स डाउन पेमेंट या कुल प्लॉट लागत में समायोजित किए जाते हैं, जिससे बैंक लोन और ईएमआई की मासिक किस्तें भी घट जाती हैं।
                                     </p>
@@ -281,7 +281,7 @@ $offers = $offers ?? [];
                                     <i class="fas fa-calendar-alt fa-lg"></i>
                                 </div>
                                 <div>
-                                    <h5 class="fw-bold mb-1">ऑफर की वैधता व शर्तें</h5>
+                                    <h4 class="fw-bold mb-1 fs-6">ऑफर की वैधता व शर्तें</h4>
                                     <p class="text-muted small mb-0">
                                         प्रत्येक ऑफर कार्ड पर वैधता तिथि अंकित है। अधिकतम रिडेम्पशन सीमा पूरी होने या तिथि समाप्त होने के बाद प्रोमो कोड स्वतः बंद हो जाते हैं।
                                     </p>
@@ -295,7 +295,7 @@ $offers = $offers ?? [];
                                     <i class="fas fa-headset fa-lg"></i>
                                 </div>
                                 <div>
-                                    <h5 class="fw-bold mb-1">मदद या स्पॉट बुकिंग सहायता</h5>
+                                    <h4 class="fw-bold mb-1 fs-6">मदद या स्पॉट बुकिंग सहायता</h4>
                                     <p class="text-muted small mb-0">
                                         किसी भी सहायता या स्पॉट बुकिंग छूट के लिए हमारे कस्टमर सपोर्ट अथवा निकटतम अधिकृत एसोसिएट से संपर्क करें: <strong>support@apsdreamhome.com</strong>
                                     </p>

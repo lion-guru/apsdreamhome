@@ -50,6 +50,25 @@
 
     var HRWebSocket = {
         init: function(options) {
+            // WebSocket server is opt-in. Without HR_WEBSOCKET_ENABLED=1 in .env,
+            // never attempt a socket connection (avoids endless failed reconnects).
+            if (window.APS_HR_WS !== '1') {
+                if (window.console && console.log) {
+                    console.log('[HRWebSocket] Disabled. Set HR_WEBSOCKET_ENABLED=1 in .env to enable the real-time server.');
+                }
+                var noop = function() { return false; };
+                return {
+                    send: noop,
+                    subscribe: noop,
+                    unsubscribe: noop,
+                    getNotifications: noop,
+                    markRead: noop,
+                    markAllRead: noop,
+                    disconnect: noop,
+                    isConnected: function() { return false; },
+                    setToken: noop
+                };
+            }
             options = options || {};
             
             // Set callbacks

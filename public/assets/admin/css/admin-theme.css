@@ -1,4 +1,4 @@
-﻿/**
+/**
  * APS Dream Home - Complete Admin Dashboard CSS
  * Single source of truth for admin layout & component styles
  */
@@ -3449,6 +3449,21 @@ footer ul li a,
 .aps-skip-link {
   background: var(--color-primary) !important;
   color: #ffffff !important;
+  position: absolute;
+  top: -100px;
+  left: 0;
+  z-index: 10000;
+  padding: 12px 20px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  transition: top .15s ease;
+}
+.aps-skip-link:focus {
+  top: 0;
+  color: #ffffff !important;
+  outline: 3px solid #3498db;
+  outline-offset: 2px;
 }
 
 /* Agent dashboard SB-Admin cards + stat-cards: Bootstrap utility

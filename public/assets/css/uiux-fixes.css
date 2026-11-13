@@ -265,3 +265,8 @@ footer ul li a,
 .text-warning-on-dark {
   color: #fbbf24 !important;
 }
+ /* Bootstrap .text-success #198754 on #f8fafc = 4.33:1 -> #157347 (5.6:1) */
+.text-success,
+.text-success-emphasis {
+  color: #157347 !important; /* green-700, 5.6:1 on white */
+}

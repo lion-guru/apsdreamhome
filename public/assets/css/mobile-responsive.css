@@ -626,7 +626,7 @@ body.dark-mode .mobile-bottom-nav,
 
 /* Active state glow on bottom nav items */
 .mobile-bottom-nav .nav-item.active {
-  color: #0d9488;
+  color: #0f766e;
   position: relative;
 }
 .mobile-bottom-nav .nav-item.active::after {

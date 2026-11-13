@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apsdreamhome-v5';
+const CACHE_NAME = 'apsdreamhome-v6';
 
 // Web-Push handlers. Subscriptions are stored via /api/push/subscribe;
 // delivery (VAPID sender) is pending server keys — until then pushes

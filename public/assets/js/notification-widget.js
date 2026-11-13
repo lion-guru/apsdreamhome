@@ -472,6 +472,9 @@
 
   /* ─── Auto-init ─── */
   document.addEventListener('DOMContentLoaded', function () {
+    // WebSocket server is opt-in. Without HR_WEBSOCKET_ENABLED=1 in .env the
+    // real-time server does not exist; never burn reconnections on every page.
+    if (window.APS_HR_WS !== '1') return;
     // Only init if user is logged in (meta tag present)
     const userIdMeta = document.querySelector('meta[name="user-id"]');
     if (!userIdMeta) return;

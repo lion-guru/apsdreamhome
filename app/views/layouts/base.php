@@ -179,22 +179,22 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <link href="<?php echo BASE_URL; ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <!-- Design Tokens (Single Source of Truth) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=9" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/style.css?v=10" rel="stylesheet">
     <!-- Core Components -->
     <link href="<?php echo BASE_URL; ?>/assets/css/frontend.css?v=7" rel="stylesheet">
     <!-- Navigation & Header -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=8" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=9" rel="stylesheet">
     <!-- Real Estate Theme & Gradients -->
     <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=12" rel="stylesheet">
     <!-- Homepage Specific Extras -->
     <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=15" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=2" rel="stylesheet">
     <!-- Mobile Responsive Overrides -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=3" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=4" rel="stylesheet">
     <!-- Utility classes (display, min-width, visibility) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/utils.css?v=1" rel="stylesheet">
     <!-- Final UI/UX Polish (contrast, tap targets) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=5" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=6" rel="stylesheet">
     <?php endif; ?>
     <!-- Shared widgets: load once globally (outside admin guard, version synced) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=6" rel="stylesheet">

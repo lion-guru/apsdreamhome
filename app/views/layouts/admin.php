@@ -53,7 +53,7 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Admin Theme (consolidated: admin.css + responsive-fixes + uiux-fixes) -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin-theme.css?v=1" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin-theme.css?v=2" rel="stylesheet">
     <!-- Shared aps-cp-* component system (systematic UI: cards, stats, empty, pills, wizard) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
     <!-- Utility classes (display, min-width, visibility) -->
@@ -910,7 +910,7 @@ $GLOBALS['_html_doc_started'] = true;
         <?php include __DIR__ . '/../components/smart_chatbot.php'; ?>
     <?php include __DIR__ . '/../components/ai_chatbot_widget.php'; ?>
     <script defer src="<?= defined('BASE_URL') ? BASE_URL : '' ?>/assets/js/customer-pages.js"></script>
-<script>
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
 function toggleDarkMode() {
     const html = document.documentElement;
     const icon = document.getElementById('darkModeIcon');
@@ -928,10 +928,12 @@ function toggleDarkMode() {
         if (icon) icon.className = 'fas fa-sun';
     }
 })();
+</script>
 
-// WebSocket Client for Real-time HR Dashboard Updates
+<!-- WebSocket Client for Real-time HR Dashboard Updates (opt-in via HR_WEBSOCKET_ENABLED=1) -->
 <script defer src="<?= BASE_URL ?>/assets/js/websocket-client.js"></script>
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+window.APS_HR_WS = '<?= (getenv('HR_WEBSOCKET_ENABLED') === '1' ? '1' : '0') ?>';
 document.addEventListener('DOMContentLoaded', function() {
     // Auto-initialize WebSocket for admin panel
     if (window.HRWebSocket) {

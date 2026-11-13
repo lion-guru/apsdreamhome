@@ -69,7 +69,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
 .props-filter-glass{background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.6);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.08);margin-top:-25px;position:relative;z-index:10;padding:0;overflow:hidden}
 .props-filter-glass .filter-header{background:linear-gradient(135deg,#f8fafc,#f1f5f9);padding:16px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background 0.2s}
 .props-filter-glass .filter-header:hover{background:#f1f5f9}
-.props-filter-glass .filter-header h6{margin:0;font-weight:700;color:#1e293b;font-size:0.95rem}
+.props-filter-glass .filter-header .filter-title{margin:0;font-weight:700;color:#1e293b;font-size:0.95rem}
 .props-filter-glass .filter-body{padding:20px 24px}
 .props-filter-glass .form-label{font-size:0.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
 .props-filter-glass .form-control,.props-filter-glass .form-select{border-radius:10px;border:1.5px solid #e2e8f0;font-size:0.88rem;padding:8px 12px;transition:all 0.2s;background:#fff}
@@ -148,7 +148,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     <!-- Filters -->
     <div class="props-filter-glass mb-4">
         <button type="button" class="filter-header" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="false" aria-controls="advancedFilters">
-            <h6><i class="fas fa-sliders-h me-2"></i><?= __('advanced_search') ?></h6>
+            <span class="filter-title"><i class="fas fa-sliders-h me-2"></i><?= __('advanced_search') ?></span>
             <div class="d-flex align-items-center gap-2">
                 <?php if (!empty($_SESSION['user_id']) && $hasActiveFilters): ?>
                     <button type="button" class="btn btn-sm" onclick="event.stopPropagation();triggerSaveSearch()">
@@ -353,7 +353,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                         </div>
 
                         <div class="card-body">
-                            <h5 class="prop-name"><?= htmlspecialchars($propTitle ?? '') ?></h5>
+                            <h2 class="prop-name"><?= htmlspecialchars($propTitle ?? '') ?></h2>
                             <div class="prop-location">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <?= htmlspecialchars($propLocation ?? '') ?>
@@ -778,7 +778,7 @@ function submitPropertyInterest(e) {
                             '    </div>' +
                             '  </div>' +
                             '  <div class="card-body">' +
-                            '    <h6 class="prop-name">' + prop.title + '</h6>' +
+                            '    <h2 class="prop-name">' + prop.title + '</h2>' +
                             '    <div class="prop-location"><i class="fas fa-map-marker-alt"></i> <span class="text-muted">' + prop.location + '</span></div>' +
                             '    <div class="prop-features">' +
                             '      <div class="feat"><i class="fas fa-ruler-combined"></i><strong>' + prop.area + '</strong> sqft</div>' +

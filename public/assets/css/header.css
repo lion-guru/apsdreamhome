@@ -72,8 +72,9 @@ body.mobile-drawer-open {
   /* Use margin-right instead of transform for off-canvas positioning
      so prefers-reduced-motion doesn't nullify it */
   margin-right: -100%;
-  transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: margin-right;
+  visibility: hidden;
+  transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.35s;
+  will-change: margin-right, visibility;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -108,6 +109,8 @@ body.mobile-drawer-open {
 
 .mobile-drawer.active {
   margin-right: 0;
+  visibility: visible;
+  transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s;
 }
 
 /* Drawer header */
