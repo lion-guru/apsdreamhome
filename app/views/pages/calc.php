@@ -36,28 +36,28 @@ if ($amount > 0 && $mon > 0 && $int > 0) {
         <!-- Calculator Form -->
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100" data-aos="fade-right">
-                <h4 class="fw-bold text-dark mb-4"><?php echo __('emi_calculate_your_emi', 'Calculate Your EMI'); ?></h4>
+                <h2 class="fs-4 fw-bold text-dark mb-4"><?php echo __('emi_calculate_your_emi', 'Calculate Your EMI'); ?></h2>
                 <form action="" method="post">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-4">
-                        <label class="form-label fw-medium text-secondary"><?php echo __('emi_loan_amount', 'Loan Amount (₹)'); ?></label>
+                        <label class="form-label fw-medium text-secondary" for="amount"><?php echo __('emi_loan_amount', 'Loan Amount (₹)'); ?></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-primary">₹</span>
-                            <input type="number" name="amount" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 500000" value="<?= $amount > 0 ? $amount : '' ?>" required>
+                            <input type="number" id="amount" name="amount" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 500000" value="<?= $amount > 0 ? $amount : '' ?>" required>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label fw-medium text-secondary"><?php echo __('emi_duration_months', 'Duration (Months)'); ?></label>
+                        <label class="form-label fw-medium text-secondary" for="month"><?php echo __('emi_duration_months', 'Duration (Months)'); ?></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-primary"><i class="far fa-calendar-alt"></i></span>
-                            <input type="number" name="month" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 12" value="<?= $mon > 0 ? $mon : '' ?>" required>
+                            <input type="number" id="month" name="month" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 12" value="<?= $mon > 0 ? $mon : '' ?>" required>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label fw-medium text-secondary"><?php echo __('emi_interest_rate', 'Interest Rate (%)'); ?></label>
+                        <label class="form-label fw-medium text-secondary" for="interest"><?php echo __('emi_interest_rate', 'Interest Rate (%)'); ?></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-primary"><i class="fas fa-percent"></i></span>
-                            <input type="number" step="0.01" name="interest" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 8.5" value="<?= $int > 0 ? $int : '' ?>" required>
+                            <input type="number" step="0.01" id="interest" name="interest" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 8.5" value="<?= $int > 0 ? $int : '' ?>" required>
                         </div>
                     </div>
                     <button type="submit" name="calc" class="btn btn-primary btn-lg w-100 rounded-pill py-3 fw-bold mt-2 shadow-sm">
@@ -70,7 +70,7 @@ if ($amount > 0 && $mon > 0 && $int > 0) {
         <!-- Calculation Results -->
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100 bg-white" data-aos="fade-left">
-                <h4 class="fw-bold text-dark mb-4"><?php echo __('emi_results_summary', 'Results Summary'); ?></h4>
+                <h2 class="fs-4 fw-bold text-dark mb-4"><?php echo __('emi_results_summary', 'Results Summary'); ?></h2>
                 
                 <?php if ($amount > 0): ?>
                     <div class="row g-4 mb-5">
@@ -134,7 +134,7 @@ if ($amount > 0 && $mon > 0 && $int > 0) {
                         <div class="bg-light rounded-circle p-4 mb-4">
                             <i class="fas fa-chart-pie fa-4x text-muted opacity-25"></i>
                         </div>
-                        <h5 class="fw-bold text-secondary"><?php echo __('emi_no_data', 'No Data to Display'); ?></h5>
+                        <h3 class="fs-6 fw-bold text-secondary"><?php echo __('emi_no_data', 'No Data to Display'); ?></h3>
                         <p class="text-muted small"><?php echo __('emi_fill_form', 'Fill in the form on the left to see your EMI breakdown.'); ?></p>
                     </div>
                 <?php endif; ?>

@@ -6979,4 +6979,32 @@ User instructions: "aur koi suggetion sbhi suggestion diye ho sabhi kaam kar do"
 ### AGENTS.md numbering (Rule 4)
 Next-free = **504** (this session; S503 logged above).
 
+## Session 504: WhatsApp EMI Overdue Reminder Automation, Calculator Semantic & Form Accessibility (2026-11-14)
+
+### Trigger
+User instructions: "aur koi suggetion sbhi suggestion diye ho sabhi kaam kar do", "do next", "do next all", and "ok do next all": Continuous autonomous Senior Software Developer & CEO execution. Enhancing EMI payment reminders via WhatsApp and completing financial tool accessibility.
+
+### The headline
+
+**1. WHATSAPP EMI DEMAND LETTER & OVERDUE REMINDER AUTOMATION (`BookingNotificationService.php`)**
+- Added automated WhatsApp dispatch to `sendDemandLetterReminder()`:
+  - Previously only Email and SMS were dispatched.
+  - Now sends a personalized WhatsApp reminder with customer name, installment number, amount formatted in INR, plot number, colony name, days overdue, and direct 1-click payment link to `/user/installments`.
+  - Atomically logs communication record in unified communications log under channel `'whatsapp'` and type `'demand_letter'`.
+
+**2. EMI CALCULATOR WCAG AA ACCESSIBILITY & HEADING STRUCTURE (`calc.php`)**
+- Linked form `<label for="...">` attributes to input IDs (`amount`, `month`, `interest`).
+- Normalized heading hierarchy, converting unsemantic `<h4>`/`<h5>` elements to structured `<h2 class="fs-4">` and `<h3 class="fs-6">` tags.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 24.2s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **505** (this session; S504 logged above).
+
+
 

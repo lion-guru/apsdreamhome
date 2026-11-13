@@ -158,7 +158,7 @@ class BookingNotificationService
      */
     public function sendDemandLetterReminder(array $booking, array $user, array $installment): array
     {
-        $result = ['email' => false, 'sms' => false];
+        $result = ['email' => false, 'sms' => false, 'whatsapp' => false];
 
         $userName = $user['name'] ?? 'Customer';
         $bookingNumber = $booking['booking_number'] ?? 'N/A';
@@ -166,6 +166,9 @@ class BookingNotificationService
         $amount = $installment['emi_amount'] ?? $installment['amount'] ?? 0;
         $dueDate = $installment['due_date'] ?? 'N/A';
         $daysOverdue = $installment['days_overdue'] ?? 0;
+        $plotNo = $booking['plot_number'] ?? $booking['plot_no'] ?? 'N/A';
+        $colonyName = $booking['colony_name'] ?? 'N/A';
+        $baseUrl = defined('BASE_URL') ? BASE_URL : '';
 
         // Email
         $subject = "Payment Overdue - Installment #{$instNo} - {$bookingNumber}";
@@ -176,9 +179,22 @@ class BookingNotificationService
         $sms = "Dear {$userName}, Installment #{$instNo} of " . number_format($amount) . " for booking {$bookingNumber} is overdue by {$daysOverdue} days. Please pay immediately. - APS Dream Home";
         $result['sms'] = $this->sendSms($user['phone'] ?? '', $sms);
 
+        // WhatsApp
+        $wa = "Dear *{$userName}*,\n\n"
+            . "⚠️ *Payment Reminder - APS Dream Home*\n\n"
+            . "Installment *#{$instNo}* of *₹" . number_format($amount) . "* for Booking *#{$bookingNumber}* (Plot {$plotNo}, {$colonyName}) is overdue.\n"
+            . "📅 *Due Date:* {$dueDate}\n"
+            . ($daysOverdue > 0 ? "⏳ *Overdue by:* {$daysOverdue} days\n" : "")
+            . "\n👉 Pay easily via UPI / NetBanking / Cards:\n"
+            . "{$baseUrl}/user/installments\n\n"
+            . "Helpline: +91 92771 21112\n"
+            . "APS Dream Home Pvt. Ltd.";
+        $result['whatsapp'] = $this->sendWhatsapp($user['phone'] ?? '', $wa);
+
         // Log
         $this->logCommunication((int)$user['id'], 'demand_letter', 'email', $result['email'], $subject, $sms);
         $this->logCommunication((int)$user['id'], 'demand_letter', 'sms', $result['sms'], 'Demand Letter SMS', $sms);
+        $this->logCommunication((int)$user['id'], 'demand_letter', 'whatsapp', $result['whatsapp'], 'Demand Letter WhatsApp', $wa);
 
         return $result;
     }

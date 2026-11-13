@@ -1,9 +1,10 @@
 <?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; } $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '919277121112'); $emailDisplay = $sc('contact_email', 'support@apsdreamhome.com'); ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Terms and conditions of use for APS Dream Homes - how to book plots, cancellations, refunds, and legal policies.">
     <title><?= htmlspecialchars($page_title ?? 'Terms & Conditions') ?></title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
@@ -26,6 +27,7 @@
     </style>
 </head>
 <body>
+<main>
     <div class="legal-container">
         <div class="legal-header">
             <h1><?= htmlspecialchars($page_title ?? 'Terms & Conditions') ?></h1>
@@ -40,5 +42,6 @@
         </div>
         <a href="/" class="back-link"><i class="fas fa-arrow-left me-1"></i> Back to Home</a>
     </div>
+</main>
 </body>
 </html>
