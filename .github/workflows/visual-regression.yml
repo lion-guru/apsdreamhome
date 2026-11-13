@@ -1,3 +1,12 @@
+# S479: the baseline-update step does `git push`, which needs write
+# permission on the repository contents.  The default GITHUB_TOKEN is
+# read-only unless the workflow asks for more, so the regeneration
+# failed with "The requested URL returned error: 403".  Granting
+# contents: write is the smallest possible permission that lets the
+# bot commit the regenerated baselines back to main.
+permissions:
+  contents: write
+
 name: Visual Regression Testing
 
 on:
