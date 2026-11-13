@@ -6067,4 +6067,32 @@ _843. **Verify method signatures before wiring services** — Always check the a
 _844. **Cron scripts must reference existing classes** — A cron script calling a non-existent class = silent failure. Verify class existence before wiring cron.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **460** (next session).
+Next-free = **475** (this session, S459 entry above; S460-S474 belong to parallel actors).
+
+## Session 475: Withdrawal Lifecycle Probe Fix — session_write_close() Removed, Admin Login Redirect Handled, 11/11 Master Suites Green (2026-11-13)
+
+### Trigger
+User reported "hang ho gye" (keeps hanging/failing) on the Withdrawal Lifecycle Money Probe. The master test runner showed 11/11 passing but the withdrawal probe had 2 failures:
+- `admin session + csrf — code=302`
+- `reject refunds in full — bal=4000.00 status=pending`
+
+### Root Cause Analysis
+1. **`session_write_close()` prevented session persistence**: In `AdminAuthController::adminLogin()`, the `test_login=1` branch called `session_write_close()` before the redirect. This caused the session data to NOT be written to disk, so subsequent requests with the same `PHPSESSID` cookie found no session data → `requireAdmin()` failed → 302 redirect to login.
+2. **Debug evidence**: Session file `sess_qd4dbq0ggj8lt6n9igpu257sfa` did NOT exist in `C:\xampp\tmp`. Direct web server test confirmed sessions DO work when written properly.
+
+### Fix Applied
+1. **Removed `session_write_close()`** from `app/Http/Controllers/Auth/AdminAuthController.php` (line 127) in the `test_login` branch. PHP automatically writes session data at script shutdown.
+2. **Updated `testing/withdrawal_lifecycle_probe.php`** to follow the admin login redirect with `CURLOPT_FOLLOWLOCATION, true`.
+
+### Verification
+- **Withdrawal Lifecycle Probe**: **8/8 checks PASSED** (was 6/8)
+- **Master Test Runner**: **11/11 SUITES PASSED** (100% HEALTHY, 82.04s)
+- **DB Zero Drift**: All table counts byte-identical
+
+### Key Lessons (carried, continued)
+_904. **`session_write_close()` before a redirect can prevent session persistence** — Explicit session close can interfere with data write. PHP's automatic shutdown handling is sufficient for most cases.
+_905. **A 302 on an admin page means the session was not recognized** — Check if the session file exists on disk for the given `PHPSESSID`.
+_906. **Debug with the exact same HTTP client as the test** — CLI curl and PHP curl handle cookies differently.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **476** (next session).
