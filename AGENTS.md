@@ -7043,3 +7043,35 @@ Next-free = **506** (this session; S504 logged above).
 _928. **"Status is pending_verification" is three different lies on three different schemas.** Every new status string written this round must be checked against `INFORMATION_SCHEMA.COLUMNS.COLUMN_TYPE` BEFORE commit — strict-mode INSERTs fail loudly, but only when the customer clicks the button. Verified via transactional probes; rollback removes all side effects.
 _929. **Whole-tree commits can propagate a broken enum literal across controllers without any test catching it.** Master suite passed 11/11 while the manual-payment path was 100% broken — because the probe suite never POSTs the actual request body those controllers expect. Always pair "green suite" with a "schema-vs-code" cross-check.
 _930. **Transactional probes are the only safe way to prove a live INSERT path.** START TRANSACTION; INSERT; verify; ROLLBACK — no allocations, no leftovers, exact same SQL the controller runs, proving enum validity and FK existence in one shot.
+
+## Session 506: ERP Dark-Mode Styling, Admin Navigation A11y, Project Detail & Customer Referral WCAG AA Normalization (2026-11-14)
+
+### Trigger
+User instruction: "do next" — continuing autonomous CEO/Senior Software Developer execution. Addressing accessibility diagnostics, admin navigation ARIA attributes, dark-mode coverage on ERP overview desk, and public project/referral UI polish.
+
+### The headline
+
+**1. ERP OVERVIEW DASHBOARD DARK-MODE DESIGN SUITE (`dark-mode.css`, `admin.php`)**
+- Added complete dark-mode styling for the modern ERP overview dashboard:
+  - Gradient header background contrast adjustment (`.erp-modern-header`).
+  - Cards, quick action buttons, and activity feed dark palette adaptations (`.erp-module-card`, `.erp-quick-action`, `.erp-activity-item`, `.erp-chart-card`).
+  - Synced dark-mode stylesheet cache busting (`dark-mode.css?v=2`).
+
+**2. ADMIN SIDEBAR NAVIGATION & ERP HEADING ACCESSIBILITY (`admin.php`, `erp/overview.php`)**
+- Added explicit `aria-label="Toggle sidebar"` and `aria-expanded="true"` to top navigation sidebar toggle button.
+- Replaced unsemantic `<h6>` elements in chart headers, quick actions, and activity logs with structured `<h2 class="fs-5">` tags.
+
+**3. PROJECT DETAIL & CUSTOMER REFERRAL ACCESSIBILITY POLISH (`project_detail.php`, `customer_referral.php`)**
+- In `customer_referral.php`: Connected hidden `<label for="refLink">` and `aria-label` to the customer referral link input and copy button.
+- In `project_detail.php`: Normalized section headings (`development status`, `EMI calculator`, `contact card`, `project details`, `site visit modal`) to semantic `<h3 class="fs-4">` and `<h3 class="fs-5">` hierarchy.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 23.2s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **507** (this session; S506 logged above).
+

@@ -100,7 +100,7 @@ $GLOBALS['_html_doc_started'] = true;
         .nav-pills .nav-link.active { background: var(--tenant-primary); }
     </style>
     <?php endif; ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/dark-mode.css?v=1">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/dark-mode.css?v=2">
 </head>
 
 <body class="aps-admin-body">
@@ -295,8 +295,8 @@ $GLOBALS['_html_doc_started'] = true;
         <!-- Top Navigation -->
         <nav class="top-nav" aria-label="Admin top navigation">
             <div class="nav-left">
-                <button class="toggle-btn" onclick="APS.toggleSidebar()">
-                    <i class="fas fa-bars"></i>
+                <button class="toggle-btn" onclick="APS.toggleSidebar()" aria-label="Toggle sidebar" aria-expanded="true">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
                 </button>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
@@ -338,7 +338,7 @@ $GLOBALS['_html_doc_started'] = true;
 
                 <!-- Profile Dropdown (Bootstrap native) -->
                 <div class="dropdown">
-                    <div class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" >
+                    <button type="button" class="user-box dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="user-avatar"><?php echo strtoupper(substr($adminName, 0, 1)); ?></div>
                         <div class="user-info">
                             <div class="user-name"><?php echo htmlspecialchars($adminName ?? ''); ?></div>
@@ -362,7 +362,7 @@ $GLOBALS['_html_doc_started'] = true;
                             <?php endif; ?>
                         </div>
                         <i class="fas fa-chevron-down"></i>
-                    </div>
+                    </button>
 
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a href="<?php echo e($base); ?>/admin/profile" class="dropdown-item"><i class="fas fa-user"></i> My Profile</a></li>

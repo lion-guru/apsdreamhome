@@ -147,9 +147,10 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                 </div>
 
                 <label class="form-label small text-muted fw-bold" for="refLink"><?= __('referral_referral_link') ?></label>
+                <label for="refLink" class="visually-hidden"><?= __('referral_link_label', null, 'Your Referral Link') ?></label>
                 <div class="input-group input-group-sm mb-3">
-                    <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($shareLinks['url'] ?? '') ?>" readonly>
-                    <button class="btn btn-outline-primary" onclick="copyToClipboard(document.getElementById('refLink').value, this)">
+                    <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($shareLinks['url'] ?? '') ?>" aria-label="<?= __('referral_link_label', null, 'Your Referral Link') ?>" readonly>
+                    <button class="btn btn-outline-primary" onclick="copyToClipboard(document.getElementById('refLink').value, this)" aria-label="<?= __('referral_copy_link', null, 'Copy link') ?>">
                         <i class="fas fa-copy"></i>
                     </button>
                 </div>

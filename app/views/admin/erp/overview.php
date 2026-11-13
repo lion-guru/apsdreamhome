@@ -64,7 +64,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 
 .erp-chart-card{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.04);overflow:hidden}
 .erp-chart-card .chart-header{padding:18px 24px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between}
-.erp-chart-card .chart-header h6{margin:0;font-weight:700;color:#1e293b;font-size:0.95rem}
+.erp-chart-card .chart-header h2{margin:0;font-weight:700;color:#1e293b;font-size:0.95rem}
 .erp-chart-card .chart-body{padding:20px 24px;height:280px;position:relative}
 
 @media(max-width:991px){
@@ -187,7 +187,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     <!-- Quick Actions -->
     <div >
         <div >
-            <h6 ><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
+            <h2 class="fs-5"><i class="fas fa-bolt me-2"></i>Quick Actions</h2>
         </div>
         <div >
             <a href="<?= BASE_URL ?>/admin/land-inventory/leads" class="erp-quick-action">
@@ -226,7 +226,7 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
     <!-- Recent Activity -->
     <div >
         <div >
-            <h6 ><i class="fas fa-clock me-2"></i>Recent Activity</h6>
+            <h2 class="fs-5"><i class="fas fa-clock me-2"></i>Recent Activity</h2>
             <span >Last 10 entries</span>
         </div>
         <div >
@@ -265,13 +265,13 @@ $fmt = fn($v) => '₹' . number_format((float)$v, 0, '.', ',');
 <div >
     <div class="erp-chart-card">
         <div class="chart-header">
-            <h6><i class="fas fa-chart-bar me-2"></i>Cash Flow (Last 7 Days)</h6>
+            <h2 class="fs-5"><i class="fas fa-chart-bar me-2"></i>Cash Flow (Last 7 Days)</h2>
         </div>
         <div class="chart-body"><canvas id="cashFlowChart"></canvas></div>
     </div>
     <div class="erp-chart-card">
         <div class="chart-header">
-            <h6><i class="fas fa-chart-pie me-2"></i>Lead Pipeline</h6>
+            <h2 class="fs-5"><i class="fas fa-chart-pie me-2"></i>Lead Pipeline</h2>
         </div>
         <div class="chart-body"><canvas id="leadPipelineChart"></canvas></div>
     </div>

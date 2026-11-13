@@ -142,3 +142,37 @@ html.dark-mode .border {
 body, .card, .modal-content, .form-control, .form-select, .dropdown-menu, .table {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
+
+/* ============================================
+   ERP Overview Dashboard — dark-mode overrides
+   ============================================ */
+html.dark-mode .erp-modern-header { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d9488 100%) !important; }
+html.dark-mode .erp-modern-header h1 { color: #e2e8f0 !important; }
+html.dark-mode .erp-modern-header p { color: rgba(226,232,240,0.72) !important; }
+html.dark-mode .erp-module-card {
+    background-color: var(--dm-card-bg) !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.35) !important;
+}
+html.dark-mode .erp-module-card .mc-val { color: var(--dm-text) !important; }
+html.dark-mode .erp-module-card .mc-lbl { color: var(--dm-text-muted) !important; }
+html.dark-mode .erp-module-card .mc-label { color: var(--dm-text-muted) !important; }
+html.dark-mode .erp-module-card .mc-icon { color: inherit; }
+html.dark-mode .erp-alert-card { background-color: var(--dm-card-bg) !important; }
+html.dark-mode .erp-quick-action {
+    background-color: var(--dm-card-bg) !important;
+    border-color: var(--dm-border) !important;
+}
+html.dark-mode .erp-quick-action:hover { background-color: var(--dm-bg-tertiary) !important; border-color: var(--dm-border) !important; }
+html.dark-mode .erp-quick-action .qa-title { color: var(--dm-text) !important; }
+html.dark-mode .erp-quick-action .qa-desc { color: var(--dm-text-muted) !important; }
+html.dark-mode .erp-quick-action .qa-arrow { color: var(--dm-text-muted) !important; }
+html.dark-mode .erp-activity-item { border-color: var(--dm-border) !important; }
+html.dark-mode .erp-activity-item:hover { background-color: var(--dm-bg-tertiary) !important; }
+html.dark-mode .erp-activity-item .ai-type { color: var(--dm-text) !important; }
+html.dark-mode .erp-activity-item .ai-desc { color: var(--dm-text-muted) !important; }
+html.dark-mode .erp-activity-item .ai-date { color: var(--dm-text-muted) !important; }
+html.dark-mode .erp-chart-card { background-color: var(--dm-card-bg) !important; box-shadow: 0 2px 12px rgba(0,0,0,0.35) !important; }
+html.dark-mode .erp-chart-card .chart-header { border-color: var(--dm-border) !important; }
+html.dark-mode .erp-chart-card .chart-header h2 { color: var(--dm-text) !important; }
+html.dark-mode .erp-empty-state,
+html.dark-mode .erp-loading { color: var(--dm-text-muted) !important; }

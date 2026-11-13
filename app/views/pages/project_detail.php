@@ -299,9 +299,9 @@ $related_projects = $normRelated;
                 <!-- Project Development & Construction Status -->
                 <div class="card border-0 shadow-sm rounded-4 p-4 mt-5 bg-white" style="border: 1px solid #e2e8f0 !important;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="fw-bold mb-0 text-dark">
+                        <h3 class="fs-4 fw-bold mb-0 text-dark">
                             <i class="fas fa-tasks text-warning me-2"></i> विकास व निर्माण प्रगति (Development Status)
-                        </h4>
+                        </h3>
                         <?php 
                         $overallPct = !empty($project->progress_pct) && (int)$project->progress_pct > 0 ? (int)$project->progress_pct : 85; 
                         ?>
@@ -375,9 +375,9 @@ $related_projects = $normRelated;
                 <!-- Interactive EMI & Loan Calculator Widget -->
                 <div class="card border-0 shadow-sm rounded-4 p-4 mt-5 bg-white" style="border: 1px solid #e2e8f0 !important;" id="emiCalculatorCard">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h4 class="fw-bold mb-0 text-dark">
+                        <h3 class="fs-4 fw-bold mb-0 text-dark">
                             <i class="fas fa-calculator text-primary me-2"></i> मासिक किश्त व लोन अनुमान (EMI Calculator)
-                        </h4>
+                        </h3>
                         <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 fw-bold">Live Calculator</span>
                     </div>
                     <p class="text-muted small mb-4">
@@ -489,10 +489,10 @@ $related_projects = $normRelated;
                 <!-- Contact Card -->
                 <div class="card shadow-lg mb-4 sticky-top">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0"><i class="fas fa-headset me-2"></i><?= __('project_get_in_touch') ?></h4>
+                        <h3 class="fs-5 mb-0"><i class="fas fa-headset me-2"></i><?= __('project_get_in_touch') ?></h3>
                     </div>
                     <div class="card-body aps-cp-card-body">
-                        <h5 class="text-primary mb-3"><?= __('project_interested') ?></h5>
+                        <div class="fs-6 fw-bold text-primary mb-3"><?= __('project_interested') ?></div>
                         <div class="d-grid gap-2">
                             <button type="button" class="btn btn-warning btn-lg fw-bold text-dark d-flex align-items-center justify-content-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#quickSiteVisitModal">
                                 <i class="fas fa-car-side"></i> <?= __('project_schedule_visit', [], 'Schedule Free Site Visit') ?>
@@ -534,7 +534,7 @@ $related_projects = $normRelated;
                 <!-- Project Details Card -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0"><i class="fas fa-building me-2"></i><?= __('project_details') ?></h5>
+                        <h3 class="fs-5 mb-0"><i class="fas fa-building me-2"></i><?= __('project_details') ?></h3>
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="table-responsive"><table class="table table-borderless table-sm">
@@ -872,9 +872,9 @@ $related_projects = $normRelated;
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
             <div class="modal-header bg-primary text-white border-0 py-3">
-                <h5 class="modal-title fw-bold" id="quickSiteVisitModalLabel">
+                <h3 class="modal-title fs-5 fw-bold" id="quickSiteVisitModalLabel">
                     <i class="fas fa-car-side me-2"></i> निशुल्क साइट विजिट बुक करें (Free Site Visit)
-                </h5>
+                </h3>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="quickSiteVisitForm" method="POST" action="<?= BASE_URL ?>/quick-inquiry">
