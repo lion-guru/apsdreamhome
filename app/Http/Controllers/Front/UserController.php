@@ -2078,15 +2078,6 @@ class UserController extends BaseController
             return;
         }
 
-        $razorpay_order_id  = $_POST['razorpay_order_id']  ?? '';
-        $razorpay_payment_id = $_POST['razorpay_payment_id'] ?? '';
-        $razorpay_signature  = $_POST['razorpay_signature']  ?? '';
-
-        if (!$razorpay_order_id || !$razorpay_payment_id || !$razorpay_signature) {
-            $this->json(['success' => false, 'error' => 'Missing payment response data.'], 400);
-            return;
-        }
-
         try {
             $installment = $this->db->fetch("
                 SELECT ips.*, pb.customer_id, pb.booking_number, pb.id as bid
@@ -2110,6 +2101,87 @@ class UserController extends BaseController
             return;
         }
 
+        $paymentMethod = $_POST['payment_method'] ?? 'razorpay';
+        $emiAmount = (float) ($installment['emi_amount'] ?? 0);
+        $oldPaid = (float) ($installment['paid_amount'] ?? 0);
+        $lateFee = (float) ($installment['late_fee'] ?? 0);
+        $accruedPenalty = (float) ($installment['accrued_penalty'] ?? 0);
+        $amountDue = max(0, ($emiAmount - $oldPaid) + $lateFee + $accruedPenalty);
+        $bookingId = (int) $installment['booking_id'];
+
+        // Branch 1: Manual UPI QR / UTR reference submission
+        if ($paymentMethod === 'upi_manual') {
+            $utrNumber = trim((string)($_POST['utr_number'] ?? ''));
+            if (empty($utrNumber) || strlen($utrNumber) < 6) {
+                $this->json(['success' => false, 'error' => 'Please enter a valid UPI Reference / UTR Number (minimum 6 characters).'], 400);
+                return;
+            }
+
+            try {
+                $this->db->beginTransaction();
+
+                $receiptNumber = 'APS-UPI-' . date('Ymd') . '-' . str_pad((string)mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+
+                // Insert into booking_payment_receipts with status pending_verification
+                $this->db->prepare("
+                    INSERT INTO booking_payment_receipts
+                        (booking_id, installment_id, receipt_number, amount, payment_mode,
+                         transaction_ref, status, receipt_date, created_at)
+                    VALUES (?, ?, ?, ?, 'upi', ?, 'pending_verification', NOW(), NOW())
+                ")->execute([$bookingId, $instId, $receiptNumber, $amountDue, $utrNumber]);
+
+                // Insert into payment_transactions
+                $this->db->prepare("
+                    INSERT INTO payment_transactions
+                        (transaction_id, user_id, booking_id, amount, currency, payment_method,
+                         payment_status, gateway_transaction_id, gateway_response, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, 'INR', 'upi', 'pending_verification', ?, ?, NOW(), NOW())
+                ")->execute([
+                    $receiptNumber, $userId, $bookingId, $amountDue,
+                    $utrNumber,
+                    json_encode([
+                        'channel'    => 'upi_qr_manual',
+                        'utr_number' => $utrNumber,
+                        'customer'   => $_SESSION['user_name'] ?? '',
+                    ])
+                ]);
+
+                // Update installment notes
+                $this->db->prepare("
+                    UPDATE booking_payment_schedules
+                    SET notes = CONCAT(COALESCE(notes, ''), ' [UPI UTR submitted: ', ?, ']'),
+                        updated_at = NOW()
+                    WHERE id = ?
+                ")->execute([$utrNumber, $instId]);
+
+                $this->db->commit();
+
+                $this->json([
+                    'success'  => true,
+                    'message'  => 'UPI payment reference recorded! Our accounts team will verify the payment shortly.',
+                    'redirect' => BASE_URL . '/user/installments/' . $instId . '/success?utr=' . urlencode($utrNumber),
+                ]);
+                return;
+            } catch (\Throwable $e) {
+                if ($this->db->inTransaction()) {
+                    $this->db->rollBack();
+                }
+                error_log("UserController::processInstallmentPayment upi_manual failed: " . $e->getMessage());
+                $this->json(['success' => false, 'error' => 'Failed to record UPI payment: ' . $e->getMessage()], 500);
+                return;
+            }
+        }
+
+        // Branch 2: Razorpay Online Gateway
+        $razorpay_order_id  = $_POST['razorpay_order_id']  ?? '';
+        $razorpay_payment_id = $_POST['razorpay_payment_id'] ?? '';
+        $razorpay_signature  = $_POST['razorpay_signature']  ?? '';
+
+        if (!$razorpay_order_id || !$razorpay_payment_id || !$razorpay_signature) {
+            $this->json(['success' => false, 'error' => 'Missing payment response data.'], 400);
+            return;
+        }
+
         $razorpaySvc = new \App\Services\Gateway\RazorpayService();
         if (!$razorpaySvc->verifyPaymentSignature($razorpay_order_id, $razorpay_payment_id, $razorpay_signature)) {
             error_log("UserController::processInstallmentPayment signature mismatch inst #{$instId}");
@@ -2117,14 +2189,7 @@ class UserController extends BaseController
             return;
         }
 
-        $emiAmount = (float) ($installment['emi_amount'] ?? 0);
-        $oldPaid = (float) ($installment['paid_amount'] ?? 0);
-        $lateFee = (float) ($installment['late_fee'] ?? 0);
-        $accruedPenalty = (float) ($installment['accrued_penalty'] ?? 0);
-        $amountDue = max(0, ($emiAmount - $oldPaid) + $lateFee + $accruedPenalty);
         $newPaid = $oldPaid + $amountDue;
-
-        $bookingId = (int) $installment['booking_id'];
 
         try {
             $this->db->beginTransaction();

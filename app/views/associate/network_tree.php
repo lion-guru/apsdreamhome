@@ -90,9 +90,14 @@ foreach ($nodes as $n) {
             <h4 class="mb-1"><i class="fas fa-project-diagram text-primary me-2"></i><?php echo __('assoc_net_tree', [], 'Network Tree'); ?></h4>
             <small class="text-muted"><?php echo __('assoc_net_subtitle', [], 'Your complete downline hierarchy with performance data'); ?></small>
         </div>
-        <a href="<?= BASE_URL ?>/associate/dashboard" class="btn btn-outline-secondary btn-sm">
-            <i class="fas fa-arrow-left me-1"></i><?php echo __('assoc_net_dashboard', [], 'Dashboard'); ?>
-        </a>
+        <div class="d-flex gap-2">
+            <a href="<?= BASE_URL ?>/associate/team" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-users me-1"></i><?php echo __('assoc_team_title', [], 'Team Table'); ?>
+            </a>
+            <a href="<?= BASE_URL ?>/associate/dashboard" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i><?php echo __('assoc_net_dashboard', [], 'Dashboard'); ?>
+            </a>
+        </div>
     </div>
 
     <!-- Stats Row -->

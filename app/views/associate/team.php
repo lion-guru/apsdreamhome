@@ -146,7 +146,10 @@ body {
             <h4 class="mb-1 fw-bold"><i class="fas fa-users text-primary me-2"></i><?= __('assoc_team_title', [], 'My Team') ?></h4>
             <div class="text-white-50 small"><?= __('assoc_team_subtitle', [], 'Manage and track your team members\' performance') ?></div>
         </div>
-        <div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="<?= BASE_URL ?>/associate/network/tree" class="btn btn-outline-light rounded-pill px-4 fw-bold shadow-sm">
+                <i class="fas fa-project-diagram me-2"></i><?= __('assoc_tree_view', [], 'Network Tree') ?>
+            </a>
             <a href="<?= BASE_URL ?>/associate/dashboard" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm">
                 <i class="fas fa-arrow-left me-2"></i><?= __('assoc_team_dashboard', [], 'Dashboard') ?>
             </a>

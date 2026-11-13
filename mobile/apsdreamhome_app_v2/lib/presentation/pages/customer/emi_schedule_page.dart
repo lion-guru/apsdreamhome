@@ -1,6 +1,8 @@
 import '../../../core/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/logger.dart';
@@ -227,48 +229,190 @@ class _EmiSchedulePageState extends ConsumerState<EmiSchedulePage> {
   }
 
   Future<void> _processPayment(Map<String, dynamic> emi) async {
-    // Show confirmation
-    final confirm = await showDialog<bool>(
+    final emiAmount = (emi['amount'] as num).toDouble();
+    final emiNumber = (emi['emi_number'] as num).toInt();
+    final emiId = (emi['id'] as num).toInt();
+    const vpa = 'apsdreamhome@icici';
+    final note = 'EMI_BK${widget.bookingId ?? 0}_INST$emiNumber';
+    final upiUri = 'upi://pay?pa=$vpa&pn=APS+Dream+Home&am=${emiAmount.toStringAsFixed(2)}&tn=$note&cu=INR';
+
+    showModalBottomSheet<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Payment'),
-        content: Text(
-          'Do you want to pay ${_formatCurrency(emi['amount'] as num)} for EMI #${emi['emi_number'] as num}?',
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Pay EMI #$emiNumber',
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    _formatCurrency(emiAmount),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Due Date: ${emi['due_date'] ?? 'N/A'}',
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+              ),
+              const Divider(height: 28),
+
+              // Option 1: Instant UPI Apps
+              ElevatedButton.icon(
+                onPressed: () async {
+                  Navigator.pop(sheetContext);
+                  final uri = Uri.parse(upiUri);
+                  try {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('No supported UPI app found. Please copy UPI ID below.')),
+                      );
+                    }
+                  }
+                },
+                icon: const Icon(Icons.flash_on, color: Colors.amber),
+                label: const Text('Pay via Any UPI App (GPay / PhonePe / Paytm)'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Option 2: Copy UPI ID
+              OutlinedButton.icon(
+                onPressed: () {
+                  Clipboard.setData(const ClipboardData(text: vpa));
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('UPI ID ($vpa) copied to clipboard!')),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.copy, size: 18),
+                label: const Text('Copy UPI ID: $vpa'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 46),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Option 3: Submit UTR
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.pop(sheetContext);
+                  _showUtrSubmissionDialog(emiId, emiNumber, emiAmount);
+                },
+                icon: const Icon(Icons.receipt_long, size: 18, color: Colors.green),
+                label: const Text(
+                  'Already Paid? Submit 12-Digit UTR Reference',
+                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                ),
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 46),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showUtrSubmissionDialog(int emiId, int emiNumber, double amount) {
+    final controller = TextEditingController();
+    showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: Text('Submit UTR for EMI #$emiNumber'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Amount: ${_formatCurrency(amount)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: '12-digit UPI UTR / Ref No.',
+                hintText: 'e.g. 432156789012',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.text,
+            ),
+          ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(dialogCtx),
             child: const Text('Cancel'),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Confirm'),
+          ElevatedButton(
+            onPressed: () async {
+              final utr = controller.text.trim();
+              if (utr.length < 6) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please enter a valid UTR number (at least 6 characters)')),
+                );
+                return;
+              }
+              Navigator.pop(dialogCtx);
+              setState(() => _isLoading = true);
+              try {
+                final api = ApiService();
+                await api.post('/customer/pay-emi', data: {
+                  'emi_id': emiId,
+                  'amount': amount,
+                  'utr_number': utr,
+                  'payment_method': 'upi',
+                });
+                _fetchSchedule();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('UTR submitted successfully! Our accounts team will verify shortly.'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                AppLogger.error('Error submitting UTR', e);
+                if (mounted) setState(() => _isLoading = false);
+              }
+            },
+            child: const Text('Submit UTR'),
           ),
         ],
       ),
     );
-
-    if (confirm != true) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final api = ApiService();
-      await api.post('/customer/pay-emi', data: {'emi_id': emi['id'] as num, 'amount': emi['amount'] as num});
-
-      _fetchSchedule(); // Refresh
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Payment successful!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      AppLogger.error('Error processing EMI payment', e);
-      if (mounted) setState(() => _isLoading = false);
-    }
   }
 }
 

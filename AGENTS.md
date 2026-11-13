@@ -6895,3 +6895,47 @@ Next-free = **502** (this session; S500 logged above in the file).
 _925. **Before touching a pinned browser cache, measure what the server truly returns.** All "broken images" were SW-cache artifacts; HTTP proved every file intact and the HTML references unchanged. Fix the transport, not the content.
 _926. **`caches.keys().then(...)` plus one re-navigation is the boot-sector fix for a wedged embedded profile.** It cost 5 seconds and turned every public page clean; the stale `notification-widget.js` reports would otherwise burn an hour of phantom bug hunts.
 _927. **Parallel whole-tree commits can propagate your uncommitted edits to HEAD without crediting you.** Verify each previously-authored marker (`data-section-toggle`, `!APS_HR_WS`) on disk, not your memory of where you put it.
+
+## Session 502: Multi-Mode EMI Payment Suite, Dynamic UPI QR Engine, Mobile Flutter Parity & Associate Tree Interlink (2026-11-14)
+
+### Trigger
+User instructions: "aur koi suggetion sbhi suggestion diye ho sabhi kaam kar do", "do next", "do next all", and "ok do next all": Continuous autonomous Senior Software Developer & CEO execution. Implementing customer EMI self-serve enhancements, mobile payment parity, associate portal workflow interlinking, and WCAG AA accessibility polish.
+
+### The headline
+
+**1. MULTI-MODE EMI PAYMENT SUITE & DYNAMIC UPI QR ENGINE (`pay_installment.php`)**
+- Upgraded the customer installment payment desk from a single-gateway dependency to a 3-tab multi-mode payment suite:
+  - **Tab 1: UPI & Dynamic QR Code**: Dynamic UPI URI generator (`upi://pay?pa=apsdreamhome@icici&pn=APS+Dream+Home+Pvt+Ltd&am={amount_due}&tn={note}&cu=INR`) with real-time QR code display, 1-tap mobile UPI intent launch button (triggering GPay/PhonePe/Paytm), 1-click clipboard VPA copy, and a 12-digit UTR reference submission form.
+  - **Tab 2: Razorpay Online Gateway**: Cards, NetBanking, and Wallets with automatic detection and graceful offline messaging if gateway scripts are unreachable.
+  - **Tab 3: Official Bank Transfer (NEFT/RTGS)**: Verified ICICI Bank Current Account credentials with 1-click clipboard copy triggers for Account Number, IFSC (`ICIC0000001`), Branch, and Beneficiary Name.
+
+**2. BACKEND UTR MANUAL PAYMENT PROCESSING (`UserController.php`)**
+- Added the `payment_method === 'upi_manual'` branch to `processInstallmentPayment($installmentId)`.
+- Enforces minimum 6-character UTR validation, initiates database transaction, records payment receipt in `booking_payment_receipts` with status `pending_verification`, logs audit record in `payment_transactions`, appends UTR transaction note to installment notes, and commits transaction safely.
+
+**3. MOBILE FLUTTER EMI SCHEDULE UPI PARITY (`emi_schedule_page.dart`)**
+- Upgraded the payment action sheet from a basic dialog to an interactive payment bottom sheet:
+  - 1-tap "Pay via Any UPI App (GPay/PhonePe/Paytm)" launching the official `upi://pay...` intent with exact amount and booking note.
+  - 1-tap "Copy UPI ID (`apsdreamhome@icici`)".
+  - Dedicated "Submit 12-digit UTR Reference" flow recording manual transfers for accountant reconciliation.
+
+**4. ASSOCIATE PORTAL TEAM & VISUAL NETWORK TREE INTERLINKING**
+- In `app/views/associate/team.php`: Added quick-navigation "Network Tree" pill linking to `/associate/network/tree`.
+- In `app/views/associate/network_tree.php`: Added "Team Table" button linking back to `/associate/team` for seamless view toggling.
+
+**5. FINANCIAL TOOLS WCAG AA ACCESSIBILITY & CONTRAST POLISH**
+- Fixed missing form labels across financial tools (`gst_calculator.php`, `property_valuation.php`, `stamp_duty.php`, and `stamp_duty_calculator.php`) by linking `<label for="...">` to inputs.
+- Normalized heading hierarchy, converting unsemantic `<h5>`/`<h6>` tags to structured `<h2 class="fs-4">` and `<h3 class="fs-6">` tags.
+- Polished `premium-theme.css` and `uiux-fixes.css` ensuring colored result tiles inside light cards maintain high-contrast `#ffffff` text across all gradient wrappers.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 33.17s).
+- **Flutter Analyze**: `cd mobile/apsdreamhome_app_v2; flutter analyze` -> No issues found! (ran in 4.3s, Exit 0).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **503** (this session; S502 logged above).
+
