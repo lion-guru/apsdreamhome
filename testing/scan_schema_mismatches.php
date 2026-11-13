@@ -224,7 +224,7 @@ foreach ($files as $file) {
             // empty string almost everywhere, so the reported table names
             // were leftovers from the previous match ("agent_commissi",
             // "rate_", ...).  The group keeps the alternation INSIDE.
-            $after = '(?:\s*`?(?:\(|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|CROSS|FULL|USING|SET|ON|GROUP|ORDER|LIMIT|OFFSET|VALUES|,|;|\))\b|\s*$)';
+            $after = '(?:\s*`?(?:\(|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|CROSS|FULL|USING|SET|ON|GROUP|ORDER|LIMIT|OFFSET|VALUES|,|;|\))\b)';
             // S469: the capture needs a word-boundary LOOKAHEAD, otherwise
             // the greedy match backtracks into the middle of a word when the
             // continuation does not fit: "from commission ledger entries"
