@@ -894,12 +894,15 @@ class ReferralService
                 $values .= ", " . implode(', ', array_fill(0, count($insertData), '?'));
                 $insertParams = array_merge($insertParams, array_values($insertData));
             }
-            $this->conn->prepare("INSERT INTO mlm_commission_ledger ($columns) VALUES ($values)")->execute($insertParams);
+            $stmt = $this->conn->prepare("INSERT INTO mlm_commission_ledger ($columns) VALUES ($values)");
+            $stmt->execute($insertParams);
+            $ledgerId = (int)$this->conn->lastInsertId();
 
             // Credit to referrer's wallet (category must be a valid wallet_transactions enum)
+            $creditOk = false;
             try {
                 $walletService = new \App\Services\WalletService();
-                $walletService->credit(
+                $creditOk = $walletService->credit(
                     $referrerId,
                     $commissionAmount,
                     'referral',
@@ -909,6 +912,14 @@ class ReferralService
                 );
             } catch (\Throwable $e) {
                 error_log("[ReferralService] wallet credit failed: " . $e->getMessage());
+            }
+            if (!$creditOk) {
+                error_log("[ReferralService] wallet credit FAILED for referrer {$referrerId} "
+                    . "(commission {$commissionAmount}, ledger_id {$ledgerId}, booking {$bookingId}) - manual disbursement required");
+                return [
+                    'success' => false,
+                    'message' => 'Commission recorded in ledger but wallet credit failed - manual disbursement required',
+                ];
             }
 
             // Send notification to referrer

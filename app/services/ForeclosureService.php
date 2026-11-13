@@ -231,8 +231,11 @@ class ForeclosureService
                 // (FK to users), so a booking id 1452'd the whole credit and the
                 // bonus silently never paid. Plain description, no relation.
                 $wallet = new \App\Services\WalletService();
-                $wallet->credit($customerId, $points, 'referral',
+                $credited = $wallet->credit($customerId, $points, 'referral',
                     "Early closure bonus for foreclosure of booking #{$bookingId}");
+                if (!$credited) {
+                    error_log('ForeclosureService: wallet credit REJECTED for customer ' . $customerId . ' (' . $points . ' points, booking #' . $bookingId . ')');
+                }
             }
         } catch (\Throwable $e) {
             error_log('ForeclosureService::creditForeclosurePoints: ' . $e->getMessage());
