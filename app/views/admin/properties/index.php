@@ -118,7 +118,7 @@ foreach ($properties as $p) {
             </div>
             <div class="col-md-2">
                 <label class="form-label small fw-semibold text-muted mb-1">Site</label>
-                <select name="site_id" class="form-select form-select-sm">
+                <select name="site_id" class="form-select form-select-sm" aria-label="Filter by site">
                     <option value="">All Sites</option>
                     <?php foreach ($sites as $site): ?>
                         <option value="<?= $site['id'] ?>" <?= ($filters['site_id'] ?? '') == $site['id'] ? 'selected' : '' ?>>
@@ -129,7 +129,7 @@ foreach ($properties as $p) {
             </div>
             <div class="col-md-2">
                 <label class="form-label small fw-semibold text-muted mb-1">Status</label>
-                <select name="status" class="form-select form-select-sm">
+                <select name="status" class="form-select form-select-sm" aria-label="Filter by status">
                     <option value="">All Status</option>
                     <option value="active"   <?= ($filters['status'] ?? '') === 'active'   ? 'selected' : '' ?>>Active</option>
                     <option value="sold"     <?= ($filters['status'] ?? '') === 'sold'     ? 'selected' : '' ?>>Sold</option>
@@ -139,7 +139,7 @@ foreach ($properties as $p) {
             </div>
             <div class="col-md-2">
                 <label class="form-label small fw-semibold text-muted mb-1">Type</label>
-                <select name="type" class="form-select form-select-sm">
+                <select name="type" class="form-select form-select-sm" aria-label="Filter by type">
                     <option value="">All Types</option>
                     <option value="apartment"  <?= ($filters['type'] ?? '') === 'apartment'  ? 'selected' : '' ?>>Apartment</option>
                     <option value="house"      <?= ($filters['type'] ?? '') === 'house'      ? 'selected' : '' ?>>House</option>
@@ -151,7 +151,7 @@ foreach ($properties as $p) {
                 <button type="submit" class="btn btn-sm btn-primary flex-fill">
                     <i class="fas fa-search me-1"></i>Search
                 </button>
-                <a href="<?= BASE_URL ?>/admin/properties" class="btn btn-sm btn-outline-secondary">
+                <a href="<?= BASE_URL ?>/admin/properties" class="btn btn-sm btn-outline-secondary" aria-label="Clear filters">
                     <i class="fas fa-times"></i>
                 </a>
                 <a href="<?= BASE_URL ?>/admin/properties/export?format=csv&type=properties" class="btn btn-sm btn-outline-secondary" title="Export CSV">
@@ -166,7 +166,7 @@ foreach ($properties as $p) {
 <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" style="display:none; border-radius:10px; border-left:4px solid #0d6efd;">
     <div class="card-body py-2 d-flex align-items-center gap-3 flex-wrap">
         <span class="fw-semibold text-primary"><i class="fas fa-check-square me-1"></i><span id="selectedCount">0</span> selected</span>
-        <select id="bulkStatus" class="form-select form-select-sm" style="width:auto;">
+        <select id="bulkStatus" class="form-select form-select-sm" style="width:auto;" aria-label="Bulk status">
             <option value="active">Active</option>
             <option value="sold">Sold</option>
             <option value="reserved">Reserved</option>
@@ -187,7 +187,7 @@ foreach ($properties as $p) {
             <table class="table table-hover align-middle mb-0">
                 <thead style="background:#f8fafc;">
                     <tr>
-                        <th width="30" class="px-3"><input type="checkbox" id="selectAll" class="form-check-input"></th>
+                        <th width="30" class="px-3"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all properties"></th>
                         <th>Property</th>
                         <th>Site</th>
                         <th>Type</th>
@@ -205,7 +205,7 @@ foreach ($properties as $p) {
                             <td colspan="10" class="text-center py-5">
                                 <div class="py-4">
                                     <i class="fas fa-home fa-3x text-muted mb-3 d-block opacity-50"></i>
-                                    <h5 class="text-muted fw-semibold">No properties found</h5>
+                                    <p class="fs-5 text-muted fw-semibold mb-0">No properties found</p>
                                     <p class="text-muted small mb-3">Add your first property listing to start showcasing to potential buyers.</p>
                                     <a href="<?= BASE_URL ?>/admin/properties/create" class="btn btn-primary btn-sm">
                                         <i class="fas fa-plus me-1"></i>Add Property
@@ -217,7 +217,7 @@ foreach ($properties as $p) {
                         <?php foreach ($properties as $property): ?>
                             <tr data-property-id="<?= $property['id'] ?>">
                                 <td class="px-3">
-                                    <input type="checkbox" class="form-check-input property-checkbox" value="<?= $property['id'] ?>">
+                                    <input type="checkbox" class="form-check-input property-checkbox" value="<?= $property['id'] ?>" aria-label="Select property <?= htmlspecialchars($property['property_name'] ?? ('#' . $property['id'])) ?>">
                                 </td>
                                 <td>
                                     <div class="fw-semibold text-dark"><?= htmlspecialchars($property['title'] ?? '') ?></div>
@@ -316,8 +316,8 @@ foreach ($properties as $p) {
     <div class="modal-dialog modal-sm">
         <div class="modal-content border-0 shadow">
             <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h2 class="modal-title fs-6 fw-bold text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p class="mb-1">Are you sure you want to delete this property?</p>

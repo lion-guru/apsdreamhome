@@ -46,7 +46,7 @@ $statuses = $statuses ?? [];
                     <?php if ($r['is_active']): ?>
                     <button type="button" class="btn btn-sm btn-success" onclick="executeJe(<?= $r['id'] ?>)"><i class="fas fa-play"></i> Execute Now</button>
                     <?php endif; ?>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/recurring-journal-entries/delete/<?= $r['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this template?');"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
+                    <form method="POST" action="<?= BASE_URL ?>/admin/recurring-journal-entries/delete/<?= $r['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this template?');"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                 </td>
             </tr>
         <?php endforeach; endif; ?>

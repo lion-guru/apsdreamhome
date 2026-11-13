@@ -122,7 +122,7 @@ $surveyTypes = $surveyTypes ?? [];
                                 <div class="drag-handle p-2 text-muted" title="Drag to reorder"><i class="fas fa-grip-lines"></i></div>
                                 <span class="question-type-badge bg-info text-white"><?= strtoupper($q['type'] ?? 'rating') ?></span>
                             </div>
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeQuestion(this)"><i class="fas fa-trash"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeQuestion(this)" aria-label="Delete"><i class="fas fa-trash"></i></button>
                         </div>
                         <div class="row g-3">
                             <div class="col-md-8">
@@ -209,7 +209,7 @@ function addQuestion() {
                     <div class="drag-handle p-2 text-muted" title="Drag to reorder"><i class="fas fa-grip-lines"></i></div>
                     <span class="question-type-badge bg-info text-white">RATING</span>
                 </div>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeQuestion(this)"><i class="fas fa-trash"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeQuestion(this)" aria-label="Delete"><i class="fas fa-trash"></i></button>
             </div>
             <div class="row g-3">
                 <div class="col-md-8">

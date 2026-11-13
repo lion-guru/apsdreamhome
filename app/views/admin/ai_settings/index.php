@@ -80,7 +80,7 @@ $chainOrder = ['groq', 'openrouter', 'gemini'];
                                 <div class="small text-muted mb-2"><?= $meta['desc'] ?></div>
                                 <div class="input-group">
                                     <input type="password" class="form-control" name="<?= $key ?>_key" placeholder="<?= $hasKeys[$key] ? 'Saved: ' . htmlspecialchars($masked[$key]) . ' — leave blank to keep' : 'not configured — paste key' ?>" autocomplete="new-password">
-                                    <button type="button" class="btn btn-outline-secondary toggle-key" tabindex="-1"><i class="fas fa-eye"></i></button>
+                                    <button type="button" class="btn btn-outline-secondary toggle-key" tabindex="-1" aria-label="View"><i class="fas fa-eye"></i></button>
                                     <button type="button" class="btn btn-outline-primary test-btn" data-provider="<?= $key ?>"><i class="fas fa-plug me-1"></i>Test</button>
                                 </div>
                                 <div class="small mt-1 test-result" data-provider="<?= $key ?>"></div>
@@ -95,7 +95,7 @@ $chainOrder = ['groq', 'openrouter', 'gemini'];
                             <div class="small text-muted mb-2">Real 384-dim embeddings for RAG Knowledge Base (sentence-transformers/all-MiniLM-L6-v2). <a href="https://huggingface.co/settings/tokens" target="_blank">Get token →</a></div>
                             <div class="input-group">
                                 <input type="password" class="form-control" name="hf_api_key" placeholder="<?= $hasKeys['hf'] ? 'Saved: ' . htmlspecialchars($masked['hf']) . ' — leave blank to keep' : 'hf_...' ?>" value="">
-                                <button type="button" class="btn btn-outline-secondary toggle-key" tabindex="-1"><i class="fas fa-eye"></i></button>
+                                <button type="button" class="btn btn-outline-secondary toggle-key" tabindex="-1" aria-label="View"><i class="fas fa-eye"></i></button>
                                 <button type="button" class="btn btn-outline-primary test-btn" data-provider="hf"><i class="fas fa-vial me-1"></i>Test</button>
                             </div>
                             <div class="small mt-1 test-result" data-provider="hf"></div>
@@ -121,7 +121,7 @@ $chainOrder = ['groq', 'openrouter', 'gemini'];
                                 <label class="form-label fw-semibold">Ollama Endpoint / Model</label>
                                 <div class="input-group input-group-sm mb-1">
                                     <input type="url" class="form-control" name="ollama_url" value="<?= htmlspecialchars((string)($cfg['ollama_url'] ?? '')) ?>" placeholder="http://localhost:11434">
-                                    <button type="button" class="btn btn-outline-primary test-btn" data-provider="ollama"><i class="fas fa-plug"></i></button>
+                                    <button type="button" class="btn btn-outline-primary test-btn" data-provider="ollama" aria-label="Test Ollama connection"><i class="fas fa-plug"></i></button>
                                 </div>
                                 <input type="text" class="form-control form-control-sm" name="ollama_model" value="<?= htmlspecialchars((string)($cfg['ollama_model'] ?? '')) ?>" placeholder="llama3.2:3b">
                                 <div class="small mt-1 test-result" data-provider="ollama"></div>

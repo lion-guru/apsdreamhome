@@ -109,7 +109,7 @@
           <button type="submit" class="btn btn-tenant-primary w-100"><i class="fas fa-filter me-1"></i> Filter</button>
         </div>
         <div class="col-md-1 d-flex align-items-end">
-          <a href="/admin/contracts-amc" class="btn btn-outline-secondary w-100"><i class="fas fa-times"></i></a>
+          <a href="/admin/contracts-amc" class="btn btn-outline-secondary w-100" aria-label="Close"><i class="fas fa-times"></i></a>
         </div>
       </form>
     </div>

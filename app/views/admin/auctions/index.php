@@ -134,7 +134,7 @@ ob_start();
                                         <?php if ($a['status'] === 'live'): ?>
                                             <a href="<?= BASE_URL ?>/admin/auctions/end/<?= $a['id'] ?>" class="btn btn-sm btn-outline-warning" data-aps-confirm="End this auction now?"><i class="fas fa-stop"></i></a>
                                         <?php endif; ?>
-                                        <form action="<?= BASE_URL ?>/admin/auctions/delete/<?= $a['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this auction and all bids?"><i class="fas fa-trash"></i></button></form>
+                                        <form action="<?= BASE_URL ?>/admin/auctions/delete/<?= $a['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this auction and all bids?" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

@@ -40,7 +40,7 @@ $statuses = $statuses ?? [];
                 <td>
                     <a href="<?= BASE_URL ?>/admin/grn/<?= $g['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                     <?php if ($g['status'] === 'draft'): ?>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/grn/delete/<?= $g['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this GRN?');"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
+                    <form method="POST" action="<?= BASE_URL ?>/admin/grn/delete/<?= $g['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this GRN?');"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                     <?php endif; ?>
                     <?php if (in_array($g['status'], ['draft','verified'])): ?>
                     <button type="button" class="btn btn-sm btn-outline-success" onclick="changeStatus(<?= $g['id'] ?>, 'accepted')"><i class="fas fa-check"></i> Accept</button>

@@ -22,7 +22,7 @@ ob_start();
         <div class="d-flex gap-2">
             <a href="<?= BASE_URL ?>/admin/nps/edit/<?= $survey['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit me-1"></i> Edit</a>
             <a href="<?= BASE_URL ?>/admin/nps" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Back to List</a>
-            <form action="<?= BASE_URL ?>/admin/nps/delete?id=<?= $survey['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete this survey and all responses?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
+            <form action="<?= BASE_URL ?>/admin/nps/delete?id=<?= $survey['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete this survey and all responses?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
         </div>
     </div>
 

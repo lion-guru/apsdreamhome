@@ -39,7 +39,7 @@ $statuses = $statuses ?? [];
                 <td><span class="badge bg-<?= match($o['status']) { 'approved'=>'success', 'received'=>'info', 'cancelled'=>'danger', default=>'warning' } ?>"><?= ucfirst($o['status']) ?></span></td>
                 <td><a href="<?= BASE_URL ?>/admin/purchase-orders/<?= $o['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                 <?php if ($o['status'] === 'pending'): ?>
-                <form method="POST" action="<?= BASE_URL ?>/admin/purchase-orders/approve/<?= $o['id'] ?>" class="d-inline" onsubmit="return confirm('Approve this PO?');"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i></button></form>
+                <form method="POST" action="<?= BASE_URL ?>/admin/purchase-orders/approve/<?= $o['id'] ?>" class="d-inline" onsubmit="return confirm('Approve this PO?');"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-outline-success" aria-label="Activate"><i class="fas fa-check"></i></button></form>
                 <?php endif; ?>
                 </td>
             </tr>

@@ -99,7 +99,7 @@ $today = $today ?? date('Y-m-d');
                                     <input type="text" name="lines[1][description]" class="form-control form-control-sm" placeholder="Line description">
                                 </td>
                                 <td class="align-middle text-center">
-                                    <button type="button" class="btn btn-sm btn-outline-danger remove-line" disabled><i class="fas fa-trash"></i></button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger remove-line" disabled aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
                             <!-- Line 2 -->
@@ -125,7 +125,7 @@ $today = $today ?? date('Y-m-d');
                                     <input type="text" name="lines[2][description]" class="form-control form-control-sm" placeholder="Line description">
                                 </td>
                                 <td class="align-middle text-center">
-                                    <button type="button" class="btn btn-sm btn-outline-danger remove-line"><i class="fas fa-trash"></i></button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger remove-line" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
                         </tbody>
@@ -290,7 +290,7 @@ document.getElementById('addLineBtn')?.addEventListener('click', function() {
             <input type="text" name="lines[${lineCounter}][description]" class="form-control form-control-sm" placeholder="Line description">
         </td>
         <td class="align-middle text-center">
-            <button type="button" class="btn btn-sm btn-outline-danger remove-line"><i class="fas fa-trash"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-line" aria-label="Delete"><i class="fas fa-trash"></i></button>
         </td>
     `;
     tbody.appendChild(newRow);

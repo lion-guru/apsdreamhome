@@ -103,9 +103,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 </a>
             </div>
             <div class="col-md-1 d-flex align-items-end">
-                <button type="button" class="btn btn-outline-dark w-100 btn-sm" onclick="exportFarmerLedger()">
-                    <i class="fas fa-download"></i>
-                </button>
+                <button type="button" class="btn btn-outline-dark w-100 btn-sm" onclick="exportFarmerLedger()" aria-label="Download"><i class="fas fa-download"></i></button>
             </div>
         </form>
     </div>

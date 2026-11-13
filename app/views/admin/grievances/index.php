@@ -216,9 +216,7 @@ $filters = $filters ?? [];
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-cog"></i>
-                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Settings"><i class="fas fa-cog"></i></button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li><a class="dropdown-item" href="#" onclick="updateStatus(<?= $g['id'] ?>, 'under_review')"><i class="fas fa-search me-2"></i>Under Review</a></li>
                                             <li><a class="dropdown-item" href="#" onclick="updateStatus(<?= $g['id'] ?>, 'investigation')"><i class="fas fa-magnifying-glass me-2"></i>Investigation</a></li>

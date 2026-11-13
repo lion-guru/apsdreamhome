@@ -223,10 +223,10 @@ ob_start();
                                             <i class="fas fa-star"></i>
                                         </a>
                                         <?php if ($t['status'] === 'pending'): ?>
-                                            <form action="<?= BASE_URL ?>/admin/reviews/approve-testimonial?id=<?= $t['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i></button></form>
-                                            <form action="<?= BASE_URL ?>/admin/reviews/reject-testimonial?id=<?= $t['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-warning"><i class="fas fa-times"></i></button></form>
+                                            <form action="<?= BASE_URL ?>/admin/reviews/approve-testimonial?id=<?= $t['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-success" aria-label="Activate"><i class="fas fa-check"></i></button></form>
+                                            <form action="<?= BASE_URL ?>/admin/reviews/reject-testimonial?id=<?= $t['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-warning" aria-label="Close"><i class="fas fa-times"></i></button></form>
                                         <?php endif; ?>
-                                        <form action="<?= BASE_URL ?>/admin/reviews/delete-testimonial?id=<?= $t['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
+                                        <form action="<?= BASE_URL ?>/admin/reviews/delete-testimonial?id=<?= $t['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

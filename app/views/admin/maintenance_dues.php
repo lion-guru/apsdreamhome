@@ -31,7 +31,7 @@ $stBadge = ['pending' => 'warning text-dark', 'paid' => 'success', 'waived' => '
         </select>
         <input type="month" name="bill_month" class="form-control form-control-sm" value="<?= $e($bill_month) ?>" onchange="this.form.submit()" title="Billing month">
         <input type="search" name="search" class="form-control form-control-sm" value="<?= $e($search) ?>" placeholder="Plot / name / phone">
-        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter"></i></button>
+        <button type="submit" class="btn btn-sm btn-primary" aria-label="Filter"><i class="fas fa-filter"></i></button>
         <a href="<?= $base ?>/admin/maintenance-dues" class="btn btn-sm btn-outline-secondary" title="Reset filters"><i class="fas fa-undo"></i></a>
     </form>
 </div>

@@ -53,7 +53,7 @@ $typeBadge = ['drone_video' => 'danger', 'site_photo' => 'success', 'layout_3d' 
                     <form method="POST" action="<?= $base ?>/admin/colonies/media/<?= (int)$r['id'] ?>/delete">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                         <input type="hidden" name="colony_id" value="<?= (int)($colony['id'] ?? 0) ?>">
-                        <button type="submit" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this media?"><i class="fas fa-trash"></i></button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this media?" aria-label="Delete"><i class="fas fa-trash"></i></button>
                     </form>
                 </div>
             </div>

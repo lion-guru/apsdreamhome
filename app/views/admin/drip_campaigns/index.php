@@ -123,9 +123,7 @@ ob_start();
                                         <form action="<?= BASE_URL ?>/admin/drip-campaigns/toggle?id=<?= $c['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-outline-<?= $c['status'] === 'active' ? 'warning' : 'success' ?>" title="<?= $c['status'] === 'active' ? 'Pause' : 'Activate' ?>">
                                             <i class="fas fa-<?= $c['status'] === 'active' ? 'pause' : 'play' ?>"></i>
                                         </button></form>
-                                        <form action="<?= BASE_URL ?>/admin/drip-campaigns/delete?id=<?= $c['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this campaign and all its data?">
-                                            <i class="fas fa-trash"></i>
-                                        </button></form>
+                                        <form action="<?= BASE_URL ?>/admin/drip-campaigns/delete?id=<?= $c['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this campaign and all its data?" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

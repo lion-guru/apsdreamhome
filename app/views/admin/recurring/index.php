@@ -59,7 +59,7 @@ $filters = $filters ?? ['status'=>''];
                         <?php if ($t['is_active'] && $t['next_execution_date'] <= date('Y-m-d')): ?>
                         <form method="POST" action="<?= BASE_URL ?>//admin/recurring/execute/<?= $t['id'] ?>" class="d-inline" onsubmit="return confirm('Execute now?');">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                            <button class="btn btn-sm btn-outline-success"><i class="fas fa-play"></i></button>
+                            <button class="btn btn-sm btn-outline-success" aria-label="Execute entry"><i class="fas fa-play"></i></button>
                         </form>
                         <?php endif; ?>
                     </td>

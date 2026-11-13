@@ -254,7 +254,7 @@ async function loadSlowQueries() {
             <td class="text-center">${q.ROWS_SENT || q.rows_sent || 0}</td>
             <td class="text-center">${q.ROWS_EXAMINED || q.rows_examined || 0}</td>
             <td>${q.DB || q.db || ''}</td>
-            <td><button class="btn btn-sm btn-outline-primary" onclick="explainQuery('${escapeJs(q.SQL_TEXT || q.sql_text || '')}')"><i class="fas fa-search"></i></button></td>
+            <td><button class="btn btn-sm btn-outline-primary" onclick="explainQuery('${escapeJs(q.SQL_TEXT || q.sql_text || '')}')" aria-label="Search"><i class="fas fa-search"></i></button></td>
         </tr>
     `).join('') || '<tr><td colspan="8" class="text-center text-muted">No slow queries found</td></tr>';
 }

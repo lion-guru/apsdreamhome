@@ -79,7 +79,7 @@ $steps = $steps ?? [];
                                             </button>
                                             <form method="POST" action="/admin/ivr-flows/<?= $s['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this step?')">
                                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                                                <button type="submit" class="btn btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                                <button type="submit" class="btn btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                             </form>
                                         </div>
                                     </td>

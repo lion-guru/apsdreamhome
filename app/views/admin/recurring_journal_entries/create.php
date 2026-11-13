@@ -89,7 +89,7 @@ function addLine() {
         <td><input type="number" name="lines[${idx}][credit_amount]" class="form-control form-control-sm" step="0.01" min="0" value="0" oninput="calcTotal()"></td>
         <td><input type="text" name="lines[${idx}][description]" class="form-control form-control-sm"></td>
         <td><input type="number" name="lines[${idx}][line_order]" class="form-control form-control-sm" value="${idx+1}" min="1"></td>
-        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeLine(${idx})"><i class="fas fa-trash"></i></button></td>
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeLine(${idx})" aria-label="Delete"><i class="fas fa-trash"></i></button></td>
     `;
     tbody.appendChild(row);
     calcTotal();

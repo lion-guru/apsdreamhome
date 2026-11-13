@@ -141,9 +141,9 @@ ob_start();
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/marketing-campaigns/show/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                                         <?php if ($c['status'] === 'draft'): ?>
-                                            <form action="<?= BASE_URL ?>/admin/marketing-campaigns/send/<?= $c['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-success" data-aps-confirm="Send this campaign now?"><i class="fas fa-paper-plane"></i></button></form>
+                                            <form action="<?= BASE_URL ?>/admin/marketing-campaigns/send/<?= $c['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-success" data-aps-confirm="Send this campaign now?" aria-label="Send"><i class="fas fa-paper-plane"></i></button></form>
                                         <?php endif; ?>
-                                        <form action="<?= BASE_URL ?>/admin/marketing-campaigns/delete?id=<?= $c['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this campaign?"><i class="fas fa-trash"></i></button></form>
+                                        <form action="<?= BASE_URL ?>/admin/marketing-campaigns/delete?id=<?= $c['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this campaign?" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

@@ -157,7 +157,7 @@ $variance = $variance ?? [];
                             <input type="number" name="amount" class="form-control" step="0.01" min="0.01" placeholder="Amount" required>
                         </div>
                         <div class="col-md-1">
-                            <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus"></i></button>
+                            <button type="submit" class="btn btn-success w-100" aria-label="Add"><i class="fas fa-plus"></i></button>
                         </div>
                     </form>
                 </div>

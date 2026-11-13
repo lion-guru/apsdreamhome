@@ -211,7 +211,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <td style="color:#94a3b8;font-size:0.8rem;"><?= date('d M Y', strtotime($t['created_at'])) ?></td>
                                     <td>
                                         <a href="<?= $base ?>/admin/campaign-templates/edit/<?= (int)$t['id'] ?>" class="btn-action btn-edit"><i class="fas fa-pen"></i></a>
-                                        <form action="<?= $base ?>/admin/campaign-templates/delete/<?= (int)$t['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn-action btn-delete" onclick="return confirm('Delete this template?');"><i class="fas fa-trash"></i></button></form>
+                                        <form action="<?= $base ?>/admin/campaign-templates/delete/<?= (int)$t['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn-action btn-delete" onclick="return confirm('Delete this template?');" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

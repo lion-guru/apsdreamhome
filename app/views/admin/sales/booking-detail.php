@@ -278,7 +278,7 @@ $plot_gata = $plot_gata ?? null;
                         <td class="text-end">
                             <form method="post" action="<?= htmlspecialchars($base ?? '') ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/co-owners/delete/<?= (int)($co['id'] ?? 0) ?>" class="d-inline">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" data-aps-confirm="Remove this co-owner?"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger" data-aps-confirm="Remove this co-owner?" aria-label="Delete"><i class="fas fa-trash"></i></button>
                             </form>
                         </td>
                     </tr>

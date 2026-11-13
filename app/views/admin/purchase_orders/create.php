@@ -33,7 +33,7 @@ $today = $today ?? date('Y-m-d');
                         <td><input type="number" name="items[1][discount_percent]" class="form-control form-control-sm po-disc" step="0.01" min="0" value="0"></td>
                         <td><input type="number" name="items[1][tax_percent]" class="form-control form-control-sm po-tax" step="0.01" min="0" value="0"></td>
                         <td class="text-end fw-bold po-total">0.00</td>
-                        <td><button type="button" class="btn btn-sm btn-outline-danger po-remove" disabled><i class="fas fa-trash"></i></button></td>
+                        <td><button type="button" class="btn btn-sm btn-outline-danger po-remove" disabled aria-label="Delete"><i class="fas fa-trash"></i></button></td>
                     </tr>
                 </tbody>
             </table>
@@ -91,7 +91,7 @@ document.getElementById('addLineBtn').addEventListener('click', function() {
     let newRow = document.createElement('tr');
     newRow.dataset.line = poLineCount;
     let idx = poLineCount;
-    newRow.innerHTML = '<td><input type="text" name="items[' + idx + '][item_name]" class="form-control form-control-sm" required></td><td><input type="text" name="items[' + idx + '][item_description]" class="form-control form-control-sm"></td><td><input type="text" name="items[' + idx + '][unit]" class="form-control form-control-sm" value="Nos"></td><td><input type="number" name="items[' + idx + '][quantity]" class="form-control form-control-sm po-qty" step="0.01" min="1" value="1" required></td><td><input type="number" name="items[' + idx + '][unit_price]" class="form-control form-control-sm po-price" step="0.01" min="0" value="0" required></td><td><input type="number" name="items[' + idx + '][discount_percent]" class="form-control form-control-sm po-disc" step="0.01" min="0" value="0"></td><td><input type="number" name="items[' + idx + '][tax_percent]" class="form-control form-control-sm po-tax" step="0.01" min="0" value="0"></td><td class="text-end fw-bold po-total">0.00</td><td><button type="button" class="btn btn-sm btn-outline-danger po-remove"><i class="fas fa-trash"></i></button></td>';
+    newRow.innerHTML = '<td><input type="text" name="items[' + idx + '][item_name]" class="form-control form-control-sm" required></td><td><input type="text" name="items[' + idx + '][item_description]" class="form-control form-control-sm"></td><td><input type="text" name="items[' + idx + '][unit]" class="form-control form-control-sm" value="Nos"></td><td><input type="number" name="items[' + idx + '][quantity]" class="form-control form-control-sm po-qty" step="0.01" min="1" value="1" required></td><td><input type="number" name="items[' + idx + '][unit_price]" class="form-control form-control-sm po-price" step="0.01" min="0" value="0" required></td><td><input type="number" name="items[' + idx + '][discount_percent]" class="form-control form-control-sm po-disc" step="0.01" min="0" value="0"></td><td><input type="number" name="items[' + idx + '][tax_percent]" class="form-control form-control-sm po-tax" step="0.01" min="0" value="0"></td><td class="text-end fw-bold po-total">0.00</td><td><button type="button" class="btn btn-sm btn-outline-danger po-remove" aria-label="Delete"><i class="fas fa-trash"></i></button></td>';
     tbody.appendChild(newRow);
     poUpdateTotals();
 });

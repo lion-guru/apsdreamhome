@@ -93,7 +93,7 @@ $roleBadge = ['mason' => 'warning text-dark', 'helper' => 'info text-dark', 'ope
                 <td class="text-end">
                     <form method="POST" action="<?= $base ?>/admin/construction/muster-roll/delete/<?= (int)$l['id'] ?>" class="d-inline">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                        <button type="submit" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this entry?"><i class="fas fa-trash"></i></button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this entry?" aria-label="Delete"><i class="fas fa-trash"></i></button>
                     </form>
                 </td>
             </tr>

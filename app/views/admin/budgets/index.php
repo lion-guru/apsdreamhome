@@ -80,7 +80,7 @@ $statuses = $statuses ?? ['draft', 'submitted', 'approved', 'rejected'];
                             <a href="<?= BASE_URL ?>/admin/budgets/<?= $b['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                             <a href="<?= BASE_URL ?>/admin/budgets/edit/<?= $b['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-edit"></i></a>
                             <?php if ($b['status'] === 'draft'): ?>
-                            <form method="POST" action="<?= BASE_URL ?>/admin/budgets/approve/<?= $b['id'] ?>" class="d-inline" onsubmit="return confirm('Approve budget?');"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button type="submit" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i></button></form>
+                            <form method="POST" action="<?= BASE_URL ?>/admin/budgets/approve/<?= $b['id'] ?>" class="d-inline" onsubmit="return confirm('Approve budget?');"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button type="submit" class="btn btn-sm btn-outline-success" aria-label="Activate"><i class="fas fa-check"></i></button></form>
                             <?php endif; ?>
                         </td>
                     </tr>

@@ -26,10 +26,10 @@
                                     <td><?= date('d M Y', strtotime($r['created_at'])) ?></td>
                                     <td>
                                         <?php if ($r['status'] !== 'approved'): ?>
-                                            <form action="<?= BASE_URL ?>/admin/directory/approve-review/<?= $r['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i></button></form>
+                                            <form action="<?= BASE_URL ?>/admin/directory/approve-review/<?= $r['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-success" aria-label="Activate"><i class="fas fa-check"></i></button></form>
                                         <?php endif; ?>
                                         <?php if ($r['status'] !== 'rejected'): ?>
-                                            <form action="<?= BASE_URL ?>/admin/directory/reject-review/<?= $r['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times"></i></button></form>
+                                            <form action="<?= BASE_URL ?>/admin/directory/reject-review/<?= $r['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Reject"><i class="fas fa-times"></i></button></form>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

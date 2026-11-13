@@ -27,7 +27,7 @@
                                     <td><?= $m['price_date'] ? date('d M Y', strtotime($m['price_date'])) : '-' ?></td>
                                     <td><span class="badge bg-<?= $m['status'] === 'active' ? 'success' : 'secondary' ?>"><?= $m['status'] ?></span></td>
                                     <td>
-                                        <form action="<?= BASE_URL ?>/admin/directory/delete-material/<?= $m['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
+                                        <form action="<?= BASE_URL ?>/admin/directory/delete-material/<?= $m['id'] ?>" method="POST" class="d-inline" data-aps-confirm="Delete?"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

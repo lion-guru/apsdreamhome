@@ -172,9 +172,7 @@ $today = date('Y-m-d');
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/associate-offers/delete" class="d-inline">
                                                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                                                     <input type="hidden" name="id" value="<?= (int)$o['id'] ?>">
-                                                    <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this draft?')">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this draft?')" aria-label="Delete"><i class="fas fa-trash"></i></button>
                                                 </form>
                                             <?php elseif (($o['status'] ?? '') === 'active'): ?>
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/associate-offers/close" class="d-inline">

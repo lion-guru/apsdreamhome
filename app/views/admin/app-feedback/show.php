@@ -184,7 +184,7 @@ $typeColors = ['bug' => 'danger', 'feature' => 'primary', 'improvement' => 'info
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i></button>
+                            <button type="submit" class="btn btn-primary" aria-label="Save"><i class="fas fa-save"></i></button>
                         </div>
                     </form>
 

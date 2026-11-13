@@ -38,8 +38,8 @@ $statuses = $statuses ?? [];
                 <td><span class="badge bg-<?= $r['status']==='active'?'success':'secondary' ?>"><?= ucfirst($r['status']) ?></span></td>
                 <td>
                     <a href="<?= BASE_URL ?>/admin/scheduled-reports/<?= $r['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
-                    <button type="button" class="btn btn-sm btn-success" onclick="runNow(<?= $r['id'] ?>)"><i class="fas fa-play"></i></button>
-                    <form method="POST" action="<?= BASE_URL ?>/admin/scheduled-reports/delete/<?= $r['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this schedule?');"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
+                    <button type="button" class="btn btn-sm btn-success" onclick="runNow(<?= $r['id'] ?>)" aria-label="Run now"><i class="fas fa-play"></i></button>
+                    <form method="POST" action="<?= BASE_URL ?>/admin/scheduled-reports/delete/<?= $r['id'] ?>" class="d-inline" onsubmit="return confirm('Delete this schedule?');"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                 </td>
             </tr>
         <?php endforeach; endif; ?>

@@ -89,7 +89,7 @@ $base = BASE_URL ?? '';
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>
-                    <select name="status" class="form-select form-select-sm">
+                    <select name="status" class="form-select form-select-sm" aria-label="Filter by status">
                         <option value="">All Status</option>
                         <?php foreach (['new','contacted','qualified','proposal','negotiation','converted','closed','lost','dead'] as $s): ?>
                             <option value="<?= $s ?>" <?= ($filters['status'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option>
@@ -98,7 +98,7 @@ $base = BASE_URL ?? '';
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Source</label>
-                    <select name="source" class="form-select form-select-sm">
+                    <select name="source" class="form-select form-select-sm" aria-label="Filter by source">
                         <option value="">All Sources</option>
                         <?php foreach (['website','referral','walk_in','phone_call','social_media','campaign','manual','api'] as $s): ?>
                             <option value="<?= $s ?>" <?= ($filters['source'] ?? '') === $s ? 'selected' : '' ?>><?= ucfirst(str_replace('_',' ',$s)) ?></option>
@@ -107,7 +107,7 @@ $base = BASE_URL ?? '';
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Priority</label>
-                    <select name="priority" class="form-select form-select-sm">
+                    <select name="priority" class="form-select form-select-sm" aria-label="Filter by priority">
                         <option value="">All</option>
                         <?php foreach (['low','medium','high','urgent'] as $p): ?>
                             <option value="<?= $p ?>" <?= ($filters['priority'] ?? '') === $p ? 'selected' : '' ?>><?= ucfirst($p) ?></option>
@@ -128,18 +128,18 @@ $base = BASE_URL ?? '';
     <div class="card border-0 shadow-sm mb-3 d-none" id="bulkActionsBar">
         <div class="card-body py-2 d-flex align-items-center gap-3 flex-wrap">
             <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
-            <select id="bulkAction" class="form-select form-select-sm min-w-140">
+            <select id="bulkAction" class="form-select form-select-sm min-w-140" aria-label="Bulk action">
                 <option value="">Bulk Actions...</option>
                 <option value="status">Change Status</option>
                 <option value="assign">Assign To</option>
                 <option value="delete">Delete Selected</option>
             </select>
-            <select id="bulkStatus" class="form-select form-select-sm d-none min-w-140">
+            <select id="bulkStatus" class="form-select form-select-sm d-none min-w-140" aria-label="Set bulk status">
                 <?php foreach (['new','contacted','qualified','proposal','negotiation','converted','closed','lost','dead'] as $s): ?>
                     <option value="<?= $s ?>"><?= ucfirst($s) ?></option>
                 <?php endforeach; ?>
             </select>
-            <select id="bulkAssign" class="form-select form-select-sm d-none min-w-160">
+            <select id="bulkAssign" class="form-select form-select-sm d-none min-w-160" aria-label="Assign bulk leads">
                 <option value="">Select User...</option>
                 <?php
                 $bulkUsers = $assignees ?? $users ?? [];
@@ -169,7 +169,7 @@ $base = BASE_URL ?? '';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th width="30"><input type="checkbox" id="selectAll" class="form-check-input"></th>
+                                <th width="30"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all leads"></th>
                                 <th>Lead</th>
                                 <th>Contact</th>
                                 <th>Source</th>
@@ -183,7 +183,7 @@ $base = BASE_URL ?? '';
                         <tbody>
                             <?php foreach ($leads as $lead): ?>
                             <tr data-lead-id="<?= $lead['id'] ?>">
-                                <td><input type="checkbox" class="form-check-input lead-checkbox" value="<?= $lead['id'] ?>"></td>
+                                <td><input type="checkbox" class="form-check-input lead-checkbox" value="<?= $lead['id'] ?>" aria-label="Select lead <?= htmlspecialchars($lead['name'] ?? ('#' . $lead['id'])) ?>"></td>
                                 <td>
                                     <a href="<?= $base ?>/admin/leads/<?= $lead['id'] ?>" class="text-decoration-none fw-semibold">
                                         <?= htmlspecialchars($lead['name'] ?? 'N/A') ?>

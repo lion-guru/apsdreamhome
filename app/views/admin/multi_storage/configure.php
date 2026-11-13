@@ -87,7 +87,7 @@ $fields = $fieldDefs[$provider] ?? [];
                         <?php if ($f['type'] === 'password'): ?>
                             <div class="input-group">
                                 <input type="password" name="configs[<?= $provider ?>][<?= $f['key'] ?>]" class="form-control" value="<?= htmlspecialchars($config[$key] ?? '') ?>" placeholder="<?= htmlspecialchars($placeholder) ?>">
-                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword(this)"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword(this)" aria-label="View"><i class="fas fa-eye"></i></button>
                             </div>
                         <?php elseif ($f['type'] === 'textarea'): ?>
                             <textarea name="configs[<?= $provider ?>][<?= $f['key'] ?>]" class="form-control" rows="6" placeholder="<?= htmlspecialchars($placeholder) ?>"><?= htmlspecialchars($config[$key] ?? '') ?></textarea>

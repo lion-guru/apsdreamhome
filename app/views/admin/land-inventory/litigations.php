@@ -71,7 +71,7 @@ $stBadge = ['pending' => 'warning text-dark', 'decided_in_favor' => 'success', '
                     </form>
                     <form method="POST" action="<?= $base ?>/admin/land-inventory/litigations/delete/<?= (int)$r['id'] ?>" class="d-inline">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                        <button type="submit" class="btn btn-sm btn-outline-danger" data-aps-confirm="Remove this case?"><i class="fas fa-trash"></i></button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger" data-aps-confirm="Remove this case?" aria-label="Delete"><i class="fas fa-trash"></i></button>
                     </form>
                 </td>
             </tr>
