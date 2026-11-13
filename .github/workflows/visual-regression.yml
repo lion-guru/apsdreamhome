@@ -87,15 +87,29 @@ jobs:
           # authenticated page could ever render, which is why 22 of the 22
           # tests failed.  database/schema_current.sql is the real schema
           # (1043 tables, no rows) and is what the job needs.
-          mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/schema_current.sql \
-            || echo "Schema import failed - continuing with whatever the service created"
+          # S471: the `|| echo` swallowed a FAILED import, so the job could
+          # render every page against an EMPTY database and still report
+          # success - the captures were meaningless.  The import must fail
+          # the job, and the table count must be asserted.
+          mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/schema_current.sql
+          TABLES=$(mysql -h 127.0.0.1 -P 3306 -u root -proot -N -B -e "SELECT COUNT(*) FROM information_schema.tables WHERE TABLE_SCHEMA='apsdreamhome';")
+          echo "tables in the visual-regression schema: $TABLES"
+          if [ "$TABLES" -lt 1000 ]; then
+            echo "::error::the schema fixture imported only $TABLES tables - every capture would be of an empty database"
+            exit 1
+          fi
 
           # S463: the suite logs in through the app's dev ?test_login=N
           # bypass, which picks a user BY ROLE.  With an empty database there
           # is no such user, so the customer / associate / agent dashboards
           # could not render at all.  Four accounts, idempotent.
-          mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/seed_visual_test_users.sql \
-            || echo "User seed failed - continuing"
+          mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/seed_visual_test_users.sql
+          USERS=$(mysql -h 127.0.0.1 -P 3306 -u root -proot -N -B -e "SELECT COUNT(*) FROM apsdreamhome.users WHERE email LIKE 'visual-%@apsdreamhome.local';")
+          echo "seeded visual test accounts: $USERS"
+          if [ "$USERS" -lt 4 ]; then
+            echo "::error::the visual test accounts did not seed ($USERS of 4) - every authenticated capture would be a login page"
+            exit 1
+          fi
 
       - name: Install dependencies
         run: npm ci

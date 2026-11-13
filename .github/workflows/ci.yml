@@ -51,8 +51,22 @@ jobs:
           # The scanner compares the app's SQL against the schema, so against
           # that fragment it was comparing against fiction.  Use the real
           # schema (1043 tables, no rows).
-          mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/schema_current.sql \
-            || echo "Schema import failed - using whatever the service created"
+          # S471: this import was swallowed by `|| echo`, so a FAILED import
+          # left the gate comparing the app against an EMPTY database - 814
+          # tables "missing", 686 NEW mismatches, and a red build whose
+          # message pointed at the app instead of at the fixture.  The
+          # fixture itself was the cause: database/schema_current.sql had
+          # been written as UTF-16LE, so mysql died on the NUL bytes.
+          # A failed import must fail the job, and the table count must be
+          # asserted - an import that silently produced 0 tables is the
+          # same failure wearing a different hat.
+          mysql -h 127.0.0.1 -P 3306 -u root -proot apsdreamhome < database/schema_current.sql
+          TABLES=$(mysql -h 127.0.0.1 -P 3306 -u root -proot -N -B -e "SELECT COUNT(*) FROM information_schema.tables WHERE TABLE_SCHEMA='apsdreamhome';")
+          echo "tables in the CI schema: $TABLES"
+          if [ "$TABLES" -lt 1000 ]; then
+            echo "::error::the schema fixture imported only $TABLES tables - the schema gate would compare the app against an empty database"
+            exit 1
+          fi
       - name: Apply migrations on top of the imported schema
         # S467: the schema dump is a SNAPSHOT, so a column added by a migration
         # after the dump was taken is missing in CI - and the scanner then
