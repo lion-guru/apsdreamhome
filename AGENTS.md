@@ -7524,3 +7524,36 @@ Next-free = **519** (this session; S518 logged above).
 
 ### Key Lessons
 _946. **Colony association can exist either directly on the booking or on the allocated plot.** When calculating aggregate revenue or PnL per colony, joining `plots p ON (p.id = pb.plot_id OR p.id = b.plot_id)` and testing `(pb.colony_id = ? OR p.colony_id = ?)` prevents false ₹0 revenue calculations for bookings that rely on the plot's colony affiliation.
+
+
+## Session 519: S518 Payment-Transactions FK Re-Pointed, Live Manual-UPI Money Path Verified End-to-End (2026-11-14)
+
+### Trigger
+Owner: explicit "yes, test the money path too" — live verification of the manual UPI payment submission path (a genuinely untraversed path) as `customer1@apsdreamhome.com`.
+
+### What was discovered, what was done
+1. **Real production bug found by actually testing a customer action**: `payment_transactions.fk_payment_transactions_booking_id` referenced legacy `bookings` (rows 9592–9611) while every live code path sets `booking_id` to `plot_bookings.id`. A customer submitting a manual UTR got a hard `1452` and the payment was **never recorded**. This is exactly the same family of bug Sessions 505–517 fixed in 12 sibling tables (`booking_payment_schedules`, `booking_payment_receipts`, `booking_demand_letters`, …) — same stale legacy FK pointing at a table holding no customer data.
+2. **Safety dump kept** — `backups/db/payment_transactions_pre_fk_fix.sql` (4 KB, `booking_id = NULL` verified safe for re-point).
+3. **Migration `database/migrations/repoint_payment_transactions_fk_s518.php`** — idempotent: drop + re-add `fk_payment_transactions_booking_id` → `plot_bookings(id)` ON DELETE SET NULL ON UPDATE CASCADE. Run 1: re-pointed; Run 2: SKIP (already correct).
+4. **Live money-path verified after fix**:
+   - Customer1 real login → `/user/installments` → HTTP 200, 12 rows, ₹73,260 on 05 Dec 2026, CSRF-TOKEN correct.
+   - POST with real CSRF to `/user/installments/25/pay` with `payment_method=upi_manual&utr_number=TEST...` → `{"success":true,"message":"UPI payment reference recorded!...","redirect":".../installments/25/success?utr=..."}`.
+   - DB writes verified: `payment_transactions` id=6, `booking_id=12, amount=73260.00, payment_status=pending, transaction_id=APS-UPI-20261113-0983`; `booking_payment_receipts` id=15, `installment_id=25, payment_mode=upi, status=pending`.
+   - The manual UPI path (a genuinely untraversed path) is now live-verified end-to-end.
+
+### Honest status
+- Sessions 518 (enum/a11y) and 516 (receipts/PDF) had already landed; this round's only change is the one-word class of fix above + one migration (committed as `S518`).
+- The UTR instrument is pending manual verification by design (accounts team verifies UTR against bank statement before marking cleared) — correct behaviour for this business model.
+- 12 OTHER tables still carry the same stale `bookings → id` FK (`agreements`, `booking_documents`, `booking_payments`, `booking_refunds`, `booking_status_history`, `booking_transfers`, `emi_schedule`, `field_collections`, `payments`, `payment_orders`, `sales`, `support_tickets`). They are unused by live customer flows right now but will 1265 the first time a live code path touches them. **NOT taken this round** — one at a time, same idempotent pattern as S507+.
+- Temp probe artifacts deleted. Safety dumps kept.
+
+### Files changed
+`database/migrations/repoint_payment_transactions_fk_s518.php`
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **520** (this session; S518 covered by S519 registration).
+
+### Key Lessons (carried, continued)
+_947. **A broken money path is only found by walking the path.** Static scan enumerates candidates; the probe is what turns "this branch exists in code" into "this action succeeds against the live DB." Every 1265 enum/FK class in this codebase was found by probing a real call path.
+_948. **The same stale-reference class recurs — don't assume it was fixed once.** Sessions 505/512/515/516/517 fixed sibling tables one at a time; this one survived because no customer actually submitted an UTR until owner said "test the money path."
+_949. **A payment record receipt and a payment transaction row are two different ledgers.** The app writes both; auditing only one misses drift between them.
