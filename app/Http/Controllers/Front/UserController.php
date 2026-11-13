@@ -452,7 +452,10 @@ class UserController extends BaseController
 
         try {
             $installment = $this->db->fetch("
-                SELECT bps.*, pb.customer_id, pb.booking_number, pb.total_plot_value
+                SELECT bps.*,
+                       bps.amount AS emi_amount,
+                       bps.installment_no AS installment_number,
+                       pb.customer_id, pb.booking_number, pb.total_plot_value
                 FROM booking_payment_schedules bps
                 JOIN plot_bookings pb ON bps.booking_id = pb.id
                 WHERE bps.id = ? AND pb.customer_id = ?
@@ -1142,8 +1145,35 @@ class UserController extends BaseController
             header('Location: ' . BASE_URL . '/login?redirect=/user/investment-plans');
             exit;
         }
+        $userId = (int)$_SESSION['user_id'];
+        $svc = new \App\Services\InvestmentService();
+        $rawStats = $svc->getStats($userId);
+        $stats = [
+            'total' => $rawStats['total_value'] ?? 0,
+            'active' => $rawStats['active_count'] ?? 0,
+            'principal' => $rawStats['total_invested'] ?? 0,
+            'current_value' => $rawStats['total_value'] ?? 0,
+            'returns' => $rawStats['total_returns'] ?? 0,
+            'level' => $rawStats['level'] ?? 'Bronze',
+            'next_level' => $rawStats['next_level'] ?? 'Silver',
+            'next_threshold' => $rawStats['next_threshold'] ?? 50000,
+            'progress_pct' => $rawStats['level_progress_pct'] ?? ($rawStats['progress_pct'] ?? 0),
+            'total_invested' => $rawStats['total_invested'] ?? 0,
+            'total_value' => $rawStats['total_value'] ?? 0,
+            'total_returns' => $rawStats['total_returns'] ?? 0,
+            'active_count' => $rawStats['active_count'] ?? 0,
+        ];
+
+        $data = [
+            'page_title' => 'Investment Plans - APS Dream Home',
+            'current_page' => 'investment',
+            'plans' => $svc->listPlans(),
+            'investments' => $svc->getUserInvestments($userId),
+            'stats' => $stats,
+        ];
+
         $this->layout = ($_SESSION['role'] ?? '') === 'associate' ? 'layouts/associate' : 'layouts/customer';
-        $this->render('pages/user/investment_plans', ['page_title' => 'Investment Plans - APS Dream Home', 'current_page' => 'investment']);
+        $this->render('pages/user/investment_plans', $data);
     }
 
     /**
@@ -1981,6 +2011,8 @@ class UserController extends BaseController
         try {
             $installment = $this->db->fetch("
                 SELECT ips.*,
+                       ips.amount AS emi_amount,
+                       ips.installment_no AS installment_number,
                        pb.booking_number, pb.customer_id, pb.total_plot_value, pb.status as booking_status,
                        p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
                        c.name as colony_name
@@ -2080,7 +2112,10 @@ class UserController extends BaseController
 
         try {
             $installment = $this->db->fetch("
-                SELECT ips.*, pb.customer_id, pb.booking_number, pb.id as bid
+                SELECT ips.*,
+                       ips.amount AS emi_amount,
+                       ips.installment_no AS installment_number,
+                       pb.customer_id, pb.booking_number, pb.id as bid
                 FROM booking_payment_schedules ips
                 JOIN plot_bookings pb ON ips.booking_id = pb.id
                 WHERE ips.id = ?
@@ -2146,10 +2181,10 @@ class UserController extends BaseController
                     ])
                 ]);
 
-                // Update installment notes
+                // Update installment remarks
                 $this->db->prepare("
                     UPDATE booking_payment_schedules
-                    SET notes = CONCAT(COALESCE(notes, ''), ' [UPI UTR submitted: ', ?, ']'),
+                    SET remarks = CONCAT(COALESCE(remarks, ''), ' [UPI UTR submitted: ', ?, ']'),
                         updated_at = NOW()
                     WHERE id = ?
                 ")->execute([$utrNumber, $instId]);
@@ -2305,6 +2340,8 @@ class UserController extends BaseController
         try {
             $installment = $this->db->fetch("
                 SELECT ips.*,
+                       ips.amount AS emi_amount,
+                       ips.installment_no AS installment_number,
                        pb.booking_number, pb.customer_id, pb.total_plot_value, pb.status as booking_status,
                        p.plot_number, p.block, p.area_sqft, p.total_price as plot_price,
                        c.name as colony_name
@@ -2340,7 +2377,7 @@ class UserController extends BaseController
             $allInstallments = $this->db->fetchAll("
                 SELECT * FROM booking_payment_schedules
                 WHERE booking_id = ?
-                ORDER BY installment_number ASC
+                ORDER BY installment_no ASC
             ", [(int) $installment['booking_id']]);
         } catch (\Throwable $e) {
             error_log("UserController::installmentSuccess fetch schedule: " . $e->getMessage());
@@ -3074,7 +3111,12 @@ class UserController extends BaseController
 
         try {
             $st = $pdo->prepare("
-                SELECT ips.*, pb.booking_number, p.plot_number, c.name as colony_name,
+                SELECT ips.*,
+                       ips.amount AS emi_amount,
+                       ips.amount AS amount_due,
+                       ips.paid_amount AS amount_paid,
+                       ips.installment_no AS installment_number,
+                       pb.booking_number, p.plot_number, c.name as colony_name,
                        pb.total_plot_value, pb.status as booking_status
                 FROM booking_payment_schedules ips
                 JOIN plot_bookings pb ON ips.booking_id = pb.id

@@ -1770,7 +1770,7 @@ class BookingLifecycleService
                 $instStmt = $this->db->prepare("
                     SELECT * FROM booking_payment_schedules 
                     WHERE booking_id = ? AND status IN ('pending', 'partial') 
-                    ORDER BY installment_number ASC LIMIT 1
+                    ORDER BY installment_no ASC LIMIT 1
                 ");
                 $instStmt->execute([$mandate['booking_id']]);
                 $installment = $instStmt->fetch(PDO::FETCH_ASSOC);

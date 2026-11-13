@@ -1117,7 +1117,7 @@ class AgreementPDFService extends ServiceTenantTrait
             $sql = "SELECT * FROM booking_payment_schedules WHERE booking_id = ?";
             $params = [(int)$bookingId];
             $this->tenantWhere($sql, $params);
-            $sql .= ' ORDER BY installment_number ASC';
+            $sql .= ' ORDER BY installment_no ASC';
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
