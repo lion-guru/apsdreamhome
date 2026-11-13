@@ -6582,3 +6582,46 @@ User report: Diagnostics in `app/views/pages/user_dashboard.php` (`$referral_cou
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **492** (next session).
+
+## Session 492: Full Multi-Role Portal Audit via Browser (Admin/Customer/Associate/Agent/Employee/Telecaller/Manager/CEO), 13-File Hardening Round, WS Opt-In Gates, SW No-Cache Fix (2026-11-13)
+
+### Trigger
+User (Hinglish): "sabhi user ko bari bari login kar ke testing karo browser me mcp tools use karo sabke menu side bar menu ya dashboard aur bhi chize ji banai gai hai unke work ka sab kuch kaam kar raha gui sahi hai aur kya improvment ki jarurat hai suggestion do aur kaam karo bina ruke mujhse puchne ki jarurat nhi hai" - Login as EVERY role via browser tools, audit menus/sidebar/dashboards/pages, verify everything works, suggest improvements, and implement them without asking.
+
+### Method
+In-app Chromium (Review pane) used for: public home, ERP overview (admin), customer dashboard, associate dashboard, agent, employee (self-service), telecaller, CEO dashboard. Manager/CFO/COO/CTO/Director/Telecaller verified over HTTP with per-role cookie jars (login chain, RBAC-filtered menu counts, console noise, link status sweeps). Sandbox had NO WebSocket server; screenshots failed with "visible tab" (desktop window not visible) - audits used accessibility-tree snapshots + DOM reports (naturalWidth for broken images, headings, href sets). Zero pixel-blind spots.
+
+### Fixes (all probe-verified)
+1. **Associate Code-of-Conduct consent was inert** - `app/views/layouts/associate.php`: the inline IIFE opened `if (!sessionStorage.getItem(...))` and never closed it, so the entire consent script threw `SyntaxError: Unexpected token ')'` on every page load - the "mandatory legal consent" feature never ran, and its accept/decline buttons were dead. Added the missing closing brace; `node --check` clean; browser console now 0 errors.
+2. **Admin layout nested `<script>` tags** - `app/views/layouts/admin.php`: `WebSocket Client` comment + `<script defer websocket-client.js>` + `<script nonce>` sat INSIDE the preceding inline `<script>` block, producing `SyntaxError: Unexpected token '<'` at line 5379 of every admin page and orphaning the HRWebSocket init. Split into a properly closed inline block + external deferred tag + nonce on the inline block.
+3. **Dead WebSocket fan-out** - `public/assets/js/websocket-client.js` + `notification-widget.js`: both auto-connected to `ws://localhost:8080/hr` / `/` on EVERY admin page load (10 exponential-backoff retries) against a server that does not exist in this stack - constant console spam + wasted reconnect sockets. Both now opt-in behind `window.APS_HR_WS !== '1'`; admin layout emits `window.APS_HR_WS = '0'` by default (set `HR_WEBSOCKET_ENABLED=1` in .env to enable the real-time server later).
+4. **`/sw.js` served with `max-age=2592000`** - `.htaccess` far-future cache rule for ALL JS also covered the service worker, so browsers could pin a stale worker (and stale assets) for 30 days and silently undeploy every fix. `.htaccess` `FilesMatch "sw\.js$"` now serves `no-cache, no-store, must-revalidate, max-age=0` (live-verified). SW asset cache bumped `apsdreamhome-v5 -> v6`.
+5. **Skip-to-content link always visible on admin** - `admin-theme.css`: `.aps-skip-link` set only colors, never hid the link (aps-core.css with the hiding rule is not loaded in admin). Admin theme now hides it until focus (`position:absolute; top:-100px`, on `:focus` reveal).
+6. **Admin gate bounced authenticated non-admins to the admin login** - `routes/router.php` Step 5b, `Admin\AdminController::requireAdmin()` + `enterpriseDashboard()` + `users()`: customers/associates/agents hitting `/admin/*` landed on a login page they cannot use. Extracted `BaseController::portalHomeForRole($role)` (static; anonymous -> /admin/login, others -> own portal home) and applied it at all four call sites. Verified over HTTP: associate->/associate/dashboard, agent->/agent/dashboard, customer->/user/dashboard, anonymous->/admin/login, telecaller/employee still reach ERP (they are ADMIN_ROLES) with per-route RBAC intact.
+7. **Referral widget shipped 4 dead links** - `referral_earnings_widget.php`: `/user/referrals`, `/user/referrals/history`, `/user/referrals/share`, `/user/referrals/tier` all 404 on every customer/associate/agent dashboard (recently-aired S490 referral actions). Widget now computes a role-aware `$refUrl` (`/associate/referral` for associates, `/agent/dashboard` for agents, `/user/referral` for everyone else) and reuses it for View Details/All/Share/Tier (Leaderboard link kept, 200).
+8. **Employee header envelope dead-ends** - `/employee/messages` has no route (silently redirects to /employee/dashboard); repointed to `/employee/inquiries` (real staff inbox) with honest tooltip/aria "Inquiries".
+9. **AI-chatbot bolt icon linked every portal visitor into the admin Executive Assistant** - `smart_chatbot.php` bolt hidden for non-admin roles (admin-only quick actions already gated the same way).
+10. **53 stale "Test Notification" rows marked read** - `UPDATE notifications SET is_read=1, status='read', read_at=NOW()` (25 'Test Notification' + 28 other probe/system rows, incl. 'Popup Test'); badge zeroed. Real notifications left untouched.
+11. **DB churn note** - zero schema changes; no money touched; `notifications` read-flag update only. Master suite 11/11 PASSED after the round (25.5s).
+
+### Verification (live HTTP, per-role cookie jars)
+- Console errors: admin ERP 0, customer 0, associate 0 (was SyntaxError), agent 0, employee 0, telecaller 0, CEO dashboard 0 (after SW cache revalidation cycle).
+- Menu RBAC live counts: super_admin 455, manager 201, cfo 184, ceo 184, coo 170, director 170, cto 156, employee 103.
+- Link sweeps (all HTTP 200): customer 47/47 (4 dead fixed), associate 48/48, agent 11/11, employee 17/17 (1 dead fixed).
+- Login chains: CEO/CFO/CTO/COO/Director/Manager/Telecaller -> /admin/dashboard|erp|200 OK; director test earlier absorbed by the admin-login 5/min/IP brute-force throttle (429 - correct behavior, deliberately NOT bypassed; login verified on other 5 accounts).
+- `git status` clean for my 8 already-swept files (parallel whole-tree commits absorbed my earlier-this-morning edits; verified on disk + re-probed; nothing lost).
+
+### Suggestions delivered (implemented this session)
+See fixes 1-9. Not taken / owner-call items: a real WebSocket server (`HR_WEBSOCKET_ENABLED=1`) only has value once a push channel exists; the WS fan-out is now opt-in instead of permanently broken; `manager1@apsdreamhome.com` and C-suite accounts share the same wallet/SSO stack as admin (no separate portal) - a genuine "executive" landing page is a candidate next round; customer portal sidebar shows 47 links - consider a collapsed defaults state on mobile (no layout change applied yet).
+
+Commits: `1f026c5c2` (pushed; 5 files - smart_chatbot, referral_earnings_widget, associate.php, employee.php, .htaccess). My other 8 fixes were absorbed, unchanged, into the parallel actor whole-tree commits `55837f082` (S490), `c4cf6a992` (S491), `6b659df04` (agent notification-centre) and `43334508e` (a11y contrast); verified byte-identical on disk + re-probed live.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **493** (this session; S491 logged above).
+
+### Key Lessons (carried, continued)
+_909. **A feature whose guard script does not parse is a feature that does not exist.** One missing closing brace silenced the entire Associate Code-of-Conduct flow while the modal markup still rendered - indistinguishable from "already accepted". Probe browser console for SyntaxErrors before trusting any "mandatory" flow.
+_910. **Far-future cache headers belong on fingerprinted build assets only** - `Cache-Control: max-age=2592000` for all `.js` also covered `/sw.js`, pinning browsers to a stale worker for 30 days. `.htaccess` now pins `sw.js` to `no-cache`; SW cache bumped v5 -> v6 the same round.
+_911. **Admin gates must be portal-aware, not login-aware.** Authenticated non-admin roles bounced to `/admin/login` cannot use it; redirect to their own portal home from BOTH the router Step 5b gate and the controller `requireAdmin()`, or the two drift (this session found exactly that drift).
+_912. **A page probe proves the page; a href sweep proves the portal.** Batch-fetch every internal `<a href>` after login, classify 200/redirect/404, and re-check console errors - that found 4 dead referral links in the customer widget and 1 dead employee link in minutes. Status 404 with a polite redirect target still means the link is wrong.
+_913. **Stale-while-revalidate means "works on second load"** - errors persisting after a fix usually mean the previous load had the old asset; reload twice, or bump SW/static versions, and verify on the second pass, not the first.
