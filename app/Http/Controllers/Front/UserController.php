@@ -2122,12 +2122,12 @@ class UserController extends BaseController
 
                 $receiptNumber = 'APS-UPI-' . date('Ymd') . '-' . str_pad((string)mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
-                // Insert into booking_payment_receipts with status pending_verification
+                // Insert into booking_payment_receipts with status pending — manual UTR needs verification before clearance
                 $this->db->prepare("
                     INSERT INTO booking_payment_receipts
                         (booking_id, installment_id, receipt_number, amount, payment_mode,
                          transaction_ref, status, receipt_date, created_at)
-                    VALUES (?, ?, ?, ?, 'upi', ?, 'pending_verification', NOW(), NOW())
+                    VALUES (?, ?, ?, ?, 'upi', ?, 'pending', NOW(), NOW())
                 ")->execute([$bookingId, $instId, $receiptNumber, $amountDue, $utrNumber]);
 
                 // Insert into payment_transactions
@@ -2135,7 +2135,7 @@ class UserController extends BaseController
                     INSERT INTO payment_transactions
                         (transaction_id, user_id, booking_id, amount, currency, payment_method,
                          payment_status, gateway_transaction_id, gateway_response, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, 'INR', 'upi', 'pending_verification', ?, ?, NOW(), NOW())
+                    VALUES (?, ?, ?, ?, 'INR', 'upi', 'pending', ?, ?, NOW(), NOW())
                 ")->execute([
                     $receiptNumber, $userId, $bookingId, $amountDue,
                     $utrNumber,

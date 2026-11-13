@@ -865,7 +865,7 @@ class MobileFeatureEndpointsController extends BaseController
 
         $stmt = $this->pdo->prepare(
             "INSERT INTO field_collections (tenant_id, user_id, user_role, collection_date, customer_name, customer_phone, plot_booking_id, amount, payment_mode, cheque_number, remarks, receipt_generated, receipt_number, status, created_at)
-             VALUES (1, ?, 'associate', CURDATE(), ?, ?, ?, ?, ?, ?, ?, 1, ?, 'pending_verification', NOW())"
+             VALUES (1, ?, 'associate', CURDATE(), ?, ?, ?, ?, ?, ?, ?, 1, ?, 'pending', NOW())"
         );
         $stmt->execute([
             $userId, $customerName, $customerPhone, $bookingId, $amount, $mode, $chequeNo, $remarks, $receiptNo
@@ -876,7 +876,7 @@ class MobileFeatureEndpointsController extends BaseController
             'message' => 'Collection logged successfully. Instant receipt issued.',
             'receipt_number' => $receiptNo,
             'amount' => $amount,
-            'status' => 'pending_verification'
+            'status' => 'pending'
         ]);
     }
 
