@@ -6312,4 +6312,33 @@ User instructions: diagnostic report on `plot_booking.php` (undefined `$plot`, f
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **484** (next session).
+Next-free = **484** (this session; S483 logged above).
+
+## Session 484: Customer Referral UI/UX Polish, Tier Progress Bar Color Fix & Viral Bilingual Sharing, 1508/1508 Clean (2026-11-13)
+
+### Trigger
+User instructions: "do next apne suugestion aur jo laga improve karne ke liye wo impove kar do aur ui gui look etc bhi dekh lo sab ki kya kamiya hai wo bhi thik karo" — Senior developer & CEO autonomous execution: visual polish, DOM defect rectification, and bilingual viral conversion copy.
+
+### The headline
+
+**1. CUSTOMER REFERRAL DESK UI/UX & DOM POLISH**
+- In `app/views/pages/customer_referral.php`:
+  - Fixed a code leak inside the earnings table where `$shareStats` and `$leaderboard` defaults were being re-evaluated inside each `<td>` iteration. Moved to top variable block.
+  - Fixed broken Bootstrap progress bar styling caused by assigning hex color (`#CD7F32`) directly to a `bg-*` class; converted to inline `style="background-color: ..."` with rounded progress track.
+  - Upgraded Tier card with a 52px circular icon container, prominent typography, and pill-shaped Max Tier badge.
+  - Redesigned referral code display box with a gradient dashed border (`#22c55e`), monospace code styling, and green copy button.
+  - Added authentic bronze medal styling (`#cd7f32`) for 3rd position on the referral leaderboard.
+
+**2. BILINGUAL VIRAL REFERRAL MESSAGING**
+- In `app/Http/Controllers/Front/ReferralController.php`:
+  - Updated pre-composed WhatsApp, Telegram, SMS, and Email share messages with bilingual (Hindi & English) copy, boosting conversion when customers share links with friends and family.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 19.19s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 15541 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **485** (next session).

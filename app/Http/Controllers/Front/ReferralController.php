@@ -49,14 +49,15 @@ class ReferralController extends BaseController
 
         $shareUrl = $service->getShareUrl($referralCode);
         $tierInfo = $service->getUserTier($userId);
+        $shareMsg = "नमस्ते! APS Dream Home पर अपने सपनों का प्लॉट बुक करें या रजिस्टर करें।\nरेफरल कोड: {$referralCode}\nरजिस्टर / देखें: {$shareUrl}";
         $shareLinks = [
             'url' => $shareUrl,
-            'whatsapp' => 'https://wa.me/?text=' . urlencode("Join APS Dream Home! Use my referral code: {$referralCode}\nRegister at: {$shareUrl}"),
+            'whatsapp' => 'https://wa.me/?text=' . urlencode($shareMsg),
             'facebook' => 'https://www.facebook.com/sharer/sharer.php?u=' . urlencode($shareUrl),
-            'twitter' => 'https://twitter.com/intent/tweet?text=' . urlencode("Join APS Dream Home! Referral: {$referralCode}") . '&url=' . urlencode($shareUrl),
-            'telegram' => 'https://t.me/share/url?url=' . urlencode($shareUrl) . '&text=' . urlencode("Join APS Dream Home! Referral: {$referralCode}"),
-            'sms' => 'sms:?body=' . urlencode("Join APS Dream Home! Use my referral code {$referralCode}: {$shareUrl}"),
-            'email' => 'mailto:?subject=' . urlencode('Join APS Dream Home') . '&body=' . urlencode("Use my referral code {$referralCode} to register: {$shareUrl}"),
+            'twitter' => 'https://twitter.com/intent/tweet?text=' . urlencode("APS Dream Home Referral: {$referralCode}") . '&url=' . urlencode($shareUrl),
+            'telegram' => 'https://t.me/share/url?url=' . urlencode($shareUrl) . '&text=' . urlencode($shareMsg),
+            'sms' => 'sms:?body=' . urlencode("APS Dream Home: Use my referral code {$referralCode}: {$shareUrl}"),
+            'email' => 'mailto:?subject=' . urlencode('Join APS Dream Home') . '&body=' . urlencode($shareMsg),
         ];
 
         // Share analytics
