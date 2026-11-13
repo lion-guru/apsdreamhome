@@ -4,6 +4,7 @@ $current_page = 'offers';
 $dashboard = $dashboard ?? [];
 $offers = $offers ?? ($dashboard['offers'] ?? []);
 $claims = $claims ?? ($dashboard['claims'] ?? []);
+$customerOffers = $customer_offers ?? [];
 $activeCount = (int)($dashboard['active_count'] ?? count($offers));
 $eligibleCount = (int)($dashboard['eligible_count'] ?? 0);
 
@@ -325,6 +326,84 @@ foreach ($claims as $cl) {
         </div>
     </div>
 
+    <!-- CUSTOMER PROMO CODES & WHATSAPP SHARE FOR ASSOCIATES -->
+    <?php if (!empty($customerOffers)): ?>
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <h5 class="card-title mb-0 fw-bold">
+                    <i class="fas fa-tags text-primary me-2"></i> ग्राहकों के लिए बुकिंग डिस्काउंट कूपन (Customer Promo Codes &amp; Deals)
+                </h5>
+                <p class="text-muted small mb-0 mt-1">
+                    अपने क्लाइंट्स को ये फेस्टिव डिस्काउंट कूपन शेयर करें और तुरंत बुकिंग क्लोज करें।
+                </p>
+            </div>
+            <a href="<?= BASE_URL ?>/offers" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill">
+                <i class="fas fa-external-link-alt me-1"></i> View Public Deals Page
+            </a>
+        </div>
+        <div class="card-body pt-0">
+            <div class="row g-3">
+                <?php foreach ($customerOffers as $co):
+                    $cDiscType = $co['discount_type'] ?? 'percentage';
+                    $cDiscText = '';
+                    if ($cDiscType === 'flat_amount') {
+                        $cDiscText = '₹' . number_format((float)($co['discount_value'] ?? 0)) . ' FLAT OFF';
+                    } elseif ($cDiscType === 'percentage') {
+                        $pct = (float)($co['discount_percentage'] ?? 0);
+                        $cDiscText = ($pct > 0 ? $pct : (float)($co['discount_value'] ?? 0)) . '% OFF';
+                    } elseif ($cDiscType === 'per_sqft') {
+                        $cDiscText = '₹' . number_format((float)($co['discount_value'] ?? 0)) . '/sqft छूट';
+                    } else {
+                        $cDiscText = 'विशेष उपहार';
+                    }
+                    $cCode = htmlspecialchars($co['promo_code'] ?? '');
+                    $cFest = htmlspecialchars(!empty($co['festival_name']) ? $co['festival_name'] : 'Festive Special');
+                    $shareMsg = "नमस्ते! APS Dream Home के खास फेस्टिव ऑफर में प्लॉट बुकिंग पर पाइए " . $cDiscText . "। प्रोमो कोड: " . ($co['promo_code'] ?? '') . " का उपयोग करें। ऑफर्स देखें: " . BASE_URL . "/offers?promo=" . urlencode($co['promo_code'] ?? '');
+                    $waLink = "https://api.whatsapp.com/send?text=" . urlencode($shareMsg);
+                ?>
+                <div class="col-md-6 col-xl-4">
+                    <div class="border rounded-3 p-3 h-100 d-flex flex-column justify-content-between bg-light">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger small">
+                                    <i class="fas fa-gift me-1"></i> <?= $cFest ?>
+                                </span>
+                                <span class="badge bg-success-subtle text-success fw-bold">
+                                    <?= htmlspecialchars($cDiscText) ?>
+                                </span>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-dark"><?= htmlspecialchars($co['title'] ?? 'Special Offer') ?></h6>
+                            <p class="text-muted small mb-2 text-truncate" style="max-height: 40px;">
+                                <?= htmlspecialchars($co['description'] ?? 'त्योहार पर विशेष बुकिंग छूट') ?>
+                            </p>
+                            <!-- Promo Code Badge -->
+                            <div class="d-flex align-items-center justify-content-between p-2 rounded bg-white border border-dashed mb-3">
+                                <div>
+                                    <small class="text-muted d-block" style="font-size: 0.72rem;">PROMO CODE</small>
+                                    <strong class="text-primary font-monospace fs-6"><?= $cCode ?></strong>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary copy-promo-btn" data-code="<?= $cCode ?>" title="Copy Code">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="<?= $waLink ?>" target="_blank" class="btn btn-sm btn-success flex-grow-1 d-flex align-items-center justify-content-center gap-1">
+                                <i class="fab fa-whatsapp"></i> WhatsApp Share
+                            </a>
+                            <a href="<?= BASE_URL ?>/associate/book-plot?promo=<?= urlencode($co['promo_code'] ?? '') ?>" class="btn btn-sm btn-outline-primary" title="Book Plot with this promo">
+                                Book Plot
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- CLAIMS & FULFILLMENT LEDGER -->
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3 border-0">
@@ -394,5 +473,25 @@ foreach ($claims as $cl) {
             <?php endif; ?>
         </div>
     </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.copy-promo-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var code = this.getAttribute('data-code');
+            if (!code) return;
+            var that = this;
+            navigator.clipboard.writeText(code).then(function() {
+                var orig = that.innerHTML;
+                that.innerHTML = '<i class="fas fa-check text-success"></i> Copied';
+                setTimeout(function() { that.innerHTML = orig; }, 2000);
+            }).catch(function() {
+                // Fallback prompt
+                prompt('Copy promo code:', code);
+            });
+        });
+    });
+});
+</script>
 
 </div>

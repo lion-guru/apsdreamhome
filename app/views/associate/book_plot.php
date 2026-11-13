@@ -148,7 +148,7 @@ $colonies = $colonies ?? [];
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Customer Promo Code (कूपन कोड)</label>
                     <div class="input-group">
-                        <input type="text" name="promo_code_applied" id="assoc_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5">
+                        <input type="text" name="promo_code_applied" id="assoc_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5" value="<?= htmlspecialchars($_GET['promo'] ?? '') ?>">
                         <button type="button" class="btn btn-primary" id="btn_assoc_apply_promo">
                             <i class="fas fa-check me-1"></i>Apply
                         </button>
@@ -280,6 +280,10 @@ document.getElementById('plotSelect').addEventListener('change', function() {
         document.getElementById('disp_total_price').textContent = '₹' + price.toLocaleString();
         const curDisc = parseFloat(document.getElementById('assoc_discount_amount').value) || 0;
         document.getElementById('disp_net_agreement').textContent = '₹' + Math.max(0, price - curDisc).toLocaleString();
+        var pCodeInput = document.getElementById('assoc_promo_code');
+        if (pCodeInput && pCodeInput.value.trim() && btnAssocApply) {
+            btnAssocApply.click();
+        }
     } else {
         document.getElementById('plotInfo').classList.add('d-none');
         document.getElementById('disp_total_price').textContent = '₹0';

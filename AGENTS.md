@@ -6231,4 +6231,28 @@ User instructions: "do next" / "do next all with your suggestion" — Continuing
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **481** (next session).
+Next-free = **481** (this session; S480 logged above).
+
+## Session 481: Associate Customer Promo Codes Desk, WhatsApp Viral Deals Sharing & Auto-Applying Plot Booking Concession, 1508/1508 Clean (2026-11-13)
+
+### Trigger
+User instructions: "jo jo pending work hai sab kar do bina ruke aur apne suggestion se jo jo improve karna ho impliment karna ho kamiya thik karna ho sab kar do mujhse puchne ki jarurat nhi hai apne se continuslly kaam karo khud ke dimag se tum hi seniour software devloper aur ceo ho ok fill power dete hai" & "do next all with your suggestion".
+
+### The headline
+
+**1. ASSOCIATE DESK CUSTOMER PROMOTIONAL CODES & WHATSAPP SHARING**
+- In `app/Http/Controllers/Associate/OfferController.php`: Enriched associate offers dashboard with active customer promotional deals via `FestivalOfferService::getActiveCustomerOffers()`.
+- In `app/views/associate/offers.php`: Added dedicated "ग्राहकों के लिए बुकिंग डिस्काउंट कूपन (Customer Promo Codes & Deals)" cards. Field associates can inspect all active customer discount codes (`DIWALI50K`, `FESTIVE21`, etc.), copy coupon codes with 1-click clipboard feedback, trigger 1-click WhatsApp share with a personalized Hindi booking invitation message, or click "Book Plot" with the coupon code pre-loaded.
+
+**2. AUTO-APPLYING CONCESSION IN ASSOCIATE PLOT BOOKING**
+- In `app/views/associate/book_plot.php`: Pre-fills `$_GET['promo']` into `assoc_promo_code`. Added reactive trigger on plot selection so selecting an available plot instantly calculates and displays the net discounted agreement value without requiring redundant button clicks.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 21.15s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1209 tables, 15554 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **482** (next session).

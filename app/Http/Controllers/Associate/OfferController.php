@@ -41,6 +41,7 @@ class OfferController extends BaseController
 
         try {
             $dashboard = $this->offerService->getAssociateFestivalDashboard($userId);
+            $customerOffers = $this->offerService->getActiveCustomerOffers();
 
             $this->render('associate/offers', [
                 'page_title'       => 'Festival & Special Campaign Offers — Associate Portal',
@@ -48,6 +49,7 @@ class OfferController extends BaseController
                 'dashboard'        => $dashboard,
                 'offers'           => $dashboard['offers'],
                 'claims'           => $dashboard['claims'],
+                'customer_offers'  => $customerOffers,
                 'current_page'     => 'offers',
             ], 'layouts/associate');
         } catch (\Throwable $e) {
