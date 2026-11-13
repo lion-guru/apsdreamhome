@@ -7326,7 +7326,7 @@ User instruction: "ok do next apne suggestion se sare kaam karte raho bina ruke"
 ### AGENTS.md numbering (Rule 4)
 Next-free = **514** (this session; S513 logged above).
 
-## Session 513: Deals Pipeline Bugs Closed — js/kanban/stage Contract, Orchestrated End-to-End Probe, Sacrificial Deal Deleted (2026-11-14)
+## Session 514: Deals Pipeline Bugs Closed — js/kanban/stage Contract, Orchestrated End-to-End Probe, Sacrificial Deal Deleted (2026-11-14)
 
 ### Trigger
 User: "do next" after Session 512 landed. An enum scan (`INSERT ... VALUES` cross-checked against live `INFORMATION_SCHEMA` with rollback-compatible probes) surfaced 4 honest findings: `deals.status='open'` (enum is `active|won|lost|cancelled`), `payments.payment_type='foreclosure'` (missing member), `whatsapp_templates.status='APPROVED'`, `whatsapp_messages.status='pending'`. The first two were already fixed in the shared S512 worktree; this session continued the same family through the deals pipeline end-to-end.
@@ -7357,4 +7357,4 @@ _938. **`deal_activities` lacks an `deals(id)` FK so deleting via app path alone
 _939. **Scan-outputs that look small are not small.** A 5342-byte kanban "page" read turned out to be a curl artifact, not a broken render; re-fetch with explicit size reporting before drawing conclusions.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **514** (this session; parallel actor holds 513+).
+Next-free = **515** (this session; parallel actor holds 513 and 514+).
