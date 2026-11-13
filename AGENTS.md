@@ -6341,4 +6341,39 @@ User instructions: "do next apne suugestion aur jo laga improve karne ke liye wo
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **485** (next session).
+Next-free = **485** (this session; S484 logged above).
+
+## Session 485: Project Photo Gallery Lightbox, Live Deals Expiry Countdown & Associate QR Share Modal, 1508/1508 Clean (2026-11-13)
+
+### Trigger
+User instructions: "do next apne suugestion aur jo laga improve karne ke liye wo impove kar do aur ui gui look etc bhi dekh lo sab ki kya kamiya hai wo bhi thik karo" & "ok do" — Autonomous Senior Developer & CEO execution: project photo lightbox gallery, real-time deals countdown timer widget, and associate instant scannable QR code modal.
+
+### The headline
+
+**1. INTERACTIVE FULLSCREEN PHOTO LIGHTBOX MODAL ON PROJECT DETAIL (`/projects/{slug}`)**
+- In `app/views/pages/project_detail.php`:
+  - Added Hero Media Showcase card prominently featuring the project's primary image with a click-to-zoom indicator badge.
+  - Added dedicated "Project Photo Gallery & Site Layouts" grid displaying all project images with zoom hover overlay.
+  - Added fullscreen interactive modal (`#projectLightboxModal`) with high-resolution image viewer, index counter (`1 of N`), previous/next navigation buttons, and keyboard shortcuts (`ArrowLeft`, `ArrowRight`, `Escape`).
+
+**2. REAL-TIME DEALS EXPIRY COUNTDOWN TIMER WIDGET ON OFFERS PAGE (`/offers`)**
+- In `app/views/pages/offers.php`:
+  - Dynamically calculates the closest upcoming expiry timestamp across all active promotional offers.
+  - Added responsive limited-time festive countdown banner widget with Days, Hours, Minutes, and Seconds metric tiles.
+  - Implemented high-performance vanilla JS countdown ticker updating every 1,000ms with smooth transition to "Expiring Soon!" upon reaching deadline.
+
+**3. INSTANT SCAN & SHARE QR CODE MODAL ON ASSOCIATE OFFERS DESK (`/associate/offers`)**
+- In `app/views/associate/offers.php`:
+  - Added "QR" action button on every customer deal card alongside WhatsApp and Book Plot.
+  - Added instant modal rendering a high-resolution QR code embedding the associate's unique referral link (`?promo=...&ref=...`) for seamless smartphone camera scanning by prospective buyers.
+  - Added 1-click clipboard copy for the full tagged referral deal link with animated feedback.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 21.2s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 15541 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **486** (next session).

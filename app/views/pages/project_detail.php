@@ -153,6 +153,15 @@ $related_projects = $normRelated;
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
+                <?php if (!empty($heroImg) && $heroImg !== '/assets/images/projects/placeholder/property.svg'): ?>
+                <div class="project-hero-media mb-4 position-relative overflow-hidden rounded-4 shadow-sm border" style="max-height: 420px; cursor: pointer;" onclick="openProjectLightbox(0)">
+                    <img src="<?= (strpos($heroImg, 'http') === 0) ? $heroImg : BASE_URL . $heroImg ?>" class="w-100 h-100" alt="<?= htmlspecialchars($project->site_name) ?>" style="max-height: 420px; width: 100%; object-fit: cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
+                    <div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                        <span class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill"><i class="fas fa-camera me-1"></i> <?= htmlspecialchars($project->site_name) ?></span>
+                        <span class="badge bg-dark bg-opacity-75 text-white px-3 py-1 rounded-pill"><i class="fas fa-expand me-1"></i> Click to Zoom</span>
+                    </div>
+                </div>
+                <?php endif; ?>
                 <h2 class="mb-4"><i class="fas fa-info-circle text-primary me-2"></i><?= __('project_overview') ?></h2>
                 <p class="lead">
                     <?php echo nl2br(htmlspecialchars($project->description ?? 'Premium residential plots with modern infrastructure and excellent amenities located in the heart of ' . ($project->district ?? 'Uttar Pradesh') . '.')); ?>
@@ -254,6 +263,30 @@ $related_projects = $normRelated;
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
+
+                <!-- Project Photo Gallery & Site Layouts -->
+                <?php if (!empty($images)): ?>
+                <div class="project-gallery-section mt-5 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="mb-0 fw-bold"><i class="fas fa-images text-primary me-2"></i><?= __('project_gallery', [], 'Project Photo Gallery & Site Layouts') ?></h3>
+                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary px-3 py-1"><?= count($images) ?> Photos</span>
+                    </div>
+                    <div class="row g-3">
+                        <?php foreach ($images as $idx => $img):
+                            $fullImgUrl = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . ltrim($img, '/');
+                        ?>
+                        <div class="col-6 col-md-4">
+                            <div class="gallery-item position-relative overflow-hidden rounded-3 shadow-sm border" style="cursor: pointer; height: 160px;" onclick="openProjectLightbox(<?= $idx ?>)">
+                                <img src="<?= htmlspecialchars($fullImgUrl) ?>" class="w-100 h-100" style="object-fit: cover; transition: transform 0.3s ease;" alt="Project Photo <?= $idx + 1 ?>" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
+                                <div class="gallery-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-40" style="opacity: 0; transition: opacity 0.25s ease;">
+                                    <i class="fas fa-search-plus fa-2x text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
             
             <!-- Sidebar -->
@@ -580,6 +613,95 @@ $related_projects = $normRelated;
         </div>
     </div>
 </section>
+
+<!-- Interactive Fullscreen Lightbox Modal -->
+<div class="modal fade" id="projectLightboxModal" tabindex="-1" aria-labelledby="projectLightboxModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content bg-dark text-white border-0 shadow-lg">
+            <div class="modal-header border-0 py-2 px-3">
+                <span class="modal-title small text-white-50" id="projectLightboxModalLabel">
+                    <span id="lightboxIndex">1</span> of <span id="lightboxTotal">1</span> &mdash; <?= htmlspecialchars($project->site_name ?? 'Project') ?>
+                </span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 text-center position-relative d-flex align-items-center justify-content-center" style="min-height: 480px; max-height: 80vh; overflow: hidden; background: #000;">
+                <img id="lightboxActiveImg" src="" class="img-fluid" style="max-height: 75vh; object-fit: contain;" alt="Project Photo">
+                <button type="button" class="btn btn-dark bg-opacity-50 text-white position-absolute top-50 start-0 translate-middle-y ms-2 rounded-circle" id="lightboxPrevBtn" style="width: 48px; height: 48px;" aria-label="Previous image">
+                    <i class="fas fa-chevron-left fa-lg"></i>
+                </button>
+                <button type="button" class="btn btn-dark bg-opacity-50 text-white position-absolute top-50 end-0 translate-middle-y me-2 rounded-circle" id="lightboxNextBtn" style="width: 48px; height: 48px;" aria-label="Next image">
+                    <i class="fas fa-chevron-right fa-lg"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.gallery-item:hover img { transform: scale(1.05); }
+.gallery-item:hover .gallery-overlay { opacity: 1 !important; }
+</style>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+const projectImages = <?= json_encode(array_values(array_map(function($img) {
+    return (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . ltrim($img, '/');
+}, $images ?? []))) ?>;
+
+let currentLightboxIdx = 0;
+function openProjectLightbox(idx) {
+    if (!projectImages || projectImages.length === 0) return;
+    currentLightboxIdx = (idx >= 0 && idx < projectImages.length) ? idx : 0;
+    updateLightboxUI();
+    const modalEl = document.getElementById('projectLightboxModal');
+    if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    }
+}
+
+function updateLightboxUI() {
+    const imgEl = document.getElementById('lightboxActiveImg');
+    const idxEl = document.getElementById('lightboxIndex');
+    const totalEl = document.getElementById('lightboxTotal');
+    if (imgEl && projectImages[currentLightboxIdx]) {
+        imgEl.src = projectImages[currentLightboxIdx];
+    }
+    if (idxEl) idxEl.textContent = currentLightboxIdx + 1;
+    if (totalEl) totalEl.textContent = projectImages.length;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const prevBtn = document.getElementById('lightboxPrevBtn');
+    const nextBtn = document.getElementById('lightboxNextBtn');
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (projectImages.length <= 1) return;
+            currentLightboxIdx = (currentLightboxIdx - 1 + projectImages.length) % projectImages.length;
+            updateLightboxUI();
+        });
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (projectImages.length <= 1) return;
+            currentLightboxIdx = (currentLightboxIdx + 1) % projectImages.length;
+            updateLightboxUI();
+        });
+    }
+    document.addEventListener('keydown', function(e) {
+        const modalEl = document.getElementById('projectLightboxModal');
+        if (!modalEl || !modalEl.classList.contains('show')) return;
+        if (e.key === 'ArrowLeft') {
+            currentLightboxIdx = (currentLightboxIdx - 1 + projectImages.length) % projectImages.length;
+            updateLightboxUI();
+        } else if (e.key === 'ArrowRight') {
+            currentLightboxIdx = (currentLightboxIdx + 1) % projectImages.length;
+            updateLightboxUI();
+        }
+    });
+});
+</script>
 
 <?php else: ?>
 <!-- Project Not Found -->

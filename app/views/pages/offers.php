@@ -30,6 +30,54 @@ $offers = $offers ?? [];
             </div>
         </div>
 
+        <!-- COUNTDOWN TIMER BANNER -->
+        <?php
+            $closestExpiry = null;
+            foreach ($offers as $off) {
+                if (!empty($off['valid_until'])) {
+                    $expTime = strtotime($off['valid_until'] . ' 23:59:59');
+                    if ($expTime > time() && ($closestExpiry === null || $expTime < $closestExpiry)) {
+                        $closestExpiry = $expTime;
+                    }
+                }
+            }
+        ?>
+        <?php if ($closestExpiry !== null): ?>
+        <div class="row justify-content-center mb-4 mt-2">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 text-center p-3" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a !important;">
+                    <div class="d-flex flex-wrap align-items-center justify-content-center gap-3">
+                        <div class="text-start">
+                            <span class="badge bg-danger text-white px-2 py-1 mb-1 rounded-pill"><i class="fas fa-fire me-1"></i> LIMITED TIME OFFER</span>
+                            <div class="fw-bold text-dark" style="font-size: 0.95rem;">फेस्टिवल डिस्काउंट विंडो समाप्त होने में शेष समय:</div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2" id="dealsCountdownBox" data-target-ts="<?= $closestExpiry ?>">
+                            <div class="bg-white border rounded-3 px-3 py-1 text-center shadow-sm">
+                                <div class="fs-4 fw-bold text-danger cd-days">00</div>
+                                <div class="text-muted" style="font-size: 0.65rem; text-transform: uppercase;">Days</div>
+                            </div>
+                            <span class="fs-4 fw-bold text-muted">:</span>
+                            <div class="bg-white border rounded-3 px-3 py-1 text-center shadow-sm">
+                                <div class="fs-4 fw-bold text-danger cd-hours">00</div>
+                                <div class="text-muted" style="font-size: 0.65rem; text-transform: uppercase;">Hours</div>
+                            </div>
+                            <span class="fs-4 fw-bold text-muted">:</span>
+                            <div class="bg-white border rounded-3 px-3 py-1 text-center shadow-sm">
+                                <div class="fs-4 fw-bold text-danger cd-mins">00</div>
+                                <div class="text-muted" style="font-size: 0.65rem; text-transform: uppercase;">Mins</div>
+                            </div>
+                            <span class="fs-4 fw-bold text-muted">:</span>
+                            <div class="bg-white border rounded-3 px-3 py-1 text-center shadow-sm">
+                                <div class="fs-4 fw-bold text-danger cd-secs">00</div>
+                                <div class="text-muted" style="font-size: 0.65rem; text-transform: uppercase;">Secs</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- FILTER PILLS -->
         <?php if (!empty($offers)): ?>
         <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
@@ -316,6 +364,36 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+    // 3. Live Countdown Timer
+    const countdownBox = document.getElementById('dealsCountdownBox');
+    if (countdownBox) {
+        const targetTs = parseInt(countdownBox.getAttribute('data-target-ts'), 10) * 1000;
+        function updateCountdown() {
+            const now = Date.now();
+            const diff = targetTs - now;
+            if (diff <= 0) {
+                countdownBox.innerHTML = '<span class="badge bg-danger fs-6 px-3 py-2">Offers Expiring Soon!</span>';
+                return;
+            }
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const dEl = countdownBox.querySelector('.cd-days');
+            const hEl = countdownBox.querySelector('.cd-hours');
+            const mEl = countdownBox.querySelector('.cd-mins');
+            const sEl = countdownBox.querySelector('.cd-secs');
+
+            if (dEl) dEl.textContent = String(days).padStart(2, '0');
+            if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+            if (mEl) mEl.textContent = String(mins).padStart(2, '0');
+            if (sEl) sEl.textContent = String(secs).padStart(2, '0');
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    }
 });
 </script>
 

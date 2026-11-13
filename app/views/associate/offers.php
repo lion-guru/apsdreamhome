@@ -359,8 +359,12 @@ foreach ($claims as $cl) {
                     }
                     $cCode = htmlspecialchars($co['promo_code'] ?? '');
                     $cFest = htmlspecialchars(!empty($co['festival_name']) ? $co['festival_name'] : 'Festive Special');
-                    $shareMsg = "नमस्ते! APS Dream Home के खास फेस्टिव ऑफर में प्लॉट बुकिंग पर पाइए " . $cDiscText . "। प्रोमो कोड: " . ($co['promo_code'] ?? '') . " का उपयोग करें। ऑफर्स देखें: " . BASE_URL . "/offers?promo=" . urlencode($co['promo_code'] ?? '');
+                    $assocRef = !empty($_SESSION['referral_code']) ? $_SESSION['referral_code'] : (!empty($_SESSION['user_id']) ? (string)$_SESSION['user_id'] : '');
+                    $dealUrl = BASE_URL . '/offers?promo=' . urlencode($co['promo_code'] ?? '') . ($assocRef !== '' ? '&ref=' . urlencode($assocRef) : '');
+                    $shareMsg = "नमस्ते! APS Dream Home के खास फेस्टिव ऑफर में प्लॉट बुकिंग पर पाइए " . $cDiscText . "। प्रोमो कोड: " . ($co['promo_code'] ?? '') . " का उपयोग करें। ऑफर्स देखें: " . $dealUrl;
                     $waLink = "https://api.whatsapp.com/send?text=" . urlencode($shareMsg);
+                    $qrApiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" . urlencode($dealUrl);
+                    $modalId = "qrModal_" . (int)($co['id'] ?? 0);
                 ?>
                 <div class="col-md-6 col-xl-4">
                     <div class="border rounded-3 p-3 h-100 d-flex flex-column justify-content-between bg-light">
@@ -390,11 +394,48 @@ foreach ($claims as $cl) {
                         </div>
                         <div class="d-flex gap-2">
                             <a href="<?= $waLink ?>" target="_blank" class="btn btn-sm btn-success flex-grow-1 d-flex align-items-center justify-content-center gap-1">
-                                <i class="fab fa-whatsapp"></i> WhatsApp Share
+                                <i class="fab fa-whatsapp"></i> WhatsApp
                             </a>
+                            <button type="button" class="btn btn-sm btn-outline-dark d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#<?= $modalId ?>" title="Scan & Share QR Code">
+                                <i class="fas fa-qrcode"></i> QR
+                            </button>
                             <a href="<?= BASE_URL ?>/associate/book-plot?promo=<?= urlencode($co['promo_code'] ?? '') ?>" class="btn btn-sm btn-outline-primary" title="Book Plot with this promo">
-                                Book Plot
+                                Book
                             </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Share Modal -->
+                <div class="modal fade" id="<?= $modalId ?>" tabindex="-1" aria-labelledby="<?= $modalId ?>Label" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header border-0 pb-0">
+                                <h6 class="modal-title fw-bold" id="<?= $modalId ?>Label">
+                                    <i class="fas fa-qrcode text-primary me-1"></i> Scan &amp; Share Offer
+                                </h6>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center pt-2">
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger small mb-2">
+                                    <?= $cFest ?> &bull; <?= htmlspecialchars($cDiscText) ?>
+                                </span>
+                                <div class="bg-white p-2 border rounded-3 d-inline-block shadow-sm mb-3">
+                                    <img src="<?= htmlspecialchars($qrApiUrl) ?>" alt="QR Code" class="img-fluid" style="width: 180px; height: 180px;" loading="lazy">
+                                </div>
+                                <div class="small text-muted mb-2">
+                                    ग्राहक मोबाइल कैमरा से स्कैन करके सीधा यह ऑफर पा सकते हैं।
+                                </div>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="text" class="form-control font-monospace" id="qrInput_<?= (int)($co['id'] ?? 0) ?>" value="<?= htmlspecialchars($dealUrl) ?>" readonly>
+                                    <button class="btn btn-outline-secondary copy-link-btn" type="button" data-input-id="qrInput_<?= (int)($co['id'] ?? 0) ?>" title="Copy link">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                                <div class="small text-success fw-bold">
+                                    <i class="fas fa-tag me-1"></i> Code: <?= $cCode ?>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -488,6 +529,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }).catch(function() {
                 // Fallback prompt
                 prompt('Copy promo code:', code);
+            });
+        });
+    });
+
+    document.querySelectorAll('.copy-link-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var targetId = this.getAttribute('data-input-id');
+            var inp = targetId ? document.getElementById(targetId) : null;
+            if (!inp) return;
+            var that = this;
+            navigator.clipboard.writeText(inp.value).then(function() {
+                var orig = that.innerHTML;
+                that.innerHTML = '<i class="fas fa-check text-success"></i>';
+                setTimeout(function() { that.innerHTML = orig; }, 2000);
+            }).catch(function() {
+                prompt('Copy deal link:', inp.value);
             });
         });
     });
