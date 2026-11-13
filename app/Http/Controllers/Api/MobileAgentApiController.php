@@ -10,6 +10,16 @@ class MobileAgentApiController extends BaseController
 {
     use TenantAwareTrait;
 
+    /**
+     * Mobile API authenticates with Bearer tokens, not session cookies.
+     * Without this override, the global BaseController constructor would
+     * reject every POST with 403 (invalid CSRF token) before dispatch.
+     */
+    protected function skipCsrfProtection(): bool
+    {
+        return true;
+    }
+
     public function __construct()
     {
         parent::__construct();
