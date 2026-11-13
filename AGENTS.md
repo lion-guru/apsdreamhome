@@ -6684,3 +6684,27 @@ User instruction: "do next amd aur koi suggestion ho iss peoject ko ko best bana
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **495** (this session; S494 logged above).
+
+## Session 495: Budha City Per-Visit DB Error 1054 Spam (Root-Caused, Fixed), Public Regression Sweep After S494 (2026-11-14)
+
+### Trigger
+User: "ok do next" — continued the public/portal regression sweep right after the parallel actor's Session 494 landed (e5d6300f8).
+
+### Work
+1. **Public regression sweep (all 200)** — `/`, `/about`, `/blog`, `/faqs`, `/offers`, `/properties`, `/services`, `/contact`, `/register/smart`, `/projects`, `/tools-hub`, `/navigation`, and all six `/project-locations/{budha-city, suryoday-colony, raghunath-nagri, bohisawagar, ram-nagri, ganga-nagri}`. Early false alarm: my 404s were wrong slug filenames; route table uses short slugs. No customer-facing regressions from S494.
+2. **php_error.log root-caused to ONE dead view path** — the 20MB log's hot-table entry was `SELECT title, image, alt_text FROM amenities_kushinagar` failing with 1054 on EVERY `/project-locations/budha-city` visit. `amenities_kushinagar` exists only as a scaffold table (`id/tenant_id/created_at/updated_at` only). The S452 shim (`app/Core/App.php`) made `class_exists('\App\Core\App')` TRUE, so the branch that had sat dormant finally executed and died every request into a `catch (\Throwable)` that only `error_log`'d — invisible on the page.
+3. **Fix** — removed the dead DB branch from `kushinagar-budha-city.php`; the amenities section now renders 7 real, on-disk-verified township images (`/assets/images/amenities/1..7.jpg`) with verified captions (site development & drainage, hospital, parks & walkways, roads & parking, street lighting, school, 24x7 security). The placeholder SVG is gone; one legitimate fallback remains (hero banner, `alt="Budha City Kushinagar"`).
+4. **Verification** — `php -l` clean; page 200 with all 7 captions + images present in fetched HTML; **php_error.log growth = 0 bytes per page load** (before: one 1054 per visit); master suite **11/11 PASSED** (30.65s); repo-wide grep confirms no other view uses the same dead `class_exists('\App\Core\App')` amenities pattern.
+
+### Notes
+- `amenities_kushinagar` kept (empty scaffold, zero writers, zero readers now) — dropping it would be a schema change; flagged, not taken.
+- Embedded desktop browser still pinned to its stale render (S493 note) — this round's probes used curl (HTTP 200 + content needles + log-growth assertion) instead of the in-app window.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **496** (this session; S494 logged above in the file).
+
+### Key Lessons (carried, continued)
+_918. **When the error log repeats one signature per HTTP request, you found a per-visit dead path — fix the path, not the log.**
+_919. **A `class_exists()` guard is a guard only until the class is created.** The S452 shim made a previously inert branch live on every visit; existence probes in views re-arm old failures. Prefer absence of code over presence-guarded dead code.
+_920. **A 1054 inside a `catch (\Throwable)` is a silently broken feature, not a broken query.** Budha City's amenities section never rendered real content; the catch hid missing schema from everyone except the log.
+_921. **Read slugs from the route table, never from filenames.** `/project-locations/gorakhpur-bohisawagar` was a 404 because the live slug is `/project-locations/bohisawagar`; two minutes of grep would have avoided the false alarm.
