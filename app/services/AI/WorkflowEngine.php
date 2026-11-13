@@ -271,21 +271,17 @@ try {
     
     private function executeLogicNode(array $config): array
     {
-        $condition = $this->replaceVariables($config['condition'] ?? '');
+        $condition = (string) ($config['condition'] ?? '');
         $trueNode = $config['true_node'] ?? null;
         $falseNode = $config['false_node'] ?? null;
         
-        // Simple condition evaluation
-        // In production, use a proper expression evaluator
+        // Condition is evaluated by a strict whitelisted expression parser —
+        // never by eval().  Trigger data is substituted as json_encode-quoted
+        // atoms (injection-proof) and the resulting text is tokenised against
+        // a grammar of numbers, strings, booleans and comparison operators.
         $result = false;
         try {
-            // Replace variables and evaluate
-            $condition = str_replace(
-                array_keys($this->context),
-                array_map(fn($v) => is_string($v) ? "'$v'" : $v, array_values($this->context)),
-                $condition
-            );
-            $result = (bool)eval("return $condition;");
+            $result = $this->evaluateCondition($condition);
         } catch (\Throwable $e) {
             return ['success' => false, 'message' => 'Logic evaluation failed'];
         }
@@ -298,6 +294,209 @@ try {
             'branch' => $result ? 'true' : 'false',
             'next_node' => $result ? $trueNode : $falseNode
         ];
+    }
+    
+    /**
+     * Strict whitelisted expression evaluator (no eval(), ever).
+     *
+     * Substitutes {{key}} / {{context.key}} placeholders (and legacy raw
+     * key occurrences) with json_encode-quoted atoms, then tokenises the
+     * result against a grammar of numbers, strings, booleans, null,
+     * parenthesised groups and comparison/logical operators only.
+     * Anything else fails closed (throws) instead of executing.
+     */
+    private function evaluateCondition(string $expr): bool
+    {
+        // Substitute context atoms.  json_encode() always yields a valid
+        // PHP atom: 72 -> "72", "O'Connor" -> "\"O'Connor\"", true -> "true".
+        foreach ($this->context as $key => $value) {
+            if ($key === '') {
+                continue;
+            }
+            $atom = json_encode($value);
+            if ($atom === false) {
+                $atom = 'null';
+            }
+            // Only atoms that json_encode produces are safe; arrays/objects
+            // produce [...] / {...} which the tokenizer will reject on.
+            $expr = str_replace('{{' . $key . '}}', $atom, $expr);
+            $expr = str_replace('{{context.' . $key . '}}', $atom, $expr);
+            $expr = str_replace($key, $atom, $expr); // legacy raw-key substitution
+        }
+
+        $expr = trim($expr);
+        if ($expr === '') {
+            return false;
+        }
+        if (strlen($expr) > 500) {
+            throw new \RuntimeException('Condition too long');
+        }
+
+        $tokens = $this->tokenizeCondition($expr);
+        $this->condPos = 0;
+        $value = $this->parseCondOr($tokens);
+        if ($this->condPos < count($tokens)) {
+            throw new \RuntimeException('Unexpected token in condition');
+        }
+        return (bool) $value;
+    }
+
+    /** Tokenise condition text; anything illegal throws. */
+    private function tokenizeCondition(string $expr): array
+    {
+        $tokens = [];
+        $len = strlen($expr);
+        $i = 0;
+
+        while ($i < $len) {
+            $ch = $expr[$i];
+
+            if (ctype_space($ch)) {
+                $i++;
+                continue;
+            }
+
+            // Numbers (including optional leading minus and decimals)
+            if (preg_match('/\A-?(?:\d+(?:\.\d+)?|\.\d+)/', substr($expr, $i), $m)) {
+                $tokens[] = ['t' => 'num', 'v' => (float) $m[0]];
+                $i += strlen($m[0]);
+                continue;
+            }
+
+            // Strings (double-quoted, JSON-compatible escapes)
+            if ($ch === '"') {
+                $j = $i + 1;
+                while ($j < $len) {
+                    if ($expr[$j] === '\\') {
+                        $j += 2;
+                        continue;
+                    }
+                    if ($expr[$j] === '"') {
+                        break;
+                    }
+                    $j++;
+                }
+                if ($j >= $len) {
+                    throw new \RuntimeException('Unterminated string in condition');
+                }
+                $decoded = json_decode(substr($expr, $i, $j - $i + 1));
+                if (!is_string($decoded)) {
+                    throw new \RuntimeException('Invalid string in condition');
+                }
+                $tokens[] = ['t' => 'str', 'v' => $decoded];
+                $i = $j + 1;
+                continue;
+            }
+
+            // Operators / parens (longest first)
+            $matched = false;
+            foreach (['>=', '<=', '==', '!=', '&&', '||', '>', '<', '!', '(', ')'] as $op) {
+                if (isset($expr[$i]) && substr_compare($expr, $op, $i, strlen($op)) === 0) {
+                    $tokens[] = ['t' => 'op', 'v' => $op];
+                    $i += strlen($op);
+                    $matched = true;
+                    break;
+                }
+            }
+            if ($matched) {
+                continue;
+            }
+
+            // Constants
+            if (preg_match('/\A(true|false|null)\b/i', substr($expr, $i), $m)) {
+                $cv = strtolower($m[1]);
+                $tokens[] = ['t' => 'const', 'v' => $cv === 'true' ? true : ($cv === 'false' ? false : null)];
+                $i += strlen($m[0]);
+                continue;
+            }
+
+            throw new \RuntimeException('Illegal character in condition at offset ' . $i);
+        }
+
+        return $tokens;
+    }
+
+    /** Recursive-descent parser (or -> and -> comparison -> not -> primary). */
+    private $condPos = 0;
+
+    private function parseCondOr(array $tokens)
+    {
+        $v = $this->parseCondAnd($tokens);
+        while (($tokens[$this->condPos]['v'] ?? null) === '||') {
+            $this->condPos++;
+            $r = $this->parseCondAnd($tokens);
+            $v = (bool) $v || (bool) $r;
+        }
+        return $v;
+    }
+
+    private function parseCondAnd(array $tokens)
+    {
+        $v = $this->parseCondCmp($tokens);
+        while (($tokens[$this->condPos]['v'] ?? null) === '&&') {
+            $this->condPos++;
+            $r = $this->parseCondCmp($tokens);
+            $v = (bool) $v && (bool) $r;
+        }
+        return $v;
+    }
+
+    private function parseCondCmp(array $tokens)
+    {
+        $v = $this->parseCondNot($tokens);
+        $op = $tokens[$this->condPos]['v'] ?? null;
+        if (in_array($op, ['>=', '<=', '==', '!=', '>', '<'], true)) {
+            $this->condPos++;
+            $r = $this->parseCondNot($tokens);
+            switch ($op) {
+                case '>=': return $this->condCompare($v, $r) >= 0;
+                case '<=': return $this->condCompare($v, $r) <= 0;
+                case '>':  return $this->condCompare($v, $r) > 0;
+                case '<':  return $this->condCompare($v, $r) < 0;
+                case '==': return $v == $r;
+                case '!=': return $v != $r;
+            }
+        }
+        return $v;
+    }
+
+    private function condCompare($a, $b): int
+    {
+        if (is_numeric($a) && is_numeric($b)) {
+            return ((float) $a <=> (float) $b);
+        }
+        return strcmp((string) $a, (string) $b);
+    }
+
+    private function parseCondNot(array $tokens)
+    {
+        if (($tokens[$this->condPos]['v'] ?? null) === '!') {
+            $this->condPos++;
+            return !$this->parseCondNot($tokens);
+        }
+        return $this->parseCondPrimary($tokens);
+    }
+
+    private function parseCondPrimary(array $tokens)
+    {
+        $t = $tokens[$this->condPos] ?? null;
+        if (!$t) {
+            throw new \RuntimeException('Unexpected end of condition');
+        }
+        if ($t['t'] === 'op' && $t['v'] === '(') {
+            $this->condPos++;
+            $v = $this->parseCondOr($tokens);
+            if (($tokens[$this->condPos]['v'] ?? null) !== ')') {
+                throw new \RuntimeException('Missing closing parenthesis in condition');
+            }
+            $this->condPos++;
+            return $v;
+        }
+        if (in_array($t['t'], ['num', 'str', 'const'], true)) {
+            $this->condPos++;
+            return $t['v'];
+        }
+        throw new \RuntimeException('Unexpected token in condition');
     }
     
     private function executeEmailNode(array $config): array
