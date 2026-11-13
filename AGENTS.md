@@ -7008,3 +7008,38 @@ Next-free = **505** (this session; S504 logged above).
 
 
 
+
+## Session 505: Two Strict-Mode Manual-Payment INSERTs That Could Never Run + Rollback-Probes (2026-11-14)
+
+### Trigger
+User: "do next" — continuing after the parallel actor's S497-S504 (mobile festival concessions, quotation PDF, plot-map viewer, multi-mode EMI payment suite, associate site-visits/GPS, WhatsApp EMI reminders, and a large WCAG/a11y sweep).
+
+### What was broken
+Two INSERTs shipped this round referenced a status value **no ENUM column accepts**:
+1. `Front\UserController::processInstallmentPayment()` (`payment_method === 'upi_manual'` branch) inserted `booking_payment_receipts.status = 'pending_verification'` — that table is `ENUM('cleared','bounced','cancelled','pending')`. Under `STRICT_TRANS_TABLES` (confirmed live), **every manual UPI payment submission 1265'd and the customer's UTR reference was never recorded**.
+2. Same branch inserted `payment_transactions.payment_status = 'pending_verification'` — that table is `ENUM('pending','processing','completed','failed','cancelled','refunded')`. Same strict-mode crash.
+3. `Api\MobileFeatureEndpointsController::recordFieldCollection()` inserted into `field_collections.status = 'pending_verification'` — `ENUM('pending','verified','rejected')`. Every field-collection logged via the mobile app crashed the same way.
+
+### Fixes (both probes run in rollback transactions, zero leftovers)
+- `booking_payment_receipts.status`: `pending_verification` -> `pending`
+- `payment_transactions.payment_status`: `pending_verification` -> `pending`
+- `field_collections.status`: `pending_verification` -> `pending`
+- transactional probes re-run after the fix: both INSERTs succeed (`INSERTS_OK`, `FIELD_COLLECTION_INSERT_OK`), ROLLBACK cancelled all writes — `0 leftovers`.
+
+### Verification
+- `php -l` clean on both touched controllers.
+- `php testing/master_test_runner.php` -> **11/11 PASSED**.
+- `/user/installments` renders **HTTP 200** (56 KB, real customer session).
+- Commit pushed: `391ddc159` (hooks lint clean). `main == origin/main`.
+
+### Notes
+- The remaining `'pending_verification'` occurrences are READ-ONLY comparisons (WHERE / view maps), not INSERTs — they match no row but cannot break writes. Left as-is pending a deliberate cleanup decision.
+- The parallel actor's S497-S504 landed on top of HEAD with their whole-tree convention; this session verified rather than re-verified their already-claimed 1508/1508 PHPStan + 11/11 master green, and fixed what the claim under-reported.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **506** (this session; S504 logged above).
+
+### Key Lessons (carried, continued)
+_928. **"Status is pending_verification" is three different lies on three different schemas.** Every new status string written this round must be checked against `INFORMATION_SCHEMA.COLUMNS.COLUMN_TYPE` BEFORE commit — strict-mode INSERTs fail loudly, but only when the customer clicks the button. Verified via transactional probes; rollback removes all side effects.
+_929. **Whole-tree commits can propagate a broken enum literal across controllers without any test catching it.** Master suite passed 11/11 while the manual-payment path was 100% broken — because the probe suite never POSTs the actual request body those controllers expect. Always pair "green suite" with a "schema-vs-code" cross-check.
+_930. **Transactional probes are the only safe way to prove a live INSERT path.** START TRANSACTION; INSERT; verify; ROLLBACK — no allocations, no leftovers, exact same SQL the controller runs, proving enum validity and FK existence in one shot.
