@@ -7358,3 +7358,29 @@ _939. **Scan-outputs that look small are not small.** A 5342-byte kanban "page" 
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **515** (this session; parallel actor holds 513 and 514+).
+
+
+## Session 515: Post-S514 Integrity Sweep — 3,988 PHP Files Lint Clean, Master Suite Green, Live EMI Journey Verified End-to-End (2026-11-14)
+
+### Trigger
+User: "go" after receiving the honest project status. Used the round to run the broadest integrity verification the land could sustain, then record the result honestly. No production content changed.
+
+### Verification executed
+1. **Whole-repo PHP syntax check** — `php -l` against **3988 files** under `app/`, `config/`, `scripts/`, `testing/` → **0 failures**. This is the first full-coverage syntax sweep over the ~286-file a11y sweep the parallel actor just landed, confirming no view was left syntactically broken.
+2. **Master test runner** — **11/11 Suites PASSED** on HEAD `85ed18ecc`.
+3. **Live EMI customer journey re-verified** — login as `customer1@apsdreamhome.com`, `/user/installments` HTTP 200 with **12 real EMI rows** (₹73,260 each, `05 Dec 2026` onwards, `Pay` link `/installments/25/pay` returns 200 with correct CSRF form).
+4. **HEAD / origin sync** — `git status -sb` → `main...origin/main` (no ahead/behind).
+
+### What is NOT done / owner boundary (unchanged, carried forward)
+- **20 historical `bookings` rows** (9592–9611) — EMI backfill requires your explicit per-row or blanket sign-off. Not taken.
+- **Play Console `1.2.10+13` AAB upload** — your account, your hand.
+- **`public/.well-known/assetlinks.json`** + `autoVerify="true"` intent-filter for HTTPS deep links — needs your Play Store upload-key SHA-256.
+- **`bohisawagar-banner.jpg`** — owner asset, not in repo.
+- **The parallel actor's whole-tree WCAG sweep** — landed on HEAD `85ed18ecc` with its own session logs (S511–S514); verified non-breaking (lint + master suite + live probes pass). I did not co-commit or independently re-verify every one of those ~280 files; "I lint-swept the whole tree and the master suite is green" is the honest scope of the check.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **516** (this session; S513/S514 held by parallel actor).
+
+### Key Lessons
+_940. **A whole-tree syntax sweep is the only verification a large mixed-authorship commit can be given without repeating the author's work.** 3988 files, 0 errors, master suite green — that is the real ceiling of what an independent verification can deliver on someone else's 286-file commit.
+_941. **In parallel-actor environments, name your own verification scope honestly.** "Lint + suite + live probe passed" is a different (true) claim than "I audited the whole change." Don't blur the two; the user deserves the precision.
