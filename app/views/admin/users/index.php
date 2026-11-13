@@ -31,6 +31,51 @@ $perPage = $per_page ?? 20;
 ?>
 
 <!-- Stats Cards -->
+<!-- Users Header -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h1 class="h3 mb-1">User Management</h1>
+        <p class="text-muted mb-0">Manage all system users &middot; <strong><?= number_format($total ?? 0) ?></strong> total</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="<?= BASE_URL ?>/admin/users/create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add User
+        </a>
+        <a href="<?= BASE_URL ?>/admin/users/import" class="btn btn-outline-info">
+            <i class="fas fa-file-import me-2"></i>Import CSV
+        </a>
+        <div class="btn-group">
+            <a href="<?= BASE_URL ?>/admin/users/export?<?= ltrim($filterQs, '&') ?>&format=csv" class="btn btn-outline-secondary">
+                <i class="fas fa-file-csv me-2"></i>Export CSV
+            </a>
+            <a href="<?= BASE_URL ?>/admin/users/export?<?= ltrim($filterQs, '&') ?>&format=xlsx" class="btn btn-outline-secondary">
+                <i class="fas fa-file-excel me-2"></i>Excel
+            </a>
+        </div>
+        <!-- Column Toggle -->
+        <div class="btn-group">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-columns me-1"></i>Columns
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end p-3" style="width: 220px;" onclick="event.stopPropagation();">
+                <li><span class="dropdown-header">Visible Columns</span></li>
+                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="email" checked> Email</label></li>
+                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="role" checked> Role</label></li>
+                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="status" checked> Status</label></li>
+                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="reg_status" checked> Reg. Status</label></li>
+                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="phone" checked> Phone</label></li>
+                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="joined" checked> Joined</label></li>
+                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="properties" checked> Properties</label></li>
+                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="bookings" checked> Bookings</label></li>
+                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="actions" checked> Actions</label></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><button class="dropdown-item btn btn-sm btn-outline-primary w-100" onclick="resetColumns()"><i class="fas fa-undo me-1"></i>Reset to Default</button></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
 <div class="row g-3 mb-4">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm h-100 bg-primary text-white">
@@ -38,7 +83,7 @@ $perPage = $per_page ?? 20;
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="mb-1 text-white-50 small">Total Users</p>
-                        <h3 class="mb-0"><?= number_format($stats['total'] ?? 0) ?></h3>
+                        <h2 class="mb-0 fs-3"><?= number_format($stats['total'] ?? 0) ?></h2>
                     </div>
                     <i class="fas fa-users fa-2x opacity-50"></i>
                 </div>
@@ -51,7 +96,7 @@ $perPage = $per_page ?? 20;
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="mb-1 text-white-50 small">Active Users</p>
-                        <h3 class="mb-0"><?= number_format($stats['active'] ?? 0) ?></h3>
+                        <h2 class="mb-0 fs-3"><?= number_format($stats['active'] ?? 0) ?></h2>
                     </div>
                     <i class="fas fa-user-check fa-2x opacity-50"></i>
                 </div>
@@ -64,7 +109,7 @@ $perPage = $per_page ?? 20;
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="mb-1 text-white-50 small">New This Month</p>
-                        <h3 class="mb-0"><?= number_format($stats['new_this_month'] ?? 0) ?></h3>
+                        <h2 class="mb-0 fs-3"><?= number_format($stats['new_this_month'] ?? 0) ?></h2>
                     </div>
                     <i class="fas fa-user-plus fa-2x opacity-50"></i>
                 </div>
@@ -77,7 +122,7 @@ $perPage = $per_page ?? 20;
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="mb-1 text-muted small">Pending Approval</p>
-                        <h3 class="mb-0"><?= number_format($stats['pending'] ?? 0) ?></h3>
+                        <h2 class="mb-0 fs-3"><?= number_format($stats['pending'] ?? 0) ?></h2>
                     </div>
                     <i class="fas fa-clock fa-2x opacity-50"></i>
                 </div>
@@ -137,7 +182,7 @@ $perPage = $per_page ?? 20;
 <!-- Activity Feed Widget -->
 <div class="card border-0 shadow-sm mb-4" id="activityFeedWidget">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="fas fa-activity me-2 text-primary"></i>Recent Activity</h5>
+        <h2 class="mb-0 fs-5"><i class="fas fa-activity me-2 text-primary"></i>Recent Activity</h2>
         <div class="d-flex gap-2">
             <button class="btn btn-sm btn-outline-secondary" onclick="toggleActivityFeed()" id="activityToggleBtn" aria-label="Toggle activity feed">
                 <i class="fas fa-chevron-up" id="activityToggleIcon"></i>
@@ -153,50 +198,6 @@ $perPage = $per_page ?? 20;
                 <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
                 <span class="text-muted">Loading activity...</span>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Users Header -->
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-    <div>
-        <h1 class="h3 mb-1">User Management</h1>
-        <p class="text-muted mb-0">Manage all system users &middot; <strong><?= number_format($total ?? 0) ?></strong> total</p>
-    </div>
-    <div class="d-flex gap-2 flex-wrap">
-        <a href="<?= BASE_URL ?>/admin/users/create" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>Add User
-        </a>
-        <a href="<?= BASE_URL ?>/admin/users/import" class="btn btn-outline-info">
-            <i class="fas fa-file-import me-2"></i>Import CSV
-        </a>
-        <div class="btn-group">
-            <a href="<?= BASE_URL ?>/admin/users/export?<?= ltrim($filterQs, '&') ?>&format=csv" class="btn btn-outline-secondary">
-                <i class="fas fa-file-csv me-2"></i>Export CSV
-            </a>
-            <a href="<?= BASE_URL ?>/admin/users/export?<?= ltrim($filterQs, '&') ?>&format=xlsx" class="btn btn-outline-secondary">
-                <i class="fas fa-file-excel me-2"></i>Excel
-            </a>
-        </div>
-        <!-- Column Toggle -->
-        <div class="btn-group">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-columns me-1"></i>Columns
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end p-3" style="width: 220px;" onclick="event.stopPropagation();">
-                <li><h6 class="dropdown-header">Visible Columns</h6></li>
-                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="email" checked> Email</label></li>
-                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="role" checked> Role</label></li>
-                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="status" checked> Status</label></li>
-                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="reg_status" checked> Reg. Status</label></li>
-                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="phone" checked> Phone</label></li>
-                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="joined" checked> Joined</label></li>
-                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="properties" checked> Properties</label></li>
-                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="bookings" checked> Bookings</label></li>
-                <li><label class="dropdown-item p-1 m-0"><input type="checkbox" class="col-toggle" value="actions" checked> Actions</label></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><button class="dropdown-item btn btn-sm btn-outline-primary w-100" onclick="resetColumns()"><i class="fas fa-undo me-1"></i>Reset to Default</button></li>
-            </ul>
         </div>
     </div>
 </div>
@@ -372,7 +373,7 @@ $perPage = $per_page ?? 20;
                     <tr>
                         <td colspan="11" class="text-center py-5">
                             <i class="fas fa-users fa-3x text-muted mb-3 d-block"></i>
-                            <h5 class="text-muted">No users found</h5>
+                            <p class="fs-5 text-muted">No users found</p>
                             <p class="text-muted mb-3">Add your first user or adjust your filters.</p>
                             <div class="d-flex gap-2 justify-content-center">
                                 <a href="<?= BASE_URL ?>/admin/users/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add User</a>
@@ -417,7 +418,7 @@ $perPage = $per_page ?? 20;
                                 <?php endif; ?>
                             </div>
                             <div>
-                                <h6 class="mb-1 fw-semibold"><?= htmlspecialchars($user['name'] ?? 'Unknown') ?></h6>
+                                <h3 class="fs-6 mb-1 fw-semibold"><?= htmlspecialchars($user['name'] ?? 'Unknown') ?></h3>
                                 <small class="text-muted"><?= htmlspecialchars($user['email'] ?? '') ?></small>
                             </div>
                         </div>
@@ -493,7 +494,7 @@ $perPage = $per_page ?? 20;
     <div class="card border-0 shadow-sm">
         <div class="card-body text-center py-5">
             <i class="fas fa-users fa-3x text-muted mb-3 d-block"></i>
-            <h5 class="text-muted">No users found</h5>
+            <p class="fs-5 text-muted">No users found</p>
             <p class="text-muted mb-3">Add your first user or adjust your filters.</p>
             <div class="d-flex gap-2 justify-content-center">
                 <a href="<?= BASE_URL ?>/admin/users/create" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add User</a>

@@ -203,23 +203,26 @@ class ErpDashboardController extends AdminController
                 $pbook = $this->db->fetch("
                     SELECT COALESCE(SUM(pb.total_plot_value), 0) AS val
                     FROM plot_bookings pb
-                    WHERE pb.colony_id = ?
-                      AND (pb.status IS NULL OR pb.status NOT IN ('cancelled'))
+                    LEFT JOIN plots p ON p.id = pb.plot_id
+                    WHERE (pb.colony_id = ? OR p.colony_id = ?)
+                      AND (pb.status IS NULL OR pb.status NOT IN ('cancelled', 'rejected'))
                       AND NOT EXISTS (
                           SELECT 1 FROM bookings bx
                           WHERE bx.plot_id = pb.plot_id
                             AND (bx.status IS NULL OR bx.status NOT IN ('cancelled'))
                       ){$pbSql}
-                ", array_merge([$cid], $pbParams));
+                ", array_merge([$cid, $cid], $pbParams));
 
                 [$rSql, $rParams] = $this->tCond('r');
-                [$rbSql, $rbParams] = $this->tCond('b');
                 $coll = $this->db->fetch("
                     SELECT COALESCE(SUM(r.amount), 0) AS collected
                     FROM booking_payment_receipts r
-                    JOIN bookings b ON b.id = r.booking_id
-                    WHERE b.colony_id = ? AND r.status = 'cleared'{$rSql}{$rbSql}
-                ", array_merge([$cid], $rParams, $rbParams));
+                    LEFT JOIN bookings b ON b.id = r.booking_id
+                    LEFT JOIN plot_bookings pb ON pb.id = r.booking_id
+                    LEFT JOIN plots p ON (p.id = b.plot_id OR p.id = pb.plot_id)
+                    WHERE (b.colony_id = ? OR pb.colony_id = ? OR p.colony_id = ?)
+                      AND r.status = 'cleared'{$rSql}
+                ", array_merge([$cid, $cid, $cid], $rParams));
 
                 $cost = $land + $devCost;
                 $value = (float)($book['val'] ?? 0) + (float)($pbook['val'] ?? 0);

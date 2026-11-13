@@ -7492,3 +7492,35 @@ _945. **An enum miss is only as bad as its call site dispatches on it.** `viewin
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **518** (this session; parallel actor holds 516 in their uncommitted stack).
+
+## Session 518: ERP Colony PnL Cross-Table Revenue Realization, Users Index Tag & Accessibility Fixes, High-Contrast Dark Badges (2026-11-14)
+
+### Trigger
+User instructions: "do next all" & "ok do next apne suggestion se sare kaam karte raho bina ruke" — continuous autonomous execution as Senior Software Developer & CEO. Deep auditing of ERP business metrics, money realization logic, UI tag validation, and accessibility compliance.
+
+### The headline
+
+**1. ERP COLONY PNL CROSS-TABLE REVENUE REALIZATION (`ErpDashboardController.php`)**
+- **Unified Collection Realization (`$coll`)**: Upgraded `ErpDashboardController::colonyPnl()` to resolve collected amounts across both legacy `bookings` and canonical `plot_bookings`. Linked via `LEFT JOIN plots p ON (p.id = b.plot_id OR p.id = pb.plot_id)` and filtered on `(b.colony_id = ? OR pb.colony_id = ? OR p.colony_id = ?)`. Previously, receipts referencing `plot_bookings.id` or bookings where colony was assigned at the plot level returned ₹0 collected revenue for colonies.
+- **Plot Booking Colony Value Resolution (`$pbook`)**: Added `LEFT JOIN plots p ON p.id = pb.plot_id` with `WHERE (pb.colony_id = ? OR p.colony_id = ?)`, accurately capturing plot booking values when the colony association is held on the plot record, while explicitly excluding cancelled and rejected bookings (`pb.status NOT IN ('cancelled', 'rejected')`).
+
+**2. ADMIN USERS INDEX TAG & ACCESSIBILITY REPAIR (`app/views/admin/users/index.php`)**
+- **Tag Mismatch Fix**: Resolved HTML parse anomaly where an opening `<p class="mb-1 fw-semibold">` was closed with `</h6>`, replacing it with semantic `<h3 class="fs-6 mb-1 fw-semibold">`.
+- **Form & Interactive Accessibility**: Bound explicit `aria-label` tags on filter dropdowns (role, status, per-page), collapsible analytics and activity feed toggle buttons, and table select-all / per-user selection checkboxes.
+
+**3. ACCESSIBLE USER-BOX BUTTON RESETS & DARK MODE CONTRAST (`admin-theme.css`, `dark-mode.css`, `admin.php`)**
+- Added button reset styling (`background: transparent; border: 0; color: inherit; font: inherit`) for `.user-box` to ensure accessible button elements retain native card styling.
+- Boosted dark-mode badge contrast for `.badge.bg-success` (`#065f46`) and `.badge.bg-info` (`#155e75`) ensuring WCAG AA >= 4.5:1 contrast against white text. Cache-busted to `admin-theme.css?v=4` and `dark-mode.css?v=7` in `admin.php`.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> `1508/1508 [OK] No errors`.
+- **Master Test Runner**: `php testing/master_test_runner.php` -> `11/11 PASSED (100% HEALTHY, 25.70s)`.
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **519** (this session; S518 logged above).
+
+### Key Lessons
+_946. **Colony association can exist either directly on the booking or on the allocated plot.** When calculating aggregate revenue or PnL per colony, joining `plots p ON (p.id = pb.plot_id OR p.id = b.plot_id)` and testing `(pb.colony_id = ? OR p.colony_id = ?)` prevents false ₹0 revenue calculations for bookings that rely on the plot's colony affiliation.

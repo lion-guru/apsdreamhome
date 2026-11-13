@@ -343,6 +343,10 @@ img {
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.2s;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
 }
 .user-box:hover {
   background: var(--body-bg);
@@ -3485,9 +3489,10 @@ footer ul li a,
   color: #64748b;
 }
 
-/* Admin top-header user role chip #94a3b8 = 2.6:1 on white */
+/* Admin top-header user role chip #94a3b8 = 2.6:1 on white (light theme AA fix;
+   dark remap of --text-muted applies under html.dark-mode) */
 .user-role {
-  color: #475569 !important;
+  color: var(--text-muted) !important;
 }
 
 /* Admin MLM stat cards: bg-primary card but admin.css label overrides
