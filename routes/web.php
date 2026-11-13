@@ -3706,6 +3706,19 @@ $router->get('/legal/agreements', 'Front\\LegalController@agreements');
 $router->get('/legal/title-protection', 'Front\\LegalController@titleProtection');
 $router->get('/legal/property-verification', 'Front\\LegalController@propertyVerification');
 
+// LifeKit mobile companion privacy policy
+$router->get('/lifekit-privacy-policy', function () {
+    $file = dirname(__DIR__) . '/public/lifekit-privacy-policy.html';
+    if (file_exists($file)) {
+        header('Content-Type: text/html; charset=UTF-8');
+        readfile($file);
+    } else {
+        http_response_code(404);
+        echo 'Privacy Policy not found';
+    }
+    exit;
+});
+
 // Short aliases â€” redirect bare URLs to /legal/ prefix
 $router->get('/insurance', function() { header('Location: /apsdreamhome/legal/insurance'); exit; });
 $router->get('/agreements', function() { header('Location: /apsdreamhome/legal/agreements'); exit; });

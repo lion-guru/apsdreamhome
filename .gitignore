@@ -122,6 +122,7 @@ storage/snapshots/
 storage/backups/
 storage/cache/
 storage/logs/*.log
+storage/logs/smoke_report.json
 storage/sessions/*
 !storage/sessions/.gitkeep
 storage/uploads/*

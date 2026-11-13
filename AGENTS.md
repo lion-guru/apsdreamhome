@@ -6414,4 +6414,36 @@ User instructions: "aur koi suggetion sbhi suggestion diye ho sabhi kaam kar do"
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **487** (next session).
+Next-free = **487** (this session; S486 logged above).
+
+## Session 487: Interactive Plot Map Navigation Integration, Customer Passbook & Site Visit Menu Links, LifeKit Compliance Route (2026-11-13)
+
+### Trigger
+User instruction: "do next" — Autonomous Senior Developer & CEO execution: surfacing high-value features in core navigation (interactive plot layout map, customer passbook, site visits schedule), route registration for mobile app compliance, and smoke test reporting gitignore cleanup.
+
+### The headline
+
+**1. INTERACTIVE PLOT MAP SURFACED IN MAIN NAVIGATION (`app/Helpers/NavigationHelper.php`)**
+- Added "Interactive Plot Map" (`/plots/layout`, icon `fas fa-map-marked-alt`, badge `MAP`) to the Plots dropdown navigation.
+- Automatically propagates to desktop mega navbar and mobile drawer accordion, giving prospective plot buyers and associates direct 1-click access to the visual SVG plot map and real-time availability visualizer.
+
+**2. CUSTOMER PASSBOOK & SITE VISITS IN USER NAVIGATION (`app/Helpers/NavigationHelper.php`)**
+- Added "My Passbook & Ledger" (`/user/passbook`, icon `fa-book-open`) and "My Site Visits" (`/user/site-visits`, icon `fa-car-side`) into the customer profile dropdown menu.
+- Eliminates previously disconnected customer accounting features, giving buyers instant access to their payment schedules, UPI QR payments, and upcoming site visit appointments.
+
+**3. LIFEEKIT COMPANION APP COMPLIANCE ROUTE & ASSET (`routes/web.php` & `public/lifekit-privacy-policy.html`)**
+- Created static privacy policy document `public/lifekit-privacy-policy.html` adhering to Google Play Store and AdMob compliance standards for the LifeKit companion utility.
+- Registered clean HTTP route `GET /lifekit-privacy-policy` serving the policy with UTF-8 text/html headers.
+
+**4. TEST REPORT LOG EXCLUSION (`.gitignore`)**
+- Added `storage/logs/smoke_report.json` to `.gitignore` to prevent test-run JSON artifact churn.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 25.82s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 15541 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **488** (next session).

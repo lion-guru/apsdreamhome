@@ -278,6 +278,8 @@ class NavigationHelper
         return [
             ['label' => __('dashboard'),            'url' => '/user/dashboard',             'icon' => 'fa-tachometer-alt'],
             ['label' => __('my_bookings'),          'url' => '/user/bookings',               'icon' => 'fa-file-contract'],
+            ['label' => 'My Passbook & Ledger',     'url' => '/user/passbook',               'icon' => 'fa-book-open'],
+            ['label' => 'My Site Visits',           'url' => '/user/site-visits',            'icon' => 'fa-car-side'],
             ['label' => __('my_favorites'),         'url' => '/dashboard/favorites',         'icon' => 'fa-heart'],
             ['label' => __('post_property'),         'url' => '/list-property',              'icon' => 'fa-plus-circle', 'highlight' => true],
             ['label' => __('my_properties'),        'url' => '/user/properties',              'icon' => 'fa-building'],
@@ -422,6 +424,7 @@ class NavigationHelper
         $submenu = [
             ['label' => __('browse_plots'),    'url' => '/plots/browse',                 'icon' => 'fas fa-search'],
             ['label' => __('nav_all_plots'),   'url' => '/plots',                        'icon' => 'fas fa-th-large'],
+            ['label' => 'Interactive Plot Map', 'url' => '/plots/layout',                'icon' => 'fas fa-map-marked-alt', 'badge' => 'MAP'],
             ['label' => 'Festive Offers & Deals', 'url' => '/offers',                    'icon' => 'fas fa-gift', 'badge' => 'NEW'],
         ];
 
