@@ -23,7 +23,7 @@ class DigiLockerService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $pdo = null;
             }
         }
@@ -44,7 +44,7 @@ class DigiLockerService
             if ($config) {
                 $this->config = $config;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         // Use defaults
         error_log($e->getMessage());
         }
@@ -121,7 +121,7 @@ class DigiLockerService
                 'refresh_token' => $tokenResponse['refresh_token'] ?? null,
                 'expires_in' => $tokenResponse['expires_in'] ?? 3600,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DigiLockerService::handleCallback] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Callback handling failed'];
         }
@@ -202,7 +202,7 @@ class DigiLockerService
                 ON DUPLICATE KEY UPDATE scopes = VALUES(scopes), status = 'pending'
             ");
             $stmt->execute([$state, $state, json_encode($scopes), $this->tenantId()]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DigiLockerService::saveSession] ' . $e->getMessage());
         }
     }
@@ -218,7 +218,7 @@ class DigiLockerService
             $stmt = $this->db->prepare("SELECT * FROM digilocker_sessions WHERE session_id = ? AND status = 'pending'" . $this->tenantSql());
             $stmt->execute([$state]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -246,7 +246,7 @@ class DigiLockerService
                 json_encode($userData),
                 $state,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[DigiLockerService::updateSession] ' . $e->getMessage());
         }
     }
@@ -266,7 +266,7 @@ class DigiLockerService
             ");
             $stmt->execute([$userId]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }

@@ -79,7 +79,7 @@ class BackupIntegrityService
                     INDEX idx_backup_file (backup_file)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ");
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Backup tables creation error: ' . $e->getMessage());
         }
     }
@@ -137,7 +137,7 @@ class BackupIntegrityService
             // Save verification record
             $this->createVerificationRecord($backupFile, $results['checksum']['details']['checksum'] ?? '', $results['checksum']['details']['file_size'] ?? 0);
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $results['error'] = $e->getMessage();
             $this->logIntegrityCheck($backupFile, 'overall', 'failed', ['error' => $e->getMessage()]);
         }
@@ -217,7 +217,7 @@ class BackupIntegrityService
             $passed = empty($details['missing_tables']);
             $details['missing_count'] = count($details['missing_tables']);
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $passed = false;
             $details['error'] = $e->getMessage();
         }
@@ -255,7 +255,7 @@ class BackupIntegrityService
             
             $passed = empty($details['failed_tables']);
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $passed = false;
             $details['error'] = $e->getMessage();
         }
@@ -287,7 +287,7 @@ class BackupIntegrityService
             
             $passed = $details['success'];
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $passed = false;
             $details['error'] = $e->getMessage();
         }
@@ -313,7 +313,7 @@ class BackupIntegrityService
                 ORDER BY created_at DESC 
                 LIMIT ?
             ", [$limit]) ?? [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -338,7 +338,7 @@ class BackupIntegrityService
             ");
             
             return array_merge($stats ?? [], ['recent' => $recent ?? []]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -351,7 +351,7 @@ class BackupIntegrityService
                 VALUES (?, ?)
             ", [$backupFile, $scheduleTime]);
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -364,7 +364,7 @@ class BackupIntegrityService
                 WHERE status = 'pending' AND schedule_time <= NOW()
                 ORDER BY schedule_time ASC
             ") ?? [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -422,7 +422,7 @@ class BackupIntegrityService
             ", [$daysToKeep]);
             
             return $this->db->rowCount();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }

@@ -118,7 +118,7 @@ class RegistryEligibilityService
             }
 
             return $out;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RegistryEligibilityService::checkEligibility] ' . $e->getMessage());
             $out['blocks'][] = 'Internal error checking eligibility.';
             return $out;
@@ -149,7 +149,7 @@ class RegistryEligibilityService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RegistryEligibilityService::getOutstandingDues] ' . $e->getMessage());
             return [];
         }
@@ -172,7 +172,7 @@ class RegistryEligibilityService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RegistryEligibilityService::getPaymentSchedule] ' . $e->getMessage());
             return [];
         }
@@ -216,7 +216,7 @@ class RegistryEligibilityService
             $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RegistryEligibilityService::getRegistryStatus] ' . $e->getMessage());
             return null;
         }
@@ -236,7 +236,7 @@ class RegistryEligibilityService
             $stmt->execute($params);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RegistryEligibilityService::getNocStatus] ' . $e->getMessage());
             return null;
         }
@@ -278,7 +278,7 @@ class RegistryEligibilityService
                 'total_amount' => (float)$row['total_amount'],
                 'status' => $row['booking_status'],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RegistryEligibilityService::getBookingSummary] ' . $e->getMessage());
             return null;
         }
@@ -294,7 +294,7 @@ class RegistryEligibilityService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return (int)$stmt->fetchColumn() > 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -313,7 +313,7 @@ class RegistryEligibilityService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return (int)$stmt->fetchColumn() > 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

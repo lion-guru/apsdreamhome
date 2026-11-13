@@ -110,7 +110,7 @@ class GenerationBonusEngine
                     $result['processed_leaders']++;
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[GenerationBonusEngine] calculateMonthlyGenerations error: " . $e->getMessage());
         }
         return $result;
@@ -158,7 +158,7 @@ class GenerationBonusEngine
                 ];
                 $result['total'] += $bonusAmt;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[GenerationBonusEngine] calculateLeaderGenerations error for user {$leaderUserId}: " . $e->getMessage());
         }
         return $result;
@@ -234,7 +234,7 @@ class GenerationBonusEngine
             }
 
             $this->db->commit();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             error_log("[GenerationBonusEngine] persist error: " . $e->getMessage());
         }
@@ -335,7 +335,7 @@ class GenerationBonusEngine
 
                 $currentParentUserIds = $nextParentUserIds;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[GenerationBonusEngine] getGenerationVolumes error: " . $e->getMessage());
         }
         return $generations;

@@ -178,7 +178,7 @@ class BudgetService
 
             $this->db->commit();
             return $expenseId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }
@@ -259,7 +259,7 @@ class BudgetService
 
             $this->db->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }
@@ -291,7 +291,7 @@ class BudgetService
             $this->db->delete('budget_expenses', 'id = ?', [$expenseId]);
             $this->db->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }

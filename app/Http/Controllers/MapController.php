@@ -29,7 +29,7 @@ class MapController extends BaseController
                 'page_description' => 'Browse properties on an interactive map',
                 'properties' => $properties
             ], 'layouts/base');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load map: ' . $e->getMessage());
             $this->redirect('/properties');
         }
@@ -74,7 +74,7 @@ class MapController extends BaseController
                 'success' => true,
                 'markers' => $markers
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             header('Content-Type: application/json');
             echo json_encode([
                 'success' => false,
@@ -131,7 +131,7 @@ class MapController extends BaseController
                 'success' => true,
                 'markers' => $markers
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             header('Content-Type: application/json');
             echo json_encode([
                 'success' => false,
@@ -166,7 +166,7 @@ class MapController extends BaseController
                 'price_revision' => \App\Http\Controllers\Admin\PriceRevisionController::activeForColony($this->db, (int)$colony['id']),
                 'sajra_url' => $this->featuredSajraUrl((int)$colony['id']),
             ], 'layouts/base');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load map');
             $this->redirect('/properties');
         }
@@ -255,7 +255,7 @@ class MapController extends BaseController
                 }
             }
             echo json_encode(['type' => 'FeatureCollection', 'features' => $features]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['type' => 'FeatureCollection', 'features' => []]);
         }
     }
@@ -313,7 +313,7 @@ class MapController extends BaseController
                 'price_revision' => \App\Http\Controllers\Admin\PriceRevisionController::activeForColony($this->db, (int)$colony['id']),
                 'sajra_url' => $this->featuredSajraUrl((int)$colony['id']),
             ], 'layouts/base');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load map');
             $this->redirect('/properties');
         }
@@ -373,7 +373,7 @@ class MapController extends BaseController
                 [$plotId, $plot['colony_id'], mb_substr($name, 0, 150), $phone, $refCode !== '' ? $refCode : null]
             );
             echo json_encode(['success' => true, 'message' => 'Hold request received! Our team will confirm your 24-hour hold on call/SMS shortly.']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('MapController::holdRequest: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success' => false, 'error' => 'Something went wrong. Please try again.']);
@@ -410,7 +410,7 @@ class MapController extends BaseController
                 'success' => true,
                 'suggestions' => $suggestions
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             header('Content-Type: application/json');
             echo json_encode([
                 'success' => false,

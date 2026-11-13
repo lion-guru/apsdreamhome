@@ -61,7 +61,7 @@ class RecommendationService
             $this->cacheRecommendations($userId, $recommendations);
 
             return $recommendations;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Recommendation Service Error: " . $e->getMessage());
             return $this->getFallbackRecommendations($userId, $limit);
         }
@@ -192,7 +192,7 @@ class RecommendationService
             }
 
             return $results;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CollaborativeFiltering Error: " . $e->getMessage());
             return [];
         }
@@ -213,7 +213,7 @@ class RecommendationService
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId, $userId]);
             return $stmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

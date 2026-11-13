@@ -118,7 +118,7 @@ class RecurringJournalEntryService
             }
             $this->db->commit();
             return $rjeId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }
@@ -179,7 +179,7 @@ class RecurringJournalEntryService
             }
             $this->db->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }
@@ -292,7 +292,7 @@ class RecurringJournalEntryService
             try {
                 $this->execute((int)$row['id']);
                 $processed++;
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $failed[] = ['id' => (int)$row['id'], 'error' => $e->getMessage()];
             }
         }

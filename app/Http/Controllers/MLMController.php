@@ -349,7 +349,7 @@ class MLMController extends BaseController
                 'success' => true,
                 'network' => $network ?: []
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get network tree: ' . $e->getMessage()
@@ -386,7 +386,7 @@ class MLMController extends BaseController
                 'success' => true,
                 'commissions' => $commissions ?: []
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get commission details: ' . $e->getMessage()
@@ -423,7 +423,7 @@ class MLMController extends BaseController
                 'success' => true,
                 'message' => 'Commission added successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to add commission: ' . $e->getMessage()

@@ -65,7 +65,7 @@ class ChartOfAccountController extends AdminController
             ];
 
             return $this->render('admin/chart_of_accounts/index', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load Chart of Accounts: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -145,7 +145,7 @@ class ChartOfAccountController extends AdminController
                 'account_id' => $accountId,
                 'redirect' => BASE_URL . '/admin/chart-of-accounts'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to create account: ' . $e->getMessage(), 500);
         }
     }
@@ -182,7 +182,7 @@ class ChartOfAccountController extends AdminController
                 'accounts' => $this->getAccountsForParent($id)
             ];
             return $this->render('admin/chart_of_accounts/edit', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load account: ' . $e->getMessage());
             return $this->redirect('/admin/chart-of-accounts');
         }
@@ -244,7 +244,7 @@ class ChartOfAccountController extends AdminController
                 'message' => 'Account updated successfully',
                 'redirect' => BASE_URL . '/admin/chart-of-accounts'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to update account: ' . $e->getMessage(), 500);
         }
     }
@@ -288,7 +288,7 @@ class ChartOfAccountController extends AdminController
                 'success' => true,
                 'message' => 'Account deleted successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to delete account: ' . $e->getMessage(), 500);
         }
     }

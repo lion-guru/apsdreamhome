@@ -83,7 +83,7 @@ class MlmInvestmentEngine
                 'total_distributed' => $totalDistributed,
                 'details' => $ledgerEntries,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             error_log("MlmInvestmentEngine::processJoiningPackage ERROR: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];

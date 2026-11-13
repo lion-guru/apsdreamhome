@@ -102,7 +102,7 @@ class JournalEntryController extends AdminController
             ];
 
             return $this->render('admin/journal_entries/index', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load Journal Entries: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -177,7 +177,7 @@ class JournalEntryController extends AdminController
                 'je_id' => $jeId,
                 'redirect' => BASE_URL . '/admin/journal-entries/' . $jeId
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to create journal entry: ' . $e->getMessage(), 500);
         }
     }
@@ -216,7 +216,7 @@ class JournalEntryController extends AdminController
                 'lines' => $lines
             ];
             return $this->render('admin/journal_entries/show', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load journal entry: ' . $e->getMessage());
             return $this->redirect('/admin/journal-entries');
         }
@@ -254,7 +254,7 @@ class JournalEntryController extends AdminController
                 'success' => true,
                 'message' => 'Journal entry approved successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to approve: ' . $e->getMessage(), 500);
         }
     }
@@ -291,7 +291,7 @@ class JournalEntryController extends AdminController
                 'success' => true,
                 'message' => 'Journal entry rejected successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to reject: ' . $e->getMessage(), 500);
         }
     }

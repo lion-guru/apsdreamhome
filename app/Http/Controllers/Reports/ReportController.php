@@ -34,19 +34,19 @@ class ReportController extends AdminController
 
         try {
             $scheduledReports = $this->reportService->getScheduledReports();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $errorMsg = 'Could not load scheduled reports: ' . $e->getMessage();
         }
 
         try {
             $availableReports = $this->reportService->getAvailableReports();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $availableReports = [];
         }
 
         try {
             $availableFormats = $this->reportService->getAvailableFormats();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $availableFormats = ['array' => 'Array Format'];
         }
 
@@ -80,7 +80,7 @@ class ReportController extends AdminController
             ];
 
             $this->render('reports/generate', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error loading report generation form: ' . $e->getMessage());
         }
     }
@@ -150,7 +150,7 @@ class ReportController extends AdminController
                     throw new Exception('Failed to generate report');
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error generating report: ' . $e->getMessage());
         }
     }
@@ -204,7 +204,7 @@ class ReportController extends AdminController
             ];
 
             $this->render('reports/scheduled', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error loading scheduled reports: ' . $e->getMessage());
         }
     }
@@ -225,7 +225,7 @@ class ReportController extends AdminController
             ];
 
             $this->render('reports/schedule', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error loading schedule form: ' . $e->getMessage());
         }
     }
@@ -269,7 +269,7 @@ class ReportController extends AdminController
                     throw new Exception('Failed to schedule report');
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error scheduling report: ' . $e->getMessage());
         }
     }
@@ -301,7 +301,7 @@ class ReportController extends AdminController
             } else {
                 throw new Exception('Failed to generate sales report');
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error generating sales report: ' . $e->getMessage());
         }
     }
@@ -331,7 +331,7 @@ class ReportController extends AdminController
             } else {
                 throw new Exception('Failed to generate property report');
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error generating property report: ' . $e->getMessage());
         }
     }
@@ -363,7 +363,7 @@ class ReportController extends AdminController
             } else {
                 throw new Exception('Failed to generate associate report');
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error generating associate report: ' . $e->getMessage());
         }
     }
@@ -395,7 +395,7 @@ class ReportController extends AdminController
             } else {
                 throw new Exception('Failed to generate customer report');
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error generating customer report: ' . $e->getMessage());
         }
     }
@@ -438,7 +438,7 @@ class ReportController extends AdminController
             ];
 
             $this->render('reports/user_activity', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error generating user activity report: ' . $e->getMessage());
         }
     }
@@ -470,7 +470,7 @@ class ReportController extends AdminController
             } else {
                 throw new Exception('Failed to generate financial report');
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Error generating financial report: ' . $e->getMessage());
         }
     }

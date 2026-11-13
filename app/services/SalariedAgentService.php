@@ -69,7 +69,7 @@ class SalariedAgentService
             ");
             $stmt->execute($params);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[SalariedAgentService] getSalaryStructure: ' . $e->getMessage());
             return null;
         }
@@ -100,7 +100,7 @@ class SalariedAgentService
             ");
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[SalariedAgentService] getSalaryHistory: ' . $e->getMessage());
             return [];
         }
@@ -193,7 +193,7 @@ class SalariedAgentService
 
             return ['success' => true, 'id' => $newId, 'error' => null];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
             }
@@ -299,7 +299,7 @@ class SalariedAgentService
                 'structure_id'     => (int)$structure['id'],
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[SalariedAgentService] calculateMonthlyPayroll: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -347,7 +347,7 @@ class SalariedAgentService
                 'sale_value'       => $saleValue,
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[SalariedAgentService] calculateSaleIncentive: ' . $e->getMessage());
             return ['success' => false, 'incentive_amount' => 0.0, 'incentive_type' => 'none', 'error' => $e->getMessage()];
         }
@@ -400,7 +400,7 @@ class SalariedAgentService
             ");
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[SalariedAgentService] getAllSalariedAgents: ' . $e->getMessage());
             return [];
         }

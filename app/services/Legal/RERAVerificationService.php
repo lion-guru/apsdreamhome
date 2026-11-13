@@ -40,7 +40,7 @@ class RERAVerificationService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $pdo = null;
             }
         }
@@ -74,7 +74,7 @@ class RERAVerificationService
                         'project' => $project,
                     ];
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[RERAVerificationService::verifyByReraNumber] DB error: ' . $e->getMessage());
             }
         }
@@ -137,7 +137,7 @@ class RERAVerificationService
             $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return ['success' => true, 'projects' => $projects];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -180,7 +180,7 @@ class RERAVerificationService
             $project['milestones'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return ['success' => true, 'project' => $project];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -313,7 +313,7 @@ class RERAVerificationService
                 $project['completion_percentage'] ?? 0,
                 $this->tenantId(),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RERAVerificationService::saveProject] ' . $e->getMessage());
             return false;
         }

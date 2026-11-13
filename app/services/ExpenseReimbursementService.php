@@ -83,7 +83,7 @@ class ExpenseReimbursementService
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($values);
             return ['success' => true, 'id' => (int)$this->conn->lastInsertId(), 'message' => 'Category created'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if (strpos($e->getMessage(), 'Duplicate') !== false) {
                 return ['success' => false, 'message' => 'Category code already exists'];
             }
@@ -277,7 +277,7 @@ class ExpenseReimbursementService
 
             $this->conn->commit();
             return ['success' => true, 'id' => $claimId, 'claim_number' => $claimNumber, 'message' => 'Claim submitted'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->conn->rollBack();
             throw $e;
         }
@@ -313,7 +313,7 @@ class ExpenseReimbursementService
 
             $this->conn->commit();
             return ['success' => true, 'message' => ucfirst($action) . 'd successfully'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->conn->rollBack();
             throw $e;
         }

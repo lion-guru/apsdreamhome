@@ -238,6 +238,9 @@ $dashBookingCount = count($dashBookings);
                                     <a href="<?= BASE_URL ?>/booking/<?= (int)$b['id'] ?>/confirmation" class="aps-cp-icon-btn" title="<?= __('dash_btn_view', null, 'View') ?>">
                                         <i class="fas fa-eye"></i>
                                     </a>
+                                    <a href="<?= BASE_URL ?>/booking/<?= (int)$b['id'] ?>/receipt" target="_blank" class="aps-cp-icon-btn" title="<?= __('dash_btn_receipt', null, 'View / Print Receipt') ?>">
+                                        <i class="fas fa-file-invoice text-primary"></i>
+                                    </a>
                                 </td>
                             </tr>
                             <?php endforeach; ?>

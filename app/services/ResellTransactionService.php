@@ -164,7 +164,7 @@ class ResellTransactionService
                 'message' => 'Deal closed successfully'
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             error_log("ResellTransactionService::closeResellDeal error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to close deal: ' . $e->getMessage()];
@@ -282,7 +282,7 @@ class ResellTransactionService
                 'message' => 'Deal closed successfully'
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             error_log("ResellTransactionService::closeUserPropertyDeal error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to close deal: ' . $e->getMessage()];

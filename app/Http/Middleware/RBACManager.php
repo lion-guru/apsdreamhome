@@ -1396,7 +1396,7 @@ class RBACManager
                 $db = Database::getInstance();
                 $user = $db->fetch("SELECT role FROM users WHERE id = ?", [$userId]);
                 return $user ? $user['role'] : null;
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("RBAC getUserRole error: " . $e->getMessage());
                 return null;
             }
@@ -1417,7 +1417,7 @@ class RBACManager
             try {
                 $db = Database::getInstance();
                 $db->query("UPDATE users SET role = ? WHERE id = ?", [$role, $userId]);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("RBAC setUserRole error: " . $e->getMessage());
             }
         }
@@ -1548,7 +1548,7 @@ class RBACManager
             $db = Database::getInstance();
             // PERFORMANCE: Select only needed columns instead of SELECT *
             return $db->fetchAll("SELECT id, name, email, role, status FROM users WHERE role = ?", [$role]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("RBAC getUsersByRole error: " . $e->getMessage());
             return [];
         }

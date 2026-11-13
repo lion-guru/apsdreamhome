@@ -86,7 +86,7 @@ class VoiceUploadApiController extends BaseController
                     'total_pages' => max(1, (int)ceil($total / $perPage)),
                 ],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("VoiceUploadApiController::index error: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Failed to fetch voice uploads'], 500);
         }
@@ -119,7 +119,7 @@ class VoiceUploadApiController extends BaseController
             }
 
             $this->json(['success' => true, 'data' => $upload]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("VoiceUploadApiController::show error: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Failed to fetch voice upload'], 500);
         }

@@ -128,7 +128,7 @@ class RetroactiveRecalculationService
                 'new_amount' => round($newAmount, 2),
                 'diff'       => round($diff, 2),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             error_log("[RetroactiveRecalc] requestRecalculation FAILED: " . $e->getMessage());
             return ['success' => false, 'error' => 'System error: ' . $e->getMessage()];
@@ -167,7 +167,7 @@ class RetroactiveRecalculationService
             }
 
             return $results;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[RetroactiveRecalc] bulkRequest FAILED: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -265,7 +265,7 @@ class RetroactiveRecalculationService
                 'new_amount'     => (float)$recalc['new_amount'],
                 'diff'           => (float)$recalc['amount_diff'],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             error_log("[RetroactiveRecalc] approve FAILED: " . $e->getMessage());
             return ['success' => false, 'error' => 'System error: ' . $e->getMessage()];
@@ -290,7 +290,7 @@ class RetroactiveRecalculationService
             }
 
             return ['success' => true];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[RetroactiveRecalc] reject FAILED: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -478,7 +478,7 @@ class RetroactiveRecalculationService
             $plan['plan_version'] = (int)$plan['version'];
 
             return $plan;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }

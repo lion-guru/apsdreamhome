@@ -57,7 +57,7 @@ class ApiAnalytics {
                     getenv('REDIS_PORT') ?: 6379
                 );
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->warning('Redis connection failed, using database fallback');
             }
@@ -100,7 +100,7 @@ class ApiAnalytics {
                 $this->updateCacheMetrics($endpoint, $method, $responseTime, $statusCode);
             }
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->error('Failed to record API request', [
                     'error' => $e->getMessage()

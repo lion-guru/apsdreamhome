@@ -171,7 +171,7 @@ class GRNService
 
             $this->db->commit();
             return $grnId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }

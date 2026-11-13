@@ -165,7 +165,7 @@ class RecurringTransactionService
             try {
                 $this->execute((int)$txn['id'], $userId);
                 $executed++;
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $errors[] = "ID {$txn['id']}: " . $e->getMessage();
             }
         }

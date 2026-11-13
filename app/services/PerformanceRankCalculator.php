@@ -54,7 +54,7 @@ class PerformanceRankCalculator
                 'next_rank_info' => $this->getNextRankInfo($currentRank, $teamSize, $businessVolume)
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Performance Rank Calculation Error: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -91,7 +91,7 @@ class PerformanceRankCalculator
             $stmt->execute([$userId]);
             return $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback for older databases or if CTE fails
             $downline = [];
             $queue = [$userId];

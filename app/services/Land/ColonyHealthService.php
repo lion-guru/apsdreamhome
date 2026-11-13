@@ -53,7 +53,7 @@ class ColonyHealthService
     {
         try {
             $this->db = Database::getInstance();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db = null;
         }
     }
@@ -105,7 +105,7 @@ class ColonyHealthService
                 'risks'            => $risks,
                 'recommendations'  => $recommendations,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -138,7 +138,7 @@ class ColonyHealthService
             }
 
             return ['success' => true, 'colonies' => $results];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -176,7 +176,7 @@ class ColonyHealthService
             usort($alerts, fn($a, $b) => $a['score'] <=> $b['score']);
 
             return $alerts;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('getColoniesBelowThreshold error: ' . $e->getMessage());
             return [];
         }

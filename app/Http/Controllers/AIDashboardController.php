@@ -84,7 +84,7 @@ class AIDashboardController extends BaseController
                 'system_health' => $this->getSystemHealth(),
                 'last_updated' => date('Y-m-d H:i:s')
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AI Statistics Error: ' . $e->getMessage());
             return [
                 'total_predictions' => 0,
@@ -107,7 +107,7 @@ class AIDashboardController extends BaseController
                 return count($suggestions) * 100; // Mock calculation
             }
             return 12500; // Fallback value
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 12500;
         }
     }
@@ -121,7 +121,7 @@ class AIDashboardController extends BaseController
                 return $health['status'] === 'healthy' ? 94.2 : 85.7;
             }
             return 94.2; // Fallback value
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 94.2;
         }
     }
@@ -135,7 +135,7 @@ class AIDashboardController extends BaseController
                 return count($activeAgents);
             }
             return 8; // Fallback value
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 8;
         }
     }
@@ -145,7 +145,7 @@ class AIDashboardController extends BaseController
         try {
             // Fallback calculation based on system activity
             return 850;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 850;
         }
     }
@@ -159,7 +159,7 @@ class AIDashboardController extends BaseController
                 return $health['status'] ?? 'healthy';
             }
             return 'healthy'; // Fallback value
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 'healthy';
         }
     }
@@ -177,7 +177,7 @@ class AIDashboardController extends BaseController
                 'current_accuracy' => 94.2,
                 'target_accuracy' => 96.0
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Training Progress Error: ' . $e->getMessage());
             return [
                 'current_model' => 'Unknown',
@@ -222,7 +222,7 @@ class AIDashboardController extends BaseController
                     'details' => 'Property recommendation generated for user #1234'
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Recent Activity Error: ' . $e->getMessage());
             return [
                 [
@@ -282,7 +282,7 @@ class AIDashboardController extends BaseController
             ];
 
             echo json_encode($metrics);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'error' => $e->getMessage(),
                 'timestamp' => date('Y-m-d H:i:s')
@@ -323,7 +323,7 @@ class AIDashboardController extends BaseController
             ];
 
             echo json_encode($status);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'error' => $e->getMessage(),
                 'timestamp' => date('Y-m-d H:i:s')
@@ -366,7 +366,7 @@ class AIDashboardController extends BaseController
             ];
 
             echo json_encode($diagnostics);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'error' => $e->getMessage(),
                 'timestamp' => date('Y-m-d H:i:s')

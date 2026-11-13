@@ -21,7 +21,7 @@ class BankImportController extends AdminController
         } catch (\Throwable $e) {
             try {
                 $this->service = new BankImportService();
-            } catch (Exception $e2) {
+            } catch (\Throwable $e2) {
                 $this->service = null;
             }
         }

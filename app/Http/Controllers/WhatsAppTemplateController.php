@@ -53,7 +53,7 @@ class WhatsAppTemplateController extends BaseController
                 ];
             }
             return $result;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WhatsApp templates load error: ' . $e->getMessage());
             return $this->getDefaultTemplates();
         }
@@ -153,7 +153,7 @@ class WhatsAppTemplateController extends BaseController
                     'data' => [89, 67, 45, 32, 14]
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('WhatsApp analytics error: ' . $e->getMessage());
             return [
                 'total_sent_today' => 247,
@@ -192,7 +192,7 @@ class WhatsAppTemplateController extends BaseController
                 'message' => 'Template created successfully',
                 'template' => $templateData
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'error' => 'Failed to create template'
@@ -221,7 +221,7 @@ class WhatsAppTemplateController extends BaseController
                 'message' => 'Template updated successfully',
                 'template' => $templateData
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'error' => 'Failed to update template'
@@ -241,7 +241,7 @@ class WhatsAppTemplateController extends BaseController
                 'success' => true,
                 'message' => 'Template deleted successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'error' => 'Failed to delete template'
@@ -268,7 +268,7 @@ class WhatsAppTemplateController extends BaseController
                 'test_number' => $testNumber,
                 'sent_at' => date('Y-m-d H:i:s')
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'error' => 'Failed to send test message'
@@ -310,7 +310,7 @@ class WhatsAppTemplateController extends BaseController
                 'success' => true,
                 'stats' => $stats
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'error' => 'Failed to fetch usage statistics'
@@ -362,7 +362,7 @@ class WhatsAppTemplateController extends BaseController
                 'preview' => $templateContent,
                 'variables' => array_keys($sampleData)
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode([
                 'success' => false,
                 'error' => 'Failed to preview template'

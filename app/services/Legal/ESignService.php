@@ -23,7 +23,7 @@ class ESignService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $pdo = null;
             }
         }
@@ -42,7 +42,7 @@ class ESignService
             $stmt = $this->db->query("SELECT config_key, config_value FROM esign_config WHERE is_active = 1");
             $configs = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
             $this->config = $configs;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignService::loadConfig] ' . $e->getMessage());
         }
     }
@@ -185,7 +185,7 @@ class ESignService
                 'signed_at' => date('Y-m-d H:i:s'),
                 'document_url' => "/api/esign/document/{$transactionId}",
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignService::verifyOtp] ' . $e->getMessage());
             return ['success' => false, 'error' => 'OTP verification failed'];
         }
@@ -223,7 +223,7 @@ class ESignService
                     'document_hash' => $transaction['document_hash'],
                 ],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignService::getTransactionStatus] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Failed to get status'];
         }
@@ -257,7 +257,7 @@ class ESignService
                 'document' => $pdf,
                 'filename' => "signed_{$transaction['document_type']}_{$transactionId}.pdf",
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignService::getSignedDocument] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Failed to get document'];
         }
@@ -276,7 +276,7 @@ class ESignService
             ");
             $stmt->execute([$bookingId]);
             return ['success' => true, 'transactions' => $stmt->fetchAll(PDO::FETCH_ASSOC)];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignService::getByBooking] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Failed to fetch transactions'];
         }
@@ -336,7 +336,7 @@ protected function saveTransaction(array $data): int
                 $this->tenantId(),
             ]);
             return (int)$this->db->lastInsertId();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignService::saveTransaction] ' . $e->getMessage());
             return 0;
         }
@@ -364,7 +364,7 @@ protected function saveTransaction(array $data): int
 
             $stmt = $this->db->prepare($sql);
             return $stmt->execute($params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignService::updateStatus] ' . $e->getMessage());
             return false;
         }
@@ -379,7 +379,7 @@ protected function saveTransaction(array $data): int
                 UPDATE esign_transactions SET signed_document_url = ? WHERE id = ?" . $this->tenantSql() . "
             ");
             return $stmt->execute([$documentUrl, $id]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignService::updateSignedDocument] ' . $e->getMessage());
             return false;
         }
@@ -401,7 +401,7 @@ protected function saveTransaction(array $data): int
                 WHERE transaction_id = ?" . $this->tenantSql() . "
             ");
             $stmt->execute([$transactionId]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ESignService::mockInitiateESign] ' . $e->getMessage());
         }
 

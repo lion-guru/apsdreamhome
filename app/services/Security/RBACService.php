@@ -118,7 +118,7 @@ class RBACManager
             }
 
             return $hasPermission;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if (class_exists(AdminLogger::class)) {
                 AdminLogger::logError('PERMISSION_CHECK_ERROR', [
                     'message' => $e->getMessage(),
@@ -183,7 +183,7 @@ class RBACManager
             }
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Rollback transaction
             if (isset($db)) $db->rollBack();
 
@@ -217,7 +217,7 @@ class RBACManager
             ", ['user_id' => $userId]);
 
             return $role ? $role['name'] : null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if (class_exists(AdminLogger::class)) {
                 AdminLogger::logError('GET_USER_ROLE_ERROR', [
                     'message' => $e->getMessage(),

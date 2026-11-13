@@ -361,7 +361,7 @@ class PayrollService
 
             $this->conn->commit();
             return ['success' => true, 'message' => "Calculated $processed employees", 'processed' => $processed, 'totals' => ['gross' => $totalGross, 'deductions' => $totalDeductions, 'net' => $totalNet]];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->conn->rollBack();
             throw $e;
         }

@@ -81,7 +81,7 @@ class CurrencyService
                 } else {
                     $result['failed']++;
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $result['failed']++;
             }
         }
@@ -109,7 +109,7 @@ class CurrencyService
                     ]);
                 }
                 $this->db->commit();
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db->rollBack();
             }
         }

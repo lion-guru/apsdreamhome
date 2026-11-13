@@ -59,7 +59,7 @@ class LandAcquisitionService
             $this->db = Database::getInstance();
             $this->pdo = $this->db->getPdo();
             $this->logger = class_exists('App\Services\LoggingService') ? new LoggingService() : null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->log('error', 'Failed to initialize LandAcquisitionService', $e->getMessage());
             $this->db = null;
             $this->pdo = null;
@@ -157,7 +157,7 @@ class LandAcquisitionService
         try {
             $row = $this->db->fetch("SELECT * FROM land_leads WHERE id = ?{$this->tenantSql()}", [$id]);
             return $row ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->log('error', 'fetchLead failed', $e->getMessage());
             return null;
         }
@@ -187,7 +187,7 @@ class LandAcquisitionService
             $sql .= " ORDER BY l.created_at DESC LIMIT 200";
             $rows = $this->db->fetchAll($sql, $params);
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->log('error', 'listLeads failed', $e->getMessage());
             return ['success' => false, 'data' => [], 'count' => 0, 'error' => $e->getMessage()];
         }
@@ -240,7 +240,7 @@ class LandAcquisitionService
                 [$leadId]
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'data' => [], 'count' => 0, 'error' => $e->getMessage()];
         }
     }
@@ -278,7 +278,7 @@ class LandAcquisitionService
                 [$leadId]
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'data' => [], 'count' => 0, 'error' => $e->getMessage()];
         }
     }
@@ -318,7 +318,7 @@ class LandAcquisitionService
                 [$leadId]
             );
             return ['success' => true, 'data' => $row];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'data' => null, 'error' => $e->getMessage()];
         }
     }
@@ -331,7 +331,7 @@ class LandAcquisitionService
                 [$leadId]
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'data' => [], 'count' => 0, 'error' => $e->getMessage()];
         }
     }
@@ -449,7 +449,7 @@ class LandAcquisitionService
             $sql .= " ORDER BY d.created_at DESC LIMIT 200";
             $rows = $this->db->fetchAll($sql, $params);
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'data' => [], 'count' => 0, 'error' => $e->getMessage()];
         }
     }
@@ -467,7 +467,7 @@ class LandAcquisitionService
                 [$id]
             );
             return $row ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -535,7 +535,7 @@ class LandAcquisitionService
                     'by_type'       => $byType,
                 ],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'data' => [], 'count' => 0, 'summary' => [], 'error' => $e->getMessage()];
         }
     }
@@ -596,7 +596,7 @@ class LandAcquisitionService
                     'by_type'        => $byType,
                 ],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'data' => [], 'count' => 0, 'summary' => [], 'error' => $e->getMessage()];
         }
     }
@@ -632,7 +632,7 @@ class LandAcquisitionService
                 [$colonyId]
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'data' => [], 'count' => 0, 'error' => $e->getMessage()];
         }
     }
@@ -862,7 +862,7 @@ class LandAcquisitionService
                 'formula'           => $formula,
                 'description'       => "Brokerage for {$formula} = ₹" . number_format($amount, 2),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'amount'  => 0.0,
@@ -878,7 +878,7 @@ class LandAcquisitionService
                 "SELECT * FROM land_brokers WHERE 1=1{$this->tenantSql()} ORDER BY `active` DESC, broker_name ASC"
             );
             return ['success' => true, 'data' => $rows, 'count' => count($rows)];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'data' => [], 'count' => 0, 'error' => $e->getMessage()];
         }
     }
@@ -902,7 +902,7 @@ class LandAcquisitionService
             $result = $fn();
             $this->pdo->commit();
             return is_array($result) ? $result : ['success' => true, 'data' => $result];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->pdo && $this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
             }
@@ -962,7 +962,7 @@ class LandAcquisitionService
     private function log(string $level, string $msg, string $detail = ''): void
     {
         if ($this->logger && method_exists($this->logger, $level)) {
-            try { $this->logger->{$level}($msg, ['detail' => $detail]); } catch (Exception $e) { error_log($e->getMessage()); }
+            try { $this->logger->{$level}($msg, ['detail' => $detail]); } catch (\Throwable $e) { error_log($e->getMessage()); }
         } else {
             @error_log("[LandAcquisitionService] [$level] $msg :: $detail");
         }

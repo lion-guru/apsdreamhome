@@ -74,7 +74,7 @@ class ScheduledReportService
             ]);
             $this->db->commit();
             return $id;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }

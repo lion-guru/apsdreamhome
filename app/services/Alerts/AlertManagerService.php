@@ -133,7 +133,7 @@ class AlertManagerService
             
             $this->logger->log("System health check completed. Created $alertsCreated alerts.", 'info', 'alerts');
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error during system health check: " . $e->getMessage(), 'error', 'alerts');
         }
         
@@ -168,7 +168,7 @@ class AlertManagerService
             
             $this->logger->log("Processed $processed automated notifications", 'info', 'alerts');
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error processing automated notifications: " . $e->getMessage(), 'error', 'alerts');
         }
         
@@ -196,7 +196,7 @@ class AlertManagerService
             // Health score (0-100)
             $metrics['health_score'] = $this->calculateHealthScore($metrics);
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error getting system metrics: " . $e->getMessage(), 'error', 'alerts');
         }
         
@@ -226,7 +226,7 @@ class AlertManagerService
             // Pending escalations
             $data['pending_escalations'] = $this->getPendingEscalations();
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error getting dashboard data: " . $e->getMessage(), 'error', 'alerts');
         }
         
@@ -267,7 +267,7 @@ class AlertManagerService
                 return $result['errors'] / $result['total'];
             }
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // If table doesn't exist, return simulated value
                     error_log("AlertManagerService.php: " . $e->getMessage());
         }
@@ -339,7 +339,7 @@ class AlertManagerService
             $sql = "SELECT COUNT(*) as count FROM active_sessions WHERE last_activity >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
             $result = $this->database->fetchOne($sql);
             return $result['count'] ?? 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return rand(10, 100);
         }
     }
@@ -356,7 +356,7 @@ class AlertManagerService
             
             $result = $this->database->fetchOne($sql);
             return round($result['size_mb'] ?? 0, 2);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -439,7 +439,7 @@ class AlertManagerService
             $sql = "SELECT COUNT(*) as count FROM alert_escalations WHERE status = 'pending'";
             $result = $this->database->fetchOne($sql);
             return $result['count'] ?? 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -463,7 +463,7 @@ class AlertManagerService
                 'priority' => 'high'
             ]);
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error sending critical alert summary: " . $e->getMessage(), 'error', 'alerts');
         }
     }

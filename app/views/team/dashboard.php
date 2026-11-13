@@ -231,7 +231,7 @@ $jsEarningsData = json_encode($performanceData['monthly_earnings'] ?? []);
                             $date = $activity['date'] ?? date('Y-m-d H:i:s');
                             try {
                                 echo \Carbon\Carbon::parse($date)->diffForHumans();
-                            } catch (Exception $e) {
+                            } catch (\Throwable $e) {
                                 echo htmlspecialchars($date);
                             }
                         ?>

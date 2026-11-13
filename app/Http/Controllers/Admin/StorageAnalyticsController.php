@@ -68,7 +68,7 @@ class StorageAnalyticsController extends AdminController
                 'totalCost' => $storageCost + $requestCost,
                 'lastBackup' => $this->getLastBackup(),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/storage-analytics');
         }
@@ -95,7 +95,7 @@ class StorageAnalyticsController extends AdminController
                 return $this->jsonError('Failed to generate URL', 500);
             }
             return $this->jsonResponse(['success' => true, 'url' => $url, 'expires_minutes' => $expiry]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -132,7 +132,7 @@ class StorageAnalyticsController extends AdminController
                 'egress_cost' => round($egressCost, 2),
                 'total_monthly' => round($storageCost + $requestCost + $egressCost, 2),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -174,7 +174,7 @@ class StorageAnalyticsController extends AdminController
                 'is_gzip' => $isGz,
                 'checksum' => md5($content),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -187,7 +187,7 @@ class StorageAnalyticsController extends AdminController
             $files = $default->listFiles('backups/');
             if (empty($files)) return null;
             return $files[0]['last_modified'] ?? $files[0]['path'] ?? null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }

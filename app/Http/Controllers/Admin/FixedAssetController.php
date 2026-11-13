@@ -34,7 +34,7 @@ class FixedAssetController extends AdminController
                 'categories' => ['building','vehicle','furniture','equipment','land','computer','other'],
                 'statuses' => ['active','disposed','sold','stolen','damaged','retired'],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load assets: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -68,7 +68,7 @@ class FixedAssetController extends AdminController
             $id = $this->assetService->create($_POST);
             $this->logActivity('asset_created', ['asset_id' => $id, 'code' => $_POST['asset_code']]);
             return $this->jsonResponse(['success'=>true,'message'=>'Asset created','asset_id'=>$id,'redirect'=>BASE_URL.'/admin/fixed-assets']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: '.$e->getMessage(), 500);
         }
     }
@@ -86,7 +86,7 @@ class FixedAssetController extends AdminController
                 'asset' => $asset,
                 'schedule' => $schedule,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error','Failed: '.$e->getMessage());
             return $this->redirect('/admin/fixed-assets');
         }
@@ -114,7 +114,7 @@ class FixedAssetController extends AdminController
         try {
             $this->assetService->update((int)$id, $_POST);
             return $this->jsonResponse(['success'=>true,'message'=>'Updated','redirect'=>BASE_URL.'/admin/fixed-assets']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: '.$e->getMessage(), 500);
         }
     }
@@ -126,7 +126,7 @@ class FixedAssetController extends AdminController
         try {
             $this->assetService->delete((int)$id);
             return $this->jsonResponse(['success'=>true,'message'=>'Deleted']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -138,7 +138,7 @@ class FixedAssetController extends AdminController
         try {
             $count = $this->assetService->generateDepreciationSchedule((int)$id, $_SESSION['user_id'] ?? 1);
             return $this->jsonResponse(['success'=>true,'message'=>"Generated $count depreciation entries"]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -152,7 +152,7 @@ class FixedAssetController extends AdminController
             $month = (int)$_POST['period_month'];
             $this->assetService->postDepreciation((int)$id, $year, $month, $_SESSION['user_id'] ?? 1);
             return $this->jsonResponse(['success'=>true,'message'=>'Depreciation posted']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }

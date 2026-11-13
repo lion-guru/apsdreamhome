@@ -135,7 +135,7 @@ class AuthenticationService
                     'role' => $user['role']
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Login error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -233,7 +233,7 @@ class AuthenticationService
                 'message' => 'Registration successful',
                 'user_id' => $userId
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Registration error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -273,7 +273,7 @@ class AuthenticationService
             }
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Logout error: " . $e->getMessage());
             return false;
         }
@@ -302,7 +302,7 @@ class AuthenticationService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($tid > 1 ? [$_SESSION['user_id'], $tid] : [$_SESSION['user_id']]);
             return $stmt->fetch() ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Get current user error: " . $e->getMessage());
             return null;
         }
@@ -368,7 +368,7 @@ class AuthenticationService
                 'success' => true,
                 'message' => 'Password updated successfully'
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Update password error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -435,7 +435,7 @@ class AuthenticationService
                 'success' => true,
                 'message' => 'Password reset link sent to your email'
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Reset password error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -455,7 +455,7 @@ class AuthenticationService
             $sql = "UPDATE users SET last_login_at = NOW() WHERE id = ?" . ($tid > 1 ? " AND tenant_id = ?" : "");
             $stmt = $this->db->prepare($sql);
             $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to update last login: " . $e->getMessage());
         }
     }

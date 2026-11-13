@@ -186,7 +186,7 @@ class MonitoringController extends AdminController
                 'slow_queries' => $slowQueries,
                 'issues' => $issues
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'status' => 'critical',
                 'error' => $e->getMessage(),
@@ -469,7 +469,7 @@ class MonitoringController extends AdminController
         try {
             $stats = $this->db->getPerformanceStats();
             return $stats['slow_queries'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }

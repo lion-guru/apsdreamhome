@@ -68,7 +68,7 @@ class EMICollectionAgent extends BaseAgent {
                 'message' => "EMI payment of ₹" . number_format($amount) . " processed successfully."
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->handleError("Payment processing failed: " . $e->getMessage());
         }
     }

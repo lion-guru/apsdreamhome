@@ -115,7 +115,7 @@ class SystemDiagnosticController extends AdminController
             } else {
                 throw new Exception("Database connection failed");
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->report['database'] = [
                 'connected' => false,
                 'error' => $e->getMessage()

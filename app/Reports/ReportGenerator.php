@@ -99,7 +99,7 @@ class ReportGenerator
                     'daily_data' => $report
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => 'Failed to generate sales report: ' . $e->getMessage()
@@ -172,7 +172,7 @@ class ReportGenerator
                     'breakdown' => $report
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => 'Failed to generate property report: ' . $e->getMessage()
@@ -249,7 +249,7 @@ class ReportGenerator
                     'user_breakdown' => $report
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => 'Failed to generate user activity report: ' . $e->getMessage()
@@ -311,7 +311,7 @@ class ReportGenerator
                     'daily_breakdown' => $report
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'error' => 'Failed to generate financial report: ' . $e->getMessage()
@@ -348,7 +348,7 @@ class ReportGenerator
 
             fclose($output);
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

@@ -33,7 +33,7 @@ class InventoryController extends AdminController
                 'categories' => $this->invService->getCategories(),
                 'statuses' => ['in_stock','low_stock','out_of_stock','discontinued'],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load inventory: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -60,7 +60,7 @@ class InventoryController extends AdminController
             }
             $id = $this->invService->create($_POST);
             return $this->jsonResponse(['success'=>true,'message'=>'Material added','material_id'=>$id,'redirect'=>BASE_URL.'/admin/inventory']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: '.$e->getMessage(), 500);
         }
     }
@@ -85,7 +85,7 @@ class InventoryController extends AdminController
         try {
             $this->invService->update((int)$id, $_POST);
             return $this->jsonResponse(['success'=>true,'message'=>'Updated','redirect'=>BASE_URL.'/admin/inventory']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: '.$e->getMessage(), 500);
         }
     }
@@ -97,7 +97,7 @@ class InventoryController extends AdminController
         try {
             $this->invService->delete((int)$id);
             return $this->jsonResponse(['success'=>true,'message'=>'Deleted']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -109,7 +109,7 @@ class InventoryController extends AdminController
         try {
             $this->invService->stockIn((int)$_POST['material_id'], $_POST);
             return $this->jsonResponse(['success'=>true,'message'=>'Stock added']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -121,7 +121,7 @@ class InventoryController extends AdminController
         try {
             $this->invService->stockOut((int)$_POST['material_id'], $_POST);
             return $this->jsonResponse(['success'=>true,'message'=>'Stock issued']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -141,7 +141,7 @@ class InventoryController extends AdminController
                 'data' => $data,
                 'method' => $method,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load valuation: ' . $e->getMessage());
             return $this->redirect('/admin/inventory');
         }

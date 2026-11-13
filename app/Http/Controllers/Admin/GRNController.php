@@ -36,7 +36,7 @@ class GRNController extends AdminController
                 'filters' => ['status' => $status],
                 'statuses' => ['draft', 'verified', 'accepted', 'partial', 'rejected'],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load GRNs: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -61,7 +61,7 @@ class GRNController extends AdminController
                 'pos' => $pos,
                 'today' => date('Y-m-d'),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/grn');
         }
@@ -85,7 +85,7 @@ class GRNController extends AdminController
                 'grn_id' => $grnId,
                 'redirect' => BASE_URL . '/admin/grn/' . $grnId,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -105,7 +105,7 @@ class GRNController extends AdminController
                 'grn' => $grn,
                 'items' => $grn['items'] ?? [],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/grn');
         }
@@ -131,7 +131,7 @@ class GRNController extends AdminController
                 'success' => true,
                 'message' => 'GRN status updated to ' . ucfirst($status),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -155,7 +155,7 @@ class GRNController extends AdminController
             $this->db->delete('grn_records', ['id' => $id]);
             $this->logActivity('grn_deleted', ['grn_id' => $id]);
             return $this->jsonResponse(['success' => true, 'message' => 'GRN deleted']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }

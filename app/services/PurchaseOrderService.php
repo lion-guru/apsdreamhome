@@ -116,7 +116,7 @@ class PurchaseOrderService
 
             $this->db->commit();
             return $poId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }
@@ -143,7 +143,7 @@ class PurchaseOrderService
             $this->db->delete('purchase_orders', 'id = ?', [$id]);
             $this->db->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }
@@ -223,7 +223,7 @@ class PurchaseOrderService
 
             $this->db->commit();
             return $grnId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }

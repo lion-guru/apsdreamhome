@@ -165,7 +165,7 @@ class ApiAuthService
                 'expires_at' => $expiresAt
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("API Login Error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Internal server error'];
         }
@@ -188,7 +188,7 @@ class ApiAuthService
             if ($tid > 1) $params[] = $tid;
             $stmt->execute($params);
             return ['success' => true];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }

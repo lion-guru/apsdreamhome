@@ -41,7 +41,7 @@ class EmailService
     {
         try {
             return $this->unifiedService->send($to, $subject, $bodyHtml, '');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Email sending failed (legacy): " . $e->getMessage());
             return false;
         }
@@ -60,7 +60,7 @@ class EmailService
             $message = $this->getVerificationEmailTemplate($name, $verificationUrl);
             
             return $this->unifiedService->send($to, $subject, $message, '');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Email sending failed (legacy): " . $e->getMessage());
             return false;
         }
@@ -76,7 +76,7 @@ class EmailService
             $message = $this->getWelcomeEmailTemplate($name);
             $result = $this->unifiedService->send($to, $subject, $message, '');
             return ['success' => $result, 'message' => $result ? 'Welcome email sent successfully' : 'Email sending failed'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Welcome email failed: " . $e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -93,7 +93,7 @@ class EmailService
             $message = $this->getInquiryNotificationTemplate($inquiryData);
             $result = $this->unifiedService->send($adminEmail, $subject, $message, '');
             return ['success' => $result, 'message' => $result ? 'Inquiry notification sent to admin' : 'Email sending failed'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Inquiry notification failed: " . $e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -109,7 +109,7 @@ class EmailService
             $message = $this->getInquiryResponseTemplate($userName, $propertyTitle, $response);
             $result = $this->unifiedService->send($userEmail, $subject, $message, '');
             return ['success' => $result, 'message' => $result ? 'Inquiry response sent to user' : 'Email sending failed'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Inquiry response failed: " . $e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -125,7 +125,7 @@ class EmailService
             $message = $this->getNewsletterConfirmationTemplate($userName);
             $result = $this->unifiedService->send($userEmail, $subject, $message, '');
             return ['success' => $result, 'message' => $result ? 'Newsletter confirmation sent' : 'Email sending failed'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Newsletter confirmation failed: " . $e->getMessage());
             return ['success' => false, 'message' => $e->getMessage()];
         }
@@ -414,7 +414,7 @@ class EmailService
             ";
 
             return $this->unifiedService->send($to, $subject, $message, '');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Lead welcome email failed: " . $e->getMessage());
             return false;
         }

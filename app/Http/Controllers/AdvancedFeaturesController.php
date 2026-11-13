@@ -58,7 +58,7 @@ class AdvancedFeaturesController extends BaseController
                 'provider' => $provider
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get authorization URL: ' . $e->getMessage()
@@ -111,7 +111,7 @@ class AdvancedFeaturesController extends BaseController
                 'redirect' => $this->getRedirectUrl($user['role'])
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Social login failed: ' . $e->getMessage()
@@ -148,7 +148,7 @@ class AdvancedFeaturesController extends BaseController
 
             return $this->jsonResponse($result);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to send OTP: ' . $e->getMessage()
@@ -177,7 +177,7 @@ class AdvancedFeaturesController extends BaseController
 
             return $this->jsonResponse($result);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'OTP verification failed: ' . $e->getMessage()
@@ -197,7 +197,7 @@ class AdvancedFeaturesController extends BaseController
 
             return $this->jsonResponse($result);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to start registration: ' . $e->getMessage()
@@ -226,7 +226,7 @@ class AdvancedFeaturesController extends BaseController
                 'step_data' => $stepData
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get current step: ' . $e->getMessage()
@@ -247,7 +247,7 @@ class AdvancedFeaturesController extends BaseController
 
             return $this->jsonResponse($result);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to save step data: ' . $e->getMessage()
@@ -266,7 +266,7 @@ class AdvancedFeaturesController extends BaseController
 
             return $this->jsonResponse($result);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to move to next step: ' . $e->getMessage()
@@ -285,7 +285,7 @@ class AdvancedFeaturesController extends BaseController
 
             return $this->jsonResponse($result);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to move to previous step: ' . $e->getMessage()
@@ -310,7 +310,7 @@ class AdvancedFeaturesController extends BaseController
 
             return $this->jsonResponse($result);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to complete registration: ' . $e->getMessage()
@@ -339,7 +339,7 @@ class AdvancedFeaturesController extends BaseController
 
             return $this->jsonResponse($result);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to process message: ' . $e->getMessage()
@@ -363,7 +363,7 @@ class AdvancedFeaturesController extends BaseController
                 'history' => $history
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get conversation history: ' . $e->getMessage()
@@ -385,7 +385,7 @@ class AdvancedFeaturesController extends BaseController
                 'message' => 'Conversation cleared successfully'
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to clear conversation: ' . $e->getMessage()
@@ -413,7 +413,7 @@ class AdvancedFeaturesController extends BaseController
 
             return $this->jsonResponse($result);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to deliver campaign: ' . $e->getMessage()
@@ -443,7 +443,7 @@ class AdvancedFeaturesController extends BaseController
                 'stats' => $stats
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get campaign stats: ' . $e->getMessage()
@@ -474,7 +474,7 @@ class AdvancedFeaturesController extends BaseController
                 'message' => 'Engagement tracked successfully'
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to track engagement: ' . $e->getMessage()

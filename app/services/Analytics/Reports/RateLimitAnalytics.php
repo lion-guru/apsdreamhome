@@ -56,7 +56,7 @@ class RateLimitAnalytics {
                     getenv('REDIS_PORT') ?: 6379
                 );
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->warning('Redis connection failed, using database fallback');
             }
@@ -102,7 +102,7 @@ class RateLimitAnalytics {
                 if ((int)($row['c'] ?? 0) === 0) {
                     $this->logger->warning("Table {$table} is missing - run database/migrations/create_rate_limit_analytics_tables_s467.php");
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logger->warning("Could not verify {$table}: " . $e->getMessage());
             }
         }
@@ -128,7 +128,7 @@ class RateLimitAnalytics {
             // Check for threshold alerts
             $this->checkThresholds($apiKeyId, $endpoint, $requests, $limit);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->error('Failed to record rate limit event', [
                     'error' => $e->getMessage()
@@ -151,7 +151,7 @@ class RateLimitAnalytics {
             // Check violation patterns
             $this->checkViolationPatterns($apiKeyId);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->error('Failed to record rate limit violation', [
                     'error' => $e->getMessage()

@@ -67,7 +67,7 @@ class EMIAutoPaymentService
             }
 
             $result['success'] = $result['failed'] === 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::processDueEmiPayments: " . $e->getMessage());
             $result['success'] = false;
         }
@@ -140,7 +140,7 @@ class EMIAutoPaymentService
             ]);
 
             return ['success' => true, 'subscription_id' => $subscriptionId, 'mandate_id' => $mandateId, 'error' => null];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::setupMandate: " . $e->getMessage());
             return ['success' => false, 'subscription_id' => null, 'mandate_id' => null, 'error' => $e->getMessage()];
         }
@@ -202,7 +202,7 @@ class EMIAutoPaymentService
                 'status'     => 'order_created',
                 'error'      => null,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::captureMandatePayment: " . $e->getMessage());
             return ['success' => false, 'payment_id' => null, 'status' => 'error', 'error' => $e->getMessage()];
         }
@@ -241,7 +241,7 @@ class EMIAutoPaymentService
             }
 
             return ['success' => $result['success'], 'error' => $result['error'] ?? null];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::cancelMandate: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -275,7 +275,7 @@ class EMIAutoPaymentService
             }
 
             return ['success' => true, 'mandate' => $mandate, 'error' => null];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::getMandateStatus: " . $e->getMessage());
             return ['success' => false, 'mandate' => null, 'error' => $e->getMessage()];
         }
@@ -315,7 +315,7 @@ class EMIAutoPaymentService
             $params[] = $limit;
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::getUpcomingEmis: " . $e->getMessage());
             return [];
         }
@@ -353,7 +353,7 @@ class EMIAutoPaymentService
             );
             $stmt->execute([$limit]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::getFailedPayments: " . $e->getMessage());
             return [];
         }
@@ -391,7 +391,7 @@ class EMIAutoPaymentService
                 $stats['active_mandates'] = (int)$row['active'];
                 $stats['failed_mandates'] = (int)$row['failed'];
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         // table may not exist
         error_log($e->getMessage());
         }
@@ -406,7 +406,7 @@ class EMIAutoPaymentService
                 $stats['upcoming_emis']    = (int)$row['cnt'];
                 $stats['total_due_amount'] = (float)$row['total_due'];
             }
-        } catch (Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
             $row = $this->db->query(
@@ -416,7 +416,7 @@ class EMIAutoPaymentService
             if ($row) {
                 $stats['today_due'] = (int)$row['cnt'];
             }
-        } catch (Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         try {
             $row = $this->db->query(
@@ -426,7 +426,7 @@ class EMIAutoPaymentService
             if ($row) {
                 $stats['today_collected'] = (int)$row['cnt'];
             }
-        } catch (Exception $e) { error_log($e->getMessage()); }
+        } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         return $stats;
     }
@@ -455,7 +455,7 @@ class EMIAutoPaymentService
                  ORDER BY cm.created_at DESC"
             );
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::listMandates: " . $e->getMessage());
             return [];
         }
@@ -491,7 +491,7 @@ class EMIAutoPaymentService
                  ORDER BY bps.due_date ASC, bps.booking_id ASC"
             );
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::getDueInstallments: " . $e->getMessage());
             return [];
         }
@@ -594,7 +594,7 @@ class EMIAutoPaymentService
             }
 
             return ['success' => false, 'customer_id' => null, 'error' => $result['error'] ?? 'Failed to create Razorpay customer'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::getOrCreateRazorpayCustomer: " . $e->getMessage());
             return ['success' => false, 'customer_id' => null, 'error' => $e->getMessage()];
         }
@@ -617,7 +617,7 @@ class EMIAutoPaymentService
             $this->db->prepare(
                 "INSERT INTO customer_mandates ({$columns}) VALUES ({$placeholders})"
             )->execute($values);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::saveMandateRecord: " . $e->getMessage());
         }
     }
@@ -656,7 +656,7 @@ class EMIAutoPaymentService
             $this->db->prepare(
                 "UPDATE booking_payment_schedules SET reminder_count = reminder_count + 1, last_reminder_at = NOW() WHERE id = ?" . $this->tenantSql()
             )->execute($this->tenantId() > 1 ? [$installmentId, $this->tenantId()] : [$installmentId]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::sendEmiReminder: " . $e->getMessage());
         }
     }
@@ -688,7 +688,7 @@ class EMIAutoPaymentService
             $this->db->prepare(
                 "INSERT INTO gateway_logs ({$columns}) VALUES ({$placeholders})"
             )->execute($values);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("EMIAutoPaymentService::logPaymentAttempt: " . $e->getMessage());
         }
     }

@@ -133,7 +133,7 @@ class PfEsiService
             }
             $this->db->commit();
             return $count;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }

@@ -64,7 +64,7 @@ class AgentDashboardController extends BaseController
                     $_SESSION['associate_id'] = $this->associateId;
                     $_SESSION['agent_type'] = $this->agentType;
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("Agent Dashboard: Failed to fetch associate: " . $e->getMessage());
             }
         } else {
@@ -129,7 +129,7 @@ class AgentDashboardController extends BaseController
 
             $this->render('agent/dashboard', $finalData);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Agent Dashboard Error: " . $e->getMessage());
             $this->render('agent/dashboard', [
                 'page_title' => 'Agent Dashboard - APS Dream Home',
@@ -259,7 +259,7 @@ return [
                 'sold_properties' => $soldProperties['count'] ?? 0,
                 'conversion_rate' => $conversionRate . '%',
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Agent Statistics Error: " . $e->getMessage());
             return [
                 'total_leads' => 0,
@@ -286,7 +286,7 @@ return [
                 [$userId]
             );
             return $leads;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Recent Leads Error: " . $e->getMessage());
             return [];
         }
@@ -307,7 +307,7 @@ return [
                 [$userId]
             );
             return $properties;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Assigned Properties Error: " . $e->getMessage());
             return [];
         }
@@ -328,7 +328,7 @@ return [
                 [$userId]
             );
             return $properties;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("My Properties Error: " . $e->getMessage());
             return [];
         }
@@ -385,7 +385,7 @@ return [
                 'total_missed' => number_format($totalMissed, 2),
                 'total_commission' => number_format($totalDirect + $totalNetwork, 2),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("MLM Commission Summary Error: " . $e->getMessage());
             return [
                 'direct_commissions' => [],
@@ -436,7 +436,7 @@ return [
                 'commissions' => $commissions,
                 'total_commission' => number_format($totalCommission, 2),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Freelancer Commission Summary Error: " . $e->getMessage());
             return [
                 'brokerage_model' => 'flat_percentage',
@@ -481,7 +481,7 @@ return [
                 'team_size' => $teamSize['count'] ?? 0,
                 'team_gv' => number_format($teamGV['gv'] ?? 0, 2),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Network Stats Error: " . $e->getMessage());
             return [
                 'direct_count' => 0,
@@ -510,7 +510,7 @@ return [
                 [$userId, $userId]
             );
             return $visits;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Site Visits Error: " . $e->getMessage());
             return [];
         }
@@ -563,7 +563,7 @@ return [
                     'volume' => number_format($career['volume'] ?? 0, 2),
                 ],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Freelancer Performance Error: " . $e->getMessage());
             return [
                 'this_month' => ['count' => 0, 'volume' => '0.00'],
@@ -620,7 +620,7 @@ return [
                 'message' => 'Lead added successfully',
                 'lead' => $leadData,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to add lead: ' . $e->getMessage(),

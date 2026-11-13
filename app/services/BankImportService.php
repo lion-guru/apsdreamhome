@@ -129,7 +129,7 @@ class BankImportService
                 'total_rows' => $totalRows,
                 'imported'   => $inserted,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('BankImportService::importCsv error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -221,7 +221,7 @@ class BankImportService
             $tidSql = $tid > 1 ? " AND tenant_id = ?" : "";
             if ($tid > 1) $params[] = $tid;
             $pdo->prepare("UPDATE bank_statement_imports SET " . implode(', ', $sets) . " WHERE id = ?{$tidSql}")->execute($params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('BankImportService::updateImportStatus error: ' . $e->getMessage());
         }
     }
@@ -279,7 +279,7 @@ class BankImportService
             $this->updateImportStatus($importId, 'completed', null, null, $totalMatched, $totalUnmatched);
 
             return ['success' => true, 'matched' => $matched, 'unmatched' => $unmatched];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('BankImportService::autoMatch error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -315,7 +315,7 @@ class BankImportService
             ");
             $stmt2->execute([$amount, $bankDate]);
             return $stmt2->fetch(\PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -327,7 +327,7 @@ class BankImportService
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM bank_transactions WHERE import_id = ? AND matched = 1");
             $stmt->execute([$importId]);
             return (int)$stmt->fetchColumn();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -339,7 +339,7 @@ class BankImportService
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM bank_transactions WHERE import_id = ? AND matched = 0");
             $stmt->execute([$importId]);
             return (int)$stmt->fetchColumn();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -361,7 +361,7 @@ class BankImportService
             ");
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -383,7 +383,7 @@ class BankImportService
             ");
             $stmt->execute($params);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -409,7 +409,7 @@ class BankImportService
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -436,7 +436,7 @@ class BankImportService
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -465,7 +465,7 @@ class BankImportService
                 return true;
             }
             return false;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('BankImportService::manualMatch error: ' . $e->getMessage());
             return false;
         }
@@ -494,7 +494,7 @@ class BankImportService
             $this->updateImportStatus($bt['import_id'], 'completed', null, null, $totalMatched, $totalUnmatched);
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('BankImportService::unmatch error: ' . $e->getMessage());
             return false;
         }
@@ -509,7 +509,7 @@ class BankImportService
             $stmt = $pdo->prepare("SELECT * FROM bank_transactions WHERE id = ?{$tidSql}");
             $stmt->execute($tid > 1 ? [$id, $tid] : [$id]);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -523,7 +523,7 @@ class BankImportService
             $stmt = $pdo->prepare("DELETE FROM bank_statement_imports WHERE id = ?{$tidSql}");
             $stmt->execute($tid > 1 ? [$importId, $tid] : [$importId]);
             return $stmt->rowCount() > 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('BankImportService::deleteImport error: ' . $e->getMessage());
             return false;
         }
@@ -568,7 +568,7 @@ class BankImportService
                 'unmatched_amount' => (float)($row['unmatched_amount'] ?? 0),
                 'match_rate'       => $matchRate,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'total_credits' => 0, 'total_debits' => 0, 'total_transactions' => 0,
                 'matched_count' => 0, 'unmatched_count' => 0,
@@ -586,7 +586,7 @@ class BankImportService
             $pdo = $this->getPdo();
             $stmt = $pdo->query("SELECT id, account_name, bank_name FROM bank_accounts_master WHERE active = 1 ORDER BY account_name");
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -625,7 +625,7 @@ class BankImportService
             $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             return $results;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

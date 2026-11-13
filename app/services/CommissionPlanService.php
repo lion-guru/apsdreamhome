@@ -169,7 +169,7 @@ class CommissionPlanService
 
             $this->pdo->commit();
             return $planId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             throw $e;
         }
@@ -256,7 +256,7 @@ UPDATE mlm_plan_levels SET
 
             $this->pdo->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             throw $e;
         }
@@ -335,7 +335,7 @@ UPDATE mlm_plan_levels SET
 
             $this->pdo->commit();
             return $newPlanId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             throw $e;
         }
@@ -363,7 +363,7 @@ UPDATE mlm_plan_levels SET
 
             $this->pdo->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             throw $e;
         }
@@ -388,7 +388,7 @@ UPDATE mlm_plan_levels SET
 
             $this->pdo->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             throw $e;
         }
@@ -414,7 +414,7 @@ UPDATE mlm_plan_levels SET
 
             $this->pdo->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             throw $e;
         }

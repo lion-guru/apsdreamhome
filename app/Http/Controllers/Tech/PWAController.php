@@ -575,7 +575,7 @@ function removeOfflineMessage(id) {
                 'p256dh' => $subscription['keys']['p256dh'] ?? '',
                 'auth' => $subscription['keys']['auth'] ?? ''
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Push subscription save error: ' . $e->getMessage());
             return false;
         }
@@ -634,7 +634,7 @@ function removeOfflineMessage(id) {
             }
 
             return $sent_count > 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Notification broadcast error: ' . $e->getMessage());
             return false;
         }
@@ -687,7 +687,7 @@ function removeOfflineMessage(id) {
             }
             $stmt = $this->db->query("SELECT COUNT(*) as total FROM pwa_install_prompts WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             return (int)$stmt->fetch()['total'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -703,7 +703,7 @@ function removeOfflineMessage(id) {
             }
             $stmt = $this->db->query("SELECT COUNT(*) as total FROM pwa_installations WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             return (int)$stmt->fetch()['total'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -719,7 +719,7 @@ function removeOfflineMessage(id) {
             }
             $stmt = $this->db->query("SELECT COUNT(*) as total FROM push_subscriptions WHERE updated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             return (int)$stmt->fetch()['total'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -735,7 +735,7 @@ function removeOfflineMessage(id) {
             }
             $stmt = $this->db->query("SELECT COUNT(*) as total FROM offline_actions WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             return (int)$stmt->fetch()['total'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -771,7 +771,7 @@ function removeOfflineMessage(id) {
                 'success' => $success,
                 'message' => 'Install prompt logged'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Install prompt logging error: ' . $e->getMessage());
             $this->jsonResponse(['success' => false, 'error' => 'Logging failed'], 500);
         }
@@ -808,7 +808,7 @@ function removeOfflineMessage(id) {
                 'success' => $success,
                 'message' => 'Installation logged'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Installation logging error: ' . $e->getMessage());
             $this->jsonResponse(['success' => false, 'error' => 'Logging failed'], 500);
         }

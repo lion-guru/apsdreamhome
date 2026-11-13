@@ -97,7 +97,7 @@ class MatchingBonusService
                     $result['processed_leaders']++;
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MatchingBonusService] calculateMonthlyMatching error: " . $e->getMessage());
         }
         return $result;
@@ -156,7 +156,7 @@ class MatchingBonusService
                     $result['total'] += $bonusAmount;
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MatchingBonusService] calculateLeaderMatching error for user {$leaderUserId}: " . $e->getMessage());
         }
         return $result;
@@ -228,7 +228,7 @@ class MatchingBonusService
             }
 
             $this->db->commit();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             error_log("[MatchingBonusService] persist error: " . $e->getMessage());
         }

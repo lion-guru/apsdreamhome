@@ -118,7 +118,7 @@ class AppFeedbackApiController extends BaseController
                     'total_pages' => max(1, (int)ceil($total / $perPage)),
                 ],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AppFeedbackApiController::index error: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Failed to fetch feedback'], 500);
         }
@@ -170,7 +170,7 @@ class AppFeedbackApiController extends BaseController
             $id = Database::getInstance()->getConnection()->lastInsertId();
 
             $this->json(['success' => true, 'message' => 'Feedback submitted', 'id' => $id], 201);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AppFeedbackApiController::store error: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Failed to submit feedback'], 500);
         }
@@ -200,7 +200,7 @@ class AppFeedbackApiController extends BaseController
             }
 
             $this->json(['success' => true, 'data' => $feedback]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AppFeedbackApiController::show error: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Failed to fetch feedback'], 500);
         }

@@ -144,7 +144,7 @@ class SocialMediaService
 
             return ['success' => true, 'stats' => $stats];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logSync($accountId, 'leads', 'failed', 0, 0, 0, $e->getMessage());
             throw $e;
         }

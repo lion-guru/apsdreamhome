@@ -56,7 +56,7 @@ class SyncService extends ServiceTenantTrait
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("SyncService Error ($table): " . $e->getMessage());
             return [];
         }
@@ -87,7 +87,7 @@ class SyncService extends ServiceTenantTrait
             try {
                 $perfCalculator = new \App\Services\PerformanceRankCalculator();
                 $package['data']['network_tree'] = $perfCalculator->getHierarchyTree($userId, 3);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $package['data']['network_tree'] = null;
             }
 

@@ -56,7 +56,7 @@ class CoreFunctionsServiceCustom
             $stmt = $db->prepare($sql);
             return $stmt->execute(array_values($logEntry));
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to log admin action: " . $e->getMessage());
             return false;
         }
@@ -301,7 +301,7 @@ class CoreFunctionsServiceCustom
                 return mkdir($dir, 0755, true);
             }
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to create directory: " . $e->getMessage());
             return false;
         }

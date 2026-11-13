@@ -48,7 +48,7 @@ class TdsConfigService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[TdsConfigService] DB init failed: ' . $e->getMessage());
                 $pdo = null;
             }
@@ -180,7 +180,7 @@ class TdsConfigService
             ");
             $stmt->execute([$userId, $fy['start'], $fy['end']]);
             return (float)$stmt->fetchColumn();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0.0;
         }
     }
@@ -239,7 +239,7 @@ class TdsConfigService
                 'rate_used' => $calc['rate_used'],
                 'net_payable' => $calc['net_payable'],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[TdsConfigService] recordDeduction: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }

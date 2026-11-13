@@ -105,7 +105,7 @@ class TaskService
             $stmt->execute($params);
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("TaskService::getTasks Error: " . $e->getMessage());
             return [];
         }
@@ -142,7 +142,7 @@ class TaskService
             }
 
             return $task;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("TaskService::getTaskById Error: " . $e->getMessage());
             return null;
         }
@@ -181,7 +181,7 @@ class TaskService
             if ($tid) { $params[] = $tid; }
             $stmt->execute($params);
             return $this->db->lastInsertId();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("TaskService::createTask Error: " . $e->getMessage());
             return false;
         }
@@ -226,7 +226,7 @@ class TaskService
             $stmt->execute($params);
             
             return $stmt->rowCount() > 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("TaskService::updateTask Error: " . $e->getMessage());
             return false;
         }
@@ -258,7 +258,7 @@ class TaskService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->rowCount() > 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("TaskService::deleteTask Error: " . $e->getMessage());
             return false;
         }
@@ -306,7 +306,7 @@ class TaskService
             $stats['by_priority'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("TaskService::getTaskStats Error: " . $e->getMessage());
             return [];
         }

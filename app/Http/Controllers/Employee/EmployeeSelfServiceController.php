@@ -401,7 +401,7 @@ class EmployeeSelfServiceController extends BaseController
         try {
             $this->announcementService->markAsRead((int)$id, $_SESSION['employee_id']);
             return $this->jsonResponse(['success' => true, 'message' => 'Marked as read']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -1304,7 +1304,7 @@ class EmployeeSelfServiceController extends BaseController
         try {
             $result = $docVaultService->uploadDocument($_SESSION['employee_id'], $data, $_FILES['document_file']);
             $_SESSION[$result['success'] ? 'success' : 'error'] = $result['message'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $_SESSION['error'] = 'Upload failed: ' . $e->getMessage();
         }
         $this->redirect(BASE_URL . '/employee/self-service/documents');

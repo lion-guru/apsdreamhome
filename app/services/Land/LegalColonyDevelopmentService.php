@@ -52,7 +52,7 @@ class LegalColonyDevelopmentService
         try {
             $this->db  = Database::getInstance();
             $this->pdo = $this->db->getPdo();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db  = null;
             $this->pdo = null;
         }
@@ -129,7 +129,7 @@ class LegalColonyDevelopmentService
                 'colony_id'      => $colonyId,
                 'acquisition_id' => $acquisitionId,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->safeRollback();
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -204,7 +204,7 @@ class LegalColonyDevelopmentService
             ]);
 
             return ['success' => true, 'status' => $newStatus];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -309,7 +309,7 @@ class LegalColonyDevelopmentService
             $this->db->commit();
 
             return ['success' => true, 'layout_id' => $layoutId];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->safeRollback();
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -437,7 +437,7 @@ class LegalColonyDevelopmentService
                 'count'      => $persistResult['count'],
                 'compliance' => $compliance,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -576,7 +576,7 @@ class LegalColonyDevelopmentService
             ]);
 
             return ['success' => true, 'rera_id' => $reraId, 'rera_number' => $reraNumber];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -688,7 +688,7 @@ class LegalColonyDevelopmentService
                 'tds_amount'      => $tdsAmount,
                 'net_payable'     => $netPayable,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -781,7 +781,7 @@ class LegalColonyDevelopmentService
                 'base_price'   => $finalPrice,
                 'cost_floor'   => $minCostPerSqft,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -885,7 +885,7 @@ class LegalColonyDevelopmentService
                 'readiness_pct' => $readinessPct,
                 'is_ready'      => $readinessPct === 100,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -946,7 +946,7 @@ class LegalColonyDevelopmentService
                 'plot_stats'    => $plotStats,
                 'readiness'     => $readiness,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -980,7 +980,7 @@ class LegalColonyDevelopmentService
             $colonies = $this->db->select($sql, $params);
 
             return ['success' => true, 'colonies' => $colonies ?? []];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1008,7 +1008,7 @@ class LegalColonyDevelopmentService
                 'user_agent'  => $_SERVER['HTTP_USER_AGENT'] ?? '',
                 'created_at'  => date('Y-m-d H:i:s'),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         // Activity logging is best-effort
         error_log($e->getMessage());
         }
@@ -1028,7 +1028,7 @@ class LegalColonyDevelopmentService
             if ($this->db) {
                 $this->db->rollBack();
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         // Rollback failure is non-fatal
         error_log($e->getMessage());
         }

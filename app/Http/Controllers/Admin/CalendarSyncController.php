@@ -35,7 +35,7 @@ class CalendarSyncController extends AdminController
                 'connected' => !empty($tokens),
                 'email' => $tokens['email'] ?? null,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -76,7 +76,7 @@ class CalendarSyncController extends AdminController
             $this->logActivity('calendar_connected', ['email' => $email]);
             $this->setFlash('success', 'Google Calendar connected' . ($email ? ' as ' . $email : '') . '.');
             return $this->redirect('/admin/calendar-sync');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Connection failed: ' . $e->getMessage());
             return $this->redirect('/admin/calendar-sync');
         }
@@ -93,7 +93,7 @@ class CalendarSyncController extends AdminController
             $this->calendarService->disconnect($userId);
             $this->logActivity('calendar_disconnected', []);
             return $this->jsonResponse(['success' => true, 'message' => 'Disconnected']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -113,7 +113,7 @@ class CalendarSyncController extends AdminController
                 'message' => "Synced {$created} meeting(s) to Google Calendar",
                 'created' => $created,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -131,7 +131,7 @@ class CalendarSyncController extends AdminController
                 'active_page' => 'calendar_sync',
                 'events' => $events,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/calendar-sync');
         }

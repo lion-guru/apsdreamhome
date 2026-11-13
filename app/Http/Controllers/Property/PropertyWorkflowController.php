@@ -63,7 +63,7 @@ class PropertyWorkflowController extends BaseController
             ];
 
             $this->view('properties/index', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleError($e);
         }
     }
@@ -103,7 +103,7 @@ class PropertyWorkflowController extends BaseController
             ];
 
             $this->view('properties/show', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleError($e);
         }
     }
@@ -145,7 +145,7 @@ class PropertyWorkflowController extends BaseController
             ];
 
             $this->view('properties/buy', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleError($e);
         }
     }
@@ -175,7 +175,7 @@ class PropertyWorkflowController extends BaseController
             ];
 
             $this->view('properties/sell', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleError($e);
         }
     }
@@ -210,7 +210,7 @@ class PropertyWorkflowController extends BaseController
             ];
 
             $this->view('properties/schedule-visit', $data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->handleError($e);
         }
     }
@@ -276,12 +276,12 @@ class PropertyWorkflowController extends BaseController
 
                 $this->redirect('/dashboard/purchases/' . $purchaseId, ['success' => 'Property purchased successfully!']);
 
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->db->rollBack();
                 throw $e;
             }
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Purchase processing error: " . $e->getMessage());
             $this->redirect("/properties/{$property['id']}/buy", ['error' => 'Purchase failed. Please try again.']);
         }
@@ -339,7 +339,7 @@ class PropertyWorkflowController extends BaseController
                 $this->redirect('/properties/sell', ['error' => 'Failed to submit property']);
             }
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Property selling error: " . $e->getMessage());
             $this->redirect('/properties/sell', ['error' => 'Failed to submit property']);
         }
@@ -395,7 +395,7 @@ class PropertyWorkflowController extends BaseController
                 $this->redirect("/properties/{$property['id']}/visit", ['error' => 'Failed to schedule visit']);
             }
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Visit scheduling error: " . $e->getMessage());
             $this->redirect("/properties/{$property['id']}/visit", ['error' => 'Failed to schedule visit']);
         }

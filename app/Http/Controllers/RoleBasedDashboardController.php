@@ -53,7 +53,7 @@ class RoleBasedDashboardController extends AdminController
                 default:
                     return $this->getDefaultDashboard();
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Dashboard error: " . $e->getMessage());
             return $this->getDefaultDashboard();
         }
@@ -790,7 +790,7 @@ class RoleBasedDashboardController extends AdminController
         try {
             $result = $this->db->fetch("SELECT COUNT(*) as count FROM users WHERE status = 'active'");
             return $result['count'] ?? 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -804,7 +804,7 @@ class RoleBasedDashboardController extends AdminController
         try {
             $result = $this->db->fetch("SELECT COUNT(*) as count FROM properties WHERE status = 'active'");
             return $result['count'] ?? 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -818,7 +818,7 @@ class RoleBasedDashboardController extends AdminController
         try {
             $result = $this->db->fetch("SELECT COUNT(*) as count FROM reports WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
             return $result['count'] ?? 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -833,7 +833,7 @@ class RoleBasedDashboardController extends AdminController
         try {
             $sql = "SELECT ual.*, u.name as user_name FROM user_activity_logs_unified ual LEFT JOIN users u ON ual.user_id = u.id ORDER BY ual.created_at DESC LIMIT 10";
             return $this->db->fetchAll($sql);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

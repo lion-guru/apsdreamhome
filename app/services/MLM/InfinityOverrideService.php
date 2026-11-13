@@ -87,7 +87,7 @@ class InfinityOverrideService
                     $result['processed_leaders']++;
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[InfinityOverrideService] calculateMonthlyOverrides error: " . $e->getMessage());
         }
         return $result;
@@ -147,7 +147,7 @@ class InfinityOverrideService
                 'period_end'          => $periodEnd,
             ];
             $result['total'] = $overrideAmount;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[InfinityOverrideService] calculateLeaderOverride error for user {$leaderUserId}: " . $e->getMessage());
         }
         return $result;
@@ -219,7 +219,7 @@ class InfinityOverrideService
             }
 
             $this->db->commit();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             error_log("[InfinityOverrideService] persist error: " . $e->getMessage());
         }

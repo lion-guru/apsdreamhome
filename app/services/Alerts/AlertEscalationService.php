@@ -98,7 +98,7 @@ class AlertEscalationService
 
             return $alertId;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error creating alert: " . $e->getMessage(), 'error', 'alerts');
             throw new RuntimeException("Failed to create alert: " . $e->getMessage());
         }
@@ -130,7 +130,7 @@ class AlertEscalationService
 
             $this->logger->log("Escalation started for alert: $alertId", 'info', 'alerts');
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error starting escalation for alert $alertId: " . $e->getMessage(), 'error', 'alerts');
             throw new RuntimeException("Failed to start escalation: " . $e->getMessage());
         }
@@ -170,7 +170,7 @@ class AlertEscalationService
 
             $this->logger->log("Processed $processed timed out escalations", 'info', 'alerts');
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error processing escalations: " . $e->getMessage(), 'error', 'alerts');
         }
 
@@ -210,7 +210,7 @@ class AlertEscalationService
 
             $this->logger->log("Alert escalated: $alertId to level $nextLevel", 'warning', 'alerts');
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error escalating alert $alertId: " . $e->getMessage(), 'error', 'alerts');
         }
     }
@@ -239,7 +239,7 @@ class AlertEscalationService
 
             return true;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error acknowledging alert $alertId: " . $e->getMessage(), 'error', 'alerts');
             return false;
         }
@@ -269,7 +269,7 @@ class AlertEscalationService
 
             return true;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error resolving alert $alertId: " . $e->getMessage(), 'error', 'alerts');
             return false;
         }
@@ -291,7 +291,7 @@ class AlertEscalationService
 
         try {
             return $this->database->fetchAll($sql, array_merge([$resolved], $tenantParam, [(int)$limit, (int)$offset]));
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error fetching alerts: " . $e->getMessage(), 'error', 'alerts');
             return [];
         }
@@ -347,7 +347,7 @@ class AlertEscalationService
             $result = $this->database->fetchOne($sql);
             $stats['active_escalations'] = $result['count'] ?? 0;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error fetching alert stats: " . $e->getMessage(), 'error', 'alerts');
         }
 
@@ -371,7 +371,7 @@ class AlertEscalationService
 
         try {
             return $this->database->fetchAll($sql, array_merge($tenantParam, [(int)$limit, (int)$offset]));
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error fetching all alerts: " . $e->getMessage(), 'error', 'alerts');
             return [];
         }
@@ -405,7 +405,7 @@ class AlertEscalationService
                 ]);
             }
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error sending escalation notification: " . $e->getMessage(), 'error', 'alerts');
         }
     }
@@ -435,7 +435,7 @@ class AlertEscalationService
         $sql = "SELECT * FROM alerts WHERE id = ?";
         try {
             return $this->database->fetchOne($sql, [$alertId]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -451,7 +451,7 @@ class AlertEscalationService
                     SET notes = CONCAT(COALESCE(notes, ''), '\n[Max escalation reached at level $level]')
                     WHERE alert_id = ? AND escalation_level = ?";
             $this->database->execute($sql, [$alertId, $level]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error marking max escalation: " . $e->getMessage(), 'error', 'alerts');
         }
     }
@@ -486,7 +486,7 @@ class AlertEscalationService
 
             $this->logger->log("Old alerts cleaned up", 'info', 'alerts');
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error cleaning up old alerts: " . $e->getMessage(), 'error', 'alerts');
             return false;
         }

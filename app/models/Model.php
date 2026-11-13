@@ -73,7 +73,7 @@ class Model
             $sql = "SELECT * FROM " . static::$table . " WHERE " . static::$primaryKey . " = ?" . $tSql;
             $params = array_merge([(int)$id], $tParams);
             return static::getDb()->fetch($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Model find error: " . $e->getMessage());
             return null;
         }
@@ -97,7 +97,7 @@ class Model
             }
 
             return static::getDb()->fetch($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Model findOne error: " . $e->getMessage());
             return null;
         }
@@ -131,7 +131,7 @@ class Model
             }
 
             return static::getDb()->fetchAll($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Model findMany error: " . $e->getMessage());
             return [];
         }
@@ -157,7 +157,7 @@ class Model
             }
 
             return false;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Model create error: " . $e->getMessage());
             return false;
         }
@@ -208,7 +208,7 @@ class Model
                     'has_previous' => $page > 1
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Model getAll error: " . $e->getMessage());
             return [];
         }
@@ -243,7 +243,7 @@ class Model
             }
 
             return false;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Model insert error: " . $e->getMessage());
             return false;
         }
@@ -271,7 +271,7 @@ class Model
             }
 
             return false;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Model insertInto error: " . $e->getMessage());
             return false;
         }
@@ -301,7 +301,7 @@ class Model
             $values = array_merge($values, $tParams);
 
             return static::getDb()->query($sql, $values);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Model update error: " . $e->getMessage());
             return false;
         }
@@ -319,7 +319,7 @@ class Model
             $sql = "DELETE FROM " . static::$table . " WHERE " . static::$primaryKey . " = ?" . $tSql;
             $params = array_merge([(int)$id], $tParams);
             return static::getDb()->query($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Model delete error: " . $e->getMessage());
             return false;
         }

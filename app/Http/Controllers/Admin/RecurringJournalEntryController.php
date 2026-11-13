@@ -37,7 +37,7 @@ class RecurringJournalEntryController extends AdminController
                 'statuses' => ['active', 'inactive'],
                 'frequencies' => ['weekly', 'monthly', 'quarterly', 'yearly'],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load recurring JEs: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -58,7 +58,7 @@ class RecurringJournalEntryController extends AdminController
                 'frequencies' => ['weekly' => 'Weekly', 'monthly' => 'Monthly', 'quarterly' => 'Quarterly', 'yearly' => 'Yearly'],
                 'entryTypes' => ['manual' => 'Manual', 'system' => 'System', 'adjustment' => 'Adjustment', 'closing' => 'Closing'],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/recurring-journal-entries');
         }
@@ -82,7 +82,7 @@ class RecurringJournalEntryController extends AdminController
                 'rje_id' => $rjeId,
                 'redirect' => BASE_URL . '/admin/recurring-journal-entries/' . $rjeId,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -102,7 +102,7 @@ class RecurringJournalEntryController extends AdminController
                 'rje' => $rje,
                 'lines' => $rje['lines'] ?? [],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/recurring-journal-entries');
         }
@@ -122,7 +122,7 @@ class RecurringJournalEntryController extends AdminController
                 'message' => 'Journal entry posted',
                 'journal_entry_id' => $jeId,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -141,7 +141,7 @@ class RecurringJournalEntryController extends AdminController
                 'message' => 'Processed ' . $result['processed'] . ' recurring JE(s)',
                 'result' => $result,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -159,7 +159,7 @@ class RecurringJournalEntryController extends AdminController
             }
             $this->logActivity('recurring_je_deleted', ['rje_id' => $id]);
             return $this->jsonResponse(['success' => true, 'message' => 'Recurring JE deleted']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }

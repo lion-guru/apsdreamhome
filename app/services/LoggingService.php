@@ -172,7 +172,7 @@ class LoggingService
                 $_SERVER['REMOTE_ADDR'] ?? 'unknown',
                 $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback to file logging if database fails
             error_log("Failed to log to database: " . $e->getMessage());
         }
@@ -196,7 +196,7 @@ class LoggingService
             // 3. Send Slack webhook alert
             $this->sendSlackAlert($level, $message, $context);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to send alert: " . $e->getMessage());
         }
     }
@@ -411,7 +411,7 @@ class LoggingService
 
                 $mail->send();
                 return;
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("PHPMailer failed: " . $e->getMessage());
                 // Fall through to mail()
             }
@@ -473,7 +473,7 @@ class LoggingService
 
             // Also log to main log
             $this->info("User activity: $action", array_merge(['user_id' => $userId], $details));
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->error("Failed to log user activity: " . $e->getMessage());
         }
     }
@@ -499,7 +499,7 @@ class LoggingService
 
             // Also log to main log
             $this->warning("Security event: $event", $details);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->error("Failed to log security event: " . $e->getMessage());
         }
     }
@@ -524,7 +524,7 @@ class LoggingService
             if ($duration > 1.0) { // More than 1 second
                 $this->warning("Slow operation detected: $action took {$duration}s", $details);
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->error("Failed to log performance: " . $e->getMessage());
         }
     }
@@ -550,7 +550,7 @@ class LoggingService
             $stmt->execute($params);
 
             return $stmt->fetchAll();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->error("Failed to get recent logs: " . $e->getMessage());
             return [];
         }
@@ -593,7 +593,7 @@ class LoggingService
             }
 
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->error("Failed to get log stats: " . $e->getMessage());
             return [];
         }
@@ -632,7 +632,7 @@ class LoggingService
 
             $this->info("Old logs cleaned successfully", ['days_kept' => $daysToKeep]);
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->error("Failed to clean old logs: " . $e->getMessage());
             return false;
         }

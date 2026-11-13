@@ -54,7 +54,7 @@ class AccessControlMiddleware {
             self::logAccessAttempt($resource, $hasAccess ? 'GRANTED' : 'DENIED', $userRole);
 
             return $hasAccess;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Log any unexpected errors
             AdminLogger::logError('ACCESS_CHECK_ERROR', [
                 'message' => $e->getMessage(),
@@ -125,7 +125,7 @@ class AccessControlMiddleware {
 
             // No IP restrictions column in user table, skipping check
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             AdminLogger::logError('IP_RESTRICTION_ERROR', [
                 'message' => $e->getMessage(),
                 'user_id' => $userId

@@ -46,7 +46,7 @@ class PerformanceMonitoringService
             // Performance alerts
             $sql = "";
             $this->database->execute($sql);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->logUserActivity(0, "performance_table_creation_error", ["error" => $e->getMessage()]);
         }
     }
@@ -68,7 +68,7 @@ class PerformanceMonitoringService
             $this->checkPerformanceThresholds($metrics);
 
             $this->logger->logPerformance("system_metrics_recorded", 0, ["status" => "success"]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->logUserActivity(0, "system_metrics_recording_error", ["error" => $e->getMessage()]);
         }
     }
@@ -369,7 +369,7 @@ class PerformanceMonitoringService
         try {
             $result = $this->database->fetchOne("SHOW STATUS LIKE 'Threads_connected'");
             return $result['Value'] ?? 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -474,7 +474,7 @@ class PerformanceMonitoringService
             $this->database->execute($sql, [$days]);
 
             $this->logger->logPerformance("data_cleanup_completed", 0, ["days" => $days]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->logUserActivity(0, "performance_data_cleanup_error", ["error" => $e->getMessage()]);
         }
     }

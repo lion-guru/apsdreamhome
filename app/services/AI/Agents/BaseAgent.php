@@ -57,7 +57,7 @@ abstract class BaseAgent implements AgentInterface {
             $this->db->execute("INSERT INTO ai_agent_logs (agent_id, log_type, message, details) VALUES (?, ?, ?, ?)", [
                 $this->agentId, $type, $message, $logData['data']
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback to error_log if table doesn't exist yet
             error_log("AI Agent Log Error: " . $e->getMessage());
         }

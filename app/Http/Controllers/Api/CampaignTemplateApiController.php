@@ -54,7 +54,7 @@ class CampaignTemplateApiController extends BaseController
             $templates = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
 
             $this->json(['success' => true, 'data' => $templates]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CampaignTemplateApiController::index error: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Failed to fetch templates'], 500);
         }
@@ -85,7 +85,7 @@ class CampaignTemplateApiController extends BaseController
             }
 
             $this->json(['success' => true, 'data' => $template]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CampaignTemplateApiController::show error: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Failed to fetch template'], 500);
         }

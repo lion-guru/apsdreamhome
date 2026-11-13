@@ -31,7 +31,7 @@ class PurchaseOrderController extends AdminController
                 'filters' => ['status' => $status],
                 'statuses' => ['pending','approved','received','cancelled'],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load POs: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -61,7 +61,7 @@ class PurchaseOrderController extends AdminController
             $id = $this->poService->create($_POST);
             $this->logActivity('po_created', ['po_id' => $id, 'number' => $_POST['order_number'] ?? '']);
             return $this->jsonResponse(['success'=>true,'message'=>'PO created','po_id'=>$id,'redirect'=>BASE_URL.'/admin/purchase-orders']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: '.$e->getMessage(), 500);
         }
     }
@@ -81,7 +81,7 @@ class PurchaseOrderController extends AdminController
                 'items' => $items,
                 'grnRecords' => $grnRecords,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error','Failed: '.$e->getMessage());
             return $this->redirect('/admin/purchase-orders');
         }
@@ -94,7 +94,7 @@ class PurchaseOrderController extends AdminController
         try {
             $this->poService->approve((int)$id, $_SESSION['user_id'] ?? 1);
             return $this->jsonResponse(['success'=>true,'message'=>'PO approved']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -106,7 +106,7 @@ class PurchaseOrderController extends AdminController
         try {
             $this->poService->cancel((int)$id);
             return $this->jsonResponse(['success'=>true,'message'=>'PO cancelled']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -118,7 +118,7 @@ class PurchaseOrderController extends AdminController
         try {
             $grnId = $this->poService->receive((int)$id, $_POST);
             return $this->jsonResponse(['success'=>true,'message'=>'GRN created','grn_id'=>$grnId]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -130,7 +130,7 @@ class PurchaseOrderController extends AdminController
         try {
             $this->poService->delete((int)$id);
             return $this->jsonResponse(['success'=>true,'message'=>'PO deleted']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }

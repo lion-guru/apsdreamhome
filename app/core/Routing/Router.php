@@ -710,7 +710,7 @@ class Router
 
         try {
             $controller = new $class();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if (class_exists($class)) {
                 $controller = new $class();
             } else {

@@ -86,7 +86,7 @@ class StorageHealthMonitor
                 'message' => 'OK',
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $latency = (microtime(true) - $start) * 1000;
 
             $this->healthStatus[$name] = array_merge($this->healthStatus[$name], [

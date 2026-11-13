@@ -39,7 +39,7 @@ class AgreementGenerationService
                 $company[$s['key']] = $s['value'];
             }
             return $company;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'company_name' => 'APS Dream Home',
                 'phone' => '+91 92771 21112',

@@ -122,7 +122,7 @@ class FarmerServiceEnhanced
                 FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
             )";
             $this->database->query($sql);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error creating farmer tables: " . $e->getMessage(), 'error', 'farmer');
             throw new RuntimeException("Failed to create farmer tables: " . $e->getMessage());
         }
@@ -181,7 +181,7 @@ class FarmerServiceEnhanced
             $farmerId = $this->database->lastInsertId();
             $this->logger->log("Farmer added: {$data['full_name']} ({$data['farmer_number']})", 'info', 'farmer');
             return $farmerId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error adding farmer: " . $e->getMessage(), 'error', 'farmer');
             throw new RuntimeException("Failed to add farmer: " . $e->getMessage());
         }
@@ -230,7 +230,7 @@ class FarmerServiceEnhanced
             $landId = $this->database->lastInsertId();
             $this->logger->log("Land holding added for farmer ID: $farmerId", 'info', 'farmer');
             return $landId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error adding land holding: " . $e->getMessage(), 'error', 'farmer');
             throw new RuntimeException("Failed to add land holding: " . $e->getMessage());
         }
@@ -288,7 +288,7 @@ class FarmerServiceEnhanced
 
         try {
             return $this->database->fetchAll($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error fetching farmers: " . $e->getMessage(), 'error', 'farmer');
             return [];
         }
@@ -327,7 +327,7 @@ class FarmerServiceEnhanced
             }
 
             return $farmer;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error fetching farmer $id: " . $e->getMessage(), 'error', 'farmer');
             return null;
         }
@@ -347,7 +347,7 @@ class FarmerServiceEnhanced
         }
         try {
             return $this->database->fetchAll($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error fetching land holdings for farmer $farmerId: " . $e->getMessage(), 'error', 'farmer');
             return [];
         }
@@ -367,7 +367,7 @@ class FarmerServiceEnhanced
         }
         try {
             return $this->database->fetchAll($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error fetching agreements for farmer $farmerId: " . $e->getMessage(), 'error', 'farmer');
             return [];
         }
@@ -429,7 +429,7 @@ class FarmerServiceEnhanced
             $this->database->execute($sql, $params);
             $this->logger->log("Farmer updated: $id", 'info', 'farmer');
             return ['success' => true, 'message' => 'Farmer updated successfully'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error updating farmer $id: " . $e->getMessage(), 'error', 'farmer');
             return ['success' => false, 'message' => 'Failed to update farmer'];
         }
@@ -464,7 +464,7 @@ class FarmerServiceEnhanced
             // Recent registrations
             $result = $this->database->fetchOne("SELECT COUNT(*) as recent FROM farmer_profiles WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY){$tenantSql}");
             $stats['recent_registrations'] = $result['recent'] ?? 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error fetching farmer stats: " . $e->getMessage(), 'error', 'farmer');
         }
 
@@ -507,7 +507,7 @@ class FarmerServiceEnhanced
             $agreementId = $this->database->lastInsertId();
             $this->logger->log("Farmer agreement created: {$agreementData['agreement_number']} for farmer ID: $farmerId", 'info', 'farmer');
             return $agreementId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error creating farmer agreement: " . $e->getMessage(), 'error', 'farmer');
             throw new RuntimeException("Failed to create farmer agreement: " . $e->getMessage());
         }

@@ -1649,7 +1649,7 @@ class BookingLifecycleController extends AdminController
             try {
                 return $this->db->query("SELECT id, name FROM colonies ORDER BY name LIMIT 50")
                                 ->fetchAll(\PDO::FETCH_ASSOC);
-            } catch (Exception $e2) {
+            } catch (\Throwable $e2) {
                 error_log("[BookingLifecycleController] fetchColonies() exception: " . $e2->getMessage());
  return []; }
         }

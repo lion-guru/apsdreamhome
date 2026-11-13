@@ -49,7 +49,7 @@ class LocalizationService
                 if ($user && in_array($user['locale'], $this->supportedLocales)) {
                     return $user['locale'];
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // Continue to other detection methods
                         error_log("LocalizationService.php: " . $e->getMessage());
             }
@@ -118,7 +118,7 @@ class LocalizationService
             // Also load from language files as fallback
             $this->loadFromFile();
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback to file-based translations only
                 $this->loadFromFile();
         }
@@ -324,7 +324,7 @@ class LocalizationService
                 return true;
             }
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to add translation: " . $e->getMessage());
         }
         
@@ -350,7 +350,7 @@ class LocalizationService
             
             return $translations;
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to get translations: " . $e->getMessage());
             return [];
         }

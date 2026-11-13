@@ -80,7 +80,7 @@ class PropertyImageTaggingService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $pdo = null;
             }
         }
@@ -318,7 +318,7 @@ class PropertyImageTaggingService
                     $tagStmt->execute($tagValues);
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyImageTaggingService::saveTags] ' . $e->getMessage());
         }
     }
@@ -342,7 +342,7 @@ class PropertyImageTaggingService
             if ($this->tenantId() > 1) $params[] = $this->tenantId();
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -374,7 +374,7 @@ class PropertyImageTaggingService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

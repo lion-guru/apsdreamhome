@@ -211,7 +211,7 @@ class SystemLogger
             }
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Fallback error logging
             error_log("SystemLogger Error: " . $e->getMessage());
             return false;
@@ -251,7 +251,7 @@ class SystemLogger
             ];
             if (!empty($tenantData)) $params = array_merge($params, array_values($tenantData));
             $stmt->execute($params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Database Logging Error: " . $e->getMessage());
         }
     }
@@ -283,7 +283,7 @@ class SystemLogger
 
             // Write to log file
             file_put_contents($logFilename, $logLine, FILE_APPEND | LOCK_EX);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("File Logging Error: " . $e->getMessage());
         }
     }

@@ -32,7 +32,7 @@ class PfEsiController extends AdminController
                 'month_year' => $monthYear,
                 'month_years' => $monthYears,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load PF/ESI: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -54,7 +54,7 @@ class PfEsiController extends AdminController
                 'month_years' => $monthYears,
                 'status' => $status,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load register: ' . $e->getMessage());
             return $this->redirect('/admin/pf-esi');
         }
@@ -69,7 +69,7 @@ class PfEsiController extends AdminController
             if (!preg_match('/^\d{4}-\d{2}$/', $monthYear)) return $this->jsonError('Invalid month format (YYYY-MM)', 400);
             $count = $this->pfEsiService->processMonth($monthYear, $_SESSION['user_id'] ?? 1);
             return $this->jsonResponse(['success' => true, 'message' => "Processed $count employees for $monthYear"]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -91,7 +91,7 @@ class PfEsiController extends AdminController
                 'month_year' => $monthYear,
                 'month_years' => $monthYears,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to generate ECR: ' . $e->getMessage());
             return $this->redirect('/admin/pf-esi');
         }
@@ -111,7 +111,7 @@ class PfEsiController extends AdminController
             header('Content-Length: ' . strlen($ecr['content']));
             echo $ecr['content'];
             exit;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to download ECR: ' . $e->getMessage());
             return $this->redirect('/admin/pf-esi');
         }
@@ -134,7 +134,7 @@ class PfEsiController extends AdminController
                 'month_year' => $monthYear,
                 'month_years' => $monthYears,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load challan: ' . $e->getMessage());
             return $this->redirect('/admin/pf-esi');
         }
@@ -157,7 +157,7 @@ class PfEsiController extends AdminController
                 'employees' => $employees,
                 'employee_id' => $employeeId,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load ledger: ' . $e->getMessage());
             return $this->redirect('/admin/pf-esi');
         }
@@ -173,7 +173,7 @@ class PfEsiController extends AdminController
             if (empty($ids)) return $this->jsonError('No records selected', 400);
             $count = $this->pfEsiService->markPaid($ids, $paymentRef, $_SESSION['user_id'] ?? 1);
             return $this->jsonResponse(['success' => true, 'message' => "Marked $count records as paid"]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }

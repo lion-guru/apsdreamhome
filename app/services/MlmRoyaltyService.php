@@ -51,7 +51,7 @@ class MlmRoyaltyService
                 ORDER BY sort_order ASC, min_gbv ASC
             ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MlmRoyaltyService] getAllRanks: ' . $e->getMessage());
             return [];
         }
@@ -66,7 +66,7 @@ class MlmRoyaltyService
             $stmt = $this->pdo->prepare("SELECT * FROM mlm_rank_slabs WHERE id = ? LIMIT 1");
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MlmRoyaltyService] getRank: ' . $e->getMessage());
             return null;
         }
@@ -102,7 +102,7 @@ class MlmRoyaltyService
                 $id,
             ]);
             return $stmt->rowCount() > 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MlmRoyaltyService] updateRank: ' . $e->getMessage());
             return false;
         }
@@ -131,7 +131,7 @@ class MlmRoyaltyService
             ");
             $stmt->execute([$monthStr]);
             return (float)$stmt->fetchColumn();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MlmRoyaltyService] getMonthlyPoolTotal: ' . $e->getMessage());
             return 0.0;
         }
@@ -160,7 +160,7 @@ class MlmRoyaltyService
                 ORDER BY mp.lifetime_sales DESC
             ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MlmRoyaltyService] getEligibleRoyaltyMembers: ' . $e->getMessage());
             return [];
         }
@@ -249,7 +249,7 @@ class MlmRoyaltyService
                 'breakdown'      => $distributions,
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
             }
@@ -274,7 +274,7 @@ class MlmRoyaltyService
             ");
             $stmt->execute([$monthStr]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MlmRoyaltyService] getMonthlyDistribution: ' . $e->getMessage());
             return [];
         }
@@ -300,7 +300,7 @@ class MlmRoyaltyService
             ");
             $stmt->execute([$gbv, $gbv]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[MlmRoyaltyService] resolveRankByGbv: ' . $e->getMessage());
             return null;
         }

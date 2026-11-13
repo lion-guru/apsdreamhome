@@ -34,7 +34,7 @@ class AgentOrchestrator
         foreach ($this->agents as $type => $config) {
             try {
                 $results[$type] = $this->runAgent($type);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $results[$type] = ['error' => $e->getMessage()];
                 $this->logTask($type, 'agent_run', ['error' => $e->getMessage()], 'failed');
             }
@@ -201,8 +201,8 @@ class AgentOrchestrator
         $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $activeEmployees = 0;
         $pendingLeave = 0;
-        try { $activeEmployees = (new \App\Services\IdentityService())->getActiveEmployeesCount(); } catch (Exception $e) { error_log($e->getMessage()); }
-        try { $pendingLeave = $this->pdo->query("SELECT COUNT(*) FROM employee_leave_requests WHERE status='pending'{$tenantSql}")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
+        try { $activeEmployees = (new \App\Services\IdentityService())->getActiveEmployeesCount(); } catch (\Throwable $e) { error_log($e->getMessage()); }
+        try { $pendingLeave = $this->pdo->query("SELECT COUNT(*) FROM employee_leave_requests WHERE status='pending'{$tenantSql}")->fetchColumn(); } catch (\Throwable $e) { error_log($e->getMessage()); }
         $activeAssociates = $this->pdo->query("SELECT COUNT(*) FROM associates WHERE status='active'{$tenantSql}")->fetchColumn();
 
         $actions[] = $this->logTask('hr', 'workforce_summary',
@@ -225,7 +225,7 @@ class AgentOrchestrator
         $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
         $properties = $this->pdo->query("SELECT COUNT(*) FROM properties WHERE status='active'{$tenantSql}")->fetchColumn();
         $incompleteReg = 0;
-        try { $incompleteReg = $this->pdo->query("SELECT COUNT(*) FROM incomplete_registrations{$tenantSql}")->fetchColumn(); } catch (Exception $e) { error_log($e->getMessage()); }
+        try { $incompleteReg = $this->pdo->query("SELECT COUNT(*) FROM incomplete_registrations{$tenantSql}")->fetchColumn(); } catch (\Throwable $e) { error_log($e->getMessage()); }
 
         $actions[] = $this->logTask('marketing', 'inventory_marketing',
             ['active_properties' => $properties, 'incomplete_registrations' => $incompleteReg], 'completed');

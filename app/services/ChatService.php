@@ -54,7 +54,7 @@ class ChatService
                 'queue_position' => $status === 'waiting' ? $this->getQueuePosition($sessionId) : 0,
                 'estimated_wait_time' => $this->getEstimatedWaitTime($department)
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Chat Initiation Error: " . $e->getMessage());
             throw new Exception("Failed to initiate chat: " . $e->getMessage());
         }
@@ -89,7 +89,7 @@ class ChatService
                 'status' => 'sent',
                 'timestamp' => date('Y-m-d H:i:s')
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Send Message Error: " . $e->getMessage());
             throw new Exception("Failed to send message: " . $e->getMessage());
         }
@@ -130,7 +130,7 @@ class ChatService
                 'agent_status' => $agentStatus,
                 'queue_position' => $session['status'] === 'open' ? $this->getQueuePosition($sessionId) : 0
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Get Session Details Error: " . $e->getMessage());
             throw new Exception("Failed to get session details: " . $e->getMessage());
         }
@@ -155,7 +155,7 @@ class ChatService
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Get User Sessions Error: " . $e->getMessage());
             return [];
         }
@@ -176,7 +176,7 @@ class ChatService
             $this->websocketServer->closeSessionConnections($sessionId);
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("End Session Error: " . $e->getMessage());
             throw new Exception("Failed to end session: " . $e->getMessage());
         }
@@ -201,7 +201,7 @@ class ChatService
             $stmt = $this->db->prepare($sql);
             $stmt->execute([]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Get Available users Error: " . $e->getMessage());
             return [];
         }
@@ -221,7 +221,7 @@ class ChatService
 
             $this->sendSystemMessage($sessionId, "Chat has been transferred to another agent.");
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Transfer Chat Error: " . $e->getMessage());
             throw new Exception("Failed to transfer chat: " . $e->getMessage());
         }
@@ -252,7 +252,7 @@ class ChatService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Get Chat Analytics Error: " . $e->getMessage());
             return [];
         }

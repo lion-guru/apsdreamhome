@@ -23,7 +23,7 @@ class PerformanceCacheController extends BaseController
             $ttl = (int)($_POST['ttl'] ?? ($_GET['ttl'] ?? 3600));
             $result = $this->cacheService->set($key, json_decode($value, true) ?? $value, $ttl);
             return $this->jsonResponse(['success' => $result, 'message' => $result ? 'Cache set' : 'Failed']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -34,7 +34,7 @@ class PerformanceCacheController extends BaseController
             $key = $_GET['key'] ?? '';
             $value = $this->cacheService->get($key);
             return $this->jsonResponse(['success' => true, 'data' => ['key' => $key, 'value' => $value, 'found' => $value !== null]]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -49,7 +49,7 @@ class PerformanceCacheController extends BaseController
             };
             $value = $this->cacheService->remember($key, $callback, $ttl);
             return $this->jsonResponse(['success' => true, 'data' => ['key' => $key, 'value' => $value, 'ttl' => $ttl]]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -60,7 +60,7 @@ class PerformanceCacheController extends BaseController
             $key = $_REQUEST['key'] ?? '';
             $result = $this->cacheService->forget($key);
             return $this->jsonResponse(['success' => $result, 'message' => $result ? 'Deleted' : 'Not found']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -70,7 +70,7 @@ class PerformanceCacheController extends BaseController
         try {
             $result = $this->cacheService->flush();
             return $this->jsonResponse(['success' => $result, 'message' => $result ? 'Cache cleared' : 'Failed']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -79,7 +79,7 @@ class PerformanceCacheController extends BaseController
     {
         try {
             return $this->jsonResponse(['success' => true, 'data' => $this->cacheService->getStats()]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -88,7 +88,7 @@ class PerformanceCacheController extends BaseController
     {
         try {
             return $this->jsonResponse(['success' => true, 'data' => $this->cacheService->cacheDashboardStats(function() { return ['test' => 'data']; })]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
@@ -98,7 +98,7 @@ class PerformanceCacheController extends BaseController
         try {
             $this->cacheService->invalidateDashboard();
             return $this->jsonResponse(['success' => true, 'message' => 'Dashboard cache invalidated']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }

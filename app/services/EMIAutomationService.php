@@ -51,7 +51,7 @@ class EMIAutomationService
 
             $this->db->commit();
             return $results;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->db->inTransaction()) {
                 $this->db->rollBack();
             }
@@ -71,7 +71,7 @@ class EMIAutomationService
         try {
             $autoPayService = new \App\Services\Payment\EMIAutoPaymentService($this->db);
             return $autoPayService->processDueEmiPayments();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("runAutoPaymentCron: " . $e->getMessage());
             return null;
         }

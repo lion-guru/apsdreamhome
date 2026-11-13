@@ -71,7 +71,7 @@ class AgentController extends BaseController
                 $this->setFlash('error', 'Invalid email or password');
                 $this->redirect('/agent/login');
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Login failed. Please try again.');
             $this->redirect('/agent/login');
         }
@@ -160,7 +160,7 @@ class AgentController extends BaseController
 
             $this->setFlash('success', 'Registration successful! Please wait for admin approval.');
             $this->redirect('/agent/login');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Registration failed. Please try again.');
             $this->redirect('/agent/register');
         }
@@ -221,7 +221,7 @@ class AgentController extends BaseController
             // Always show the same message to prevent email enumeration
             $this->setFlash('success', 'If an account with that email exists, a password reset link has been sent.');
             $this->redirect('/agent/login');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'An unexpected error occurred. Please try again.');
             $this->redirect('/agent/forgot-password');
         }

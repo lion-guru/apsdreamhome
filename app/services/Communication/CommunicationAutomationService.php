@@ -44,19 +44,19 @@ class CommunicationAutomationService
     {
         try {
             $this->whatsappService = new \App\Services\Communication\WhatsAppService();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->channels['whatsapp']['enabled'] = false;
         }
 
         try {
             $this->smsService = new \App\Services\Communication\SMSService();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->channels['sms']['enabled'] = false;
         }
 
         try {
             $this->emailService = new \App\Services\Communication\EmailService();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->channels['email']['enabled'] = false;
         }
     }
@@ -119,7 +119,7 @@ class CommunicationAutomationService
 
             $result['success'] = true;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CommunicationAutomation: Error processing incoming message: " . $e->getMessage());
             $result['error'] = $e->getMessage();
         }
@@ -322,7 +322,7 @@ class CommunicationAutomationService
                     'source' => 'ai_gateway'
                 ];
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AI Gateway error: " . $e->getMessage());
         }
 
@@ -357,7 +357,7 @@ class CommunicationAutomationService
                 default:
                     return ['success' => false, 'error' => "Unknown channel: $channel"];
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Send $channel message failed: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -451,7 +451,7 @@ class CommunicationAutomationService
                 'status' => $direction === 'outbound' ? 'sent' : 'received',
                 'created_at' => date('Y-m-d H:i:s', $timestamp)
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to store communication log: " . $e->getMessage());
         }
     }
@@ -570,7 +570,7 @@ class CommunicationAutomationService
             $results['sent'] += $festivalResults['sent'];
             $results['failed'] += $festivalResults['failed'];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Automated greetings error: " . $e->getMessage());
             $results['errors'][] = $e->getMessage();
         }
@@ -676,7 +676,7 @@ class CommunicationAutomationService
                 'status' => $status,
                 'sent_at' => date('Y-m-d H:i:s')
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Failed to log automated message: " . $e->getMessage());
         }
     }
@@ -722,7 +722,7 @@ class CommunicationAutomationService
                 }
             }
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Newsletter automation error: " . $e->getMessage());
         }
 

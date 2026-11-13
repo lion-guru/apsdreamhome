@@ -108,7 +108,7 @@ class InventoryService
 
             $this->db->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }
@@ -154,7 +154,7 @@ class InventoryService
 
             $this->db->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db->rollBack();
             throw $e;
         }

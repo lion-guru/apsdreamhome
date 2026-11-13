@@ -336,7 +336,7 @@ class OrgChartService
             }
             $this->conn->commit();
             return ['success' => true, 'message' => 'Org chart reordered'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->conn->rollBack();
             throw $e;
         }
@@ -472,7 +472,7 @@ class OrgChartService
             }
             $this->conn->commit();
             return ['success' => true, 'imported' => $imported, 'message' => "Imported $imported nodes"];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->conn->rollBack();
             throw $e;
         }

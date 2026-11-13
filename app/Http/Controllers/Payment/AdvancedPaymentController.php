@@ -96,7 +96,7 @@ class AdvancedPaymentController extends AdminController
             } else {
                 throw new Exception('Payment processing failed: ' . $payment_result['error']);
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Payment processing error: ' . $e->getMessage());
             $this->setFlash('error', 'Payment processing failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/gateway-selection');
@@ -130,7 +130,7 @@ class AdvancedPaymentController extends AdminController
             $this->data['razorpay_order'] = $razorpay_order;
             $this->data['gateway'] = 'razorpay';
             $this->render('payment/razorpay_checkout');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Razorpay payment initialization failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/gateway-selection');
         }
@@ -163,7 +163,7 @@ class AdvancedPaymentController extends AdminController
                 header('Location: ' . $paypal_response['approval_url']);
                 exit;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'PayPal payment initialization failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/gateway-selection');
         }
@@ -195,7 +195,7 @@ class AdvancedPaymentController extends AdminController
             $this->data['client_secret'] = $payment_intent['client_secret'];
             $this->data['gateway'] = 'stripe';
             $this->render('payment/stripe_checkout');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Stripe payment initialization failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/gateway-selection');
         }
@@ -230,7 +230,7 @@ class AdvancedPaymentController extends AdminController
                 header('Location: ' . $payu_response['payment_url']);
                 exit;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'PayU payment initialization failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/gateway-selection');
         }
@@ -404,7 +404,7 @@ class AdvancedPaymentController extends AdminController
             ]);
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Order status update error: ' . $e->getMessage());
             return false;
         }
@@ -485,7 +485,7 @@ class AdvancedPaymentController extends AdminController
             $this->data['payments'] = $payments;
 
             $this->render('payment/history');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Payment history error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to load payment history');
             $this->redirect(BASE_URL . 'dashboard');
@@ -541,7 +541,7 @@ class AdvancedPaymentController extends AdminController
             // In production, generate actual PDF
             $this->data['receipt_data'] = $receipt_data;
             $this->render('payment/receipt');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Receipt download error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to generate receipt');
             $this->redirect(BASE_URL . 'payment/history');
@@ -603,7 +603,7 @@ $sql = "SELECT payment_method as gateway, COUNT(*) as transactions, SUM(amount) 
             $this->data['payment_stats'] = ['total_revenue' => 0, 'monthly' => $payment_trends ?? []];
 
             $this->render('admin/payment_analytics');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Payment analytics error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to load payment analytics');
             $this->redirect(BASE_URL . 'admin');

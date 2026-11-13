@@ -43,7 +43,7 @@ class PlotCutterService
             $this->db     = Database::getInstance();
             $this->pdo    = $this->db->getPdo();
             $this->logger = new SystemLogger();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->log('error', 'PlotCutterService init failed', ['error' => $e->getMessage()]);
             $this->db     = null;
             $this->pdo    = null;
@@ -95,7 +95,7 @@ class PlotCutterService
                 'count'   => $persisted['count'],
                 'summary' => $result['summary'],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->log('error', 'generateAndPersist failed', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -225,7 +225,7 @@ class PlotCutterService
                 'summary' => $summary,
                 'plots'   => $plots,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->log('error', 'generatePlots exception', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -338,7 +338,7 @@ class PlotCutterService
             ]);
 
             return ['success' => true, 'count' => $plotCount];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->safeRollback();
             $this->log('error', 'persistPlots failed', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
@@ -396,7 +396,7 @@ class PlotCutterService
             ]);
 
             return ['success' => true, 'deleted' => $existingCount];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->safeRollback();
             $this->log('error', 'deletePlotsByColony failed', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
@@ -418,7 +418,7 @@ class PlotCutterService
                 "SELECT * FROM colony_layouts WHERE colony_id = :cid{$tsql} ORDER BY version DESC",
                 array_merge(['cid' => $colonyId], $tparam)
             );
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->log('error', 'getLayoutsForColony failed', ['error' => $e->getMessage()]);
             return [];
         }
@@ -771,7 +771,7 @@ class PlotCutterService
             if ($this->pdo && $this->pdo->inTransaction()) {
                 $this->db->rollBack();
             }
-        } catch (Exception $ignored) {
+        } catch (\Throwable $ignored) {
         // Swallow — nothing useful to do here
         error_log($ignored->getMessage());
         }
@@ -786,7 +786,7 @@ class PlotCutterService
             if ($this->logger) {
                 $this->logger->log($level, $message, $context);
             }
-        } catch (Exception $ignored) {
+        } catch (\Throwable $ignored) {
         // Never let logging break the caller
         error_log($ignored->getMessage());
         }

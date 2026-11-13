@@ -57,7 +57,7 @@ class ColonyFeasibilityService
             $this->db     = Database::getInstance();
             $this->pdo    = $this->db->getPdo();
             $this->logger = new SystemLogger();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db     = null;
             $this->pdo    = null;
             $this->logger = null;
@@ -164,7 +164,7 @@ class ColonyFeasibilityService
 
             return $result;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logError('calculateFeasibility failed', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -198,7 +198,7 @@ class ColonyFeasibilityService
             $stmt->bindValue(':lim', $limit, \PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logError('getFeasibilityHistory failed', ['error' => $e->getMessage()]);
             return [];
         }
@@ -252,7 +252,7 @@ class ColonyFeasibilityService
                     'ga_rupees' => round($gaCost, 2),
                 ],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -290,7 +290,7 @@ class ColonyFeasibilityService
             }
 
             return ['success' => true, 'colonies' => $results];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -562,7 +562,7 @@ class ColonyFeasibilityService
                 ':created_by'  => $createdBy,
                 ':tid'         => $tid,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logError('logFeasibility failed', ['error' => $e->getMessage()]);
         }
     }
@@ -577,7 +577,7 @@ class ColonyFeasibilityService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logError('tryFetch failed', ['error' => $e->getMessage(), 'sql' => mb_substr($sql, 0, 120)]);
             return null;
         }
@@ -589,7 +589,7 @@ class ColonyFeasibilityService
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logError('tryFetchAll failed', ['error' => $e->getMessage(), 'sql' => mb_substr($sql, 0, 120)]);
             return null;
         }
@@ -601,6 +601,6 @@ class ColonyFeasibilityService
             if ($this->logger) {
                 $this->logger->error($msg, $ctx);
             }
-        } catch (Exception $ignored) { error_log($ignored->getMessage()); }
+        } catch (\Throwable $ignored) { error_log($ignored->getMessage()); }
     }
 }

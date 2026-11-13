@@ -41,7 +41,7 @@ class FundFlowController extends AdminController
                 'end_date' => $endDate,
                 'data' => $data,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/reports/financial');
         }

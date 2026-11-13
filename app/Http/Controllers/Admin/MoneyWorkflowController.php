@@ -41,7 +41,7 @@ class MoneyWorkflowController extends AdminController
         } catch (\Throwable $e) {
             try {
                 $this->service = new MoneyWorkflowService();
-            } catch (Exception $e2) {
+            } catch (\Throwable $e2) {
                 $this->service = null;
             }
         }

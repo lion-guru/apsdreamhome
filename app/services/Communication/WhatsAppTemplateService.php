@@ -30,7 +30,7 @@ class WhatsAppTemplateService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $pdo = null;
             }
         }
@@ -54,7 +54,7 @@ class WhatsAppTemplateService
             $this->phoneNumberId = $configs['phone_number_id'] ?? '';
             $this->accessToken = $configs['access_token'] ?? '';
             $this->apiUrl = $configs['api_url'] ?? 'https://graph.facebook.com/v18.0';
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[WhatsAppTemplateService::loadConfig] ' . $e->getMessage());
         }
     }
@@ -289,7 +289,7 @@ class WhatsAppTemplateService
                 VALUES ($values)
             ");
             $stmt->execute($params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[WhatsAppTemplateService::logMessage] ' . $e->getMessage());
         }
     }
@@ -324,7 +324,7 @@ class WhatsAppTemplateService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

@@ -43,7 +43,7 @@ class RankPromotionNotificationService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[RankPromotionNotificationService] DB init failed: ' . $e->getMessage());
                 $pdo = null;
             }
@@ -145,7 +145,7 @@ class RankPromotionNotificationService
         ], array_values($insertData)));
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RankPromotionNotificationService] in-app failed: ' . $e->getMessage());
             return false;
         }
@@ -206,7 +206,7 @@ class RankPromotionNotificationService
         ")->execute(array_merge([$email, $subject, $html], array_values($insertData)));
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RankPromotionNotificationService] email failed: ' . $e->getMessage());
             return false;
         }
@@ -232,7 +232,7 @@ class RankPromotionNotificationService
         ")->execute(array_merge([$phone, $message], array_values($insertData)));
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RankPromotionNotificationService] sms failed: ' . $e->getMessage());
             return false;
         }
@@ -295,7 +295,7 @@ $assocStmt->execute([$userId]);
                 UPDATE mlm_profiles SET current_level = ?, updated_at = NOW() WHERE user_id = ?" . $this->tenantSql() . "
             ")->execute([$newRank, $userId]);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[RankPromotionNotificationService] logRankHistory: ' . $e->getMessage());
         }
     }
@@ -311,7 +311,7 @@ $assocStmt->execute([$userId]);
             $stmt = $this->db->prepare("SELECT id, name, email, phone FROM users WHERE id = ?{$tenantSql} LIMIT 1");
             $stmt->execute($tid > 1 ? [$userId, $tid] : [$userId]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }

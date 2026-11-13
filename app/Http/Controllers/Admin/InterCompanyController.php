@@ -42,7 +42,7 @@ class InterCompanyController extends AdminController
                 'stats' => $stats,
                 'filters' => ['status' => $status, 'from_date' => $fromDate, 'to_date' => $toDate, 'from_entity' => $fromEntity, 'to_entity' => $toEntity],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load transactions: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -59,7 +59,7 @@ class InterCompanyController extends AdminController
                 'entities' => $entities,
                 'today' => date('Y-m-d'),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load form: ' . $e->getMessage());
             return $this->redirect('/admin/inter-company');
         }
@@ -85,7 +85,7 @@ class InterCompanyController extends AdminController
                 'transaction_id' => $id,
                 'redirect' => BASE_URL . '/admin/inter-company/' . $id,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -104,7 +104,7 @@ class InterCompanyController extends AdminController
                 'active_page' => 'inter_company',
                 'txn' => $txn,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load transaction: ' . $e->getMessage());
             return $this->redirect('/admin/inter-company');
         }
@@ -122,7 +122,7 @@ class InterCompanyController extends AdminController
                 'message' => 'Transaction updated',
                 'redirect' => BASE_URL . '/admin/inter-company/' . $id,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -139,7 +139,7 @@ class InterCompanyController extends AdminController
                 'message' => 'Transaction deleted',
                 'redirect' => BASE_URL . '/admin/inter-company',
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -156,7 +156,7 @@ class InterCompanyController extends AdminController
                 'message' => 'Transaction posted',
                 'redirect' => BASE_URL . '/admin/inter-company/' . $id,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -173,7 +173,7 @@ class InterCompanyController extends AdminController
                 'message' => 'Transaction cancelled',
                 'redirect' => BASE_URL . '/admin/inter-company/' . $id,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -192,7 +192,7 @@ class InterCompanyController extends AdminController
                 'entities' => $entities,
                 'status' => $status,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load reconciliations: ' . $e->getMessage());
             return $this->redirect('/admin/inter-company');
         }
@@ -214,7 +214,7 @@ class InterCompanyController extends AdminController
                 'reconciliation_id' => $id,
                 'redirect' => BASE_URL . '/admin/inter-company/reconcile',
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -236,7 +236,7 @@ class InterCompanyController extends AdminController
                 'success' => true,
                 'items' => $items,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }

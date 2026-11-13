@@ -114,7 +114,7 @@ class InvoiceService
                 $details['phone'] = $row['phone'] ?? $details['phone'];
                 $details['email'] = $row['email'] ?? $details['email'];
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         // graceful fallback
         error_log($e->getMessage());
         }
@@ -138,7 +138,7 @@ class InvoiceService
                     if ($k === 'bank_branch' && $v) $details['bank_branch'] = $v;
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         // graceful fallback
         error_log($e->getMessage());
         }
@@ -227,7 +227,7 @@ class InvoiceService
 
             $pdo->commit();
             return $invoiceId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $pdo->rollBack();
             throw $e;
         }
@@ -469,7 +469,7 @@ class InvoiceService
             $stmt->execute($params);
             $pdo->commit();
             return $stmt->rowCount() > 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $pdo->rollBack();
             throw $e;
         }
@@ -518,7 +518,7 @@ class InvoiceService
                     $stats[$k] = (int)$stats[$k];
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         // graceful fallback to zeros
         error_log($e->getMessage());
         }
@@ -541,7 +541,7 @@ class InvoiceService
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -560,7 +560,7 @@ class InvoiceService
             $stmt = $pdo->prepare($sql);
             $stmt->execute($tid > 1 ? [$tid] : []);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

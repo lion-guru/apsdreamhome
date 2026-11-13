@@ -106,7 +106,7 @@ class DocumentVaultController extends AdminController
         try {
             $result = $this->service->uploadDocument($data['employee_id'], $data, $_FILES['document_file']);
             $this->setFlash($result['success'] ? 'success' : 'error', $result['message']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Upload failed: ' . $e->getMessage());
         }
         $this->redirect(BASE_URL . '/admin/document-vault/documents');

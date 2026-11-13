@@ -31,7 +31,7 @@ class CurrencyController extends AdminController
                 'currencies' => $currencies,
                 'today' => date('Y-m-d'),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -61,7 +61,7 @@ class CurrencyController extends AdminController
             if ($existing) return $this->jsonError('Rate pair already exists', 400);
             $id = $this->currencyService->addRate($_POST);
             return $this->jsonResponse(['success'=>true,'message'=>'Rate added','rate_id'=>$id,'redirect'=>BASE_URL.'/admin/multi-currency']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: '.$e->getMessage(), 500);
         }
     }
@@ -87,7 +87,7 @@ class CurrencyController extends AdminController
             if (isset($_POST['rate']) && (float)$_POST['rate'] <= 0) return $this->jsonError('Rate must be > 0', 400);
             $this->currencyService->updateRate((int)$id, $_POST);
             return $this->jsonResponse(['success'=>true,'message'=>'Updated','redirect'=>BASE_URL.'/admin/multi-currency']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: '.$e->getMessage(), 500);
         }
     }
@@ -99,7 +99,7 @@ class CurrencyController extends AdminController
         try {
             $this->currencyService->deleteRate((int)$id);
             return $this->jsonResponse(['success'=>true,'message'=>'Deleted']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -111,7 +111,7 @@ class CurrencyController extends AdminController
         try {
             $result = $this->currencyService->refreshRates();
             return $this->jsonResponse(['success'=>true,'message'=>"Updated {$result['updated']} rates",'details'=>$result]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -126,7 +126,7 @@ class CurrencyController extends AdminController
             $to = $_POST['to_currency'] ?? 'USD';
             $result = $this->currencyService->convert($amount, $from, $to);
             return $this->jsonResponse($result);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }

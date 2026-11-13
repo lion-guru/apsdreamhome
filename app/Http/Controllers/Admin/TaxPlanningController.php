@@ -34,7 +34,7 @@ class TaxPlanningController extends AdminController
                 'stats' => $stats,
                 'tds' => $tds,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -48,7 +48,7 @@ class TaxPlanningController extends AdminController
             $fy = $_POST['financial_year'] ?? $this->taxService->currentFinancialYear();
             $result = $this->taxService->generateSchedule($fy);
             return $this->jsonResponse(['success' => true, 'message' => 'Schedule generated', 'created' => $result['created'], 'redirect' => BASE_URL . '/admin/tax-planning?fy=' . urlencode($fy)]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -64,7 +64,7 @@ class TaxPlanningController extends AdminController
             $ok = $this->taxService->recordPayment((int)$id, $amount, $challan, $notes);
             if (!$ok) return $this->jsonError('Invalid payment details', 400);
             return $this->jsonResponse(['success' => true, 'message' => 'Payment recorded', 'redirect' => BASE_URL . '/admin/tax-planning']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }

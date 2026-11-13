@@ -97,7 +97,7 @@ class ExchangeRateService
             $this->cacheRate($cacheKey, ['rate' => $rate, 'fetched_at' => $fetchedAt], self::CACHE_TTL);
 
             return ['success' => true, 'rate' => $rate, 'from' => $from, 'to' => $to, 'cached' => false, 'fetched_at' => $fetchedAt];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage(), 'from' => $fromCurrency ?? $from ?? '', 'to' => $toCurrency ?? $to ?? ''];
         }
     }
@@ -143,7 +143,7 @@ class ExchangeRateService
             $this->cacheRate($cacheKey, ['rates' => $rates, 'fetched_at' => $fetchedAt], self::CACHE_TTL);
 
             return ['success' => true, 'rates' => $rates, 'base' => $base, 'fetched_at' => $fetchedAt];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage(), 'base' => $baseCurrency ?? $base ?? 'INR'];
         }
     }
@@ -176,7 +176,7 @@ class ExchangeRateService
                 'cached'           => $rateResult['cached'] ?? false,
                 'fetched_at'       => $rateResult['fetched_at'] ?? date('Y-m-d H:i:s'),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -255,7 +255,7 @@ class ExchangeRateService
                 return $cached;
             }
             return null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -264,7 +264,7 @@ class ExchangeRateService
     {
         try {
             Cache::set($key, $data, $ttl);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
         // Silently fail — next request will re-fetch
         error_log($e->getMessage());
         }

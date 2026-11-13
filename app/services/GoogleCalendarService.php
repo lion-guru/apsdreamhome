@@ -152,7 +152,7 @@ class GoogleCalendarService
             $new = $this->refreshAccessToken($tokens['refresh_token']);
             $this->saveTokens($userId, $new, $tokens['email'] ?? null);
             return $new['access_token'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -209,7 +209,7 @@ class GoogleCalendarService
                     $this->db->update('crm_meetings', ['google_event_id' => $result['id']], ['id' => $m['id']]);
                     $created++;
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // best-effort, continue
             }
         }

@@ -217,7 +217,7 @@ class PaymentGatewayController extends BaseController
                 $this->setFlash('error', $payment_result['error']);
                 $this->redirect(BASE_URL . 'payment/failed');
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Payment processing error: ' . $e->getMessage());
             $this->setFlash('error', 'Payment processing failed: ' . $e->getMessage());
             $this->redirect(BASE_URL . 'payment/failed');
@@ -436,7 +436,7 @@ class PaymentGatewayController extends BaseController
                     ]);
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Commission processing error: ' . $e->getMessage());
         }
     }
@@ -496,7 +496,7 @@ class PaymentGatewayController extends BaseController
             $stmt = $this->db->prepare($payments_query);
             $stmt->execute(['associate_id' => $associate_id]);
             $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Payment history error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to retrieve payment history');
         }
@@ -825,7 +825,7 @@ class PaymentGatewayController extends BaseController
                     $this->json(['success' => true, 'status' => $payment['payment_status'], 'payment' => $payment]);
                     return;
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('Payment status lookup error: ' . $e->getMessage());
             }
         }
@@ -912,7 +912,7 @@ class PaymentGatewayController extends BaseController
                         }
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('Refund lookup error: ' . $e->getMessage());
             }
         }
@@ -940,7 +940,7 @@ class PaymentGatewayController extends BaseController
                 'response' => json_encode($gatewayResponse),
                 'transaction_id' => $transactionId
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PaymentGatewayController: updatePaymentStatus error: ' . $e->getMessage());
         }
     }
@@ -960,7 +960,7 @@ class PaymentGatewayController extends BaseController
             if ($payment && !empty($payment['plot_id'])) {
                 $this->processCommission($transactionId, $payment['plot_id']);
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('PaymentGatewayController: commission processing error: ' . $e->getMessage());
         }
     }

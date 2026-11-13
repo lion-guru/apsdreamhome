@@ -51,7 +51,7 @@ class ColonyPricingService
             
             // Load premiums from config if available
             $this->loadPremiumsFromConfig();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->logger) {
                 $this->logger->error('ColonyPricingService init failed', ['error' => $e->getMessage()]);
             }
@@ -73,7 +73,7 @@ class ColonyPricingService
                 elseif ($key === 'wide_road_premium_pct') $this->wideRoadPremium = $val / 100;
                 elseif ($key === 'wide_road_threshold_ft') $this->wideRoadThreshold = $val;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Use defaults if config not available
         }
     }
@@ -185,7 +185,7 @@ class ColonyPricingService
                 'base_price_per_sqft'    => $basePrice,
                 'min_price_per_sqft'     => round($rawCostPerSqft, 2),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('calculateColonyPricing failed', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -360,7 +360,7 @@ class ColonyPricingService
                 'avg_price'     => $avgPrice,
                 'total_value'   => round($totalValue, 2),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->safeRollback();
             $this->logger->error('applyPricingToColony failed', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
@@ -469,7 +469,7 @@ class ColonyPricingService
                 'plots_priced'          => (int) ($plotStats['plots_priced'] ?? 0),
                 'plots_available'       => (int) ($colony['available_plots'] ?? 0),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('getColonyFinancialSummary failed', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -517,7 +517,7 @@ class ColonyPricingService
                  ORDER BY created_at DESC",
                 array_merge(['pid' => $plotId], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('getPlotPriceHistory failed', ['error' => $e->getMessage()]);
             return [];
         }
@@ -552,7 +552,7 @@ class ColonyPricingService
                   ORDER BY c.name",
                 $tenantId > 1 ? ['tid' => $tenantId] : []
             );
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('getAllColoniesPricingComparison failed', ['error' => $e->getMessage()]);
             return [];
         }
@@ -637,7 +637,7 @@ class ColonyPricingService
                 'old_total'        => $oldTotal,
                 'new_total'        => $newTotal,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('updatePlotPrice failed', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -717,7 +717,7 @@ class ColonyPricingService
             ]);
 
             return ['success' => true, 'message' => 'Discount request submitted for approval.'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('requestDiscount failed', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -778,7 +778,7 @@ class ColonyPricingService
             }
             $sql .= " ORDER BY pa.requested_at DESC LIMIT 100";
             return $this->db->fetchAll($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('getPendingApprovals failed', ['error' => $e->getMessage()]);
             return [];
         }
@@ -820,7 +820,7 @@ class ColonyPricingService
             }
             $sql .= " ORDER BY pa.requested_at DESC LIMIT 200";
             return $this->db->fetchAll($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('getAllApprovals failed', ['error' => $e->getMessage()]);
             return [];
         }
@@ -905,7 +905,7 @@ class ColonyPricingService
                 'message' => "Discount request #{$approvalId} {$action}.",
                 'action'  => $action,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error("processApproval failed", ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -931,7 +931,7 @@ class ColonyPricingService
                     'cid' => $colonyId,
                 ], $tenantId > 1 ? ['tid' => $tenantId] : [])
             );
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->warning('storeMinPrice failed', ['error' => $e->getMessage()]);
         }
     }
@@ -1062,7 +1062,7 @@ class ColonyPricingService
                 $historyData['tenant_id'] = $tenantId;
             }
             $this->db->insert('price_history', $historyData);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Price history failure is non-critical — log and continue
             $this->logger->warning('price_history insert failed', [
                 'plot_id' => $plotId,
@@ -1082,7 +1082,7 @@ class ColonyPricingService
     {
         try {
             return $this->db->fetch($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->warning('tryFetch failed', [
                 'error'  => $e->getMessage(),
                 'sql'    => mb_substr($sql, 0, 120),
@@ -1098,7 +1098,7 @@ class ColonyPricingService
     {
         try {
             return $this->db->fetchAll($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->warning('tryFetchAll failed', [
                 'error'  => $e->getMessage(),
                 'sql'    => mb_substr($sql, 0, 120),
@@ -1116,7 +1116,7 @@ class ColonyPricingService
             if ($this->pdo && $this->pdo->inTransaction()) {
                 $this->db->rollBack();
             }
-        } catch (Exception $ignored) {
+        } catch (\Throwable $ignored) {
         // Swallow
         error_log($ignored->getMessage());
         }
@@ -1131,7 +1131,7 @@ class ColonyPricingService
             if ($this->logger) {
                 $this->logger->log($level, $message, $context);
             }
-        } catch (Exception $ignored) {
+        } catch (\Throwable $ignored) {
             // Never let logging break the caller
             error_log($ignored->getMessage());
         }
@@ -1186,11 +1186,11 @@ class ColonyPricingService
                 ]);
 
                 return ['success' => true, 'id' => $planId, 'version' => $nextVersion];
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->safeRollback();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1235,11 +1235,11 @@ class ColonyPricingService
                 ]);
 
                 return ['success' => true];
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->safeRollback();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1259,7 +1259,7 @@ class ColonyPricingService
                 [$colonyId, $tid]
             );
             return ['success' => true, 'plans' => $plans];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1325,11 +1325,11 @@ class ColonyPricingService
                     $this->safeRollback();
                     return ['success' => false, 'error' => $result['error'] ?? 'Failed to apply pricing'];
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->safeRollback();
                 throw $e;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1353,7 +1353,7 @@ class ColonyPricingService
                 [$colonyId, $tid]
             );
             return ['success' => true, 'applications' => $applications];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -1378,7 +1378,7 @@ class ColonyPricingService
             $plan['premiums'] = json_decode($plan['premiums'], true);
             $plan['config'] = json_decode($plan['config'], true);
             return ['success' => true, 'plan' => $plan];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

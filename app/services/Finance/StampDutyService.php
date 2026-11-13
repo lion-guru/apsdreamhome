@@ -21,7 +21,7 @@ class StampDutyService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $pdo = null;
             }
         }
@@ -147,7 +147,7 @@ class StampDutyService
             ");
             $stmt->execute([$stateCode]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyService::getStateRates] ' . $e->getMessage());
             return null;
         }
@@ -169,7 +169,7 @@ class StampDutyService
                 ORDER BY state_name
             ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyService::getAllStates] ' . $e->getMessage());
             return [];
         }
@@ -202,7 +202,7 @@ class StampDutyService
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return $row ? (float)$row['rate_per_sqft'] : null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyService::getCircleRate] ' . $e->getMessage());
             return null;
         }
@@ -231,7 +231,7 @@ class StampDutyService
             ");
             $stmt->execute([$stateCode, $search, $search, $search]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyService::searchCircleRates] ' . $e->getMessage());
             return [];
         }
@@ -282,7 +282,7 @@ class StampDutyService
                 VALUES ($vals)
             ");
             $stmt->execute($params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyService::saveCalculation] ' . $e->getMessage());
         }
     }
@@ -303,7 +303,7 @@ class StampDutyService
             ");
             $stmt->execute([$userId, $limit]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[StampDutyService::getHistory] ' . $e->getMessage());
             return [];
         }

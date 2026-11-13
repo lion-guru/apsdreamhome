@@ -30,7 +30,7 @@ class UPIQRService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $pdo = null;
             }
         }
@@ -144,7 +144,7 @@ class UPIQRService
                 $writer = new \Endroid\QrCode\Writer\PngWriter();
                 $result = $writer->write($qrCode);
                 return 'data:image/png;base64,' . base64_encode($result->getString());
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[UPIQRService] Endroid QrCode failed: ' . $e->getMessage());
             }
         }
@@ -204,7 +204,7 @@ class UPIQRService
             ]);
 
             return (int)$this->db->lastInsertId();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[UPIQRService::savePayment] ' . $e->getMessage());
             return null;
         }
@@ -226,7 +226,7 @@ class UPIQRService
             ");
             $stmt->execute([$bookingId, $paymentType]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[UPIQRService::getByBooking] ' . $e->getMessage());
             return null;
         }
@@ -248,7 +248,7 @@ class UPIQRService
             ");
             $stmt->execute([$bookingId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[UPIQRService::getPendingForBooking] ' . $e->getMessage());
             return [];
         }
@@ -295,7 +295,7 @@ class UPIQRService
                 'message' => 'Payment verified successfully',
                 'payment' => array_merge($payment, ['status' => 'paid', 'paid_at' => $paidAt]),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[UPIQRService::verifyPayment] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Verification failed'];
         }
@@ -326,7 +326,7 @@ class UPIQRService
 
             $stmt = $this->db->prepare($sql);
             return $stmt->execute($params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[UPIQRService::updateStatus] ' . $e->getMessage());
             return false;
         }
@@ -343,7 +343,7 @@ class UPIQRService
             $stmt = $this->db->prepare("SELECT * FROM upi_payments WHERE id = ?");
             $stmt->execute([$paymentId]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[UPIQRService::getById] ' . $e->getMessage());
             return null;
         }

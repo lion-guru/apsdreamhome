@@ -59,7 +59,7 @@ class DepartmentRequestService
             $this->logActivity($requestId, 'request_submitted', 'Request submitted');
 
             return ['success' => true, 'request_id' => $requestId];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DepartmentRequestService::submitRequest error: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -194,7 +194,7 @@ class DepartmentRequestService
             $this->logActivity($requestId, 'status_changed', "Status changed to: $status");
 
             return ['success' => true];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -218,7 +218,7 @@ class DepartmentRequestService
             $this->logActivity($requestId, 'assigned', "Assigned to user ID: " . ($userId ?? 'NULL'));
 
             return ['success' => true];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -242,7 +242,7 @@ class DepartmentRequestService
 
             $stmt->execute($params);
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DepartmentRequestService::addComment error: ' . $e->getMessage());
             return false;
         }
@@ -370,7 +370,7 @@ class DepartmentRequestService
                     ]
                 );
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DepartmentRequestService::notifyDepartmentHead error: ' . $e->getMessage());
         }
     }
@@ -388,7 +388,7 @@ class DepartmentRequestService
             $stmt->execute($params);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             return $user['name'] ?? 'Unknown User';
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 'Unknown User';
         }
     }
@@ -420,7 +420,7 @@ class DepartmentRequestService
             if ($tid > 1) $params[] = $tid;
 
             $stmt->execute($params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('DepartmentRequestService::logActivity error: ' . $e->getMessage());
         }
     }

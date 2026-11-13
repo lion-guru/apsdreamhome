@@ -67,7 +67,7 @@ class ExcelExportController extends AdminController
                     $this->redirect('/admin/reports');
                     return;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Excel export failed: ' . $e->getMessage());
             $this->redirect('/admin/reports');
         }

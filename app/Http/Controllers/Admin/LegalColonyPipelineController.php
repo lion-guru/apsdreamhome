@@ -98,7 +98,7 @@ class LegalColonyPipelineController extends AdminController
                     }
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $colonies     = [];
             $stats        = [];
             $colonyHealth = [];
@@ -193,7 +193,7 @@ class LegalColonyPipelineController extends AdminController
 
             // Get colony health score
             $health = $this->health->getColonyHealth($colonyId);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('LegalPipeline detail error: ' . $e->getMessage());
             $result = ['success' => false, 'error' => $e->getMessage()];
             $colony = null;
@@ -544,7 +544,7 @@ class LegalColonyPipelineController extends AdminController
         try {
             $readiness = $this->service->getSalesReadinessChecklist($colonyId);
             $colony    = $this->db->fetchOne("SELECT * FROM colonies WHERE id = ?", [$colonyId]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $readiness = ['success' => false, 'error' => $e->getMessage()];
             $colony    = null;
         }
@@ -825,7 +825,7 @@ class LegalColonyPipelineController extends AdminController
             ]);
 
             echo json_encode(['success' => true, 'milestone_id' => $milestoneId, 'status' => $status]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;

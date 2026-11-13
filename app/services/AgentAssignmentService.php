@@ -65,7 +65,7 @@ class AgentAssignmentService
 
             return $result;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Agent assignment error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Assignment failed'];
         }
@@ -102,7 +102,7 @@ class AgentAssignmentService
 
             return $result;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Office assignment error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Office assignment failed'];
         }
@@ -135,7 +135,7 @@ class AgentAssignmentService
                 'location' => $customer['city'] ?? ''
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Auto assignment error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Auto assignment failed'];
         }
@@ -303,7 +303,7 @@ class AgentAssignmentService
 
             return ['success' => false, 'message' => 'Failed to create assignment'];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Assignment creation error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Assignment creation failed'];
         }
@@ -353,7 +353,7 @@ if ($assignmentType === 'agent') {
                 }
             }
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Notification sending error: " . $e->getMessage());
         }
     }
@@ -443,7 +443,7 @@ $updParams = ['reason' => $reason ?: 'Reassigned', 'assignment_id' => $currentAs
 
             return $result;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Reassignment error: " . $e->getMessage());
             return ['success' => false, 'message' => 'Reassignment failed'];
         }
@@ -491,7 +491,7 @@ $updParams = ['reason' => $reason ?: 'Reassigned', 'assignment_id' => $currentAs
                     "Customer {$customer['name']} has been reassigned to you.");
             }
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Reassignment notification error: " . $e->getMessage());
         }
     }

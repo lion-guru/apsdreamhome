@@ -27,7 +27,7 @@ class CommissionReconciliationService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[CommissionReconciliationService] DB init failed: ' . $e->getMessage());
                 $pdo = null;
             }
@@ -84,7 +84,7 @@ class CommissionReconciliationService
             $findings['summary'] = $this->buildSummary($findings);
             $findings['summary']['status'] = $findings['summary']['health'];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionReconciliationService] reconcile() failed: ' . $e->getMessage());
             $findings['error'] = $e->getMessage();
         }
@@ -108,7 +108,7 @@ class CommissionReconciliationService
         try {
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionReconciliationService] findOrphanedLedgerNoBooking: ' . $e->getMessage());
             return [];
         }
@@ -129,7 +129,7 @@ class CommissionReconciliationService
         try {
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionReconciliationService] findMissingBeneficiaries: ' . $e->getMessage());
             return [];
         }
@@ -173,7 +173,7 @@ class CommissionReconciliationService
                 ];
             }
             return $results;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionReconciliationService] findNegativeEntries: ' . $e->getMessage());
             return [];
         }
@@ -219,7 +219,7 @@ class CommissionReconciliationService
                 'total_paid_amount' => round($ledgerAmount, 2),
                 'clawback_count' => $clawbacks,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionReconciliationService] getQuickStats: ' . $e->getMessage());
             return ['healthy' => false, 'error' => $e->getMessage()];
         }
@@ -229,7 +229,7 @@ class CommissionReconciliationService
     {
         try {
             return (int)$this->db->query("SELECT COUNT(*) FROM `{$table}`" . $this->tenantSql())->fetchColumn();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -309,7 +309,7 @@ class CommissionReconciliationService
             $dupStmt = $this->db->query($dupSql);
             $doubles = $dupStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             return $doubles;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionReconciliationService] findDoubleCountedBookings: ' . $e->getMessage());
             return [];
         }
@@ -332,7 +332,7 @@ class CommissionReconciliationService
         try {
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionReconciliationService] findAmountMismatches: ' . $e->getMessage());
             return [];
         }

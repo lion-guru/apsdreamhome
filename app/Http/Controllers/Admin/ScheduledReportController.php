@@ -40,7 +40,7 @@ class ScheduledReportController extends AdminController
                 'reportTypes' => ['sales', 'property', 'associate', 'customer', 'financial'],
                 'daysOfWeek' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load scheduled reports: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -80,7 +80,7 @@ class ScheduledReportController extends AdminController
                 'id' => $id,
                 'redirect' => BASE_URL . '/admin/scheduled-reports/' . $id,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -100,7 +100,7 @@ class ScheduledReportController extends AdminController
                 'report' => $report,
                 'parameters' => json_decode($report['parameters'] ?? '{}', true) ?: [],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/scheduled-reports');
         }
@@ -119,7 +119,7 @@ class ScheduledReportController extends AdminController
             }
             $this->logActivity('scheduled_report_updated', ['id' => $id]);
             return $this->jsonResponse(['success' => true, 'message' => 'Scheduled report updated']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -137,7 +137,7 @@ class ScheduledReportController extends AdminController
             }
             $this->logActivity('scheduled_report_run_now', ['id' => $id]);
             return $this->jsonResponse(['success' => true, 'message' => 'Report queued for immediate run (cron will pick it up)']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -155,7 +155,7 @@ class ScheduledReportController extends AdminController
             }
             $this->logActivity('scheduled_report_deleted', ['id' => $id]);
             return $this->jsonResponse(['success' => true, 'message' => 'Scheduled report deleted']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }

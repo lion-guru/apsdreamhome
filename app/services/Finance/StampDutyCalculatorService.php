@@ -27,7 +27,7 @@ class StampDutyCalculatorService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $pdo = null;
             }
         }
@@ -152,7 +152,7 @@ class StampDutyCalculatorService
                         $config
                     );
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
             // Use defaults
             error_log($e->getMessage());
             }
@@ -308,7 +308,7 @@ class StampDutyCalculatorService
             $stmt->execute([strtoupper($stateCode), $district, $areaName, $areaType]);
             $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $result ? (float)$result['rate_per_sqft'] : null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
@@ -335,7 +335,7 @@ class StampDutyCalculatorService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

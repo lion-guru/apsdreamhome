@@ -25,7 +25,7 @@ class AIAggregatorService
     {
         try {
             $this->db->getConnection()->query("SELECT source FROM properties LIMIT 1");
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $sql = "ALTER TABLE properties 
                     ADD COLUMN source ENUM('internal', 'ai_fetched', 'user_submitted') DEFAULT 'internal',
                     ADD COLUMN original_url VARCHAR(500) NULL,
@@ -69,7 +69,7 @@ class AIAggregatorService
 
                 $results['success']++;
                 $results['logs'][] = "Added: " . $listing['title'];
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $results['failed']++;
                 $results['logs'][] = "Failed: " . $e->getMessage();
             }

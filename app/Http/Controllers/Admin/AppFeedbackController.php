@@ -75,7 +75,7 @@ protected function pdo(): \PDO
             $countStmt = $this->pdo()->prepare($countSql);
             $countStmt->execute($params);
             $total = (int)$countStmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AppFeedbackController::index count error: ' . $e->getMessage());
         }
 
@@ -85,7 +85,7 @@ protected function pdo(): \PDO
             $stmt = $this->pdo()->prepare($sql);
             $stmt->execute($fetchParams);
             $feedback = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AppFeedbackController::index fetch error: ' . $e->getMessage());
         }
 
@@ -110,7 +110,7 @@ protected function pdo(): \PDO
                 }
             }
             $stats['avg_rating'] = $totalRated > 0 ? round($totalRating / $totalRated, 1) : 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AppFeedbackController::index stats error: ' . $e->getMessage());
         }
 
@@ -152,7 +152,7 @@ protected function pdo(): \PDO
             $stmt = $this->pdo()->prepare($sql);
             $stmt->execute($params);
             $item = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AppFeedbackController::show error: ' . $e->getMessage());
         }
 
@@ -214,7 +214,7 @@ protected function pdo(): \PDO
             } else {
                 $this->setFlash('warning', 'Status was already set to ' . ucfirst(str_replace('_', ' ', $status)));
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AppFeedbackController::updateStatus error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to update status');
         }
@@ -259,7 +259,7 @@ protected function pdo(): \PDO
             } else {
                 $this->setFlash('warning', 'Feedback not found or unchanged');
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AppFeedbackController::respond error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to save response');
         }
@@ -291,7 +291,7 @@ protected function pdo(): \PDO
             } else {
                 $this->setFlash('error', 'Feedback not found');
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('AppFeedbackController::delete error: ' . $e->getMessage());
             $this->setFlash('error', 'Failed to delete feedback');
         }

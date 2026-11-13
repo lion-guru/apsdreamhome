@@ -70,7 +70,7 @@ class AIHealthMonitor
                 'status' => 'ok',
                 'latency_ms' => $latency
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
@@ -146,7 +146,7 @@ class AIHealthMonitor
                 'missing_tables' => $missing,
                 'driver' => 'ORM'
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }

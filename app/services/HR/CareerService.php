@@ -72,7 +72,7 @@ class CareerService
                 'application_id' => $applicationId,
                 'message' => 'Application submitted successfully'
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to submit job application', [
                 'email' => $data['email'] ?? '',
                 'position' => $data['position'] ?? '',
@@ -238,7 +238,7 @@ class CareerService
 
             // Send confirmation to applicant
             $this->sendApplicantConfirmation($data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to send application notifications', [
                 'email' => $data['email'],
                 'error' => $e->getMessage()
@@ -338,7 +338,7 @@ class CareerService
             $params[] = $offset;
 
             return $this->db->fetchAll($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get applications by status', [
                 'status' => $status,
                 'error' => $e->getMessage()
@@ -358,7 +358,7 @@ class CareerService
                 [$id]
             );
             return $result;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get application by ID', [
                 'application_id' => $id,
                 'error' => $e->getMessage()
@@ -387,7 +387,7 @@ class CareerService
             ]);
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to update application status', [
                 'application_id' => $id,
                 'status' => $status,
@@ -426,7 +426,7 @@ class CareerService
             $stats['recent_applications'] = $result['count'] ?? 0;
 
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get application statistics', [
                 'error' => $e->getMessage()
             ]);
@@ -500,7 +500,7 @@ class CareerService
             ]);
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to delete application', [
                 'application_id' => $id,
                 'error' => $e->getMessage()
@@ -563,7 +563,7 @@ class CareerService
                     ]
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get applications', [
                 'page' => $page,
                 'limit' => $limit,
@@ -591,7 +591,7 @@ class CareerService
                 'success' => true,
                 'data' => array_column($positions, 'position')
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->error('Failed to get available positions', [
                 'error' => $e->getMessage()
             ]);
@@ -633,7 +633,7 @@ class CareerService
                     'history' => $history
                 ]
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [
                 'success' => false,
                 'message' => 'Failed to retrieve application details'

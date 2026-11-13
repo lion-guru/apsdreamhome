@@ -269,7 +269,7 @@ class ColonyLandCostingService
 
             return ['success' => true, 'id' => $costingId, 'calc' => $calc];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
             }
@@ -342,7 +342,7 @@ class ColonyLandCostingService
             ");
             $stmt->execute([$colonyId, $tid]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ColonyLandCostingService] getColonyCosting: ' . $e->getMessage());
             return null;
         }
@@ -364,7 +364,7 @@ class ColonyLandCostingService
             ");
             $stmt->execute([$colonyId, $tid]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ColonyLandCostingService] getCostingHistory: ' . $e->getMessage());
             return [];
         }
@@ -384,7 +384,7 @@ class ColonyLandCostingService
             ");
             $stmt->execute([$costingId, $tid]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ColonyLandCostingService] getCostingLineItems: ' . $e->getMessage());
             return [];
         }
@@ -403,7 +403,7 @@ class ColonyLandCostingService
             ");
             $stmt->execute([$finalPrice, $approvedByUserId, $costingId]);
             return $stmt->rowCount() > 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ColonyLandCostingService] approveCosting: ' . $e->getMessage());
             return false;
         }
@@ -444,7 +444,7 @@ class ColonyLandCostingService
             ");
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[ColonyLandCostingService] getAllColoniesWithCostingStatus: ' . $e->getMessage());
             return [];
         }
@@ -600,7 +600,7 @@ class ColonyLandCostingService
                 'total_allocated_acquisition' => round($sellableSqft * $landCostSqft, 2),
                 'total_allocated_development' => round($sellableSqft * $devCostSqft, 2),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
             }

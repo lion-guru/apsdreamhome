@@ -32,7 +32,7 @@ class ReceivablesAgingController extends AdminController
                 'colonies' => $colonies,
                 'data' => $data,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/reports/financial');
         }

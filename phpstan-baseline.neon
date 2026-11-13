@@ -613,7 +613,7 @@ parameters:
 			path: app/Http/Controllers/AIController.php
 
 		-
-			message: '#^Dead catch \- Exception is never thrown in the try block\.$#'
+			message: '#^Dead catch \- Throwable is never thrown in the try block\.$#'
 			identifier: catch.neverThrown
 			count: 6
 			path: app/Http/Controllers/AIDashboardController.php
@@ -4033,7 +4033,7 @@ parameters:
 			path: app/Http/Controllers/WalletController.php
 
 		-
-			message: '#^Dead catch \- Exception is never thrown in the try block\.$#'
+			message: '#^Dead catch \- Throwable is never thrown in the try block\.$#'
 			identifier: catch.neverThrown
 			count: 2
 			path: app/Http/Controllers/WhatsAppTemplateController.php

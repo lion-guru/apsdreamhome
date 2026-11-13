@@ -40,7 +40,7 @@ class StorageLifecycleController extends AdminController
                 'prefix' => $prefix, 'action' => $action, 'days' => $days, 'is_active' => 1,
             ]);
             return $this->jsonResponse(['success' => true, 'message' => 'Rule created', 'id' => $id]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -86,7 +86,7 @@ class StorageLifecycleController extends AdminController
                 $this->db->query("UPDATE storage_lifecycle_rules SET last_run = NOW() WHERE id = ?", [(int)$rule['id']]);
             }
             return $this->jsonResponse(['success' => true, 'message' => "Processed {$processed} file(s)", 'processed' => $processed]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }

@@ -54,7 +54,7 @@ class OTPService
                 'message' => "OTP sent successfully",
                 'expires_at' => $expiresAt
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OTP Service Error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -113,7 +113,7 @@ class OTPService
                 'success' => true,
                 'message' => 'OTP verified successfully'
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OTP verification error: " . $e->getMessage());
             return [
                 'success' => false,
@@ -199,7 +199,7 @@ class OTPService
                 default:
                     throw new Exception("Unsupported OTP type: $type");
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("OTP send error for $type: " . $e->getMessage());
             return false;
         }
@@ -250,7 +250,7 @@ class OTPService
                     'body' => $message
                 ]);
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Twilio SMS OTP error: " . $e->getMessage());
         }
 

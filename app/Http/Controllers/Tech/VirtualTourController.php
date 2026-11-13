@@ -164,7 +164,7 @@ class VirtualTourController extends BaseController
             $stmt = $this->db->prepare("SELECT * FROM properties WHERE id = :propertyId AND status = 'available'");
             $stmt->execute(['propertyId' => $property_id]);
             return $stmt->fetch();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Property fetch error: ' . $e->getMessage());
             return null;
         }
@@ -299,7 +299,7 @@ class VirtualTourController extends BaseController
                 'path' => $file_path,
                 'thumb' => str_replace('.jpg', '_thumb.jpg', $file_path)
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Panorama save error: ' . $e->getMessage());
             return false;
         }
@@ -482,7 +482,7 @@ class VirtualTourController extends BaseController
 
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -511,7 +511,7 @@ class VirtualTourController extends BaseController
                 'linkedRoom' => $hotspot_data['linked_room'] ?? null,
                 'description' => $hotspot_data['description'] ?? ''
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Hotspot save error: ' . $e->getMessage());
             return false;
         }
@@ -532,7 +532,7 @@ class VirtualTourController extends BaseController
             $stmt->execute(['propertyId' => $property_id]);
 
             return $stmt->fetchAll();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Hotspot fetch error: ' . $e->getMessage());
             return [];
         }

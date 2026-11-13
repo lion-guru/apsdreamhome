@@ -46,7 +46,7 @@ class Payment extends Model
             $stmt->execute([$currentMonth]);
             $expenses = $stmt->fetchColumn();
             $stmt->closeCursor();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             // Ignore if expenses table doesn't exist
         }
 
@@ -143,13 +143,13 @@ class Payment extends Model
 
                 $stmtNotif = $conn->prepare($sqlNotif);
                 $stmtNotif->execute([$data['customer_id'], $notificationMessage, $notificationLink]);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // Ignore notification errors
             }
 
             $conn->commit();
             return $paymentId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if (isset($conn)) $conn->rollBack();
             error_log("Payment::recordPayment error: " . $e->getMessage());
             return false;

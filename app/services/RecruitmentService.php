@@ -97,7 +97,7 @@ class RecruitmentService
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($values);
             return ['success' => true, 'id' => (int)$this->conn->lastInsertId(), 'message' => 'Job posting created'];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if (strpos($e->getMessage(), 'Duplicate') !== false) {
                 return ['success' => false, 'message' => 'Job code already exists'];
             }

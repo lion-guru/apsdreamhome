@@ -63,7 +63,7 @@ class SecurityEnhancementService
             // Vulnerability scans
             $sql = "";
             $this->database->execute($sql);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error creating security tables: " . $e->getMessage(), 'error', 'security');
         }
     }
@@ -265,7 +265,7 @@ class SecurityEnhancementService
             $this->blockedIPs[$ipAddress] = true;
 
             $this->logger->log("IP blocked: $ipAddress - Reason: $reason", 'warning', 'security');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error blocking IP: " . $e->getMessage(), 'error', 'security');
         }
     }
@@ -290,7 +290,7 @@ class SecurityEnhancementService
                 $this->blockedIPs[$ipAddress] = true;
                 return true;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error checking blocked IP: " . $e->getMessage(), 'error', 'security');
         }
 
@@ -340,7 +340,7 @@ class SecurityEnhancementService
             }
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error checking rate limit: " . $e->getMessage(), 'error', 'security');
             return true; // Allow on error
         }
@@ -368,7 +368,7 @@ class SecurityEnhancementService
                 $ipAddress,
                 $details
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error logging security event: " . $e->getMessage(), 'error', 'security');
         }
     }
@@ -425,7 +425,7 @@ class SecurityEnhancementService
 
             $result = $this->database->fetchOne($sql);
             $summary['total_events'] = $result['total'] ?? 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error getting threat summary: " . $e->getMessage(), 'error', 'security');
         }
 
@@ -444,7 +444,7 @@ class SecurityEnhancementService
                     LIMIT ?";
 
             return $this->database->fetchAll($sql, [$limit]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error getting blocked IPs: " . $e->getMessage(), 'error', 'security');
             return [];
         }
@@ -461,7 +461,7 @@ class SecurityEnhancementService
                     LIMIT ?";
 
             return $this->database->fetchAll($sql, [$limit]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error getting security events: " . $e->getMessage(), 'error', 'security');
             return [];
         }
@@ -479,7 +479,7 @@ class SecurityEnhancementService
                     LIMIT ?";
 
             return $this->database->fetchAll($sql, [$limit]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error getting vulnerabilities: " . $e->getMessage(), 'error', 'security');
             return [];
         }
@@ -520,7 +520,7 @@ class SecurityEnhancementService
             $score -= $vulnerabilities * 15;
 
             return max(0, $score);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error calculating security score: " . $e->getMessage(), 'error', 'security');
             return 50; // Default score
         }
@@ -556,7 +556,7 @@ class SecurityEnhancementService
             foreach ($results as $row) {
                 $this->blockedIPs[$row['ip_address']] = true;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error loading security data: " . $e->getMessage(), 'error', 'security');
         }
     }
@@ -602,7 +602,7 @@ class SecurityEnhancementService
 
             $result = $this->database->fetchOne($sql, [$ipAddress, $severity]);
             return $result['count'] ?? 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return 0;
         }
     }
@@ -626,7 +626,7 @@ class SecurityEnhancementService
             $this->database->execute($sql);
 
             $this->logger->log("Security data cleanup completed", 'info', 'security');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->logger->log("Error cleaning security data: " . $e->getMessage(), 'error', 'security');
         }
     }

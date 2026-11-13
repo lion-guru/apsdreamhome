@@ -171,7 +171,7 @@ class Employee extends Model
 
             $pdo->commit();
             return $employeeId;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $pdo->rollBack();
             throw $e;
         }
@@ -272,7 +272,7 @@ class Employee extends Model
 
             $pdo->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $pdo->rollBack();
             return false;
         }
@@ -325,7 +325,7 @@ class Employee extends Model
 
             $pdo->commit();
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $pdo->rollBack();
             throw $e;
         }
@@ -386,7 +386,7 @@ class Employee extends Model
             $stmt->execute();
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Employee::getAdminEmployees error: ' . $e->getMessage());
             return [];
         }
@@ -432,7 +432,7 @@ class Employee extends Model
             $stmt->execute();
 
             return (int)$stmt->fetchColumn();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Employee::getAdminTotalEmployees error: ' . $e->getMessage());
             return 0;
         }

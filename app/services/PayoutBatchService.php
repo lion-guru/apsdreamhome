@@ -63,7 +63,7 @@ class PayoutBatchService
 
             $batchId = (int)$this->pdo->lastInsertId();
             return ['success' => true, 'batch_id' => $batchId];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[PayoutBatch] createBatch FAILED: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -223,7 +223,7 @@ class PayoutBatchService
                 'total_amount'  => round($totalAmount, 2),
                 'skipped'       => count($entries) - $inserted,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             error_log("[PayoutBatch] autoPopulateBatch FAILED: " . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
@@ -319,7 +319,7 @@ class PayoutBatchService
 
             $this->pdo->commit();
             return ['success' => true];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->pdo->rollBack();
             throw $e;
         }

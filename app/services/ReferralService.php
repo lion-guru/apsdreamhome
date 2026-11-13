@@ -138,7 +138,7 @@ class ReferralService
                                 $summary['success']++;
                                 $message = $notes ?: 'Sponsor updated';
                                 $processedAt = date('Y-m-d H:i:s');
-                            } catch (Exception $e) {
+                            } catch (\Throwable $e) {
                                 if ($this->conn->inTransaction()) {
                                     $this->conn->rollBack();
                                 }

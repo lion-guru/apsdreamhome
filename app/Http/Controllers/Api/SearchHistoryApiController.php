@@ -86,7 +86,7 @@ class SearchHistoryApiController extends BaseController
                     'total_pages' => max(1, (int)ceil($total / $perPage)),
                 ],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("SearchHistoryApiController::index error: " . $e->getMessage());
             $this->json(['success' => false, 'error' => 'Failed to fetch search history'], 500);
         }

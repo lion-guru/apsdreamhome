@@ -53,7 +53,7 @@ class MLMCommissionEngine
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[MLMCommissionEngine] Database init failed: ' . $e->getMessage());
                 $pdo = null;
             }
@@ -133,7 +133,7 @@ class MLMCommissionEngine
                 }
                 return $r;
             }, $rows);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return $this->defaultRankBenefits();
@@ -219,7 +219,7 @@ class MLMCommissionEngine
                 $lStmt = $this->db->prepare("SELECT COUNT(DISTINCT associate_id) FROM mlm_network_tree WHERE parent_id = ? OR sponsor_id = ?");
                 $lStmt->execute([$userId, $userId]);
                 $legs = (int)$lStmt->fetchColumn();
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
                 $legs = 0;
@@ -230,7 +230,7 @@ class MLMCommissionEngine
                     $rStmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE referred_by = ? AND tenant_id = ?");
                     $rStmt->execute([$userId, $this->getTenantId()]);
                     $legs = (int)$rStmt->fetchColumn();
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
                     $legs = 0;
@@ -252,7 +252,7 @@ class MLMCommissionEngine
                 'current_rank'   => $currentRank,
                 'status'         => $a['status'] ?? 'active',
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return $empty;
@@ -655,8 +655,8 @@ class MLMCommissionEngine
 
             $this->db->commit();
             return true;
-        } catch (Exception $e) {
-            try { $this->db->rollBack(); } catch (Exception $e2) {
+        } catch (\Throwable $e) {
+            try { $this->db->rollBack(); } catch (\Throwable $e2) {
                 error_log("[MLMCommissionEngine] applyRankPromotion() rollback exception: " . $e2->getMessage());
             }
             return false;
@@ -682,13 +682,13 @@ class MLMCommissionEngine
                     } else {
                         $unchanged++;
                     }
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
                     error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
                     $errors[] = "Assoc {$aid}: " . $e->getMessage();
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             $errors[] = $e->getMessage();
@@ -705,7 +705,7 @@ class MLMCommissionEngine
             $stmt = $this->db->prepare("SELECT * FROM mlm_rank_history WHERE associate_id = ? ORDER BY promoted_at DESC LIMIT 50");
             $stmt->execute([$associateId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return [];
@@ -1053,7 +1053,7 @@ class MLMCommissionEngine
                     $e['id'] = (int)$this->db->lastInsertId();
                     $result['created_ids'][] = $e['id'];
                     $result['total'] += $e['amount'];
-                } catch (Exception $ee) {
+                } catch (\Throwable $ee) {
                     error_log("[__CLASS__] __METHOD__() exception: " . $ee->getMessage());
                     // continue to next entry
                 }
@@ -1061,7 +1061,7 @@ class MLMCommissionEngine
             unset($e);
             $result['entries'] = $entries;
             return $result;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
             return $result;
         }
@@ -1447,14 +1447,14 @@ class MLMCommissionEngine
                     ]);
                     $e['id'] = (int)$this->db->lastInsertId();
                     $result['total'] += $e['amount'];
-                } catch (Exception $ee) {
+                } catch (\Throwable $ee) {
                     error_log("[__CLASS__] __METHOD__() exception: " . $ee->getMessage());
                 }
             }
             unset($e);
             $result['entries'] = $entries;
             return $result;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
             $result['error'] = $e->getMessage();
             return $result;
@@ -1502,7 +1502,7 @@ class MLMCommissionEngine
             $ins->execute([$bookingId, $userId, $rank, $rate, $this->getTenantId(), $rank, $rate]);
 
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
             return false;
         }
@@ -1610,7 +1610,7 @@ class MLMCommissionEngine
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$minDaysOverdue]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return [];
@@ -1688,7 +1688,7 @@ class MLMCommissionEngine
                                     WHERE id = ?
                                 ")->execute([$cbAmt, $cbAmt, $w['id']]);
                             }
-                        } catch (Exception $we) {
+                        } catch (\Throwable $we) {
                             error_log("[__CLASS__] __METHOD__() exception: " . $we->getMessage());
 
                             // wallet may not exist
@@ -1696,7 +1696,7 @@ class MLMCommissionEngine
 
                         $result['processed']++;
                         $result['amount'] += $cbAmt;
-                    } catch (Exception $ie) {
+                    } catch (\Throwable $ie) {
                         error_log("[__CLASS__] __METHOD__() exception: " . $ie->getMessage());
 
                         $result['errors'][] = "Ledger {$pr['id']}: " . $ie->getMessage();
@@ -1704,7 +1704,7 @@ class MLMCommissionEngine
                 }
                 // mlm_commission_ledger is the single source of truth — no legacy table to check
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             $result['errors'][] = $e->getMessage();
@@ -1741,7 +1741,7 @@ class MLMCommissionEngine
             $stmt->bindValue(2, $limit, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return [];
@@ -1845,8 +1845,8 @@ class MLMCommissionEngine
 
             $this->db->commit();
             return $batchId;
-        } catch (Exception $e) {
-            try { $this->db->rollBack(); } catch (Exception $e2) {
+        } catch (\Throwable $e) {
+            try { $this->db->rollBack(); } catch (\Throwable $e2) {
                 error_log("[__CLASS__] __METHOD__() exception: " . $e2->getMessage());
 }
             error_log('[MLMCommissionEngine] createPayoutBatch error: ' . $e->getMessage());
@@ -1867,7 +1867,7 @@ class MLMCommissionEngine
             ");
             $stmt->execute([$approverId, $batchId]);
             return $stmt->rowCount() > 0;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return false;
@@ -1913,7 +1913,7 @@ class MLMCommissionEngine
             $stmt2->execute([$payoutId, $this->getTenantId()]);
             $this->refreshBatchTotals((int)$stmt2->fetchColumn());
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return false;
@@ -1949,7 +1949,7 @@ class MLMCommissionEngine
                     $batchId,
                 ]);
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             // non-fatal
@@ -1980,7 +1980,7 @@ class MLMCommissionEngine
             $p->execute([$this->getTenantId(), $batchId]);
             $payouts = $p->fetchAll(PDO::FETCH_ASSOC) ?: [];
             return ['batch' => $batch, 'payouts' => $payouts];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return ['batch' => null, 'payouts' => []];
@@ -2005,7 +2005,7 @@ class MLMCommissionEngine
             $stmt->bindValue(2, $limit, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return [];
@@ -2097,7 +2097,7 @@ class MLMCommissionEngine
             $stats['recent_cron'] = $cronStmt ? ($cronStmt->fetch(PDO::FETCH_ASSOC) ?: null) : null;
 
             return $stats;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return $empty;
@@ -2119,7 +2119,7 @@ class MLMCommissionEngine
                 }
                 $buckets[$lvl] = (int)$r['c'];
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             // return default buckets
@@ -2142,7 +2142,7 @@ class MLMCommissionEngine
                 VALUES (?, CURDATE(), NOW(), 'running')
             ")->execute([$cronName]);
             return (int)$this->db->lastInsertId();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return 0;
@@ -2161,7 +2161,7 @@ class MLMCommissionEngine
                 WHERE id = ?
             ")->execute([$status, $itemsProcessed, $errorsCount, $errorLog, $logId]);
             return true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return false;
@@ -2178,7 +2178,7 @@ class MLMCommissionEngine
             $stmt->bindValue(1, $limit, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[__CLASS__] __METHOD__() exception: " . $e->getMessage());
 
             return [];
@@ -2232,7 +2232,7 @@ class MLMCommissionEngine
                 'levels' => $levels,
                 'snapshot_taken_at' => date('Y-m-d H:i:s'),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("[MLMCommissionEngine] getActivePlanSnapshot FAILED: " . $e->getMessage());
             return null;
         }

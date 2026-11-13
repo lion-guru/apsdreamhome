@@ -52,7 +52,7 @@ class PipelineWorkflowService
         try {
             $this->db       = Database::getInstance();
             $this->pipeline = new LegalColonyDevelopmentService();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db       = null;
             $this->pipeline = null;
         }
@@ -102,7 +102,7 @@ class PipelineWorkflowService
                 'requirements'  => $requirements,
                 'blocking'      => $blocking,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -252,8 +252,8 @@ class PipelineWorkflowService
                 'from_stage' => $currentStage,
                 'to_stage'   => $nextStage,
             ];
-        } catch (Exception $e) {
-            try { $this->db->rollBack(); } catch (Exception $x) { error_log($x->getMessage()); }
+        } catch (\Throwable $e) {
+            try { $this->db->rollBack(); } catch (\Throwable $x) { error_log($x->getMessage()); }
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -321,7 +321,7 @@ class PipelineWorkflowService
                 'errors'    => $errors,
                 'summary'   => count($advanced) . ' advanced, ' . count($skipped) . ' skipped, ' . count($errors) . ' errors',
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -354,7 +354,7 @@ class PipelineWorkflowService
             }
 
             return ['success' => true, 'history' => $history];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

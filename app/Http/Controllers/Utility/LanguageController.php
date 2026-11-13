@@ -315,7 +315,7 @@ class LanguageController extends AdminController
             // Save back to file
             $php_content = "<?php\nreturn " . var_export($translations, true) . ";\n";
             return file_put_contents($translation_file, $php_content) !== false;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Translation save error: ' . $e->getMessage());
             return false;
         }

@@ -71,7 +71,7 @@ class WorkflowEngine
             
             return ['success' => true, 'execution_id' => $this->executionId, 'results' => $results];
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($this->executionId) {
                 $this->updateExecution($this->executionId, 'failed', $e->getMessage(), $this->context);
             }
@@ -202,7 +202,7 @@ class WorkflowEngine
             $this->context[$outputVar] = $result;
             
             return ['success' => true, 'result' => $result];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -222,7 +222,7 @@ private function executeAiNode(array $config): array
             $this->context[$outputVar] = $result;
             
             return ['success' => true, 'result' => $result];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -244,7 +244,7 @@ private function executeAiNode(array $config): array
             }
             
             return ['success' => true, 'sent' => count($recipients)];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -264,7 +264,7 @@ try {
             $this->db->query("INSERT INTO ai_calling_schedule ($colStr) VALUES ($placeholders)", $insVals);
 
             return ['success' => true, 'call_id' => $this->db->lastInsertId()];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -286,7 +286,7 @@ try {
                 $condition
             );
             $result = (bool)eval("return $condition;");
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => 'Logic evaluation failed'];
         }
         
@@ -317,7 +317,7 @@ try {
             $emailService->send($to, $subject, $template, $data);
             
             return ['success' => true];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -339,7 +339,7 @@ try {
             ]);
             
             return ['success' => true, 'post_id' => $result];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -355,7 +355,7 @@ try {
             $smsService->sendSMS($to, $message, $template);
             
             return ['success' => true];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -381,7 +381,7 @@ try {
             }
             
             return ['success' => true, 'meeting_id' => $result['id'] ?? null];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -401,7 +401,7 @@ try {
             $this->context[$outputVar] = $order;
             
             return ['success' => true, 'order' => $order];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -457,7 +457,7 @@ public function createWorkflow(array $data): array
             $this->db->query("INSERT INTO workflows ($colStr) VALUES ($placeholders)", $insVals);
 
             return ['success' => true, 'id' => $this->db->lastInsertId()];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -468,7 +468,7 @@ public function createWorkflow(array $data): array
             $tenantSql = $this->tenantSql();
             $tenantParam = $this->tenantId() > 1 ? [$this->tenantId()] : [];
             return $this->db->fetchAll("SELECT * FROM workflows WHERE is_active = 1{$tenantSql} ORDER BY created_at DESC", $tenantParam) ?? [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

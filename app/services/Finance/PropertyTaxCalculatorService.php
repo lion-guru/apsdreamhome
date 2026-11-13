@@ -21,7 +21,7 @@ class PropertyTaxCalculatorService
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $pdo = null;
             }
         }
@@ -180,7 +180,7 @@ class PropertyTaxCalculatorService
                 ],
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyTaxCalculatorService::calculateTax] ' . $e->getMessage());
             return ['success' => false, 'error' => 'Calculation failed: ' . $e->getMessage()];
         }
@@ -212,7 +212,7 @@ class PropertyTaxCalculatorService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -240,7 +240,7 @@ class PropertyTaxCalculatorService
             $stmt = $this->db->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -287,7 +287,7 @@ class PropertyTaxCalculatorService
             ");
             $stmt->execute($params);
             return (int)$this->db->lastInsertId();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PropertyTaxCalculatorService::saveAssessment] ' . $e->getMessage());
             return null;
         }
@@ -308,7 +308,7 @@ class PropertyTaxCalculatorService
             ");
             $stmt->execute([$propertyId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -329,7 +329,7 @@ class PropertyTaxCalculatorService
                 ORDER BY state_code, city
             ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

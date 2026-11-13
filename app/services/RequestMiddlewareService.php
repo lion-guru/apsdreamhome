@@ -44,7 +44,7 @@ class RequestMiddlewareService
 
             return $metadata;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Request Metadata Error: " . $e->getMessage());
             return [
                 'error' => 'Failed to get request metadata',
@@ -92,7 +92,7 @@ class RequestMiddlewareService
 
             return ['id' => $params[0], 'name' => $params[1], 'type' => $params[2], 'priority' => $params[5], 'status' => $params[6], 'created_at' => $params[7]];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Add Middleware Rule Error: " . $e->getMessage());
             return [
                 'error' => 'Failed to add middleware rule',
@@ -124,7 +124,7 @@ class RequestMiddlewareService
 
             return $rules;
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Get Middleware Rules Error: " . $e->getMessage());
             return [];
         }
@@ -154,7 +154,7 @@ class RequestMiddlewareService
 
             return array_merge(['id' => $ruleId], $data);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Update Middleware Rule Error: " . $e->getMessage());
             return [
                 'error' => 'Failed to update middleware rule',
@@ -180,7 +180,7 @@ class RequestMiddlewareService
                 'message' => 'Middleware rule deleted successfully'
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Delete Middleware Rule Error: " . $e->getMessage());
             return [
                 'error' => 'Failed to delete middleware rule',
@@ -219,7 +219,7 @@ class RequestMiddlewareService
                 'test_result' => $result
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Test Middleware Rule Error: " . $e->getMessage());
             return [
                 'error' => 'Failed to test middleware rule',

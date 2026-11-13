@@ -166,7 +166,7 @@ class SocialLoginService
 
             return $this->getUserById($userId);
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Social authentication error: " . $e->getMessage());
             throw new Exception("Social authentication failed: " . $e->getMessage());
         }

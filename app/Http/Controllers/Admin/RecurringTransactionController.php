@@ -30,7 +30,7 @@ class RecurringTransactionController extends AdminController
                 'stats' => $stats,
                 'filters' => ['status' => $status],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -61,7 +61,7 @@ class RecurringTransactionController extends AdminController
             }
             $id = $this->rtService->create($_POST);
             return $this->jsonResponse(['success'=>true,'message'=>'Created','rt_id'=>$id,'redirect'=>BASE_URL.'/admin/recurring']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: '.$e->getMessage(), 500);
         }
     }
@@ -89,7 +89,7 @@ class RecurringTransactionController extends AdminController
         try {
             $this->rtService->update((int)$id, $_POST);
             return $this->jsonResponse(['success'=>true,'message'=>'Updated','redirect'=>BASE_URL.'/admin/recurring']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: '.$e->getMessage(), 500);
         }
     }
@@ -101,7 +101,7 @@ class RecurringTransactionController extends AdminController
         try {
             $this->rtService->delete((int)$id);
             return $this->jsonResponse(['success'=>true,'message'=>'Deleted']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -113,7 +113,7 @@ class RecurringTransactionController extends AdminController
         try {
             $jeId = $this->rtService->execute((int)$id, $_SESSION['user_id'] ?? 1);
             return $this->jsonResponse(['success'=>true,'message'=>'Executed','je_id'=>$jeId]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }
@@ -125,7 +125,7 @@ class RecurringTransactionController extends AdminController
         try {
             $result = $this->rtService->processAllDue($_SESSION['user_id'] ?? 1);
             return $this->jsonResponse(['success'=>true,'message'=>"Processed {$result['executed']} of {$result['due']}",'details'=>$result]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError($e->getMessage(), 500);
         }
     }

@@ -20,7 +20,7 @@ class ColonyAnalyticsService
     {
         try {
             $this->db = Database::getInstance();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->db = null;
         }
     }
@@ -224,7 +224,7 @@ class ColonyAnalyticsService
                     'projected_roi_pct'      => round($profitMargin, 1),
                 ],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -301,7 +301,7 @@ class ColonyAnalyticsService
                         : 0,
                 ],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -345,7 +345,7 @@ class ColonyAnalyticsService
                 'realization_pct'    => round($realizationPct, 1),
                 'break_even_plots'   => $breakEvenPlots,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

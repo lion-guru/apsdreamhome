@@ -44,7 +44,7 @@ class CommissionManager
                 if (method_exists($pdo, 'getPdo')) {
                     $pdo = $pdo->getPdo();
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 error_log('[CommissionManager] DB init failed: ' . $e->getMessage());
                 $pdo = null;
             }
@@ -121,7 +121,7 @@ class CommissionManager
                 return self::ENGINE_HYBRID;
             }
             return self::ENGINE_MLM;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionManager] detectEngine failed: ' . $e->getMessage());
             return self::ENGINE_MLM;
         }
@@ -171,7 +171,7 @@ class CommissionManager
                 'total_amount' => round((float)($result['total'] ?? 0.0), 2),
                 'entries' => $entries,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionManager] calculateViaHybrid failed: ' . $e->getMessage());
             return ['success' => false, 'engine' => self::ENGINE_HYBRID, 'error' => $e->getMessage()];
         }
@@ -233,7 +233,7 @@ class CommissionManager
                 'amount'     => $amountReceived,
                 'agent_id'   => $agentId,
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionManager] resolveBookingContext failed: ' . $e->getMessage());
             return null;
         }
@@ -274,7 +274,7 @@ class CommissionManager
                 'total_amount' => round((float)($result['total'] ?? 0.0), 2),
                 'entries' => $result['entries'],
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionManager] calculateViaMLM failed: ' . $e->getMessage());
             return ['success' => false, 'engine' => self::ENGINE_MLM, 'error' => $e->getMessage()];
         }
@@ -305,7 +305,7 @@ class CommissionManager
                     }
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionManager] DailyCappingService error: ' . $e->getMessage());
         }
     }
@@ -329,7 +329,7 @@ class CommissionManager
             ");
             $stmt->execute([$bookingId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -391,7 +391,7 @@ class CommissionManager
                 'reversed' => $reversed,
                 'total_reversed' => round(array_sum(array_column($entries, 'amount')) * -1, 2),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionManager] reverseForBooking failed: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -487,7 +487,7 @@ class CommissionManager
                 'total' => round($totalCredited, 2),
                 'users_affected' => count($byUser),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[CommissionManager] creditWallets failed: ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
@@ -527,7 +527,7 @@ class CommissionManager
                 'breakdown' => $rows,
                 'total' => round($totalAll, 2),
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return ['error' => $e->getMessage()];
         }
     }

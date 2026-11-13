@@ -66,7 +66,7 @@ class AdminLogger
                     $logEntry['created_at']
                 ]
             );
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AdminLogger Error: " . $e->getMessage());
             return false;
         }
@@ -103,7 +103,7 @@ class AdminLogger
                     $logEntry['created_at']
                 ]
             );
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AdminLogger Error: " . $e->getMessage());
             return false;
         }
@@ -146,7 +146,7 @@ class AdminLogger
             $sql .= " ORDER BY created_at DESC";
 
             return $db->fetchAll($sql, $params);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("AdminLogger Error: " . $e->getMessage());
             return [];
         }

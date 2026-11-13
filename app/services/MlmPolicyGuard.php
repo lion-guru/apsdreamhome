@@ -60,7 +60,7 @@ class MlmPolicyGuard
             try {
                 $db = \App\Core\Database\Database::getInstance();
                 $this->pdo = method_exists($db, 'getPdo') ? $db->getPdo() : $db;
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 $this->pdo = null;
             }
         }

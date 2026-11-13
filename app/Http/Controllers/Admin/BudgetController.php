@@ -50,7 +50,7 @@ class BudgetController extends AdminController
             ];
 
             return $this->render('admin/budgets/index', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load budgets: ' . $e->getMessage());
             return $this->redirect('/admin/accounting');
         }
@@ -105,7 +105,7 @@ class BudgetController extends AdminController
                 'budget_id' => $budgetId,
                 'redirect' => BASE_URL . '/admin/budgets'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to create budget: ' . $e->getMessage(), 500);
         }
     }
@@ -132,7 +132,7 @@ class BudgetController extends AdminController
                 'statuses' => ['pending', 'approved', 'paid', 'rejected']
             ];
             return $this->render('admin/budgets/show', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load budget: ' . $e->getMessage());
             return $this->redirect('/admin/budgets');
         }
@@ -160,7 +160,7 @@ class BudgetController extends AdminController
                 'categories' => ['operating', 'capital', 'marketing', 'hr', 'it', 'maintenance', 'other']
             ];
             return $this->render('admin/budgets/edit', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load budget: ' . $e->getMessage());
             return $this->redirect('/admin/budgets');
         }
@@ -189,7 +189,7 @@ class BudgetController extends AdminController
                 ]);
             }
             return $this->jsonError('Budget not found', 404);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to update budget: ' . $e->getMessage(), 500);
         }
     }
@@ -210,7 +210,7 @@ class BudgetController extends AdminController
                 'success' => true,
                 'message' => 'Budget deleted successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to delete budget: ' . $e->getMessage(), 500);
         }
     }
@@ -231,7 +231,7 @@ class BudgetController extends AdminController
                 return $this->jsonResponse(['success' => true, 'message' => 'Budget approved']);
             }
             return $this->jsonError('Budget not found', 404);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to approve: ' . $e->getMessage(), 500);
         }
     }
@@ -250,7 +250,7 @@ class BudgetController extends AdminController
                 return $this->jsonResponse(['success' => true, 'message' => 'Budget activated']);
             }
             return $this->jsonError('Budget not found', 404);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to activate: ' . $e->getMessage(), 500);
         }
     }
@@ -269,7 +269,7 @@ class BudgetController extends AdminController
                 return $this->jsonResponse(['success' => true, 'message' => 'Budget closed']);
             }
             return $this->jsonError('Budget not found', 404);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to close: ' . $e->getMessage(), 500);
         }
     }
@@ -305,7 +305,7 @@ class BudgetController extends AdminController
                 'message' => 'Expense added successfully',
                 'expense_id' => $expenseId
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to add expense: ' . $e->getMessage(), 500);
         }
     }
@@ -329,7 +329,7 @@ class BudgetController extends AdminController
                 return $this->jsonResponse(['success' => true, 'message' => 'Expense updated']);
             }
             return $this->jsonError('Expense not found', 404);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to update expense: ' . $e->getMessage(), 500);
         }
     }
@@ -348,7 +348,7 @@ class BudgetController extends AdminController
                 return $this->jsonResponse(['success' => true, 'message' => 'Expense deleted']);
             }
             return $this->jsonError('Expense not found', 404);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to delete expense: ' . $e->getMessage(), 500);
         }
     }
@@ -377,7 +377,7 @@ class BudgetController extends AdminController
                 ]
             ];
             return $this->render('admin/budgets/variance', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load variance report: ' . $e->getMessage());
             return $this->redirect('/admin/budgets');
         }
@@ -407,7 +407,7 @@ class BudgetController extends AdminController
                 ]
             ];
             return $this->render('admin/budgets/planning', $data);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed to load budget planning: ' . $e->getMessage());
             return $this->redirect('/admin/budgets');
         }
@@ -429,7 +429,7 @@ class BudgetController extends AdminController
                 'message' => 'Planning item saved successfully',
                 'planning_id' => $planningId
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to save planning: ' . $e->getMessage(), 500);
         }
     }
@@ -449,7 +449,7 @@ class BudgetController extends AdminController
                 return $this->jsonResponse(['success' => true, 'message' => 'Planning updated']);
             }
             return $this->jsonError('Planning not found', 404);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to update planning: ' . $e->getMessage(), 500);
         }
     }
@@ -467,7 +467,7 @@ class BudgetController extends AdminController
                 return $this->jsonResponse(['success' => true, 'message' => 'Planning deleted']);
             }
             return $this->jsonError('Planning not found', 404);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed to delete planning: ' . $e->getMessage(), 500);
         }
     }

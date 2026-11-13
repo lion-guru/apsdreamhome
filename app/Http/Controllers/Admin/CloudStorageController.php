@@ -37,7 +37,7 @@ class CloudStorageController extends AdminController
                 'files' => $files,
                 'driver' => $this->storage->getDriver(),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->setFlash('error', 'Failed: ' . $e->getMessage());
             return $this->redirect('/admin/cloud-storage');
         }
@@ -62,7 +62,7 @@ class CloudStorageController extends AdminController
             }
             $this->logActivity('s3_upload', ['path' => $path, 'size' => $file['size']]);
             return $this->jsonResponse(['success' => true, 'message' => 'File uploaded', 'path' => $path]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -85,7 +85,7 @@ class CloudStorageController extends AdminController
             header('Content-Length: ' . strlen($content));
             echo $content;
             exit;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }
@@ -107,7 +107,7 @@ class CloudStorageController extends AdminController
             }
             $this->logActivity('s3_delete', ['path' => $path]);
             return $this->jsonResponse(['success' => true, 'message' => 'File deleted']);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonError('Failed: ' . $e->getMessage(), 500);
         }
     }

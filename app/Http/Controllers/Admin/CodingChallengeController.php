@@ -76,7 +76,7 @@ class CodingChallengeController extends AdminController
                 'success' => $this->getFlash('success'),
                 'error' => $this->getFlash('error'),
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CodingChallengeController::index error: " . $e->getMessage());
             $this->render('admin/coding-challenges/index', [
                 'page_title' => 'Coding Challenges',
@@ -133,7 +133,7 @@ class CodingChallengeController extends AdminController
 
             $this->setFlash('success', 'Challenge created successfully');
             $this->redirect(BASE_URL . '/admin/coding-challenges');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CodingChallengeController::store error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to create challenge');
             $this->redirect(BASE_URL . '/admin/coding-challenges/create');
@@ -167,7 +167,7 @@ class CodingChallengeController extends AdminController
                 'challenge' => $challenge,
                 'categories' => ['arrays', 'strings', 'stack', 'search', 'dynamic-programming', 'graph', 'tree', 'math', 'greedy', 'bit-manipulation', 'other'],
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CodingChallengeController::edit error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to load challenge');
             $this->redirect(BASE_URL . '/admin/coding-challenges');
@@ -205,7 +205,7 @@ class CodingChallengeController extends AdminController
 
             $this->setFlash('success', 'Challenge updated successfully');
             $this->redirect(BASE_URL . '/admin/coding-challenges');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CodingChallengeController::update error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to update challenge');
             $this->redirect(BASE_URL . '/admin/coding-challenges/edit/' . $id);
@@ -229,7 +229,7 @@ class CodingChallengeController extends AdminController
 
             $this->setFlash('success', 'Challenge deleted successfully');
             $this->redirect(BASE_URL . '/admin/coding-challenges');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("CodingChallengeController::destroy error: " . $e->getMessage());
             $this->setFlash('error', 'Failed to delete challenge');
             $this->redirect(BASE_URL . '/admin/coding-challenges');

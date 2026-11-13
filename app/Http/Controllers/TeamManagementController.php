@@ -58,7 +58,7 @@ class TeamManagementController extends BaseController
                 'recent_activities' => $recentActivities,
                 'top_performers' => $topPerformers
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Team Management Error: " . $e->getMessage());
             $this->render('pages/team-management', [
                 'page_title' => 'Team Management - APS Dream Home',
@@ -125,7 +125,7 @@ class TeamManagementController extends BaseController
                 'level_distribution' => $levelDistribution,
                 'growth_rate' => $totalMembers['count'] > 0 ? round(($newMembers['count'] / $totalMembers['count']) * 100, 2) : 0
             ];
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Team Statistics Error: " . $e->getMessage());
             return [
                 'total_members' => 0,
@@ -161,7 +161,7 @@ class TeamManagementController extends BaseController
             );
 
             return $activities;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Recent Activities Error: " . $e->getMessage());
             return [];
         }
@@ -191,7 +191,7 @@ class TeamManagementController extends BaseController
             );
 
             return $performers;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Top Performers Error: " . $e->getMessage());
             return [];
         }
@@ -238,7 +238,7 @@ class TeamManagementController extends BaseController
                 'message' => 'Team member added successfully',
                 'member' => $memberData
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to add team member: ' . $e->getMessage()
@@ -278,7 +278,7 @@ class TeamManagementController extends BaseController
                 'success' => true,
                 'member' => $member
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get team member: ' . $e->getMessage()
@@ -316,7 +316,7 @@ class TeamManagementController extends BaseController
                 'message' => 'Team member updated successfully',
                 'member' => $updateData
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to update team member: ' . $e->getMessage()
@@ -357,7 +357,7 @@ class TeamManagementController extends BaseController
                 'success' => true,
                 'message' => 'Team member deleted successfully'
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to delete team member: ' . $e->getMessage()
@@ -400,7 +400,7 @@ class TeamManagementController extends BaseController
                 'message' => 'Team message sent successfully',
                 'message_data' => $messageData
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to send team message: ' . $e->getMessage()
@@ -431,7 +431,7 @@ class TeamManagementController extends BaseController
                 'success' => true,
                 'messages' => $messages
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'message' => 'Failed to get team messages: ' . $e->getMessage()

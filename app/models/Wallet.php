@@ -20,7 +20,7 @@ class Wallet
     {
         try {
             return $this->db->fetchOne("SELECT * FROM wallet_points WHERE user_id = ?", [$userId]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Wallet::getByUserId error: ' . $e->getMessage());
             return null;
         }
