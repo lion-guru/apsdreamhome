@@ -177,9 +177,14 @@ class PromotionalOfferController extends AdminController
     public function validatePromo()
     {
         header('Content-Type: application/json; charset=utf-8');
-        $code = trim($_POST['promo_code'] ?? ($_GET['promo_code'] ?? ''));
-        $plotValue = (float)($_POST['plot_value'] ?? ($_GET['plot_value'] ?? 0.0));
-        $colonyId = !empty($_POST['colony_id']) ? (int)$_POST['colony_id'] : (!empty($_GET['colony_id']) ? (int)$_GET['colony_id'] : null);
+        $jsonBody = json_decode((string) file_get_contents('php://input'), true);
+        if (!is_array($jsonBody)) {
+            $jsonBody = [];
+        }
+        $code = trim((string)($_POST['promo_code'] ?? $jsonBody['promo_code'] ?? ($_GET['promo_code'] ?? '')));
+        $plotValue = (float)($_POST['plot_value'] ?? $jsonBody['plot_value'] ?? ($_GET['plot_value'] ?? 0.0));
+        $rawColonyId = $_POST['colony_id'] ?? $jsonBody['colony_id'] ?? ($_GET['colony_id'] ?? null);
+        $colonyId = ($rawColonyId !== null && $rawColonyId !== '') ? (int)$rawColonyId : null;
 
         if ($code === '') {
             echo json_encode(['valid' => false, 'message' => 'Please enter a promo code']);

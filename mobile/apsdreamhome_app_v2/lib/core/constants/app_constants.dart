@@ -83,6 +83,7 @@ class AppConstants {
   static const String agentOffersEndpointV2 = '/api/v2/mobile/agent/offers';
   static const String agentSalaryEndpointV2 = '/api/v2/mobile/agent/salary';
   static const String promotionalOffersEndpointV2 = '/api/v2/mobile/promotional-offers';
+  static const String validatePromoEndpoint = '/api/promo/validate';
 
   // Referral
 

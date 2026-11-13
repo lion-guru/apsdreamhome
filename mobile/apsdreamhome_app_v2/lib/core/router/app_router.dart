@@ -1002,7 +1002,10 @@ isDisclaimer ||
         path: '/booking/:plotId',
         pageBuilder: (context, state) {
           return CustomTransitionPage<void>(
-            child: BookingPage(plotId: state.pathParameters['plotId']!),
+            child: BookingPage(
+              plotId: state.pathParameters['plotId']!,
+              promoCode: state.uri.queryParameters['promo'],
+            ),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   return SlideTransition(
@@ -1421,7 +1424,7 @@ isDisclaimer ||
             amount: (extra?['amount'] as num?)?.toDouble() ?? 0.0,
             description: extra?['description'] as String? ?? 'Payment',
             entityType: extra?['entity_type'] as String? ?? 'misc',
-            entityId: extra?['entity_id'] as int? ?? 0,
+            entityId: int.tryParse('${extra?['entity_id']}') ?? 0,
             entityName: extra?['entity_name'] as String?,
           );
         },

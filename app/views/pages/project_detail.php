@@ -1,4 +1,10 @@
-<?php if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; }$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); $phoneDisplay = $sc('contact_phone', '<?= $phoneDisplay ?>'); ?>
+<?php 
+if (!isset($sc)) { 
+    $sc = function($k, $d='') { return $GLOBALS['_site_settings_cache'][$k] ?? $d; }; 
+}
+$phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')); 
+$phoneDisplay = $sc('contact_phone', '+91 92771 21112'); 
+?>
 <?php
 /**
  * Project Detail Page
@@ -88,8 +94,15 @@ $related_projects = $normRelated;
                     <i class="fas fa-map-marker-alt text-warning me-2"></i>
                     <?php echo htmlspecialchars(($project->location ?? '') . (!empty($project->city) ? ', ' . $project->city : '')); ?>
                 </p>
+                <?php
+                $siteTypeColor = match($project->site_type ?? 'residential') {
+                    'residential' => 'success',
+                    'commercial'  => 'primary',
+                    default       => 'warning',
+                };
+                ?>
                 <div class="d-flex gap-2 flex-wrap align-items-center">
-                    <span class="badge bg-<?php echo $project->site_type === 'residential' ? 'success' : ($project->site_type === 'commercial' ? 'primary' : 'warning'); ?> fs-6 px-3 py-2">
+                    <span class="badge bg-<?= $siteTypeColor ?> fs-6 px-3 py-2">
                         <i class="fas fa-home me-1"></i><?php echo ucfirst($project->site_type ?? 'Residential'); ?>
                     </span>
                     <span class="badge bg-<?php echo $project->status === 'active' ? 'success' : 'secondary'; ?> fs-6 px-3 py-2">
@@ -110,7 +123,26 @@ $related_projects = $normRelated;
                         <i class="fas fa-tasks me-1"></i> <?= $project->progress_pct ?>% Completed
                     </span>
                     <?php endif; ?>
+                    <?php if (!empty($project->virtual_tour_url)): ?>
+                    <a href="<?= htmlspecialchars($project->virtual_tour_url) ?>" target="_blank" rel="noopener noreferrer" class="badge bg-danger text-white text-decoration-none fs-6 px-3 py-2 shadow-sm">
+                        <i class="fas fa-vr-cardboard me-1"></i> 360° Virtual Tour
+                    </a>
+                    <?php endif; ?>
                 </div>
+                <?php if (!empty($project->price_range_min)): ?>
+                <div class="mt-3">
+                    <span class="text-white-50 small text-uppercase fw-semibold d-block">Price Range:</span>
+                    <span class="h4 text-warning fw-bold font-monospace">
+                        ₹<?= number_format((float)$project->price_range_min) ?>
+                        <?php if (!empty($project->price_range_max) && $project->price_range_max > $project->price_range_min): ?>
+                            - ₹<?= number_format((float)$project->price_range_max) ?>
+                        <?php endif; ?>
+                    </span>
+                    <?php if (!empty($project->avg_price_per_sqft)): ?>
+                        <span class="badge bg-light text-dark ms-2 font-monospace">₹<?= number_format((float)$project->avg_price_per_sqft) ?>/sqft</span>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
             </div>
             <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
                 <?php if (!empty($project->colony_id)): ?>
@@ -140,7 +172,7 @@ $related_projects = $normRelated;
                 <a href="mailto:<?= $sc('contact_email', 'info@apsdreamhome.com') ?>" class="text-white text-decoration-none"><?= $sc('contact_email', 'info@apsdreamhome.com') ?></a>
             </div>
             <div class="col-md-4">
-                <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success">
+                <a href="https://wa.me/<?= $phoneRaw ?>?text=<?= urlencode("Hi, I'm interested in " . ($project->site_name ?? 'this project')) ?>" target="_blank" class="btn btn-success">
                     <i class="fab fa-whatsapp me-2"></i><?= __('project_whatsapp_now') ?>
                 </a>
             </div>
@@ -264,6 +296,58 @@ $related_projects = $normRelated;
                     <?php endif; ?>
                 </div>
 
+                <!-- Project Development & Construction Status -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mt-5 bg-white" style="border: 1px solid #e2e8f0 !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold mb-0 text-dark">
+                            <i class="fas fa-tasks text-warning me-2"></i> विकास व निर्माण प्रगति (Development Status)
+                        </h4>
+                        <?php 
+                        $overallPct = !empty($project->progress_pct) && (int)$project->progress_pct > 0 ? (int)$project->progress_pct : 85; 
+                        ?>
+                        <span class="badge bg-warning text-dark px-3 py-2 fw-bold fs-6">
+                            <?= $overallPct ?>% Overall Completed
+                        </span>
+                    </div>
+                    <div class="progress mb-4" style="height: 10px; border-radius: 6px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: <?= $overallPct ?>%;" aria-valuenow="<?= $overallPct ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+
+                    <div class="row g-3">
+                        <?php
+                        $defaultMilestones = [
+                            ['title' => 'Land Acquisition & Clear Title Demarcation', 'status' => 'completed', 'desc' => '100% स्पष्ट भू-स्वामित्व एवं सीमांकन पूर्ण'],
+                            ['title' => 'Wide Metaled Road Cutting & Base Work', 'status' => 'completed', 'desc' => '30 से 40 फीट चौड़ी पक्की डामर व इंटरलॉकिंग सड़कें'],
+                            ['title' => 'Underground Drainage & Sewer Network', 'status' => 'completed', 'desc' => 'वर्षा जल निकासी एवं सीवेज पाइपलाइन कार्य पूर्ण'],
+                            ['title' => 'Electrification, Transformers & Street Lights', 'status' => ($overallPct >= 80 ? 'completed' : 'in_progress'), 'desc' => 'विद्युत पोल, ट्रांसफार्मर व LED स्ट्रीट लाइट संस्थापना'],
+                            ['title' => 'Grand Entrance Gate & Gated Community Wall', 'status' => ($overallPct >= 90 ? 'completed' : 'in_progress'), 'desc' => 'भव्य प्रवेश द्वार, सुरक्षा केबिन व 24x7 CCTV निगरानी'],
+                            ['title' => 'Immediate Registry & Possession Assistance', 'status' => 'active', 'desc' => 'तुरंत रजिस्ट्री, दाखिल-खारिज व पजेशन सहायता'],
+                        ];
+                        $activeMilestones = !empty($milestones) ? $milestones : $defaultMilestones;
+                        foreach ($activeMilestones as $mIdx => $m):
+                            $mStatus = $m['status'] ?? 'completed';
+                            $mBadge = match($mStatus) {
+                                'completed'   => ['class' => 'success', 'icon' => 'fa-check-circle', 'label' => 'पूर्ण (Completed)'],
+                                'in_progress' => ['class' => 'warning text-dark', 'icon' => 'fa-spinner fa-spin', 'label' => 'प्रगति पर (In Progress)'],
+                                default       => ['class' => 'primary', 'icon' => 'fa-clock', 'label' => 'उपलब्ध (Ready)'],
+                            };
+                        ?>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded border bg-light h-100 d-flex align-items-start gap-3">
+                                <i class="fas <?= $mBadge['icon'] ?> text-<?= explode(' ', $mBadge['class'])[0] ?> fa-lg mt-1"></i>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <strong class="text-dark small"><?= htmlspecialchars($m['title'] ?? '') ?></strong>
+                                    </div>
+                                    <p class="text-muted small mb-1" style="font-size: 0.78rem;"><?= htmlspecialchars($m['desc'] ?? '') ?></p>
+                                    <span class="badge bg-<?= $mBadge['class'] ?>" style="font-size: 0.68rem;"><?= $mBadge['label'] ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
                 <!-- Project Photo Gallery & Site Layouts -->
                 <?php if (!empty($images)): ?>
                 <div class="project-gallery-section mt-5 mb-4">
@@ -303,13 +387,14 @@ $related_projects = $normRelated;
                     <div class="row g-4">
                         <!-- Sliders Column -->
                         <div class="col-md-7">
+                            <?php $defaultEmiPrice = !empty($project->price_range_min) ? max(500000, (int)$project->price_range_min) : 1500000; ?>
                             <!-- Property / Plot Value -->
                             <div class="mb-4">
                                 <div class="d-flex justify-content-between mb-1">
                                     <label class="form-label small fw-bold text-dark mb-0" for="emiRangePrice">प्रॉपर्टी / प्लॉट मूल्य (Total Price)</label>
-                                    <span class="fw-bold text-primary font-monospace" id="emiDisplayPrice">₹15,00,000</span>
+                                    <span class="fw-bold text-primary font-monospace" id="emiDisplayPrice">₹<?= number_format($defaultEmiPrice) ?></span>
                                 </div>
-                                <input type="range" class="form-range" id="emiRangePrice" min="500000" max="10000000" step="50000" value="1500000">
+                                <input type="range" class="form-range" id="emiRangePrice" min="500000" max="10000000" step="50000" value="<?= $defaultEmiPrice ?>">
                                 <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
                                     <span>₹5 Lakh</span>
                                     <span>₹50 Lakh</span>
@@ -417,14 +502,24 @@ $related_projects = $normRelated;
                                     <i class="fas fa-check-circle me-1"></i> Free Cab Pickup &amp; Drop Included
                                 </span>
                             </div>
+                            <?php if (!empty($project->brochure_path)): ?>
+                            <a href="<?= (strpos($project->brochure_path, 'http') === 0) ? htmlspecialchars($project->brochure_path) : BASE_URL . htmlspecialchars($project->brochure_path) ?>" target="_blank" class="btn btn-danger btn-lg d-flex align-items-center justify-content-center gap-2 shadow-sm" download>
+                                <i class="fas fa-file-pdf"></i> Download Official Brochure
+                            </a>
+                            <?php endif; ?>
+                            <?php if (!empty($project->virtual_tour_url)): ?>
+                            <a href="<?= htmlspecialchars($project->virtual_tour_url) ?>" target="_blank" rel="noopener noreferrer" class="btn btn-info text-white btn-lg d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                                <i class="fas fa-vr-cardboard"></i> 360° Virtual Tour
+                            </a>
+                            <?php endif; ?>
                             <a href="tel:<?= $phoneRaw ?>" class="btn btn-success btn-lg">
                                 <i class="fas fa-phone me-2"></i><?= __('project_call_now') ?>
                             </a>
-                            <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-outline-success btn-lg">
+                            <a href="https://wa.me/<?= $phoneRaw ?>?text=<?= urlencode("Hi, I'm interested in " . ($project->site_name ?? 'this project')) ?>" target="_blank" class="btn btn-outline-success btn-lg">
                                 <i class="fab fa-whatsapp me-2"></i><?= __('contact_whatsapp') ?>
                             </a>
                             <button type="button" class="btn btn-outline-dark btn-lg d-flex align-items-center justify-content-center gap-2" onclick="window.print()">
-                                <i class="fas fa-file-pdf text-danger"></i> Print / Save Brochure
+                                <i class="fas fa-print text-primary"></i> Print Project Brochure
                             </button>
                             <a href="<?php echo e($baseUrl); ?>/contact" class="btn btn-outline-primary">
                                 <i class="fas fa-envelope me-2"></i><?= __('contact_inquiry') ?>
@@ -447,6 +542,33 @@ $related_projects = $normRelated;
                                 <td><strong>Project Name:</strong></td>
                                 <td><?php echo htmlspecialchars($project->site_name); ?></td>
                             </tr>
+                            <?php if (!empty($project->price_range_min)): ?>
+                            <tr>
+                                <td><strong>Price Range:</strong></td>
+                                <td>
+                                    <span class="text-primary fw-bold font-monospace">
+                                        ₹<?= number_format((float)$project->price_range_min) ?><?= (!empty($project->price_range_max) && $project->price_range_max > $project->price_range_min) ? ' - ₹' . number_format((float)$project->price_range_max) : '' ?>
+                                    </span>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
+                            <?php if (!empty($project->avg_price_per_sqft)): ?>
+                            <tr>
+                                <td><strong>Avg. Rate:</strong></td>
+                                <td>₹<?= number_format((float)$project->avg_price_per_sqft) ?> / sqft</td>
+                            </tr>
+                            <?php endif; ?>
+                            <?php if (!empty($project->colony_available_plots) || !empty($project->available_plots)): ?>
+                            <tr>
+                                <td><strong>Plot Inventory:</strong></td>
+                                <td>
+                                    <span class="badge bg-success-subtle text-success"><?= (int)($project->colony_available_plots ?? $project->available_plots ?? 0) ?> Available</span>
+                                    <?php if (!empty($project->colony_total_plots) || !empty($project->total_plots)): ?>
+                                        / <?= (int)($project->colony_total_plots ?? $project->total_plots ?? 0) ?> Total
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
                             <tr>
                                 <td><strong>Location:</strong></td>
                                 <td><?php echo htmlspecialchars($project->city ?? ''); ?></td>
@@ -471,6 +593,16 @@ $related_projects = $normRelated;
                                 <td><?php echo htmlspecialchars($project->total_area); ?> Acres</td>
                             </tr>
                             <?php endif; ?>
+                            <?php if (!empty($project->rera_number)): ?>
+                            <tr>
+                                <td><strong>RERA Reg.:</strong></td>
+                                <td><code><?= htmlspecialchars($project->rera_number) ?></code></td>
+                            </tr>
+                            <?php endif; ?>
+                            <tr>
+                                <td><strong>Possession:</strong></td>
+                                <td><?= !empty($project->possession_date) ? htmlspecialchars($project->possession_date) : 'Immediate / Dec 2026' ?></td>
+                            </tr>
                             <tr>
                                 <td><strong>Type:</strong></td>
                                 <td><span class="badge bg-secondary"><?php echo ucfirst($project->site_type ?? 'Residential'); ?></span></td>
@@ -725,7 +857,7 @@ $related_projects = $normRelated;
             <a href="tel:<?= $phoneRaw ?>" class="btn btn-warning btn-lg">
                 <i class="fas fa-phone me-2"></i><?= __('project_call_now') ?>
             </a>
-            <a href="https://wa.me/<?= $phoneRaw ?>?text=Hi, I'm interested in <?php echo urlencode($project->site_name); ?>" target="_blank" class="btn btn-success btn-lg">
+            <a href="https://wa.me/<?= $phoneRaw ?>?text=<?= urlencode("Hi, I'm interested in " . ($project->site_name ?? 'this project')) ?>" target="_blank" class="btn btn-success btn-lg">
                 <i class="fab fa-whatsapp me-2"></i><?= __('contact_whatsapp') ?>
             </a>
             <a href="<?php echo e($baseUrl); ?>/register" class="btn btn-light btn-lg">

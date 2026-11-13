@@ -6652,3 +6652,35 @@ _914. **Check the route table before building "the missing dashboard"** — `/ad
 _915. **A pinned embedded render is not evidence about the server** — curl + node --check + served-byte needles are the trustworthy channel when the desktop window wedges; stop the loop and log the wedge instead of fighting it.
 _916. **An authenticated embedded profile can wedge so that every navigation yields the admin render** — `/auth/logout` clears the cookie wedge; keep a one-liner recovery before opening new tabs.
 _917. **Collapse beats trim** — collapsible sections keep 100% of the navigation one click away while opening as short tiles: aria + sessionStorage + active-section-preservation is the recipe.
+
+## Session 494: Project Detail Dynamic Development Progress & EMI Engine, Full-Stack Mobile Festival Concession Suite & Native Deep Links (2026-11-14)
+
+### Trigger
+User instruction: "do next amd aur koi suggestion ho iss peoject ko ko best banane me imorove jarne me" — Continuing full-power Senior Developer & CEO execution: continuous audits, UI/UX refinement, mobile app feature parity, and zero regressions.
+
+### The headline
+
+**1. PROJECT DETAIL DYNAMIC PROGRESS, PRICING & BROCHURE SUITE (`app/views/pages/project_detail.php`)**
+- **Dynamic Project-Specific EMI Calculator**: Wired `#emiRangePrice` slider and display to dynamically initialize from the project's real base rate (`$defaultEmiPrice = !empty($project->price_range_min) ? max(500000, (int)$project->price_range_min) : 1500000;`). Calculates downpayment and monthly EMI according to actual township pricing on page load.
+- **Project Development & Construction Timeline**: Added 6-stage development timeline card (Land Acquisition, Road Cutting, Drainage & Sewer, Electrification, Entrance Gate & Boundary Wall, Immediate Registry) with reactive progress bar reflecting `progress_pct`.
+- **Brochure & 360° Virtual Tour Quick Actions**: Added 1-click official brochure PDF download CTA and direct 360° Virtual Tour badge in the Hero and Project Details sidebar.
+- **WhatsApp Sanitization & Duplicate Table Cleanup**: Replaced raw string concatenation in WhatsApp CTA with strict `urlencode("Hi, I'm interested in " . ($project->site_name ?? 'this project'))`. Cleaned up orphaned duplicate `<tr>...</tr></table></div>` markup from the sidebar specs table.
+
+**2. FULL-STACK MOBILE FESTIVAL PROMO & CONCESSION FLOW (`mobile/apsdreamhome_app_v2`)**
+- **API Promo Validation Controller (`PromotionalOfferController.php` & `MobileUserApiController.php`)**: Enhanced `validatePromo()` to parse raw JSON payloads (`file_get_contents('php://input')`) alongside form-encoded data. Expanded promotional offers API endpoint to return rich metadata (`discount_type`, `discount_value`, `min_booking_amount`, `valid_until`, `times_redeemed`).
+- **Customer Festival Offers Page (`offers_page.dart`)**: Added rich festival discount cards with urgency countdown badge, minimum booking threshold display, 1-click clipboard promo code copy, and direct "Book Plot with This Offer" CTA pre-filling promo code into checkout.
+- **Booking Concession & Net Recalculation Engine (`booking_page.dart`)**: Added promo code entry field pre-filling from offers navigation. Integrated live server validation via `api.validatePromoCode()`, dynamically updating plot discount, net agreement value, and 10% token payment requirements.
+- **Associate Promo Sharing Suite (`associate_offers_page.dart`)**: Added dedicated `_CustomerPromoSection` enabling field associates to view live buyer promo codes, copy them, or share them directly via `SharePlus` to prospective clients on WhatsApp/SMS.
+- **Native Android Deep Linking (`MainActivity.kt` & `deep_link_service.dart`)**: Integrated custom native Android intent handling (`MethodChannel` `apsdreamhome/deeplinks`) for cold start and warm taps (`onNewIntent`), routing `apsdreamhome://` URLs to property details, colony plots, offers, and bookings.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 25.15s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Mobile Flutter Analyzer**: `flutter analyze --no-fatal-infos` -> No issues found! (ran in 13.0s, Exit 0).
+- **Mobile Flutter Unit Tests**: `flutter test test/offline_widgets_test.dart` -> 10/10 tests passed (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **495** (this session; S494 logged above).

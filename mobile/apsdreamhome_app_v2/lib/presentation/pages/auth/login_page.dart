@@ -9,6 +9,7 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/services/notification_service.dart';
+import '../../../core/services/biometric_auth_service.dart';
 import '../../../core/utils/logger.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/services/google_auth_service.dart';
@@ -28,6 +29,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
   final _secureStorage = const FlutterSecureStorage();
+  final _biometricService = BiometricAuthService();
+  bool _biometricAvailable = false;
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _rememberMe = false;
@@ -48,6 +51,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       _passwordController.text = savedPassword;
       setState(() => _rememberMe = true);
     }
+    final available = await _biometricService.checkBiometricAvailability();
+    if (mounted) {
+      setState(() => _biometricAvailable = available);
+    }
+  }
+
+  Future<void> _biometricLogin() async {
+    final ok = await _biometricService.authenticate(
+      localizedReason: 'Unlock APS Dream Home with biometrics',
+    );
+    if (!ok || !mounted) return;
+    // Credentials are already prefilled from secure storage - delegate to _login.
+    await _login();
   }
 
   Future<void> _saveCredentials() async {
@@ -597,15 +613,31 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         )
                       : Text(
                           'Sign In',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                 ),
               ),
             ),
+            if (_biometricAvailable &&
+                _rememberMe &&
+                _passwordController.text.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: _isLoading ? null : _biometricLogin,
+                icon: Icon(
+                  _biometricService.getBiometricName() == 'Face ID'
+                      ? Icons.face_retouching_natural
+                      : Icons.fingerprint,
+                  color: AppTheme.primaryColor,
+                ),
+                label: Text(
+                  'Unlock with ${_biometricService.getBiometricName()}',
+                ),
+              ),
+            ],
           ],
         ),
       ),

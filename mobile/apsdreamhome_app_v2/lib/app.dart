@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import 'core/router/app_router.dart';
 import 'core/services/notification_service.dart';
+import 'core/services/deep_link_service.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/widgets/ai/ai_chatbot_widget.dart';
 
@@ -26,6 +27,8 @@ class _APSDreamHomeAppState extends ConsumerState<APSDreamHomeApp> {
   void initState() {
     super.initState();
     setNavigatorKey(navigatorKey);
+    // Register apsdreamhome:// deep-link routing (cold start + warm taps)
+    DeepLinkService().initialize();
   }
 
   @override

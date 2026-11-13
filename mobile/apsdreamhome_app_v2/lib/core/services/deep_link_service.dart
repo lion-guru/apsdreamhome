@@ -1,79 +1,116 @@
-import 'dart:async';
 import 'dart:developer' as developer;
-// app_links removed — AGP 8.7 incompatibility; re-enable when building for release
-// import 'package:app_links/app_links.dart';
+import 'package:flutter/services.dart';
+
+import '../router/app_router.dart';
 
 /// Deep Linking Service
-/// Handles app links from external sources
-/// NOTE: app_links dependency removed temporarily. Re-add when AGP 8.7+ is compatible.
+/// Receives `apsdreamhome://...` links from the Android launch intent or a
+/// warm (onNewIntent) tap and routes them into the GoRouter.
+///
+/// Native side lives in MainActivity.kt on the channel `apsdreamhome/deeplinks`:
+///   - `getInitialLink` -> String? (the URL that cold-started the app)
+///   - `onLink`         -> method channel event with String arguments
+///
+/// Links are published by the APS Dream Home ecosystem, e.g.:
+///   apsdreamhome://property/123      -> /property-detail/123
+///   apsdreamhome://colony/3          -> /colony-detail/3
+///   apsdreamhome://colony/3/plots    -> /colony-plots/3
+///   apsdreamhome://booking/55        -> /booking/55
+///   apsdreamhome://offers            -> /offers
+///   apsdreamhome://offers?promo=CODE -> /booking/... not linked to a plot -> /offers
 class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
   factory DeepLinkService() => _instance;
   DeepLinkService._internal();
 
-  StreamSubscription<String>? _linkSubscription;
+  static const MethodChannel _channel = MethodChannel('apsdreamhome/deeplinks');
 
-  /// Initialize deep link handling
-  Future<void> initialize({
-    required Function(DeepLinkData) onLinkReceived,
-  }) async {
-    developer.log('Deep link service initialized (stub mode)', name: 'DeepLinkService');
+  bool _initialized = false;
+
+  /// Initialize deep link handling. Safe to call exactly once at app start.
+  Future<void> initialize() async {
+    if (_initialized) return;
+    _initialized = true;
+    try {
+      _channel.setMethodCallHandler(_handleNativeCall);
+      final initial = await _channel.invokeMethod<String>('getInitialLink');
+      if (initial != null && initial.isNotEmpty) {
+        await _route(initial);
+      }
+    } catch (e) {
+      developer.log('Deep link init failed: $e', name: 'DeepLinkService');
+    }
   }
 
-  /// Generate shareable link
-  String generateShareLink({
-    required DeepLinkType type,
-    required String id,
-    Map<String, String>? parameters,
-  }) {
-    final buffer = StringBuffer();
-    buffer.write('https://apsdreamhome.com');
+  Future<dynamic> _handleNativeCall(MethodCall call) async {
+    if (call.method == 'onLink' && call.arguments is String) {
+      await _route(call.arguments as String);
+    }
+    return null;
+  }
 
-    switch (type) {
-      case DeepLinkType.property:
-        buffer.write('/property/$id');
-        break;
-      case DeepLinkType.colony:
-        buffer.write('/colony/$id');
-        break;
-      case DeepLinkType.referral:
-        buffer.write('/invite?code=$id');
-        break;
-      case DeepLinkType.payment:
-        buffer.write('/payment?order_id=$id');
-        break;
-      case DeepLinkType.lead:
-        buffer.write('/lead/$id');
-        break;
+  Future<void> _route(String link) async {
+    final route = parseRoute(link);
+    if (route == null) {
+      developer.log('Unmapped deep link: $link', name: 'DeepLinkService');
+      return;
+    }
+    developer.log('Deep link $link -> $route', name: 'DeepLinkService');
+    try {
+      getRouter().go(route);
+    } catch (e) {
+      developer.log('Deep link navigation failed: $e', name: 'DeepLinkService');
+    }
+  }
+
+  /// Pure parser - unit-testable, no Flutter bindings required.
+  static String? parseRoute(String link) {
+    final uri = Uri.tryParse(link);
+    if (uri == null || uri.scheme != 'apsdreamhome') return null;
+
+    final host = uri.host.toLowerCase();
+    final segs = [
+      if (host.isNotEmpty) host,
+      ...uri.pathSegments.where((s) => s.isNotEmpty),
+    ];
+    if (segs.isEmpty) return null;
+
+    String digits(String s) => RegExp(r'\d+').stringMatch(s) ?? s;
+
+    switch (segs[0]) {
+      case 'property':
+      case 'property-detail':
+        if (segs.length >= 2 && segs[1].trim().isNotEmpty) {
+          return '/property-detail/${digits(segs[1])}';
+        }
+        return null;
+      case 'colony':
+      case 'colony-detail':
+        if (segs.length >= 3 && segs[2] == 'plots') {
+          return '/colony-plots/${digits(segs[1])}';
+        }
+        if (segs.length >= 2 && segs[1].trim().isNotEmpty) {
+          return '/colony-detail/${digits(segs[1])}';
+        }
+        return null;
+      case 'colony-plots':
+        if (segs.length >= 2 && segs[1].trim().isNotEmpty) {
+          return '/colony-plots/${digits(segs[1])}';
+        }
+        return null;
+      case 'booking':
+        if (segs.length >= 2 && segs[1].trim().isNotEmpty) {
+          return '/booking/${segs[1]}';
+        }
+        return null;
+      case 'offers':
+        return '/offers';
+      case 'my-bookings':
+        return '/my-bookings';
+      case 'home':
+        return '/home';
       default:
-        buffer.write('/');
+        return null;
     }
-
-    if (parameters != null && parameters.isNotEmpty) {
-      final queryString = parameters.entries
-          .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-          .join('&');
-      buffer.write('?$queryString');
-    }
-
-    return buffer.toString();
   }
-
-  void dispose() {
-    _linkSubscription?.cancel();
-  }
-}
-
-enum DeepLinkType { property, colony, referral, payment, lead, unknown }
-
-class DeepLinkData {
-  final DeepLinkType type;
-  final String id;
-  final Map<String, String> parameters;
-  final String? rawUrl;
-
-  DeepLinkData({required this.type, required this.id, required this.parameters, this.rawUrl});
-
-  @override
-  String toString() => 'DeepLinkData(type: $type, id: $id, params: $parameters)';
 }

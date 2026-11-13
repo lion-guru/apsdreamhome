@@ -1045,6 +1045,24 @@ class ApiService {
         .toList();
   }
 
+  /// Validate a customer festival promo code server-side.
+  /// Returns the raw backend payload: {valid, offer_id, title, promo_code,
+  /// festival_name, discount_type, discount_amount, net_payable, message}.
+  Future<Map<String, dynamic>> validatePromoCode({
+    required String promoCode,
+    required double plotValue,
+    int? colonyId,
+  }) async {
+    return post(
+      AppConstants.validatePromoEndpoint,
+      data: {
+        'promo_code': promoCode.trim().toUpperCase(),
+        'plot_value': plotValue,
+        if (colonyId != null && colonyId > 0) 'colony_id': colonyId,
+      },
+    );
+  }
+
   // ============================================================
   // WALLET ACTIVATION (Customer)
   // ============================================================

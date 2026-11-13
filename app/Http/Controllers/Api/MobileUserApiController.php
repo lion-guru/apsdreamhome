@@ -1927,9 +1927,13 @@ class MobileUserApiController extends BaseController
                 return;
             }
             $stmt = $this->db->prepare("
-                SELECT id, title, description, discount_percentage, valid_until
+                SELECT id, title, description, festival_name,
+                       discount_percentage, discount_type, discount_value,
+                       min_booking_amount, colony_id, promo_code,
+                       valid_from, valid_until, max_redemptions, times_redeemed,
+                       banner_image
                 FROM promotional_offers
-                WHERE status = 'active' AND valid_until >= CURDATE()
+                WHERE status = 'active' AND (valid_until IS NULL OR valid_until >= CURDATE())
                 ORDER BY valid_until ASC LIMIT 20
             ");
             $stmt->execute();
