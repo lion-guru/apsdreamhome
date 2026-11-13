@@ -2014,7 +2014,7 @@ section[style*="linear-gradient"] .btn-primary {
 section[style*="linear-gradient"] .btn-warning {
   background-color: var(--color-warning) !important;
   border-color: var(--color-warning) !important;
-  color: var(--color-text-primary) !important;
+  color: #ffffff !important;
 }
 
 /* ================================================

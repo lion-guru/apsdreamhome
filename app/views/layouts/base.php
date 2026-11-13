@@ -185,7 +185,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Navigation & Header -->
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=9" rel="stylesheet">
     <!-- Real Estate Theme & Gradients -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=12" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=13" rel="stylesheet">
     <!-- Homepage Specific Extras -->
     <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=15" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=2" rel="stylesheet">
@@ -194,7 +194,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Utility classes (display, min-width, visibility) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/utils.css?v=1" rel="stylesheet">
     <!-- Final UI/UX Polish (contrast, tap targets) -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=6" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/uiux-fixes.css?v=7" rel="stylesheet">
     <?php endif; ?>
     <!-- Shared widgets: load once globally (outside admin guard, version synced) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/notification-system.css?v=6" rel="stylesheet">

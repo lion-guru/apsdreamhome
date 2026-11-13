@@ -231,6 +231,7 @@ footer ul li a,
 
 /* Agent dashboard SB-Admin cards + stat-cards: Bootstrap utility
    colors too light on white (text-info 2.0:1, text-warning 1.6:1) */
+.text-info,
 .card .text-info,
 .stat-card .text-info {
   color: #0e7490 !important; /* cyan-700, 4.8:1 */
@@ -269,4 +270,14 @@ footer ul li a,
 .text-success,
 .text-success-emphasis {
   color: #157347 !important; /* green-700, 5.6:1 on white */
+}
+
+/* Warning buttons now use dark amber (#92400e) after the token darkening;
+   Bootstrap default dark text on dark amber = 2.06:1. White text = 7.4:1. */
+.btn-warning {
+  color: #ffffff !important;
+  border-color: #92400e;
+}
+.btn-warning:hover {
+  color: #ffffff !important;
 }

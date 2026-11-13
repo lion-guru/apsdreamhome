@@ -46,25 +46,25 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
         <div class="row text-center">
             <div class="col-md-3 col-6 mb-3">
                 <div class="p-3">
-                    <h3 class="fw-bold text-primary mb-1"><?= e($project_stats['total_projects'] ?? 0) ?></h3>
+                    <h2 class="fw-bold text-primary mb-1 fs-4"><?= e($project_stats['total_projects'] ?? 0) ?></h2>
                     <small class="text-muted">Total Projects</small>
                 </div>
             </div>
             <div class="col-md-3 col-6 mb-3">
                 <div class="p-3">
-                    <h3 class="fw-bold text-success mb-1"><?= e($project_stats['completed'] ?? 0) ?></h3>
+                    <h2 class="fw-bold text-success mb-1 fs-4"><?= e($project_stats['completed'] ?? 0) ?></h2>
                     <small class="text-muted">Completed</small>
                 </div>
             </div>
             <div class="col-md-3 col-6 mb-3">
                 <div class="p-3">
-                    <h3 class="fw-bold text-warning mb-1"><?= e($project_stats['under_construction'] ?? 0) ?></h3>
+                    <h2 class="fw-bold text-warning mb-1 fs-4"><?= e($project_stats['under_construction'] ?? 0) ?></h2>
                     <small class="text-muted">Under Construction</small>
                 </div>
             </div>
             <div class="col-md-3 col-6 mb-3">
                 <div class="p-3">
-                    <h3 class="fw-bold text-info mb-1"><?= number_format($project_stats['total_plots'] ?? 0) ?></h3>
+                    <h2 class="fw-bold text-info mb-1 fs-4"><?= number_format($project_stats['total_plots'] ?? 0) ?></h2>
                     <small class="text-muted">Total Plots</small>
                 </div>
             </div>
@@ -118,7 +118,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
                             <?php endif; ?>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title fw-bold mb-2"><?= e($project['name']) ?></h5>
+                            <h2 class="card-title fw-bold mb-2 fs-5"><?= e($project['name']) ?></h2>
                             <?php if ($project['developer_name']): ?>
                                 <p class="text-muted small mb-2"><i class="fas fa-building me-1"></i><?= e($project['developer_name']) ?></p>
                             <?php endif; ?>
@@ -173,7 +173,7 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
         <?php else: ?>
             <div class="text-center py-5">
                 <i class="fas fa-building fa-4x text-muted mb-4"></i>
-                <h3 class="text-muted">No Projects Available</h3>
+                <h2 class="text-muted fs-4">No Projects Available</h2>
                 <p class="text-muted">We are currently developing new projects. Check back soon!</p>
                 <a href="<?= BASE_URL ?>/colonies" class="btn btn-primary mt-3">
                     <i class="fas fa-map me-2"></i>Explore Our Colonies
