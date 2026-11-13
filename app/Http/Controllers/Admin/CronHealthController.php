@@ -49,9 +49,13 @@ class CronHealthController extends AdminController
         $this->requireAdmin();
 
         $mode = $_POST['mode'] ?? 'daily';
+        if (!in_array($mode, ['daily', 'monthly', 'all'], true)) {
+            $this->setFlash('error', 'Invalid cron mode requested');
+            return $this->redirect('/admin/cron-health');
+        }
         $dryRun = isset($_POST['dry_run']);
 
-        $cmd = "php " . BASE_PATH . "/scripts/run_all_crons.php --mode={$mode}";
+        $cmd = 'php ' . escapeshellarg(BASE_PATH . '/scripts/run_all_crons.php') . ' --mode=' . escapeshellarg($mode);
         if ($dryRun) {
             $cmd .= " --dry-run";
         }

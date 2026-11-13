@@ -637,6 +637,17 @@ class AdminWorkflowController extends AdminController
                 exit;
             }
             $filePath = $backup['file_path'] ?? null;
+            if ($filePath) {
+                $real = realpath($filePath);
+                $backupsDir = realpath(STORAGE_PATH . '/backups');
+                // Only accept .sql files that live inside the canonical backups dir —
+                // anything else (forged backup row, path traversal, non-SQL file) is refused.
+                if (!$real || !$backupsDir || stripos($real, rtrim($backupsDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR) !== 0 || strtolower(pathinfo($real, PATHINFO_EXTENSION)) !== 'sql') {
+                    echo json_encode(['success' => false, 'error' => 'Refusing to restore: backup path is not inside the backups directory']);
+                    exit;
+                }
+                $filePath = $real;
+            }
             if ($filePath && file_exists($filePath)) {
                 $sql = file_get_contents($filePath);
                 $db->exec($sql);
