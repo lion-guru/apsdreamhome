@@ -176,7 +176,7 @@ $active_page = 'bookings';
     </div>
     <div class="card-body aps-cp-card-body">
         <!-- Bulk Actions Bar (hidden by default) -->
-        <div class="card border-0 shadow-sm mb-3" id="bulkActionsBar" class="d-none">
+        <div class="card border-0 shadow-sm mb-3 d-none" id="bulkActionsBar">
             <div class="card-body py-2 d-flex align-items-center gap-3 flex-wrap">
                 <span class="fw-semibold"><span id="selectedCount">0</span> selected</span>
                 <select id="bulkStatus" class="form-select form-select-sm" style="width: auto; display: inline-block;">

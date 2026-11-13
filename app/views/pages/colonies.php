@@ -125,7 +125,7 @@ function getAmenityIcon($amenity) {
                                 $imagePath = get_asset_url((string)$imagePath);
                             }
                             ?>
-                            <img src="<?php echo htmlspecialchars($imagePath ?? '');?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" <?php if (empty($imagePath)) echo 'class="d-none"'; ?>>
+                            <img src="<?php echo htmlspecialchars($imagePath ?? '');?>" alt="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" class="img-fluid<?php if (empty($imagePath)) echo ' d-none'; ?>" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <?php if (empty($imagePath)): ?><style>.colony-placeholder{display:flex!important}</style><?php endif; ?>
                             <div class="colony-placeholder">
                                 <i class="fas fa-city fa-3x mb-2"></i>
