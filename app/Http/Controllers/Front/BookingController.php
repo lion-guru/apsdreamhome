@@ -265,18 +265,26 @@ class BookingController extends BaseController
             }
         }
 
+        $promoCode = !empty($_POST['promo_code']) ? strtoupper(trim((string)$_POST['promo_code'])) : null;
+        $discountAmount = !empty($_POST['discount_amount']) ? (float)$_POST['discount_amount'] : 0.0;
+        if ($promoCode !== null && $discountAmount > 0) {
+            $notes = "[Festive Promo: {$promoCode} - ₹" . number_format($discountAmount, 2) . " Off] " . $notes;
+        }
+
         try {
             $svc = new BookingLifecycleService();
             $result = $svc->createBooking([
-                'plot_id'          => $plot['id'],
-                'customer_id'      => $user['id'],
-                'total_plot_value' => (float)$plot['total_price'],
-                'booking_amount'   => $this->tokenAmountFor((float)$plot['total_price']),
-                'channel'          => $associateId ? 'associate' : 'direct',
-                'associate_id'      => $associateId,
-                'notes'            => $notes,
-                'legal_consent'    => true,
-                'consent_timestamp'=> date('Y-m-d H:i:s'),
+                'plot_id'            => $plot['id'],
+                'customer_id'        => $user['id'],
+                'total_plot_value'   => (float)$plot['total_price'],
+                'booking_amount'     => $this->tokenAmountFor((float)$plot['total_price']),
+                'channel'            => $associateId ? 'associate' : 'direct',
+                'associate_id'        => $associateId,
+                'discount_amount'    => $discountAmount,
+                'promo_code_applied' => $promoCode,
+                'notes'              => $notes,
+                'legal_consent'      => true,
+                'consent_timestamp'  => date('Y-m-d H:i:s'),
             ]);
 
             if (!$result['success']) {

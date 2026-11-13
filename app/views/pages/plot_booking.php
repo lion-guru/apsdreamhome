@@ -57,13 +57,37 @@
                     </div>
                     <?php endif; ?>
 
+                    <!-- Festive Promo Code / Concession -->
+                    <div class="mb-3 p-3 rounded border bg-light">
+                        <label class="form-label fw-bold mb-1">
+                            <i class="fas fa-gift text-danger me-1"></i> <?= __('festive_promo_label', [], 'Festive Promo Code / Concession (त्योहारी छूट कोड)') ?>
+                        </label>
+                        <div class="input-group">
+                            <input type="text" name="promo_code" id="booking_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5" value="<?= htmlspecialchars($_GET['promo'] ?? '') ?>">
+                            <button type="button" class="btn btn-outline-primary" id="btn_apply_customer_promo">
+                                <i class="fas fa-check me-1"></i> Apply
+                            </button>
+                        </div>
+                        <input type="hidden" name="discount_amount" id="cust_discount_amount" value="0">
+                        <div id="cust_promo_feedback" class="small mt-2 text-muted">
+                            <?php if (!empty($_GET['promo'])): ?>
+                                <span class="text-primary"><i class="fas fa-spinner fa-spin me-1"></i> Checking offer code...</span>
+                            <?php else: ?>
+                                Enter promotional or festival discount code (e.g. <code>FESTIVE21</code>). <a href="<?= BASE_URL ?>/offers" target="_blank" class="text-decoration-none">View active festival offers</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label"><?= __('plot_book_notes', [], 'Notes / Special Requests (optional)') ?></label>
                         <textarea class="form-control" name="notes" rows="3" placeholder="<?= __('plot_book_notes_ph', [], 'Any specific requirements or questions...') ?>"></textarea>
                     </div>
 
-                    <div class="emi-note mb-3">
-                        <i class="fas fa-info-circle"></i> <strong><?= __('plot_book_payment_terms', [], 'Payment Terms:') ?></strong> <?= __('plot_book_token_required', [], '25% token amount') ?> (₹<?= number_format(intval($plot['total_price'] * 0.25)) ?>) <?= __('plot_book_token_within', [], 'required within 15 days of booking confirmation. Balance as per agreed schedule.') ?>
+                    <div class="emi-note mb-3" id="plot_payment_terms_box">
+                        <i class="fas fa-info-circle"></i> <strong><?= __('plot_book_payment_terms', [], 'Payment Terms:') ?></strong> 
+                        <span id="terms_token_desc">
+                            <?= __('plot_book_token_required', [], '25% token amount') ?> (₹<?= number_format(intval(($plot['negotiated_price'] ?? $plot['total_price']) * 0.25)) ?>) <?= __('plot_book_token_within', [], 'required within 15 days of booking confirmation. Balance as per agreed schedule.') ?>
+                        </span>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-lg w-100">
@@ -115,3 +139,76 @@
         </div>
     </div>
 </div>
+
+<script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+document.addEventListener('DOMContentLoaded', function() {
+    const promoInput = document.getElementById('booking_promo_code');
+    const applyBtn = document.getElementById('btn_apply_customer_promo');
+    const feedback = document.getElementById('cust_promo_feedback');
+    const discountHidden = document.getElementById('cust_discount_amount');
+    const termsDesc = document.getElementById('terms_token_desc');
+    const basePrice = <?= (float)($plot['negotiated_price'] ?? $plot['total_price']) ?>;
+    const colonyId = <?= (int)($plot['colony_id'] ?? 0) ?>;
+
+    function validatePromo(code) {
+        if (!code || code.trim() === '') {
+            feedback.innerHTML = '<span class="text-muted">Enter promotional or festival discount code (e.g. <code>FESTIVE21</code>).</span>';
+            discountHidden.value = '0';
+            return;
+        }
+
+        feedback.innerHTML = '<span class="text-primary"><i class="fas fa-spinner fa-spin me-1"></i> Validating code...</span>';
+
+        fetch('<?= BASE_URL ?>/api/promo/validate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'promo_code=' + encodeURIComponent(code.trim()) + '&plot_value=' + encodeURIComponent(basePrice) + '&colony_id=' + encodeURIComponent(colonyId)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.valid) {
+                const discount = parseFloat(data.discount_amount || 0);
+                const netPrice = Math.max(0, basePrice - discount);
+                const tokenAmt = Math.round(netPrice * 0.25);
+                discountHidden.value = discount;
+
+                feedback.innerHTML = '<div class="alert alert-success py-2 px-3 mb-0 mt-2 small">' +
+                    '<i class="fas fa-check-circle me-1"></i> <strong>' + (data.title || 'Festive Offer') + ' Applied!</strong><br>' +
+                    'Festive Discount: <strong>-₹' + discount.toLocaleString('en-IN') + '</strong> | Net Agreement: <strong>₹' + netPrice.toLocaleString('en-IN') + '</strong>' +
+                    '</div>';
+
+                if (termsDesc) {
+                    termsDesc.innerHTML = '<strong>Festive Discounted Price: ₹' + netPrice.toLocaleString('en-IN') + '</strong> (Saved ₹' + discount.toLocaleString('en-IN') + '). ' +
+                        '25% token amount (<strong>₹' + tokenAmt.toLocaleString('en-IN') + '</strong>) required within 15 days of booking confirmation. Balance as per agreed schedule.';
+                }
+            } else {
+                discountHidden.value = '0';
+                feedback.innerHTML = '<div class="alert alert-danger py-2 px-3 mb-0 mt-2 small">' +
+                    '<i class="fas fa-times-circle me-1"></i> ' + (data.message || 'Invalid or expired promo code') +
+                    '</div>';
+            }
+        })
+        .catch(err => {
+            feedback.innerHTML = '<span class="text-danger small"><i class="fas fa-exclamation-triangle me-1"></i> Validation failed. Please try again.</span>';
+        });
+    }
+
+    if (applyBtn && promoInput) {
+        applyBtn.addEventListener('click', function() {
+            validatePromo(promoInput.value);
+        });
+
+        promoInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                validatePromo(promoInput.value);
+            }
+        });
+
+        // Auto-validate if promo code pre-populated from URL
+        if (promoInput.value.trim() !== '') {
+            validatePromo(promoInput.value);
+        }
+    }
+});
+</script>

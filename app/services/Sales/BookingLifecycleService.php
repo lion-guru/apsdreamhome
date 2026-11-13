@@ -199,7 +199,7 @@ class BookingLifecycleService
                 $bookingNumber,
                 $totalValue,
                 (float)($data['booking_amount'] ?? 0.0),
-                (float)($data['agreement_value'] ?? $totalValue),
+                (float)($data['agreement_value'] ?? max(0.0, $totalValue - $discountAmount)),
                 !empty($data['sales_manager_id']) ? (int)$data['sales_manager_id'] : null,
                 $channel,
                 !empty($data['associate_id']) ? (int)$data['associate_id'] : null,

@@ -232,13 +232,22 @@ class DashboardController extends BaseController
                 error_log('Associate dashboard today-actions: ' . $e->getMessage());
             }
 
-            // Diwali Dhamaka Salary & Maintenance Data (S458)
+            // Corporate Leadership Salary Data
             $salaryData = [];
             try {
                 $salaryService = new \App\Services\MLM\LeadershipSalaryService();
                 $salaryData = $salaryService->getAssociateSalaryDashboardData($userId);
             } catch (\Throwable $e) {
                 error_log('Associate dashboard salary data: ' . $e->getMessage());
+            }
+
+            // Festive Campaigns & Associate Targets Data
+            $festiveOffersData = [];
+            try {
+                $festiveService = new \App\Services\FestivalOfferService($db);
+                $festiveOffersData = $festiveService->getAssociateFestivalDashboard((int)$userId);
+            } catch (\Throwable $e) {
+                error_log('Associate dashboard festive data: ' . $e->getMessage());
             }
 
             $dashboardData = [
@@ -266,6 +275,7 @@ class DashboardController extends BaseController
                 'referral_earnings_breakdown' => $referralEarningsBreakdown,
                 'attribution_stats' => $attributionStats,
                 'salary_data' => $salaryData,
+                'festive_offers_data' => $festiveOffersData,
             ];
 
             // Cache dashboard data for 5 minutes (300 seconds)

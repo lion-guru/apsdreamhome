@@ -21,6 +21,34 @@
 
 > **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
 
+## Session 476: Full-Stack Customer Festive Booking Flow, Promo Code Concession Engine, Multi-View Booking Synchronization, 1508/1508 Clean (2026-11-13)
+
+### Trigger
+User instructions: "jo jo pending work hai sab kar do bina ruke aur apne suggestion se jo jo improve karna ho impliment karna ho kamiya thik karna ho sab kar do mujhse puchne ki jarurat nhi hai apne se continuslly kaam karo khud ke dimag se tum hi seniour software devloper aur ceo ho ok fill power dete hai" & "do next aur koi suggestion tumhara".
+
+### The headline
+
+**1. FULL-STACK CUSTOMER FESTIVE PROMO CODE & CONCESSION INTEGRATION**
+- **Customer Plot Booking (`pages/plot_booking.php`)**: Added Festive Promo Code field pre-filling from `$_GET['promo']` with real-time AJAX verification against `/api/promo/validate`. Dynamically updates discount amount, net agreement value, and 25% token payment terms.
+- **Plot Booking Front Controller (`PlotBookingController.php`)**: Server-side promo validation via `FestivalOfferService::validateCustomerPromo()`. Dynamically recalculates agreement price, notes promo savings in booking remarks, and atomically increments `times_redeemed` on `promotional_offers`.
+- **Statutory E2E Booking Flow (`pages/booking/form.php` & `BookingController.php`)**: Added dedicated Festive Offer & Concession Code card with client AJAX validation and dynamic net price recalculation. In `submitBooking()`, passed `promo_code_applied` and `discount_amount` directly to `BookingLifecycleService::createBooking()`.
+- **Booking Lifecycle Concession Calculation (`BookingLifecycleService.php`)**: Fixed default `agreement_value` fallback from `$totalValue` to `max(0.0, $totalValue - $discountAmount)`, ensuring buyers with approved promo discounts are billed the net discounted price rather than gross price. Automatically calls `FestivalOfferService::applyOfferToBooking()` to link the promotion and record redemptions.
+- **Plot Browse & Detail URL Preservation (`pages/booking/browse.php` & `detail.php`)**: Forwarded `?promo=...` parameter across all plot cards and detail links so customers navigating from `/offers` maintain their festive promo code without retyping.
+
+**2. ASSOCIATE DASHBOARD ACTIVE FESTIVAL CAMPAIGNS ALERT**
+- In `Associate\DashboardController.php`: Injected real-time festive campaign and target metrics (`festive_offers_data`) via `FestivalOfferService::getAssociateFestivalDashboard()`.
+- In `views/associate/dashboard.php`: Added prominent Festive Special Campaign alert banner highlighting active campaigns, ready-to-claim rewards count, and direct link to `/associate/offers`.
+
+**3. CUSTOMER DASHBOARD FESTIVE SHORTCUT**
+- In `views/pages/user_dashboard.php`: Added "Festive Offers" highlight button with gift icon in the dashboard hero actions linking directly to `/offers`.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 20.39s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1209 tables, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
 ## Session 474: Customer Festival Offers Full-Stack Desk & Public Routes, Admin Menu Integration (Migration S474), Associate Multi-Alias Target Resolution, Zero Drift, 1509/1509 Clean (2026-11-13)
 
 ### Trigger
@@ -6095,4 +6123,4 @@ _905. **A 302 on an admin page means the session was not recognized** — Check 
 _906. **Debug with the exact same HTTP client as the test** — CLI curl and PHP curl handle cookies differently.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **476** (next session).
+Next-free = **477** (next session; S476 logged above).

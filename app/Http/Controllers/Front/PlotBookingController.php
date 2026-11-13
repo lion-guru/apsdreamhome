@@ -172,6 +172,25 @@ class PlotBookingController extends PlotBaseController
             }
             if ($dealPrice <= 0) $dealPrice = floatval($plot['total_price']);
 
+            // Apply customer festival promo code (server-side verified)
+            $promoCode = strtoupper(trim((string)($_POST['promo_code'] ?? '')));
+            $promoOfferId = 0;
+            $discountAmount = 0.0;
+            if ($promoCode !== '') {
+                try {
+                    $festSvc = new \App\Services\FestivalOfferService($pdo);
+                    $promoRes = $festSvc->validateCustomerPromo($promoCode, $dealPrice, (int)$plot['colony_id']);
+                    if (!empty($promoRes['valid'])) {
+                        $promoOfferId = (int)$promoRes['offer_id'];
+                        $discountAmount = (float)$promoRes['discount_amount'];
+                        $dealPrice = max(0.0, $dealPrice - $discountAmount);
+                        $notes = "[Festive Promo: {$promoCode} - ₹" . number_format($discountAmount, 2) . " Off] " . $notes;
+                    }
+                } catch (\Throwable $pe) {
+                    error_log('PlotBookingController promo validation: ' . $pe->getMessage());
+                }
+            }
+
             // 2. Create booking (unique number via random_bytes)
             $bookingId = $this->db->insert('bookings', [
                 'customer_id' => $user['id'],
@@ -191,6 +210,15 @@ class PlotBookingController extends PlotBaseController
                 'tenant_id' => $tid,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
+
+            if ($promoOfferId > 0 && $discountAmount > 0) {
+                try {
+                    $pdo->prepare("UPDATE promotional_offers SET times_redeemed = times_redeemed + 1, updated_at = NOW() WHERE id = ?")
+                        ->execute([$promoOfferId]);
+                } catch (\Throwable $pe) {
+                    error_log('PlotBookingController times_redeemed update: ' . $pe->getMessage());
+                }
+            }
 
             // 3. Atomically hold the plot — rowCount 0 means we lost the race.
             //    48h expiry (configurable via booking.hold_hours) auto-releases unpaid holds.

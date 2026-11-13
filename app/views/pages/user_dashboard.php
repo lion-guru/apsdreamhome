@@ -20,13 +20,16 @@ $kycStatus = $kycStatus ?? 'not_started';
             <h2><i class="fas fa-hand-sparkles me-2"></i><?= sprintf(__('dash_welcome_back', null, 'Welcome back, %s!'), htmlspecialchars($_SESSION['user_name'] ?? $user['name'] ?? '')) ?></h2>
             <p><?= __('dash_hero_subtitle', null, 'Manage your properties, track inquiries, bookings and payments — all in one place.') ?></p>
         </div>
-        <div class="col-md-4 mt-3 mt-md-0">
-            <div class="aps-cp-hero-actions justify-content-md-end">
+        <div class="col-md-5 mt-3 mt-md-0">
+            <div class="aps-cp-hero-actions justify-content-md-end gap-2">
+                <a href="<?= BASE_URL ?>/offers" class="btn btn-warning text-dark fw-bold">
+                    <i class="fas fa-gift text-danger me-1"></i><?= __('nav_offers', null, 'Festive Offers') ?>
+                </a>
                 <a href="<?= BASE_URL ?>/list-property" class="btn btn-light">
-                    <i class="fas fa-plus me-2"></i><?= __('dash_btn_post_property', null, 'Post Property') ?>
+                    <i class="fas fa-plus me-1"></i><?= __('dash_btn_post_property', null, 'Post Property') ?>
                 </a>
                 <a href="<?= BASE_URL ?>/properties" class="btn btn-outline-light">
-                    <i class="fas fa-search me-2"></i><?= __('dash_btn_browse', null, 'Browse') ?>
+                    <i class="fas fa-search me-1"></i><?= __('dash_btn_browse', null, 'Browse') ?>
                 </a>
             </div>
         </div>

@@ -262,6 +262,45 @@ $sc = $statusConfig[$regStatus] ?? $statusConfig['pending'];
     </div>
 </div>
 
+<?php
+$festiveData = $festive_offers_data ?? [];
+$activeFestiveCount = (int)($festiveData['active_count'] ?? 0);
+$eligibleFestiveCount = (int)($festiveData['eligible_count'] ?? 0);
+if ($activeFestiveCount > 0):
+?>
+<!-- ACTIVE FESTIVAL REWARDS & CAMPAIGNS ALERT -->
+<div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #7c2d12 0%, #ea580c 100%); color: #fff; border-radius: 16px;">
+    <div class="card-body p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-white bg-opacity-20 p-3 text-white">
+                    <i class="fas fa-gift fa-2x text-warning"></i>
+                </div>
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="badge bg-warning text-dark fw-bold px-2 py-1">FESTIVAL SPECIAL</span>
+                        <?php if ($eligibleFestiveCount > 0): ?>
+                            <span class="badge bg-success text-white fw-bold px-2 py-1">
+                                <i class="fas fa-trophy me-1"></i> <?= $eligibleFestiveCount ?> REWARD(S) READY TO CLAIM!
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                    <h5 class="fw-bold mb-1 text-white">त्योहार विशेष ऑफर्स व नकद रिवॉर्ड्स (Festive Campaigns Live)</h5>
+                    <p class="mb-0 text-white-50 small">
+                        सामान्य कमीशन के अलावा अतिरिक्त नकद बोनस, सोने-चांदी के सिक्के, एलईडी टीवी व टूर पैकेज जीतें!
+                    </p>
+                </div>
+            </div>
+            <div>
+                <a href="<?= BASE_URL ?>/associate/offers" class="btn btn-warning text-dark fw-bold px-4 py-2 rounded-pill shadow-sm">
+                    <i class="fas fa-eye me-1"></i> ऑफर्स व प्रोग्रेस देखें (View & Claim)
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <?php if (!empty($salary_data)): ?>
 <?php
     $curTarget = $salary_data['current_target'] ?? [];

@@ -142,11 +142,14 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     </div>
                     <?php endif; ?>
                 </div>
+                <?php
+                $promoQuery = !empty($_GET['promo']) ? '?promo=' . urlencode(trim((string)$_GET['promo'])) : '';
+                ?>
                 <div class="border-top px-3 py-2 d-flex gap-2">
-                    <a href="<?= $baseUrl ?>/plots/<?= e($plot['id']) ?>/detail" class="btn btn-sm btn-outline-primary flex-grow-1">
+                    <a href="<?= $baseUrl ?>/plots/<?= e($plot['id']) ?>/detail<?= $promoQuery ?>" class="btn btn-sm btn-outline-primary flex-grow-1">
                         <i class="fas fa-eye me-1"></i><?= __('browse_view_details') ?>
                     </a>
-                    <a href="<?= $baseUrl ?>/plots/<?= e($plot['id']) ?>/book" class="btn btn-sm btn-primary flex-grow-1">
+                    <a href="<?= $baseUrl ?>/plots/<?= e($plot['id']) ?>/book<?= $promoQuery ?>" class="btn btn-sm btn-primary flex-grow-1">
                         <i class="fas fa-check-circle me-1"></i><?= __('browse_book_now') ?>
                     </a>
                 </div>

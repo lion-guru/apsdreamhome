@@ -1,6 +1,7 @@
 <?php
 $current_page = $current_page ?? 'plot-detail';
 $baseUrl = defined('BASE_URL') ? BASE_URL : '';
+$promoQuery = !empty($_GET['promo']) ? '?promo=' . urlencode(trim((string)$_GET['promo'])) : '';
 ?>
 
 <div class="container py-4">
@@ -38,7 +39,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     <!-- 360° Quick Actions Bar -->
                     <div class="d-flex flex-wrap gap-2 mt-3" style="border-top: 1px solid #e9ecef; padding-top: 1rem;">
                         <h6 class="fw-bold mb-0 me-3 align-self-center"><i class="fas fa-link me-1"></i> Quick Links:</h6>
-                        <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/book" class="btn btn-sm btn-primary" title="Book This Plot">
+                        <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/book<?= $promoQuery ?>" class="btn btn-sm btn-primary" title="Book This Plot">
                             <i class="fas fa-check-circle me-1"></i> Book Now
                         </a>
                         <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/emi-schedule" class="btn btn-sm btn-outline-info" title="View EMI Schedule">
@@ -182,7 +183,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                 <div class="aps-cp-card-body text-center">
                     <h5 class="fw-bold mb-2"><?= __('detail_interested_plot') ?></h5>
                     <p class="text-muted small mb-3"><?= __('detail_book_token_desc') ?></p>
-                    <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/book" class="btn btn-primary btn-lg w-100 mb-2">
+                    <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/book<?= $promoQuery ?>" class="btn btn-primary btn-lg w-100 mb-2">
                         <i class="fas fa-check-circle me-2"></i><?= __('detail_book_this_plot') ?>
                     </a>
                     <a href="<?= $baseUrl ?>/plots/browse" class="btn btn-outline-secondary btn-sm w-100">

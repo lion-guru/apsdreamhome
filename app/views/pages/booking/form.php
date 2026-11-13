@@ -141,6 +141,50 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                     </div>
                 </div>
 
+                <!-- 2.5 Festive Promo Code & Concession -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold text-dark">
+                            <i class="fas fa-gift text-danger me-2"></i><?= __('book_festive_promo', 'Festive Offer & Concession Code (त्योहारी छूट कोड)') ?>
+                        </h6>
+                        <span class="badge bg-danger bg-opacity-10 text-danger fw-bold">Special Savings</span>
+                    </div>
+                    <div class="card-body p-3 p-md-4">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-7">
+                                <label class="form-label small fw-semibold text-muted mb-1"><?= __('book_promo_code_label', 'Enter Festive Promo Code') ?></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fas fa-tags text-primary"></i></span>
+                                    <input type="text" class="form-control text-uppercase fw-bold" name="promo_code" id="promoCodeInput"
+                                           placeholder="e.g. FESTIVE21, SUBHLABH5"
+                                           value="<?= htmlspecialchars((string)($_GET['promo'] ?? '')) ?>">
+                                    <button class="btn btn-outline-primary" type="button" id="btnVerifyPromo"><?= __('book_apply', 'Apply') ?></button>
+                                </div>
+                                <input type="hidden" name="discount_amount" id="promoDiscountAmount" value="0">
+                                <div id="promoFeedback" class="small mt-2 text-muted">
+                                    <?php if (!empty($_GET['promo'])): ?>
+                                        <span class="text-primary"><i class="fas fa-spinner fa-spin me-1"></i> Checking offer code...</span>
+                                    <?php else: ?>
+                                        <span>Enter promo code or check <a href="<?= $baseUrl ?>/offers" target="_blank" class="fw-bold">active festive offers</a>.</span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div id="promoAppliedBadge" class="p-3 rounded border border-success bg-success bg-opacity-10 d-none">
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <i class="fas fa-check-circle text-success fs-5"></i>
+                                        <strong id="promoAppliedTitle" class="text-success">Offer Applied!</strong>
+                                    </div>
+                                    <div class="small text-dark">
+                                        Concession: <strong id="promoDiscountText" class="text-success">-₹0</strong><br>
+                                        Net Agreement: <strong id="promoNetPriceText">₹0</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 3. Payment Plan & EMI Selection -->
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-white py-3 border-bottom">
@@ -453,6 +497,70 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
             csrf_token: CSRF
         }));
     });
+
+    // Festive Promo Code validation
+    const promoInput = document.getElementById('promoCodeInput');
+    const verifyPromoBtn = document.getElementById('btnVerifyPromo');
+    const promoFeedback = document.getElementById('promoFeedback');
+    const promoDiscountInput = document.getElementById('promoDiscountAmount');
+    const promoBadge = document.getElementById('promoAppliedBadge');
+    const promoTitle = document.getElementById('promoAppliedTitle');
+    const promoDiscountText = document.getElementById('promoDiscountText');
+    const promoNetPriceText = document.getElementById('promoNetPriceText');
+    const basePlotPrice = <?= (float)$totalPrice ?>;
+    const colonyId = <?= (int)($plot['colony_id'] ?? 0) ?>;
+
+    function applyPromoCode(code) {
+        if (!code || !code.trim()) {
+            if (promoFeedback) promoFeedback.innerHTML = '<span>Enter promo code or check <a href="' + BASE + '/offers" target="_blank" class="fw-bold">active festive offers</a>.</span>';
+            if (promoBadge) promoBadge.classList.add('d-none');
+            if (promoDiscountInput) promoDiscountInput.value = '0';
+            return;
+        }
+
+        if (promoFeedback) promoFeedback.innerHTML = '<span class="text-primary"><i class="fas fa-spinner fa-spin me-1"></i> Validating code...</span>';
+
+        fetch(BASE + '/api/promo/validate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'promo_code=' + encodeURIComponent(code.trim()) + '&plot_value=' + encodeURIComponent(basePlotPrice) + '&colony_id=' + encodeURIComponent(colonyId)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.valid) {
+                const discount = parseFloat(data.discount_amount || 0);
+                const netPrice = Math.max(0, basePlotPrice - discount);
+                if (promoDiscountInput) promoDiscountInput.value = discount;
+                if (promoTitle) promoTitle.textContent = (data.title || 'Festive Offer') + ' Applied!';
+                if (promoDiscountText) promoDiscountText.textContent = '-₹' + discount.toLocaleString('en-IN');
+                if (promoNetPriceText) promoNetPriceText.textContent = '₹' + netPrice.toLocaleString('en-IN');
+                if (promoBadge) promoBadge.classList.remove('d-none');
+                if (promoFeedback) promoFeedback.innerHTML = '<span class="text-success"><i class="fas fa-check me-1"></i> Promo applied successfully. Net value adjusted.</span>';
+            } else {
+                if (promoDiscountInput) promoDiscountInput.value = '0';
+                if (promoBadge) promoBadge.classList.add('d-none');
+                if (promoFeedback) promoFeedback.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> ' + (data.message || 'Invalid or expired code') + '</span>';
+            }
+        })
+        .catch(() => {
+            if (promoFeedback) promoFeedback.innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i> Verification failed.</span>';
+        });
+    }
+
+    if (verifyPromoBtn && promoInput) {
+        verifyPromoBtn.addEventListener('click', function() {
+            applyPromoCode(promoInput.value);
+        });
+        promoInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyPromoCode(promoInput.value);
+            }
+        });
+        if (promoInput.value.trim() !== '') {
+            applyPromoCode(promoInput.value);
+        }
+    }
 
     // Form submit validation
     document.getElementById('bookingForm').addEventListener('submit', function(e) {
