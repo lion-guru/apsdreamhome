@@ -6708,3 +6708,30 @@ _918. **When the error log repeats one signature per HTTP request, you found a p
 _919. **A `class_exists()` guard is a guard only until the class is created.** The S452 shim made a previously inert branch live on every visit; existence probes in views re-arm old failures. Prefer absence of code over presence-guarded dead code.
 _920. **A 1054 inside a `catch (\Throwable)` is a silently broken feature, not a broken query.** Budha City's amenities section never rendered real content; the catch hid missing schema from everyone except the log.
 _921. **Read slugs from the route table, never from filenames.** `/project-locations/gorakhpur-bohisawagar` was a 404 because the live slug is `/project-locations/bohisawagar`; two minutes of grep would have avoided the false alarm.
+
+## Session 496: php_error.log 20MB Corrupt-Mix Archive + Zero-Error Baseline (2026-11-14)
+
+### Trigger
+User: "ok do next" — log hygiene round after S495's root-cause fix.
+
+### Work
+1. **php_error.log forensics** — the project's PHP error sink (set by `.htaccess:151` as `php_value error_log logs/php_error.log`, relative to webroot) had grown to ~20MB with a **mixed encoding** (starts `FF FE 0D 00 0A 00` = UTF-16LE BOM + CRLF, then plain-ASCII segments later in the file; bytes/chars ratio ≈ 2). It held **218 occurrences** of the Budha City `amenities_kushinagar` 1054 spam line (byte-level count, encoding-agnostic; literal string counts 0 and UTF-16E counts 0 in a naive decoded scan — both misleading).
+2. **Safe rotation (not deletion)** — `logs/php_error.log` → `logs/php_error.log.2026-11-14` via `[System.IO.File]::Move` (PowerShell `Rename-Item`/`Move-Item` failed with "path or device name" on this target; .NET API succeeded instantly and is lossless). Archive kept for forensics; owner may delete it if the disk tightens.
+3. **Zero-error baseline proven** — after rotation, 4 page probes (`/`, `/project-locations/budha-city`, `/properties`, `/offers`) all return **200** and **no new `php_error.log` exists** — i.e., today's fixes plus the environment produce zero logged errors on the probed routes.
+
+### Verification
+- Archive integrity: 218 spam occurrences enumerated byte-precisely.
+- 4 live page probes: 200 each, fresh log absent.
+- `.htaccess` line 151 confirmed as the error_log route (relative `logs/php_error.log`); Apache's own `ErrorLog` (httpd.conf) and php.ini's `C:\xampp\php\logs\php_error_log` are different sinks, not the one this project writes.
+
+### Notes
+- The log archive is intentionally kept, not deleted. `.gitignore` covers `logs/` (no git impact).
+- Reminder carried forward: `alerts_cron.log` 62KB last written 13-Nov 09:00; `backup_cron.log` 104KB 13-Nov 02:00 — both healthy, untouched.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **497** (this session; S495 logged above in the file).
+
+### Key Lessons (carried, continued)
+_922. **A log that takes 120s to read is itself a defect — rotate first, audit second.** `php_error.log` at 20MB was unreadable until archived; the scan that would have found the 1054 root cause took seconds after rotation.
+_923. **File-level ops on large/locked files belong in .NET, not PowerShell's cmdlets** — `Rename-Item`/`Move-Item` failed with a misleading "path or device name" on a 20MB active log; `[System.IO.File]::Move` worked instantly and losslessly.
+_924. **When bytes/chars ≈ 2 and the file starts with FF FE, the file is a mixed-encoding concatenation — do counts at byte level, never with decoded strings.** 218 byte-exact occurrences of the spam pattern vs 0 in any naive decoded scan; the naive scan looked like the bug was never logged.
