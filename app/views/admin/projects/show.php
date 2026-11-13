@@ -42,6 +42,16 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
         <a href="<?= BASE_URL ?>/admin/projects/images/<?= $pId ?>" class="btn btn-outline-primary btn-sm">
             <i class="fas fa-images me-1"></i>Gallery (<?= count($images) ?>)
         </a>
+        <?php if (!empty($project['virtual_tour_url'])): ?>
+        <a href="<?= htmlspecialchars($project['virtual_tour_url']) ?>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger btn-sm">
+            <i class="fas fa-vr-cardboard me-1"></i>360° Tour
+        </a>
+        <?php endif; ?>
+        <?php if (!empty($project['brochure_path'])): ?>
+        <a href="<?= htmlspecialchars((strpos($project['brochure_path'], 'http') === 0) ? $project['brochure_path'] : BASE_URL . '/' . ltrim($project['brochure_path'], '/')) ?>" target="_blank" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-file-pdf text-danger me-1"></i>Brochure
+        </a>
+        <?php endif; ?>
         <a href="<?= BASE_URL ?>/admin/projects/progress/<?= $pId ?>" class="btn btn-outline-info btn-sm">
             <i class="fas fa-tasks me-1"></i>Progress Tracker
         </a>

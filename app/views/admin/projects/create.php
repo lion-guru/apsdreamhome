@@ -219,6 +219,76 @@
                             </div>
                         </div>
 
+                        <h5 class="mb-3 mt-4"><i class="fas fa-vr-cardboard me-2 text-danger"></i>Digital Assets &amp; Media</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="virtual_tour_url" class="form-label">360° Virtual Tour URL</label>
+                                    <input type="url" class="form-control" id="virtual_tour_url" name="virtual_tour_url" placeholder="https://kuula.co/post/... or Matterport link">
+                                    <div class="form-text">Embeddable 360 virtual tour or YouTube VR walkthrough URL.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="brochure_path" class="form-label">Brochure File Path / URL</label>
+                                    <input type="text" class="form-control" id="brochure_path" name="brochure_path" placeholder="/assets/docs/brochures/project_brochure.pdf">
+                                    <div class="form-text">Official project brochure PDF link for customer downloads.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4"><i class="fas fa-certificate me-2 text-success"></i>Compliance &amp; Construction</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="rera_number" class="form-label">RERA Number</label>
+                                    <input type="text" class="form-control" id="rera_number" name="rera_number" placeholder="e.g. UP-RERA-2024-001235">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="progress_pct" class="form-label">Construction Progress (%)</label>
+                                    <input type="number" class="form-control" id="progress_pct" name="progress_pct" min="0" max="100" step="1" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="project_budget" class="form-label">Project Budget (₹)</label>
+                                    <input type="number" class="form-control" id="project_budget" name="project_budget" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="amount_spent" class="form-label">Amount Spent (₹)</label>
+                                    <input type="number" class="form-control" id="amount_spent" name="amount_spent" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="project_manager" class="form-label">Project Manager</label>
+                                    <input type="text" class="form-control" id="project_manager" name="project_manager">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="site_supervisor" class="form-label">Site Supervisor</label>
+                                    <input type="text" class="form-control" id="site_supervisor" name="site_supervisor">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="contractor_name" class="form-label">Contractor Name</label>
+                                    <input type="text" class="form-control" id="contractor_name" name="contractor_name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="risk_flags" class="form-label">Risk Flags / Notes</label>
+                            <textarea class="form-control" id="risk_flags" name="risk_flags" rows="2" placeholder="Describe any risks, delays, or issues..."></textarea>
+                        </div>
+
                         <div class="d-flex justify-content-between mt-4">
                             <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel

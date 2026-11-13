@@ -64,7 +64,7 @@ class AgentFollowUpsPage extends ConsumerWidget {
                 if (followUps.isEmpty) {
                   return _buildEmptyState(context);
                 }
-                return _buildFollowUpsList(context, followUps);
+                return _buildFollowUpsList(context, ref, followUps, userId);
               },
               loading: () => const Center(
                 child: Padding(
@@ -203,7 +203,8 @@ class AgentFollowUpsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildFollowUpsList(BuildContext context, List<dynamic> followUps) {
+  Widget _buildFollowUpsList(BuildContext context, WidgetRef ref,
+      List<dynamic> followUps, int userId) {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -212,12 +213,13 @@ class AgentFollowUpsPage extends ConsumerWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final followUp = followUps[index] as Map<String, dynamic>;
-        return _buildFollowUpCard(context, followUp);
+        return _buildFollowUpCard(context, ref, followUp, userId);
       },
     );
   }
 
-  Widget _buildFollowUpCard(BuildContext context, Map<String, dynamic> followUp) {
+  Widget _buildFollowUpCard(BuildContext context, WidgetRef ref,
+      Map<String, dynamic> followUp, int userId) {
     final leadName = followUp['lead_name']?.toString() ?? 'Unknown Lead';
     final leadPhone = followUp['lead_phone']?.toString() ?? '';
     final scheduledAt = followUp['scheduled_at']?.toString() ?? '';
@@ -436,7 +438,7 @@ class AgentFollowUpsPage extends ConsumerWidget {
                         ),
                       ),
                       child: ElevatedButton.icon(
-                        onPressed: () => _markCompleted(followUp),
+                        onPressed: () => _markCompleted(context, ref, followUp, userId),
                         icon: const Icon(Icons.check_circle_rounded,
                             size: 16, color: Colors.white),
                         label: const Text('Mark Done'),
@@ -455,7 +457,7 @@ class AgentFollowUpsPage extends ConsumerWidget {
                 child: SizedBox(
                   height: 36,
                   child: OutlinedButton.icon(
-                    onPressed: () => _reschedule(followUp),
+                    onPressed: () => _reschedule(context, ref, followUp, userId),
                     icon: const Icon(Icons.schedule_rounded, size: 16),
                     label: const Text('Reschedule'),
                     style: OutlinedButton.styleFrom(
@@ -484,12 +486,92 @@ class AgentFollowUpsPage extends ConsumerWidget {
     }
   }
 
-  void _markCompleted(Map<String, dynamic> followUp) {
-    // TODO: Call API to mark as completed
+  void _markCompleted(
+      BuildContext context, WidgetRef ref, Map<String, dynamic> followUp, int userId) async {
+    final id = int.tryParse('${followUp['id'] ?? ''}') ?? 0;
+    if (id <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid follow-up id')),
+      );
+      return;
+    }
+    try {
+      final api = ApiService();
+      await api.post(
+        '${AppConstants.apiVersion}/agent/follow-ups/$id/complete',
+        data: {'notes': ''},
+      );
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Follow-up marked done for ${followUp['lead_name'] ?? 'lead'}'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      ref.invalidate(_agentFollowUpsProvider(userId));
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Mark done failed: $e')),
+      );
+    }
   }
 
-  void _reschedule(Map<String, dynamic> followUp) {
-    // TODO: Navigate to reschedule screen
+  void _reschedule(
+      BuildContext context, WidgetRef ref, Map<String, dynamic> followUp, int userId) async {
+    final id = int.tryParse('${followUp['id'] ?? ''}') ?? 0;
+    if (id <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid follow-up id')),
+      );
+      return;
+    }
+    final now = DateTime.now();
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: now.add(const Duration(days: 1)),
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 365)),
+      helpText: 'Reschedule follow-up',
+    );
+    if (pickedDate == null || !context.mounted) return;
+    final timePart = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 11, minute: 0),
+      helpText: 'Follow-up time',
+    );
+    if (!context.mounted) return;
+
+    final dueDate =
+        '${pickedDate.year.toString().padLeft(4, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}';
+    final dueTime = timePart == null
+        ? null
+        : '${timePart.hour.toString().padLeft(2, '0')}:${timePart.minute.toString().padLeft(2, '0')}';
+
+    try {
+      final api = ApiService();
+      final payload = <String, dynamic>{'due_date': dueDate};
+      if (dueTime != null) {
+        payload['due_time'] = dueTime;
+      }
+      await api.post(
+        '${AppConstants.apiVersion}/agent/follow-ups/$id/reschedule',
+        data: payload,
+      );
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Follow-up rescheduled to $dueDate${dueTime != null ? ' $dueTime' : ''}'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      ref.invalidate(_agentFollowUpsProvider(userId));
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Reschedule failed: $e')),
+      );
+    }
   }
 }
 

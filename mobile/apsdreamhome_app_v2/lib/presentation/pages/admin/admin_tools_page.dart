@@ -1,7 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/database_helper.dart';
+import '../../../core/services/sync_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/connectivity_provider.dart';
 import '../../providers/property_providers.dart';
@@ -429,18 +438,15 @@ class AdminToolsPage extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Update Property Status'),
-        content: const Text('Select a property to update its status'),
+        content: const Text(
+          'Status updates are managed from the APS Dream Home ERP admin '
+          'web panel. The mobile admin console is in development - use '
+          'Properties there to change a property status.',
+        ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // TODO: Navigate to property selection
-            },
-            child: const Text('Select Property'),
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Got it'),
           ),
         ],
       ),
@@ -452,18 +458,15 @@ class AdminToolsPage extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Bulk Update Properties'),
-        content: const Text('Update multiple properties at once'),
+        content: const Text(
+          'Bulk updates are managed from the APS Dream Home ERP admin web '
+          'panel (Properties → Bulk Actions). The mobile bulk-update '
+          'console is in development.',
+        ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // TODO: Implement bulk update
-            },
-            child: const Text('Start Bulk Update'),
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Got it'),
           ),
         ],
       ),
@@ -484,7 +487,7 @@ class AdminToolsPage extends ConsumerWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // TODO: Navigate to add property form
+              context.push('/post-property');
             },
             child: const Text('Add Property'),
           ),
@@ -498,19 +501,15 @@ class AdminToolsPage extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Property'),
-        content: const Text('Remove a property from the system'),
+        content: const Text(
+          'Property deletion is managed from the APS Dream Home ERP admin '
+          'web panel (Properties → Delete). The mobile admin console '
+          'deliberately cannot delete live listings.',
+        ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // TODO: Navigate to property selection for deletion
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Select Property'),
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Got it'),
           ),
         ],
       ),
@@ -518,27 +517,92 @@ class AdminToolsPage extends ConsumerWidget {
   }
 
   void _forceSyncAll(BuildContext context) async {
-    // TODO: Implement force sync all
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Force sync initiated')),
+      const SnackBar(content: Text('Force sync started…')),
     );
+    try {
+      final result = await SyncService().performSync();
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result.message)),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sync failed: $e')),
+      );
+    }
   }
 
   void _clearSyncQueue(BuildContext context) async {
-    // TODO: Implement clear sync queue
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sync queue cleared')),
-    );
+    try {
+      final pending = await SyncService().getPendingSyncItems();
+      await SyncService().clearSyncQueue();
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Sync queue cleared (${pending.length} pending change(s) removed)',
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Clear sync queue failed: $e')),
+      );
+    }
   }
 
   void _exportData(BuildContext context) async {
-    // TODO: Implement data export
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Data export started')),
-    );
+    try {
+      final pending = await SyncService().getPendingSyncItems();
+      final properties = await DatabaseHelper.query(AppConstants.propertiesTable);
+      final leads = await DatabaseHelper.query(AppConstants.leadsTable);
+      final version = await PackageInfo.fromPlatform();
+      final export = <String, dynamic>{
+        'exported_at': DateTime.now().toIso8601String(),
+        'app_version': '${version.version}+${version.buildNumber}',
+        'property_count': properties.length,
+        'lead_count': leads.length,
+        'pending_sync_items': pending.length,
+        'properties': properties,
+        'leads': leads,
+        'sync_queue': pending,
+      };
+
+      const encoder = JsonEncoder.withIndent('  ');
+      final json = encoder.convert(export);
+      final dir = await getTemporaryDirectory();
+      final stamp = DateTime.now()
+          .toIso8601String()
+          .replaceAll(':', '-')
+          .split('.')
+          .first;
+      final file = File('${dir.path}/apsdreamhome-export-$stamp.json');
+      await file.writeAsString(json);
+
+      if (!context.mounted) return;
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path)],
+          subject: 'APS Dream Home export',
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Export failed: $e')),
+      );
+    }
   }
 
-  void _showSystemHealth(BuildContext context) {
+  Future<void> _showSystemHealth(BuildContext context) async {
+    final pending = await SyncService().getPendingSyncItems();
+    final properties = await DatabaseHelper.query(AppConstants.propertiesTable);
+    final version = await PackageInfo.fromPlatform();
+    if (!context.mounted) return;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -547,10 +611,10 @@ class AdminToolsPage extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHealthItem('Database', 'Healthy', Colors.green),
-            _buildHealthItem('API Connection', 'Connected', Colors.green),
-            _buildHealthItem('Sync Queue', '3 items pending', Colors.orange),
-            _buildHealthItem('Storage', '45 MB used', Colors.blue),
+            _buildHealthItem('Database', '${properties.length} cached properties', Colors.green),
+            _buildHealthItem('Offline Changes', '${pending.length} pending sync item(s)',
+                pending.isEmpty ? Colors.green : Colors.orange),
+            _buildHealthItem('App Version', '${version.version}+${version.buildNumber}', Colors.blue),
           ],
         ),
         actions: [

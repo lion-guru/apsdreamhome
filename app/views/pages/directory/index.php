@@ -50,7 +50,7 @@
                         <?php endif; ?>
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="card-title mb-0"><?= htmlspecialchars($f['business_name'] ?? '') ?></h6>
+                                <h3 class="card-title fs-6 mb-0"><?= htmlspecialchars($f['business_name'] ?? '') ?></h3>
                                 <?php if ($f['is_verified']): ?><i class="fas fa-check-circle text-info" title="Verified"></i><?php endif; ?>
                             </div>
                             <p class="text-muted small mb-1"><i class="<?= htmlspecialchars($f['category_icon'] ?? 'fas fa-tag') ?> me-1"></i><?= htmlspecialchars($f['category_name'] ?? '') ?></p>
@@ -75,7 +75,7 @@
                     <div class="card h-100 border-0 shadow-sm category-card">
                         <div class="card-body text-center py-4">
                             <i class="<?= htmlspecialchars($cat['icon'] ?? 'fas fa-building') ?> fa-3x mb-3 text-primary"></i>
-                            <h5 class="card-title"><?= htmlspecialchars($cat['name'] ?? '') ?></h5>
+                            <h3 class="card-title fs-5"><?= htmlspecialchars($cat['name'] ?? '') ?></h3>
                             <p class="text-muted small mb-0"><?= htmlspecialchars($cat['description'] ?? '') ?></p>
                         </div>
                     </div>

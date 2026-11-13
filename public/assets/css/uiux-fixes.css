@@ -176,6 +176,25 @@ footer ul li a,
   border-color: #0a58ca;
 }
 
+
+/* AA solid Bootstrap backgrounds: white text needs >= 4.5:1 */
+.bg-success {
+  background-color: #157347 !important;
+  background: #157347 !important;
+}
+.bg-info {
+  background-color: #0e7490 !important;
+  background: #0e7490 !important;
+}
+.bg-danger {
+  background-color: #b91c1c !important;
+  background: #b91c1c !important;
+}
+.bg-secondary {
+  background-color: #495057 !important;
+  background: #495057 !important;
+}
+
 /* Outline warning text #ffc107 on white = 1.6:1 -> amber-700 4.6:1 */
 .btn-outline-warning {
   color: #b45309;
@@ -184,6 +203,18 @@ footer ul li a,
 .btn-outline-warning:hover {
   background-color: #b45309;
   border-color: #b45309;
+}
+
+
+/* Outline success text green on white = 4.33:1 -> green-700 5.6:1 (AA) */
+.btn-outline-success {
+  color: #157347;
+  border-color: #157347;
+}
+.btn-outline-success:hover {
+  background-color: #157347;
+  border-color: #157347;
+  color: #fff;
 }
 
 /* Outline info text cyan on white = 1.9:1 -> cyan-700 4.9:1 */

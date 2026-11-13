@@ -138,7 +138,7 @@ function getAmenityIcon($amenity) {
                     </div>
 
                     <div class="colony-content">
-                        <h3 class="colony-title"><?php echo e($colony['name']); ?></h3>
+                        <h2 class="colony-title fs-4"><?php echo e($colony['name']); ?></h2>
 
                         <div class="colony-location">
                             <i class="fas fa-map-marker-alt"></i>
@@ -171,7 +171,7 @@ function getAmenityIcon($amenity) {
                         </div>
 
                         <div class="colony-amenities">
-                            <h6><i class="fas fa-star me-2"></i><?= __('colonies_amenities_title') ?></h6>
+                            <h3 class="fs-6 amenities-h3"><i class="fas fa-star me-2"></i><?= __('colonies_amenities_title') ?></h3>
                             <?php foreach (array_slice($colony['amenities'], 0, 4) as $amenity): ?>
                                 <div class="amenity-item">
                                     <i class="fas <?= getAmenityIcon($amenity) ?>"></i>

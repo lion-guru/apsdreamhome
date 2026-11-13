@@ -1944,6 +1944,30 @@ class MobileUserApiController extends BaseController
         }
     }
 
+    public function validatePromo() {
+        $this->setCorsHeaders();
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                http_response_code(401);
+                echo json_encode(['valid' => false, 'message' => 'Unauthorized']);
+                return;
+            }
+            $input = json_decode((string) file_get_contents('php://input'), true);
+            if (!is_array($input)) {
+                $input = $_POST;
+            }
+            $code = trim((string)($input['promo_code'] ?? ''));
+            $plotValue = (float)($input['plot_value'] ?? 0.0);
+            $colonyId = isset($input['colony_id']) && $input['colony_id'] !== '' ? (int)$input['colony_id'] : null;
+            $service = new \App\Services\FestivalOfferService($this->db instanceof \PDO ? $this->db : null);
+            echo json_encode($service->validateCustomerPromo($code, $plotValue, $colonyId));
+        } catch (\Throwable $e) {
+            error_log('validatePromo error: ' . $e->getMessage());
+            echo json_encode(['valid' => false, 'message' => 'Unable to validate promo code right now']);
+        }
+    }
+
     public function referralLeaderboard() {
         $this->setCorsHeaders();
         try {

@@ -526,13 +526,50 @@ $dashBookingCount = count($dashBookings);
                     </button>
                 </div>
                 <div class="d-flex gap-2 justify-content-center mt-3">
+                    <button type="button" class="aps-cp-icon-btn border-0" onclick="dashNativeShare()" title="<?= __('dash_share_native', null, 'Share via App') ?>"><i class="fas fa-share-nodes"></i></button>
                     <a href="https://wa.me/?text=<?= urlencode(sprintf(__('dash_share_whatsapp_msg', null, 'Join APS Dream Home! Use my referral code: %s Register here: %s'), $referral_code, $referral_link)) ?>" target="_blank" class="aps-cp-icon-btn" title="<?= __('dash_share_whatsapp', null, 'Share on WhatsApp') ?>"><i class="fab fa-whatsapp"></i></a>
                     <a href="sms:?body=<?= urlencode(sprintf(__('dash_share_sms_msg', null, 'Use my referral code %s to register at APS Dream Home: %s'), $referral_code, $referral_link)) ?>" class="aps-cp-icon-btn" title="<?= __('dash_share_sms', null, 'Share via SMS') ?>"><i class="fas fa-sms"></i></a>
                     <a href="mailto:?subject=<?= urlencode(__('dash_share_email_subject', null, 'Join APS Dream Home')) ?>&body=<?= urlencode(sprintf(__('dash_share_email_body', null, 'Use my referral code %s to register: %s'), $referral_code, $referral_link)) ?>" class="aps-cp-icon-btn" title="<?= __('dash_share_email', null, 'Share via Email') ?>"><i class="fas fa-envelope"></i></a>
                 </div>
+                <button type="button" class="btn btn-sm btn-outline-warning w-100 mt-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#dashRefQrModal">
+                    <i class="fas fa-qrcode me-1"></i> <?= __('dash_show_qr', null, 'Show Referral QR Code') ?>
+                </button>
                 <?php endif; ?>
             </div>
         </div>
+
+        <!-- Dashboard Referral QR Modal -->
+        <div class="modal fade" id="dashRefQrModal" tabindex="-1" aria-labelledby="dashRefQrModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content border-0 shadow-lg rounded-4 text-center overflow-hidden">
+                    <div class="modal-header bg-warning text-dark border-0 py-3">
+                        <h5 class="modal-title fw-bold fs-6" id="dashRefQrModalLabel">
+                            <i class="fas fa-qrcode me-2"></i><?= __('dash_qr_modal_title', null, 'My Referral QR Code') ?>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 bg-light">
+                        <div class="bg-white p-3 rounded-4 shadow-sm d-inline-block mb-3 border">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=<?= urlencode($referral_link ?? '') ?>" alt="Referral QR Code" class="img-fluid" width="200" height="200">
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted d-block"><?= __('dash_your_referral_code', null, 'Your Referral Code') ?></small>
+                            <span class="badge bg-warning-subtle text-warning-emphasis fs-5 px-3 py-1 font-monospace fw-bold"><?= htmlspecialchars($referral_code ?? '') ?></span>
+                        </div>
+                        <p class="small text-muted mb-0"><?= __('dash_qr_scan_instruction', null, 'Scan with any mobile camera to register with my referral code.') ?></p>
+                    </div>
+                    <div class="modal-footer border-0 p-3 bg-white justify-content-center">
+                        <button type="button" class="btn btn-outline-secondary btn-sm px-3 rounded-pill" onclick="dashCopyRef()">
+                            <i class="fas fa-copy me-1"></i>Copy Link
+                        </button>
+                        <a href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=<?= urlencode($referral_link ?? '') ?>" download="APS_Referral_QR.png" target="_blank" class="btn btn-warning btn-sm px-3 rounded-pill text-dark fw-bold">
+                            <i class="fas fa-download me-1"></i>Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
         function dashCopyRef() {
             var el = document.getElementById('refLink');
@@ -541,6 +578,19 @@ $dashBookingCount = count($dashBookings);
                     var btn = el.nextElementSibling;
                     if (btn) { btn.innerHTML = '<i class="fas fa-check"></i>'; setTimeout(function(){ btn.innerHTML = '<i class="fas fa-copy"></i>'; }, 2000); }
                 });
+            }
+        }
+        function dashNativeShare() {
+            var refLink = '<?= htmlspecialchars($referral_link ?? '') ?>';
+            var refCode = '<?= htmlspecialchars($referral_code ?? '') ?>';
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Join APS Dream Home',
+                    text: 'Join APS Dream Home using my referral code: ' + refCode,
+                    url: refLink
+                }).catch(function(e){});
+            } else {
+                dashCopyRef();
             }
         }
         </script>

@@ -96,6 +96,139 @@ class _ReferralPageState extends ConsumerState<ReferralPage> {
     );
   }
 
+  void _showQrDialog(BuildContext context) {
+    final link = 'https://apsdreamhome.com/register?ref=$_referralCode';
+    final qrApi =
+        'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${Uri.encodeComponent(link)}';
+
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(Icons.qr_code_2_rounded, color: AppTheme.primaryColor),
+                      SizedBox(width: 8),
+                      Text(
+                        'Referral QR Code',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: Image.network(
+                  qrApi,
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.contain,
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return const SizedBox(
+                      width: 200,
+                      height: 200,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) => const SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: Center(
+                      child: Icon(Icons.broken_image_rounded, size: 48, color: Colors.grey),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  _referralCode.isNotEmpty ? _referralCode : '------',
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                    fontSize: 16,
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Let friends & clients scan with their camera to join with your referral.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.copy_rounded, size: 16),
+                      label: const Text('Copy Link'),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: link));
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Referral link copied!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.share_rounded, size: 16),
+                      label: const Text('Share'),
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        _shareReferral();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -205,25 +338,47 @@ class _ReferralPageState extends ConsumerState<ReferralPage> {
             ),
           ),
           const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _shareReferral,
-              icon: const Icon(Icons.share_rounded, size: 20),
-              label: const Text(
-                'Share Code',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: AppTheme.primaryColor,
-                elevation: 4,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _shareReferral,
+                  icon: const Icon(Icons.share_rounded, size: 18),
+                  label: const Text(
+                    'Share Code',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: AppTheme.primaryColor,
+                    elevation: 4,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _showQrDialog(context),
+                  icon: const Icon(Icons.qr_code_2_rounded, size: 18),
+                  label: const Text(
+                    'Scan QR',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: Colors.white, width: 1.5),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -231,6 +231,24 @@
                         </div>
 
 
+                        <h5 class="mb-3 mt-4"><i class="fas fa-vr-cardboard me-2 text-danger"></i>Digital Assets &amp; Media</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="virtual_tour_url" class="form-label">360° Virtual Tour URL</label>
+                                    <input type="url" class="form-control" id="virtual_tour_url" name="virtual_tour_url" value="<?php echo htmlspecialchars($project['virtual_tour_url'] ?? ''); ?>" placeholder="https://kuula.co/post/... or Matterport link">
+                                    <div class="form-text">Embeddable 360 virtual tour or YouTube VR walkthrough URL.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="brochure_path" class="form-label">Brochure File Path / URL</label>
+                                    <input type="text" class="form-control" id="brochure_path" name="brochure_path" value="<?php echo htmlspecialchars($project['brochure_path'] ?? ''); ?>" placeholder="/assets/docs/brochures/project_brochure.pdf">
+                                    <div class="form-text">Official project brochure PDF link for customer downloads.</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <h5 class="mb-3 mt-4"><i class="fas fa-certificate me-2 text-success"></i>Compliance &amp; Construction</h5>
                         <div class="row">
                             <div class="col-md-4">

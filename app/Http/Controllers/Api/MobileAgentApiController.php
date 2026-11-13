@@ -522,4 +522,86 @@ class MobileAgentApiController extends BaseController
             $this->jsonError('Server error: ' . $e->getMessage(), 500);
         }
     }
+
+    public function followUpComplete($id = 0)
+    {
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonError('Unauthorized', 401);
+            }
+            $id = (int)$id;
+            if ($id <= 0) {
+                return $this->jsonError('Invalid follow-up id', 400);
+            }
+            $input = json_decode((string) file_get_contents('php://input'), true);
+            if (!is_array($input)) {
+                $input = $_POST;
+            }
+            $notes = isset($input['notes']) ? trim(mb_substr((string)$input['notes'], 0, 2000)) : null;
+
+            $stmt = $this->db->prepare("
+                UPDATE crm_tasks
+                SET status = 'completed', completed_at = NOW(),
+                    completed_notes = COALESCE(?, completed_notes)
+                WHERE id = ? AND assigned_to = ?
+            ");
+            $stmt->execute([$notes, $id, $userId]);
+            if ($stmt->rowCount() < 1) {
+                $check = $this->db->prepare("SELECT id, status FROM crm_tasks WHERE id = ? AND assigned_to = ? LIMIT 1");
+                $check->execute([$id, $userId]);
+                $row = $check->fetch(\PDO::FETCH_ASSOC);
+                if (!$row) {
+                    return $this->jsonError('Follow-up not found', 404);
+                }
+                return $this->jsonResponse(['success' => true, 'already_completed' => true]);
+            }
+            $this->jsonResponse(['success' => true]);
+        } catch (\Throwable $e) {
+            error_log('Agent followUpComplete error: ' . $e->getMessage());
+            $this->jsonError('Server error', 500);
+        }
+    }
+
+    public function followUpReschedule($id = 0)
+    {
+        try {
+            $userId = (int)($GLOBALS['api_user_id'] ?? 0);
+            if (!$userId) {
+                return $this->jsonError('Unauthorized', 401);
+            }
+            $id = (int)$id;
+            if ($id <= 0) {
+                return $this->jsonError('Invalid follow-up id', 400);
+            }
+            $input = json_decode((string) file_get_contents('php://input'), true);
+            if (!is_array($input)) {
+                $input = $_POST;
+            }
+            $dueDate = trim((string)($input['due_date'] ?? ''));
+            $dueTime = trim((string)($input['due_time'] ?? ''));
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dueDate)) {
+                return $this->jsonError('due_date must be YYYY-MM-DD', 400);
+            }
+            $dueTime = preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $dueTime) ? substr($dueTime, 0, 8) : null;
+
+            $stmt = $this->db->prepare("
+                UPDATE crm_tasks
+                SET due_date = ?, due_time = ?, status = 'pending'
+                WHERE id = ? AND assigned_to = ?
+            ");
+            $stmt->execute([$dueDate, $dueTime, $id, $userId]);
+            if ($stmt->rowCount() < 1) {
+                $check = $this->db->prepare("SELECT id FROM crm_tasks WHERE id = ? AND assigned_to = ? LIMIT 1");
+                $check->execute([$id, $userId]);
+                if (!$check->fetch(\PDO::FETCH_ASSOC)) {
+                    return $this->jsonError('Follow-up not found', 404);
+                }
+            }
+            $this->jsonResponse(['success' => true, 'due_date' => $dueDate]);
+        } catch (\Throwable $e) {
+            error_log('Agent followUpReschedule error: ' . $e->getMessage());
+            $this->jsonError('Server error', 500);
+        }
+    }
 }

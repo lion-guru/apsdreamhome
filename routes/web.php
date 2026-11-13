@@ -873,6 +873,18 @@ $router->get('/user/referral', 'App\\Http\\Controllers\\Front\\ReferralControlle
 $router->get('/user/upgrade-to-associate', 'App\\Http\\Controllers\\Front\\ReferralController@upgradeToAssociate');
 $router->post('/user/upgrade-to-associate', 'App\\Http\\Controllers\\Front\\ReferralController@upgradeToAssociate');
 
+// Canonical Short Referral Redirects: /ref/{code} & /r/{code}
+$router->get('/ref/{code}', function ($code = '') {
+    $code = preg_replace('/[^a-zA-Z0-9_-]/', '', (string)$code);
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/register?ref=' . urlencode($code), true, 302);
+    exit;
+});
+$router->get('/r/{code}', function ($code = '') {
+    $code = preg_replace('/[^a-zA-Z0-9_-]/', '', (string)$code);
+    header('Location: ' . (defined('BASE_URL') ? BASE_URL : '') . '/register?ref=' . urlencode($code), true, 302);
+    exit;
+});
+
 // ============================================================
 // CUSTOMER / USER PORTAL ROUTES (/user/*)
 // Views exist in app/views/user/ â€” routes were missing!

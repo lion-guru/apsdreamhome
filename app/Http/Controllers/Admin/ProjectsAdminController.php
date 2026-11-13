@@ -68,7 +68,8 @@ class ProjectsAdminController extends AdminController
                 'launch_date', 'completion_date', 'possession_date',
                 'marketing_description', 'tags', 'is_featured', 'is_hot_deal',
                 'rera_number', 'progress_pct', 'project_budget', 'amount_spent',
-                'project_manager', 'site_supervisor', 'contractor_name',
+                'project_manager', 'site_supervisor', 'contractor_name', 'risk_flags',
+                'virtual_tour_url', 'brochure_path',
             ];
 
             $data = [];
@@ -200,6 +201,7 @@ class ProjectsAdminController extends AdminController
                 'status', 'launch_date', 'completion_date', 'possession_date', 'marketing_description', 'tags',
                 'is_featured', 'is_hot_deal', 'rera_number', 'progress_pct', 'project_budget', 'amount_spent',
                 'project_manager', 'site_supervisor', 'contractor_name', 'risk_flags',
+                'virtual_tour_url', 'brochure_path',
             ];
 
             $numericFields = [

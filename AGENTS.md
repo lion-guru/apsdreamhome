@@ -6735,3 +6735,41 @@ Next-free = **497** (this session; S495 logged above in the file).
 _922. **A log that takes 120s to read is itself a defect — rotate first, audit second.** `php_error.log` at 20MB was unreadable until archived; the scan that would have found the 1054 root cause took seconds after rotation.
 _923. **File-level ops on large/locked files belong in .NET, not PowerShell's cmdlets** — `Rename-Item`/`Move-Item` failed with a misleading "path or device name" on a 20MB active log; `[System.IO.File]::Move` worked instantly and losslessly.
 _924. **When bytes/chars ≈ 2 and the file starts with FF FE, the file is a mixed-encoding concatenation — do counts at byte level, never with decoded strings.** 218 byte-exact occurrences of the spam pattern vs 0 in any naive decoded scan; the naive scan looked like the bug was never logged.
+
+## Session 497: Dynamic Referral QR Code Suite, Short Link Engine, Project Admin Digital Assets & Mobile Agent Follow-Ups (2026-11-14)
+
+### Trigger
+User instruction: "do next" — continuing proactive CEO & Senior Developer execution across customer growth tools, admin digital assets, mobile app parity, and zero regressions.
+
+### The headline
+
+**1. DYNAMIC REFERRAL QR CODE SUITE & SHORT LINK REDIRECT ENGINE**
+- **Short Referral Links (`routes/web.php`)**: Added canonical short redirects for `GET /ref/{code}` and `GET /r/{code}` with strict regex character sanitization (`[a-zA-Z0-9_-]`), redirecting with 302 to `/register?ref={code}` so SMS and printed QR codes remain short and clean.
+- **Customer Referral Desk (`app/views/pages/customer_referral.php`)**: Added live on-page QR code card (`api.qrserver.com`), Fullscreen QR popup modal with download option, native app sharing (`navigator.share`), and accessible `<label for="refLink">` association.
+- **Customer Dashboard Referral Quick Modal (`app/views/pages/user_dashboard.php`)**: Added "Show Referral QR Code" button with modal popup (`#dashRefQrModal`), native Web Share API trigger (`dashNativeShare()`), and 1-click clipboard copy with live visual feedback.
+- **Customer Mobile App Referral QR (`mobile/.../referral_page.dart`)**: Added "Scan QR" button alongside "Share Code", opening a high-resolution QR modal (`_showQrDialog`) with network image loading, fallback error handlers, and 1-tap copy/share.
+
+**2. PROJECT ADMIN DIGITAL ASSETS & COMPLIANCE PARITY (`app/Http/Controllers/Admin/ProjectsAdminController.php`)**
+- **Controller Store & Update Grounding**: Added `virtual_tour_url`, `brochure_path`, and `risk_flags` to allowed `$fields` in both `store()` and `update()`, ensuring digital media assets and compliance flags persist to the database.
+- **Admin Project Create Form (`admin/projects/create.php`)**: Added Digital Assets & Media (`virtual_tour_url`, `brochure_path`) and Compliance & Construction (`rera_number`, `progress_pct`, `project_budget`, `amount_spent`, `project_manager`, `site_supervisor`, contractor details, `risk_flags`).
+- **Admin Project Edit Form (`admin/projects/edit.php`)**: Added Digital Assets & Media section (`virtual_tour_url`, `brochure_path`).
+- **Admin Project Show Desk (`admin/projects/show.php`)**: Added quick action buttons for 360° Virtual Tour and Brochure Download.
+
+**3. MOBILE AGENT FOLLOW-UPS & FLUTTER MODERNIZATION**
+- **Agent CRM Task API (`MobileAgentApiController.php` & `routes/api.php`)**: Added `POST /api/v2/mobile/agent/follow-ups/{id}/complete` and `POST /api/v2/mobile/agent/follow-ups/{id}/reschedule` with JSON/POST fallback and ownership validation.
+- **Agent Mobile Desk (`agent_follow_ups_page.dart`)**: Implemented "Mark Done" with note capture and "Reschedule" with native date/time pickers.
+- **Deprecation Clean-up (`admin_tools_page.dart`)**: Upgraded deprecated `Share.shareXFiles` to modern `SharePlus.instance.share(ShareParams(files: ...))`.
+
+**4. ACCESSIBILITY & WCAG AA CONTRAST POLISH**
+- **Contrast & Semantic Headings (`uiux-fixes.css`, `premium-theme.css`, `homepage.css`, `colonies.php`, `directory/index.php`)**: Solid AA color ratios for badges/buttons (`#157347` success, `#0e7490` info, `#b91c1c` danger) and corrected sequential heading levels (h2/h3).
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 35.08s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing, 0 new mismatches (Exit 0).
+- **Mobile Flutter Analyzer**: `flutter analyze` -> No issues found! (ran in 5.5s, Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **498** (this session; S497 logged above).

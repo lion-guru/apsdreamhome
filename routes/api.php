@@ -315,6 +315,7 @@ $router->get('/api/v2/mobile/referral/leaderboard', 'Api\MobileUserApiController
 $router->get('/api/v2/mobile/referral/share-url', 'Api\MobileUserApiController@referralShareUrl')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/associate/offers', 'Api\MobileUserApiController@associateOffers')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/promotional-offers', 'Api\MobileUserApiController@promotionalOffers')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/promo/validate', 'Api\MobileUserApiController@validatePromo')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
 // ============================================================
 // CUSTOMER INVESTMENTS
@@ -1094,6 +1095,8 @@ $router->get('/api/v2/mobile/agent/bookings', 'Api\MobileAgentApiController@book
 $router->get('/api/v2/mobile/agent/commissions', 'Api\MobileAgentApiController@commissions')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/agent/documents', 'Api\MobileAgentApiController@documents')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/agent/follow-ups', 'Api\MobileAgentApiController@followUps')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/agent/follow-ups/{id}/complete', 'Api\MobileAgentApiController@followUpComplete')->middleware('App\Http\Middleware\ApiAuthMiddleware');
+$router->post('/api/v2/mobile/agent/follow-ups/{id}/reschedule', 'Api\MobileAgentApiController@followUpReschedule')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/agent/leads', 'Api\MobileAgentApiController@leads')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/agent/payouts', 'Api\MobileAgentApiController@payouts')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->get('/api/v2/mobile/agent/properties', 'Api\MobileAgentApiController@properties')->middleware('App\Http\Middleware\ApiAuthMiddleware');

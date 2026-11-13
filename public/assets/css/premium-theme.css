@@ -358,18 +358,18 @@ h6 { font-size: var(--h6-size); font-weight: 500; }
 }
 
 /* Card Body High Contrast Text Protection — NOT in dark mode */
-.card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body,
-.card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body p,
-.card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body span,
-.card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body td,
-.card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body th,
-.card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body strong,
-.card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body label,
-.card:not(.bg-dark):not(.bg-primary):not(.glass-dark) .card-body li {
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body p,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body span,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body td,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body th,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body strong,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body label,
+.card:not(.bg-dark):not(.bg-primary):not(.glass-dark):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body li {
   color: var(--color-text-primary) !important;
 }
 
-.card:not(.bg-dark):not(.bg-primary) .card-body .text-muted {
+.card:not(.bg-dark):not(.bg-primary):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .card-body .text-muted {
   color: var(--color-text-muted) !important;
 }
 .bg-dark .card.bg-dark .form-control,

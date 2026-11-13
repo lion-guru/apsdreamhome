@@ -146,7 +146,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                     </button>
                 </div>
 
-                <label class="form-label small text-muted fw-bold"><?= __('referral_referral_link') ?></label>
+                <label class="form-label small text-muted fw-bold" for="refLink"><?= __('referral_referral_link') ?></label>
                 <div class="input-group input-group-sm mb-3">
                     <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($shareLinks['url'] ?? '') ?>" readonly>
                     <button class="btn btn-outline-primary" onclick="copyToClipboard(document.getElementById('refLink').value, this)">
@@ -154,8 +154,26 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                     </button>
                 </div>
 
+                <!-- Personal Referral QR Code -->
+                <div class="card border border-light-subtle rounded-4 p-3 mb-3 text-center bg-white shadow-sm">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="small fw-bold text-dark"><i class="fas fa-qrcode text-primary me-1"></i><?= __('referral_qr_code', null, 'QR Code (Scan to Register)') ?></span>
+                        <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 rounded-pill" data-bs-toggle="modal" data-bs-target="#refQrModal" style="font-size: 0.75rem;">
+                            <i class="fas fa-expand me-1"></i><?= __('referral_fullscreen', null, 'Fullscreen') ?>
+                        </button>
+                    </div>
+                    <?php $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" . urlencode($shareLinks['url'] ?? ''); ?>
+                    <div class="py-1">
+                        <img src="<?= $qrUrl ?>" alt="Referral QR Code" class="img-fluid rounded border p-1 bg-white shadow-xs" width="140" height="140" loading="lazy">
+                    </div>
+                    <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">दोस्तों और ग्राहकों को कैमरा से स्कैन करवाएं</small>
+                </div>
+
                 <label class="form-label small text-muted fw-bold"><?= __('referral_share_via') ?></label>
                 <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-primary" onclick="nativeShareReferral()">
+                        <i class="fas fa-share-nodes me-2"></i><?= __('referral_share_all_apps', null, 'Share via Any App') ?>
+                    </button>
                     <a href="<?= htmlspecialchars($shareLinks['whatsapp'] ?? '#') ?>" target="_blank" class="btn btn-success" onclick="trackShare('whatsapp')">
                         <i class="fab fa-whatsapp me-2"></i><?= __('referral_share_whatsapp') ?>
                     </a>
@@ -440,7 +458,57 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
     </div>
 </div>
 
+<!-- Fullscreen Referral QR Modal -->
+<div class="modal fade" id="refQrModal" tabindex="-1" aria-labelledby="refQrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow-lg rounded-4 text-center overflow-hidden">
+            <div class="modal-header bg-primary text-white border-0 py-3">
+                <h5 class="modal-title fw-bold fs-6" id="refQrModalLabel">
+                    <i class="fas fa-qrcode me-2"></i><?= __('referral_scan_join', null, 'Scan & Join APS Dream Home') ?>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 bg-light">
+                <div class="bg-white p-3 rounded-4 shadow-sm d-inline-block mb-3 border">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=<?= urlencode($shareLinks['url'] ?? '') ?>" alt="Full Referral QR Code" class="img-fluid" width="220" height="220">
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block"><?= __('referral_your_code', null, 'Referral Code') ?></small>
+                    <span class="badge bg-success-subtle text-success fs-5 px-3 py-1 font-monospace fw-bold"><?= htmlspecialchars($referralCode ?? '') ?></span>
+                </div>
+                <p class="small text-muted mb-0">किसी भी मोबाइल कैमरा या QR स्कैनर से स्कैन करके तुरंत रजिस्टर करें।</p>
+            </div>
+            <div class="modal-footer border-0 p-3 bg-white justify-content-center">
+                <button type="button" class="btn btn-outline-secondary btn-sm px-3 rounded-pill" onclick="copyToClipboard('<?= htmlspecialchars($shareLinks['url'] ?? '') ?>', this)">
+                    <i class="fas fa-copy me-1"></i>Copy Link
+                </button>
+                <a href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=<?= urlencode($shareLinks['url'] ?? '') ?>" download="APS_Referral_QR.png" target="_blank" class="btn btn-primary btn-sm px-3 rounded-pill">
+                    <i class="fas fa-download me-1"></i>Download QR
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+function nativeShareReferral() {
+    var shareUrl = '<?= htmlspecialchars($shareLinks['url'] ?? '') ?>';
+    var refCode = '<?= htmlspecialchars($referralCode ?? '') ?>';
+    if (navigator.share) {
+        navigator.share({
+            title: 'Join APS Dream Home',
+            text: 'नमस्ते! APS Dream Home पर अपने सपनों का प्लॉट बुक करें या रजिस्टर करें।\nरेफरल कोड: ' + refCode,
+            url: shareUrl
+        }).then(function() {
+            trackShare('native');
+        }).catch(function(err) {});
+    } else {
+        navigator.clipboard.writeText(shareUrl).then(function() {
+            alert('Referral link copied to clipboard! You can paste and share it anywhere.');
+        });
+    }
+}
+
 function copyToClipboard(text, btn) {
     navigator.clipboard.writeText(text).then(function() {
         var orig = btn.innerHTML;
