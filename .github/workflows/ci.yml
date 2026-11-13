@@ -41,7 +41,14 @@ jobs:
           php-version: '8.3'
           extensions: pdo_mysql, mbstring, json, curl, openssl, zip, gd
       - name: Install composer dependencies
-        run: composer install --no-interaction --prefer-dist || true
+        # S471: `|| true` swallowed a FAILED dependency install - the same
+        # swallowed failure as the schema import.  A dependency install that
+        # is allowed to fail silently leaves the job testing an app that
+        # cannot boot.  Retried once for a flaky mirror, then it fails.
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress \
+            || composer install --no-interaction --prefer-dist --no-progress
+          echo "composer packages: $(ls vendor | wc -l)"
       - name: Import database schema
         run: |
           sleep 10

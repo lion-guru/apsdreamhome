@@ -66,6 +66,19 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Install composer dependencies
+        # S471: this job NEVER installed the PHP dependencies - vendor/ is
+        # gitignored and 0 files of it are tracked, so the app was served
+        # with NO packages at all: 'Class "Psr\Log\AbstractLogger" not found'
+        # and /auth/login answering HTTP 500.  Every capture was of a
+        # degraded app.  The install must also FAIL LOUDLY: a dependency
+        # install that is allowed to fail silently is the same swallowed
+        # failure as the schema import.
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader \
+            || composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader
+          echo "composer packages: $(ls vendor | wc -l)"
+
       - name: Import database schema
         run: |
           # S453: MariaDB needs a moment before it accepts the import, and the
