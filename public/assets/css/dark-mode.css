@@ -113,6 +113,14 @@ html.dark-mode .text-muted {
     color: var(--dm-text-muted) !important;
 }
 
+html.dark-mode a {
+    color: #93c5fd;
+}
+
+html.dark-mode a:hover {
+    color: #bfdbfe;
+}
+
 html.dark-mode .bg-light {
     background-color: var(--dm-bg-secondary) !important;
 }

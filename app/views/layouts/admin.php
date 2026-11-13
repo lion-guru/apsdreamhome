@@ -100,7 +100,7 @@ $GLOBALS['_html_doc_started'] = true;
         .nav-pills .nav-link.active { background: var(--tenant-primary); }
     </style>
     <?php endif; ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/dark-mode.css?v=2">
+<link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/dark-mode.css?v=3">
 </head>
 
 <body class="aps-admin-body">
