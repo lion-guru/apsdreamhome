@@ -399,12 +399,31 @@ class CustomerPassbookController extends BaseController
                  LEFT JOIN booking_payment_schedules bps
                      ON bps.booking_id = p.booking_id AND bps.installment_no = p.emi_month
                  JOIN plot_bookings pb ON pb.id = p.booking_id
-                 JOIN plots p2 ON pb.plot_id = p2.id
-                 JOIN colonies c ON pb.colony_id = c.id
+                 LEFT JOIN plots p2 ON pb.plot_id = p2.id
+                 LEFT JOIN colonies c ON (c.id = pb.colony_id OR c.id = p2.colony_id)
                  WHERE p.id = ? AND pb.customer_id = ?"
             );
             $payStmt->execute([$paymentId, $customerId]);
             $payment = $payStmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$payment) {
+                // Try fetching from booking_payment_receipts (e.g. from /customer/receipt/{receiptId})
+                $rcpStmt = $pdo->prepare(
+                    "SELECT bpr.*, bpr.receipt_date AS paid_date, bpr.amount AS paid_amount,
+                            bps.installment_no,
+                            pb.customer_id, pb.plot_id, pb.colony_id,
+                            p2.plot_number, p2.block,
+                            c.name as colony_name
+                     FROM booking_payment_receipts bpr
+                     JOIN plot_bookings pb ON pb.id = bpr.booking_id
+                     LEFT JOIN booking_payment_schedules bps ON bps.id = bpr.installment_id
+                     LEFT JOIN plots p2 ON pb.plot_id = p2.id
+                     LEFT JOIN colonies c ON (c.id = pb.colony_id OR c.id = p2.colony_id)
+                     WHERE bpr.id = ? AND pb.customer_id = ?"
+                );
+                $rcpStmt->execute([$paymentId, $customerId]);
+                $payment = $rcpStmt->fetch(\PDO::FETCH_ASSOC);
+            }
 
             if (!$payment) {
                 // Try fetching from booking_payment_schedules if payments table has no record
@@ -414,8 +433,8 @@ class CustomerPassbookController extends BaseController
                             c.name as colony_name
                      FROM booking_payment_schedules bps
                      JOIN plot_bookings pb ON pb.id = bps.booking_id
-                     JOIN plots p2 ON pb.plot_id = p2.id
-                     JOIN colonies c ON pb.colony_id = c.id
+                     LEFT JOIN plots p2 ON pb.plot_id = p2.id
+                     LEFT JOIN colonies c ON (c.id = pb.colony_id OR c.id = p2.colony_id)
                      WHERE bps.id = ? AND pb.customer_id = ? AND bps.status = 'paid'"
                 );
                 $schedStmt->execute([$paymentId, $customerId]);
@@ -434,7 +453,7 @@ class CustomerPassbookController extends BaseController
             $customerName = $user['name'] ?? 'Customer';
 
             // Build receipt data
-            $receiptNumber = 'REC-' . str_pad($paymentId, 6, '0', STR_PAD_LEFT) . '-' . date('Ym');
+            $receiptNumber = !empty($payment['receipt_number']) ? $payment['receipt_number'] : ('REC-' . str_pad((string)$paymentId, 6, '0', STR_PAD_LEFT) . '-' . date('Ym'));
             $receiptData = [
                 'receipt_number' => $receiptNumber,
                 'date'           => $payment['paid_date'] ?? $payment['created_at'] ?? date('Y-m-d'),
@@ -446,14 +465,15 @@ class CustomerPassbookController extends BaseController
                 'formatted_amount' => $this->formatCurrency((float)($payment['paid_amount'] ?? $payment['amount'] ?? 0)),
                 'payment_mode'   => $payment['gateway'] ?? $payment['payment_mode'] ?? 'N/A',
                 'transaction_ref' => $payment['gateway_transaction_id'] ?? $payment['transaction_ref'] ?? '',
-                'booking_number' => 'BK-' . str_pad((int)($payment['booking_id'] ?? 0), 6, '0', STR_PAD_LEFT),
+                'booking_number' => 'BK-' . str_pad((string)(int)($payment['booking_id'] ?? 0), 6, '0', STR_PAD_LEFT),
                 'installment_no' => $payment['installment_no'] ?? $payment['emi_month'] ?? '',
             ];
 
             // Try to generate PDF via PdfService
             try {
                 $pdfService = new PdfService();
-                $result = $pdfService->generate(PdfService::TYPE_RECEIPT, $paymentId);
+                $bookingId = (int)($payment['booking_id'] ?? 0);
+                $result = $pdfService->generate(PdfService::TYPE_RECEIPT, $bookingId ?: $paymentId);
 
                 if ($result['success'] && !empty($result['data']['path']) && file_exists($result['data']['path'])) {
                     header('Content-Type: application/pdf');

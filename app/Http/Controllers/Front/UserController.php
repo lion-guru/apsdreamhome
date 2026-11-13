@@ -3117,11 +3117,13 @@ class UserController extends BaseController
                        ips.paid_amount AS amount_paid,
                        ips.installment_no AS installment_number,
                        pb.booking_number, p.plot_number, c.name as colony_name,
-                       pb.total_plot_value, pb.status as booking_status
+                       pb.total_plot_value, pb.status as booking_status,
+                       r.id AS receipt_id, r.receipt_number
                 FROM booking_payment_schedules ips
                 JOIN plot_bookings pb ON ips.booking_id = pb.id
                 LEFT JOIN plots p ON pb.plot_id = p.id
-                LEFT JOIN colonies c ON p.colony_id = c.id
+                LEFT JOIN colonies c ON (c.id = pb.colony_id OR c.id = p.colony_id)
+                LEFT JOIN booking_payment_receipts r ON (r.installment_id = ips.id AND r.status = 'cleared')
                 WHERE pb.customer_id = ?
                 ORDER BY ips.due_date ASC
             ");

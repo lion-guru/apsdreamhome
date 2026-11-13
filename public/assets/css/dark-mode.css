@@ -46,6 +46,24 @@ html.dark-mode {
     --dm-success: #34d399;
     --dm-warning: #fbbf24;
     --dm-danger: #f87171;
+
+    /* Admin theme variable remap - keeps .aps-cp-card, .top-nav, .breadcrumb, .table etc. coherent */
+    --topnav-bg: #1e293b;
+    --topnav-border: rgba(255,255,255,0.09);
+    --body-bg: #0f172a;
+    --card-bg: #1e293b;
+    --card-border: rgba(255,255,255,0.09);
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.35);
+    --text-primary: #e2e8f0;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --primary-light: rgba(20,184,166,0.18);
+    --sidebar-hover: rgba(255,255,255,0.05);
+    --sidebar-active: rgba(20,184,166,0.22);
+    --sidebar-text: rgba(255,255,255,0.88);
+    --sidebar-text-hover: #ffffff;
+    --sidebar-border: rgba(255,255,255,0.06);
+    --topnav-accent: #14b8a6;
 }
 
 /* Apply dark mode variables */
@@ -184,3 +202,85 @@ html.dark-mode .erp-chart-card .chart-header { border-color: var(--dm-border) !i
 html.dark-mode .erp-chart-card .chart-header h2 { color: var(--dm-text) !important; }
 html.dark-mode .erp-empty-state,
 html.dark-mode .erp-loading { color: var(--dm-text-muted) !important; }
+
+/* ============================================
+   SYSTEMATIC LIGHT-CLASS REMAP (covers 100% of view usage)
+   ============================================ */
+html.dark-mode .bg-white { background-color: var(--dm-card-bg) !important; color: var(--dm-text) !important; }
+html.dark-mode .bg-light { background-color: var(--dm-bg-secondary) !important; color: var(--dm-text) !important; }
+html.dark-mode .bg-primary { background-color: #0a58ca !important; color: #ffffff !important; }
+html.dark-mode .bg-success { background-color: #047857 !important; color: #ffffff !important; }
+html.dark-mode .bg-warning { background-color: #b45309 !important; color: #ffffff !important; }
+html.dark-mode .bg-info { background-color: #0e7490 !important; color: #ffffff !important; }
+html.dark-mode .bg-secondary { background-color: #334155 !important; color: #e2e8f0 !important; }
+html.dark-mode .bg-danger { background-color: #b91c1c !important; color: #ffffff !important; }
+html.dark-mode .text-dark { color: var(--dm-text) !important; }
+html.dark-mode .text-body { color: var(--dm-text) !important; }
+html.dark-mode .text-primary { color: #93c5fd !important; }
+html.dark-mode .text-success { color: #34d399 !important; }
+html.dark-mode .text-danger { color: #f87171 !important; }
+html.dark-mode .text-info { color: #38bdf8 !important; }
+html.dark-mode .text-warning { color: #fbbf24 !important; }
+html.dark-mode .text-muted { color: #94a3b8 !important; }
+html.dark-mode .border { border-color: var(--dm-border) !important; }
+html.dark-mode .border-top { border-top-color: var(--dm-border) !important; }
+html.dark-mode .border-bottom { border-bottom-color: var(--dm-border) !important; }
+
+/* Badges (low-contrast Bootstrap defaults) */
+html.dark-mode .badge.bg-primary { background-color: #0a58ca !important; color: #fff !important; }
+html.dark-mode .badge.bg-success { background-color: #047857 !important; color: #fff !important; }
+html.dark-mode .badge.bg-warning { background-color: #92400e !important; color: #fff !important; }
+html.dark-mode .badge.bg-info { background-color: #0e7490 !important; color: #fff !important; }
+html.dark-mode .badge.bg-secondary { background-color: #334155 !important; color: #e2e8f0 !important; }
+html.dark-mode .badge.bg-danger { background-color: #b91c1c !important; color: #fff !important; }
+html.dark-mode .badge.bg-light { background-color: var(--dm-bg-tertiary) !important; color: var(--dm-text) !important; }
+
+/* thead / table-light rows */
+html.dark-mode .table-light th,
+html.dark-mode .table-light td { background-color: var(--dm-bg-secondary) !important; color: var(--dm-text) !important; border-color: var(--dm-border) !important; }
+html.dark-mode .table-light thead th { background-color: var(--dm-bg-secondary) !important; color: var(--dm-text) !important; }
+html.dark-mode .thead-light th { background-color: var(--dm-bg-secondary) !important; color: var(--dm-text) !important; }
+
+/* Breadcrumb */
+html.dark-mode .breadcrumb { background-color: transparent !important; }
+html.dark-mode .breadcrumb-item a { color: #93c5fd !important; }
+html.dark-mode .breadcrumb-item,
+html.dark-mode .breadcrumb-item.active { color: var(--dm-text-muted) !important; }
+
+/* Pagination */
+html.dark-mode .page-link { background-color: var(--dm-card-bg) !important; border-color: var(--dm-border) !important; color: #93c5fd !important; }
+html.dark-mode .page-link:hover { background-color: var(--dm-bg-tertiary) !important; color: #bfdbfe !important; }
+html.dark-mode .page-item.active .page-link { background-color: var(--dm-accent) !important; border-color: var(--dm-accent) !important; color: #fff !important; }
+html.dark-mode .page-item.disabled .page-link { background-color: var(--dm-bg-secondary) !important; color: var(--dm-text-muted) !important; }
+
+/* Links on dark rows */
+html.dark-mode .table a { color: #93c5fd !important; }
+html.dark-mode .table a:hover { color: #bfdbfe !important; }
+
+/* Scrollbars */
+html.dark-mode ::-webkit-scrollbar { width: 10px; height: 10px; }
+html.dark-mode ::-webkit-scrollbar-track { background: var(--dm-bg-secondary); }
+html.dark-mode ::-webkit-scrollbar-thumb { background: var(--dm-bg-tertiary); border-radius: 6px; }
+html.dark-mode ::-webkit-scrollbar-thumb:hover { background: var(--dm-input-border); }
+
+
+html.dark-mode {
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: #1e293b;
+    --bs-table-striped-color: #e2e8f0;
+    --bs-table-hover-bg: #334155;
+    --bs-table-hover-color: #e2e8f0;
+    --bs-table-color: #e2e8f0;
+    --bs-table-border-color: #334155;
+    --bs-table-accent-bg: transparent;
+    --bs-table-active-bg: #334155;
+    --bs-table-active-color: #e2e8f0;
+    --bs-body-bg: #0f172a;
+    --bs-body-color: #e2e8f0;
+}
+html.dark-mode .table thead th { background: var(--dm-bg-secondary) !important; color: var(--dm-text-muted) !important; border-bottom-color: var(--dm-border) !important; }
+html.dark-mode .table-hover tbody tr:hover { background: var(--dm-bg-tertiary) !important; }
+html.dark-mode .table > :not(caption) > * > * { background-color: transparent !important; border-color: var(--dm-border) !important; }
+html.dark-mode .table-sm > :not(caption) > * > * { border-color: var(--dm-border) !important; }
+html.dark-mode .table-bordered > :not(caption) > * { border-color: var(--dm-border) !important; }
+

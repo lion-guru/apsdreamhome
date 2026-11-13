@@ -943,13 +943,20 @@ class PdfService
             $stmt = $this->db->prepare("SELECT * FROM bookings WHERE id = ? LIMIT 1");
             $stmt->execute([(int)$bookingId]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$row) {
+                // Fallback to plot_bookings (the live bookings table)
+                $stmt = $this->db->prepare("SELECT * FROM plot_bookings WHERE id = ? LIMIT 1");
+                $stmt->execute([(int)$bookingId]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            }
             if (!$row) return null;
 
-            // Augment with user data if user_id is set
-            if (!empty($row['user_id'])) {
+            // Augment with user data if user_id or customer_id is set
+            $userId = !empty($row['user_id']) ? (int)$row['user_id'] : (int)($row['customer_id'] ?? 0);
+            if ($userId > 0) {
                 try {
                     $u = $this->db->prepare("SELECT name, email, phone FROM users WHERE id = ? LIMIT 1");
-                    $u->execute([(int)$row['user_id']]);
+                    $u->execute([$userId]);
                     if ($user = $u->fetch(\PDO::FETCH_ASSOC)) {
                         $row['customer_name']  = $user['name'] ?? '';
                         $row['customer_email'] = $user['email'] ?? '';
@@ -984,11 +991,23 @@ class PdfService
         try {
             $stmt = $this->db->prepare("
                 SELECT * FROM payments
-                WHERE booking_id = ? AND status IN ('paid', 'captured', 'success')
+                WHERE booking_id = ? AND status IN ('paid', 'captured', 'success', 'completed')
                 ORDER BY id DESC LIMIT 1
             ");
             $stmt->execute([(int)$bookingId]);
-            return $stmt->fetch(\PDO::FETCH_ASSOC) ?: null;
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if (!$row) {
+                // Fallback to booking_payment_receipts for live plot_bookings payments
+                $stmt = $this->db->prepare("
+                    SELECT id, booking_id, amount, payment_mode as method, status, receipt_date as created_at
+                    FROM booking_payment_receipts
+                    WHERE booking_id = ? AND status = 'cleared'
+                    ORDER BY id DESC LIMIT 1
+                ");
+                $stmt->execute([(int)$bookingId]);
+                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            }
+            return $row ?: null;
         } catch (\Throwable $e) {
             return null;
         }

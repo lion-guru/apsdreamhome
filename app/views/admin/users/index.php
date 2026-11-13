@@ -89,9 +89,9 @@ $perPage = $per_page ?? 20;
 <!-- Analytics Dashboard (Collapsible) -->
 <div class="card border-0 shadow-sm mb-4" id="analyticsDashboard">
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>Analytics Dashboard</h5>
+        <h2 class="mb-0 fs-5"><i class="fas fa-chart-pie me-2 text-primary"></i>Analytics Dashboard</h2>
         <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-outline-secondary" onclick="toggleAnalytics()" id="analyticsToggleBtn">
+            <button class="btn btn-sm btn-outline-secondary" onclick="toggleAnalytics()" id="analyticsToggleBtn" aria-label="Toggle analytics panel">
                 <i class="fas fa-chevron-up" id="analyticsToggleIcon"></i>
             </button>
             <button class="btn btn-sm btn-outline-primary" onclick="refreshAnalytics()">
@@ -139,7 +139,7 @@ $perPage = $per_page ?? 20;
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas fa-activity me-2 text-primary"></i>Recent Activity</h5>
         <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-outline-secondary" onclick="toggleActivityFeed()" id="activityToggleBtn">
+            <button class="btn btn-sm btn-outline-secondary" onclick="toggleActivityFeed()" id="activityToggleBtn" aria-label="Toggle activity feed">
                 <i class="fas fa-chevron-up" id="activityToggleIcon"></i>
             </button>
             <a href="<?= BASE_URL ?>/admin/activity-log" class="btn btn-sm btn-primary" target="_blank">
@@ -211,7 +211,7 @@ $perPage = $per_page ?? 20;
             </div>
             <div class="col-md-2">
                 <label class="form-label small text-muted mb-1">Role</label>
-                <select name="role" class="form-select form-select-sm">
+                <select name="role" class="form-select form-select-sm" aria-label="Filter by role">
                     <option value="">All Roles</option>
                     <?php foreach (['admin','super_admin','manager','employee','telecaller','associate','agent','customer','user'] as $r): ?>
                     <option value="<?= $r ?>" <?= ($filters['role'] ?? '') === $r ? 'selected' : '' ?>><?= ucfirst(str_replace('_', ' ', $r)) ?></option>
@@ -220,7 +220,7 @@ $perPage = $per_page ?? 20;
             </div>
             <div class="col-md-2">
                 <label class="form-label small text-muted mb-1">Status</label>
-                <select name="status" class="form-select form-select-sm">
+                <select name="status" class="form-select form-select-sm" aria-label="Filter by status">
                     <option value="">All Status</option>
                     <option value="active" <?= ($filters['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
                     <option value="inactive" <?= ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
@@ -237,7 +237,7 @@ $perPage = $per_page ?? 20;
             </div>
             <div class="col-md-1">
                 <label class="form-label small text-muted mb-1">Per Page</label>
-                <select name="per_page" class="form-select form-select-sm" onchange="this.form.submit()">
+                <select name="per_page" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="Results per page">
                     <?php foreach ($perPageOptions as $opt): ?>
                     <option value="<?= $opt ?>" <?= ($perPage == $opt) ? 'selected' : '' ?>><?= $opt ?></option>
                     <?php endforeach; ?>
@@ -287,7 +287,7 @@ $perPage = $per_page ?? 20;
                 <thead class="bg-light">
                     <tr>
                         <th class="border-0 ps-4" style="width: 40px;" data-col="select">
-                            <input type="checkbox" id="selectAll" class="form-check-input" title="Select all">
+                            <input type="checkbox" id="selectAll" class="form-check-input" title="Select all" aria-label="Select all users">
                         </th>
                         <th class="border-0" data-col="user"><a href="<?= sortLink('name', 'User', $filters) ?>" class="text-decoration-none text-dark">User<?= $iconName ?? '' ?></a></th>
                         <th class="border-0" data-col="email"><a href="<?= sortLink('email', 'Email', $filters) ?>" class="text-decoration-none text-dark">Email<?= $iconEmail ?? '' ?></a></th>
@@ -318,7 +318,7 @@ $perPage = $per_page ?? 20;
                     ?>
                     <tr data-user-id="<?= $user['id'] ?>">
                         <td class="ps-4" data-col="select">
-                            <input type="checkbox" class="form-check-input user-checkbox" value="<?= $user['id'] ?>" data-role="<?= htmlspecialchars($user['role'] ?? '') ?>">
+                            <input type="checkbox" class="form-check-input user-checkbox" value="<?= $user['id'] ?>" data-role="<?= htmlspecialchars($user['role'] ?? '') ?>" aria-label="Select user <?= htmlspecialchars($user['name'] ?? ('#' . $user['id'])) ?>">
                         </td>
                         <td data-col="user">
                             <div class="d-flex align-items-center">
@@ -836,7 +836,7 @@ function initMobileCardCheckboxes() {
         <div class="col-12 mb-3" id="mobileSelectAllWrapper" style="display: none;">
             <div class="card border-0 bg-light">
                 <div class="card-body py-2 d-flex align-items-center">
-                    <input type="checkbox" id="mobileSelectAll" class="form-check-input me-2">
+                    <input type="checkbox" id="mobileSelectAll" class="form-check-input me-2" aria-label="Select all users">
                     <span class="text-muted small"><strong id="mobileSelectedCount">0</strong> users selected</span>
                     <div class="ms-auto btn-group btn-group-sm">
                         <button onclick="bulkAction('activate')" class="btn btn-outline-success"><i class="fas fa-check me-1"></i>Activate</button>
