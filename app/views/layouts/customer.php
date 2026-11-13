@@ -58,7 +58,12 @@ use App\Services\PortalMenuService;
         .user-name { font-weight: 600; font-size: 0.92rem; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .user-role { font-size: 0.75rem; color: rgba(255,255,255,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .sidebar-section { padding: 14px 20px 4px; font-size: 0.68rem; text-transform: uppercase; color: rgba(255,255,255,0.45); font-weight: 700; letter-spacing: 0.05em; }
+        .sidebar-section { padding: 14px 20px 4px; font-size: 0.68rem; text-transform: uppercase; color: rgba(255,255,255,0.45); font-weight: 700; letter-spacing: 0.05em; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; user-select: none; }
+        .sidebar-section:hover { color: rgba(255,255,255,0.75); }
+        .sidebar-section:focus-visible { outline: 2px solid #38bdf8; outline-offset: -2px; border-radius: 6px; }
+        .sidebar-section .chev { font-size: 0.62rem; transition: transform 0.2s ease; opacity: 0.8; }
+        .sidebar-section.collapsed .chev { transform: rotate(-90deg); }
+        .sidebar-menu.aps-collapsed { display: none; }
         .sidebar-menu { list-style: none; padding: 0 10px; margin: 0 0 8px; }
         .sidebar-item { margin-bottom: 2px; }
         .sidebar-link { display: flex; align-items: center; padding: 9px 14px; color: #cbd5e1; text-decoration: none; border-radius: 8px; transition: all 0.2s ease; font-size: 0.88rem; }
@@ -128,13 +133,15 @@ use App\Services\PortalMenuService;
         }
         $currentUri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
         $activeKey = $current_page ?? '';
+        $sectionIndex = 0;
         foreach ($portalMenu as $section):
             if (empty($section['items'])) {
                 continue;
             }
+            $sectionIndex++;
         ?>
-        <div class="sidebar-section"><?= htmlspecialchars(__($section['name'], null, $section['name'])) ?></div>
-        <ul class="sidebar-menu">
+        <div class="sidebar-section" role="button" tabindex="0" data-section-toggle="<?= $sectionIndex ?>" aria-expanded="true" aria-controls="sidebar-list-<?= $sectionIndex ?>"><span><?= htmlspecialchars(__($section['name'], null, $section['name'])) ?></span><i class="fas fa-chevron-down chev" aria-hidden="true"></i></div>
+        <ul class="sidebar-menu" id="sidebar-list-<?= $sectionIndex ?>" data-section-list="<?= $sectionIndex ?>">
             <?php foreach ($section['items'] as $menuItem):
                 $itemUrl = $menuItem['url'] ?? '';
                 $isUrlMatch = (!empty($itemUrl) && ($currentUri === $itemUrl || (strlen($itemUrl) > 6 && strpos($currentUri, $itemUrl) === 0)));
@@ -199,6 +206,40 @@ use App\Services\PortalMenuService;
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
+        function setSectionCollapsed(sec, list, collapsed) {
+            sec.classList.toggle('collapsed', collapsed);
+            sec.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+            if (list) list.classList.toggle('aps-collapsed', collapsed);
+        }
+
+        function initSidebarSections() {
+            var sections = document.querySelectorAll('.sidebar-section[data-section-toggle]');
+            if (!sections.length) return;
+            var saved = [];
+            try { saved = JSON.parse(sessionStorage.getItem('aps_customer_collapsed') || '[]'); } catch (e) {}
+            sections.forEach(function(sec) {
+                var idx = sec.getAttribute('data-section-toggle');
+                var list = document.querySelector('[data-section-list="' + idx + '"]');
+                var hasActive = list ? !!list.querySelector('.sidebar-link.active') : false;
+                // First visit (no saved state): keep only the section with the active link open.
+                var shouldCollapse = saved.length ? (saved.indexOf(idx) !== -1 && !hasActive) : !hasActive;
+                setSectionCollapsed(sec, list, shouldCollapse);
+                var toggle = function() {
+                    var nowCollapsed = !sec.classList.contains('collapsed');
+                    setSectionCollapsed(sec, list, nowCollapsed);
+                    var state = [];
+                    document.querySelectorAll('.sidebar-section.collapsed').forEach(function(s) {
+                        state.push(s.getAttribute('data-section-toggle'));
+                    });
+                    try { sessionStorage.setItem('aps_customer_collapsed', JSON.stringify(state)); } catch (e) {}
+                };
+                sec.addEventListener('click', toggle);
+                sec.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+                });
+            });
+        }
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -207,6 +248,7 @@ use App\Services\PortalMenuService;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            initSidebarSections();
             const toggleBtn = document.getElementById('sidebarToggle');
             const overlay = document.getElementById('sidebarOverlay');
             if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
