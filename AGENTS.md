@@ -6864,3 +6864,34 @@ User instructions: "do next amd aur koi suggestion ho iss peoject ko ko best ban
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **501** (this session; S500 logged above).
+
+## Session 501: Public Regression Sweep After S500, Embedded-Browser Wedge Cleared, Image Audit (2026-11-14)
+
+### Trigger
+User: "do next and aur bhi suggestion ho rationale ho apne dimag se best kaam karo" — continue autonomous CEO/senior-developer work after the parallel actor's Sessions 494-500 landed (mobile festival concession suite, agent follow-ups, colony plot map viewer, cost-sheet PDF parity).
+
+### Work
+1. **Public funnel re-probed on current HEAD (`17575c3f2`)** — `/`, `/properties`, `/offers`, `/contact`, `/about`, `/project-locations/budha-city`, `/ai-chatbot` — all 200; no regressions from S494-S500.
+2. **Fresh-content verification vs stale embedded browser** — the OpenCode embedded Chromium (HTTP-returning-a-stale-cached-page bug) was cleared at operator level with `caches.delete('*')` + re-navigate: console now reports **0 errors** on every public page except the known stale-SW byproduct (`notification-widget.js:76`) which is already fixed in code (`apsdreamhome-v6` SW + `no-cache sw.js`) and self-heals on a fresh profile.
+3. **Image audit on 3 flagged pages** — `properties` (12 `placeholder/property.svg` refs), `about` (6 `leaders/leader-1..6.jpg` refs), `budha-city` (7 `amenities/1..7.jpg` refs). All URLs return 200 with correct `Content-Length`/`Content-Type` over curl; all referenced files exist on disk in `public/assets/images/{placeholder,leaders,amenities}/`. The "broken image" signal was the pinned SW cache; served HTML references the correct assets; no code change needed. Noted for the next verification with a clean profile.
+4. **Fresh fetch needles** — `properties` (38 image refs), `about` (20, incl. all 6 leaders), `budha-city` (21, incl. all 7 amenities + property.svg placeholder for the hero). All references are absolute-style `/assets/...` and hit live assets.
+
+### Verification
+- Browser console: 0 page-level errors on the public funnel after cache bust; residual is stale-SW noise only.
+- All checked images: 200 image/jpeg or image/svg+xml with non-zero lengths (211996/145649/738/129461 bytes for the four families).
+- Master suite remains **11/11 PASSED** (last run 27.74s); no app code changed this round.
+
+### Suggestions (not taken without owner call)
+- `/logs` grows again as real errors land; a logrotate/cron would be a 20-minute follow-up.
+- `admin_gate` logging is quiet now that probes settled; a weekly error-rate report could ship with `alerts_cron.log`.
+- The screenshot tool requires a visible desktop window; for CI-grade visual checks, use the headless Playwright visual-regression job (already seeded in S465).
+
+Commits: none (no app code changes this round).
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **502** (this session; S500 logged above in the file).
+
+### Key Lessons (carried, continued)
+_925. **Before touching a pinned browser cache, measure what the server truly returns.** All "broken images" were SW-cache artifacts; HTTP proved every file intact and the HTML references unchanged. Fix the transport, not the content.
+_926. **`caches.keys().then(...)` plus one re-navigation is the boot-sector fix for a wedged embedded profile.** It cost 5 seconds and turned every public page clean; the stale `notification-widget.js` reports would otherwise burn an hour of phantom bug hunts.
+_927. **Parallel whole-tree commits can propagate your uncommitted edits to HEAD without crediting you.** Verify each previously-authored marker (`data-section-toggle`, `!APS_HR_WS`) on disk, not your memory of where you put it.
