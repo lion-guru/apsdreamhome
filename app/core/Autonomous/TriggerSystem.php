@@ -136,17 +136,17 @@ class AutonomousTriggerSystem
         $this->log("📝 Checking for changes to commit...");
 
         // Check if there are changes
-        $output = shell_exec('cd ' . $this->projectRoot . ' && git status --porcelain');
+        $output = shell_exec('cd ' . escapeshellarg($this->projectRoot) . ' && git status --porcelain');
 
         if (!empty(trim($output))) {
             $this->log("📦 Auto-committing changes...");
 
             // Add all changes
-            shell_exec('cd ' . $this->projectRoot . ' && git add .');
+            shell_exec('cd ' . escapeshellarg($this->projectRoot) . ' && git add .');
 
             // Commit with timestamp
             $commitMessage = '[Auto-Fix] Super Admin: Autonomous improvements - ' . date('Y-m-d H:i:s');
-            shell_exec('cd ' . $this->projectRoot . ' && git commit -m "' . $commitMessage . '"');
+            shell_exec('cd ' . escapeshellarg($this->projectRoot) . ' && git commit -m ' . escapeshellarg($commitMessage));
 
             $this->log("✅ Changes auto-committed successfully");
         }
@@ -176,7 +176,7 @@ class AutonomousTriggerSystem
      */
     private function hasSyntaxError($file)
     {
-        $output = shell_exec('php -l "' . $file . '" 2>&1');
+        $output = shell_exec('php -l ' . escapeshellarg($file) . ' 2>&1');
         return strpos($output, 'Parse error') !== false || strpos($output, 'Fatal error') !== false;
     }
 
