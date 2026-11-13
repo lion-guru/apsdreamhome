@@ -42,14 +42,14 @@ ob_start();
                         <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Shopping Centre & Community Parks</li>
                     </ul>
                     <div class="alert alert-info border-0 shadow-sm p-4 rounded-4">
-                        <h5 class="fw-bold mb-2"><i class="fas fa-map-marker-alt me-2"></i>Strategic Location</h5>
+                        <h3 class="fs-6 fw-bold mb-2"><i class="fas fa-map-marker-alt me-2"></i>Strategic Location</h3>
                         Our township is located nearby premium educational institutions, engineering & dental colleges, 
                         railway station, petrol pumps, airport, and city malls, ensuring a convenient lifestyle for your family.
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-light">
-                        <h4 class="fw-bold text-primary mb-3">Quick Inquiry</h4>
+                        <h3 class="fs-5 fw-bold text-primary mb-3">Quick Inquiry</h3>
                         <form action="<?= BASE_URL ?>contact" method="POST">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <input type="hidden" name="subject" value="Inquiry about Ram Nagri">

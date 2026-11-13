@@ -55,7 +55,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
                 <h1><?php echo htmlspecialchars($colony['name'] ?? 'Our Project'); ?></h1>
                 <p class="lead mb-4 opacity-75"><?php echo htmlspecialchars(substr($colony['description'] ?? '', 0, 200)); ?></p>
                 <div class="d-flex flex-wrap gap-3">
-                    <a href="#contact" class="btn btn-light btn-lg"><i class="fas fa-phone me-2"></i><?= __('colony_enquire_now') ?></a>
+                    <a href="#contact" class="btn btn-primary btn-lg"><i class="fas fa-phone me-2"></i><?= __('colony_enquire_now') ?></a>
                     <?php if ($colony['brochure_path'] ?? ''): ?>
                     <a href="<?php echo BASE_URL . '/' . ltrim($colony['brochure_path'], '/'); ?>" class="btn btn-outline-light btn-lg" target="_blank"><i class="fas fa-download me-2"></i><?= __('colony_download_brochure') ?></a>
                     <?php endif; ?>
@@ -141,7 +141,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             <div class="col-md-4 col-sm-6">
                 <div class="plot-card bg-white">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h6 class="mb-0"><?= sprintf(__('colony_plot_number'), htmlspecialchars($p['plot_number'] ?? 'N/A')) ?></h6>
+                        <h3 class="fs-5 fw-bold mb-0"><?= sprintf(__('colony_plot_number'), htmlspecialchars($p['plot_number'] ?? 'N/A')) ?></h3>
                         <span class="badge bg-success"><?= __('colony_available') ?></span>
                     </div>
                     <p class="text-muted small mb-2"><?php echo htmlspecialchars($p['block'] ?? ''); ?> &bull; <?php echo e($p['area_sqft'] ?? 0); ?> sqft</p>
@@ -259,7 +259,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow">
-                    <iframe src="<?php echo htmlspecialchars($colony['youtube_video_url'] ?? ''); ?>" allowfullscreen></iframe>
+                    <iframe src="<?php echo htmlspecialchars($colony['youtube_video_url'] ?? ''); ?>" allowfullscreen title="Colony walkthrough video"></iframe>
                 </div>
             </div>
         </div>
@@ -297,7 +297,7 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
     <div class="container">
         <h2 class="text-center mb-5"><i class="fas fa-map text-primary me-2"></i><?= __('colony_location_map_heading') ?></h2>
         <div class="rounded-4 overflow-hidden shadow">
-            <iframe src="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" width="100%" height="400" allowfullscreen loading="lazy"></iframe>
+            <iframe src="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" width="100%" height="400" allowfullscreen loading="lazy" title="Colony location map"></iframe>
         </div>
     </div>
 </section>
@@ -311,13 +311,13 @@ $bannerImage = !empty($bannerRaw) && (str_starts_with($bannerRaw, 'http://') || 
             <p class="mb-4 opacity-75"><?= __('colony_get_in_touch') ?></p>
             <div class="d-flex flex-wrap justify-content-center gap-4 mb-4">
                 <?php if ($colony['contact_phone'] ?? ''): ?>
-                <a href="tel:<?php echo htmlspecialchars($colony['contact_phone'] ?? ''); ?>" class="btn btn-light btn-lg"><i class="fas fa-phone me-2"></i><?php echo htmlspecialchars($colony['contact_phone'] ?? ''); ?></a>
+                <a href="tel:<?php echo htmlspecialchars($colony['contact_phone'] ?? ''); ?>" class="btn btn-primary btn-lg"><i class="fas fa-phone me-2"></i><?php echo htmlspecialchars($colony['contact_phone'] ?? ''); ?></a>
                 <?php endif; ?>
                 <?php if ($colony['contact_email'] ?? ''): ?>
-                <a href="mailto:<?php echo htmlspecialchars($colony['contact_email'] ?? ''); ?>" class="btn btn-outline-light btn-lg"><i class="fas fa-envelope me-2"></i><?php echo htmlspecialchars($colony['contact_email'] ?? ''); ?></a>
+                <a href="mailto:<?php echo htmlspecialchars($colony['contact_email'] ?? ''); ?>" class="btn btn-outline-dark btn-lg"><i class="fas fa-envelope me-2"></i><?php echo htmlspecialchars($colony['contact_email'] ?? ''); ?></a>
                 <?php endif; ?>
             </div>
-            <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-warning btn-lg"><i class="fas fa-paper-plane me-2"></i><?= __('colony_send_enquiry') ?></a>
+            <a href="<?php echo BASE_URL; ?>/contact" class="btn btn-lg" style="background:#f4c542;color:#1e293b;border-color:#f4c542;"><i class="fas fa-paper-plane me-2"></i><?= __('colony_send_enquiry') ?></a>
         </div>
     </div>
 </section>

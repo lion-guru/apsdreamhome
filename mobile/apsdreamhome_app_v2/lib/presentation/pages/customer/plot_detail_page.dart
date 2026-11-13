@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/services/colony_service.dart';
 import '../../../data/models/plot_model.dart';
@@ -29,6 +30,22 @@ class PlotDetailPage extends ConsumerWidget {
         title: const Text('Plot Details'),
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
+        actions: [
+          plotAsync.maybeWhen(
+            data: (plot) {
+              if (plot == null) return const SizedBox.shrink();
+              return IconButton(
+                icon: const Icon(Icons.picture_as_pdf_outlined),
+                tooltip: 'Cost Sheet (PDF)',
+                onPressed: () {
+                  final pdfUrl = '${AppConstants.baseUrl}/plots/${plot.id}/quotation-pdf';
+                  launchUrl(Uri.parse(pdfUrl), mode: LaunchMode.externalApplication);
+                },
+              );
+            },
+            orElse: () => const SizedBox.shrink(),
+          ),
+        ],
       ),
       body: plotAsync.when(
         data: (plot) {
@@ -123,6 +140,20 @@ class PlotDetailPage extends ConsumerWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    onPressed: () {
+                      final pdfUrl = '${AppConstants.baseUrl}/plots/${plot.id}/quotation-pdf';
+                      launchUrl(Uri.parse(pdfUrl), mode: LaunchMode.externalApplication);
+                    },
+                    icon: const Icon(Icons.picture_as_pdf, color: Color(0xFF0284C7)),
+                    tooltip: 'Cost Sheet (PDF)',
+                    style: IconButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFF0284C7), width: 1.2),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.all(12),
                     ),
                   ),
                   const SizedBox(width: 8),

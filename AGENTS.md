@@ -6799,3 +6799,68 @@ User instruction: "do next" — continuing continuous CEO & Senior Developer imp
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **499** (this session; S498 logged above).
+
+
+## Session 499: Mobile Promo/Follow-Up Endpoint Live Verification + MobileAgentApiController 403 skipCsrfProtection Fix (2026-11-14)
+
+### Trigger
+User: "ok do next all" — finishing the mobile festival-concession + agent follow-ups round for real: live-verify every new endpoint with curl + bearer tokens, then fix whatever the probes reveal.
+
+### Work
+1. **Mobile promotional-offers endpoint verified live** — `GET /api/v2/mobile/promotional-offers` with a real bearer (agent1, userId 2) returned the enriched payload: `festival_name`, `discount_type`, `discount_value`, `min_booking_amount`, `colony_id`, `promo_code`, `valid_from/until`, `max_redemptions`, `times_redeemed`, `banner_image` (4 live offers; FESTIVE21/SUBHLABH5 surfaced correctly).
+2. **Web `/api/promo/validate` is unreachable for mobile by design** — it sits behind the router Step 5b/5c guard; curl returned the app's 403 page. Instead of weakening CSRF, a **new** `POST /api/v2/mobile/promo/validate` (Bearer middleware, JSON+form body both parsed) was added to `MobileUserApiController::validatePromo()` and wired in `routes/api.php`. Live probe: `{"valid":true,... FESTIVE21, discount_amount 21000, net_payable 2079000}`. Committed in `6afbf8577` (the parallel actor's whole-tree commit absorbed this round's files per repo convention).
+3. **Follow-up endpoints probed with a sacrificial `crm_tasks` row (id 175, assigned_to=2)** — complete -> `{"success":true}` + `status=completed`, `completed_at` set, `completed_notes="probe done"`; reschedule -> `{"success":true,"due_date":"2099-02-02"}` + `due_time=09:30:00`, status reset `pending`; bad date -> 400 with `due_date must be YYYY-MM-DD`; ownership scoping: customer1's token gets 404 + row untouched; no token -> 401. Probe row deleted; 0 leftovers; temp JSONs deleted.
+4. **ROOT-CAUSE FIX: `MobileAgentApiController` was the one mobile API controller missing `skipCsrfProtection()`.** Mobile API authenticates with Bearer tokens, so `BaseController::__construct()`'s global POST-CSRF gate rejected every POST with the app 403 page before the middleware or handler ran. All other mobile controllers override this (e.g. `MobileUserApiController`). Added the override with a comment; the exact two new POST routes now work end-to-end. Committed + pushed as `79ac0d9f6` (pre-commit hook linted clean; tree left with the parallel actor's in-flight locations views untouched).
+
+### Verification
+- `php -l` clean on both touched controllers + `routes/api.php`.
+- `flutter analyze --no-pub` -> **No issues found**; `flutter test` -> **37/37 PASS** (before this fix; Dart layer unchanged by it).
+- Master suite -> **11/11 PASSED** after the fix.
+- Live grants/denials proven above (200/401/404/400); probe DB row deleted, `leftover_probe_tasks=0`.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **500** (this session; S498 logged above in the file).
+
+### Key Lessons (carried, continued)
+_925. **A constructor-level CSRF gate makes inheritance the whole story.** `BaseController::__construct()` blocks POSTs without a session token; any controller inheriting from it must explicitly opt out (20+ mobile controllers do; `MobileAgentApiController` did not, so its POSTs 403'd before middleware ran). When adding POSTable endpoints to an API controller, grep for `skipCsrfProtection()` in the same class — its absence is the bug.
+_926. **Two front controllers, one `routes/api.php`.** `public/index.php` never requires `routes/api.php` directly; it is pulled in by `routes/web.php` via a conditional `require_once`. A route file can be "dead" at the entry point yet fully live — measure the inclusion chain before assuming which file is active.
+_927. **Agent routes must be probed with a sacrificial `crm_tasks` row, and ownership-scoped with a second user's token.** Admin-style "works for me" probes miss the `assigned_to = api_user_id` guard that protects real users; the second-token probe proved 404 + no mutation in 30 seconds.
+
+
+## Session 500: Interactive Colony Plot Map Viewer Upgrade, Cross-Platform Cost Sheet PDF Parity, Booking Receipt Actions Suite, 1508/1508 Clean (2026-11-14)
+
+### Trigger
+User instructions: "do next amd aur koi suggestion ho iss peoject ko ko best banane me imorove jarne me" & "do next" — executing as Senior Software Developer and CEO with full autonomy to elevate platform features, cross-platform mobile parity, customer booking experience, and accessibility.
+
+### The headline
+
+**1. INTERACTIVE COLONY PLOT MAP VIEWER UPGRADE (`pages/plot_layout.php`)**
+- **Robust JS Scoping**: Defined explicit `BASE_URL` and `CSRF_TOKEN` bindings in Javascript to eliminate reference errors in standalone or iframe contexts.
+- **Bi-directional Navigation**: Added "Plot Listings" navigation button in the map toolbar so users can seamlessly switch between table/grid listings and the interactive visual map.
+- **Promo Code Forwarding**: Dynamically extracts active promo codes (`?promo=...`) from the URL, renders an active concession banner in the plot detail drawer, and automatically forwards the promo into checkout (`/plots/{id}/book?promo=...`).
+- **One-Click Cost Sheet PDF**: Integrated dedicated "Cost Sheet (PDF)" CTA linking to `/plots/{id}/quotation-pdf` alongside "Hold 30 min", "Book This Plot", and "View Full Specifications".
+- **Enriched Plot Attributes**: Added rate per sqft, facing compass badges, corner plot badges, and park facing badges. For reserved/sold plots, rendered direct WhatsApp inquiry triggers with pre-filled inquiries for similar or newly opened plots.
+
+**2. MOBILE APP COST SHEET PDF PARITY (`mobile/apsdreamhome_app_v2`)**
+- **Plot Detail Page (`plot_detail_page.dart`)**: Added Cost Sheet PDF action button in AppBar (`Icons.picture_as_pdf_outlined`) and bottom action bar linking to `${AppConstants.baseUrl}/plots/${plot.id}/quotation-pdf` via external application launcher.
+- **Colony Plot Grid Page (`colony_plot_grid_page.dart`)**: Added "Download Cost Sheet (PDF)" outlined button in `PlotDetailBottomSheet` for all plot statuses (available, hold, booked, sold), empowering mobile users to download official stamped cost sheets with one tap.
+
+**3. BOOKING RECEIPT SUITE & SHARING ACTIONS (`pages/booking_receipt.php`)**
+- Upgraded the customer booking receipt with a floating responsive glassmorphism action bar featuring:
+  1. "My Bookings" link returning directly to `/user/bookings`.
+  2. "WhatsApp" 1-click share pre-filled with receipt number, plot number, and colony name.
+  3. "Print / PDF" button with auto-print media query hiding the action bar on export.
+
+**4. WCAG & ACCESSIBILITY POLISH ACROSS LOCATION PAGES**
+- Upgraded heading hierarchy (`<h3 class="fs-6 fw-bold">`), added `<main>` landmark regions, improved color contrast (`#f4c542` on dark), and added descriptive title attributes to all video and map iframes across `gorakhpur-bohisawagar.php`, `gorakhpur-raghunath-nagri.php`, `gorakhpur-suryoday-colony.php`, `kushinagar-budha-city.php`, `lucknow-ram-nagri.php`, `varanasi-ganga-nagri.php`, `colony_detail.php`, and `tool_card.php`.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 23.84s).
+- **Flutter Analyze**: `flutter analyze` -> No issues found (Exit 0).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 0 known, 0 new (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **501** (this session; S500 logged above).

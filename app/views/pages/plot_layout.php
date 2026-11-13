@@ -1,4 +1,5 @@
 <!-- Interactive Plot Layout Map -->
+<meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 <link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css">
 <script src="<?= BASE_URL ?>/assets/js/vendor/chart.umd.js"></script>
 <style>
@@ -39,6 +40,13 @@
         display: flex; align-items: center; gap: 12px; padding: 10px 20px;
         background: #fff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;
     }
+    .back-nav-btn {
+        display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px;
+        border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc;
+        color: #334155; font-size: 12px; font-weight: 600; text-decoration: none;
+        transition: all 0.15s; flex-shrink: 0;
+    }
+    .back-nav-btn:hover { background: #e2e8f0; color: #0f172a; text-decoration: none; }
     .map-toolbar input[type="text"] {
         padding: 8px 14px; border: 1px solid #e2e8f0; border-radius: 8px;
         font-size: 13px; width: 220px; outline: none;
@@ -89,14 +97,26 @@
         display: inline-block; padding: 4px 12px; border-radius: 20px;
         font-size: 12px; font-weight: 600; color: #fff;
     }
-    .detail-footer { padding: 16px 20px; border-top: 1px solid #e2e8f0; flex-shrink: 0; }
+    .detail-footer { padding: 16px 20px; border-top: 1px solid #e2e8f0; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+    .detail-btn-row { display: flex; gap: 8px; }
+    .detail-btn-row .book-btn { flex: 1; }
     .book-btn {
-        display: block; width: 100%; padding: 12px; background: #0d9488; color: #fff;
-        border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
-        cursor: pointer; text-align: center; text-decoration: none;
+        display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+        padding: 11px 16px; background: #0d9488; color: #fff; border: none; border-radius: 8px;
+        font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none;
+        transition: all 0.2s;
     }
-    .book-btn:hover { background: #4338ca; }
+    .book-btn:hover { opacity: 0.92; color: #fff; text-decoration: none; }
+    .book-btn.pdf-btn { background: #0284c7; }
+    .book-btn.details-btn { background: #475569; }
+    .book-btn.hold-btn { background: #f59e0b; }
+    .book-btn.whatsapp-btn { background: #25d366; }
     .book-btn.disabled { background: #94a3b8; cursor: not-allowed; pointer-events: none; }
+    .promo-badge-tag {
+        background: #fef3c7; border: 1px solid #fde68a; border-radius: 6px;
+        padding: 8px 12px; font-size: 12px; color: #92400e; font-weight: 600;
+        display: flex; align-items: center; gap: 6px; margin-bottom: 14px;
+    }
     .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 90; display: none; }
     .overlay.open { display: block; }
     .empty-colony { display: flex; align-items: center; justify-content: center; height: 300px; color: #94a3b8; font-size: 14px; }
@@ -144,6 +164,9 @@
     <!-- MAIN AREA -->
     <div class="map-main">
         <div class="map-toolbar">
+            <a href="<?= BASE_URL ?>/plots" class="back-nav-btn" title="<?= __('plot_back_listings', [], 'Back to Plot Listings') ?>">
+                <i class="fas fa-arrow-left"></i> <span><?= __('plot_listings_label', [], 'Plot Listings') ?></span>
+            </a>
             <input type="text" id="searchInput" placeholder="<?= __('plot_search_placeholder', [], 'Search plot number...') ?>" oninput="searchPlots(this.value)">
             <button class="filter-btn active" data-status="all" onclick="filterStatus('all', this)">All</button>
             <button class="filter-btn" data-status="available" onclick="filterStatus('available', this)">Available</button>
@@ -174,8 +197,12 @@
 </div>
 
 <script>
-// ---- DATA ----
+// ---- DATA & CONFIG ----
+var BASE_URL = <?= json_encode(BASE_URL) ?>;
+var CSRF_TOKEN = <?= json_encode($_SESSION['csrf_token'] ?? '') ?>;
 var coloniesData = <?= json_encode($colonies, JSON_HEX_TAG | JSON_HEX_AMP) ?>;
+var urlParams = new URLSearchParams(window.location.search);
+var activePromo = urlParams.get('promo') || '';
 var currentColony = 'all';
 var currentStatus = 'all';
 var searchTerm = '';
@@ -393,28 +420,70 @@ function showPlotDetail(id) {
     var status = getDisplayStatus(plot.status);
     document.getElementById('detailTitle').textContent = 'Plot ' + escHtml(plot.plot_number);
 
-    var body = '<div class="detail-field"><div class="label">Status</div><div class="value"><span class="detail-status-badge">' + status.label + '</span></div></div>';
-    body += '<div class="detail-field"><div class="label">Plot Number</div><div class="value">' + escHtml(plot.plot_number) + '</div></div>';
+    var body = '';
+    if (activePromo) {
+        body += '<div class="promo-badge-tag"><i class="fas fa-gift"></i> Promo Code <strong>' + escHtml(activePromo) + '</strong> applied at checkout!</div>';
+    }
+
+    body += '<div class="detail-field"><div class="label">Status</div><div class="value"><span class="detail-status-badge">' + status.label + '</span></div></div>';
+    body += '<div class="detail-field"><div class="label">Plot Number</div><div class="value">#' + escHtml(plot.plot_number) + '</div></div>';
     body += '<div class="detail-field"><div class="label">Colony</div><div class="value">' + escHtml(plot.colony_name) + '</div></div>';
     body += '<div class="detail-field"><div class="label">Block</div><div class="value">' + escHtml(plot.block || '-') + '</div></div>';
     body += '<div class="detail-field"><div class="label">Dimensions</div><div class="value">' + (plot.width_ft || '-') + ' ft x ' + (plot.length_ft || '-') + ' ft</div></div>';
     body += '<div class="detail-field"><div class="label">Area</div><div class="value">' + (parseFloat(plot.area_sqft) ? Math.round(plot.area_sqft) + ' sqft' : '-') + '</div></div>';
-    body += '<div class="detail-field"><div class="label">Total Price</div><div class="value">&#8377; ' + formatPrice(plot.total_price) + '</div></div>';
-    if (plot.facing) body += '<div class="detail-field"><div class="label">Facing</div><div class="value">' + escHtml(plot.facing) + '</div></div>';
-    if (plot.corner_plot == 1) body += '<div class="detail-field"><div class="label">Corner Plot</div><div class="value"><i class="fas fa-check-circle"></i> Yes</div></div>';
-    if (plot.park_facing == 1) body += '<div class="detail-field"><div class="label">Park Facing</div><div class="value"><i class="fas fa-check-circle"></i> Yes</div></div>';
-    if (plot.last_status_change) body += '<div class="detail-field"><div class="label">Last Status Change</div><div class="value">' + escHtml(plot.last_status_change) + '</div></div>';
+    if (plot.price_per_sqft && parseFloat(plot.price_per_sqft) > 0) {
+        body += '<div class="detail-field"><div class="label">Rate per sqft</div><div class="value">&#8377; ' + formatPrice(plot.price_per_sqft) + ' / sqft</div></div>';
+    }
+    body += '<div class="detail-field"><div class="label">Total Price</div><div class="value" style="font-weight:700;color:#0f766e;">&#8377; ' + formatPrice(plot.total_price) + '</div></div>';
+
+    var tagsHtml = '';
+    if (plot.facing) {
+        tagsHtml += '<span class="badge" style="background:#e0e7ff;color:#3730a3;padding:5px 9px;border-radius:6px;font-size:11px;margin-right:4px;"><i class="fas fa-compass me-1"></i> ' + escHtml(plot.facing) + ' Facing</span>';
+    }
+    if (plot.corner_plot == 1) {
+        tagsHtml += '<span class="badge" style="background:#fef3c7;color:#92400e;padding:5px 9px;border-radius:6px;font-size:11px;margin-right:4px;"><i class="fas fa-star me-1"></i> Corner Plot</span>';
+    }
+    if (plot.park_facing == 1) {
+        tagsHtml += '<span class="badge" style="background:#d1fae5;color:#065f46;padding:5px 9px;border-radius:6px;font-size:11px;margin-right:4px;"><i class="fas fa-tree me-1"></i> Park Facing</span>';
+    }
+    if (tagsHtml) {
+        body += '<div class="detail-field"><div class="label">Special Features</div><div class="value" style="margin-top:4px;">' + tagsHtml + '</div></div>';
+    }
+
+    if (plot.last_status_change) {
+        body += '<div class="detail-field"><div class="label">Last Updated</div><div class="value" style="font-size:12px;color:#64748b;">' + escHtml(plot.last_status_change) + '</div></div>';
+    }
 
     document.getElementById('detailBody').innerHTML = body;
 
+    var bookUrl = BASE_URL + '/plots/' + plot.id + '/book' + (activePromo ? '?promo=' + encodeURIComponent(activePromo) : '');
+    var quotationPdfUrl = BASE_URL + '/plots/' + plot.id + '/quotation-pdf';
+    var plotDetailsUrl = BASE_URL + '/plots/' + plot.id;
+
     var footer = '';
     if (plot.status === 'available') {
-        footer = '<a href="' + BASE_URL + '/plots/' + plot.id + '/book" class="book-btn"><i class="fas fa-bookmark"></i> Book Now</a>';
-        footer += ' <button class="book-btn" style="background:#f59e0b;margin-left:8px;" onclick="holdPlot(' + plot.id + ')"><i class="fas fa-clock"></i> Hold 30 min</button>';
+        footer += '<a href="' + bookUrl + '" class="book-btn"><i class="fas fa-bookmark"></i> Book This Plot</a>';
+        footer += '<div class="detail-btn-row">';
+        footer += '<a href="' + quotationPdfUrl + '" target="_blank" class="book-btn pdf-btn" title="Download Official Cost Sheet PDF"><i class="fas fa-file-pdf"></i> Cost Sheet (PDF)</a>';
+        footer += '<button type="button" class="book-btn hold-btn" onclick="holdPlot(' + plot.id + ')"><i class="fas fa-clock"></i> Hold 30 min</button>';
+        footer += '</div>';
+        footer += '<a href="' + plotDetailsUrl + '" class="book-btn details-btn"><i class="fas fa-info-circle"></i> View Full Specifications</a>';
     } else if (plot.status === 'hold') {
-        footer = '<a class="book-btn disabled"><i class="fas fa-hourglass-half"></i> On Hold</a>';
+        footer += '<a class="book-btn disabled"><i class="fas fa-hourglass-half"></i> Currently On Hold</a>';
+        footer += '<div class="detail-btn-row">';
+        footer += '<a href="' + quotationPdfUrl + '" target="_blank" class="book-btn pdf-btn"><i class="fas fa-file-pdf"></i> Cost Sheet (PDF)</a>';
+        footer += '<a href="' + plotDetailsUrl + '" class="book-btn details-btn"><i class="fas fa-info-circle"></i> Specs</a>';
+        footer += '</div>';
+        var waMsg = encodeURIComponent('Namaste APS Dream Home! I am interested in Plot #' + plot.plot_number + ' in ' + plot.colony_name + ' which is currently on hold. Please notify me if it becomes available.');
+        footer += '<a href="https://wa.me/917007444842?text=' + waMsg + '" target="_blank" class="book-btn whatsapp-btn"><i class="fab fa-whatsapp"></i> Inquire on WhatsApp</a>';
     } else {
-        footer = '<a class="book-btn disabled"><i class="fas fa-ban"></i> Not Available</a>';
+        footer += '<a class="book-btn disabled"><i class="fas fa-ban"></i> ' + status.label + '</a>';
+        footer += '<div class="detail-btn-row">';
+        footer += '<a href="' + quotationPdfUrl + '" target="_blank" class="book-btn pdf-btn"><i class="fas fa-file-pdf"></i> Cost Sheet (PDF)</a>';
+        footer += '<a href="' + plotDetailsUrl + '" class="book-btn details-btn"><i class="fas fa-info-circle"></i> Specs</a>';
+        footer += '</div>';
+        var waMsg2 = encodeURIComponent('Namaste APS Dream Home! Plot #' + plot.plot_number + ' in ' + plot.colony_name + ' is ' + status.label + '. Do you have similar available plots nearby?');
+        footer += '<a href="https://wa.me/917007444842?text=' + waMsg2 + '" target="_blank" class="book-btn whatsapp-btn"><i class="fab fa-whatsapp"></i> Enquire for Similar Plots</a>';
     }
     document.getElementById('detailFooter').innerHTML = footer;
 
@@ -448,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ---- HOLD PLOT ----
 function holdPlot(plotId) {
     var csrf = document.querySelector('meta[name="csrf-token"]');
-    var token = csrf ? csrf.getAttribute('content') : '';
+    var token = CSRF_TOKEN || (csrf ? csrf.getAttribute('content') : '');
     if (!confirm('Reserve this plot for 30 minutes?')) return;
 
     fetch(BASE_URL + '/plots/' + plotId + '/lock', {

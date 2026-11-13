@@ -67,6 +67,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
 </head>
 
 <body>
+<main>
     <!-- Navigation -->
     <!-- FIXED: Commented out missing template file -->
     <?php // include 'includes/templates/header.php'; ?>
@@ -83,7 +84,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                             <i class="fas fa-map-marker-alt me-1"></i>
                             <?php echo e($projectLocation); ?>
                         </span>
-                        <span class="badge bg-warning px-3 py-2">
+                        <span class="badge px-3 py-2" style="background:#f4c542;color:#1e293b;">
                             <?php echo e($projectStatus); ?>
                         </span>
                     </div>
@@ -112,7 +113,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                                         <div class="highlight-icon">
                                             <i class="fas fa-home"></i>
                                         </div>
-                                        <h5>Project Type</h5>
+                                        <h3 class="fs-6 fw-bold">Project Type</h3>
                                         <p class="text-muted"><?php echo e($projectType); ?></p>
                                     </div>
                                 </div>
@@ -121,7 +122,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                                         <div class="highlight-icon">
                                             <i class="fas fa-map-marked-alt"></i>
                                         </div>
-                                        <h5>Location</h5>
+                                        <h3 class="fs-6 fw-bold">Location</h3>
                                         <p class="text-muted"><?php echo e($projectLocation); ?></p>
                                     </div>
                                 </div>
@@ -130,7 +131,7 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
                                         <div class="highlight-icon">
                                             <i class="fas fa-calendar-alt"></i>
                                         </div>
-                                        <h5>Possession</h5>
+                                        <h3 class="fs-6 fw-bold">Possession</h3>
                                         <p class="text-muted"><?php echo e($possessionDate); ?></p>
                                     </div>
                                 </div>
@@ -239,6 +240,8 @@ $metaDescription = "Bohisawagar - Premium residential plots in Gorakhpur by APS 
             </div>
         </div>
     </div>
+
+</main>
 
     <!-- Footer -->
     <!-- FIXED: Commented out missing template file -->

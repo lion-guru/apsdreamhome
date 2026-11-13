@@ -34,7 +34,7 @@
                                     <i class="fas fa-expand-arrows-alt"></i>
                                 </div>
                                 <div>
-                                    <h6 class="mb-0 fw-bold">15+ Acres</h6>
+                                    <h3 class="fs-4 fw-bold mb-0">15+ Acres</h3>
                                     <small class="text-muted">Total Area</small>
                                 </div>
                             </div>
@@ -45,7 +45,7 @@
                                     <i class="fas fa-map-marker-alt"></i>
                                 </div>
                                 <div>
-                                    <h6 class="mb-0 fw-bold">Prime Location</h6>
+                                    <h3 class="fs-4 fw-bold mb-0">Prime Location</h3>
                                     <small class="text-muted">Motiram to Jhangha</small>
                                 </div>
                             </div>
@@ -60,7 +60,7 @@
                                 <div class="bg-success text-white p-2 rounded-circle me-3">
                                     <i class="fas fa-check"></i>
                                 </div>
-                                <h6 class="mb-0 fw-bold">RERA Registered</h6>
+                                <h3 class="fs-4 fw-bold mb-0">RERA Registered</h3>
                             </div>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
                                 <div class="mb-3">
                                     <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($item['image'] ?? '') ?>" alt="<?= htmlspecialchars($item['alt_text'] ?? '') ?>" class="img-fluid">
                                 </div>
-                                <h6 class="fw-bold mb-0"><?= $item['title'] ?></h6>
+                                <h3 class="fs-6 fw-bold mb-0"><?= $item['title'] ?></h3>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -104,7 +104,7 @@
                             <iframe src="https://www.youtube.com/embed/<?= $video['youtube_id'] ?>" title="<?= $video['title'] ?>" allowfullscreen></iframe>
                         </div>
                         <div class="card-body aps-cp-card-body">
-                            <h6 class="fw-bold mb-0 text-center"><?= $video['title'] ?></h6>
+                            <h3 class="fs-6 fw-bold mb-0 text-center"><?= $video['title'] ?></h3>
                         </div>
                     </div>
                 </div>

@@ -31,7 +31,7 @@
                                         <i class="fas fa-check-double fa-lg"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0 fw-bold">Ready to Move</h6>
+                                        <h3 class="fs-4 fw-bold mb-0">Ready to Move</h3>
                                         <small class="text-muted">Possession Status</small>
                                     </div>
                                 </div>
@@ -44,7 +44,7 @@
                                         <i class="fas fa-certificate fa-lg"></i>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0 fw-bold">GDA Approved</h6>
+                                        <h3 class="fs-4 fw-bold mb-0">GDA Approved</h3>
                                         <small class="text-muted">Legal Approval</small>
                                     </div>
                                 </div>
@@ -56,7 +56,7 @@
                 <!-- Contact Sidebar -->
                 <div class="col-lg-5">
                     <div class="card shadow-lg border-0 rounded-4 p-4 sticky-top">
-                        <h4 class="fw-bold mb-4">Interested?</h4>
+                        <h3 class="fs-5 fw-bold mb-4">Interested?</h3>
                         <form action="<?= BASE_URL ?>contact" method="POST">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <?= csrf_field() ?>
@@ -88,7 +88,7 @@
                         <div class="amenity-icon mb-3">
                             <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($amenity['image'] ?? '') ?>" alt="<?= htmlspecialchars($amenity['title'] ?? '') ?>" class="img-fluid">
                         </div>
-                        <h6 class="fw-bold"><?= $amenity['title'] ?></h6>
+                        <h3 class="fs-6 fw-bold"><?= $amenity['title'] ?></h3>
                     </div>
                 </div>
                 <?php endforeach; ?>

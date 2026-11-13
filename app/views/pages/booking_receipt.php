@@ -19,12 +19,21 @@
         .amount-box .value { font-size: 1.5rem; font-weight: 700; color: #1a73e8; }
         .receipt-footer { border-top: 1px dashed #dee2e6; padding-top: 20px; margin-top: 25px; font-size: 0.85rem; color: #666; }
         .status-badge { padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; }
-        .print-btn { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
-        @media print { .print-btn { display: none; } }
+        .receipt-actions-bar {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+            display: flex; gap: 8px; background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(8px); padding: 8px 14px; border-radius: 50px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.15); border: 1px solid #dee2e6;
+        }
+        @media print { .receipt-actions-bar { display: none !important; } }
     </style>
 </head>
 <body>
-    <button class="btn btn-primary print-btn" onclick="window.print()"><i class="fas fa-print me-2"></i><?= __('receipt_print', [], 'Print / Download PDF') ?></button>
+    <div class="receipt-actions-bar">
+        <a href="<?= BASE_URL ?>/user/bookings" class="btn btn-sm btn-outline-secondary rounded-pill px-3"><i class="fas fa-arrow-left me-1"></i> <?= __('receipt_back_bookings', [], 'My Bookings') ?></a>
+        <a href="https://wa.me/?text=<?= urlencode('APS Dream Home Booking Receipt #RCP-' . str_pad((string)$booking['id'], 6, '0', STR_PAD_LEFT) . ' for Plot #' . ($booking['plot_number'] ?? '') . ' in ' . ($booking['colony_name'] ?? '')) ?>" target="_blank" class="btn btn-sm btn-success rounded-pill px-3"><i class="fab fa-whatsapp me-1"></i> WhatsApp</a>
+        <button class="btn btn-sm btn-primary rounded-pill px-3" onclick="window.print()"><i class="fas fa-print me-1"></i> <?= __('receipt_print', [], 'Print / PDF') ?></button>
+    </div>
 
     <div class="receipt-box">
         <div class="receipt-header">

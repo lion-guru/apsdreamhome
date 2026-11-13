@@ -48,7 +48,7 @@
                                 <div class="mb-3">
                                     <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($item['image'] ?? '') ?>" alt="<?= htmlspecialchars($item['alt_text'] ?? '') ?>" class="img-fluid">
                                 </div>
-                                <h6 class="fw-bold"><?= $item['title'] ?></h6>
+                                <h3 class="fs-6 fw-bold"><?= $item['title'] ?></h3>
                             </div>
                         </div>
                         <?php endforeach; ?>

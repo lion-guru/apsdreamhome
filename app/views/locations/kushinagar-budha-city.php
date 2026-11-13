@@ -42,7 +42,7 @@ ob_start();
                 <div class="col-lg-7">
                     <div class="pe-lg-5">
                         <h2 class="display-6 fw-bold text-primary mb-4">Kushinagar Projects</h2>
-                        <h4 class="fw-bold mb-3">Overview - Budha City</h4>
+                        <h3 class="fs-4 fw-bold mb-3">Overview - Budha City</h3>
                         <p class="lead text-dark mb-4">
                             <strong>BUDHA CITY</strong> is an integrated township located at a Prime Location in Kushinagar, 
                             situated right on the Premwaliya Kushinagar Highway.
@@ -55,7 +55,7 @@ ob_start();
                         </p>
                         
                         <div class="bg-light p-4 rounded-4 mb-4 border-start border-primary border-4">
-                            <h5 class="fw-bold mb-3"><i class="fas fa-location-arrow text-primary me-2"></i>Prime Connectivity</h5>
+                            <h4 class="fs-5 fw-bold mb-3"><i class="fas fa-location-arrow"></i>Prime Connectivity</h4>
                             <p class="small text-muted mb-0">
                                 Our township is strategically located near a maximum number of Engineering Colleges, 
                                 Educational Institutions, Dental Colleges, Railway Station, Petrol Pumps, Airport, 
@@ -86,7 +86,7 @@ ob_start();
                             <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-lift h-100">
                                 <img src="<?= BASE_URL ?>/assets/images/<?= htmlspecialchars($amenity['image'], ENT_QUOTES, 'UTF-8') ?>" class="card-img-top" alt="<?= htmlspecialchars($amenity['alt_text'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
                                 <div class="card-body text-center p-3">
-                                    <h6 class="fw-bold mb-0"><?= h($amenity['title']) ?></h6>
+                                    <h3 class="fs-6 fw-bold mb-0"><?= h($amenity['title']) ?></h3>
                                 </div>
                             </div>
                         </div>
@@ -101,7 +101,7 @@ ob_start();
                 </div>
                 <div class="position-relative z-index-1">
                     <h2 class="display-5 fw-bold mb-3">Invest in Your Future at Budha City</h2>
-                    <p class="lead mb-4 opacity-75">Secure your plot or row house in Kushinagar's most promising integrated township.</p>
+                    <p class="lead mb-4" style="color: #dbeafe;">Secure your plot or row house in Kushinagar's most promising integrated township.</p>
                     <div class="d-flex flex-wrap justify-content-center gap-3">
                         <a href="tel:+917007444842" class="btn btn-light btn-lg rounded-pill px-5 py-3 fw-bold text-primary">
                             <i class="fas fa-phone-alt me-2"></i>Call for Booking

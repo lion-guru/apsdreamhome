@@ -60,7 +60,7 @@
                         <i class="fas fa-calculator text-white fa-xl" id="toolModalIcon"></i>
                     </div>
                     <div>
-                        <h5 class="modal-title text-white fw-bold mb-1" id="toolModalTitle"><?= __('tool') ?></h5>
+                        <h3 class="modal-title fs-5 text-white fw-bold mb-1" id="toolModalTitle"><?= __('tool') ?></h3>
                         <p class="text-white-50 small mb-0" id="toolModalSubtitle"><?= __('calculate_instantly') ?></p>
                     </div>
                 </div>

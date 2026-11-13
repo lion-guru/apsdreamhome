@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/services/colony_service.dart';
 import '../../../data/models/plot_model.dart';
@@ -470,6 +471,27 @@ class PlotDetailBottomSheet extends StatelessWidget {
                 const SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      final pdfUrl = '${AppConstants.baseUrl}/plots/${plot.id}/quotation-pdf';
+                      launchUrl(
+                        Uri.parse(pdfUrl),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    icon: const Icon(Icons.picture_as_pdf_outlined, color: Color(0xFF0284C7), size: 18),
+                    label: const Text('Download Cost Sheet (PDF)', style: TextStyle(color: Color(0xFF0284C7), fontWeight: FontWeight.w600)),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFF0284C7), width: 1.2),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  width: double.infinity,
                   child: TextButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
@@ -480,6 +502,27 @@ class PlotDetailBottomSheet extends StatelessWidget {
                   ),
                 ),
               ] else ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      final pdfUrl = '${AppConstants.baseUrl}/plots/${plot.id}/quotation-pdf';
+                      launchUrl(
+                        Uri.parse(pdfUrl),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    icon: const Icon(Icons.picture_as_pdf_outlined, color: Color(0xFF0284C7), size: 18),
+                    label: const Text('Download Cost Sheet (PDF)', style: TextStyle(color: Color(0xFF0284C7), fontWeight: FontWeight.w600)),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFF0284C7), width: 1.2),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
