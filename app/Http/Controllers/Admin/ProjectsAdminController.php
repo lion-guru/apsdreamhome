@@ -161,10 +161,10 @@ class ProjectsAdminController extends AdminController
     public function images($id)
     {
         $db = Database::getInstance();
-        $project = $db->fetch("SELECT * FROM projects WHERE id = ?", [$id]);
+        $project = $db->fetch("SELECT * FROM projects WHERE id = ? AND tenant_id = ?", [$id, $this->tenantId()]);
         $images  = [];
         try {
-            $images = $db->fetchAll("SELECT * FROM project_images WHERE project_id = ? ORDER BY display_order", [$id]);
+            $images = $db->fetchAll("SELECT * FROM project_images WHERE project_id = ? AND tenant_id = ? ORDER BY is_primary DESC, display_order ASC", [$id, $this->tenantId()]);
         } catch (\Throwable $e) {
             error_log($e->getMessage());
         }
@@ -371,5 +371,34 @@ class ProjectsAdminController extends AdminController
 
         $this->setFlash('success', 'Image deleted successfully');
         $this->redirect('/admin/projects/images/' . $image['project_id']);
+    }
+
+    /**
+     * Set an image as primary for a project
+     */
+    public function setPrimaryImage($imageId)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/projects');
+            return;
+        }
+
+        $this->validateCsrfOrFail();
+
+        $db = Database::getInstance();
+        $image = $db->fetchOne("SELECT * FROM project_images WHERE id = ? AND tenant_id = ?", [$imageId, $this->tenantId()]);
+
+        if (!$image) {
+            $this->setFlash('error', 'Image not found');
+            $this->redirect('/admin/projects');
+            return;
+        }
+
+        $projectId = (int)$image['project_id'];
+        $db->query("UPDATE project_images SET is_primary = 0 WHERE project_id = ? AND tenant_id = ?", [$projectId, $this->tenantId()]);
+        $db->query("UPDATE project_images SET is_primary = 1 WHERE id = ? AND tenant_id = ?", [$imageId, $this->tenantId()]);
+
+        $this->setFlash('success', 'Primary project image updated successfully');
+        $this->redirect('/admin/projects/images/' . $projectId);
     }
 }

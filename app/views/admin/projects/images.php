@@ -46,19 +46,31 @@
                                 <div class="col-md-3 mb-3">
                                     <div class="position-relative">
                                         <img src="<?= BASE_URL ?><?php echo htmlspecialchars($image['image_path'] ?? '/assets/images/placeholder/property.svg'); ?>" 
-                                             class="img-fluid rounded" 
+                                             class="img-fluid rounded w-100" 
                                              alt="<?php echo htmlspecialchars($image['alt_text'] ?? $image['image_name'] ?? 'Project Image'); ?>"
                                              style="height: 180px; object-fit: cover;">
                                         <?php if ((int)($image['is_primary'] ?? 0) === 1): ?>
-                                            <span class="badge bg-success position-absolute top-0 start-0 m-1">Primary</span>
+                                            <span class="badge bg-success position-absolute top-0 start-0 m-2 shadow-sm">
+                                                <i class="fas fa-star me-1"></i> Primary
+                                            </span>
+                                        <?php else: ?>
+                                            <form method="POST" action="<?= BASE_URL ?>/admin/projects/images/primary/<?php echo $image['id'] ?? 0; ?>" class="position-absolute top-0 start-0 m-2">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                                <button type="submit" class="btn btn-sm btn-dark bg-opacity-75 text-white shadow-sm border-0" title="Set as Primary Image">
+                                                    <i class="far fa-star me-1"></i> Make Primary
+                                                </button>
+                                            </form>
                                         <?php endif; ?>
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/projects/images/delete/<?php echo $image['id'] ?? 0; ?>" class="position-absolute top-0 end-0 m-1">
+                                        <form method="POST" action="<?= BASE_URL ?>/admin/projects/images/delete/<?php echo $image['id'] ?? 0; ?>" class="position-absolute top-0 end-0 m-2">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                            <button type="submit" class="btn btn-sm btn-danger" data-aps-confirm="Delete this image?">
+                                            <button type="submit" class="btn btn-sm btn-danger shadow-sm" data-aps-confirm="Delete this image?">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
-                                        <small class="d-block text-muted mt-1"><?php echo number_format((int)($image['file_size'] ?? 0) / 1024, 1); ?> KB</small>
+                                        <div class="d-flex justify-content-between align-items-center mt-1">
+                                            <small class="text-muted"><?php echo number_format((int)($image['file_size'] ?? 0) / 1024, 1); ?> KB</small>
+                                            <small class="text-muted text-truncate" style="max-width: 140px;"><?php echo htmlspecialchars($image['image_name'] ?? ''); ?></small>
+                                        </div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

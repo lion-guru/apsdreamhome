@@ -1017,7 +1017,8 @@ class PropertyPageController extends BaseController
     {
         try {
             $rows = $this->db->fetchAll(
-                "SELECT p.*, c.name AS colony_name, d.name AS district_name, s.name AS state_name
+                "SELECT p.*, c.name AS colony_name, d.name AS district_name, s.name AS state_name,
+                        (SELECT image_path FROM project_images WHERE project_id = p.id ORDER BY is_primary DESC, display_order ASC LIMIT 1) AS primary_image_path
                  FROM projects p
                  LEFT JOIN colonies c ON p.colony_id = c.id
                  LEFT JOIN districts d ON p.district_id = d.id
@@ -1027,7 +1028,10 @@ class PropertyPageController extends BaseController
             );
             $projects = [];
             foreach ($rows as $row) {
-                $images = json_decode($row['images'] ?? '[]', true);
+                $images = json_decode($row['images'] ?? '[]', true) ?: [];
+                if (!empty($row['primary_image_path'])) {
+                    array_unshift($images, $row['primary_image_path']);
+                }
                 $amenities = json_decode($row['amenities'] ?? '[]', true);
                 $projects[] = [
                     'id' => (int)$row['id'],

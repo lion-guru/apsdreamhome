@@ -2366,6 +2366,7 @@ $router->get('/admin/projects/view/{id}', 'App\Http\Controllers\Admin\ProjectsAd
 $router->get('/admin/projects/images/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@images');
 $router->post('/admin/projects/images/upload/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@uploadImage');
 $router->post('/admin/projects/images/delete/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@deleteImage');
+$router->post('/admin/projects/images/primary/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@setPrimaryImage');
 $router->post('/admin/projects/delete/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@delete');
 $router->post('/admin/projects/status/{id}', 'App\Http\Controllers\Admin\ProjectsAdminController@status');
 

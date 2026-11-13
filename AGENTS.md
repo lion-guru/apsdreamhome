@@ -6255,4 +6255,32 @@ User instructions: "jo jo pending work hai sab kar do bina ruke aur apne suggest
 - **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
 
 ### AGENTS.md numbering (Rule 4)
-Next-free = **482** (next session).
+Next-free = **482** (this session; S481 logged above).
+
+## Session 482: Primary Project Image Assignment, Public Showcase Card Thumbnails & Tenant-Isolated Gallery Desk, 1508/1508 Clean (2026-11-13)
+
+### Trigger
+User instructions: "do next all aur koi suggestion tumhara" — Tech lead / CEO autonomous improvements: complete the project images lifecycle with primary image designation and public project card showcase synchronization.
+
+### The headline
+
+**1. PRIMARY IMAGE DESIGNATION & ADMIN GALLERY ACTIONS**
+- In `app/Http/Controllers/Admin/ProjectsAdminController.php`:
+  - Added `setPrimaryImage($imageId)` with CSRF verification and tenant isolation (`tenant_id = ?`). Resets previous primary image and designates chosen image as primary with success flash.
+  - Hardened `images($id)` with tenant scoping and sorted by `is_primary DESC, display_order ASC`.
+- In `routes/web.php`: Registered `POST /admin/projects/images/primary/{id}`.
+- In `app/views/admin/projects/images.php`: Added status badge (`★ Primary`), 1-click `☆ Make Primary` action form for non-primary assets, and file metadata labels.
+
+**2. PUBLIC PROJECT SHOWCASE & CARD THUMBNAIL INTEGRATION**
+- In `app/Http/Controllers/Front/PropertyPageController.php`: Updated `projects()` to query `primary_image_path` from canonical `project_images` table and prepend it to the `$images` array, ensuring public `/projects` cards immediately display uploaded high-res photos instead of placeholders.
+- In `app/Http/Controllers/Front/ProjectController.php`: Prioritized uploaded `project_images` over legacy/placeholder JSON arrays in `projectDetails($slug)`.
+
+### Verification
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 25.15s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1209 tables, 15554 columns, 0 missing tables, 0 missing columns, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **483** (next session).
