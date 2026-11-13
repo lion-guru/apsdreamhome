@@ -136,6 +136,12 @@ SetEnvIf Authorization (.*) HTTP_AUTHORIZATION=$1
         Header unset Cache-Control
         Header set Cache-Control "public, max-age=2592000"
     </FilesMatch>
+    # Service worker MUST be revalidated on every navigation or browsers can
+    # run a stale worker for up to 30 days and silently undeploy web fixes.
+    <FilesMatch "sw\.js$">
+        Header unset Cache-Control
+        Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+    </FilesMatch>
 </IfModule>
 
 # PHP settings — display_errors OFF in prod (prevent stack trace / SQL leak)

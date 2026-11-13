@@ -51,7 +51,9 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
                 <span class="status"><i class="fas fa-circle"></i> <?= __('component_online', 'Online') ?></span>
             </div>
             <div class="chatbot-actions">
+                <?php if ($userRole === 'admin'): ?>
                 <a href="<?= defined('BASE_URL') ? BASE_URL : '' ?>/admin/ai/executive-assistant" target="_blank" title="<?= htmlspecialchars(__('component_powerful_help', 'Powerful Help (RBAC)')) ?>" style="color:inherit;text-decoration:none;margin-right:6px;"><i class="fas fa-bolt"></i></a>
+                <?php endif; ?>
                 <button onclick="clearChat()" title="<?= htmlspecialchars(__('component_clear_chat', 'Clear Chat')) ?>"><i class="fas fa-trash"></i></button>
                 <button onclick="toggleChatbot()" title="<?= htmlspecialchars(__('component_close', 'Close')) ?>"><i class="fas fa-times"></i></button>
             </div>

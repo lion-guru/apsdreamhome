@@ -12,6 +12,16 @@ $userId = $userId ?? ($_SESSION['user_id'] ?? 0);
 
 if (!$userId) return;
 
+// The widget links to the role-appropriate referral page. /user/referral and
+// /associate/referral exist; agents have no dedicated page, so the agent
+// dashboard (which renders this widget) is the honest target.
+$role = $_SESSION['role'] ?? $_SESSION['admin_role'] ?? 'customer';
+$refUrl = match ($role) {
+    'associate' => '/associate/referral',
+    'agent' => '/agent/dashboard',
+    default => '/user/referral',
+};
+
 // Controllers pass $referral_earnings_breakdown; accept both names so the
 // widget never silently renders empty on a variable-name mismatch.
 $referralEarnings = $referralEarnings ?? $referral_earnings_breakdown ?? [];
@@ -56,7 +66,7 @@ if (!function_exists('getTypeIconClass')) {
 <div class="referral-earnings-widget" data-user-id="<?= $userId ?>">
     <div class="widget-header d-flex justify-content-between align-items-center mb-3">
         <h5 class="fw-bold mb-0"><i class="fas fa-share-alt text-warning me-2"></i>Referral Earnings</h5>
-        <a href="<?= $base ?>/user/referrals" class="btn btn-sm btn-outline-warning rounded-pill px-3 fw-medium">
+        <a href="<?= $base ?><?= $refUrl ?>" class="btn btn-sm btn-outline-warning rounded-pill px-3 fw-medium">
             View Details <i class="fas fa-arrow-right ms-1"></i>
         </a>
     </div>
@@ -145,7 +155,7 @@ if (!function_exists('getTypeIconClass')) {
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
             <h6 class="fw-bold mb-0"><i class="fas fa-history text-primary me-2"></i>Recent Activity</h6>
-            <a href="<?= $base ?>/user/referrals/history" class="small text-decoration-none">View All</a>
+            <a href="<?= $base ?><?= $refUrl ?>" class="small text-decoration-none">View All</a>
         </div>
         <div class="card-body p-0">
             <?php if (!empty($recent)): ?>
@@ -187,13 +197,13 @@ if (!function_exists('getTypeIconClass')) {
 
     <!-- Quick Actions -->
     <div class="d-flex gap-2 mt-3 flex-wrap">
-        <a href="<?= $base ?>/user/referrals/share" class="btn btn-sm btn-outline-warning rounded-pill px-3">
+        <a href="<?= $base ?><?= $refUrl ?>" class="btn btn-sm btn-outline-warning rounded-pill px-3">
             <i class="fas fa-share-alt me-1"></i>Share Code
         </a>
         <a href="<?= $base ?>/user/referrals/leaderboard" class="btn btn-sm btn-outline-primary rounded-pill px-3">
             <i class="fas fa-trophy me-1"></i>Leaderboard
         </a>
-        <a href="<?= $base ?>/user/referrals/tier" class="btn btn-sm btn-outline-info rounded-pill px-3">
+        <a href="<?= $base ?><?= $refUrl ?>" class="btn btn-sm btn-outline-info rounded-pill px-3">
             <i class="fas fa-medal me-1"></i>My Tier
         </a>
     </div>

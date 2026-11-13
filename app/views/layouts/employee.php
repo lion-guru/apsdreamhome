@@ -180,7 +180,7 @@ $GLOBALS['_html_doc_started'] = true;
                         <i class="fas fa-bell"></i>
                     </a>
                 </div>
-                <a href="<?= BASE_URL ?>/employee/messages" class="btn-icon" title="Messages" aria-label="Messages">
+                <a href="<?= BASE_URL ?>/employee/inquiries" class="btn-icon" title="Inquiries" aria-label="Inquiries">
                     <i class="fas fa-envelope"></i>
                 </a>
                 <div class="dropdown">

@@ -833,6 +833,7 @@ $GLOBALS['_html_doc_started'] = true;
             document.getElementById('legalConsentModal').addEventListener('hidden.bs.modal', function() {
                 sessionStorage.setItem('legalConsentChecked', '1');
             });
+        }
 
         window.handleConsentAccept = function() {
             var checkbox = document.getElementById('legalConsentCheckbox');
