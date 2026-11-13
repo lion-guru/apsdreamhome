@@ -366,11 +366,18 @@ class AuthenticationService
     private function checkRateLimit($email)
     {
         $tid = $this->getTenantId();
-        $recentAttempts = $this->db->fetchOne(
-            "SELECT COUNT(*) as count FROM activity_logs_unified 
-             WHERE email = ? AND created_at > DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND success = 0" . ($tid > 1 ? " AND tenant_id = ?" : ""),
+        // S472: activity_logs_unified has NO `email` and NO `success`
+        // column, so this query died with 1054 on EVERY login and the
+        // throttle never engaged.  `login_attempts` is the real table for
+        // login attempts (identifier + success), and it is the table the
+        // live AuthController already uses.  recordLoginAttempt() writes
+        // there, so the count and the write finally agree.
+        $row = $this->db->fetchOne(
+            "SELECT COUNT(*) as count FROM login_attempts
+             WHERE identifier = ? AND success = 0 AND created_at > DATE_SUB(NOW(), INTERVAL 15 MINUTE)" . ($tid > 1 ? " AND tenant_id = ?" : ""),
             ($tid > 1 ? [$email, $tid] : [$email])
-        )['count'];
+        );
+        $recentAttempts = (int)($row['count'] ?? 0);
 
         return $recentAttempts < $this->maxLoginAttempts;
     }

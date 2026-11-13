@@ -21,6 +21,54 @@
 
 > **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
 
+## Session 473: The Login Lockout Was Dead (3 Layers), a 14-Hour Lockout from a Single Typo, the Schema Ratchet at 88, 85 Columns + 66 Tables Added, All Gates Green (2026-11-13)
+
+### Trigger
+Owner: "ise hi bhut honge to sab thik karna padega satad code me changes kar bhul gyr ho do next" - fix everything in the code, don't forget. Deep scan of the login/lockout family revealed three dead mechanisms and a 14-hour lockout from a single `(int)` cast.
+
+### The headline
+
+**1. THE LOGIN LOCKOUT HAD THREE DEAD LAYERS - AND ONE 14-HOUR LOCKOUT**
+- **Layer 1 (the throttle)**: `App\Services\Auth\AuthenticationService::checkRateLimit()` counted `activity_logs_unified WHERE email = ? AND ... AND success = 0` - but that table has NO `email` and NO `success` column. The query died with 1054 on EVERY login. The throttle never engaged.
+- **Layer 2 (the account lock)**: `App\Services\Auth\AuthService::isAccountLocked()` queried `failed_activity_logs_unified`, a table that was NEVER created. Always threw, always returned false. The account lockout never happened.
+- **Layer 3 (the 14-hour lockout)**: `AuthController::authenticate()`'s progressive throttle did `$lastAttempt = (int)($db->fetchOne(... )['last'] ?? 0)` - casting the DATETIME string to an int gave 2026, and `strtotime(2026)` parses as 20:26 TODAY, so `time() - strtotime(...)` came out NEGATIVE and the throttle demanded "Please wait 50482 seconds" (14 hours) after a SINGLE mistyped password. A legitimate user who mistyped once was locked out for 14 hours. Fixed: keep the string, treat a missing/unparsable timestamp as "long enough ago".
+- **The root cause nobody caught**: `test_login=N` bypasses the ENTIRE password path, so no probe ever exercised `login()`. The login throttle was dead for the lifetime of the project. **Test the REAL login (wrong password -> lockout) at least once.**
+
+**2. THE CONSOLIDATION WAS HALF-DONE (S472's partial fix)**
+The parallel actor's S472 moved the INSERTs to `login_attempts` but left `checkRateLimit` querying the phantom `activity_logs_unified.email` column. So the write went to the right table and the read went to the wrong one - the throttle still 1054'd. Fixed both service implementations:
+- `App\Services\Auth\AuthenticationService` (the LIVE one, used by the AuthController): `checkRateLimit` + `recordLoginAttempt` now use `login_attempts` (identifier + success).
+- `App\Services\Auth\AuthService` (parallel impl): `checkRateLimit`, `recordLoginAttempt`, `isAccountLocked`, `incrementFailedAttempts`, `clearFailedAttempts` all pointed at `login_attempts`.
+- `login_attempts.user_id` column + index added (migration `fix_login_attempts_and_rate_limit_s472.php`, idempotent, already applied).
+- `rate_limit` table created (used by `MonitorService::checkRateLimit`, which was dead).
+- `mlm_goal_progress` repointed to `goal_progress` (the code wrote to a table that exists under a different name - the user's "merged table" hypothesis was right for 2 tables).
+- 85 missing columns added (`add_missing_columns_s473.php`, idempotent, 0 failures).
+- 66 absent write-tables created (`create_absent_write_tables_s473.php`, idempotent, 0 failures).
+
+**3. THE SCHEMA RATCHET DROPPED 243 -> 88**
+- 85 columns + 2 renames + 66 tables removed their findings.
+- The remaining 88 are mostly internal/admin (monitoring, logging, analytics, optimization, AI tools, security, backup, queue, cron). 10 of them have dynamic INSERTs (no static column list); 78 are read-only references.
+
+**4. THE GATE STAYS GREEN**
+- PHPStan -> `[OK] No errors`. Master -> ALL TEST SUITES PASSED (100% HEALTHY). Township -> Steps Failed 0. Schema ratchet -> 88 known / 0 new -> exit 0.
+- Live DB byte-identical: users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0; faqs 6 / blog_posts 12 / states 37 / districts 781 unchanged.
+- The login throttle is now live: 5 failed attempts -> "Too many failed attempts. Please try again in 15 minutes." (probe: 5 failures + 1 lockout, 6 rows written, all cleaned, 0 leftovers).
+
+### Verification
+- **Login throttle probe**: 6 attempts -> attempts 1-5 "Invalid email/phone or password.", attempt 6 "Too many failed attempts. Please try again in 15 minutes." - 5 rows written, 0 leftovers. The 14-hour lockout is gone.
+- **PHPStan** -> `[OK] No errors` (exit 0). **Master** -> ALL TEST SUITES PASSED (100% HEALTHY). **Township** -> Steps Failed 0, Overall Health 100%. **Schema ratchet** -> 88 known / **0 new** -> exit 0.
+- **Live DB byte-identical**: users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0; faqs 6 / blog_posts 12 / states 37 / districts 781 unchanged.
+
+### Key Lessons (carried, continued)
+_898. **A brute-force lockout that is never tested stays broken for years.** AuthService had three dead mechanisms (`activity_logs_unified.email/success` phantom columns, `failed_activity_logs_unified` missing table, and the `AuthController`'s 14-hour throttle from a `(int)` cast on a DATETIME). The controller's `test_login` bypass skipped the entire password path, so no probe ever exercised it. Test the REAL login (wrong password -> lockout) at least once.
+_899. **An `(int)` cast on a DATETIME string gives 2026, and `strtotime(2026)` is 20:26 TODAY.** `time() - strtotime(...)` becomes negative -> the throttle demands 14 hours after one typo. Keep the string, and treat a missing or unparsable timestamp as "long enough ago".
+_900. **A service with a broken schema is a landmine, not a feature.** Two AuthService implementations existed (parallel implementations) - both broken. Fixing one is not enough; the audit must find ALL of them (grep for the table name).
+_901. **The `login_attempts` table is the canonical home for login security.** It has `identifier`, `success`, `ip_address`, `user_agent`, `created_at`, `tenant_id`, and now `user_id`. One table, three implementations, no duplicate schema.
+_902. **A code-level fix is the durable fix; a schema-only fix is a band-aid.** Adding `email`/`success` to `activity_logs_unified` would have "fixed" the throttle but left the audit trail and the counter in two tables. Repointing to the canonical table is cleaner.
+_903. **The user-facing question is "does the feature WORK?" not "does the scanner pass?"** The ratchet counts findings; creating hollow tables (id + created_at) silences the scanner but doesn't fix the INSERT. Only add the columns the code actually writes.
+
+### Owner actions still open (carried forward)
+Play Console upload of `apsdreamhome-v1.2.10-release.aab` (1.2.10+13) - voice/S3/scheduler/Redis credentials - `bohisawagar-banner.jpg` owner asset drop - `scripts\vacuum_opencode_db.ps1` (needs OpenCode CLOSED; ~32 GB) - the `package:material_ui` migration if the Flutter pin is ever raised above 3.47.9 - the visual baselines should be regenerated as one consistent set - **88 schema mismatches remain** (`database/schema_mismatch_baseline.txt`); the next most-used are `php_optimization_log` (4), `slow_queries_log` (4), `middleware_rules` (4), `user_quick_actions` (4), `agent_state` (4), `mlm_associate_registrations` (4), `lead_assignment_log` (4), `user_theme_preferences` (4), `rate_limit` (3), `monthly_salary_payments` (3) - **`user_wallets` vs `wallet_points` is a SECOND, parallel wallet system** - and **`project_images` does not exist**: the admin projects images desk is a hollow feature (it renders an honest empty state) - the owner call is whether to build it or drop the link.
+
 ## Session 472: Database Duplication & Merge Audit, IdentityService 3-Tier Associate Resolution, Commission Ledger Idempotency & Rate Limit Migration, Schema Ratchet Lowered to 241, 1509/1509 PHPStan Clean (2026-11-13)
 
 ### Trigger

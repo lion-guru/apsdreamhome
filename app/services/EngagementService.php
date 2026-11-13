@@ -77,7 +77,7 @@ class EngagementService
 
     public function getGoalProgress(int $goalId): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM mlm_goal_progress WHERE goal_id = ? ORDER BY checkpoint_date ASC');
+        $stmt = $this->conn->prepare('SELECT * FROM goal_progress WHERE goal_id = ? ORDER BY checkpoint_date ASC');
         $stmt->execute([$goalId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -165,7 +165,7 @@ class EngagementService
 
     public function recordGoalProgress(int $goalId, string $checkpointDate, float $actualValue): bool
     {
-        $stmt = $this->conn->prepare('INSERT INTO mlm_goal_progress (goal_id, checkpoint_date, actual_value, percentage_complete, tenant_id) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value)');
+        $stmt = $this->conn->prepare('INSERT INTO goal_progress (goal_id, checkpoint_date, actual_value, percentage_complete, tenant_id) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value)');
         $goal = $this->fetchGoal($goalId);
         $target = $goal ? (float)$goal['target_value'] : 1;
         $pct = $target > 0 ? ($actualValue / $target) * 100 : 0;

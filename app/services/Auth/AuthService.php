@@ -569,9 +569,11 @@ class AuthService
     private function checkRateLimit(string $email): bool
     {
         $tid = $this->getTenantId();
-        $sql = "SELECT COUNT(*) as attempts FROM activity_logs_unified 
-                WHERE email = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND success = 0" . ($tid > 1 ? " AND tenant_id = ?" : "");
-        
+        // S472: activity_logs_unified has no `email` and no `success`
+        // column.  login_attempts is the real table (identifier + success).
+        $sql = "SELECT COUNT(*) as attempts FROM login_attempts 
+                WHERE identifier = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND success = 0" . ($tid > 1 ? " AND tenant_id = ?" : "");
+
         $attempts = $this->db->fetchOne($sql, $tid > 1 ? [$email, $tid] : [$email]) ?? 0;
         return $attempts < $this->maxLoginAttempts;
     }
