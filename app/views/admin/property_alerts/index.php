@@ -203,10 +203,10 @@ ob_start();
                                         <button class="btn btn-sm btn-outline-info" onclick="testMatch(<?= $sub['id'] ?>)" title="Test match">
                                             <i class="fas fa-search"></i>
                                         </button>
-                                        <a href="<?= BASE_URL ?>/admin/property-alerts/delete?id=<?= $sub['id'] ?>" class="btn btn-sm btn-outline-danger"
+                                        <form action="<?= BASE_URL ?>/admin/property-alerts/delete?id=<?= $sub['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-outline-danger"
                                            data-aps-confirm="Delete this subscription?" title="Delete">
                                             <i class="fas fa-trash"></i>
-                                        </a>
+                                        </button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

@@ -133,7 +133,7 @@ class DripCampaignController extends AdminController
     public function toggle()
     {
         $this->requireAdmin();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if ($this->service && $id) {
             $campaign = $this->service->getDripCampaignById($id);
             if ($campaign) {
@@ -148,7 +148,7 @@ class DripCampaignController extends AdminController
     public function delete()
     {
         $this->requireAdmin();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if ($this->service && $id) {
             try {
                 $tid = $this->tenantId();

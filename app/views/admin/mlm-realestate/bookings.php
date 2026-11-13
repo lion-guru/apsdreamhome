@@ -64,9 +64,9 @@
                                 <div class="btn-group btn-group-sm">
                                     <a href="<?= BASE_URL ?>/admin/mlm-realestate/bookings/<?= $b['id'] ?>" class="btn btn-outline-info" title="View"><i class="fas fa-eye"></i></a>
                                     <?php if ($b['status'] === 'pending'): ?>
-                                        <a href="<?= BASE_URL ?>/admin/mlm-realestate/bookings/<?= $b['id'] ?>/approve" class="btn btn-outline-success" title="Approve" data-aps-confirm="Approve booking #<?= $b['id'] ?>? This will mark the plot as booked and trigger commission.">
+                                        <form action="<?= BASE_URL ?>/admin/mlm-realestate/bookings/<?= $b['id'] ?>/approve" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-outline-success" title="Approve" data-aps-confirm="Approve booking #<?= $b['id'] ?>? This will mark the plot as booked and trigger commission.">
                                             <i class="fas fa-check"></i>
-                                        </a>
+                                        </button></form>
                                         <button type="button" class="btn btn-outline-danger" title="Reject" data-bs-toggle="modal" data-bs-target="#rejectModal<?= $b['id'] ?>">
                                             <i class="fas fa-times"></i>
                                         </button>

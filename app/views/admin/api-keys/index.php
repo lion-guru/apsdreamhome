@@ -135,9 +135,9 @@ $extraHead .= '<style>
                                         <a href="<?= BASE_URL ?>/admin/api-keys/edit/<?= $key['id'] ?>" class="btn btn-outline-primary" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="<?= BASE_URL ?>/admin/api-keys/toggle/<?= $key['id'] ?>" class="btn btn-outline-<?= $key['is_active'] ? 'warning' : 'success' ?>" title="<?= $key['is_active'] ? 'Deactivate' : 'Activate' ?>">
+                                        <form action="<?= BASE_URL ?>/admin/api-keys/toggle/<?= $key['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-outline-<?= $key['is_active'] ? 'warning' : 'success' ?>" title="<?= $key['is_active'] ? 'Deactivate' : 'Activate' ?>">
                                             <i class="fas fa-<?= $key['is_active'] ? 'ban' : 'check' ?>"></i>
-                                        </a>
+                                        </button></form>
                                         <button type="button" class="btn btn-outline-info test-btn" onclick="testKey(<?= $key['id'] ?>)" title="Test">
                                             <i class="fas fa-plug"></i>
                                         </button>

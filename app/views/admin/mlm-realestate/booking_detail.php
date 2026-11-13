@@ -3,9 +3,9 @@
         <h1 class="h3 mb-0"><i class="fas fa-file-invoice me-2"></i>Booking Details</h1>
         <div>
             <?php if (isset($status['booking']) && $status['booking']['status'] === 'pending'): ?>
-                <a href="<?= BASE_URL ?>/admin/mlm-realestate/bookings/<?= $status['booking']['id'] ?>/approve" class="btn btn-success btn-sm" data-aps-confirm="Approve this booking? Plot will be marked as booked and commission will be processed.">
+                <form action="<?= BASE_URL ?>/admin/mlm-realestate/bookings/<?= $status['booking']['id'] ?>/approve" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-success btn-sm" data-aps-confirm="Approve this booking? Plot will be marked as booked and commission will be processed.">
                     <i class="fas fa-check me-1"></i>Approve
-                </a>
+                </button></form>
                 <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectModal">
                     <i class="fas fa-times me-1"></i>Reject
                 </button>

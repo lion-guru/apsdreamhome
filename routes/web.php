@@ -445,7 +445,7 @@ if (file_exists(__DIR__ . '/../app/Services/Bulk/PropertyImportService.php')) {
 }
 $router->get('/admin/api-keys/edit/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@edit');
 $router->post('/admin/api-keys/update/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@update');
-$router->get('/admin/api-keys/toggle/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@toggle');
+$router->post('/admin/api-keys/toggle/{id}', 'App\\Http\\Controllers\\Admin\\ApiKeyController@toggle');
 $router->get('/admin/api-keys/test/{id}', 'App\Http\Controllers\Admin\ApiKeyController@test');
 
 // API Key Management AJAX endpoints (for api_key_management.php view)
@@ -732,7 +732,7 @@ $router->get('/admin/lead-kanban/pipeline-stats', 'App\\Http\\Controllers\\Admin
 $router->get('/admin/sales-dashboard', 'App\\Http\\Controllers\\Admin\\SalesManagerDashboardController@index');
 
 $router->get('/admin/property-alerts', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@index');
-$router->get('/admin/property-alerts/delete', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@delete');
+$router->post('/admin/property-alerts/delete', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@delete');
 $router->post('/admin/property-alerts/toggle', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@toggle');
 $router->get('/admin/property-alerts/test-match', 'App\\Http\\Controllers\\Admin\\PropertyAlertController@testMatch');
 
@@ -740,8 +740,8 @@ $router->get('/admin/marketing-campaigns', 'App\\Http\\Controllers\\Admin\\Marke
 $router->get('/admin/marketing-campaigns/create', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@create');
 $router->post('/admin/marketing-campaigns/store', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@store');
 $router->get('/admin/marketing-campaigns/show/{id}', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@show');
-$router->get('/admin/marketing-campaigns/send/{id}', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@send');
-$router->get('/admin/marketing-campaigns/delete', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@delete');
+$router->post('/admin/marketing-campaigns/send/{id}', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@send');
+$router->post('/admin/marketing-campaigns/delete', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@delete');
 $router->get('/admin/marketing-campaigns/templates', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@templates');
 $router->get('/admin/marketing-campaigns/{id}/edit', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@edit');
 $router->post('/admin/marketing-campaigns/{id}/update', 'App\\Http\\Controllers\\Admin\\MarketingCampaignController@update');
@@ -759,8 +759,8 @@ $router->get('/admin/drip-campaigns/create', 'App\\Http\\Controllers\\Admin\\Dri
 $router->post('/admin/drip-campaigns/store', 'App\\Http\\Controllers\\Admin\\DripCampaignController@store');
 $router->get('/admin/drip-campaigns/show/{id}', 'App\\Http\\Controllers\\Admin\\DripCampaignController@show');
 $router->get('/admin/drip-campaigns/process', 'App\\Http\\Controllers\\Admin\\DripCampaignController@process');
-$router->get('/admin/drip-campaigns/toggle', 'App\\Http\\Controllers\\Admin\\DripCampaignController@toggle');
-$router->get('/admin/drip-campaigns/delete', 'App\\Http\\Controllers\\Admin\\DripCampaignController@delete');
+$router->post('/admin/drip-campaigns/toggle', 'App\\Http\\Controllers\\Admin\\DripCampaignController@toggle');
+$router->post('/admin/drip-campaigns/delete', 'App\\Http\\Controllers\\Admin\\DripCampaignController@delete');
 
 $router->get('/admin/live-chat', 'App\\Http\\Controllers\\Admin\\LiveChatController@index');
 $router->get('/admin/live-chat/open/{id}', 'App\\Http\\Controllers\\Admin\\LiveChatController@open');
@@ -789,7 +789,7 @@ $router->get('/admin/auctions/show/{id}', 'App\\Http\\Controllers\\Admin\\Auctio
 $router->get('/admin/auctions/start/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@start');
 $router->get('/admin/auctions/end/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@end');
 $router->get('/admin/auctions/cancel', 'App\\Http\\Controllers\\Admin\\AuctionController@cancel');
-$router->get('/admin/auctions/delete/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@delete');
+$router->post('/admin/auctions/delete/{id}', 'App\\Http\\Controllers\\Admin\\AuctionController@delete');
 $router->get('/admin/auctions/process-ending', 'App\\Http\\Controllers\\Admin\\AuctionController@processEnding');
 
 $router->get('/auctions', 'App\\Http\\Controllers\\Front\\AuctionController@index');
@@ -4418,7 +4418,7 @@ $router->post('/admin/mlm-realestate/rera/approve', 'Admin\MLMRealEstateControll
 $router->get('/admin/mlm-realestate/plots', 'Admin\MLMRealEstateController@plotsInventory');
 $router->get('/admin/mlm-realestate/bookings', 'Admin\MLMRealEstateController@bookings');
 $router->get('/admin/mlm-realestate/bookings/{id}', 'Admin\MLMRealEstateController@bookingDetail');
-$router->get('/admin/mlm-realestate/bookings/{id}/approve', 'Admin\MLMRealEstateController@approveBooking');
+$router->post('/admin/mlm-realestate/bookings/{id}/approve', 'Admin\MLMRealEstateController@approveBooking');
 $router->post('/admin/mlm-realestate/bookings/{id}/reject', 'Admin\MLMRealEstateController@rejectBooking');
 $router->post('/admin/mlm-realestate/bookings/payment', 'Admin\MLMRealEstateController@recordPayment');
 $router->post('/admin/mlm-realestate/bookings/commission', 'Admin\MLMRealEstateController@processCommission');
@@ -5183,7 +5183,7 @@ $router->get('/admin/property-allocations/create', 'App\\Http\\Controllers\\Admi
 $router->post('/admin/property-allocations/store', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@store');
 $router->get('/admin/property-allocations/{id}', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@show');
 $router->get('/admin/property-allocations/{id}/confirm', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@confirm');
-$router->get('/admin/property-allocations/{id}/cancel', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@cancel');
+$router->post('/admin/property-allocations/{id}/cancel', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@cancel');
 $router->get('/admin/property-allocations/calendar', 'App\\Http\\Controllers\\Admin\\PropertyAllocationController@calendar');
 
 // ============================================================

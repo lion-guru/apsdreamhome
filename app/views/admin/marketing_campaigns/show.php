@@ -24,9 +24,9 @@ ob_start();
                 <i class="fas fa-arrow-left me-1"></i> Back
             </a>
             <?php if (($campaign['status'] ?? '') === 'draft'): ?>
-                <a href="<?= BASE_URL ?>/admin/marketing-campaigns/send/<?= $campaign['id'] ?>" class="btn btn-success" data-aps-confirm="Send this campaign now?">
+                <form action="<?= BASE_URL ?>/admin/marketing-campaigns/send/<?= $campaign['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-success" data-aps-confirm="Send this campaign now?">
                     <i class="fas fa-paper-plane me-1"></i> Send Now
-                </a>
+                </button></form>
             <?php endif; ?>
         </div>
     </div>

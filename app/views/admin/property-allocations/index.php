@@ -124,9 +124,9 @@
                                                 <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/confirm" class="btn btn-outline-success" title="Confirm" data-aps-confirm="Confirm this property allocation?">
                                                     <i class="fas fa-check"></i>
                                                 </a>
-                                                <a href="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/cancel" class="btn btn-outline-danger" title="Cancel" data-aps-confirm="Cancel this property allocation?">
+                                                <form action="<?= BASE_URL ?>/admin/property-allocations/<?= $allocation['id'] ?>/cancel" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-outline-danger" title="Cancel" data-aps-confirm="Cancel this property allocation?">
                                                     <i class="fas fa-times"></i>
-                                                </a>
+                                                </button></form>
                                             <?php endif; ?>
                                         </div>
                                     </td>

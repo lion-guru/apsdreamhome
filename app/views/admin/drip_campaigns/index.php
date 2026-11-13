@@ -120,12 +120,12 @@ ob_start();
                                     <td><small><?= date('M j, Y', strtotime($c['created_at'])) ?></small></td>
                                     <td>
                                         <a href="<?= BASE_URL ?>/admin/drip-campaigns/show/<?= $c['id'] ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
-                                        <a href="<?= BASE_URL ?>/admin/drip-campaigns/toggle?id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-<?= $c['status'] === 'active' ? 'warning' : 'success' ?>" title="<?= $c['status'] === 'active' ? 'Pause' : 'Activate' ?>">
+                                        <form action="<?= BASE_URL ?>/admin/drip-campaigns/toggle?id=<?= $c['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-outline-<?= $c['status'] === 'active' ? 'warning' : 'success' ?>" title="<?= $c['status'] === 'active' ? 'Pause' : 'Activate' ?>">
                                             <i class="fas fa-<?= $c['status'] === 'active' ? 'pause' : 'play' ?>"></i>
-                                        </a>
-                                        <a href="<?= BASE_URL ?>/admin/drip-campaigns/delete?id=<?= $c['id'] ?>" class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this campaign and all its data?">
+                                        </button></form>
+                                        <form action="<?= BASE_URL ?>/admin/drip-campaigns/delete?id=<?= $c['id'] ?>" method="POST" class="d-inline"><?= \App\Helpers\SecurityHelper::csrfField() ?><button type="submit"  class="btn btn-sm btn-outline-danger" data-aps-confirm="Delete this campaign and all its data?">
                                             <i class="fas fa-trash"></i>
-                                        </a>
+                                        </button></form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

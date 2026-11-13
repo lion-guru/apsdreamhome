@@ -66,7 +66,7 @@ class PropertyAlertController extends AdminController
     public function delete()
     {
         $this->requireAdmin();
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int)($_POST['id'] ?? $_GET['id'] ?? 0);
         if ($id > 0 && $this->alerts) {
             try {
                 [$tenantSql, $tenantParams] = $this->tenantWhere();
