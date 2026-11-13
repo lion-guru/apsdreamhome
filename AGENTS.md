@@ -6773,3 +6773,29 @@ User instruction: "do next" — continuing proactive CEO & Senior Developer exec
 
 ### AGENTS.md numbering (Rule 4)
 Next-free = **498** (this session; S497 logged above).
+
+## Session 498: Customer Plot Quotation PDF Self-Serve Engine, PlcRuleService PHP 8 Fix & Pricing Transparency (2026-11-14)
+
+### Trigger
+User instruction: "do next" — continuing continuous CEO & Senior Developer improvements: customer empowerment, self-serve downloadable cost sheets, and eliminating PHP 8 latent edge-case warnings.
+
+### The headline
+
+**1. CUSTOMER & PUBLIC PLOT QUOTATION PDF ENGINE (`Front\BookingController@quotationPdf`)**
+- **Public & Customer Route (`routes/web.php`)**: Registered `GET /plots/{id}/quotation-pdf` (`Front\BookingController@quotationPdf`). Allows any buyer or customer to generate and view/download an instant, branded 1-page plot quotation and payment schedule PDF.
+- **Controller Action (`app/Http/Controllers/Front/BookingController.php`)**: Connected `quotationPdf($id)` to `\App\Services\PDF\AgreementPDFService::generateQuotation()`. Computes plot base pricing, dimensions, PLC breakdown (corner, park facing, road width), estimated UP stamp duty & registration fees, and generates 3 distinct payment options (Full Payment 5% off, 50-50 Milestone, and 36-Month 0% EMI schedule). Streams with clean `inline` PDF headers and filename.
+- **Plot Detail Quick Action & Sidebar Buttons (`app/views/pages/booking/detail.php`)**: Added "Cost Sheet PDF" button in the Quick Actions header bar and "Download Cost Sheet (PDF)" in the right-hand pricing sidebar under "Book Now", giving buyers immediate access to formal downloadable pricing documents.
+
+**2. PLCRULESERVICE PHP 8 LATENT WARNING RESOLVED (`app/Services/Pricing/PlcRuleService.php`)**
+- In `PlcRuleService::calculatePlotPLC()`: Replaced direct array offset `$plot['id']` on line 208 with safe null-coalescing `$plot['id'] ?? null`. Eliminates latent `PHP Notice/Warning: Undefined array key "id"` when plot attribute dictionaries without an explicit `id` key are passed through the PLC rule engine.
+
+### Verification
+- **Quotation PDF Generation**: Clean 1-page PDF generated (9,679 bytes, Exit 0), zero PHP warnings.
+- **PHPStan Static Analysis**: `vendor/bin/phpstan analyse --memory-limit=1G` -> 1508/1508 [OK] No errors (Exit 0).
+- **Master Test Runner**: `php testing/master_test_runner.php` -> 11/11 PASSED (100% HEALTHY, 27.74s).
+- **Schema Mismatch Scanner**: `php testing/scan_schema_mismatches.php --baseline=database/schema_mismatch_baseline.txt` -> 1208 tables, 0 missing, 0 new mismatches (Exit 0).
+- **Live DB Zero Drift**: Byte-identical verification confirmed across all 13 core tracking tables (users 75 / plots 756 / leads 994 / properties 627 / employees 15 / documents 27 / inquiries 10 / notifications 53 / document_esign 0 / associate_profiles 5 / wallet_points 76 / wallet_transactions 3 / mlm_salary_grants 0).
+- **AGENTS.md Integrity**: `php scripts/verify_agents_log.php` -> OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **499** (this session; S498 logged above).

@@ -54,6 +54,9 @@ $promoQuery = !empty($_GET['promo']) ? '?promo=' . urlencode(trim((string)$_GET[
                         <button type="button" class="btn btn-sm btn-outline-secondary" id="btnComparePlot" onclick="comparePlots(<?= $plot['id'] ?>)" title="Compare with Other Plots">
                             <i class="fas fa-balance-scale me-1"></i> <span id="btnComparePlotText">Compare</span>
                         </button>
+                        <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/quotation-pdf" target="_blank" class="btn btn-sm btn-outline-danger" title="Download Official Quotation & Cost Sheet (PDF)">
+                            <i class="fas fa-file-pdf me-1"></i> Cost Sheet PDF
+                        </a>
                     </div>
 
                     <div class="row g-3 mb-3">
@@ -197,6 +200,9 @@ $promoQuery = !empty($_GET['promo']) ? '?promo=' . urlencode(trim((string)$_GET[
                     <p class="text-muted small mb-3"><?= __('detail_book_token_desc') ?></p>
                     <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/book<?= $promoQuery ?>" class="btn btn-primary btn-lg w-100 mb-2">
                         <i class="fas fa-check-circle me-2"></i><?= __('detail_book_this_plot') ?>
+                    </a>
+                    <a href="<?= $baseUrl ?>/plots/<?= $plot['id'] ?>/quotation-pdf" target="_blank" class="btn btn-outline-danger btn-sm w-100 mb-2">
+                        <i class="fas fa-file-pdf me-1"></i> Download Cost Sheet (PDF)
                     </a>
                     <a href="<?= $baseUrl ?>/plots/browse" class="btn btn-outline-secondary btn-sm w-100">
                         <i class="fas fa-arrow-left me-1"></i><?= __('detail_back_to_browse') ?>

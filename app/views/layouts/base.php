@@ -185,12 +185,12 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
     <!-- Navigation & Header -->
     <link href="<?php echo BASE_URL; ?>/assets/css/header.css?v=9" rel="stylesheet">
     <!-- Real Estate Theme & Gradients -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=14" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/premium-theme.css?v=15" rel="stylesheet">
     <!-- Homepage Specific Extras -->
     <link href="<?php echo BASE_URL; ?>/assets/css/homepage.css?v=16" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/assets/css/modern-animations.css?v=2" rel="stylesheet">
     <!-- Mobile Responsive Overrides -->
-    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=5" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/assets/css/mobile-responsive.css?v=6" rel="stylesheet">
     <!-- Utility classes (display, min-width, visibility) -->
     <link href="<?php echo BASE_URL; ?>/assets/css/utils.css?v=1" rel="stylesheet">
     <!-- Final UI/UX Polish (contrast, tap targets) -->

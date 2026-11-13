@@ -171,6 +171,39 @@ class BookingController extends BaseController
     }
 
     /**
+     * Branded 1-page quotation PDF for an available plot (Customer & Public).
+     * Route: GET /plots/{id}/quotation-pdf
+     */
+    public function quotationPdf($id)
+    {
+        $id = (int)$id;
+        try {
+            $svc = new \App\Services\PDF\AgreementPDFService(
+                $this->db instanceof \PDO ? $this->db : null
+            );
+            $me = !empty($_SESSION['user_name']) ? (string)$_SESSION['user_name'] : 'Customer Online Desk';
+            $res = $svc->generateQuotation($id, $me);
+        } catch (\Throwable $e) {
+            error_log('BookingController::quotationPdf: ' . $e->getMessage());
+            $res = ['success' => false];
+        }
+
+        if (empty($res['success']) || !is_file($res['pdf_path'] ?? '')) {
+            $this->setFlash('error', $res['error'] ?? 'Quotation failed (plot must be available).');
+            return $this->redirect('/plots/' . $id . '/detail');
+        }
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . basename($res['pdf_path']) . '"');
+        header('Content-Length: ' . (string)filesize($res['pdf_path']));
+        readfile($res['pdf_path']);
+        exit;
+    }
+
+    /**
      * Booking form — customer fills details, selects payment plan.
      * Requires login.
      */

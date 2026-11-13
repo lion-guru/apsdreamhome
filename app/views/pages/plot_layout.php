@@ -20,9 +20,9 @@
         transition: all 0.2s;
     }
     .colony-tab:hover { background: #334155; color: #f8fafc; }
-    .colony-tab.active { background: #0d9488; color: #fff; border-color: #6366f1; }
+    .colony-tab.active { background: #0f766e; color: #fff; border-color: #6366f1; }
     .colony-tab .tab-stats { font-size: 11px; color: #94a3b8; margin-top: 4px; }
-    .colony-tab.active .tab-stats { color: #c7d2fe; }
+    .colony-tab.active .tab-stats { color: #d1fae5; }
     .sidebar-legend { padding: 16px 20px; border-bottom: 1px solid #334155; }
     .sidebar-legend h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-bottom: 10px; }
     .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 13px; }
@@ -49,7 +49,7 @@
         background: #fff; font-size: 12px; cursor: pointer; transition: all 0.15s;
     }
     .filter-btn:hover { background: #f1f5f9; }
-    .filter-btn.active { background: #0d9488; color: #fff; border-color: #0d9488; }
+    .filter-btn.active { background: #0f766e; color: #fff; border-color: #0d9488; }
     .zoom-controls { margin-left: auto; display: flex; gap: 4px; }
     .zoom-btn {
         width: 32px; height: 32px; border: 1px solid #e2e8f0; border-radius: 6px;

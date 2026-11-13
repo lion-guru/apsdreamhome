@@ -205,7 +205,7 @@ class PlcRuleService
         $finalAmount = $baseAmount + $totalPlcAmount;
 
         return [
-            'plot_id' => $plot['id'],
+            'plot_id' => $plot['id'] ?? null,
             'plot_number' => $plot['plot_number'] ?? '',
             'colony_name' => $plot['colony_name'] ?? '',
             'base_rate' => $baseRate,

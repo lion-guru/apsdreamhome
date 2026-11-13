@@ -401,27 +401,27 @@ h6 { font-size: var(--h6-size); font-weight: 500; }
   color: #ffffff !important;
 }
 /* Card Surface Reset inside Dark Sections — prevents white-on-white text */
-.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']),
-.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']),
-.hero-premium .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']),
-.cta-section .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) {
+.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary),
+.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary),
+.hero-premium .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary),
+.cta-section .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) {
   --aps-text: var(--premium-dark);
   --aps-heading: var(--premium-navy);
   --aps-text-muted: var(--color-text-muted);
   color: var(--premium-dark) !important;
 }
 
-.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) p,
-.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) span,
-.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) div,
-.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) p,
-.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) span,
-.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) div {
+.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) p,
+.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) span,
+.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) div,
+.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) p,
+.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) span,
+.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) div {
   color: var(--premium-dark);
 }
 
-.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) .text-muted,
-.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) .text-muted {
+.bg-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .text-muted,
+.section-dark .card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) .text-muted {
   color: var(--color-text-muted) !important;
 }
 
@@ -619,12 +619,12 @@ h5, .h5 { font-family: var(--font-primary) !important; font-weight: 700; letter-
 h6, .h6 { font-family: var(--font-primary) !important; font-weight: 700; letter-spacing: -0.02em; color: var(--aps-heading); font-size: clamp(1rem, 1.5vw, 1.1rem) !important; line-height: 1.4; }
 
 /* Universal Card Heading & Text Reset — NOT in dark mode */
-.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h1,
-.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h2,
-.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h3,
-.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h4,
-.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h5,
-.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']) h6,
+.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) h1,
+.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) h2,
+.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) h3,
+.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) h4,
+.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) h5,
+.card:not(.bg-dark):not(.bg-primary):not([class*='gradient']):not(.bg-success):not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-secondary) h6,
 .ps-card h1,
 .ps-card h2,
 .ps-card h3,

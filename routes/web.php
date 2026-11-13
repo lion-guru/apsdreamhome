@@ -313,6 +313,7 @@ $router->get('/plots', 'Front\\PlotIndexController@index');
 // â€”â€” Customer Booking Portal â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
 $router->get('/plots/browse', 'Front\\BookingController@browse');
 $router->get('/plots/{id}/detail', 'Front\\BookingController@detail');
+$router->get('/plots/{id}/quotation-pdf', 'Front\\BookingController@quotationPdf');
 $router->get('/plots/{id}/book', 'Front\\BookingController@bookForm');
 $router->post('/plots/{id}/book', 'Front\\BookingController@submitBooking');
 $router->get('/booking/confirmation/{id}', 'Front\\BookingController@confirmation');
