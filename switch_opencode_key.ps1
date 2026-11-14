@@ -1,8 +1,20 @@
 # OpenCode API Key 1-Click Switcher Script
+# Keys come from environment variables (gitignored .env) — set them there or in your shell:
+#   $env:OPENCODE_ZEN_KEY_TECHGURU = "key1..."
+#   $env:OPENCODE_ZEN_KEY_APS      = "key2..."
+# SECURITY (2026-11-14): the live keys previously hardcoded here were exposed to disk and
+# assistant session context; rotate them in the OpenCode console before re-configuring.
+
 $authPath = "$env:USERPROFILE\.local\share\opencode\auth.json"
 
-$keyTechguru = "oc_sk_e45303e6e06c_dlgfYvLfSFtkaZa5YTcOiy0upxQGrpjt"
-$keyAps      = "oc_sk_922b42946876_zyXpUtTi8K4KWjFRE5XI_lDx34ZX2wRQ"
+$keyTechguru = $env:OPENCODE_ZEN_KEY_TECHGURU
+$keyAps      = $env:OPENCODE_ZEN_KEY_APS
+
+if ([string]::IsNullOrWhiteSpace($keyTechguru) -or [string]::IsNullOrWhiteSpace($keyAps)) {
+    Write-Host "[ERROR] OPENCODE_ZEN_KEY_TECHGURU / OPENCODE_ZEN_KEY_APS not set." -ForegroundColor Red
+    Write-Host "Set them as environment variables (or in .env) after rotating the exposed keys." -ForegroundColor Yellow
+    exit 1
+}
 
 if (-not (Test-Path $authPath)) {
     Write-Host "[ERROR] auth.json not found at: $authPath" -ForegroundColor Red
@@ -54,7 +66,7 @@ Set-Content -Path $authPath -Value $newJson -Encoding UTF8
 Write-Host "----------------------------------------------------------------" -ForegroundColor DarkGray
 Write-Host " [SUCCESS]  NOW ACTIVE ACCOUNT: " -NoNewline -ForegroundColor Green
 Write-Host $targetName -ForegroundColor Yellow
-Write-Host " [KEY]      $($targetKey.Substring(0, 12))...$($targetKey.Substring($targetKey.Length - 8))" -ForegroundColor DarkCyan
+Write-Host " [KEY]      (hidden - not printed)" -ForegroundColor DarkCyan
 Write-Host "================================================================" -ForegroundColor Cyan
 Write-Host "OpenCode is now configured with: $targetName" -ForegroundColor Green
 Write-Host ""

@@ -100,7 +100,7 @@ class FreeAIEngines
             $this->deepseekKey = $settings['deepseek_api_key'] ?? getenv('DEEPSEEK_API_KEY') ?: '';
             $this->togetherAiKey = $settings['together_api_key'] ?? getenv('TOGETHER_API_KEY') ?: '';
             $this->cohereKey = $settings['cohere_api_key'] ?? getenv('COHERE_API_KEY') ?: '';
-            $this->opencodeZenKey = $settings['opencode_zen_key'] ?? (getenv('OPENCODE_ZEN_KEY_APS') ?: (getenv('OPENCODE_ZEN_KEY') ?: 'oc_sk_922b42946876_zyXpUtTi8K4KWjFRE5XI_lDx34ZX2wRQ'));
+            $this->opencodeZenKey = $settings['opencode_zen_key'] ?? (getenv('OPENCODE_ZEN_KEY_APS') ?: (getenv('OPENCODE_ZEN_KEY') ?: ''));
             // Model saved by the AI Provider Settings dashboard (settings JSON column)
             if (!empty($cfg['model']) && is_string($cfg['model'])) {
                 $this->geminiModel = $cfg['model'];
@@ -115,7 +115,7 @@ class FreeAIEngines
             $this->deepseekKey = getenv('DEEPSEEK_API_KEY') ?: '';
             $this->togetherAiKey = getenv('TOGETHER_API_KEY') ?: '';
             $this->cohereKey = getenv('COHERE_API_KEY') ?: '';
-            $this->opencodeZenKey = getenv('OPENCODE_ZEN_KEY_APS') ?: (getenv('OPENCODE_ZEN_KEY') ?: 'oc_sk_922b42946876_zyXpUtTi8K4KWjFRE5XI_lDx34ZX2wRQ');
+            $this->opencodeZenKey = getenv('OPENCODE_ZEN_KEY_APS') ?: (getenv('OPENCODE_ZEN_KEY') ?: '');
         }
     }
 
