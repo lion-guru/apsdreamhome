@@ -500,6 +500,9 @@ class Sentinel
      */
     private function getTableFragmentation($table)
     {
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
+            return 50;
+        }
         $stmt = $this->db->query("CHECK TABLE `$table`");
         $result = $stmt->fetch();
         return strpos((isset($result['Msg_text']) ? $result['Msg_text'] : ''), 'OK') === false ? 50 : 0;
