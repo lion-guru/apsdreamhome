@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // ============================================================================
@@ -136,24 +135,22 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
 
-  // Typography Scale
+  // Typography Scale — Inter is now bundled as an asset, so no network-time download
   static const String _fontFamily = 'Inter';
-  static final TextTheme _textTheme = GoogleFonts.interTextTheme(
-    const TextTheme(
-      displayLarge: displayLarge,
-      displayMedium: displayMedium,
-      headlineLarge: headlineLarge,
-      headlineMedium: headlineMedium,
-      titleLarge: titleLarge,
-      titleMedium: titleMedium,
-      titleSmall: titleSmall,
-      bodyLarge: bodyLarge,
-      bodyMedium: bodyMedium,
-      bodySmall: bodySmall,
-      labelLarge: labelLarge,
-      labelMedium: labelMedium,
-      labelSmall: labelSmall,
-    ),
+  static const TextTheme _textTheme = TextTheme(
+    displayLarge: displayLarge,
+    displayMedium: displayMedium,
+    headlineLarge: headlineLarge,
+    headlineMedium: headlineMedium,
+    titleLarge: titleLarge,
+    titleMedium: titleMedium,
+    titleSmall: titleSmall,
+    bodyLarge: bodyLarge,
+    bodyMedium: bodyMedium,
+    bodySmall: bodySmall,
+    labelLarge: labelLarge,
+    labelMedium: labelMedium,
+    labelSmall: labelSmall,
   );
 
   static const TextStyle displayLarge = TextStyle(

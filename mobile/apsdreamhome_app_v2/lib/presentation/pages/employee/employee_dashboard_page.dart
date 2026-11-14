@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/theme/app_theme.dart';
@@ -136,7 +135,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
         children: [
           Text(
             '${_greeting()}, $name!',
-            style: GoogleFonts.outfit(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontFamily: 'Outfit', color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
@@ -232,11 +231,11 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
                 const SizedBox(height: 8),
                 Text(
                   stat['value'] as String,
-                  style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: color),
+                  style: TextStyle(fontFamily: 'Outfit', fontSize: 20, fontWeight: FontWeight.bold, color: color),
                 ),
                 Text(
                   stat['label'] as String,
-                  style: GoogleFonts.inter(fontSize: 11, color: Colors.grey.shade600),
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: Colors.grey.shade600),
                 ),
               ],
             ),
@@ -276,7 +275,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
               children: [
                 Text(
                   isPunchedIn ? (isPunchedOut ? 'Day Complete' : 'Clocked In') : 'Not Checked In',
-                  style: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 13),
+                  style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w600, fontSize: 13),
                 ),
                 if (att != null) ...[
                   const SizedBox(height: 2),
@@ -286,7 +285,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
                       if (att['punch_out_time'] != null) 'Out: ${att['punch_out_time']}',
                       if (hoursWorked != null) '${hoursWorked}h worked',
                     ].join(' \u00b7 '),
-                    style: GoogleFonts.inter(fontSize: 11, color: Colors.grey.shade500),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: Colors.grey.shade500),
                   ),
                 ],
               ],
@@ -324,7 +323,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
                   const SizedBox(height: 6),
                   Text(
                     a['label'] as String,
-                    style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w500, color: color),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w500, color: color),
                   ),
                 ],
               ),
@@ -339,7 +338,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(title, style: TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.bold)),
         TextButton(onPressed: onSeeAll, child: const Text('See All', style: TextStyle(fontSize: 12))),
       ],
     );
@@ -360,7 +359,7 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
           children: [
             Icon(Icons.campaign_outlined, color: Colors.grey.shade400, size: 20),
             const SizedBox(width: 12),
-            Text('No recent announcements', style: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade500)),
+            Text('No recent announcements', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: Colors.grey.shade500)),
           ],
         ),
       );
@@ -391,12 +390,12 @@ class _EmployeeDashboardPageState extends ConsumerState<EmployeeDashboardPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(a['title'] as String? ?? '', style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 13)),
-                  Text(a['subtitle'] as String? ?? '', style: GoogleFonts.inter(fontSize: 11, color: Colors.grey.shade500)),
+                  Text(a['title'] as String? ?? '', style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 13)),
+                  Text(a['subtitle'] as String? ?? '', style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: Colors.grey.shade500)),
                 ],
               ),
             ),
-            Text(a['time'] as String? ?? '', style: GoogleFonts.inter(fontSize: 10, color: Colors.grey.shade400)),
+            Text(a['time'] as String? ?? '', style: TextStyle(fontFamily: 'Inter', fontSize: 10, color: Colors.grey.shade400)),
           ],
         ),
       )).toList(),

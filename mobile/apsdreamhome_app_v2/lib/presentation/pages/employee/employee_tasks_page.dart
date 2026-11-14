@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../data/repositories/kyc_repository_provider.dart';
@@ -146,7 +145,7 @@ class _EmployeeTasksPageState extends ConsumerState<EmployeeTasksPage> {
                         children: [
                           Icon(Icons.error_outline, size: 48, color: AppTheme.errorColor.withValues(alpha: 0.5)),
                           const SizedBox(height: 12),
-                          Text(_error!, style: GoogleFonts.inter(color: AppTheme.errorColor), textAlign: TextAlign.center),
+                          Text(_error!, style: TextStyle(fontFamily: 'Inter', color: AppTheme.errorColor), textAlign: TextAlign.center),
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
                             onPressed: _load,
@@ -165,7 +164,7 @@ class _EmployeeTasksPageState extends ConsumerState<EmployeeTasksPage> {
                               const SizedBox(height: 12),
                               Text(
                                 _filter == 'all' ? 'No tasks assigned' : 'No $_filter tasks',
-                                style: GoogleFonts.inter(color: Colors.grey.shade500, fontSize: 14),
+                                style: TextStyle(fontFamily: 'Inter', color: Colors.grey.shade500, fontSize: 14),
                               ),
                             ],
                           ),
@@ -198,7 +197,7 @@ class _EmployeeTasksPageState extends ConsumerState<EmployeeTasksPage> {
         ),
         child: Text(
           label,
-          style: GoogleFonts.inter(
+          style: TextStyle(fontFamily: 'Inter', 
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: isSelected ? Colors.white : Colors.grey.shade700,
@@ -256,7 +255,7 @@ class _EmployeeTasksPageState extends ConsumerState<EmployeeTasksPage> {
               children: [
                 Text(
                   '$title',
-                  style: GoogleFonts.inter(
+                  style: TextStyle(fontFamily: 'Inter', 
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                     decoration: isCompleted ? TextDecoration.lineThrough : null,
@@ -267,7 +266,7 @@ class _EmployeeTasksPageState extends ConsumerState<EmployeeTasksPage> {
                   const SizedBox(height: 2),
                   Text(
                     '$description',
-                    style: GoogleFonts.inter(fontSize: 11, color: Colors.grey.shade500),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: Colors.grey.shade500),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -278,7 +277,7 @@ class _EmployeeTasksPageState extends ConsumerState<EmployeeTasksPage> {
                     if ('$dueDate'.isNotEmpty) ...[
                       Icon(Icons.access_time, size: 11, color: Colors.grey.shade400),
                       const SizedBox(width: 3),
-                      Text('$dueDate', style: GoogleFonts.inter(fontSize: 10, color: Colors.grey.shade400)),
+                      Text('$dueDate', style: TextStyle(fontFamily: 'Inter', fontSize: 10, color: Colors.grey.shade400)),
                     ],
                   ],
                 ),
@@ -294,7 +293,7 @@ class _EmployeeTasksPageState extends ConsumerState<EmployeeTasksPage> {
             ),
             child: Text(
               priority.toUpperCase(),
-              style: GoogleFonts.inter(fontSize: 9, fontWeight: FontWeight.bold, color: color),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 9, fontWeight: FontWeight.bold, color: color),
             ),
           ),
         ],

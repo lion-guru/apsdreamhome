@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
@@ -41,7 +40,7 @@ class _ColonyPlotGridPageState extends ConsumerState<ColonyPlotGridPage> {
       appBar: AppBar(
         title: Text(
           widget.colonyName,
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+          style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w600),
         ),
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
@@ -121,7 +120,7 @@ class _ColonyPlotGridPageState extends ConsumerState<ColonyPlotGridPage> {
         ),
         const SizedBox(width: 4),
         Text(label,
-            style: GoogleFonts.inter(
+            style: TextStyle(fontFamily: 'Inter', 
                 fontSize: 11, fontWeight: FontWeight.w500)),
       ],
     );
@@ -132,7 +131,7 @@ class _ColonyPlotGridPageState extends ConsumerState<ColonyPlotGridPage> {
       return Center(
         child: Text(
           'No plots found',
-          style: GoogleFonts.inter(fontSize: 16, color: Colors.grey),
+          style: TextStyle(fontFamily: 'Inter', fontSize: 16, color: Colors.grey),
         ),
       );
     }
@@ -313,7 +312,7 @@ class PlotDetailBottomSheet extends StatelessWidget {
                 children: [
                   Text(
                     'Plot ${plot.plotNumber}',
-                    style: GoogleFonts.outfit(
+                    style: TextStyle(fontFamily: 'Outfit', 
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
                       color: AppTheme.primaryColor,
@@ -329,7 +328,7 @@ class PlotDetailBottomSheet extends StatelessWidget {
                     ),
                     child: Text(
                       _statusLabel,
-                      style: GoogleFonts.inter(
+                      style: TextStyle(fontFamily: 'Inter', 
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: _statusColor,
@@ -341,7 +340,7 @@ class PlotDetailBottomSheet extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 plot.colonyName,
-                style: GoogleFonts.inter(
+                style: TextStyle(fontFamily: 'Inter', 
                   fontSize: 14,
                   color: Colors.grey.shade600,
                 ),
@@ -459,7 +458,7 @@ class PlotDetailBottomSheet extends StatelessWidget {
                         ),
                         child: Text(
                           'Book Plot',
-                          style: GoogleFonts.outfit(
+                          style: TextStyle(fontFamily: 'Outfit', 
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),
@@ -562,7 +561,7 @@ class PlotDetailBottomSheet extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.inter(
+              style: TextStyle(fontFamily: 'Inter', 
                 fontSize: 14,
                 color: Colors.grey.shade600,
               ),
@@ -570,7 +569,7 @@ class PlotDetailBottomSheet extends StatelessWidget {
           ),
           Text(
             value,
-            style: GoogleFonts.inter(
+            style: TextStyle(fontFamily: 'Inter', 
               fontSize: 14,
               fontWeight: valueWeight ?? FontWeight.w600,
               color: valueColor ?? Colors.black87,
@@ -597,7 +596,7 @@ class PlotDetailBottomSheet extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: TextStyle(fontFamily: 'Inter', 
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: Colors.orange.shade800,

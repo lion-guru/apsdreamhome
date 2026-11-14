@@ -60,8 +60,7 @@ dependencies:
 
   go_router: ^17.3.0
 
-  # Fonts
-  google_fonts: ^8.1.0
+  # Fonts - Inter/Outfit/Poppins now bundled locally, google_fonts removed
 
   # Google Sign-In
   google_sign_in: ^6.2.2
@@ -139,3 +138,17 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/fonts/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/InterVariable.ttf
+    - family: Outfit
+      fonts:
+        - asset: assets/fonts/OutfitVariable.ttf
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600

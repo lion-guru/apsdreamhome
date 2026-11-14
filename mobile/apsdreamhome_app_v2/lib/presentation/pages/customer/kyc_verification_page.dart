@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -364,7 +363,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
       appBar: AppBar(
         title: Text(
           'KYC Verification',
-          style: GoogleFonts.poppins(
+          style: TextStyle(fontFamily: 'Poppins', 
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -443,7 +442,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
               const SizedBox(width: 16),
               Text(
                 '${(_progressAnimation.value * 100).toInt()}%',
-                style: GoogleFonts.poppins(
+                style: TextStyle(fontFamily: 'Poppins', 
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF2E7D32),
                 ),
@@ -453,7 +452,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
           const SizedBox(height: 8),
           Text(
             'Complete all verification steps to finish KYC',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 12,
               color: Colors.grey[600],
             ),
@@ -577,7 +576,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
               const SizedBox(width: 8),
               Text(
                 _kycStatus!.isCompleted ? 'KYC Completed' : 'KYC In Progress',
-                style: GoogleFonts.poppins(
+                style: TextStyle(fontFamily: 'Poppins', 
                   fontWeight: FontWeight.w600,
                   color: _kycStatus!.isCompleted ? Colors.green : Colors.orange,
                 ),
@@ -587,7 +586,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
           const SizedBox(height: 8),
           Text(
             'Status: ${_kycStatus!.isCompleted ? "Completed" : "In Progress"}',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 14,
               color: Colors.grey[700],
             ),
@@ -616,7 +615,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
         children: [
           Text(
             'PAN Verification',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -673,7 +672,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
         children: [
           Text(
             'Aadhaar Verification',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -696,7 +695,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
           const SizedBox(height: 8),
           Text(
             'Note: You will receive an OTP on your registered mobile number',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 12,
               color: Colors.grey[600],
             ),
@@ -725,7 +724,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
         children: [
           Text(
             'Upload ${isPan ? 'PAN' : 'Aadhaar'} Document',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -752,7 +751,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
                   const SizedBox(height: 8),
                   Text(
                     'Tap to upload ${isPan ? 'PAN' : 'Aadhaar'} card',
-                    style: GoogleFonts.poppins(
+                    style: TextStyle(fontFamily: 'Poppins', 
                       color: Colors.grey[600],
                     ),
                   ),
@@ -845,7 +844,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
         children: [
           Text(
             'Selfie Capture',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -877,7 +876,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
                         const SizedBox(height: 8),
                         Text(
                           'Initializing camera...',
-                          style: GoogleFonts.poppins(
+                          style: TextStyle(fontFamily: 'Poppins', 
                             color: Colors.grey[600],
                           ),
                         ),
@@ -957,7 +956,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
         children: [
           Text(
             'Video KYC',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -966,7 +965,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
           const SizedBox(height: 8),
           Text(
             'Record a 30-second video saying your name and address',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 12,
               color: Colors.grey[600],
             ),
@@ -993,7 +992,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
                   if (_isRecording) ...[
                     Text(
                       'Recording... $_recordingDuration/30s',
-                      style: GoogleFonts.poppins(
+                      style: TextStyle(fontFamily: 'Poppins', 
                         color: Colors.red,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1011,7 +1010,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
                   ] else ...[
                     Text(
                       'Tap to start recording',
-                      style: GoogleFonts.poppins(
+                      style: TextStyle(fontFamily: 'Poppins', 
                         color: Colors.grey[600],
                       ),
                     ),
@@ -1051,7 +1050,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
                   const SizedBox(height: 8),
                   Text(
                     'Video recorded successfully',
-                    style: GoogleFonts.poppins(
+                    style: TextStyle(fontFamily: 'Poppins', 
                       color: Colors.green,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1105,7 +1104,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
                 result.success
                     ? 'Verification Successful'
                     : 'Verification Failed',
-                style: GoogleFonts.poppins(
+                style: TextStyle(fontFamily: 'Poppins', 
                   fontWeight: FontWeight.w600,
                   color: result.success ? Colors.green : Colors.red,
                 ),
@@ -1115,7 +1114,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
           const SizedBox(height: 8),
           Text(
             result.message,
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 14,
               color: Colors.grey[700],
             ),
@@ -1124,7 +1123,7 @@ class _KYCVerificationPageState extends ConsumerState<KYCVerificationPage>
             const SizedBox(height: 8),
             Text(
               'Details: ${result.data.toString()}',
-              style: GoogleFonts.poppins(
+              style: TextStyle(fontFamily: 'Poppins', 
                 fontSize: 12,
                 color: Colors.grey[600],
               ),

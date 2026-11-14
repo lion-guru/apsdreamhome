@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../data/repositories/kyc_repository_provider.dart';
 import '../../../domain/models/kyc_models.dart';
 
@@ -70,7 +69,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
       appBar: AppBar(
         title: Text(
           'KYC Status',
-          style: GoogleFonts.poppins(
+          style: TextStyle(fontFamily: 'Poppins', 
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -131,7 +130,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
             const SizedBox(height: 24),
             Text(
               'No KYC Data Found',
-              style: GoogleFonts.poppins(
+              style: TextStyle(fontFamily: 'Poppins', 
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey[700],
@@ -140,7 +139,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
             const SizedBox(height: 8),
             Text(
               'Start your KYC verification process',
-              style: GoogleFonts.poppins(
+              style: TextStyle(fontFamily: 'Poppins', 
                 fontSize: 14,
                 color: Colors.grey[600],
               ),
@@ -237,7 +236,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
           const SizedBox(height: 16),
           Text(
             statusText,
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 24,
               fontWeight: FontWeight.w700,
               color: iconColor,
@@ -246,7 +245,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
           const SizedBox(height: 8),
           Text(
             'Status: ${_kycStatus!.status.name}',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 16,
               color: Colors.grey[700],
             ),
@@ -255,7 +254,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
             const SizedBox(height: 8),
             Text(
               'Verified: ${_formatDate(_kycStatus!.verifiedAt)}',
-              style: GoogleFonts.poppins(
+              style: TextStyle(fontFamily: 'Poppins', 
                 fontSize: 14,
                 color: Colors.grey[600],
               ),
@@ -296,7 +295,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
         children: [
           Text(
             'Verification Steps',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -341,7 +340,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
             Expanded(
               child: Text(
                 name,
-                style: GoogleFonts.poppins(
+                style: TextStyle(fontFamily: 'Poppins', 
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: completed ? Colors.black87 : Colors.grey[600],
@@ -357,7 +356,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
                 ),
                 child: Text(
                   'Done',
-                  style: GoogleFonts.poppins(
+                  style: TextStyle(fontFamily: 'Poppins', 
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: Colors.green,
@@ -401,7 +400,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
         children: [
           Text(
             'KYC Details',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -432,7 +431,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
             width: 100,
             child: Text(
               label,
-              style: GoogleFonts.poppins(
+              style: TextStyle(fontFamily: 'Poppins', 
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.grey[600],
@@ -442,7 +441,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
           Expanded(
             child: Text(
               value,
-              style: GoogleFonts.poppins(
+              style: TextStyle(fontFamily: 'Poppins', 
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.black87,
@@ -511,7 +510,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
         children: [
           Text(
             'Activity Timeline',
-            style: GoogleFonts.poppins(
+            style: TextStyle(fontFamily: 'Poppins', 
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -563,7 +562,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.poppins(
+                    style: TextStyle(fontFamily: 'Poppins', 
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
@@ -572,7 +571,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: GoogleFonts.poppins(
+                    style: TextStyle(fontFamily: 'Poppins', 
                       fontSize: 12,
                       color: Colors.grey[600],
                     ),
@@ -580,7 +579,7 @@ class _KYCStatusPageState extends ConsumerState<KYCStatusPage>
                   const SizedBox(height: 4),
                   Text(
                     time,
-                    style: GoogleFonts.poppins(
+                    style: TextStyle(fontFamily: 'Poppins', 
                       fontSize: 11,
                       color: Colors.grey[500],
                     ),

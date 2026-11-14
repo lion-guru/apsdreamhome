@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/repositories/kyc_repository_provider.dart';
@@ -218,7 +217,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                       const SizedBox(height: 12),
                       Text(
                         _isPunchedIn ? 'Checked In' : 'Not Checked In',
-                        style: GoogleFonts.outfit(
+                        style: TextStyle(fontFamily: 'Outfit', 
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
                             color: Colors.white),
@@ -228,7 +227,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                         Text(
                           'In: ${_todayRecord!['punch_in_time'] ?? 'N/A'}',
                           style:
-                              GoogleFonts.inter(color: Colors.white70),
+                              TextStyle(fontFamily: 'Inter', color: Colors.white70),
                         ),
                       ],
                     ],
@@ -248,7 +247,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                           color: AppTheme.errorColor.withValues(alpha: 0.3)),
                     ),
                     child: Text(_error!,
-                        style: GoogleFonts.inter(
+                        style: TextStyle(fontFamily: 'Inter', 
                             color: AppTheme.errorColor, fontSize: 13)),
                   ),
 
@@ -257,7 +256,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                   Text(
                     'Distance from office: ${_distanceFromOffice!.round()}m',
                     style:
-                        GoogleFonts.inter(color: Colors.grey.shade600),
+                        TextStyle(fontFamily: 'Inter', color: Colors.grey.shade600),
                   ),
                 ],
 
@@ -284,7 +283,7 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                             color: Colors.white)
                         : Text(
                             _isPunchedIn ? 'PUNCH OUT' : 'PUNCH IN',
-                            style: GoogleFonts.outfit(
+                            style: TextStyle(fontFamily: 'Outfit', 
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 1.2),
@@ -305,14 +304,14 @@ class _CheckInPageState extends ConsumerState<CheckInPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Office Location',
-                          style: GoogleFonts.outfit(
+                          style: TextStyle(fontFamily: 'Outfit', 
                               fontWeight: FontWeight.w600)),
                       const SizedBox(height: 4),
                       Text('Kunraghat Office, Gorakhpur',
-                          style: GoogleFonts.inter(
+                          style: TextStyle(fontFamily: 'Inter', 
                               color: Colors.grey.shade600)),
                       Text('Radius: ${_radiusMeters}m',
-                          style: GoogleFonts.inter(
+                          style: TextStyle(fontFamily: 'Inter', 
                               color: Colors.grey.shade600,
                               fontSize: 12)),
                     ],
