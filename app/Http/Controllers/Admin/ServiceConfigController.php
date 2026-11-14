@@ -196,13 +196,13 @@ class ServiceConfigController extends AdminController
             return;
         }
 
-        $pdo = $this->getDb();
+        $pdo = $this->db;
         $tid = (int)$this->tenantId();
         [$tenantSql, $tenantParams] = $this->tenantWhere();
         $stmt = $pdo->prepare("DELETE FROM `service_configs` WHERE `service_name` = ?" . $tenantSql);
         $stmt->execute(array_merge([$service], $tenantParams));
 
-        // Re-seed defaults for this service from the full seed list — tenant-scoped
+        // Re-seed defaults for this service from the full seed list - tenant-scoped
         $defaults = $this->getSeedDefaults();
         if (isset($defaults[$service])) {
             $tenantCol = $tid > 1 ? ", `tenant_id`" : "";
@@ -217,6 +217,11 @@ class ServiceConfigController extends AdminController
                 if ($tid > 1) $params[] = $tid;
                 $ins->execute($params);
             }
+        } else {
+            // No defaults available: clear values instead of deleting rows
+            [$tenantSql, $tenantParams] = $this->tenantWhere();
+            $stmt = $pdo->prepare("UPDATE `service_configs` SET `config_value` = '', `updated_at` = NOW() WHERE `service_name` = ?" . $tenantSql);
+            $stmt->execute(array_merge([$service], $tenantParams));
         }
 
         $this->redirect(BASE_URL . '/admin/service-configs?saved=' . urlencode("Reset {$service} to defaults"));
