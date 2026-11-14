@@ -159,7 +159,7 @@ class AuthController extends BaseController
             // Canonical wallet_points shape, mirroring WalletService::credit().)
             $walletCols = "user_id, tenant_id, points_balance, total_earned, total_used, total_transferred_to_emi, referral_earnings, commission_earnings, bonus_earnings, status, wallet_activated, created_at, updated_at";
             $walletVals = "?, ?, 0, 0, 0, 0, 0, 0, 0, 'active', 0, NOW(), NOW()";
-            $walletParams = [$userId, $insertExtra['tenant_id'] ?? ($tid ?? 1)];
+            $walletParams = [$userId, $insertExtra['tenant_id'] ?? $tid];
             $stmt = $db->prepare("INSERT INTO wallet_points ($walletCols) VALUES ($walletVals)");
             $stmt->execute($walletParams);
 
