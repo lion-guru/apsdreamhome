@@ -111,6 +111,37 @@ _1007. **Probe the E2E of an outcome, not just the handler** — the unit-of-tru
 ### AGENTS.md numbering (Rule 4)
 Highest heading before this entry = 537 (parallel actor, this round). This entry = **S538**. Next-free = **539**.
 
+## Session 540: AI Call History Admin Page — Three-Layer Dead Feature Revived, Live Data Rendered (2026-11-14)
+
+### Trigger
+User: "do next itta bada context hai suggestion do improvment ka research kar ke" — asked for a researched improvement, not another synthetic module. A full-strength grep sweep over the AI voice surface found one feature that was **100% dead for its entire lifetime** and is the natural payoff of the outcome loop shipped last session: `/admin/voice-users/history`.
+
+### What was broken (all three layers)
+1. **Controller — phantom table JOIN**: `history()` joined `ai_calling_agents` (a table that has never existed — confirmed S548: `Base table not found: 1146`). Every request threw, the `catch` swallowed it, and **every admin who ever opened the page saw "No call records found."** The agent-side join is removed; `ai_call_scripts` is joined for a readable script name.
+2. **View — field contract mismatch**: view read `customer_name` / `phone` / `agent_name` / `duration` / `created_at`; the controller passes `lead_name` / `s.phone` / `duration_seconds` / `lead_phone` — column cells rendered `N/A`/`-`/`0:00` even if rows had arrived.
+3. **Pagination contract shattered**: view dereferences `$pagination['offset'|'page'|'total_pages']`; the controller passed `page`/`total_pages`/`total` at top level — `$pagination['offset'] ?? 0` made every page renumber from 1 and hid the 6 → 2-page pagination on 26 sessions.
+4. **Filter was dead too**: the form posted `agent` (an `ai_agent_id` nobody has) and the Actions button linked `/admin/voice-users/history/{id}` — **a route that does not exist** (all `history/{id}` hrefs 404'd). Replaced the filter with `outcome` (interested/callback/transfer/not_interested/dnd/no_response) + `script`; removed the dead Actions column; added an audio `<audio>` tag rendered only when `recording_url` is set.
+
+### Fix
+- `VoiceAgentAdminController::history()` — no agents join; joins `ai_call_scripts`; returns `pagination` array `['page', 'per_page', 'offset', 'total', 'total_pages']`; new `outcome`/`script` filters; `search` now also matches lead phone; logs `history` query failures with `error_log` instead of silently emptying; scripts dropdown populated from live `ai_call_scripts` (tenant 1, is_active=1).
+- `views/admin/voice-users/history.php` — full rewrite against the real contract: `# | Lead / Phone | Script | Status badge | Outcome badge | Interest chip | Follow-up | Duration | Date/Time | Recording`; filter GET form keeps `date_from`/`date_to`/`status`/`outcome`/`script`/`search`; pagination rebuilt for the `$pagination` array; nil-safe everywhere (no-outcome sessions render `—`).
+- Cosmetic: `in_progress` badge now renders "In progress" instead of `In_progress`.
+
+### Verification (live HTTP as admin, curl)
+- `/admin/login?test_login=1` → 302; `/admin/voice-users/history` → **200**, "AI Call History" heading present.
+- **20 rows** render on page 1 (26 historical sessions, mostly township test data — lead column shows real `lead_name` or `—`), **6 rows** on `?page=2` — pagination now works; no PHP notices or "No call records found." in the body.
+- Filter probes (all 200, no SQL error): `?status=completed`, `?outcome=interested` (0 rows — expected, all NULL pre-S538), `?outcome=bogus` (200, no 500), `?script=property_introduction` (returns its hi-en scripts), `?search=98765` (200).
+- `phpstan` → `[OK] No errors`. **Master 11/11 PASSED.** php -l clean.
+
+### Key lessons (carried, continued)
+_1007. **A page that always shows empty is a feature that was never launched** — the catch-swallow + agents-JOIN for ai_calling_agents (phantom since S548) meant "No call records found." for every admin, forever; nobody flagged it because the page *looked* alive. Audit every `try/catch` that maps to "render a friendly page" — they hide total failures better than they surface them.
+_1008. **A missing table in a JOIN is a 1146 that kills the request before the catch can help the view** — swap the join to a table that exists (`ai_call_scripts`) or drop it entirely; never `LEFT JOIN` a phantom and expect the catch to save the page.
+_1009. **Field-contract drift between controller and view is cheaper to find than any runtime error** — `customer_name` vs `lead_name`, `duration` vs `duration_seconds`, top-level `page` vs `$pagination['page']`: three renamings away from a page that "loads but shows nothing." Grep the view's `$` variables against the controller's render payload before debugging anything else.
+_1010. **When an Actions column links to a 404, the whole page is a dead-end** — grep the `href` list against `routes/web.php`; one dead link is a bug, but its presence usually means nobody ever clicked the button.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 539 (parallel actor, this round). This entry = **S540**. Next-free = **541**.
+
 ## Session 476: Full-Stack Customer Festive Booking Flow, Promo Code Concession Engine, Multi-View Booking Synchronization, 1508/1508 Clean (2026-11-13)
 
 ### Trigger

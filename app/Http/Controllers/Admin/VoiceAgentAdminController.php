@@ -116,10 +116,15 @@ class VoiceAgentAdminController extends AdminController
             $params[] = $_GET['status'];
             $filters['status'] = $_GET['status'];
         }
-        if (!empty($_GET['agent'])) {
-            $where .= " AND s.ai_agent_id = ?";
-            $params[] = $_GET['agent'];
-            $filters['agent'] = $_GET['agent'];
+        if (!empty($_GET['outcome'])) {
+            $where .= " AND s.customer_response = ?";
+            $params[] = $_GET['outcome'];
+            $filters['outcome'] = $_GET['outcome'];
+        }
+        if (!empty($_GET['script'])) {
+            $where .= " AND s.script_template = ?";
+            $params[] = $_GET['script'];
+            $filters['script'] = $_GET['script'];
         }
         if (!empty($_GET['date_from'])) {
             $where .= " AND DATE(s.created_at) >= ?";
@@ -132,8 +137,9 @@ class VoiceAgentAdminController extends AdminController
             $filters['date_to'] = $_GET['date_to'];
         }
         if (!empty($_GET['search'])) {
-            $where .= " AND (l.name LIKE ? OR s.phone LIKE ?)";
+            $where .= " AND (l.name LIKE ? OR l.phone LIKE ? OR s.phone LIKE ?)";
             $searchTerm = '%' . $_GET['search'] . '%';
+            $params[] = $searchTerm;
             $params[] = $searchTerm;
             $params[] = $searchTerm;
             $filters['search'] = $_GET['search'];
@@ -148,35 +154,41 @@ class VoiceAgentAdminController extends AdminController
             ", $params)['c'] ?? 0;
 
             $calls = $this->db->fetchAll("
-                SELECT s.*, l.name as lead_name, l.phone as lead_phone,
-                       a.agent_name as agent_display_name
+                SELECT s.*, l.name as lead_name, l.phone as lead_phone, l.property_interest,
+                       sc.script_name as script_name
                 FROM ai_call_sessions s
                 LEFT JOIN leads l ON l.id = s.lead_id
-                LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id
+                LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1
                 WHERE 1=1 $where
                 ORDER BY s.created_at DESC
                 LIMIT $perPage OFFSET $offset
             ", $params);
         } catch (\Throwable $e) {
-            $total = 0; $calls = [];
+            error_log('VoiceAgentAdminController::history: ' . $e->getMessage());
+            $total = 0;
+            $calls = [];
         }
 
-        $totalPages = max(1, ceil($total / $perPage));
+        $totalPages = max(1, (int)ceil($total / $perPage));
 
         try {
-            $agentsList = $this->db->fetchAll("SELECT agent_id, agent_name FROM ai_calling_agents ORDER BY agent_name");
+            $scriptsList = $this->db->fetchAll("SELECT script_code, script_name FROM ai_call_scripts WHERE tenant_id = 1 AND is_active = 1 ORDER BY script_name");
         } catch (\Throwable $e) {
-            $agentsList = [];
+            $scriptsList = [];
         }
 
         return $this->render('admin/voice-users/history', [
-            'page_title' => 'Call History',
+            'page_title' => 'AI Call History',
             'calls' => $calls,
-            'agents_list' => $agentsList,
+            'scripts_list' => $scriptsList,
             'filters' => $filters,
-            'page' => $page,
-            'total_pages' => $totalPages,
-            'total' => $total,
+            'pagination' => [
+                'page' => $page,
+                'per_page' => $perPage,
+                'offset' => $offset,
+                'total' => (int)$total,
+                'total_pages' => $totalPages,
+            ],
         ]);
     }
 
