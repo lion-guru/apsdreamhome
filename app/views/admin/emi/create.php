@@ -29,7 +29,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <select aria-label="Booking id" name="booking_id" class="form-select" required>
                                 <option value="">Choose a booking...</option>
                                 <?php foreach ($bookings as $booking): ?>
-                                    <option value="<?php echo e($booking['id']); ?>" data-amount="<?php echo $booking['total_amount']; ?>">
+                                    <option value="<?php echo e($booking['id']); ?>" data-amount="<?php echo (float)($booking['total_amount'] ?? 0); ?>">
                                         <?php echo htmlspecialchars($booking['booking_number'] ?? ''); ?> - 
                                         <?php echo htmlspecialchars($booking['customer_name'] ?? ''); ?> - 
                                         ₹<?php echo number_format(floatval($booking['total_amount'] ?? 0)); ?>

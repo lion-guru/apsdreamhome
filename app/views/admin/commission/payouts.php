@@ -70,7 +70,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <tbody>
                             <?php foreach ($approved_commissions as $c): ?>
                                 <tr>
-                                    <td><input type="checkbox" class="form-check-input payout-check" value="<?php echo e($c['id']); ?>" aria-label="Select payout <?php echo e($c['id']); ?>" data-amount="<?php echo $c['amount']; ?>"></td>
+                                    <td><input type="checkbox" class="form-check-input payout-check" value="<?php echo e($c['id']); ?>" aria-label="Select payout <?php echo e($c['id']); ?>" data-amount="<?php echo (float)($c['amount'] ?? 0); ?>"></td>
                                     <td>
                                         <strong><?php echo htmlspecialchars($c['associate_name'] ?? 'Unknown'); ?></strong>
                                         <br><small class="text-muted"><?php echo htmlspecialchars($c['associate_email'] ?? ''); ?></small>
