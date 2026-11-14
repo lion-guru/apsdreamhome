@@ -256,3 +256,7 @@ testing/visual_tests/screenshots/diff/
 
 storage/exports/*
 storage/efiling/*
+
+# SECURITY (2026-11-14, this repo contains NO live credentials): untracked local migration holding
+# plaintext AWS/Twilio secrets pending owner rotation/apply via admin panel. Must never be committed.
+database/migrations/configure_aws_twilio_s419.php
