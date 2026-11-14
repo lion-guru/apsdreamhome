@@ -510,12 +510,13 @@ class MobileUserApiController extends BaseController
 
             if (isset($_FILES['avatar'])) {
                 $validator = new \App\Helpers\UploadValidator();
-                if (!$validator->validate($_FILES['avatar'], 10 * 1024 * 1024)) {
+                $result = $validator->validate($_FILES['avatar'], ['types' => 'images', 'max_size' => 10]);
+                if (!$result['valid']) {
                     http_response_code(400);
-                    echo json_encode(['success' => false, 'error' => 'Invalid avatar file']);
+                    echo json_encode(['success' => false, 'error' => $result['error']]);
                     return;
                 }
-                $filename = time() . '_' . basename($_FILES['avatar']['name']);
+                $filename = time() . '_' . $result['sanitized_name'];
                 $targetFile = $uploadDir . $filename;
                 if (!move_uploaded_file($_FILES['avatar']['tmp_name'], $targetFile)) {
                     http_response_code(500);
