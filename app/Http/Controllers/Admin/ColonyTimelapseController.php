@@ -78,7 +78,11 @@ class ColonyTimelapseController extends AdminController
         $photoBefore = null;
         if (!empty($_FILES['photo_before']['name']) && $_FILES['photo_before']['error'] === UPLOAD_ERR_OK) {
             $ext = strtolower(pathinfo($_FILES['photo_before']['name'], PATHINFO_EXTENSION));
-            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+            $allowedExts = ['jpg', 'jpeg', 'png', 'webp'];
+            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+            $mime = $finfo->file($_FILES['photo_before']['tmp_name']);
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (in_array($ext, $allowedExts, true) && in_array($mime, $allowedMimes, true)) {
                 $fname = 'before_' . $colonyId . '_' . time() . '_' . bin2hex(random_bytes(3)) . '.' . $ext;
                 if (@move_uploaded_file($_FILES['photo_before']['tmp_name'], $uploadDir . '/' . $fname)) {
                     $photoBefore = 'storage/uploads/timelapse/' . $fname;
@@ -89,7 +93,11 @@ class ColonyTimelapseController extends AdminController
         $photoAfter = null;
         if (!empty($_FILES['photo_after']['name']) && $_FILES['photo_after']['error'] === UPLOAD_ERR_OK) {
             $ext = strtolower(pathinfo($_FILES['photo_after']['name'], PATHINFO_EXTENSION));
-            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+            $allowedExts = ['jpg', 'jpeg', 'png', 'webp'];
+            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+            $mime = $finfo->file($_FILES['photo_after']['tmp_name']);
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (in_array($ext, $allowedExts, true) && in_array($mime, $allowedMimes, true)) {
                 $fname = 'after_' . $colonyId . '_' . time() . '_' . bin2hex(random_bytes(3)) . '.' . $ext;
                 if (@move_uploaded_file($_FILES['photo_after']['tmp_name'], $uploadDir . '/' . $fname)) {
                     $photoAfter = 'storage/uploads/timelapse/' . $fname;
