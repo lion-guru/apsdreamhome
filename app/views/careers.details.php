@@ -48,7 +48,7 @@
                     <?php if (!empty($job['application_url'])): ?>
                     <a href="<?= htmlspecialchars($job['application_url'] ?? '') ?>" target="_blank" class="btn btn-primary w-100"><i class="fas fa-external-link-alt me-1"></i>Apply Externally</a>
                     <?php else: ?>
-                    <form method="post" action="<?= BASE_URL ?>careers/apply/<?= $job['id'] ?? 0 ?>" enctype="multipart/form-data">
+                    <form method="post" action="<?= BASE_URL ?>careers/apply/<?= (int)($job['id'] ?? 0) ?>" enctype="multipart/form-data">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-2"><input aria-label="Name" type="text" class="form-control form-control-sm" name="name" placeholder="Your Name" required></div>
                         <div class="mb-2"><input aria-label="Email" type="email" class="form-control form-control-sm" name="email" placeholder="Your Email" required></div>

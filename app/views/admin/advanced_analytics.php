@@ -3,9 +3,9 @@
     <div class="page-header mb-4">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title"><i class="fas fa-chart-pie me-2"></i><?= ($pageTitle ?? ($page_title ?? 'Advanced Analytics')) ?></h3>
+                <h3 class="page-title"><i class="fas fa-chart-pie me-2"></i><?= htmlspecialchars($pageTitle ?? ($page_title ?? 'Advanced Analytics'), ENT_QUOTES, 'UTF-8') ?></h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="<?= $base ?? BASE_URL ?>admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= htmlspecialchars(($base ?? BASE_URL), ENT_QUOTES, 'UTF-8') ?>admin/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item active">Advanced Analytics</li>
                 </ul>
             </div>
@@ -112,10 +112,10 @@
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php $engagement = $analyticsData['user_engagement'] ?? []; ?>
-                    <div class="d-flex justify-content-between mb-2"><span>Avg Session</span><strong><?= $engagement['avg_session_duration'] ?? 'N/A' ?></strong></div>
-                    <div class="d-flex justify-content-between mb-2"><span>Pages/Session</span><strong><?= $engagement['pages_per_session'] ?? 'N/A' ?></strong></div>
-                    <div class="d-flex justify-content-between mb-2"><span>Bounce Rate</span><strong><?= $engagement['bounce_rate'] ?? 'N/A' ?></strong></div>
-                    <div class="d-flex justify-content-between"><span>Return Visitors</span><strong><?= $engagement['return_visitor_rate'] ?? 'N/A' ?></strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Avg Session</span><strong><?= htmlspecialchars($engagement['avg_session_duration'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Pages/Session</span><strong><?= htmlspecialchars($engagement['pages_per_session'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Bounce Rate</span><strong><?= htmlspecialchars($engagement['bounce_rate'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></strong></div>
+                    <div class="d-flex justify-content-between"><span>Return Visitors</span><strong><?= htmlspecialchars($engagement['return_visitor_rate'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></strong></div>
                 </div>
             </div>
         </div>
@@ -126,10 +126,10 @@
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <?php $perf = $analyticsData['property_performance'] ?? []; ?>
-                    <div class="d-flex justify-content-between mb-2"><span>Avg Days on Market</span><strong><?= $perf['avg_days_on_market'] ?? 'N/A' ?></strong></div>
-                    <div class="d-flex justify-content-between mb-2"><span>Price Reduction Rate</span><strong><?= $perf['price_reduction_rate'] ?? 'N/A' ?></strong></div>
-                    <div class="d-flex justify-content-between mb-2"><span>View to Inquiry Ratio</span><strong><?= $perf['view_to_inquiry_ratio'] ?? 'N/A' ?></strong></div>
-                    <div class="d-flex justify-content-between"><span>Inquiry to Sale Ratio</span><strong><?= $perf['inquiry_to_sale_ratio'] ?? 'N/A' ?></strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Avg Days on Market</span><strong><?= htmlspecialchars($perf['avg_days_on_market'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Price Reduction Rate</span><strong><?= htmlspecialchars($perf['price_reduction_rate'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>View to Inquiry Ratio</span><strong><?= htmlspecialchars($perf['view_to_inquiry_ratio'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></strong></div>
+                    <div class="d-flex justify-content-between"><span>Inquiry to Sale Ratio</span><strong><?= htmlspecialchars($perf['inquiry_to_sale_ratio'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></strong></div>
                 </div>
             </div>
         </div>
