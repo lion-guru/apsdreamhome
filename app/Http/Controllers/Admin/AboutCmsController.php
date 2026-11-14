@@ -91,7 +91,22 @@ class AboutCmsController extends AdminController
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
-            $ext = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
+            $ext = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+            $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+            if (!in_array($ext, $allowedExts, true)) {
+                $_SESSION['error'] = 'Only image files (jpg, png, gif, webp, svg) are allowed';
+                $this->redirect('/admin/about-cms');
+                return;
+            }
+            // Verify MIME type matches extension
+            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+            $mime = $finfo->file($_FILES['photo']['tmp_name']);
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+            if (!in_array($mime, $allowedMimes, true)) {
+                $_SESSION['error'] = 'Invalid file content type';
+                $this->redirect('/admin/about-cms');
+                return;
+            }
             $filename = $key . '_' . time() . '.' . $ext;
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadDir . $filename)) {
                 $path = 'assets/images/team/' . $filename;

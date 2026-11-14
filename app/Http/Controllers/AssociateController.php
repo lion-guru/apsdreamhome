@@ -515,8 +515,9 @@ class AssociateController extends BaseController
                 $tmpPath = $_FILES['master_deed_upload']['tmp_name'];
                 $origName = basename($_FILES['master_deed_upload']['name']);
                 $fileExt = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+                $allowedExts = ['jpg', 'jpeg', 'png', 'pdf'];
                 $mime = mime_content_type($tmpPath);
-                if (in_array($mime, $allowedTypes) && $_FILES['master_deed_upload']['size'] <= $maxSize) {
+                if (in_array($fileExt, $allowedExts, true) && in_array($mime, $allowedTypes) && $_FILES['master_deed_upload']['size'] <= $maxSize) {
                     $uploadDir = 'assets/documents/master-deeds/';
                     if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
                     $safeName = 'deed_' . time() . '_' . uniqid() . '.' . $fileExt;
