@@ -51,3 +51,15 @@ Then also delete equivalent temp copies anywhere else (desktop, Downloads, OneDr
 3. **CI/local lint cannot catch this class of problem.** The only proof is the gitignore lists + the provider-side rotation + `enc:v1:` spot-checks.
 
 Written 2026-11-14 after finding the two scripts already executed. Values intentionally NOT reproduced here — rotate at the provider, don't copy them again anywhere.
+
+## Addendum (2026-11-14, later same day): the AES-256 key itself was committed to git
+
+- `storage/keys/service_config.key` (the 32-byte key behind `enc:v1:`) was committed in `bee73667e` (Session 348, "OpenCode Zen multi-key switcher …") and sat on `origin/main`, byte-identical to the working-tree copy (SHA256 `21896032…`). Anyone with a clone had the full encryption primitive.
+- **Verification before rotation**: `SELECT COUNT(*) FROM service_configs WHERE config_value LIKE 'enc:v1:%'` → **0**. No ciphertext depended on the compromised key, so the rotation destroys nothing.
+- **What was done**: key was untracked from git (`git rm --cached`), a fresh 32-byte random key was written, `storage/keys/` added to `.gitignore`. Roundtrip through `ServiceConfigService::encryptValue`/`decryptValue` passed on the new key.
+- **Backup of the old key**: `backups/keys/service_config.key.2026-11-14.bak` (gitignored; not in the repo).
+- **What history holds**: the compromised key remains in git history (force-push was declined). Anyone who cloned before this point must be treated as having it. The correct response — rotating every secret ever written with it — is equivalent to rotating every `enc:v1:` secret in the DB, of which there are currently **zero**. The live (plaintext) SMTP/Twilio/AWS/Razorpay values already require provider-side rotation per the original runbook; this exposure does not enlarge that set, it just removes the last theoretical protection of future writes.
+
+Rules added:
+4. **Encryption keys belong in gitignored storage, never in the repo** — and they must be treated as compromised from the moment they land anywhere shared. A key leak is total: no rotation of ciphertexts is possible after the fact.
+5. **A feature whose entire point is "encrypted at rest" is only as safe as its key file.** When adopting `enc:v1:` for a new secret, first check `git ls-files storage/keys` is empty and `git check-ignore storage/keys` matches — in this repo both failed for months.

@@ -7730,3 +7730,37 @@ _962. **`ON DELETE SET NULL` on a money table creates phantom payouts.** Every u
 _963. **A stale "report" that contradicts the DB is falsified by three queries.** The sibling tab claimed the S522 backfill never ran; one `SELECT COUNT(booking_number LIKE 'TEST-HIST-%')` settled it (20). Before accepting a status claim, run the cheapest query that decides it.
 _964. **Clean your own actor's evidence before claiming "zero drift".** The 40-row / ₹5600 reconciliation I first saw this session was explained entirely by the parallel actor's ₹5,000 probe account — which was itself a live demo of the exact un-ledgered-write bug this round fixed. Every "drift" needs a *name*, not a SUM.
 _965. **Backup, then delete, then verify — in that order, every time.** `probe_wd_s523_2026-11-14.sql` existed before the two DELETEs; post-delete reconciliation printed the exact expected tuple. Zero rescue needed, but only because the dump existed.
+
+
+## Session 525: service_config.key Removed From Committed History + New Key Generated — The AES-256 Key Was Public On GitHub (2026-11-14)
+
+### Trigger
+Continuation of the credential exposure round (S523/S524 pattern). While verifying the plaintext-secrets incident, `git ls-files storage/keys` listed `storage/keys/service_config.key` — the 32-byte AES key behind ServiceConfigService::encryptValue/decryptValue (`enc:v1:`) was committed in bee73667e (Session 348) and identical to disk (SHA256 21896032...).
+
+### Findings (all verified by query or hash, not assumed)
+- The key file sat on origin/main byte-identical to the working copy for weeks — the encryption primitive was broken at the key layer for that entire period.
+- `SELECT COUNT(*) FROM service_configs WHERE config_value LIKE 'enc:v1:%'` => **0**. ZERO rows depend on the key TODAY — every live secret is legacy plaintext — so rotation loses nothing.
+- `encrypt_service_config_secrets_s524.php` (sibling untracked file) is the pending remediation for those plaintext rows; it encrypts with ServiceConfigService::encryptValue at run time, so it picks up the NEW key automatically.
+
+### What I did
+- Backed up the exposed key first: backups/keys/service_config.key.2026-11-14.bak (32 bytes, gitignored, NOT committed).
+- `git rm --cached storage/keys/service_config.key` (untrack; file remained on disk).
+- Generated a fresh 32-byte random key and overwrote storage/keys/service_config.key.
+- `.gitignore` += storage/keys/ (verified: git check-ignore matches; the leaky path can never return untracked-in-repo).
+- Verified: index has no key file; HEAD tree no longer contains it (sibling's whole-tree commit 8d155fc22 Session 534 mechanically carried the removal; HEAD now lacks it).
+- Roundtrip proof via the REAL ServiceConfigService (require config/bootstrap, encrypt then decrypt of two probe strings): enc_prefix_ok=true, decrypts_back=true — both before and after the sibling merge.
+- 0 rows/dependencies break; master suite 11/11 green on the rotated tree.
+
+### Post-conditions to hold
+1. History still contains the leaked key (force-push declined) — anyone who cloned before 2026-11-14 has it. All secrets ever written with it MUST be considered compromised at the provider level; the provider-side rotation in docs/CREDENTIALS_RUNBOOK.md stands.
+2. Any new secret entered through /admin/service-configs will now write as enc:v1: with the NEW key — the first enc:v1: rows to appear will decrypt correctly, and only for someone holding the new key file (gitignored, never committed).
+3. `git ls-files storage/keys` MUST stay empty; CI cannot check this — in every round that touches credentials, check it explicitly.
+
+### AGENTS.md numbering (Rule 4)
+S523 = wallet reconcile; S524 = sibling's encrypt_service_config_secrets migration name (reserved); this entry = S525. Next-free = **526**.
+
+### Key lessons
+_966. **Encryption without key custody is decoration.** The app encrypts values with enc:v1: correctly; the key file sat in a tracked path on origin/main for three weeks anyway. When auditing "is the secret encrypted", always ask "WHERE IS THE KEY?" — a plaintext key file in the repo with enc:v1: values is a costume of security.
+_967. **Check-ignore the key file as a first-class step.** git ls-files / git check-ignore on storage/keys took 2 seconds and names the exposure instantly. The encryption feature shipped with this check unrun for its entire life.
+_968. **Zero-dep-now is the rotation window.** Because no enc:v1: rows existed yet, the key could be rotated with an empty blast radius. The longer plaintext persisted in service_configs, the more painful and risky any rotation becomes.
+_969. **A friend's whole-tree commit can also carry YOUR fix.** The key removal reached main via the sibling's Session 534 sweep commit (8d155fc22) — same mechanics (git add -A) that swept migration files before. Track staged/unstaged state carefully around parallel-actor rounds; document who actually committed it.

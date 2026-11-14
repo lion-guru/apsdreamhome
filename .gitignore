@@ -262,3 +262,6 @@ storage/efiling/*
 database/migrations/configure_aws_twilio_s419.php
 
 database/migrations/update_twilio_number_s419.php
+
+# SECURITY (2026-11-14): AES-256 key for enc:v1: secrets must never be committed
+storage/keys/
