@@ -70,7 +70,7 @@
                             <tr><td colspan="4" class="text-center py-4 text-muted"><i class="fas fa-inbox fa-2x d-block mb-2"></i>No transactions yet</td></tr>
                         <?php else: ?>
                             <?php foreach ($recentTransactions as $t): ?>
-                            <tr><td class="ps-4"><?= date('d M Y', strtotime($t['date'])) ?></td><td><?= $t['description'] ?></td><td><span class="badge bg-<?= $t['type'] === 'Income' ? 'success' : 'danger' ?>-subtle text-<?= $t['type'] === 'Income' ? 'success' : 'danger' ?> rounded-pill px-3"><?= $t['type'] ?></span></td><td class="text-end pe-4 fw-bold text-<?= $t['type'] === 'Income' ? 'success' : 'danger' ?>">₹<?= number_format($t['amount'] ?? 0, 2) ?></td></tr>
+                            <tr><td class="ps-4"><?= date('d M Y', strtotime($t['date'])) ?></td><td><?= h($t['description']) ?></td><td><span class="badge bg-<?= $t['type'] === 'Income' ? 'success' : 'danger' ?>-subtle text-<?= $t['type'] === 'Income' ? 'success' : 'danger' ?> rounded-pill px-3"><?= h($t['type']) ?></span></td><td class="text-end pe-4 fw-bold text-<?= $t['type'] === 'Income' ? 'success' : 'danger' ?>">₹<?= number_format($t['amount'] ?? 0, 2) ?></td></tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
