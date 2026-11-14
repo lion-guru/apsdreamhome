@@ -214,7 +214,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
 <script>
 const base = '<?php echo $base; ?>';
-const csrf = '<?php echo $_SESSION['csrf_token'] ?? ''; ?>';
+const csrf = '<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>';
 
 const headers = {
     'Content-Type': 'application/json',

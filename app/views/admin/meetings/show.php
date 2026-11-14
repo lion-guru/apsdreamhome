@@ -94,12 +94,12 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Actions</h2></div>
                     <div class="card-body">
                         <form method="POST" action="<?php echo e($base); ?>/admin/meetings/<?php echo $meeting['id']; ?>/update" class="mb-2">
-                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="status" value="completed">
                             <button type="submit" class="btn btn-success w-100 btn-sm"><i class="fas fa-check me-2"></i>Mark Completed</button>
                         </form>
                         <form method="POST" action="<?php echo e($base); ?>/admin/meetings/<?php echo $meeting['id']; ?>/update">
-                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="status" value="cancelled">
                             <button type="submit" class="btn btn-outline-danger w-100 btn-sm" data-aps-confirm="Cancel this meeting?"><i class="fas fa-times me-2"></i>Cancel Meeting</button>
                         </form>

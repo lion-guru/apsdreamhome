@@ -146,7 +146,7 @@ $page_title = 'Transaction Details - #' . ($transaction['id'] ?? '');
                         <hr>
                         <p class="text-muted text-center mb-3">This transaction has not been reconciled yet.</p>
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/banking/reconcile/<?php echo e($transaction['id']); ?>">
-                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Status</label>
                                 <select aria-label="Reconciliation status" class="form-select" name="reconciliation_status" required>

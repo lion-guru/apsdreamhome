@@ -88,7 +88,7 @@ $page_title = 'Financial Years Management';
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="<?php echo BASE_URL; ?>/admin/banking/financial-years/store">
-                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Financial Year <span class="text-danger">*</span></label>

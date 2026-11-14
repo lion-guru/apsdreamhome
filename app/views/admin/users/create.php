@@ -12,7 +12,7 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
                 <form method="POST" action="<?php echo BASE_URL; ?>/admin/users">
-                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
 
                     <div class="row g-3">
                         <div class="col-md-6">

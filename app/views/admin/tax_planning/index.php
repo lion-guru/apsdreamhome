@@ -241,7 +241,7 @@ function submitPay() {
     var id = document.getElementById('payId').value;
     var form = document.getElementById('payForm');
     var data = new URLSearchParams(new FormData(form));
-    data.append('csrf_token', '<?php echo $_SESSION['csrf_token'] ?? ''; ?>');
+    data.append('csrf_token', '<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>');
     fetch('/admin/tax-planning/record-payment/' + id, {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
@@ -254,7 +254,7 @@ function submitPay() {
 document.getElementById('generateForm').addEventListener('submit', function(e){
     e.preventDefault();
     var data = new URLSearchParams();
-    data.append('csrf_token', '<?php echo $_SESSION['csrf_token'] ?? ''; ?>');
+    data.append('csrf_token', '<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>');
     data.append('financial_year', document.querySelector('input[name="financial_year"]').value);
     fetch('/admin/tax-planning/generate', {
         method: 'POST',

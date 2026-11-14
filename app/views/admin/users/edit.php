@@ -22,7 +22,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
                         <form id="editUserForm" action="<?php echo e($base); ?>/admin/users/<?php echo $user['id']; ?>/update" method="POST">
-                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             
                             <div class="row">
                                 <div class="col-md-6 mb-3">

@@ -172,7 +172,7 @@ function bulkPay() {
         fetch('<?php echo e($base); ?>/admin/commission/payout', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest'},
-            body: 'commission_ids[]=' + ids.join('&commission_ids[]=') + '&payout_method=bank_transfer&csrf_token=<?php echo $_SESSION['csrf_token'] ?? ''; ?>'
+            body: 'commission_ids[]=' + ids.join('&commission_ids[]=') + '&payout_method=bank_transfer&csrf_token=<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>'
         })
         .then(r => r.json())
         .then(data => {

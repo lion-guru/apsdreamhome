@@ -12,7 +12,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>/assets/fonts/fontawesome/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <meta name="csrf-token" content="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+    <meta name="csrf-token" content="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
     <style>
         body { font-family: 'Inter', sans-serif; background: #f8fafc; }
         .page-content { padding: 28px; }
@@ -105,7 +105,7 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
 
                     <form id="purchaseForm" onsubmit="submitPurchase(event)">
                         <input type="hidden" name="item_id" id="modalItemId">
-                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         
                         <div class="d-flex gap-2">
                             <button type="button" class="btn btn-light w-50" data-bs-dismiss="modal">Cancel</button>
