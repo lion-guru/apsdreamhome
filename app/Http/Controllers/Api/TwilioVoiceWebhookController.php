@@ -33,13 +33,22 @@ class TwilioVoiceWebhookController extends Controller
 
     /**
      * Build the full URL Twilio used to call us (for HMAC verification).
+     * Behind ngrok/Apache we may see X-Forwarded-Proto/Host instead of HTTPS.
      */
     protected function buildCallbackUrl()
     {
-        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $uri    = $_SERVER['REQUEST_URI'] ?? '/api/twilio/voice';
-        return $scheme . '://' . $host . $uri;
+        $proto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null;
+        if (!$proto) {
+            $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        }
+        $proto = strtolower((string) $proto);
+        if (!in_array($proto, ['http', 'https'], true)) {
+            $proto = 'http';
+        }
+
+        $host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $uri  = $_SERVER['REQUEST_URI'] ?? '/api/twilio/voice';
+        return $proto . '://' . $host . $uri;
     }
 
     /**
