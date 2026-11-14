@@ -137,6 +137,26 @@ Rules added:
 8. **A plaintext credential is compromised the instant it exists in a shared sink.** The fix is deletion + provider-rotation, never "rename to `_backup`" or "move to another table".
 9. **Audit tables are sinks too.** Any audit/logging that stores secret payloads must record `[redacted]` for `is_secret` rows - see Session 526. Rotation cures the copy; deletion cleans the audit; rotation does not fix the audit.
 
+## Addendum 5 (2026-11-15): SMTP is also silently dead — every send since forever has failed
+The 2025-04 addition of `SMTP_PASS=xuvv-bzvz-updj-wcbn` to `.env` is **stale** — Google rejects it. Verified Nov-14 log: **255 EmailService failures** across 24 hours (every 3-10 minutes around the clock).
+`EmailService` uses ONLY these `.env` lines (in priority order):
+```
+SMTP_HOST=smtp.gmail.com
+SMTP_USER=apdreamhomes44@gmail.com
+SMTP_PASS=xuvv-bzvz-updj-wcbn
+```
+`service_configs` rows for `smtp` (`host`, `username`, `password`, `from_email`, `from_name`) are all **empty strings** — never filled in.
+
+**Impact:** Every automatic email the app sends is silently dropped — welcome on registration, EMI reminders, newsletter/search alerts, password resets, payment confirmations. `email_queue.sent` shows only 12 historical rows (May-October 2026), one from October.
+
+**Owner action:**
+1. Go to https://myaccount.google.com/apppasswords (2FA required on `apdreamhomes44@gmail.com`)
+2. Generate new 16-char app password for "Mail".
+3. Replace line 92 in `.env` `SMTP_PASS=xxxx-xxxx-xxxx-xxxx` (lowercase, no spaces surrounding `=`).
+4. **Verify immediately**: `curl -b "same phpunit cookie jar" -X POST "http://localhost/apsdreamhome/admin/settings/email-test"` (or by visiting `/admin/settings/email` -> click "Send Test Email"; it uses the same `.env` config so the test result tells you `ready` vs `Could not authenticate`).
+
+**Weekly scorecard already reports this** via `scripts/weekly_scorecard.php --quiet` -> exit 1 — it labels the row `secret audit`. Consider making it an explicit `SMTP probe` as soon as `service_configs` actually has non-zero SMTP values (then `$check('SMTP reachable', ...)` fits naturally).
+
 ## Addendum 4 (2026-11-14): log retention was silently dead; now one daily run + owner registration
 
 - `ab_events` had 42,584 rows older than the 90-day rule (never executed: no OS scheduled task invoked
