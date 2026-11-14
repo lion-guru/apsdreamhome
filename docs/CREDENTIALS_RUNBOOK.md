@@ -90,44 +90,33 @@ Rules added:
 
 ## Addendum 3 (2026-11-14): exact plaintext token manifest - rotate at providers, then delete rows
 
-`scripts/secret_audit.php` (committed, exit 1 on findings) found **31 token-shaped plaintext rows**.
-Every row audited: `usage_count = 0`, `last_used_at = NULL` for all `api_keys` rows - the app reads credentials from `.env` / `service_configs`, never from these tables.
+`scripts/secret_audit.php` (committed, exit 1 on findings) flags **19 STRICTLY token-shaped plaintext rows** (signature + length pattern).
+A looser prefix-only scan returns 31 (includes short/test keys such as `sk-test123`-style values that are *not* valid production tokens); the committed audit number is authoritative.
+Every `api_keys` row audited: `usage_count = 0`, `last_used_at = NULL` - the app reads credentials from `.env` / `service_configs`, never from these tables.
 
-### `settings` (14 rows, `key` shown; values are the raw tokens - never printed here)
+### `settings` (10 flagged; loose prefix shows 14 - IDs 423, 425, 427, 428, 436 are short/test values not flagged)
 | id | key |
 |----|-----|
-| 423 | `api_groq_key` |
-| 425 | `api_openrouter_key` |
 | 426 | `api_openrouter_key_backup` |
-| 427 | `api_anthropic_key` |
-| 428 | `api_openai_key` |
 | 429 | `api_openai_key_test` |
 | 430 | `api_gemini_key` |
 | 431 | `api_google_speech_key` |
 | 432 | `api_opencode_key` |
 | 434 | `api_huggingface_key` |
 | 435 | `api_kimi_key` |
-| 436 | `api_zenmux_key` |
+| 440 | `api_supabase_auth_token` |
 | 458 | `api_opencode_key_techguru` |
 | 459 | `api_opencode_key_aps` |
 
-### `api_keys` (17 rows)
+### `api_keys` (9 flagged; loose prefix shows 17 - IDs 10, 19, 23, 25, 26, 27, 28, 30 are short/test values not flagged)
 | id | service_name | key_name |
 |----|--------------|----------|
 | 4 | OpenRouter | OPENROUTER_API_KEY |
 | 7 | OpenAI | OPENAI_API_KEY |
-| 10 | Anthropic Claude | ANTHROPIC_API_KEY |
 | 11 | Hugging Face | HUGGING_FACE_API_KEY |
-| 19 | groq | GROQ_API_KEY |
 | 20 | openrouter | OPENROUTER_API_KEY_BACKUP |
 | 22 | opencode | OPENCODE_ZEN_KEY_TECHGURU |
-| 23 | zenmux | ZENMUX_API_KEY |
-| 25 | (empty) | GROQ_API_KEY |
-| 26 | (empty) | OPENROUTER_API_KEY |
-| 27 | (empty) | OPENAI_API_KEY |
-| 28 | (empty) | ANTHROPIC_API_KEY |
 | 29 | (empty) | OPENCODE_API_KEY |
-| 30 | (empty) | ZENMUX_API_KEY |
 | 32 | (empty) | GOOGLE_SPEECH_API_KEY |
 | 33 | opencode | OPENCODE_ZEN_KEY_TECHGURU |
 | 34 | opencode | OPENCODE_ZEN_KEY_APS |
@@ -136,9 +125,9 @@ Every row audited: `usage_count = 0`, `last_used_at = NULL` for all `api_keys` r
 1. **Rotate at the provider console**: OpenCode Zen (apsdreamhomes44@gmail.com + techguruabhay@gmail.com), OpenAI, OpenRouter, Groq, Anthropic, HuggingFace, Kimi/Zenmux (if they exist), GCP (`api_gemini_key`, `api_google_speech_key`).
    The live app keeps working - none of these rows feed any code path (all API reads go through `.env` / `service_configs`; live keys live there).
 2. **Re-enter the rotated values** through `/admin/service-configs` (stored `enc:v1:` + audit-redacted per Session 526), or into `.env` as env keys.
-3. **Delete the 31 stale rows** once rotation is confirmed (safety dump first):
+3. **Delete the 19 stale rows** once rotation is confirmed (safety dump first):
    `C:\xampp\mysql\bin\mysqldump.exe -u root apsdreamhome settings api_keys > backups\db\pre-token-delete.sql`
-   Then apply the DELETEs for the exact IDs above. Do NOT delete before rotation is announced - the rows are the owner's only local copy of the keys.
+   Then apply the DELETEs for the exact IDs above (10 settings + 9 api_keys). Do NOT delete before rotation is announced - the rows are the owner's only local copy of the keys. Also sweep the 13 loose-prefix test/short rows (settings: 423, 425, 427, 428, 436; api_keys: 10, 19, 23, 25, 26, 27, 28, 30) at the same time - they are not live tokens, just leftovers.
 4. **Verify**: `php scripts/secret_audit.php` -> `RESULT: OK`; `php testing/master_test_runner.php` -> 11/11.
 5. **`service_config_audit`** still holds 11 legacy plaintext rows (Exotel/Twilio/AWS, Addendum 2) - same rotation class applies; purging audit rows is a separate explicit owner decision.
 
