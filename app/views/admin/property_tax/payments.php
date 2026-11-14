@@ -202,7 +202,7 @@ document.getElementById('paymentMode').addEventListener('change', function() {
 });
 
 document.getElementById('paymentForm').addEventListener('submit', function(e) {
-    this.action = '<?= $base ?>/admin/property-tax/record-payment/<?= $master['id'] ?>';
+    this.action = <?= json_encode($base . '/admin/property-tax/record-payment/' . (int)($master['id'] ?? 0)) ?>;
 });
 </script>
 </body>
