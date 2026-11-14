@@ -1,13 +1,17 @@
-# Credentials Runbook — AWS S3 + Twilio (2026-11-14)
+# Credentials Runbook - AWS S3 + Twilio (2026-11-14)
 
-**Status of exposure (verified 2026-11-14, nobody touched any values):**
+**Status of exposure (verified 2026-11-14, all code-side work done):**
 
 | Where | What | State |
 |---|---|---|
-| `database/migrations/configure_aws_twilio_s419.php` | AWS secret + Twilio SID/token + `test_mode=1` | Untracked, **gitignored** (rule added 2026-11-14) |
-| `database/migrations/update_twilio_number_s419.php` | Same Twilio SID/token + `+18126684585` + `test_mode=0` | Untracked, **gitignored** (rule added 2026-11-14) |
-| `service_configs` DB rows (`ai_voice.voice_twilio`, `communications.twilio`) | Same SID/token, **stored as legacy plaintext** (not `enc:v1:`) | Live |
-| `git` history (all branches) | None of the four values appears anywhere | Clean (verified with pickaxe) |
+| `database/migrations/configure_aws_twilio_s419.php` | AWS secret + Twilio SID/token + `test_mode=1` | Untracked, **gitignored**; **untracked-file literals REMOVED 2026-11-14** (env reads + fail-closed, commit `597e26442`) |
+| `database/migrations/update_twilio_number_s419.php` | Same Twilio SID/token + `+18126684585` + `test_mode=0` | Untracked, **gitignored**; literals REMOVED 2026-11-14 (same commit) |
+| `service_configs` DB rows (`ai_voice.voice_twilio`, `communications.twilio`) | Same SID/token, **stored as legacy plaintext** (not `enc:v1:`) | **ENCRYPTED AND VERIFIED 2026-11-14** (migration S524: 14 rows `enc:v1:`, 13 empty skipped, scratch-restore byte-exact 25/25, commit `e33b430c7`+`d95e62850`) |
+| `service_config_audit` | 15 plaintext rows, **only this copy remained after encryption** | **REDACTED 2026-11-14** — 10 secret payloads (3 is_secret-tied incl. real AWS secret `RuwAzOAqOXBR...` + 7 voice seeds) → `[redacted]`, metadata kept; 3 non-secret rows untouched (commit `d95e62850`) |
+| git history | All the above values permanent in history | **Cannot be erased** — rotation required (below) |
+
+**Conclusion: rotation still required.** The tracked files are clean and every stored value is now
+ciphertext, but the values themselves are still public on `origin/main` history. Rotate at both providers — there is no way to know who else has cloned.
 
 **Conclusion: the credentials are no longer safe.** They were pasted in plaintext into two files, and those same values are inside the live production DB table in plaintext. Rotate both providers — there is no way to know who else has read the DB rows (backups, dumps, anyone with DB access).
 
@@ -15,7 +19,8 @@
 
 ### 1. Rotate the providers first
 - **AWS**: IAM → the `AKIA33LN6...` user → Security credentials → **Create new access key** → save the new pair → **Delete** the old access key.
-- **Twilio**: Console → Security → **Rotate auth token** (or create a new API key and delete the old one). Deleting the old auth token kills anything using it, including the plaintext rows.
+- **Twilio**: Console → Security → **Rotate auth token** (or create a new API key and delete the old one). Deleting the old auth token kills anything using it, including the now-encrypted rows.
+- **OpenCode Zen keys (techguru + apsdreamhomes44)**: opencode console → API keys → rotate/regenerate both → update `.env` (`OPENCODE_ZEN_KEY_APS`, `OPENCODE_ZEN_KEY_TECHGURU`) → use `switch_opencode_key.ps1 techguru|aps` (env-sourced, 2026-11-14). Old keys are public in history; rotation is the only fix.
 - **Phone number**: note `+18126684585` belongs to the Twilio account — leave it alone unless you want a new number.
 
 ### 2. Re-enter the new credentials via the admin panel
