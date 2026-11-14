@@ -7657,3 +7657,35 @@ Next-free = **522** (this session; S520+ held by parallel actor).
 _955. **Legacy schema artifacts cascade beat enum bugs for "impossible to trigger" code paths.** Foreign keys that point at a table the application cannot possibly name, with children tables full of dead rows, are the pattern; the whole site survived them until combined developer-only test artifacts collided with the restore path.
 _956. **`NOT NULL` columns bind FK on-delete behaviour.** `ON DELETE SET NULL` fails silently under MariaDB strictly — you discover it only after dropping the prior constraint and failing to add the new one, leaving the table with **no** FK. Always read `IS_NULLABLE` on the column before writing the ALTER.
 _957. **A partial migration run needs a recovery contract.** Check "is the FK already on plot_bookings?" first, else re-add. The earlier failure handled this with a repair branch; the correct pattern is idempotent + self-healing.
+
+
+## Session 522: EMI Historical Backfill + Stale-FK Exit — and an Empty Commit I Pushed by Accident (Honest Correction, 2026-11-14)
+
+### Trigger
+User: "Backfill EMI schedules for the 20 historical bookings … thik karo tum aur baki ke kaam bhi karo" after the S521 ghost-FK round landed green.
+
+### What is live (verified, safety-dumped first)
+- Safety dumps: `backups/db/pre_historical_backfill.sql` (36 KB), `backups/db/stale_fks_pre_repoint_2026-11-14.sql` (43 KB).
+- `database/migrations/backfill_historical_emi_schedules_s522.php` seeds 20 mirrored test bookings `TEST-HIST-0001..0020` from the legacy `bookings` rows 9592–9611 (synthetic @example.com customer users 122876–122895, created 2026-11-05): 20% token up front, 80% / 12 monthly EMI, first due 2026-12-05, each row tagged `TEST SEED (dev)`. Transaction-wrapped, idempotent.
+- Execution verified: **20 plot_bookings rows** added (`plot_bookings`: 23 total), **240 new EMI schedule rows** (`booking_payment_schedules`: **276 total** = 274 pending + 2 paid). Live EMI page + payment flows unaffected (master 11/11 green afterwards).
+- `database/migrations/repoint_all_stale_booking_fks_s521.php` (committed `8248abe2d`) re-pointed the 12 remaining stale legacy `bookings → id` FKs onto `plot_bookings(id)`: `ON DELETE RESTRICT` where the column is NOT NULL (`booking_documents`, `booking_refunds`, `booking_status_history`, `booking_transfers`), `ON DELETE SET NULL` otherwise. 42 ghost rows were deleted first (all point at bookings 9592–9611, 9004–9020, 2/4, or none — none reference a live `plot_bookings` row). `booking_documents` had already lost its FK to a failed earlier ALTER and was re-added live; re-run is all SKIP (idempotent). **Zero references to legacy `bookings` remain as an FK parent.**
+
+### Honest correction — the empty commit mistake
+- I pushed `8c7cd3f00` ("feat(emi): backfill EMI schedules for 20 historical bookings (S522)") — **it contains zero files.** What actually happened:
+  1. My migration commit staged only the migration, but the parallel actor's whole-tree sweep committed `fba6427a3` ("feat(a11y): alt text on all images"), which carried my already-added migration file in with their sweep (whole-tree `git add`).
+  2. My subsequent `git stash push --include-untracked` captured only the one-file `AGENTS.md.new` deletion (their/my stale copy of a session log backup) — the untracked commit is the EMPTY tree.
+  3. My `--allow-empty` commit was pushed, then `reset --soft HEAD~1`, but `git pull --rebase` then restored `8c7cd3f00` from origin/main.
+- The migration file IS in the repo at HEAD (introduced by `fba6427a3`; verified byte-identical to disk, `git status` clean). Only the commit `8c7cd3f00` is contentless — a repo cosmetic blemish I will not hide.
+- **No force-push was used and none should be.** The empty commit on main stands; it is misleading in message but harmless in content. Next commit from this lineage should carry the real story.
+- Stash `stash@{0}` ("parallel actor in-flight work, NOT MINE") holds ONLY the stale `AGENTS.md.new` copy — kept, not dropped, for safety. No other data lives in it.
+
+### Verification
+- Live DB: plot_bookings 23 · booking_payment_schedules 276 (274 pending / 2 paid) · master 11/11 · agents-log OK (911393 bytes, 270 headings).
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds S518–S521 lineage; this entry = S522. Next-free = **523**.
+
+### Key lessons
+_958. **Never publish a commit whose contents you have not enumerated.** `--allow-empty` while unsure is how misleading single-line messages land on main. This session proved it: the real migration was fine — the deliverable commit was not. Use `git status --short` BEFORE every commit, and (if the only delta rides a parallel actor's whole-tree sweep) say so instead of pushing an empty commit.
+_959. **A stash push with --include-untracked can save less than you think.** The stash here held only AGENTS.md.new; the untracked commit was the empty tree, and the two files I expected (migration, a11y scripts) were never in it because they were already tracked. Inventory `stash^3` before trusting "I stashed it".
+_960. **A cleanup that mangles `AGENTS.md.new` into a one-file stash is not a loss** — it is a stale backup of the session log on top of HEAD's deleted state. Junk it last, after re-reading it, not while busy.
