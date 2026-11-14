@@ -646,7 +646,8 @@ public function becomeAssociate()
     {
         $viewPath = APP_PATH . '/views/pages/under_construction.php';
         if (file_exists($viewPath)) {
-            extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
+            $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+            extract(['base' => $base], EXTR_SKIP);
             include $viewPath;
         } else {
             $this->redirect(BASE_URL);
@@ -679,7 +680,8 @@ public function becomeAssociate()
     {
         $viewPath = APP_PATH . '/views/pages/pricing.php';
         if (file_exists($viewPath)) {
-            extract($_GET + ['base' => defined('BASE_URL') ? BASE_URL : '/apsdreamhome']);
+            $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
+            extract(['base' => $base], EXTR_SKIP);
             include $viewPath;
         } else {
             $this->redirect(BASE_URL);
