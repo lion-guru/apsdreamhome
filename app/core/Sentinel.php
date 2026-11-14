@@ -440,7 +440,13 @@ class Sentinel
         foreach ($healthIssues as $issue) {
             $table = $issue['table'];
             $action = $issue['action'];
-            
+
+            // Validate table name to prevent SQL injection
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
+                $this->log('? Invalid table name skipped: ' . $table);
+                continue;
+            }
+
             try {
                 if ($action === 'OPTIMIZE TABLE') {
                     $stmt = $this->db->query("OPTIMIZE TABLE `$table`");
