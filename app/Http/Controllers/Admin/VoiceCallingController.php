@@ -32,13 +32,13 @@ class VoiceCallingController extends AdminController
         ];
 
         try {
-            $stats['total_agents'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_agents")['c'] ?? 0;
-            $stats['active_agents'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_calling_agents WHERE status = 'active'")['c'] ?? 0;
+            $stats['total_scripts'] = (int)($this->db->fetch("SELECT COUNT(*) as c FROM ai_call_scripts WHERE tenant_id = 1")['c'] ?? 0);
+            $stats['active_scripts'] = (int)($this->db->fetch("SELECT COUNT(*) as c FROM ai_call_scripts WHERE tenant_id = 1 AND is_active = 1")['c'] ?? 0);
             $stats['today_calls'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE DATE(created_at) = CURDATE()")['c'] ?? 0;
             $stats['today_connected'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE DATE(created_at) = CURDATE() AND status = 'completed'")['c'] ?? 0;
             $stats['today_interested'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE DATE(created_at) = CURDATE() AND (customer_response = 'interested' OR interest_level IN ('hot','warm'))")['c'] ?? 0;
             $stats['today_leads'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_extracted_leads WHERE auto_created_lead_id IS NOT NULL AND DATE(created_at) = CURDATE()")['c'] ?? 0;
-            $stats['avg_duration'] = $this->db->fetch("SELECT AVG(duration) as avg FROM ai_call_sessions WHERE DATE(created_at) = CURDATE() AND duration > 0")['avg'] ?? 0;
+            $stats['avg_duration'] = $this->db->fetch("SELECT AVG(duration_seconds) as avg FROM ai_call_sessions WHERE DATE(created_at) = CURDATE() AND duration_seconds > 0")['avg'] ?? 0;
         } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
 
         $stats['conversion_rate'] = $stats['today_calls'] > 0 ? round(($stats['today_interested'] / $stats['today_calls']) * 100, 1) : 0;
@@ -66,10 +66,10 @@ class VoiceCallingController extends AdminController
         try {
             $recentCalls = $this->db->fetchAll("
                 SELECT s.*, l.name as lead_name, l.phone as lead_phone,
-                       a.agent_name as agent_display_name
+                       sc.script_name as agent_display_name
                 FROM ai_call_sessions s
                 LEFT JOIN leads l ON l.id = s.lead_id
-                LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id
+                LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1
                 ORDER BY s.created_at DESC
                 LIMIT 10
             ");

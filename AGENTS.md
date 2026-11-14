@@ -205,6 +205,51 @@ _1015. **Round-robin must be over a table that exists** — `ai_call_scripts.is_
 ### AGENTS.md numbering (Rule 4)
 Highest heading before this entry = 540 (S539 parallel actor, S540 mine). This entry = **S541**. Next-free = **542**.
 
+## Session 543: The Rest Of The AI Voice Stack Was The Same Dead Shape — Phantom `ai_calling_agents` Eliminated Everywhere, Mobile API, Analytics, Scheduler Repaired (2026-11-14)
+
+### Trigger
+User: "do next" — continuing the AI voice sweep. S540/S541 fixed the admin desk surfaces. The codebase audit found the same phantom-table family in **four more modules** — none of them reachable by any user, all silent zeros behind catch blocks.
+
+### The phantom chain (one root, four sites)
+`ai_calling_agents` **never existed**. Every `JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id` died with 1146; every surrounding try/catch turned a fatal into "empty table, zero error message." Same pattern as S540/S541, wider blast radius:
+
+1. **`VoiceAnalyticsController`** (`/admin/voice-analytics`): `getAgentPerformance()` joined the phantom "agents" table and selected `AVG(s.duration)` — **two phantoms in one query** (missing table + missing column). Page rendered "No agent data" forever. Provider comparison grouped by `a.provider` (ditto). Overviews averaged `s.duration` (phantom).
+2. **`VoiceCallingController`** (`/admin/voice-calling`): KPI cards `total_agents`/`active_agents` both queried the phantom table; `AVG(duration)` → wrong column; the "10 most recent calls" list joined the phantom to filter nothing but also leaked a fatal-ish shape.
+3. **`VoiceCallSchedulerController`** (`/admin/voice-scheduler/calls` + `callDetail()`): two agent joins → the whole desk's lists rendered empty.
+4. **`VoiceService::getAgentList()`** (`loadProviders`' system), `getLeadCallHistory()`, `processScheduledCalls()`, `getCallsByAgent()` — all joined the phantom.
+5. **`Api\VoiceAgentController`** (the **public mobile `/api/voice-agent/*` API the Flutter app calls**): `startCall` picked an "agent" with an unguarded `SELECT * FROM ai_calling_agents ...` outside any try/catch → **the mobile "Start Voice Call" button 500'd on every tap since the feature was added**. `endCall()` decremented a phantom row. `getSchedule`, `getSession`, `getCallHistory`, `getStats` all joined the phantom → 500s or empty payloads.
+
+### Fix (no schema, no migration — everything except the missing table existed)
+1. **Agent concept → Script concept everywhere.** Real rows live in `ai_call_scripts` (tenant-scoped, `script_code/script_name/is_active`). All lists query scripts instead of agents; every view now reads the same contract: `agent_name`→`script_name` aliased to keep the older views working; headings re-labelled to Script Performance / Script Comparison / Active Scripts.
+2. **`duration` → `duration_seconds`** everywhere (the actual column). All AVG()s re-pointed.
+3. **`Api\VoiceAgentController`** — the public mobile API's start-call path no longer touches agents; the "agent" returned by the API is the `ai_call_scripts` row for `script_code`; when scripts table is absent/error it degrades to `'APS Dream Home AI'` instead of 500. `endCall`'s phantom counter update removed (`current_calls` tracked no real resource). `getSession`/`getSchedule`/`getCallHistory` now join scripts (or nothing).
+4. **View labels** — `voice_analytics/index.php` (Agent→Script columns, provider→script headings); `voice_calling/dashboard.php` ("Active Agents" → "Active Scripts", both stat keys renamed).
+5. **Scheduler view** unchanged (payload alias `script_name as agent_name` keeps its filter working).
+
+### Verification (live, as admin + public mobile API)
+- Admin pages all 200 with no warnings, real needles: `voice-calling` ('Active Scripts'), `voice-analytics` ('Script Performance'), `voice-scheduler/calls` ('Scheduled Calls'), + all S540/S541 desks (`voice-users/*`).
+- Public API unauthenticated: `/api/voice-agent/start-call` → 401 (was 500); `get-session/1` → 200 real session payload; `get-stats` → 200 real stats body; `get-schedule` → 200 `schedule: []`; `get-call-history` → 200 paginated empty list.
+- **PHPStan → [OK] No errors. Master 11/11 PASSED. Smoke runner 28/28 (S540 additions intact).**
+- 47-probe live matrix: 0 failures.
+- `findstr /s ai_calling_agents app\*.php config\*.php scripts\*.php routes\*.php testing\*.php` → **0 hits** codebase-wide.
+- Temp probes deleted same-turn (probe_s543.php, probe_voice_pages*, probe_history).
+
+### Post-mortem: why this class keeps recurring
+Every occurrence of `ai_calling_agents` shared one shape: **a writer that referenced a table from a design that was never migrated**, then a reader behind a catch block that silently returned `[]`. The untraceable nature of "shows zero, no error" is exactly what let this survive S331-S541 undetected. Fixed by (a) never shipping a JOIN to an unverified table, (b) grep-able zero-hits policy documented in lessons _1008/_1011, (c) this migration-free elimination as the fourth example in the family.
+
+### Not done (owner awareness)
+1. **Mobile voice call UX** — the Flutter `voice_call_page.dart` shows a raw detailed error on 500 today; after this fix it reaches 401 unless a Bearer is present (expected). A real start-call (with an authenticated mobile session) exercises the TS flow end-to-end but requires a token probe — can be done on demand.
+2. **`VoiceAgentController::getStats`** reports `total_calls_today` for *the api_user_id's agents* — it still returns 200-zero because it aggregates by user association, not because of the phantom. Honest zero, not a lie.
+
+### Key lessons (carried, continued)
+_1117. **A phantom JOIN inside a try/catch is a 100%-silent feature killer** — the 2nd + 3rd + 5th instances found after S540/S541; every time, the catch returned `[]` and no page rendered anything. Grep the entire tree for the table name BEFORE fixing anything; one hit = a page that never worked.
+_1118. **In phantom-drains, swap the AGENT concept, don't fake the table** — creating `ai_calling_agents` to save the join would have produced a fake "Agents" KPI with zero rows and zero meaning forever. Grouping by the tenant-scoped `ai_call_scripts` table uses real data; the menu/label just needs relabelling.
+_1119. **One phantom, two defects** — `AVG(s.duration)` was a phantom COLUMN (duration → duration_seconds); elgarn's `a.provider` was a phantom SQLite-style column that does not exist on either side. A query that panics on JOIN 1146 never reaches the column error — always fix both together on the same line.
+_1120. **The public mobile API is part of the blast radius** — `/api/voice-agent/*` routes consumed by the Flutter app were 500ing on every unauthenticated/authenticated call. Any admin/desk fix that stays internal misses the API surface; grep routes/api.php for the table name or class name.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 542 (parallel actor). This entry = **S543**. Next-free = **544**.
+
 ## Session 476: Full-Stack Customer Festive Booking Flow, Promo Code Concession Engine, Multi-View Booking Synchronization, 1508/1508 Clean (2026-11-13)
 
 ### Trigger

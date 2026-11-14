@@ -68,12 +68,19 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
 
             $sessionId = bin2hex(random_bytes(16));
 
-            $agent = $this->db->fetch(
-                "SELECT * FROM ai_calling_agents WHERE status = 'active' ORDER BY current_calls ASC LIMIT 1"
-            );
+            $agent = null;
+            try {
+                $agent = $this->db->fetch(
+                    "SELECT script_code AS agent_id, script_name AS agent_name, 0 AS current_calls
+                     FROM ai_call_scripts WHERE is_active = 1 AND script_code = ? LIMIT 1",
+                    [$scriptCode]
+                );
+            } catch (\Throwable $e) {
+                $agent = null;
+            }
 
-            $agentName = $agent['agent_name'] ?? 'AI Calling Agent';
-            $agentId = $agent['id'] ?? null;
+            $agentName = $agent['agent_name'] ?? 'APS Dream Home AI';
+            $agentId = $agent['agent_id'] ?? null;
 
             $script = null;
             try {
@@ -91,12 +98,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 [$sessionId, $leadId, $phone, $agentId, $agentType, $scriptCode, $agentName]
             );
 
-            if ($agentId) {
-                $this->db->execute(
-                    "UPDATE ai_calling_agents SET current_calls = current_calls + 1 WHERE id = ?",
-                    [$agentId]
-                );
-            }
+
 
             return $this->jsonResponse([
                 'success' => true,
@@ -232,10 +234,10 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
             $session = $this->db->fetch(
                 "SELECT s.*, l.name as lead_name, l.phone as lead_phone, l.email as lead_email,
                         l.property_interest, l.budget_range, l.status as lead_status,
-                        a.agent_name as agent_name, a.status as agent_type_name
+                        sc.script_name as agent_name, sc.script_code as agent_type_name
                  FROM ai_call_sessions s
                  LEFT JOIN leads l ON s.lead_id = l.id
-                 LEFT JOIN ai_calling_agents a ON s.agent_id = a.id
+                 LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1
                  WHERE s.id = ? OR s.session_id = ?",
                 [$id, $id]
             );
@@ -284,12 +286,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 [$summary, $sentiment, $outcome, $sessionId]
             );
 
-            if ($session['agent_id']) {
-                $this->db->execute(
-                    "UPDATE ai_calling_agents SET current_calls = GREATEST(current_calls - 1, 0) WHERE id = ?",
-                    [$session['agent_id']]
-                );
-            }
+
 
             if ($session['lead_id'] && $outcome === 'interested') {
                 $lead = $this->db->fetch("SELECT name, phone, email, property_interest, budget_range, city, state FROM leads WHERE id = ?", [$session['lead_id']]);
@@ -335,10 +332,10 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
             $status = $_GET['status'] ?? null;
 
             $sql = "SELECT s.*, l.name as lead_name, l.phone as lead_phone,
-                           a.agent_name as agent_name, a.status as agent_type
+                           sc.script_name as agent_name, sc.script_code as agent_type
                     FROM ai_calling_schedule s
                     LEFT JOIN leads l ON s.lead_id = l.id
-                    LEFT JOIN ai_calling_agents a ON s.ai_agent_id = a.id
+                    LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1
                     WHERE (s.scheduled_date = ? OR ? IS NULL)";
             $params = [$date, $date];
 
@@ -579,10 +576,10 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
 
             $calls = $this->db->fetchAll(
                 "SELECT s.*, l.name as lead_name, l.phone as lead_phone,
-                        a.agent_name as agent_name
+                        sc.script_name as agent_name
                  FROM ai_call_sessions s
                  LEFT JOIN leads l ON s.lead_id = l.id
-                 LEFT JOIN ai_calling_agents a ON s.agent_id = a.id
+                 LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1
                  {$where}
                  ORDER BY s.started_at DESC
                  LIMIT ? OFFSET ?",

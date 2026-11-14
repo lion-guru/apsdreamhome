@@ -140,7 +140,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
     <div class="col-md-6 mb-3">
         <div class="card h-100">
             <div class="card-header">
-                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-users me-1"></i>Agent Performance</h2>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-alt me-1"></i>Script Performance</h2>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($agent_performance)): ?>
@@ -149,12 +149,12 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
                     <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
                             <thead>
-                                <tr><th scope="col">Agent</th><th scope="col">Calls</th><th scope="col">Connected</th><th scope="col">Interested</th><th scope="col">Leads</th><th scope="col">Avg Dur</th></tr>
+                                <tr><th scope="col">Script</th><th scope="col">Calls</th><th scope="col">Connected</th><th scope="col">Interested</th><th scope="col">Leads</th><th scope="col">Avg Dur</th></tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($agent_performance as $a): ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($a['agent_name'] ?? 'Unknown') ?></td>
+                                    <td><?= htmlspecialchars($a['script_name'] ?? 'Unknown') ?></td>
                                     <td><?= $a['total_calls'] ?></td>
                                     <td><?= $a['connected'] ?></td>
                                     <td><?= $a['interested'] ?></td>
@@ -249,7 +249,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
     <div class="col-md-6 mb-3">
         <div class="card h-100">
             <div class="card-header">
-                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-cloud me-1"></i>Provider Comparison</h2>
+                <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-file-alt me-1"></i>Script Comparison</h2>
             </div>
             <div class="card-body">
                 <?php if (empty($provider_comparison)): ?>
@@ -258,7 +258,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
                     <div class="table-responsive">
                         <table class="table table-sm mb-0">
                             <thead>
-                                <tr><th scope="col">Provider</th><th scope="col">Calls</th><th scope="col">Connected</th><th scope="col">Avg Dur</th><th scope="col">Interested</th></tr>
+                                <tr><th scope="col">Script</th><th scope="col">Calls</th><th scope="col">Connected</th><th scope="col">Avg Dur</th><th scope="col">Interested</th></tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($provider_comparison as $p): ?>

@@ -1082,7 +1082,7 @@ class VoiceService
         $params = $tid > 1 ? [$tid] : [];
 
         try {
-            return $this->db->fetchAll("SELECT * FROM ai_calling_agents WHERE is_active = 1{$tenantFilter} ORDER BY agent_name", $params);
+            return $this->db->fetchAll("SELECT script_code AS agent_id, script_name AS agent_name, is_active AS status FROM ai_call_scripts WHERE is_active = 1 AND tenant_id = 1{$tenantFilter} ORDER BY script_name", $params);
         } catch (\Throwable $e) {
             error_log("VoiceService::getAgentList failed: " . $e->getMessage());
             return [];
@@ -1159,7 +1159,7 @@ class VoiceService
 
         try {
             return $this->db->fetchAll(
-                "SELECT s.*, a.agent_name FROM ai_calling_schedule s LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id WHERE s.lead_id = ?{$tenantFilter} ORDER BY s.scheduled_date DESC",
+                "SELECT s.*, sc.script_name as agent_name FROM ai_calling_schedule s LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1 WHERE s.lead_id = ?{$tenantFilter} ORDER BY s.scheduled_date DESC",
                 $params
             );
         } catch (\Throwable $e) {
@@ -1178,10 +1178,10 @@ class VoiceService
         try {
             $schedule = $this->db->fetch(
                 "SELECT s.*, l.name as lead_name, l.phone as lead_phone, l.property_interest,
-                        a.agent_name, a.agent_id as agent_identifier
+                        sc.script_name as agent_name, sc.script_code as agent_identifier
                  FROM ai_calling_schedule s
                  LEFT JOIN leads l ON l.id = s.lead_id
-                 LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id
+                 LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1
                  WHERE s.status = 'pending'{$tenantFilter} ORDER BY s.scheduled_date ASC, s.scheduled_time ASC LIMIT ?",
                 array_merge($params, [$limit])
             );
@@ -1214,7 +1214,7 @@ class VoiceService
 
         try {
             return $this->db->fetchAll(
-                "SELECT a.agent_name, COUNT(s.id) as call_count FROM ai_calling_agents a LEFT JOIN ai_calling_schedule s ON a.agent_id = s.ai_agent_id WHERE a.is_active = 1{$tenantFilter} GROUP BY a.id, a.agent_name ORDER BY call_count DESC",
+                "SELECT COALESCE(script_template, 'Default') AS agent_name, COUNT(s.id) as call_count FROM ai_calling_schedule s WHERE 1=1{$tenantFilter} GROUP BY s.script_template ORDER BY call_count DESC",
                 $params
             );
         } catch (\Throwable $e) {

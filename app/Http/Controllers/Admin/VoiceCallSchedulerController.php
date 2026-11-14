@@ -129,15 +129,14 @@ class VoiceCallSchedulerController extends AdminController
 
             $allCalls = $this->db->fetchAll(
                 "SELECT s.*, l.name as lead_name, l.phone as lead_phone, l.property_interest,
-                        a.agent_name
+                        sc.script_name as agent_name
                  FROM ai_calling_schedule s
                  LEFT JOIN leads l ON l.id = s.lead_id
-                 LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id
+                 LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1
                  $where
                  ORDER BY s.scheduled_date DESC, s.scheduled_time DESC
                  LIMIT $perPage OFFSET $offset",
-                $params
-            );
+                 $params            );
         } catch (\Throwable $e) {
             $total = 0;
             $allCalls = [];
@@ -165,10 +164,10 @@ class VoiceCallSchedulerController extends AdminController
         $call = $this->db->fetch(
             "SELECT s.*, l.name as lead_name, l.phone as lead_phone, l.email as lead_email,
                     l.property_interest, l.budget_range, l.status as lead_status,
-                    a.agent_name, a.agent_id as agent_identifier
+                    sc.script_name as agent_name, sc.script_code as agent_identifier
              FROM ai_calling_schedule s
              LEFT JOIN leads l ON l.id = s.lead_id
-             LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id
+             LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1
              WHERE s.id = ?",
             [$id]
         );

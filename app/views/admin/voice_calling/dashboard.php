@@ -146,8 +146,8 @@ $recentCalls = $recentCalls ?? [];
     <div class="col-md-4 mb-3">
         <div class="card h-100">
             <div class="card-body">
-                <h6 class="card-title">Active Agents</h6>
-                <h2 class="text-info mb-0"><?= $stats['active_agents'] ?? 0 ?> / <?= $stats['total_agents'] ?? 0 ?></h2>
+                <h6 class="card-title">Active Scripts</h6>
+                <h2 class="text-info mb-0"><?= $stats['active_scripts'] ?? 0 ?> / <?= $stats['total_scripts'] ?? 0 ?></h2>
             </div>
         </div>
     </div>

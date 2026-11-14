@@ -66,7 +66,7 @@ class VoiceAnalyticsController extends AdminController
         try {
             $stats['total_calls'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE $where")['c'] ?? 0;
             $stats['connected_calls'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_sessions WHERE $where AND status = 'completed'")['c'] ?? 0;
-            $stats['avg_duration'] = $this->db->fetch("SELECT AVG(duration) as avg FROM ai_call_sessions WHERE $where AND duration > 0")['avg'] ?? 0;
+            $stats['avg_duration'] = $this->db->fetch("SELECT AVG(duration_seconds) as avg FROM ai_call_sessions WHERE $where AND duration > 0")['avg'] ?? 0;
             $stats['total_leads'] = $this->db->fetch("SELECT COUNT(*) as c FROM ai_call_extracted_leads WHERE $where AND auto_created_lead_id IS NOT NULL")['c'] ?? 0;
             $stats['conversion_rate'] = $stats['total_calls'] > 0 ? round(($stats['total_leads'] / $stats['total_calls']) * 100, 2) : 0;
         } catch (\Throwable $e) { error_log('[' . __CLASS__ . ']: ' . $e->getMessage()); }
@@ -83,7 +83,7 @@ class VoiceAnalyticsController extends AdminController
                     SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as connected,
                     SUM(CASE WHEN customer_response = 'interested' OR interest_level IN ('hot','warm') THEN 1 ELSE 0 END) as interested,
                     SUM(CASE WHEN customer_response = 'not_interested' OR interest_level = 'cold' THEN 1 ELSE 0 END) as not_interested,
-                    AVG(duration) as avg_duration
+                    AVG(duration_seconds) as avg_duration
                 FROM ai_call_sessions 
                 WHERE $where
                 GROUP BY DATE(created_at)
@@ -96,26 +96,27 @@ class VoiceAnalyticsController extends AdminController
 
     private function getAgentPerformance($where)
     {
+        $agentWhere = preg_replace('/\bcreated_at\b/', 's.created_at', $where);
         try {
             return $this->db->fetchAll("
-                SELECT a.agent_id, a.agent_name, 
+                SELECT COALESCE(sc.script_name, s.script_template, 'Default Script') AS script_name,
                     COUNT(s.id) as total_calls,
                     SUM(CASE WHEN s.status = 'completed' THEN 1 ELSE 0 END) as connected,
                     SUM(CASE WHEN s.customer_response = 'interested' OR s.interest_level IN ('hot','warm') THEN 1 ELSE 0 END) as interested,
                     SUM(CASE WHEN e.auto_created_lead_id IS NOT NULL THEN 1 ELSE 0 END) as leads_created,
-                    AVG(s.duration) as avg_duration,
-                    a.status
-                FROM ai_calling_agents a
-                LEFT JOIN ai_call_sessions s ON s.ai_agent_id = a.agent_id AND $where
+                    AVG(s.duration_seconds) as avg_duration
+                FROM ai_call_sessions s
+                LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1
                 LEFT JOIN ai_call_extracted_leads e ON e.call_session_id = s.id
-                GROUP BY a.agent_id
+                WHERE $agentWhere
+                GROUP BY sc.id, s.script_template
                 ORDER BY total_calls DESC
             ");
         } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '] getAgentPerformance: ' . $e->getMessage());
             return [];
         }
     }
-
     private function getInterestBreakdown($where)
     {
         try {
@@ -187,20 +188,21 @@ class VoiceAnalyticsController extends AdminController
 
     private function getProviderComparison($where)
     {
+        $agentWhere = preg_replace('/\bcreated_at\b/', 's.created_at', $where);
         try {
             return $this->db->fetchAll("
-                SELECT 
-                    a.provider as provider,
+                SELECT COALESCE(sc.script_name, s.script_template, 'Default Script') AS provider,
                     COUNT(s.id) as total_calls,
                     SUM(CASE WHEN s.status = 'completed' THEN 1 ELSE 0 END) as connected,
-                    AVG(s.duration) as avg_duration,
+                    AVG(s.duration_seconds) as avg_duration,
                     SUM(CASE WHEN s.customer_response = 'interested' OR s.interest_level IN ('hot','warm') THEN 1 ELSE 0 END) as interested
                 FROM ai_call_sessions s
-                JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id
-                WHERE $where
-                GROUP BY a.provider
+                LEFT JOIN ai_call_scripts sc ON sc.script_code = s.script_template AND sc.tenant_id = 1
+                WHERE $agentWhere
+                GROUP BY sc.id, s.script_template
             ");
         } catch (\Throwable $e) {
+            error_log('[' . __CLASS__ . '] getProviderComparison: ' . $e->getMessage());
             return [];
         }
     }
