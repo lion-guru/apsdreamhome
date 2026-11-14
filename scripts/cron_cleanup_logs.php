@@ -1,9 +1,10 @@
 <?php
-// Log retention purge — prevents ab_events / visitor_page_views / csp_violations
-// from growing unbounded (ab_events was 94k+ rows / 18.6MB).
-// - ab_events: DELETE older than 90 days (created_at)
+// Log retention purge — prevents volatile log tables from growing unbounded.
+// - ab_events:          DELETE older than 90 days (created_at)
 // - visitor_page_views: DELETE older than 60 days (created_at)
-// - csp_violations: DELETE older than 30 days (received_at — table has no created_at)
+// - csp_violations:     DELETE older than 30 days (received_at — table has no created_at)
+// - notification_logs:  DELETE older than 180 days (created_at)
+// - audit_logs:         DELETE older than 365 days (created_at)
 // Runnable standalone: php scripts/cron_cleanup_logs.php
 // Also wired as daily Task 10 in scripts/run_all_crons.php
 // Returns ['deleted' => [...]] when included; echoes summary on CLI.
@@ -13,6 +14,8 @@ function cron_cleanup_logs(PDO $pdo): array
         'ab_events'          => ['created_at', 90],
         'visitor_page_views' => ['created_at', 60],
         'csp_violations'     => ['received_at', 30],
+        'notification_logs'  => ['created_at', 180],
+        'audit_logs'         => ['created_at', 365],
     ];
     $deleted = [];
     foreach ($rules as $table => [$col, $days]) {
