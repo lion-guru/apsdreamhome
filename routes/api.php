@@ -917,6 +917,33 @@ $router->get('/api/docs/spec/{version}', 'App\Http\Controllers\Api\DocsControlle
 $router->get('/api/docs/list', 'App\Http\Controllers\Api\DocsController@list');
 $router->post('/api/twilio/voice/gather', 'Api\TwilioVoiceWebhookController@gather');
 
+// GET returns a friendly status page instead of a panic-inducing 404.
+$router->get('/api/twilio/voice', function() {
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "APS Dream Home - Twilio Voice Webhook\n\n" .
+         "This is an HTTP endpoint for Twilio, not a web page.\n" .
+         "POST requests only. Twilio sends X-Twilio-Signature\n" .
+         "(HMAC-SHA1 of URL + params, keyed by the account auth token)\n" .
+         "which is verified before any TwiML is generated.\n\n" .
+         "Status: OK - webhook is live.\n";
+    exit;
+});
+$router->get('/api/twilio/voice/status', function() {
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "APS Dream Home - Twilio Call Status Callback\n\nPOST only. Status: OK - callback is live.\n";
+    exit;
+});
+$router->get('/api/twilio/voice/recording', function() {
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "APS Dream Home - Twilio Recording Ready Callback\n\nPOST only. Status: OK - callback is live.\n";
+    exit;
+});
+$router->get('/api/twilio/voice/gather', function() {
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "APS Dream Home - Twilio Gather Callback\n\nPOST only. Status: OK - callback is live.\n";
+    exit;
+});
+
 
 // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
 // CRM API (Flutter Lead Management + Pipeline + Follow-ups)
