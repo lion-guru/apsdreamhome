@@ -177,6 +177,36 @@ class TwilioVoiceWebhookController extends Controller
 
         $this->voice->updateSessionStatus($callSid, $status, ['duration' => $duration]);
 
+        // Close the outbound schedule row so the CRM dialer reports the real
+        // outcome once Twilio finishes the call (previously left 'processing').
+        $terminal = [
+            'completed' => 'completed',
+            'busy'      => 'failed',
+            'failed'    => 'failed',
+            'no-answer' => 'failed',
+            'canceled'  => 'cancelled',
+        ];
+        $target = $terminal[strtolower($status)] ?? null;
+        if ($target !== null && $callSid !== '') {
+            try {
+                $db = \App\Core\Database\Database::getInstance();
+                $pdo = method_exists($db, 'getPdo') ? $db->getPdo() : null;
+                if ($pdo) {
+                    $stmt = $pdo->prepare(
+                        "UPDATE ai_calling_schedule s
+                           JOIN ai_call_sessions ss ON ss.id = s.call_session_id
+                              SET s.status = ?,
+                                  s.result_notes = CONCAT('call_status=', ?, ' duration=', ?),
+                                  s.updated_at = NOW()
+                            WHERE ss.call_sid = ?"
+                    );
+                    $stmt->execute([$target, $status, $duration !== null ? (string)$duration : '', $callSid]);
+                }
+            } catch (\Throwable $e) {
+                error_log('TwilioVoiceWebhookController::status schedule close: ' . $e->getMessage());
+            }
+        }
+
         // Twilio expects 200 OK + TwiML (or 204) for status callbacks.
         header('Content-Type: text/xml; charset=utf-8');
         echo '<?xml version="1.0" encoding="UTF-8"?><Response/>';
@@ -247,25 +277,81 @@ class TwilioVoiceWebhookController extends Controller
             return;
         }
 
-        // Persist the DTMF result against the session.
+        // Map the DTMF digit to a semantic outcome so the CRM learns what the
+        // customer chose — not just the numeral.
+        $outcome = null;
+        $interest = 'none';
+        $followUp = 0;
+        $followUpDate = null;
+        if ($digits === '1') {
+            $outcome = 'interested';
+            $interest = 'warm';
+            $followUp = 1;
+            $followUpDate = (new \DateTimeImmutable('+1 day'))->format('Y-m-d');
+        } elseif ($digits === '2') {
+            $outcome = 'callback';
+            $interest = 'cold';
+            $followUp = 1;
+            $followUpDate = (new \DateTimeImmutable('+2 days'))->format('Y-m-d');
+        } elseif ($digits === '3') {
+            $outcome = 'transfer';
+            $interest = 'hot';
+            $followUp = 0;
+        } elseif ($digits !== '') {
+            $outcome = 'no_response';
+            $interest = 'none';
+        }
+
+        // Persist the DTMF result against the session AND close the schedule
+        // row so the dialer does not re-call someone who already answered.
         try {
             $db = \App\Core\Database\Database::getInstance();
             $pdo = method_exists($db, 'getPdo') ? $db->getPdo() : null;
             if ($pdo && $callSid) {
+                $sets = [
+                    "call_transcript = CONCAT(COALESCE(call_transcript, ''), IFNULL(?, ''), IFNULL(CONCAT(' ', ?), ''))",
+                    "transcript = CONCAT(COALESCE(transcript, ''), IFNULL(?, ''), IFNULL(CONCAT(' ', ?), ''))",
+                    "updated_at = NOW()",
+                ];
+                $params = [$digits ?: null, $speech ?: null, $digits ?: null, $speech ?: null];
+
+                if ($outcome !== null) {
+                    $sets[] = 'customer_response = ?';
+                    $sets[] = 'interest_level = ?';
+                    $sets[] = 'outcome = ?';
+                    $sets[] = 'follow_up_required = ?';
+                    $params[] = $outcome;
+                    $params[] = $interest;
+                    $params[] = $outcome;
+                    $params[] = $followUp;
+                    if ($followUpDate !== null) {
+                        $sets[] = 'follow_up_date = ?';
+                        $params[] = $followUpDate;
+                    }
+                }
+
                 $stmt = $pdo->prepare(
-                    "UPDATE ai_call_sessions
-                        SET call_transcript = CONCAT(COALESCE(call_transcript, ''), IFNULL(?, ''), IFNULL(CONCAT(' ', ?), '')),
-                            transcript = CONCAT(COALESCE(transcript, ''), IFNULL(?, ''), IFNULL(CONCAT(' ', ?), '')),
-                            updated_at = NOW()
-                      WHERE call_sid = ?"
+                    'UPDATE ai_call_sessions SET ' . implode(', ', $sets) . ' WHERE call_sid = ?'
                 );
-                $stmt->execute([$digits ?: null, $speech ?: null, $digits ?: null, $speech ?: null, $callSid]);
+                $params[] = $callSid;
+                $stmt->execute($params);
+
+                if ($outcome !== null) {
+                    $stmt = $pdo->prepare(
+                        "UPDATE ai_calling_schedule s
+                           JOIN ai_call_sessions ss ON ss.id = s.call_session_id
+                              SET s.status = 'completed',
+                                  s.result_notes = CONCAT('digit=', ?, ' outcome=', ?),
+                                  s.updated_at = NOW()
+                            WHERE ss.call_sid = ?"
+                    );
+                    $stmt->execute([$digits, $outcome, $callSid]);
+                }
             }
         } catch (\Throwable $e) {
         // ignore
         error_log($e->getMessage());
         }
-
         $builder = new TwiMLBuilder();
 
         if ($digits === '1') {
@@ -275,8 +361,14 @@ class TwilioVoiceWebhookController extends Controller
             $builder->say("Got it. We will reschedule and call you back. Goodbye.", 'alice', 'en')
                     ->hangup();
         } elseif ($digits === '3') {
-            $builder->say("Connecting you to an agent now. Please hold.", 'alice', 'en')
-                    ->dial($_ENV['AGENT_FORWARD_NUMBER'] ?? '+919876543210', ['timeout' => 30]);
+            $forward = trim((string)($_ENV['AGENT_FORWARD_NUMBER'] ?? getenv('AGENT_FORWARD_NUMBER') ?: ''));
+            if ($forward !== '' && preg_match('/^\+[1-9][0-9]{8,14}$/', $forward)) {
+                $builder->say("Connecting you to an agent now. Please hold.", 'alice', 'en')
+                        ->dial($forward, ['timeout' => 30]);
+            } else {
+                $builder->say("Thank you. One of our agents will call you back shortly. Goodbye.", 'alice', 'en')
+                        ->hangup();
+            }
         } else {
             $builder->say("Sorry, we did not understand your selection. Goodbye.", 'alice', 'en')
                     ->hangup();

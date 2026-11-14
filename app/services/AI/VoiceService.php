@@ -274,15 +274,16 @@ class VoiceService
                         [null, $tid > 1 ? $tid : 1, $sessionId, $schedule['lead_id'],
                          $schedule['phone'] ?: $schedule['lead_phone'] ?? '0000000000', $tpl, $sid]
                     );
+                    // Link the session row back onto the schedule so the
+                    // gather/status webhooks can close both rows together.
+                    $sessionPk = (int) $this->db->lastInsertId();
+                    $this->db->execute(
+                        "UPDATE ai_calling_schedule SET call_session_id = ?, result_notes = ?, updated_at = NOW() WHERE id = ?",
+                        [$sessionPk, 'initiated sid=' . $sid, $scheduleId]
+                    );
                 } catch (\Throwable $e) {
                     error_log('initiateCall session insert: ' . $e->getMessage());
                 }
-                try {
-                    $this->db->execute(
-                        "UPDATE ai_calling_schedule SET result_notes = ?, updated_at = NOW() WHERE id = ?",
-                        ['initiated sid=' . $sid, $scheduleId]
-                    );
-                } catch (\Throwable $e) { /* best-effort */ }
             }
             return [
                 'success'    => true,

@@ -67,6 +67,50 @@ _1000. **Debug prints inside the failing branch must be one-shot and reverted sa
 ### AGENTS.md numbering (Rule 4)
 Highest pre-existing heading = 533 (parallel S534 landed mid-round). This entry = **S536** per the parallel-race rescue precedent (S227, S481). Next-free = **537**.
 
+## Session 538: AI Call Outcome Loop Closed — The Dialer Now Learns What The Customer Said (2026-11-14)
+
+### Trigger
+User: "do next" — continue the voice/AI outbound-call work. Chosen by senior-dev judgment: the AI call pipeline had one fatal blind spot. A Twilio AI call could play a script, gather a digit and close the phone line — but **the CRM never learned what the customer chose**, and the dialer never closed the schedule row, so every answered call stayed "processing" forever and the lead's follow-up was never captured.
+
+### Gap analysis (before touching anything)
+- `gather()` wrote the raw `Digits` into `call_transcript` only; `customer_response`, `interest_level`, `outcome`, `follow_up_required`, `follow_up_date` stayed NULL — the dialer had no machine-readable result.
+- `status()` flipped `ai_call_sessions.status` but **never touched `ai_calling_schedule`** — a finished call left its schedule row `processing` until the 15-minute cron watchdog flipped it to `failed` (wrong final state: answered calls reported as timeouts).
+- `initiateCall()` (S549/S536) linked the session to the schedule by writing `result_notes='initiated sid=...'` but never populated the existing `call_session_id` column — the join column sat unused.
+- `AGENT_FORWARD_NUMBER` fell back to **a hardcoded +919876543210** when the env var was missing — an unconfigured deploy silently forwarded every "3" caller to a stranger's phone.
+
+### Fix (4 changes, no schema, no migration — `call_session_id` already existed)
+
+1. **`VoiceService::initiateCall()`** — persists `call_session_id` on the schedule row after the session insert (`$this->db->lastInsertId()`), alongside the existing `result_notes`.
+2. **`TwilioVoiceWebhookController::gather()`** — digit → semantic outcome map:
+   - `1` (confirm interested) → `customer_response=interested`, `interest_level=warm`, `outcome=interested`, `follow_up_required=1`, `follow_up_date=+1 day`; schedule → `status='completed'` confirming `digit=1 outcome=interested`.
+   - `2` (callback) → `callback`/`cold`/`callback`/1/+2 days; schedule → `completed`, `digit=2`.
+   - `3` (agent) → `transfer`/`hot`, no follow-up flag; still routes to `AGENT_FORWARD_NUMBER` (or polite goodbye if unset).
+   - unknown/none → `no_response` recorded, no schedule completion.
+   - Session updated via `call_sid`; schedule closed through the new `call_session_id` join. Transcript concat behaviour preserved.
+3. **`TwilioVoiceWebhookController::status()`** — on terminal Twilio statuses (`completed`/`busy`/`failed`/`no-answer`/`canceled`), the schedule row is closed (`completed|failed|cancelled`) with `call_status=<raw> duration=<n>` in `result_notes`. Non-terminal statuses are left alone.
+4. **AGENT_FORWARD gate** — the transfer dials only when the number is env-set AND matches E.164 (`/^\+[1-9][0-9]{8,14}$/`); otherwise the caller hears "One of our agents will call you back shortly. Goodbye." and the call hangs up. No hardcoded number remains in code.
+
+### Verification (live sacrificial E2E, baseline restored byte-identical)
+Safety dump first: `backups/db/ai_call_loop_pre_s538.sql` (26 sessions / 2 schedules). Probe rows were inserted explicitly for the test and deleted after; the two real schedule rows (10, 11) and all 26 real sessions were untouched.
+Signed HTTP POSTs (HMAC-SHA1, file-body transport):
+- `gather` digit=2 → session `callback/cold/callback`, `follow_up_date=2026-11-16`; schedule → `completed`, `result_notes='digit=2 outcome=callback'`; TwiML "Got it. We will reschedule..." (200).
+- `gather` digit=1 (after reset) → `interested/warm/interested`, `follow_up_date=2026-11-15`; schedule → `completed` (200).
+- `status` `call_status=completed duration=91` → session `status=completed, outcome=interested, duration_seconds=91`; schedule `result_notes='call_status=completed duration=91'` (200).
+- After cleanup: **sessions=26, schedules=2 — baseline restored exactly.**
+- PHPStan → `[OK] No errors`. Master → **11/11 PASSED**. AGENTS.md integrity → OK.
+
+### What this closes
+The outbound-AI loop is now closed at every edge: schedule → Twilio → dynamic hi-en script (S536) → DTMF gather → **CRM outcome row + schedule completion** → **status callback final closure with duration** → recording URL persisted (S547) → cron watchdog for abandoned calls (S549). A sales manager querying the CRM can now see "called / answered / interested / callback date / duration" without opening Twilio's console.
+
+### Key lessons (carried, continued)
+_1004. **A status enum with a half-implemented mapping is a silent lie** — `ai_calling_schedule.status='processing'` after a completed call looked like a bug the cron would eventually fix; it was a dead "success" path. Terminal callbacks must close the source-of-truth row, not just the audit table.
+_1005. **A hardcoded phone number in a dial path is a privacy defect, not a default** — `AGENT_FORWARD_NUMBER ?? '+919876543210'` meant a misconfigured deploy sent real customers to a real (unknown) human. Env-or-goodbye, always; validate E.164 before dialling.
+_1006. **Link columns that nobody populates are dead weight until needed** — `call_session_id` existed since the schema was created (S468-era legacy migrations) and sat unused for months while "result_notes parse" was the "link". When you need the join, populate the column in the same transaction that creates the row.
+_1007. **Probe the E2E of an outcome, not just the handler** — the unit-of-truth for a voice funnel is the DB row state after the HTTP round trip. One signed POST per branch, with baseline-restored counts, is the only honest proof.
+
+### AGENTS.md numbering (Rule 4)
+Highest heading before this entry = 537 (parallel actor, this round). This entry = **S538**. Next-free = **539**.
+
 ## Session 476: Full-Stack Customer Festive Booking Flow, Promo Code Concession Engine, Multi-View Booking Synchronization, 1508/1508 Clean (2026-11-13)
 
 ### Trigger
