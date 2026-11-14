@@ -82,11 +82,11 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                     <table class="table table-sm m-0">
                         <thead>
                             <tr>
-                                <th>Rank</th>
-                                <th class="text-end">Associates</th>
-                                <th class="text-end">Min Legs</th>
-                                <th class="text-end">Min Volume</th>
-                                <th class="text-end">Rate</th>
+                                <th scope="col">Rank</th>
+                                <th scope="col" class="text-end">Associates</th>
+                                <th scope="col" class="text-end">Min Legs</th>
+                                <th scope="col" class="text-end">Min Volume</th>
+                                <th scope="col" class="text-end">Rate</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -123,11 +123,11 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                     <table class="table table-sm m-0">
                         <thead>
                             <tr>
-                                <th>Stream</th>
-                                <th class="text-end">Count</th>
-                                <th class="text-end">Total (All Time)</th>
-                                <th class="text-end">This Month</th>
-                                <th class="text-end">% of Total</th>
+                                <th scope="col">Stream</th>
+                                <th scope="col" class="text-end">Count</th>
+                                <th scope="col" class="text-end">Total (All Time)</th>
+                                <th scope="col" class="text-end">This Month</th>
+                                <th scope="col" class="text-end">% of Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -199,10 +199,10 @@ $monthByType = $stats['commission_this_month_by_type'] ?? [];
                 <table class="table table-sm m-0">
                     <thead>
                         <tr>
-                            <th>Cron</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th class="text-end">Items</th>
+                            <th scope="col">Cron</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end">Items</th>
                         </tr>
                     </thead>
                     <tbody>

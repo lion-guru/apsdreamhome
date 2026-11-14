@@ -106,13 +106,13 @@ $items = $items ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 80px">Employee</th>
-                            <th style="width: 150px">Basic</th>
-                            <th style="width: 120px">Allowances</th>
-                            <th style="width: 120px">Gross</th>
-                            <th style="width: 120px">Deductions</th>
-                            <th style="width: 120px">Net Pay</th>
-                            <th style="width: 100px">Status</th>
+                            <th scope="col" style="width: 80px">Employee</th>
+                            <th scope="col" style="width: 150px">Basic</th>
+                            <th scope="col" style="width: 120px">Allowances</th>
+                            <th scope="col" style="width: 120px">Gross</th>
+                            <th scope="col" style="width: 120px">Deductions</th>
+                            <th scope="col" style="width: 120px">Net Pay</th>
+                            <th scope="col" style="width: 100px">Status</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -50,12 +50,12 @@ $healthColor = $healthColors[$health] ?? '#6b7280';
             <p >Commission entries referencing bookings that no longer exist.</p>
             <div class="table-responsive"><table >
                 <thead><tr >
-                    <th >Ledger ID</th>
-                    <th >Booking</th>
-                    <th >User</th>
-                    <th >Type</th>
-                    <th >Amount</th>
-                    <th >Status</th>
+                    <th scope="col" >Ledger ID</th>
+                    <th scope="col" >Booking</th>
+                    <th scope="col" >User</th>
+                    <th scope="col" >Type</th>
+                    <th scope="col" >Amount</th>
+                    <th scope="col" >Status</th>
                 </tr></thead>
                 <tbody>
                 <?php foreach ($reconciliation['orphaned_ledger_no_booking'] as $ol): ?>

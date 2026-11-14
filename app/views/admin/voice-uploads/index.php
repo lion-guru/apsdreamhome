@@ -110,15 +110,15 @@ $error = $error ?? null;
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>ID</th>
-                                <th>User Name</th>
-                                <th>Phone</th>
-                                <th>Language</th>
-                                <th>Duration</th>
-                                <th>File Size</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                                <th>Actions</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">User Name</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Language</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">File Size</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Created</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

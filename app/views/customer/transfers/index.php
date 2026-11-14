@@ -38,12 +38,12 @@ $transfers = $transfers ?? [];
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Ref / NOC</th>
-                                <th>Plot & Colony</th>
-                                <th>Transferee (Buyer)</th>
-                                <th>Transfer Type</th>
-                                <th>Status</th>
-                                <th class="text-end">Action</th>
+                                <th scope="col">Ref / NOC</th>
+                                <th scope="col">Plot & Colony</th>
+                                <th scope="col">Transferee (Buyer)</th>
+                                <th scope="col">Transfer Type</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-end">Action</th>
                             </tr>
                         </thead>
                         <tbody>

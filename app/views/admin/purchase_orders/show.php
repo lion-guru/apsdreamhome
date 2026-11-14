@@ -36,7 +36,7 @@ $grnRecords = $grnRecords ?? [];
     <div class="row">
         <div class="col-md-8">
             <div class="card mb-4"><div class="card-header"><strong>Line Items</strong></div><div class="card-body p-0"><table class="table mb-0">
-                <thead><tr><th>Item</th><th>Description</th><th>Qty</th><th>Price</th><th>Disc %</th><th>Tax %</th><th>Total</th></tr></thead>
+                <thead><tr><th scope="col">Item</th><th scope="col">Description</th><th scope="col">Qty</th><th scope="col">Price</th><th scope="col">Disc %</th><th scope="col">Tax %</th><th scope="col">Total</th></tr></thead>
                 <tbody>
                 <?php foreach ($items as $item): ?>
                     <tr>
@@ -53,7 +53,7 @@ $grnRecords = $grnRecords ?? [];
             </table></div></div>
             <div class="card mb-4"><div class="card-header"><strong>GRN History</strong></div><div class="card-body p-0">
                 <?php if (empty($grnRecords)): ?><div class="p-3 text-muted">No GRN records yet</div>
-                <?php else: ?><table class="table mb-0"><thead><tr><th>GRN #</th><th>Date</th><th>Items</th><th>Qty</th><th>Status</th></tr></thead><tbody>
+                <?php else: ?><table class="table mb-0"><thead><tr><th scope="col">GRN #</th><th scope="col">Date</th><th scope="col">Items</th><th scope="col">Qty</th><th scope="col">Status</th></tr></thead><tbody>
                     <?php foreach ($grnRecords as $g): ?>
                     <tr><td><code><?= htmlspecialchars($g['grn_number']) ?></code></td><td><?= date('M d, Y', strtotime($g['received_at'] ?? $g['created_at'])) ?></td><td><?= $g['total_items'] ?></td><td><?= number_format($g['total_quantity'], 2) ?></td><td><span class="badge bg-<?= $g['status']==='accepted'?'success':($g['status']==='rejected'?'danger':'warning') ?>"><?= ucfirst($g['status']) ?></span></td></tr>
                     <?php endforeach; ?></tbody></table>
@@ -83,7 +83,7 @@ $grnRecords = $grnRecords ?? [];
                 <div class="col-md-4"><label>Challan Date</label><input type="date" name="challan_date" class="form-control"></div>
             </div>
             <h6 class="mt-3">Item Receipt</h6>
-            <table class="table table-sm"><thead><tr><th>Item</th><th>Ordered</th><th>Accepted Qty</th></tr></thead><tbody>
+            <table class="table table-sm"><thead><tr><th scope="col">Item</th><th scope="col">Ordered</th><th scope="col">Accepted Qty</th></tr></thead><tbody>
             <?php foreach ($items as $item): ?>
                 <tr><td><?= htmlspecialchars($item['item_name']) ?></td><td><?= $item['quantity'] ?></td><td><input type="hidden" name="items_po_id[]" value="<?= $item['id'] ?>"><input type="number" name="items_accepted[]" class="form-control form-control-sm" step="0.01" min="0" max="<?= $item['quantity'] ?>" value="0"></td></tr>
             <?php endforeach; ?>

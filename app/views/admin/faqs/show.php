@@ -16,27 +16,27 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-bordered">
                         <tr>
-                            <th class="w-25">ID</th>
+                            <th scope="col" class="w-25">ID</th>
                             <td><?php echo e($faq['id']); ?></td>
                         </tr>
                         <tr>
-                            <th>Question</th>
+                            <th scope="col">Question</th>
                             <td><?php echo htmlspecialchars($faq['question'] ?? ''); ?></td>
                         </tr>
                         <tr>
-                            <th>Answer</th>
+                            <th scope="col">Answer</th>
                             <td><?php echo nl2br(htmlspecialchars($faq['answer'] ?? '')); ?></td>
                         </tr>
                         <tr>
-                            <th>Category</th>
+                            <th scope="col">Category</th>
                             <td><?php echo htmlspecialchars($faq['category'] ?? '-'); ?></td>
                         </tr>
                         <tr>
-                            <th>Sort Order</th>
+                            <th scope="col">Sort Order</th>
                             <td><?php echo e($faq['display_order']); ?></td>
                         </tr>
                         <tr>
-                            <th>Status</th>
+                            <th scope="col">Status</th>
                             <td>
                                 <?php if ($faq['status'] == 'active'): ?>
                                     <span class="badge bg-success">Active</span>
@@ -46,7 +46,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>Created Date</th>
+                            <th scope="col">Created Date</th>
                             <td><?php echo date('Y-m-d H:i:s', strtotime($faq['created_at'])); ?></td>
                         </tr>
                     </table></div>

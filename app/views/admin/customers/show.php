@@ -111,12 +111,12 @@
                             <table class="table table-striped table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Plot #</th>
-                                        <th>Colony</th>
-                                        <th>Date</th>
-                                        <th>Token Paid</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Plot #</th>
+                                        <th scope="col">Colony</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Token Paid</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($customer_bookings as $bk): ?>
@@ -176,14 +176,14 @@
                             <table class="table table-striped table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Booking #</th>
-                                        <th>Plot</th>
-                                        <th>Due Date</th>
-                                        <th>EMI Amount</th>
-                                        <th>Paid</th>
-                                        <th>Balance</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Booking #</th>
+                                        <th scope="col">Plot</th>
+                                        <th scope="col">Due Date</th>
+                                        <th scope="col">EMI Amount</th>
+                                        <th scope="col">Paid</th>
+                                        <th scope="col">Balance</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -250,13 +250,13 @@
                             <table class="table table-striped table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Receipt #</th>
-                                        <th>Date</th>
-                                        <th>Mode</th>
-                                        <th>Amount</th>
-                                        <th>Transaction ID</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Receipt #</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Mode</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Transaction ID</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

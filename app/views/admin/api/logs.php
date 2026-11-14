@@ -48,12 +48,12 @@ $logs = $logs ?? [];
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Endpoint</th>
-                                    <th>Developer</th>
-                                    <th>IP Address</th>
-                                    <th>User Agent</th>
-                                    <th>Request Time</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Endpoint</th>
+                                    <th scope="col">Developer</th>
+                                    <th scope="col">IP Address</th>
+                                    <th scope="col">User Agent</th>
+                                    <th scope="col">Request Time</th>
                                 </tr>
                             </thead>
                             <tbody>

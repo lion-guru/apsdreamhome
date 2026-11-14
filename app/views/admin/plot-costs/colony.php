@@ -126,10 +126,10 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
             <table class="table table-sm">
                 <thead>
                     <tr>
-                        <th>Type</th>
-                        <th class="text-end">Total</th>
-                        <th class="text-center">Entries</th>
-                        <th class="text-end">% of Total</th>
+                        <th scope="col">Type</th>
+                        <th scope="col" class="text-end">Total</th>
+                        <th scope="col" class="text-center">Entries</th>
+                        <th scope="col" class="text-end">% of Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -148,10 +148,10 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
                 </tbody>
                 <tfoot class="table-dark">
                     <tr>
-                        <th>Total</th>
-                        <th class="text-end">₹<?= number_format(floatval($costs['total'] ?? 0)) ?></th>
-                        <th></th>
-                        <th></th>
+                        <th scope="col">Total</th>
+                        <th scope="col" class="text-end">₹<?= number_format(floatval($costs['total'] ?? 0)) ?></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
                     </tr>
                 </tfoot>
             </table>
@@ -203,11 +203,11 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Plot #</th>
-                                <th>Area (sqft)</th>
-                                <th>Cost Price</th>
-                                <th>Selling Price</th>
-                                <th>Status</th>
+                                <th scope="col">Plot #</th>
+                                <th scope="col">Area (sqft)</th>
+                                <th scope="col">Cost Price</th>
+                                <th scope="col">Selling Price</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>

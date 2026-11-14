@@ -117,13 +117,13 @@ $page_title = "SMS Dashboard";
                     <table class="table table-hover log-table" id="smsLogsTable">
                         <thead class="table-light">
                             <tr>
-                                <th>ID</th>
-                                <th>Mobile</th>
-                                <th>Type</th>
-                                <th>Message</th>
-                                <th>Status</th>
-                                <th>Date & Time</th>
-                                <th>Actions</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Mobile</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Message</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Date & Time</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -84,13 +84,13 @@ $registryLabels = [
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>Booking #</th>
-                        <th>Property</th>
-                        <th>Customer</th>
-                        <th>Registry Status</th>
-                        <th>Mutation</th>
-                        <th>Booked On</th>
-                        <th>Actions</th>
+                        <th scope="col">Booking #</th>
+                        <th scope="col">Property</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Registry Status</th>
+                        <th scope="col">Mutation</th>
+                        <th scope="col">Booked On</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

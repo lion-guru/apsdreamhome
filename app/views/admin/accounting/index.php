@@ -64,7 +64,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light"><tr><th class="ps-4">Date</th><th>Description</th><th>Type</th><th class="text-end pe-4">Amount</th></tr></thead>
+                    <thead class="bg-light"><tr><th scope="col" class="ps-4">Date</th><th scope="col">Description</th><th scope="col">Type</th><th scope="col" class="text-end pe-4">Amount</th></tr></thead>
                     <tbody>
                         <?php if (empty($recentTransactions)): ?>
                             <tr><td colspan="4" class="text-center py-4 text-muted"><i class="fas fa-inbox fa-2x d-block mb-2"></i>No transactions yet</td></tr>

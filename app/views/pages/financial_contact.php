@@ -181,11 +181,11 @@ try {
                     <table class="table table-hover align-middle">
                         <thead class="table-primary">
                             <tr>
-                                <th>Bank / Financial Institution</th>
-                                <th class="text-center">Home Loan</th>
-                                <th class="text-center">Plot Loan</th>
-                                <th class="text-center">Construction Loan</th>
-                                <th class="text-center">Balance Transfer</th>
+                                <th scope="col">Bank / Financial Institution</th>
+                                <th scope="col" class="text-center">Home Loan</th>
+                                <th scope="col" class="text-center">Plot Loan</th>
+                                <th scope="col" class="text-center">Construction Loan</th>
+                                <th scope="col" class="text-center">Balance Transfer</th>
                             </tr>
                         </thead>
                         <tbody>

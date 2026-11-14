@@ -148,16 +148,16 @@ $currentColony = $current_colony ?? null;
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light text-muted small text-uppercase">
                         <tr>
-                            <th class="ps-3">Audit Date</th>
-                            <th>Colony</th>
-                            <th>Recharge Shaft / Pit</th>
-                            <th>Recharge Type</th>
-                            <th>Capacity (kL)</th>
-                            <th>Filtration Media</th>
-                            <th>Water Table Depth</th>
-                            <th>Monsoon Score</th>
-                            <th>CGWB / UP NOC</th>
-                            <th class="text-end pe-3">Actions</th>
+                            <th scope="col" class="ps-3">Audit Date</th>
+                            <th scope="col">Colony</th>
+                            <th scope="col">Recharge Shaft / Pit</th>
+                            <th scope="col">Recharge Type</th>
+                            <th scope="col">Capacity (kL)</th>
+                            <th scope="col">Filtration Media</th>
+                            <th scope="col">Water Table Depth</th>
+                            <th scope="col">Monsoon Score</th>
+                            <th scope="col">CGWB / UP NOC</th>
+                            <th scope="col" class="text-end pe-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

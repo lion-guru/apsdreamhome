@@ -101,14 +101,14 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light text-muted small text-uppercase">
                         <tr>
-                            <th class="ps-3">Deal Token</th>
-                            <th>Mauza / Village &amp; Gata</th>
-                            <th>Farmer / Landholder</th>
-                            <th>Area (Bigha / Sq.Ft)</th>
-                            <th>Total Deal Value</th>
-                            <th>Disbursed</th>
-                            <th>Status</th>
-                            <th class="text-end pe-3">Actions</th>
+                            <th scope="col" class="ps-3">Deal Token</th>
+                            <th scope="col">Mauza / Village &amp; Gata</th>
+                            <th scope="col">Farmer / Landholder</th>
+                            <th scope="col">Area (Bigha / Sq.Ft)</th>
+                            <th scope="col">Total Deal Value</th>
+                            <th scope="col">Disbursed</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end pe-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

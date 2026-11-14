@@ -86,8 +86,8 @@
     <table class="table table-bordered table-condensed mb-4">
         <thead class="table-light">
             <tr>
-                <th>Description</th>
-                <th class="text-end" style="width: 200px;">Amount / Rate</th>
+                <th scope="col">Description</th>
+                <th scope="col" class="text-end" style="width: 200px;">Amount / Rate</th>
             </tr>
         </thead>
         <tbody>

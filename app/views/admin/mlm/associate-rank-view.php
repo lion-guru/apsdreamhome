@@ -76,7 +76,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <div class="tab-pane fade show active" id="tab-history">
                 <div class="table-responsive"><table class="table table-sm">
                     <thead>
-                        <tr><th>Date</th><th>From</th><th>To</th><th class="text-end">Volume</th><th>Legs</th><th>Type</th></tr>
+                        <tr><th scope="col">Date</th><th scope="col">From</th><th scope="col">To</th><th scope="col" class="text-end">Volume</th><th scope="col">Legs</th><th scope="col">Type</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($history)): ?>
@@ -98,7 +98,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <div class="tab-pane fade" id="tab-payouts">
                 <div class="table-responsive"><table class="table table-sm">
                     <thead>
-                        <tr><th>Batch</th><th>Period</th><th class="text-end">Gross</th><th class="text-end">TDS</th><th class="text-end">Net</th><th>Status</th></tr>
+                        <tr><th scope="col">Batch</th><th scope="col">Period</th><th scope="col" class="text-end">Gross</th><th scope="col" class="text-end">TDS</th><th scope="col" class="text-end">Net</th><th scope="col">Status</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($payouts)): ?>
@@ -120,7 +120,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <div class="tab-pane fade" id="tab-clawback">
                 <div class="table-responsive"><table class="table table-sm">
                     <thead>
-                        <tr><th>Date</th><th>EMI Installment</th><th class="text-end">Original</th><th class="text-end">Clawback</th><th>Status</th><th>Recovered</th></tr>
+                        <tr><th scope="col">Date</th><th scope="col">EMI Installment</th><th scope="col" class="text-end">Original</th><th scope="col" class="text-end">Clawback</th><th scope="col">Status</th><th scope="col">Recovered</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($clawbackLog)): ?>

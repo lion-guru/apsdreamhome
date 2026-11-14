@@ -7,7 +7,7 @@
         <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3"><div ><?= $stats['verified'] ?? 0 ?></div><small class="text-muted">Verified</small></div></div>
         <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3"><div ><?= $stats['rejected'] ?? 0 ?></div><small class="text-muted">Rejected</small></div></div>
     </div>
-    <div class="card border-0 shadow-sm"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th>ID</th><th>User</th><th>PAN</th><th>Aadhaar</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>
+    <div class="card border-0 shadow-sm"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th scope="col">ID</th><th scope="col">User</th><th scope="col">PAN</th><th scope="col">Aadhaar</th><th scope="col">Status</th><th scope="col">Date</th><th scope="col">Actions</th></tr></thead><tbody>
     <?php if (empty($requests)): ?><tr><td colspan="7" class="text-center py-4 text-muted">No KYC requests</td></tr>
     <?php else: foreach ($requests as $r): ?><tr>
         <td>#<?= $r['id'] ?></td>

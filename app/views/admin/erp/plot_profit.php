@@ -50,16 +50,16 @@
         <table class="table table-hover mb-0 align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>Plot #</th>
-                    <th>Colony</th>
-                    <th>Area (sqft)</th>
-                    <th>Land Cost (₹)</th>
-                    <th>Dev Cost (₹)</th>
-                    <th>Total Cost (₹)</th>
-                    <th>Sale Price (₹)</th>
-                    <th>Profit (₹)</th>
-                    <th>Margin</th>
-                    <th>Status</th>
+                    <th scope="col">Plot #</th>
+                    <th scope="col">Colony</th>
+                    <th scope="col">Area (sqft)</th>
+                    <th scope="col">Land Cost (₹)</th>
+                    <th scope="col">Dev Cost (₹)</th>
+                    <th scope="col">Total Cost (₹)</th>
+                    <th scope="col">Sale Price (₹)</th>
+                    <th scope="col">Profit (₹)</th>
+                    <th scope="col">Margin</th>
+                    <th scope="col">Status</th>
                 </tr>
             </thead>
             <tbody>

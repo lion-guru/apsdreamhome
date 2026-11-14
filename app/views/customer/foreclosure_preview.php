@@ -103,7 +103,7 @@ $base = BASE_URL ?? '';
             <?php else: ?>
             <div class="table-responsive"><table class="table table-hover mb-0">
                 <thead class="table-light"><tr>
-                    <th>#</th><th>Due Date</th><th>Amount</th><th>Status</th><th>Rebate Applied</th>
+                    <th scope="col">#</th><th scope="col">Due Date</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">Rebate Applied</th>
                 </tr></thead>
                 <tbody>
                 <?php foreach ($foreclosure['installments'] as $inst): 

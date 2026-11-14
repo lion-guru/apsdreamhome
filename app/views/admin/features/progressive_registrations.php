@@ -51,7 +51,7 @@ ob_start();
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>Token</th><th>Step</th><th>IP</th><th>Updated</th><th>Expires</th>
+              <th scope="col">Token</th><th scope="col">Step</th><th scope="col">IP</th><th scope="col">Updated</th><th scope="col">Expires</th>
             </tr>
           </thead>
           <tbody>

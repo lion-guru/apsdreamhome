@@ -112,18 +112,18 @@ $filters = $filters ?? ['status' => '', 'land_type' => ''];
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-4">Acq #</th>
-                            <th>Location</th>
-                            <th>Total Area</th>
-                            <th>Acquired Area</th>
-                            <th>Cost</th>
-                            <th>Total Consideration</th>
-                            <th>Advance Paid</th>
-                            <th>Balance</th>
-                            <th>Mutation Status</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th scope="col" class="ps-4">Acq #</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Total Area</th>
+                            <th scope="col">Acquired Area</th>
+                            <th scope="col">Cost</th>
+                            <th scope="col">Total Consideration</th>
+                            <th scope="col">Advance Paid</th>
+                            <th scope="col">Balance</th>
+                            <th scope="col">Mutation Status</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date</th>
+                            <th scope="col" class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

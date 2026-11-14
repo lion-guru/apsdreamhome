@@ -18,7 +18,7 @@ $day_names = $day_names ?? ['Sunday','Monday','Tuesday','Wednesday','Thursday','
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>Employee</th><th>Department</th><th>Work Days</th><th>Shift</th><th>Status</th><th>Actions</th></tr></thead>
+                        <thead><tr><th scope="col">Employee</th><th scope="col">Department</th><th scope="col">Work Days</th><th scope="col">Shift</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                         <tbody>
                         <?php foreach ($users as $emp): ?>
                             <tr>

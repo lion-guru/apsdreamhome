@@ -13,7 +13,7 @@ $page_title = $page_title ?? 'HR Settings';
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive"><table class="table table-sm mb-0">
-                    <thead class="table-light"><tr><th>Name</th><th>Code</th><th>Days/Year</th><th>Status</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Name</th><th scope="col">Code</th><th scope="col">Days/Year</th><th scope="col">Status</th></tr></thead>
                     <tbody>
                         <?php if (empty($leave_types ?? [])): ?>
                             <tr><td colspan="4" class="text-center text-muted py-3">No leave types configured</td></tr>
@@ -42,7 +42,7 @@ $page_title = $page_title ?? 'HR Settings';
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive"><table class="table table-sm mb-0">
-                    <thead class="table-light"><tr><th>Name</th><th>Start</th><th>End</th><th>Duration</th><th>Active</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Name</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Duration</th><th scope="col">Active</th></tr></thead>
                     <tbody>
                         <?php if (empty($shift_types ?? [])): ?>
                             <tr><td colspan="5" class="text-center text-muted py-3">No shift types configured</td></tr>

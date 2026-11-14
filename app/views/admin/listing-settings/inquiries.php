@@ -26,13 +26,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
         <table class="inq-table">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Property</th>
-                    <th>Location</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Message</th>
-                    <th>Date</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Property</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Message</th>
+                    <th scope="col">Date</th>
                 </tr>
             </thead>
             <tbody>

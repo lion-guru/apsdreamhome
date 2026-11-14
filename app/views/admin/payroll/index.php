@@ -110,13 +110,13 @@ $stats = $stats ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 120px">Run #</th>
-                            <th>Period</th>
-                            <th style="width: 100px">Pay Date</th>
-                            <th style="width: 100px">Employees</th>
-                            <th style="width: 150px">Gross / Net</th>
-                            <th style="width: 120px">Status</th>
-                            <th style="width: 120px">Actions</th>
+                            <th scope="col" style="width: 120px">Run #</th>
+                            <th scope="col">Period</th>
+                            <th scope="col" style="width: 100px">Pay Date</th>
+                            <th scope="col" style="width: 100px">Employees</th>
+                            <th scope="col" style="width: 150px">Gross / Net</th>
+                            <th scope="col" style="width: 120px">Status</th>
+                            <th scope="col" style="width: 120px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

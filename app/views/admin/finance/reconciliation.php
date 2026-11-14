@@ -9,7 +9,7 @@
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr><th><?php echo __('finance_bank'); ?></th><th><?php echo __('finance_statement_date'); ?></th><th><?php echo __('finance_statement_balance'); ?></th><th><?php echo __('finance_book_balance'); ?></th><th><?php echo __('finance_diff'); ?></th><th><?php echo __('finance_status'); ?></th><th><?php echo __('finance_started'); ?></th><th></th></tr>
+                    <tr><th scope="col"><?php echo __('finance_bank'); ?></th><th scope="col"><?php echo __('finance_statement_date'); ?></th><th scope="col"><?php echo __('finance_statement_balance'); ?></th><th scope="col"><?php echo __('finance_book_balance'); ?></th><th scope="col"><?php echo __('finance_diff'); ?></th><th scope="col"><?php echo __('finance_status'); ?></th><th scope="col"><?php echo __('finance_started'); ?></th><th scope="col"></th></tr>
                 </thead>
                 <tbody>
                 <?php if (empty($reconciliations)): ?>

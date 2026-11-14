@@ -21,12 +21,12 @@
                 <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-4"><?= __('user_inv_th_plot', null, 'Plot Number') ?></th>
-                            <th><?= __('user_inv_th_project', null, 'Project/Site') ?></th>
-                            <th><?= __('user_inv_th_area', null, 'Area') ?></th>
-                            <th><?= __('user_inv_th_total_price', null, 'Total Price') ?></th>
-                            <th><?= __('user_inv_th_status', null, 'Status') ?></th>
-                            <th><?= __('user_inv_th_updated', null, 'Last Updated') ?></th>
+                            <th scope="col" class="ps-4"><?= __('user_inv_th_plot', null, 'Plot Number') ?></th>
+                            <th scope="col"><?= __('user_inv_th_project', null, 'Project/Site') ?></th>
+                            <th scope="col"><?= __('user_inv_th_area', null, 'Area') ?></th>
+                            <th scope="col"><?= __('user_inv_th_total_price', null, 'Total Price') ?></th>
+                            <th scope="col"><?= __('user_inv_th_status', null, 'Status') ?></th>
+                            <th scope="col"><?= __('user_inv_th_updated', null, 'Last Updated') ?></th>
                         </tr>
                     </thead>
                     <tbody>

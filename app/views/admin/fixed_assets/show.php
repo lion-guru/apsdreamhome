@@ -39,7 +39,7 @@ $schedule = $schedule ?? [];
                     <div class="p-4 text-center text-muted">No depreciation schedule generated yet</div>
                     <?php else: ?>
                     <table class="table table-sm mb-0">
-                        <thead><tr><th>Period</th><th>Opening</th><th>Depreciation</th><th>Closing</th><th>Cumulative</th><th>Status</th></tr></thead>
+                        <thead><tr><th scope="col">Period</th><th scope="col">Opening</th><th scope="col">Depreciation</th><th scope="col">Closing</th><th scope="col">Cumulative</th><th scope="col">Status</th></tr></thead>
                         <tbody>
                         <?php foreach (array_slice($schedule, 0, 24) as $s): ?>
                             <tr>

@@ -15,7 +15,7 @@ $id = (int)($acq['id'] ?? 0);
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>Date</th><th>Type</th><th>Amount</th><th>Mode</th><th>Ref</th><th>Status</th><th>Action</th></tr>
+                        <tr><th scope="col">Date</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">Mode</th><th scope="col">Ref</th><th scope="col">Status</th><th scope="col">Action</th></tr>
                     </thead>
                     <tbody>
                     <?php foreach ($payments as $p): ?>

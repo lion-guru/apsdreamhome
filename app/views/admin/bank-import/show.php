@@ -126,13 +126,13 @@ $unmatched_txns = $unmatched_txns ?? [];
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th class="text-end">Debit (₹)</th>
-                                        <th class="text-end">Credit (₹)</th>
-                                        <th class="text-end">Balance (₹)</th>
-                                        <th>Cheque/Ref</th>
-                                        <th></th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col" class="text-end">Debit (₹)</th>
+                                        <th scope="col" class="text-end">Credit (₹)</th>
+                                        <th scope="col" class="text-end">Balance (₹)</th>
+                                        <th scope="col">Cheque/Ref</th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -184,14 +184,14 @@ $unmatched_txns = $unmatched_txns ?? [];
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th class="text-end">Debit (₹)</th>
-                                        <th class="text-end">Credit (₹)</th>
-                                        <th class="text-end">Balance (₹)</th>
-                                        <th>Cheque/Ref</th>
-                                        <th>Matched At</th>
-                                        <th></th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col" class="text-end">Debit (₹)</th>
+                                        <th scope="col" class="text-end">Credit (₹)</th>
+                                        <th scope="col" class="text-end">Balance (₹)</th>
+                                        <th scope="col">Cheque/Ref</th>
+                                        <th scope="col">Matched At</th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -260,11 +260,11 @@ $unmatched_txns = $unmatched_txns ?? [];
                             <table class="table table-sm table-hover">
                                 <thead class="table-light sticky-top">
                                     <tr>
-                                        <th></th>
-                                        <th>Date</th>
-                                        <th>Type</th>
-                                        <th>Description</th>
-                                        <th class="text-end">Amount (₹)</th>
+                                        <th scope="col"></th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col" class="text-end">Amount (₹)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="internalResultsBody">

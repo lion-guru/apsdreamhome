@@ -23,7 +23,7 @@
             <div class="table-responsive">
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
-                        <tr><th>ID</th><th>Slot Key</th><th>Title</th><th>Type</th><th>Status</th><th>Views</th><th>Clicks</th><th>Actions</th></tr>
+                        <tr><th scope="col">ID</th><th scope="col">Slot Key</th><th scope="col">Title</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Views</th><th scope="col">Clicks</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($slots)): ?>

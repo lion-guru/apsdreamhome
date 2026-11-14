@@ -92,14 +92,14 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Date</th>
-                                <th class="text-end">Installments</th>
-                                <th class="text-end">Total Amount</th>
-                                <th class="text-end">Paid Amount</th>
-                                <th class="text-end">Failed Amount</th>
-                                <th class="text-end">Paid</th>
-                                <th class="text-end">Failed</th>
-                                <th class="text-end">Success Rate</th>
+                                <th scope="col">Date</th>
+                                <th scope="col" class="text-end">Installments</th>
+                                <th scope="col" class="text-end">Total Amount</th>
+                                <th scope="col" class="text-end">Paid Amount</th>
+                                <th scope="col" class="text-end">Failed Amount</th>
+                                <th scope="col" class="text-end">Paid</th>
+                                <th scope="col" class="text-end">Failed</th>
+                                <th scope="col" class="text-end">Success Rate</th>
                             </tr>
                         </thead>
                         <tbody>

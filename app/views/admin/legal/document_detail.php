@@ -56,7 +56,7 @@ if (!$doc) { echo '<div class="container-fluid py-4"><div class="alert alert-dan
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-sm">
-                                <thead><tr><th>File</th><th>Type</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                                <thead><tr><th scope="col">File</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Date</th><th scope="col">Actions</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($uploads as $u): ?>
                                     <tr>

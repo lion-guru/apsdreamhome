@@ -64,12 +64,12 @@ $userId = $userId ?? 0;
                         <table class="table table-hover mb-0" id="leadsTable">
                             <thead>
                                 <tr>
-                                    <th><input type="checkbox" id="selectAll"></th>
-                                    <th>Lead</th>
-                                    <th>Phone</th>
-                                    <th>Location/Interest</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th scope="col"><input type="checkbox" id="selectAll"></th>
+                                    <th scope="col">Lead</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Location/Interest</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -163,12 +163,12 @@ $userId = $userId ?? 0;
                     <table class="table table-sm table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Time</th>
-                                <th>Lead</th>
-                                <th>Phone</th>
-                                <th>Outcome</th>
-                                <th>Duration</th>
-                                <th>Notes</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Lead</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Outcome</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">Notes</th>
                             </tr>
                         </thead>
                         <tbody>

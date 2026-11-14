@@ -250,9 +250,9 @@ $totalEarned = (float)($data['total_salary_earned'] ?? 0.0);
                         <table class="table table-sm align-middle mb-0">
                             <thead class="table-light">
                                 <tr style="font-size: 12px;">
-                                    <th>Leg / Source</th>
-                                    <th class="text-end">Actual Volume</th>
-                                    <th class="text-end">Capped (Qualifying)</th>
+                                    <th scope="col">Leg / Source</th>
+                                    <th scope="col" class="text-end">Actual Volume</th>
+                                    <th scope="col" class="text-end">Capped (Qualifying)</th>
                                 </tr>
                             </thead>
                             <tbody style="font-size: 13px;">
@@ -370,13 +370,13 @@ $totalEarned = (float)($data['total_salary_earned'] ?? 0.0);
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr style="font-size: 12px;">
-                            <th>Grant ID</th>
-                            <th>Target Description</th>
-                            <th>Monthly Installment</th>
-                            <th>Tenure / Paid</th>
-                            <th>Status</th>
-                            <th>Active Maintenance</th>
-                            <th>Next Payout Date</th>
+                            <th scope="col">Grant ID</th>
+                            <th scope="col">Target Description</th>
+                            <th scope="col">Monthly Installment</th>
+                            <th scope="col">Tenure / Paid</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Active Maintenance</th>
+                            <th scope="col">Next Payout Date</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 13px;">

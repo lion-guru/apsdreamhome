@@ -71,13 +71,13 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>ID / Date</th>
-                        <th>Associate</th>
-                        <th>Requested</th>
-                        <th>Approved</th>
-                        <th>Recovery Progress</th>
-                        <th>Status</th>
-                        <th class="text-end">Actions</th>
+                        <th scope="col">ID / Date</th>
+                        <th scope="col">Associate</th>
+                        <th scope="col">Requested</th>
+                        <th scope="col">Approved</th>
+                        <th scope="col">Recovery Progress</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

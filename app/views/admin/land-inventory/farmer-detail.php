@@ -83,14 +83,14 @@ $base        = defined('BASE_URL') ? BASE_URL : '';
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Lead ID</th>
-                        <th>Source</th>
-                        <th>Location</th>
-                        <th>Area</th>
-                        <th>Expected Price</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th>Actions</th>
+                        <th scope="col">Lead ID</th>
+                        <th scope="col">Source</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Area</th>
+                        <th scope="col">Expected Price</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -154,18 +154,18 @@ $base        = defined('BASE_URL') ? BASE_URL : '';
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Deal ID</th>
-                        <th>Lead</th>
-                        <th>Colony</th>
-                        <th>Area</th>
-                        <th>Consideration</th>
-                        <th>Advance</th>
-                        <th>Balance</th>
-                        <th>Agreement</th>
-                        <th>Registration</th>
-                        <th>Mutation</th>
-                        <th>Status</th>
-                        <th>Payments</th>
+                        <th scope="col">Deal ID</th>
+                        <th scope="col">Lead</th>
+                        <th scope="col">Colony</th>
+                        <th scope="col">Area</th>
+                        <th scope="col">Consideration</th>
+                        <th scope="col">Advance</th>
+                        <th scope="col">Balance</th>
+                        <th scope="col">Agreement</th>
+                        <th scope="col">Registration</th>
+                        <th scope="col">Mutation</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Payments</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -259,7 +259,7 @@ $base        = defined('BASE_URL') ? BASE_URL : '';
         <?php else: ?>
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead><tr><th>Plot</th><th>Colony</th><th>Gata</th><th class="text-end">Area</th><th>Status</th><th class="text-end">Price</th></tr></thead>
+                <thead><tr><th scope="col">Plot</th><th scope="col">Colony</th><th scope="col">Gata</th><th scope="col" class="text-end">Area</th><th scope="col">Status</th><th scope="col" class="text-end">Price</th></tr></thead>
                 <tbody>
                     <?php foreach ($farmer_plots as $fp): ?>
                     <tr>
@@ -301,13 +301,13 @@ if (!empty($allPayments)):
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Date</th>
-                        <th>Deal</th>
-                        <th>Amount</th>
-                        <th>Mode</th>
-                        <th>Reference</th>
-                        <th>Notes</th>
-                        <th>Recorded By</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Deal</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Reference</th>
+                        <th scope="col">Notes</th>
+                        <th scope="col">Recorded By</th>
                     </tr>
                 </thead>
                 <tbody>

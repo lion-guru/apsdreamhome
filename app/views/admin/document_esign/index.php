@@ -16,13 +16,13 @@
                     <table class="table table-zebra w-full">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Document Type</th>
-                                <th>Title</th>
-                                <th>Status</th>
-                                <th>Created By</th>
-                                <th>Created At</th>
-                                <th>Actions</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Document Type</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Created By</th>
+                                <th scope="col">Created At</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

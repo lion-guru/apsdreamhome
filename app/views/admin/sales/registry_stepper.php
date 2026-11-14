@@ -279,13 +279,13 @@ $statusBadges = [
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
-                        <th>Due Date</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Paid Date</th>
-                        <th>Receipt</th>
-                        <th>Stage Mapping</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Due Date</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Paid Date</th>
+                        <th scope="col">Receipt</th>
+                        <th scope="col">Stage Mapping</th>
                     </tr>
                 </thead>
                 <tbody>

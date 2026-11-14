@@ -93,38 +93,38 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
                         <div class="table-responsive mb-3">
                             <table class="table table-sm table-striped align-middle mb-0">
                                 <tr>
-                                    <th class="text-muted" style="width: 40%;">Plot Number</th>
+                                    <th scope="col" class="text-muted" style="width: 40%;">Plot Number</th>
                                     <td><strong class="fs-5 text-primary"><?= htmlspecialchars((string)($plot['plot_number'] ?? 'N/A')) ?></strong></td>
                                 </tr>
                                 <tr>
-                                    <th class="text-muted">Colony / Township</th>
+                                    <th scope="col" class="text-muted">Colony / Township</th>
                                     <td><strong><?= htmlspecialchars((string)($plot['colony_name'] ?? 'N/A')) ?></strong></td>
                                 </tr>
                                 <tr>
-                                    <th class="text-muted">Block &amp; Sector</th>
+                                    <th scope="col" class="text-muted">Block &amp; Sector</th>
                                     <td><?= htmlspecialchars((string)($plot['block'] ?? '')) ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars((string)($plot['sector'] ?? '')) : '' ?></td>
                                 </tr>
                                 <tr>
-                                    <th class="text-muted">Type &amp; Facing</th>
+                                    <th scope="col" class="text-muted">Type &amp; Facing</th>
                                     <td>
                                         <span class="badge bg-light text-dark border"><?= ucfirst(htmlspecialchars((string)($plot['plot_type'] ?? 'residential'))) ?></span>
                                         <span class="badge bg-light text-dark border ms-1"><i class="fas fa-compass text-info me-1"></i><?= ucfirst(htmlspecialchars((string)($plot['facing'] ?? 'N/A'))) ?></span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th class="text-muted">Dimensions</th>
+                                    <th scope="col" class="text-muted">Dimensions</th>
                                     <td><?= !empty($plot['dimension_label']) ? htmlspecialchars((string)($plot['dimension_label'] ?? '')) : number_format((float)($plot['width_ft'] ?? 0)) . ' × ' . number_format((float)($plot['length_ft'] ?? 0)) . ' ft' ?></td>
                                 </tr>
                                 <tr>
-                                    <th class="text-muted">Super / Carpet Area</th>
+                                    <th scope="col" class="text-muted">Super / Carpet Area</th>
                                     <td><strong><?= number_format((float)($plot['area_sqft'] ?? 0)) ?></strong> sq.ft.</td>
                                 </tr>
                                 <tr>
-                                    <th class="text-muted">Standard Rate</th>
+                                    <th scope="col" class="text-muted">Standard Rate</th>
                                     <td>₹<?= number_format((float)($plot['price_per_sqft'] ?? 0), 2) ?> / sq.ft.</td>
                                 </tr>
                                 <tr>
-                                    <th class="text-muted">Total List Price</th>
+                                    <th scope="col" class="text-muted">Total List Price</th>
                                     <td><span class="fs-6 fw-bold text-dark">₹<?= number_format((float)$totalPrice) ?></span></td>
                                 </tr>
                             </table>

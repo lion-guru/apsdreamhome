@@ -57,7 +57,7 @@ $colony_name = $colony_name ?? 'All Colonies';
 </div>
 
 <table>
-    <thead><tr><th>#</th><th>Property</th><th>Type</th><th>Area</th><th>Price</th><th>Location</th><th>QR</th></tr></thead>
+    <thead><tr><th scope="col">#</th><th scope="col">Property</th><th scope="col">Type</th><th scope="col">Area</th><th scope="col">Price</th><th scope="col">Location</th><th scope="col">QR</th></tr></thead>
     <tbody>
     <?php foreach ($listings as $i => $p): ?>
         <tr class="property-row">

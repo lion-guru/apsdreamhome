@@ -49,13 +49,13 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Type</th>
-                                <th>Department</th>
-                                <th>Title</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th>Submitted</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Department</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Priority</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Submitted</th>
                             </tr>
                         </thead>
                         <tbody>

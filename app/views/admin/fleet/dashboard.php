@@ -69,7 +69,7 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                 <?php else: ?>
                 <div class="table-responsive"><table class="table table-hover mb-0">
                     <thead class="table-light"><tr>
-                        <th>Date</th><th>Pickup → Colony</th><th>Vehicle / Driver</th><th>Associate</th><th>Plan</th><th>Status</th><th></th>
+                        <th scope="col">Date</th><th scope="col">Pickup → Colony</th><th scope="col">Vehicle / Driver</th><th scope="col">Associate</th><th scope="col">Plan</th><th scope="col">Status</th><th scope="col"></th>
                     </tr></thead>
                     <tbody>
                     <?php foreach ($trips as $t): ?>
@@ -103,7 +103,7 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                     <div class="text-center text-muted py-4 small">No completed trips yet.</div>
                 <?php else: ?>
                 <div class="table-responsive"><table class="table table-sm mb-0">
-                    <thead class="table-light"><tr><th>Associate</th><th class="text-end">Trips</th><th class="text-end">Visited</th><th class="text-end">Tokens</th><th class="text-end">Conv.</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Associate</th><th scope="col" class="text-end">Trips</th><th scope="col" class="text-end">Visited</th><th scope="col" class="text-end">Tokens</th><th scope="col" class="text-end">Conv.</th></tr></thead>
                     <tbody>
                     <?php foreach ($perAssociate as $a):
                         $conv = ((int)$a['visited'] > 0) ? round(((int)$a['tokens'] * 100) / (int)$a['visited'], 1) : 0; ?>

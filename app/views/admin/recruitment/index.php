@@ -115,14 +115,14 @@ $stats = $stats ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 100px">Code</th>
-                            <th>Title</th>
-                            <th style="width: 120px">Department</th>
-                            <th style="width: 120px">Type</th>
-                            <th style="width: 120px">Status</th>
-                            <th style="width: 100px">Applications</th>
-                            <th style="width: 100px">Openings</th>
-                            <th style="width: 150px">Actions</th>
+                            <th scope="col" style="width: 100px">Code</th>
+                            <th scope="col">Title</th>
+                            <th scope="col" style="width: 120px">Department</th>
+                            <th scope="col" style="width: 120px">Type</th>
+                            <th scope="col" style="width: 120px">Status</th>
+                            <th scope="col" style="width: 100px">Applications</th>
+                            <th scope="col" style="width: 100px">Openings</th>
+                            <th scope="col" style="width: 150px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

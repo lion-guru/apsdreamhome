@@ -37,13 +37,13 @@ $news = $news ?? ['id' => 0, 'title' => '', 'content' => '', 'author' => '', 'pu
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Article Details</h6></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm">
-                        <tr><th>Title</th><td><?= htmlspecialchars($news['title'] ?? '') ?></td></tr>
-                        <tr><th>Author</th><td><?= htmlspecialchars($news['author'] ?? '') ?></td></tr>
-                        <tr><th>Category</th><td><?= htmlspecialchars($news['category'] ?? 'General') ?></td></tr>
-                        <tr><th>Published</th><td><?= htmlspecialchars($news['publish_date'] ?? 'Not published') ?></td></tr>
-                        <tr><th>Status</th><td><span class="badge bg-<?= ($news['status'] ?? 'draft') === 'published' ? 'success' : 'secondary' ?>"><?= ucfirst($news['status'] ?? 'draft') ?></span></td></tr>
+                        <tr><th scope="col">Title</th><td><?= htmlspecialchars($news['title'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Author</th><td><?= htmlspecialchars($news['author'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Category</th><td><?= htmlspecialchars($news['category'] ?? 'General') ?></td></tr>
+                        <tr><th scope="col">Published</th><td><?= htmlspecialchars($news['publish_date'] ?? 'Not published') ?></td></tr>
+                        <tr><th scope="col">Status</th><td><span class="badge bg-<?= ($news['status'] ?? 'draft') === 'published' ? 'success' : 'secondary' ?>"><?= ucfirst($news['status'] ?? 'draft') ?></span></td></tr>
                         <?php if (!empty($news['updated_at'])): ?>
-                        <tr><th>Last Updated</th><td><?= htmlspecialchars($news['updated_at'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Last Updated</th><td><?= htmlspecialchars($news['updated_at'] ?? '') ?></td></tr>
                         <?php endif; ?>
                     </table></div>
                 </div>

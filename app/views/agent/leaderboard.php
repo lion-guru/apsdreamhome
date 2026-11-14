@@ -18,12 +18,12 @@ $currentUserId = $currentUserId ?? 0;
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Rank</th>
-                    <th>Agent</th>
-                    <th>Referral Code</th>
-                    <th>Bookings</th>
-                    <th>Revenue</th>
-                    <th>Commission</th>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Agent</th>
+                    <th scope="col">Referral Code</th>
+                    <th scope="col">Bookings</th>
+                    <th scope="col">Revenue</th>
+                    <th scope="col">Commission</th>
                 </tr>
             </thead>
             <tbody>

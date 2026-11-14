@@ -44,10 +44,10 @@ $steps = $steps ?? [];
                         <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Order</th>
-                                    <th>Type</th>
-                                    <th>Configuration</th>
-                                    <th>Actions</th>
+                                    <th scope="col">Order</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Configuration</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

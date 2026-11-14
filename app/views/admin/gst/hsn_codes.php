@@ -92,17 +92,17 @@ $csrf = $this->getCsrfToken();
                 <table class="table table-hover mb-0" id="hsnTable">
                     <thead class="table-light">
                         <tr>
-                            <th>Code</th>
-                            <th>Description</th>
-                            <th>GST%</th>
-                            <th>CGST%</th>
-                            <th>SGST%</th>
-                            <th>IGST%</th>
-                            <th>Cess%</th>
-                            <th>Unit</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th class="text-end">Actions</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">GST%</th>
+                            <th scope="col">CGST%</th>
+                            <th scope="col">SGST%</th>
+                            <th scope="col">IGST%</th>
+                            <th scope="col">Cess%</th>
+                            <th scope="col">Unit</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -67,11 +67,11 @@ $prefs = $prefs ?? [];
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th style="min-width: 240px;" class="ps-4">Event Type</th>
-                                        <th class="text-center" style="width: 110px;">In-App</th>
-                                        <th class="text-center" style="width: 110px;">Web Push</th>
-                                        <th class="text-center" style="width: 110px;">Email</th>
-                                        <th class="text-center pe-4" style="width: 110px;">WhatsApp</th>
+                                        <th scope="col" style="min-width: 240px;" class="ps-4">Event Type</th>
+                                        <th scope="col" class="text-center" style="width: 110px;">In-App</th>
+                                        <th scope="col" class="text-center" style="width: 110px;">Web Push</th>
+                                        <th scope="col" class="text-center" style="width: 110px;">Email</th>
+                                        <th scope="col" class="text-center pe-4" style="width: 110px;">WhatsApp</th>
                                     </tr>
                                 </thead>
                                 <tbody>

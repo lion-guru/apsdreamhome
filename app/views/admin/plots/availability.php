@@ -112,16 +112,16 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                         <table class="table table-hover table-bordered mb-0" id="plotsTable">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Plot No.</th>
-                                    <th>Block</th>
-                                    <th>Dimensions</th>
-                                    <th>Area (sqft)</th>
-                                    <th>Price / sqft</th>
-                                    <th>Total Price</th>
-                                    <th>Facing</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Plot No.</th>
+                                    <th scope="col">Block</th>
+                                    <th scope="col">Dimensions</th>
+                                    <th scope="col">Area (sqft)</th>
+                                    <th scope="col">Price / sqft</th>
+                                    <th scope="col">Total Price</th>
+                                    <th scope="col">Facing</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

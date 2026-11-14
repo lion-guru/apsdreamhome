@@ -65,15 +65,15 @@
                 <table class="table table-hover table-bordered">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Source</th>
-                            <th>Status</th>
-                            <th>Score</th>
-                            <th>Activities</th>
-                            <th>Created Date</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Source</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Activities</th>
+                            <th scope="col">Created Date</th>
                         </tr>
                     </thead>
                     <tbody>

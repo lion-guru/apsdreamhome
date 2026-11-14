@@ -75,7 +75,7 @@ $exportUrl = BASE_URL . '/admin/reports/tds-194h/export?fy=' . urlencode($fy) . 
         <div class="table-responsive">
             <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark">
-                    <tr><th>Associate</th><th>PAN</th><th class="text-end">Gross</th><th>Threshold</th><th class="text-end">Rate</th><th class="text-end">TDS</th><th class="text-end">Net Paid</th><th>UTR / Ref</th></tr>
+                    <tr><th scope="col">Associate</th><th scope="col">PAN</th><th scope="col" class="text-end">Gross</th><th scope="col">Threshold</th><th scope="col" class="text-end">Rate</th><th scope="col" class="text-end">TDS</th><th scope="col" class="text-end">Net Paid</th><th scope="col">UTR / Ref</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($rows)): ?>

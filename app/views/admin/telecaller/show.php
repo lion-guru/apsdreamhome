@@ -38,51 +38,51 @@ $ratingBadge = function($rating) {
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-bordered">
                         <tr>
-                            <th class=" text-muted">Telecaller</th>
+                            <th scope="col" class=" text-muted">Telecaller</th>
                             <td><strong><?php echo htmlspecialchars($task['telecaller_name'] ?? 'N/A'); ?></strong></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Email</th>
+                            <th scope="col" class="text-muted">Email</th>
                             <td><?php echo htmlspecialchars($task['email'] ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Phone</th>
+                            <th scope="col" class="text-muted">Phone</th>
                             <td><?php echo htmlspecialchars($task['phone'] ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Task Date</th>
+                            <th scope="col" class="text-muted">Task Date</th>
                             <td><?php echo htmlspecialchars($task['task_date'] ?? 'N/A'); ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Leads Assigned</th>
+                            <th scope="col" class="text-muted">Leads Assigned</th>
                             <td><?php echo number_format($task['total_leads_assigned'] ?? 0); ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Calls Made</th>
+                            <th scope="col" class="text-muted">Calls Made</th>
                             <td><?php echo number_format($task['calls_made'] ?? 0); ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Calls Connected</th>
+                            <th scope="col" class="text-muted">Calls Connected</th>
                             <td><?php echo number_format($task['calls_connected'] ?? 0); ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Leads Converted</th>
+                            <th scope="col" class="text-muted">Leads Converted</th>
                             <td><span class="badge bg-success fs-6"><?php echo number_format($task['leads_converted'] ?? 0); ?></span></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Callbacks</th>
+                            <th scope="col" class="text-muted">Callbacks</th>
                             <td><?php echo number_format($task['leads_callback'] ?? 0); ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Not Interested</th>
+                            <th scope="col" class="text-muted">Not Interested</th>
                             <td><?php echo number_format($task['leads_not_interested'] ?? 0); ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Pending Calls</th>
+                            <th scope="col" class="text-muted">Pending Calls</th>
                             <td><?php echo number_format($task['pending_calls'] ?? 0); ?></td>
                         </tr>
                         <tr>
-                            <th class="text-muted">Target Calls</th>
+                            <th scope="col" class="text-muted">Target Calls</th>
                             <td><?php echo number_format($task['target_calls'] ?? 0); ?></td>
                         </tr>
                     </table></div>

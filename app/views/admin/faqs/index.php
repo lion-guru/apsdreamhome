@@ -89,11 +89,11 @@ $topCat = array_key_first($categories) ?? '';
             <table class="table table-hover align-middle mb-0" id="faqsTable">
                 <thead style="background:#f8fafc;">
                     <tr>
-                        <th class="px-4" style="width:40%;">Question</th>
-                        <th>Category</th>
-                        <th class="text-center">Order</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th scope="col" class="px-4" style="width:40%;">Question</th>
+                        <th scope="col">Category</th>
+                        <th scope="col" class="text-center">Order</th>
+                        <th scope="col" class="text-center">Status</th>
+                        <th scope="col" class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

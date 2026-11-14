@@ -145,12 +145,12 @@ $department = $department ?? '';
                 <table class="table table-hover mb-0" id="tasksTable">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 35%">Task</th>
-                            <th style="width: 10%">Priority</th>
-                            <th style="width: 10%">Status</th>
-                            <th style="width: 12%">Due Date</th>
-                            <th style="width: 15%">Assigned To</th>
-                            <th style="width: 18%">Actions</th>
+                            <th scope="col" style="width: 35%">Task</th>
+                            <th scope="col" style="width: 10%">Priority</th>
+                            <th scope="col" style="width: 10%">Status</th>
+                            <th scope="col" style="width: 12%">Due Date</th>
+                            <th scope="col" style="width: 15%">Assigned To</th>
+                            <th scope="col" style="width: 18%">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

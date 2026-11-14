@@ -69,15 +69,15 @@ $report = $report ?? ['total_employees' => 0, 'eligible_employees' => 0, 'total_
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Employee</th>
-                            <th>Code</th>
-                            <th>Designation</th>
-                            <th>Department</th>
-                            <th>Joining Date</th>
-                            <th class="text-center">Tenure</th>
-                            <th class="text-end">Basic Salary</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-end">Gratuity Amount</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Designation</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Joining Date</th>
+                            <th scope="col" class="text-center">Tenure</th>
+                            <th scope="col" class="text-end">Basic Salary</th>
+                            <th scope="col" class="text-center">Status</th>
+                            <th scope="col" class="text-end">Gratuity Amount</th>
                         </tr>
                     </thead>
                     <tbody>

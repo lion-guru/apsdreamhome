@@ -50,7 +50,7 @@ $_date = $date ?? date('Y-m-d');
                     <div class="table-responsive">
                         <table class="table table-sm table-hover">
                             <thead>
-                                <tr><th>Time</th><th>Agent</th><th>Task</th><th>Status</th><th>Confidence</th><th>Result</th></tr>
+                                <tr><th scope="col">Time</th><th scope="col">Agent</th><th scope="col">Task</th><th scope="col">Status</th><th scope="col">Confidence</th><th scope="col">Result</th></tr>
                             </thead>
                             <tbody>
                             <?php foreach ($_logs as $l): ?>

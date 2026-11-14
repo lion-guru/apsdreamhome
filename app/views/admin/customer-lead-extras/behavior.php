@@ -96,11 +96,11 @@ $page_description = 'Analyze customer behavior patterns and insights';
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>Customer</th>
-                            <th>Analysis Date</th>
-                            <th>Key Patterns</th>
-                            <th>Segment</th>
-                            <th>Actions</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Analysis Date</th>
+                            <th scope="col">Key Patterns</th>
+                            <th scope="col">Segment</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

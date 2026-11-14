@@ -34,13 +34,13 @@ $page_title = 'Plot Development Cost Calculator - APS Dream Home';
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Colony Name</th>
-                                <th>Location</th>
-                                <th>Total Plots</th>
-                                <th>Total Area (sqft)</th>
-                                <th>Total Cost</th>
-                                <th>Cost/Plot</th>
-                                <th>Actions</th>
+                                <th scope="col">Colony Name</th>
+                                <th scope="col">Location</th>
+                                <th scope="col">Total Plots</th>
+                                <th scope="col">Total Area (sqft)</th>
+                                <th scope="col">Total Cost</th>
+                                <th scope="col">Cost/Plot</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -27,7 +27,7 @@ $page_title = $page_title ?? 'Employee Documents';
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Employee</th><th>Document Type</th><th>Document Name</th><th>File</th><th>Uploaded At</th></tr>
+                    <tr><th scope="col">Employee</th><th scope="col">Document Type</th><th scope="col">Document Name</th><th scope="col">File</th><th scope="col">Uploaded At</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($documents ?? [])): ?>
@@ -70,7 +70,7 @@ $page_title = $page_title ?? 'Employee Documents';
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Employee</th><th>FY</th><th>Section</th><th>File</th><th>Size</th><th>Uploaded At</th></tr>
+                    <tr><th scope="col">Employee</th><th scope="col">FY</th><th scope="col">Section</th><th scope="col">File</th><th scope="col">Size</th><th scope="col">Uploaded At</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($proofs ?? [])): ?>

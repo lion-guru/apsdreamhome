@@ -17,9 +17,9 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'status' => '', 'last_r
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary"><?= htmlspecialchars($task['name'] ?? '') ?></h6></div>
                 <div class="card-body aps-cp-card-body">
                     <table class="table table-bordered">
-                        <tr><th >Task Name</th><td><?= htmlspecialchars($task['name'] ?? '') ?></td></tr>
-                        <tr><th>Type</th><td><span class="badge bg-info"><?= htmlspecialchars($task['type'] ?? '') ?></span></td></tr>
-                        <tr><th>Status</th>
+                        <tr><th scope="col" >Task Name</th><td><?= htmlspecialchars($task['name'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Type</th><td><span class="badge bg-info"><?= htmlspecialchars($task['type'] ?? '') ?></span></td></tr>
+                        <tr><th scope="col">Status</th>
                             <td>
                                 <?php if ($task['enabled'] ?? false): ?>
                                     <span class="badge bg-success">Enabled</span>
@@ -28,9 +28,9 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'status' => '', 'last_r
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <tr><th>Schedule</th><td><code><?= htmlspecialchars($task['schedule'] ?? '') ?></code></td></tr>
-                        <tr><th>Last Run</th><td><?= !empty($task['last_run']) ? htmlspecialchars($task['last_run'] ?? '') : '<span class="text-muted">Never</span>' ?></td></tr>
-                        <tr><th>Next Run</th><td><?= !empty($task['next_run']) ? htmlspecialchars($task['next_run'] ?? '') : '<span class="text-muted">Not scheduled</span>' ?></td></tr>
+                        <tr><th scope="col">Schedule</th><td><code><?= htmlspecialchars($task['schedule'] ?? '') ?></code></td></tr>
+                        <tr><th scope="col">Last Run</th><td><?= !empty($task['last_run']) ? htmlspecialchars($task['last_run'] ?? '') : '<span class="text-muted">Never</span>' ?></td></tr>
+                        <tr><th scope="col">Next Run</th><td><?= !empty($task['next_run']) ? htmlspecialchars($task['next_run'] ?? '') : '<span class="text-muted">Not scheduled</span>' ?></td></tr>
                     </table>
                 </div>
             </div>
@@ -43,7 +43,7 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'status' => '', 'last_r
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-sm table-hover">
-                                <thead><tr><th>Start Time</th><th>End Time</th><th>Status</th><th>Output</th></tr></thead>
+                                <thead><tr><th scope="col">Start Time</th><th scope="col">End Time</th><th scope="col">Status</th><th scope="col">Output</th></tr></thead>
                                 <tbody>
                                     <?php foreach ($logs as $log): ?>
                                     <tr>

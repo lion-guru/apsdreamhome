@@ -82,7 +82,7 @@ $id = (int)($lead['id'] ?? 0);
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                                <tr><th>Date</th><th>GPS</th><th>Risk</th><th>Encroach</th><th>Observations</th></tr>
+                                <tr><th scope="col">Date</th><th scope="col">GPS</th><th scope="col">Risk</th><th scope="col">Encroach</th><th scope="col">Observations</th></tr>
                             </thead>
                             <tbody>
                             <?php foreach ($visits as $v): ?>

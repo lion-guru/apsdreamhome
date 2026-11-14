@@ -325,13 +325,13 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light small text-uppercase">
                         <tr>
-                            <th class="ps-3">Reward Item</th>
-                            <th>Rank Slug</th>
-                            <th>Value</th>
-                            <th>Delivery Mode</th>
-                            <th>Status</th>
-                            <th>Tracking / Serial / Event</th>
-                            <th>Timeline</th>
+                            <th scope="col" class="ps-3">Reward Item</th>
+                            <th scope="col">Rank Slug</th>
+                            <th scope="col">Value</th>
+                            <th scope="col">Delivery Mode</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Tracking / Serial / Event</th>
+                            <th scope="col">Timeline</th>
                         </tr>
                     </thead>
                     <tbody class="small">

@@ -189,7 +189,7 @@
         <h4 class="fw-bold mb-3"><i class="fas fa-history"></i> <?= __('plot_detail_price_history') ?></h4>
         <div class="table-responsive">
             <table class="table table-sm">
-                <thead><tr><th><?= __('plot_detail_date') ?></th><th><?= __('plot_detail_old_price') ?></th><th><?= __('plot_detail_new_price') ?></th><th><?= __('plot_detail_change_type') ?></th><th><?= __('plot_detail_reason') ?></th></tr></thead>
+                <thead><tr><th scope="col"><?= __('plot_detail_date') ?></th><th scope="col"><?= __('plot_detail_old_price') ?></th><th scope="col"><?= __('plot_detail_new_price') ?></th><th scope="col"><?= __('plot_detail_change_type') ?></th><th scope="col"><?= __('plot_detail_reason') ?></th></tr></thead>
                 <tbody>
                     <?php foreach ($priceHistory as $ph): ?>
                     <tr>

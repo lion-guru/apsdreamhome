@@ -213,15 +213,15 @@ $channels = $channels ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Channel</th>
-                            <th>Status</th>
-                            <th>Role Detected</th>
-                            <th>Profile %</th>
-                            <th>Follow-ups</th>
-                            <th>Created</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Channel</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Role Detected</th>
+                            <th scope="col">Profile %</th>
+                            <th scope="col">Follow-ups</th>
+                            <th scope="col">Created</th>
                         </tr>
                     </thead>
                     <tbody>

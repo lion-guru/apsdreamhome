@@ -15,7 +15,7 @@ $shift_types = $shift_types ?? [];
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>Name</th><th>Code</th><th>Time</th><th>Duration</th><th>Overnight</th><th>Assigned</th><th>Status</th><th>Actions</th></tr></thead>
+                        <thead><tr><th scope="col">Name</th><th scope="col">Code</th><th scope="col">Time</th><th scope="col">Duration</th><th scope="col">Overnight</th><th scope="col">Assigned</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                         <tbody>
                         <?php foreach ($shift_types as $st): ?>
                             <tr>

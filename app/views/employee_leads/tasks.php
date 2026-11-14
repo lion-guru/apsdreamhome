@@ -105,12 +105,12 @@ function taskStatusBadge($status) {
                     <table class="table table-hover mb-0" id="tasksTable">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 40%">Task</th>
-                                <th style="width: 12%">Priority</th>
-                                <th style="width: 12%">Status</th>
-                                <th style="width: 12%">Due Date</th>
-                                <th style="width: 12%">Assigned By</th>
-                                <th style="width: 12%">Actions</th>
+                                <th scope="col" style="width: 40%">Task</th>
+                                <th scope="col" style="width: 12%">Priority</th>
+                                <th scope="col" style="width: 12%">Status</th>
+                                <th scope="col" style="width: 12%">Due Date</th>
+                                <th scope="col" style="width: 12%">Assigned By</th>
+                                <th scope="col" style="width: 12%">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

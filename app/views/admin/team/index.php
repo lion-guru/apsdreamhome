@@ -11,16 +11,16 @@
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
-                        <th>Photo</th>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Category</th>
-                        <th>Group</th>
-                        <th>Expertise</th>
-                        <th>Order</th>
-                        <th>Status</th>
-                        <th class="text-end">Actions</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Photo</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Position</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Group</th>
+                        <th scope="col">Expertise</th>
+                        <th scope="col">Order</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

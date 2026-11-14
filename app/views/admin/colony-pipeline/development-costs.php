@@ -32,7 +32,7 @@ $cid = (int)($colony['id'] ?? 0);
 </div>
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Type</th><th>Vendor</th><th>Description</th><th class="text-end">Amount</th><th class="text-end">GST</th><th class="text-end">Paid</th><th class="text-end">Balance</th><th>Status</th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Type</th><th scope="col">Vendor</th><th scope="col">Description</th><th scope="col" class="text-end">Amount</th><th scope="col" class="text-end">GST</th><th scope="col" class="text-end">Paid</th><th scope="col" class="text-end">Balance</th><th scope="col">Status</th></tr></thead>
         <tbody>
             <?php if (empty($costs)): ?><tr><td colspan="8" class="text-center text-muted py-3">No costs recorded</td></tr><?php endif; ?>
             <?php foreach ($costs as $c): ?><tr><td><?= htmlspecialchars($c['cost_type'] ?? '') ?></td><td><?= htmlspecialchars($c['vendor_name_lookup'] ?? $c['vendor_name'] ?? '') ?></td><td><?= htmlspecialchars(substr($c['work_description'] ?? '', 0, 60)) ?></td><td class="text-end">₹<?= number_format($c['amount'] ?? 0, 0) ?></td><td class="text-end">₹<?= number_format($c['gst_amount'] ?? 0, 0) ?></td><td class="text-end text-success">₹<?= number_format($c['paid_amount'] ?? 0, 0) ?></td><td class="text-end text-danger">₹<?= number_format($c['balance_amount'] ?? 0, 0) ?></td><td><?= htmlspecialchars($c['payment_status'] ?? $c['status'] ?? '') ?></td></tr><?php endforeach; ?>

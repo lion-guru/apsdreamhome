@@ -8,7 +8,7 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-dark"><tr>
-                        <th>#</th><th>Employee</th><th>Type</th><th>Start</th><th>End</th><th>Salary</th><th>Bonus</th><th>Status</th><th>Created By</th><th>Actions</th>
+                        <th scope="col">#</th><th scope="col">Employee</th><th scope="col">Type</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Salary</th><th scope="col">Bonus</th><th scope="col">Status</th><th scope="col">Created By</th><th scope="col">Actions</th>
                     </tr></thead>
                     <tbody>
                         <?php if (empty($contracts ?? [])): ?>

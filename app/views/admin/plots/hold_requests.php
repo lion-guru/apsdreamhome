@@ -28,7 +28,7 @@ $colors = ['pending' => 'warning text-dark', 'approved' => 'success', 'rejected'
         <?php else: ?>
         <div class="table-responsive"><table class="table table-hover mb-0">
             <thead class="table-light"><tr>
-                <th>When</th><th>Plot</th><th>Customer</th><th>Ref</th><th>Plot Now</th><th>Status</th><th></th>
+                <th scope="col">When</th><th scope="col">Plot</th><th scope="col">Customer</th><th scope="col">Ref</th><th scope="col">Plot Now</th><th scope="col">Status</th><th scope="col"></th>
             </tr></thead>
             <tbody>
             <?php foreach ($requests as $r): ?>

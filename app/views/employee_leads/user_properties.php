@@ -54,14 +54,14 @@ $extraHead = '<link href="https://cdn.datatables.net/1.13.6/css/dataTables.boots
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Posted By</th>
-                            <th>Type</th>
-                            <th>Price</th>
-                            <th>Location</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Posted By</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

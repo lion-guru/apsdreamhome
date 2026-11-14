@@ -23,12 +23,12 @@ function getImportanceColor($level) {
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>User</th>
-                        <th>Context Type</th>
-                        <th>Key</th>
-                        <th>Value</th>
-                        <th>Importance</th>
-                        <th>Date</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Context Type</th>
+                        <th scope="col">Key</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Importance</th>
+                        <th scope="col">Date</th>
                     </tr>
                 </thead>
                 <tbody>

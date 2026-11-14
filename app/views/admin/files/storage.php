@@ -78,7 +78,7 @@ $storage_stats = $storage_stats ?? ['used_space' => 0, 'total_space' => 0, 'file
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-sm">
-                                <thead><tr><th>Category</th><th>Files</th><th>Size</th></tr></thead>
+                                <thead><tr><th scope="col">Category</th><th scope="col">Files</th><th scope="col">Size</th></tr></thead>
                                 <tbody>
                                     <?php foreach ($byCategory as $cat): ?>
                                     <tr>

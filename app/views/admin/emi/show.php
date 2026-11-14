@@ -87,11 +87,11 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 <table class="table table-hover table-sm">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th>Due Date</th>
-                                            <th>Due Amount</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Due Date</th>
+                                            <th scope="col">Due Amount</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>

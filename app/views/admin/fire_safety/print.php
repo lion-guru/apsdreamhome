@@ -146,11 +146,11 @@ $dpMap = ['operational_ready' => 'Operational Ready ✅', 'battery_weak' => 'Bat
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>Parameter</th>
-                    <th>Tested / Qty</th>
-                    <th>Healthy / OK</th>
-                    <th>Health %</th>
-                    <th>Condition</th>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">Tested / Qty</th>
+                    <th scope="col">Healthy / OK</th>
+                    <th scope="col">Health %</th>
+                    <th scope="col">Condition</th>
                 </tr>
             </thead>
             <tbody>
@@ -185,18 +185,18 @@ $dpMap = ['operational_ready' => 'Operational Ready ✅', 'battery_weak' => 'Bat
         <!-- Defects & Officer -->
         <table class="data-table">
             <tr>
-                <th style="width:30%;">Fire Safety Officer</th>
+                <th scope="col" style="width:30%;">Fire Safety Officer</th>
                 <td><?= htmlspecialchars($log['fire_officer_name'] ?? 'N/A') ?> | <?= htmlspecialchars($log['fire_officer_contact'] ?? 'N/A') ?></td>
             </tr>
             <?php if (!empty($log['defects_observed'])): ?>
             <tr>
-                <th>Defects Observed</th>
+                <th scope="col">Defects Observed</th>
                 <td style="color:#c0392b;"><?= htmlspecialchars($log['defects_observed']) ?></td>
             </tr>
             <?php endif; ?>
             <?php if (!empty($log['remarks'])): ?>
             <tr>
-                <th>Inspection Remarks</th>
+                <th scope="col">Inspection Remarks</th>
                 <td><?= htmlspecialchars($log['remarks']) ?></td>
             </tr>
             <?php endif; ?>

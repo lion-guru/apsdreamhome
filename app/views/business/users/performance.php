@@ -110,11 +110,11 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Month</th>
-                            <th>Leads Generated</th>
-                            <th>Deals Closed</th>
-                            <th>Revenue</th>
-                            <th>Commission Earned</th>
+                            <th scope="col">Month</th>
+                            <th scope="col">Leads Generated</th>
+                            <th scope="col">Deals Closed</th>
+                            <th scope="col">Revenue</th>
+                            <th scope="col">Commission Earned</th>
                         </tr>
                     </thead>
                     <tbody>

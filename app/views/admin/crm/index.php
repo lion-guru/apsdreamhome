@@ -152,12 +152,12 @@ $kpis = [
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Phone</th>
-                                        <th>Source</th>
-                                        <th>Status</th>
-                                        <th>Score</th>
-                                        <th>Assigned</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Phone</th>
+                                        <th scope="col">Source</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Score</th>
+                                        <th scope="col">Assigned</th>
                                     </tr>
                                 </thead>
                                 <tbody>

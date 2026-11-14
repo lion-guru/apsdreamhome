@@ -28,19 +28,19 @@ $txn = $txn ?? [];
         <div class="card-header"><h5 class="card-title mb-0">Transaction Details</h5></div>
         <div class="card-body">
             <table class="table table-borderless">
-                <tr><th style="width:30%">From Entity</th><td><?= htmlspecialchars($txn['from_entity_name']) ?> (<?= htmlspecialchars($txn['entity_code'] ?? '') ?>)</td></tr>
-                <tr><th>To Entity</th><td><?= htmlspecialchars($txn['to_entity_name']) ?></td></tr>
-                <tr><th>Transaction Type</th><td><?= htmlspecialchars(ucfirst(str_replace('_',' ',$txn['transaction_type']))) ?></td></tr>
-                <tr><th>Currency</th><td><?= htmlspecialchars($txn['currency']) ?></td></tr>
-                <tr><th>Exchange Rate</th><td><?= number_format((float)$txn['exchange_rate'], 4) ?></td></tr>
-                <tr><th>Amount</th><td><?= number_format((float)$txn['amount'], 2) ?></td></tr>
-                <tr><th>Amount (INR)</th><td><?= number_format((float)$txn['amount_inr'], 2) ?></td></tr>
-                <tr><th>Reference Document</th><td><?= htmlspecialchars($txn['reference_document'] ?? '-') ?></td></tr>
-                <tr><th>Description</th><td><?= htmlspecialchars($txn['description'] ?? '-') ?></td></tr>
-                <tr><th>Notes</th><td><?= htmlspecialchars($txn['notes'] ?? '-') ?></td></tr>
-                <tr><th>Status</th><td><span class="badge bg-<?= $txn['status']==='posted'?'success':($txn['status']==='draft'?'warning':($txn['status']==='reconciled'?'info':'danger')) ?>"><?= ucfirst($txn['status']) ?></span></td></tr>
-                <tr><th>Created</th><td><?= htmlspecialchars($txn['created_at']) ?></td></tr>
-                <?php if ($txn['posted_at']): ?><tr><th>Posted At</th><td><?= htmlspecialchars($txn['posted_at']) ?></td></tr><?php endif; ?>
+                <tr><th scope="col" style="width:30%">From Entity</th><td><?= htmlspecialchars($txn['from_entity_name']) ?> (<?= htmlspecialchars($txn['entity_code'] ?? '') ?>)</td></tr>
+                <tr><th scope="col">To Entity</th><td><?= htmlspecialchars($txn['to_entity_name']) ?></td></tr>
+                <tr><th scope="col">Transaction Type</th><td><?= htmlspecialchars(ucfirst(str_replace('_',' ',$txn['transaction_type']))) ?></td></tr>
+                <tr><th scope="col">Currency</th><td><?= htmlspecialchars($txn['currency']) ?></td></tr>
+                <tr><th scope="col">Exchange Rate</th><td><?= number_format((float)$txn['exchange_rate'], 4) ?></td></tr>
+                <tr><th scope="col">Amount</th><td><?= number_format((float)$txn['amount'], 2) ?></td></tr>
+                <tr><th scope="col">Amount (INR)</th><td><?= number_format((float)$txn['amount_inr'], 2) ?></td></tr>
+                <tr><th scope="col">Reference Document</th><td><?= htmlspecialchars($txn['reference_document'] ?? '-') ?></td></tr>
+                <tr><th scope="col">Description</th><td><?= htmlspecialchars($txn['description'] ?? '-') ?></td></tr>
+                <tr><th scope="col">Notes</th><td><?= htmlspecialchars($txn['notes'] ?? '-') ?></td></tr>
+                <tr><th scope="col">Status</th><td><span class="badge bg-<?= $txn['status']==='posted'?'success':($txn['status']==='draft'?'warning':($txn['status']==='reconciled'?'info':'danger')) ?>"><?= ucfirst($txn['status']) ?></span></td></tr>
+                <tr><th scope="col">Created</th><td><?= htmlspecialchars($txn['created_at']) ?></td></tr>
+                <?php if ($txn['posted_at']): ?><tr><th scope="col">Posted At</th><td><?= htmlspecialchars($txn['posted_at']) ?></td></tr><?php endif; ?>
             </table>
         </div>
     </div>

@@ -27,7 +27,7 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th><?= __('admin_source') ?></th><th><?= __('admin_status') ?></th><th><?= __('admin_count') ?></th></tr></thead>
+                        <thead><tr><th scope="col"><?= __('admin_source') ?></th><th scope="col"><?= __('admin_status') ?></th><th scope="col"><?= __('admin_count') ?></th></tr></thead>
                         <tbody>
                         <?php foreach ($by_source as $bs): ?>
                             <tr>

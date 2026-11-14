@@ -183,15 +183,15 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th style="width:36px"><input type="checkbox" class="form-check-input" id="bulkAll" title="Select all"></th>
-                                <th><?= __('assoc_leads_th_lead', [], 'Lead') ?></th>
-                                <th><?= __('assoc_leads_th_contact', [], 'Contact') ?></th>
-                                <th><?= __('assoc_leads_th_interest', [], 'Interest') ?></th>
-                                <th><?= __('assoc_leads_th_status', [], 'Status') ?></th>
-                                <th><?= __('assoc_leads_th_priority', [], 'Priority') ?></th>
-                                <th><?= __('assoc_leads_th_score', [], 'Score') ?></th>
-                                <th><?= __('assoc_leads_th_followup', [], 'Follow-up') ?></th>
-                                <th><?= __('assoc_leads_th_actions', [], 'Actions') ?></th>
+                                <th scope="col" style="width:36px"><input type="checkbox" class="form-check-input" id="bulkAll" title="Select all"></th>
+                                <th scope="col"><?= __('assoc_leads_th_lead', [], 'Lead') ?></th>
+                                <th scope="col"><?= __('assoc_leads_th_contact', [], 'Contact') ?></th>
+                                <th scope="col"><?= __('assoc_leads_th_interest', [], 'Interest') ?></th>
+                                <th scope="col"><?= __('assoc_leads_th_status', [], 'Status') ?></th>
+                                <th scope="col"><?= __('assoc_leads_th_priority', [], 'Priority') ?></th>
+                                <th scope="col"><?= __('assoc_leads_th_score', [], 'Score') ?></th>
+                                <th scope="col"><?= __('assoc_leads_th_followup', [], 'Follow-up') ?></th>
+                                <th scope="col"><?= __('assoc_leads_th_actions', [], 'Actions') ?></th>
                             </tr>
                         </thead>
                         <tbody>

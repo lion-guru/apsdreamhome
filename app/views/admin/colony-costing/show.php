@@ -169,7 +169,7 @@ function fmtSqft(float $v): string {
             </div>
             <div class="card-body p-0">
                 <table class="table table-sm mb-0">
-                    <thead class="table-light"><tr><th>Version</th><th>Label</th><th>Landing Cost</th><th>Suggested</th><th>Final</th><th>Status</th><th>Date</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Version</th><th scope="col">Label</th><th scope="col">Landing Cost</th><th scope="col">Suggested</th><th scope="col">Final</th><th scope="col">Status</th><th scope="col">Date</th></tr></thead>
                     <tbody>
                         <?php foreach ($history as $h): ?>
                             <tr class="<?= $h['id'] == $costingId ? 'table-primary' : '' ?>">

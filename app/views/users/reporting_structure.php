@@ -263,11 +263,11 @@ function rpLevelBadge($role) {
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Designation</th>
-                                    <th>Role</th>
-                                    <th>Email</th>
-                                    <th>Status</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Designation</th>
+                                    <th scope="col">Role</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Status</th>
                                 </tr>
                             </thead>
                             <tbody>

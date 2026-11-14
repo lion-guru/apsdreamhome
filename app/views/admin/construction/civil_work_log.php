@@ -75,7 +75,7 @@ $typeColors = ['jcb_hours' => 'warning', 'road_soling' => 'secondary', 'morang' 
                     <div class="text-center text-muted py-4">No civil work logged yet.</div>
                 <?php else: ?>
                 <div class="table-responsive"><table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>Date</th><th>Colony</th><th>Work</th><th class="text-end">Qty</th><th class="text-end">Amount</th><th>Vendor</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Colony</th><th scope="col">Work</th><th scope="col" class="text-end">Qty</th><th scope="col" class="text-end">Amount</th><th scope="col">Vendor</th></tr></thead>
                     <tbody>
                     <?php foreach ($logs as $l): ?>
                         <tr>

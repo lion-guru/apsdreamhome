@@ -30,11 +30,11 @@ $rewards = $rewards ?? [];
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Associate</th>
-                                <th>Reward Type</th>
-                                <th>Value</th>
-                                <th>Date</th>
-                                <th>Description</th>
+                                <th scope="col">Associate</th>
+                                <th scope="col">Reward Type</th>
+                                <th scope="col">Value</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Description</th>
                             </tr>
                         </thead>
                         <tbody>

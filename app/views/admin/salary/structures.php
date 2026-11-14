@@ -127,18 +127,18 @@
                 <table class="table table-bordered table-hover w-100" id="structuresTable">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Employee</th>
-                            <th>Basic</th>
-                            <th>HRA</th>
-                            <th>Conv.</th>
-                            <th>Med+Spl+Oth</th>
-                            <th class="text-success">Gross</th>
-                            <th class="text-danger">Deductions</th>
-                            <th class="text-primary">Net Salary</th>
-                            <th>Effective</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Basic</th>
+                            <th scope="col">HRA</th>
+                            <th scope="col">Conv.</th>
+                            <th scope="col">Med+Spl+Oth</th>
+                            <th scope="col" class="text-success">Gross</th>
+                            <th scope="col" class="text-danger">Deductions</th>
+                            <th scope="col" class="text-primary">Net Salary</th>
+                            <th scope="col">Effective</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

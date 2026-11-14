@@ -135,13 +135,13 @@ $filters = $filters ?? [];
                 <table class="table table-bordered mb-0" style="min-width: 100%;">
                     <thead class="table-light">
                         <tr>
-                            <th class="text-center" style="width: 14.28%">Sun</th>
-                            <th class="text-center" style="width: 14.28%">Mon</th>
-                            <th class="text-center" style="width: 14.28%">Tue</th>
-                            <th class="text-center" style="width: 14.28%">Wed</th>
-                            <th class="text-center" style="width: 14.28%">Thu</th>
-                            <th class="text-center" style="width: 14.28%">Fri</th>
-                            <th class="text-center" style="width: 14.28%">Sat</th>
+                            <th scope="col" class="text-center" style="width: 14.28%">Sun</th>
+                            <th scope="col" class="text-center" style="width: 14.28%">Mon</th>
+                            <th scope="col" class="text-center" style="width: 14.28%">Tue</th>
+                            <th scope="col" class="text-center" style="width: 14.28%">Wed</th>
+                            <th scope="col" class="text-center" style="width: 14.28%">Thu</th>
+                            <th scope="col" class="text-center" style="width: 14.28%">Fri</th>
+                            <th scope="col" class="text-center" style="width: 14.28%">Sat</th>
                         </tr>
                     </thead>
                     <tbody id="calendarBody">
@@ -170,11 +170,11 @@ $filters = $filters ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 50%">Holiday</th>
-                            <th style="width: 15%">Date</th>
-                            <th style="width: 15%">Type</th>
-                            <th style="width: 10%">Region</th>
-                            <th style="width: 10%">Details</th>
+                            <th scope="col" style="width: 50%">Holiday</th>
+                            <th scope="col" style="width: 15%">Date</th>
+                            <th scope="col" style="width: 15%">Type</th>
+                            <th scope="col" style="width: 10%">Region</th>
+                            <th scope="col" style="width: 10%">Details</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -240,12 +240,12 @@ $filters = $filters ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Leave Type</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Days</th>
-                            <th>Status</th>
-                            <th>Applied</th>
+                            <th scope="col">Leave Type</th>
+                            <th scope="col">From</th>
+                            <th scope="col">To</th>
+                            <th scope="col">Days</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Applied</th>
                         </tr>
                     </thead>
                     <tbody>

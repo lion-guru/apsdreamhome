@@ -52,15 +52,15 @@ $current_status = $current_status ?? 'all';
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Token #</th>
-                        <th>Buyer & Booking</th>
-                        <th>Colony & Plot</th>
-                        <th>SRO Office</th>
-                        <th>Preferred Dates</th>
-                        <th>Confirmed Date</th>
-                        <th>Stamp Duty & Fee</th>
-                        <th>Status</th>
-                        <th class="text-end">Actions</th>
+                        <th scope="col">Token #</th>
+                        <th scope="col">Buyer & Booking</th>
+                        <th scope="col">Colony & Plot</th>
+                        <th scope="col">SRO Office</th>
+                        <th scope="col">Preferred Dates</th>
+                        <th scope="col">Confirmed Date</th>
+                        <th scope="col">Stamp Duty & Fee</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -52,7 +52,7 @@ $closedCount = $closed_count ?? 0;
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>Loan#</th><th>Farmer</th><th>Amount</th><th>Interest</th><th>EMI</th><th>Status</th><th>Sanction Date</th><th>Actions</th></tr>
+                        <tr><th scope="col">Loan#</th><th scope="col">Farmer</th><th scope="col">Amount</th><th scope="col">Interest</th><th scope="col">EMI</th><th scope="col">Status</th><th scope="col">Sanction Date</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($loans as $l): ?>

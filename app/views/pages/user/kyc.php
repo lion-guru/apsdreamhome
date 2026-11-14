@@ -123,10 +123,10 @@ ob_start();
         <table class="aps-cp-table">
             <thead>
                 <tr>
-                    <th><?= __('user_kyc_history_date', null, 'Date') ?></th>
-                    <th><?= __('user_kyc_history_pan', null, 'PAN') ?></th>
-                    <th><?= __('user_kyc_history_status', null, 'Status') ?></th>
-                    <th><?= __('user_kyc_history_reason', null, 'Reason') ?></th>
+                    <th scope="col"><?= __('user_kyc_history_date', null, 'Date') ?></th>
+                    <th scope="col"><?= __('user_kyc_history_pan', null, 'PAN') ?></th>
+                    <th scope="col"><?= __('user_kyc_history_status', null, 'Status') ?></th>
+                    <th scope="col"><?= __('user_kyc_history_reason', null, 'Reason') ?></th>
                 </tr>
             </thead>
             <tbody>

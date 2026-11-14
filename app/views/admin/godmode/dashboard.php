@@ -498,11 +498,11 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                 <table class="table table-dark table-hover">
                     <thead>
                         <tr>
-                            <th>Admin ID</th>
-                            <th>Impersonating User</th>
-                            <th>Started</th>
-                            <th>Duration</th>
-                            <th>Actions</th>
+                            <th scope="col">Admin ID</th>
+                            <th scope="col">Impersonating User</th>
+                            <th scope="col">Started</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

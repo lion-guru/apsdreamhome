@@ -130,15 +130,15 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Invoice #</th>
-                            <th>Client</th>
-                            <th class="text-end">Amount</th>
-                            <th class="text-end">Tax</th>
-                            <th class="text-end">Total</th>
-                            <th>Date</th>
-                            <th>Due</th>
-                            <th>Status</th>
-                            <th class="text-center">Actions</th>
+                            <th scope="col">Invoice #</th>
+                            <th scope="col">Client</th>
+                            <th scope="col" class="text-end">Amount</th>
+                            <th scope="col" class="text-end">Tax</th>
+                            <th scope="col" class="text-end">Total</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Due</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

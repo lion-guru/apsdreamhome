@@ -17,12 +17,12 @@ $page_title = 'Labour Law Compliance';
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Law</th>
-                        <th>Type</th>
-                        <th>Registration</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th scope="col">Law</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Registration</th>
+                        <th scope="col">Due Date</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -16,13 +16,13 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark">
                             <tr>
-                                <th>Colony Name</th>
-                                <th class="text-end">Net Sellable (SqFt)</th>
-                                <th class="text-end">Landing Cost/SqFt</th>
-                                <th class="text-end">Suggested Price/SqFt</th>
-                                <th class="text-end">Final Price/SqFt</th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Actions</th>
+                                <th scope="col">Colony Name</th>
+                                <th scope="col" class="text-end">Net Sellable (SqFt)</th>
+                                <th scope="col" class="text-end">Landing Cost/SqFt</th>
+                                <th scope="col" class="text-end">Suggested Price/SqFt</th>
+                                <th scope="col" class="text-end">Final Price/SqFt</th>
+                                <th scope="col" class="text-center">Status</th>
+                                <th scope="col" class="text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

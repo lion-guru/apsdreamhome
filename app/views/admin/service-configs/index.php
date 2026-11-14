@@ -38,7 +38,7 @@ $serviceLabels = [
             </div>
             <div class="card-body p-0">
                 <table class="table mb-0">
-                    <thead><tr><th style="width:25%">Key</th><th>Value</th><th style="width:80px">Type</th><th style="width:20%">Description</th></tr></thead>
+                    <thead><tr><th scope="col" style="width:25%">Key</th><th scope="col">Value</th><th scope="col" style="width:80px">Type</th><th scope="col" style="width:20%">Description</th></tr></thead>
                     <tbody>
                     <?php foreach ($groupServices as $s): ?>
                         <?php $sName = htmlspecialchars($s['service_name']); $sKey = htmlspecialchars($s['config_key']); $sVal = htmlspecialchars((string)($s['config_value'] ?? '')); $sType = htmlspecialchars($s['config_type']); ?>

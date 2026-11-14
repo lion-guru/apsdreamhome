@@ -40,7 +40,7 @@ $employee_id = (int)($employee_id ?? 0);
             <table class="table table-striped mb-0">
                 <thead>
                     <tr>
-                        <th>Month</th><th class="text-end">Basic</th><th class="text-end">Gross</th><th class="text-end">PF Wage</th><th class="text-end">PF Emp</th><th class="text-end">PF Er</th><th class="text-end">ESI Emp</th><th class="text-end">ESI Er</th><th class="text-end">Total Deduct</th><th class="text-end">Running PF</th><th class="text-end">Running Employer</th><th>Status</th>
+                        <th scope="col">Month</th><th scope="col" class="text-end">Basic</th><th scope="col" class="text-end">Gross</th><th scope="col" class="text-end">PF Wage</th><th scope="col" class="text-end">PF Emp</th><th scope="col" class="text-end">PF Er</th><th scope="col" class="text-end">ESI Emp</th><th scope="col" class="text-end">ESI Er</th><th scope="col" class="text-end">Total Deduct</th><th scope="col" class="text-end">Running PF</th><th scope="col" class="text-end">Running Employer</th><th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>

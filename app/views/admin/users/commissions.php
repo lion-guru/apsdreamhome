@@ -38,7 +38,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
         <?php else: ?>
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="table-light"><tr><th>Date</th><th>Type</th><th>Amount</th><th>Source (From)</th><th>Level</th><th>Status</th><th>Notes</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">Source (From)</th><th scope="col">Level</th><th scope="col">Status</th><th scope="col">Notes</th></tr></thead>
                 <tbody>
                 <?php foreach ($commissions as $c): ?>
                 <tr>

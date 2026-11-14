@@ -22,15 +22,15 @@ $statusBadge = function ($s) {
         <div class="table-responsive"><table class="table table-hover m-0">
             <thead>
                 <tr>
-                    <th>Run Date</th>
-                    <th>Started</th>
-                    <th>Finished</th>
-                    <th>Status</th>
-                    <th class="text-end">Promotions</th>
-                    <th class="text-end">Clawbacks</th>
-                    <th class="text-end">Payouts</th>
-                    <th class="text-end">Duration (ms)</th>
-                    <th>Errors</th>
+                    <th scope="col">Run Date</th>
+                    <th scope="col">Started</th>
+                    <th scope="col">Finished</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="text-end">Promotions</th>
+                    <th scope="col" class="text-end">Clawbacks</th>
+                    <th scope="col" class="text-end">Payouts</th>
+                    <th scope="col" class="text-end">Duration (ms)</th>
+                    <th scope="col">Errors</th>
                 </tr>
             </thead>
             <tbody>

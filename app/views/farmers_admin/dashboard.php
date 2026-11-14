@@ -15,7 +15,7 @@
             <?php if (empty($farmers)): ?>
             <div class="text-center py-5"><i class="fas fa-tractor fa-3x text-muted mb-3"></i><p class="text-muted">No farmers registered yet</p><a href="<?= BASE_URL ?>farmers/create" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Add First Farmer</a></div>
             <?php else: ?>
-            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th>Name</th><th>Phone</th><th>Area (sqft)</th><th>Status</th><th>Actions</th></tr></thead>
+            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th scope="col">Name</th><th scope="col">Phone</th><th scope="col">Area (sqft)</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                 <tbody><?php foreach ($farmers as $f): ?><tr>
                     <td><?= htmlspecialchars($f['name'] ?? '-') ?><br><small class="text-muted"><?= htmlspecialchars($f['state_name'] ?? '') ?></small></td><td><?= htmlspecialchars($f['phone'] ?? '-') ?></td><td><?= number_format($f['total_area'] ?? 0, 2) ?></td>
                     <td><span class="badge bg-<?= ($f['status'] ?? '') === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($f['status'] ?? '-') ?></span></td>

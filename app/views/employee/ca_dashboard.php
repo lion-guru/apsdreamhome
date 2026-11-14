@@ -56,7 +56,7 @@
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($recentTransactions)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
-                            <thead><tr><th>Date</th><th>Description</th><th class="text-end">Amount</th><th>Status</th></tr></thead>
+                            <thead><tr><th scope="col">Date</th><th scope="col">Description</th><th scope="col" class="text-end">Amount</th><th scope="col">Status</th></tr></thead>
                             <tbody>
                                 <?php foreach ($recentTransactions as $txn): ?>
                                 <tr>

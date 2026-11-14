@@ -117,11 +117,11 @@ $page_description = 'Monitor and manage AI-powered lead scores';
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>Lead Name</th>
-                            <th>Score</th>
-                            <th>Criteria</th>
-                            <th>Date</th>
-                            <th>Actions</th>
+                            <th scope="col">Lead Name</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Criteria</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

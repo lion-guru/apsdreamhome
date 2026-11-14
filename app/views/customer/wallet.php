@@ -85,11 +85,11 @@ $stats = $stats ?? ['balance' => 0, 'total_earned' => 0, 'total_redeemed' => 0];
             <table class="table table-hover mb-0 align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th class="text-end">Amount</th>
-                        <th class="text-end">Balance</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Description</th>
+                        <th scope="col" class="text-end">Amount</th>
+                        <th scope="col" class="text-end">Balance</th>
                     </tr>
                 </thead>
                 <tbody>

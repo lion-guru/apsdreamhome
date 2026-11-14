@@ -30,7 +30,7 @@ $badge = ['active' => 'success', 'converted' => 'primary', 'expired' => 'seconda
     </div>
 <?php else: ?>
     <div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Receipt</th><th>Buyer</th><th>Plot</th><th class="text-end">Token ₹</th><th>Mode</th><th>Lock Till</th><th>Status</th><th></th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Receipt</th><th scope="col">Buyer</th><th scope="col">Plot</th><th scope="col" class="text-end">Token ₹</th><th scope="col">Mode</th><th scope="col">Lock Till</th><th scope="col">Status</th><th scope="col"></th></tr></thead>
         <tbody>
         <?php foreach ($rows as $r): ?>
             <tr>

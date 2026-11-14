@@ -100,14 +100,14 @@ $uidaiTestMode = $uidaiTestMode ?? true;
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>User</th>
-                            <th>Legal Name</th>
-                            <th>PAN</th>
-                            <th>Aadhaar</th>
-                            <th>Status</th>
-                            <th>Submitted</th>
-                            <th>Actions</th>
+                            <th scope="col">#</th>
+                            <th scope="col">User</th>
+                            <th scope="col">Legal Name</th>
+                            <th scope="col">PAN</th>
+                            <th scope="col">Aadhaar</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Submitted</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

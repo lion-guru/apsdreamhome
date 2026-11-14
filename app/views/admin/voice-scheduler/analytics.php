@@ -67,7 +67,7 @@
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light"><tr>
-                    <th>Agent</th><th>Status</th><th>Total Calls</th><th>Completed</th><th>Success Rate</th>
+                    <th scope="col">Agent</th><th scope="col">Status</th><th scope="col">Total Calls</th><th scope="col">Completed</th><th scope="col">Success Rate</th>
                 </tr></thead>
                 <tbody>
                 <?php foreach ($callsByAgent as $a): ?>

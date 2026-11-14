@@ -50,7 +50,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <div class="col-md-2 col-sm-4">
                                 <div class="card border">
                                     <?php if (strpos($item['type'], 'image') !== false): ?>
-                                        <img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" />
+                                        <img alt="" src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="card-img-top" />
                                     <?php else: ?>
                                         <div class="bg-light d-flex align-items-center justify-content-center">
                                             <i class="fas fa-file fa-2x text-muted"></i>

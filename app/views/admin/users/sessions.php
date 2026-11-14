@@ -33,14 +33,14 @@
             <table class="table table-hover mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="border-0 ps-4">#</th>
-                        <th class="border-0">Device / Browser</th>
-                        <th class="border-0">IP Address</th>
-                        <th class="border-0">Location</th>
-                        <th class="border-0">Login Time</th>
-                        <th class="border-0">Last Activity</th>
-                        <th class="border-0">Current</th>
-                        <th class="border-0 text-end pe-4">Actions</th>
+                        <th scope="col" class="border-0 ps-4">#</th>
+                        <th scope="col" class="border-0">Device / Browser</th>
+                        <th scope="col" class="border-0">IP Address</th>
+                        <th scope="col" class="border-0">Location</th>
+                        <th scope="col" class="border-0">Login Time</th>
+                        <th scope="col" class="border-0">Last Activity</th>
+                        <th scope="col" class="border-0">Current</th>
+                        <th scope="col" class="border-0 text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

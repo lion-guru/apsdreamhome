@@ -53,7 +53,7 @@
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($payment_history)): ?>
                     <div class="table-responsive"><table class="table table-striped">
-                        <thead><tr><th>Date</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead>
+                        <thead><tr><th scope="col">Date</th><th scope="col">Amount</th><th scope="col">Method</th><th scope="col">Status</th></tr></thead>
                         <tbody>
                             <?php foreach ($payment_history as $pmt): ?>
                             <tr>

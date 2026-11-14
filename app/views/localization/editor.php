@@ -56,10 +56,10 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
                     <table class="table table-hover mb-0" id="translations-table">
                         <thead class="table-light">
                             <tr>
-                                <th >Key</th>
-                                <th >English (Reference)</th>
-                                <th >Translation (<?= htmlspecialchars($locale ?? '') ?>)</th>
-                                <th ></th>
+                                <th scope="col" >Key</th>
+                                <th scope="col" >English (Reference)</th>
+                                <th scope="col" >Translation (<?= htmlspecialchars($locale ?? '') ?>)</th>
+                                <th scope="col" ></th>
                             </tr>
                         </thead>
                         <tbody>

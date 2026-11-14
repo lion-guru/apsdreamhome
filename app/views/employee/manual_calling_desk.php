@@ -48,11 +48,11 @@ $recentCalls = $recentCalls ?? [];
                     <table class="table table-sm table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Lead</th>
-                                <th>Phone</th>
-                                <th>Type</th>
-                                <th>Due</th>
-                                <th>Actions</th>
+                                <th scope="col">Lead</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Due</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -108,13 +108,13 @@ $recentCalls = $recentCalls ?? [];
                         <table class="table table-hover mb-0" id="leadsTable">
                             <thead>
                                 <tr>
-                                    <th>Lead</th>
-                                    <th>Phone</th>
-                                    <th>Colony/Plot</th>
-                                    <th>Status</th>
-                                    <th>Interest</th>
-                                    <th>Last Contact</th>
-                                    <th>Actions</th>
+                                    <th scope="col">Lead</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Colony/Plot</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Interest</th>
+                                    <th scope="col">Last Contact</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -213,12 +213,12 @@ $recentCalls = $recentCalls ?? [];
                     <table class="table table-sm table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Time</th>
-                                <th>Lead</th>
-                                <th>Phone</th>
-                                <th>Outcome</th>
-                                <th>Duration</th>
-                                <th>Notes</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Lead</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Outcome</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">Notes</th>
                             </tr>
                         </thead>
                         <tbody>

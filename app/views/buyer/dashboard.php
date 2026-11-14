@@ -124,7 +124,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <h6><i class="fas fa-list me-2"></i>My Requirements</h6>
             <div class="table-responsive">
                 <table class="table table-sm align-middle mb-0">
-                    <thead class="table-light"><tr><th>Type</th><th>Budget</th><th>Location</th><th>Status</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Type</th><th scope="col">Budget</th><th scope="col">Location</th><th scope="col">Status</th></tr></thead>
                     <tbody>
                         <?php foreach ($interests as $i): ?>
                             <tr>

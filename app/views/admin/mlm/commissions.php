@@ -65,18 +65,18 @@ $statusBadge = function ($s) {
             <table class="table table-hover m-0" id="commissionsTable">
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="selectAllCommissions" title="Select all pending" aria-label="Select all pending commissions"></th>
-                        <th>#</th>
-                        <th>Date</th>
-                        <th>Beneficiary</th>
-                        <th>Source</th>
-                        <th>Type</th>
-                        <th>Lvl</th>
-                        <th>Sale</th>
-                        <th>%</th>
-                        <th class="text-end">Amount</th>
-                        <th>Status</th>
-                        <th></th>
+                        <th scope="col"><input type="checkbox" id="selectAllCommissions" title="Select all pending" aria-label="Select all pending commissions"></th>
+                        <th scope="col">#</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Beneficiary</th>
+                        <th scope="col">Source</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Lvl</th>
+                        <th scope="col">Sale</th>
+                        <th scope="col">%</th>
+                        <th scope="col" class="text-end">Amount</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>

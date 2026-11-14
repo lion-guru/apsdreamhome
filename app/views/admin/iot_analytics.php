@@ -48,7 +48,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>ID</th><th>Device Name</th><th>Type</th><th>Location</th><th>Status</th><th>Last Reading</th></tr>
+                        <tr><th scope="col">ID</th><th scope="col">Device Name</th><th scope="col">Type</th><th scope="col">Location</th><th scope="col">Status</th><th scope="col">Last Reading</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($devices)): ?>

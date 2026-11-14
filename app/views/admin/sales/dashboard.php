@@ -69,11 +69,11 @@ $statusBadge = function ($s) {
                 <div class="table-responsive"><table class="table table-sm m-0">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Customer</th>
-                            <th>Plot</th>
-                            <th>Status</th>
-                            <th class="text-end">Value</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Plot</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end">Value</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -106,10 +106,10 @@ $statusBadge = function ($s) {
                 <div class="table-responsive"><table class="table table-sm m-0">
                     <thead>
                         <tr>
-                            <th>Booking</th>
-                            <th>Due</th>
-                            <th class="text-end">Amount</th>
-                            <th></th>
+                            <th scope="col">Booking</th>
+                            <th scope="col">Due</th>
+                            <th scope="col" class="text-end">Amount</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>

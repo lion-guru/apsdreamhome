@@ -10,11 +10,11 @@
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Basic Info</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm">
-                        <tr><th>Name</th><td><?= htmlspecialchars($associate['name'] ?? '') ?></td></tr>
-                        <tr><th>Email</th><td><?= htmlspecialchars($associate['email'] ?? '') ?></td></tr>
-                        <tr><th>Phone</th><td><?= htmlspecialchars($associate['phone'] ?? '') ?></td></tr>
-                        <tr><th>Role</th><td><span class="badge bg-info"><?= htmlspecialchars($associate['role'] ?? '') ?></span></td></tr>
-                        <tr><th>Status</th><td><span class="badge bg-<?= ($associate['user_status'] ?? '') === 'active' ? 'success' : 'secondary' ?>"><?= htmlspecialchars($associate['user_status'] ?? '') ?></span></td></tr>
+                        <tr><th scope="col">Name</th><td><?= htmlspecialchars($associate['name'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Email</th><td><?= htmlspecialchars($associate['email'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Phone</th><td><?= htmlspecialchars($associate['phone'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Role</th><td><span class="badge bg-info"><?= htmlspecialchars($associate['role'] ?? '') ?></span></td></tr>
+                        <tr><th scope="col">Status</th><td><span class="badge bg-<?= ($associate['user_status'] ?? '') === 'active' ? 'success' : 'secondary' ?>"><?= htmlspecialchars($associate['user_status'] ?? '') ?></span></td></tr>
                     </table></div>
                 </div>
             </div>
@@ -24,12 +24,12 @@
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-star me-2"></i>Extension Data</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm">
-                        <tr><th>Points</th><td><span class="badge bg-warning text-dark fs-6"><?= (int)($associate['points'] ?? 0) ?></span></td></tr>
-                        <tr><th>Badges</th><td><?= htmlspecialchars($associate['badges'] ?? '—') ?></td></tr>
-                        <tr><th>Training Progress</th><td><div class="progress"><div class="progress-bar bg-info"><?= (int)($associate['training_progress'] ?? 0) ?>%</div></div></td></tr>
-                        <tr><th>Total Visits</th><td><?= (int)($associate['total_visits'] ?? 0) ?></td></tr>
-                        <tr><th>Total Appointments</th><td><?= (int)($associate['total_appointments'] ?? 0) ?></td></tr>
-                        <tr><th>Total Referrals</th><td><?= (int)($associate['total_referrals'] ?? 0) ?></td></tr>
+                        <tr><th scope="col">Points</th><td><span class="badge bg-warning text-dark fs-6"><?= (int)($associate['points'] ?? 0) ?></span></td></tr>
+                        <tr><th scope="col">Badges</th><td><?= htmlspecialchars($associate['badges'] ?? '—') ?></td></tr>
+                        <tr><th scope="col">Training Progress</th><td><div class="progress"><div class="progress-bar bg-info"><?= (int)($associate['training_progress'] ?? 0) ?>%</div></div></td></tr>
+                        <tr><th scope="col">Total Visits</th><td><?= (int)($associate['total_visits'] ?? 0) ?></td></tr>
+                        <tr><th scope="col">Total Appointments</th><td><?= (int)($associate['total_appointments'] ?? 0) ?></td></tr>
+                        <tr><th scope="col">Total Referrals</th><td><?= (int)($associate['total_referrals'] ?? 0) ?></td></tr>
                     </table></div>
                 </div>
             </div>

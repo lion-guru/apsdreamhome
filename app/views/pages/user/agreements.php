@@ -103,13 +103,13 @@ $typeLabels = [
                 <table class="aps-cp-table mb-0">
                     <thead>
                         <tr>
-                            <th><?= __('user_agreements_th_number', null, 'Agreement No') ?></th>
-                            <th><?= __('user_agreements_th_type', null, 'Type') ?></th>
-                            <th><?= __('user_agreements_th_plot', null, 'Plot / Colony') ?></th>
-                            <th><?= __('user_agreements_th_value', null, 'Value') ?></th>
-                            <th><?= __('user_agreements_th_status', null, 'Status') ?></th>
-                            <th><?= __('user_agreements_th_date', null, 'Date') ?></th>
-                            <th><?= __('user_agreements_th_actions', null, 'Actions') ?></th>
+                            <th scope="col"><?= __('user_agreements_th_number', null, 'Agreement No') ?></th>
+                            <th scope="col"><?= __('user_agreements_th_type', null, 'Type') ?></th>
+                            <th scope="col"><?= __('user_agreements_th_plot', null, 'Plot / Colony') ?></th>
+                            <th scope="col"><?= __('user_agreements_th_value', null, 'Value') ?></th>
+                            <th scope="col"><?= __('user_agreements_th_status', null, 'Status') ?></th>
+                            <th scope="col"><?= __('user_agreements_th_date', null, 'Date') ?></th>
+                            <th scope="col"><?= __('user_agreements_th_actions', null, 'Actions') ?></th>
                         </tr>
                     </thead>
                     <tbody>

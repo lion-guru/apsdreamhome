@@ -85,7 +85,7 @@ $isLegacy = $is_legacy ?? false;
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                    <thead class="table-light"><tr><th>Type</th><th>Amount</th><th>Date</th><th>Notes</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">Date</th><th scope="col">Notes</th></tr></thead>
                     <tbody>
                         <?php foreach ($transactions as $t): ?>
                         <tr>
@@ -109,7 +109,7 @@ $isLegacy = $is_legacy ?? false;
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-sm mb-0">
-                            <thead class="table-light"><tr><th>#</th><th>Type</th><th>Amount</th><th>Status</th><th>Start</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">#</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">Start</th></tr></thead>
                             <tbody>
                                 <?php foreach ($agreements as $a): ?>
                                 <tr>
@@ -142,7 +142,7 @@ $isLegacy = $is_legacy ?? false;
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-sm mb-0">
-                            <thead class="table-light"><tr><th>#</th><th>Amount</th><th>Interest</th><th>EMI</th><th>Status</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">#</th><th scope="col">Amount</th><th scope="col">Interest</th><th scope="col">EMI</th><th scope="col">Status</th></tr></thead>
                             <tbody>
                                 <?php foreach ($loans as $l): ?>
                                 <tr>

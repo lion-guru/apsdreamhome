@@ -45,7 +45,7 @@ $stages = ['new' => 'New', 'contacted' => 'Contacted', 'closed' => 'Closed'];
                 </div>
             <?php else: ?>
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-                <thead class="bg-light"><tr><th><?= __('user_contacts_th_who', [], 'Who') ?></th><th><?= __('user_contacts_th_stage', [], 'Stage') ?></th><th><?= __('user_contacts_th_next', [], 'Next') ?></th></tr></thead>
+                <thead class="bg-light"><tr><th scope="col"><?= __('user_contacts_th_who', [], 'Who') ?></th><th scope="col"><?= __('user_contacts_th_stage', [], 'Stage') ?></th><th scope="col"><?= __('user_contacts_th_next', [], 'Next') ?></th></tr></thead>
                 <tbody>
                 <?php foreach ($contacts as $c): ?>
                     <tr>

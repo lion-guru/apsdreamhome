@@ -20,7 +20,7 @@ ob_start();
         <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table table-hover mb-0">
-              <thead class="table-light"><tr><th>Employee</th><th>Amount</th><th>Reason</th><th>Status</th><th>Requested</th></tr></thead>
+              <thead class="table-light"><tr><th scope="col">Employee</th><th scope="col">Amount</th><th scope="col">Reason</th><th scope="col">Status</th><th scope="col">Requested</th></tr></thead>
               <tbody>
                 <?php if (empty($advances)): ?>
                   <tr><td colspan="5" class="text-center py-4 text-muted">No advances</td></tr>
@@ -45,7 +45,7 @@ ob_start();
         <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table table-hover mb-0">
-              <thead class="table-light"><tr><th>Employee</th><th>Amount</th><th>Type</th><th>Reason</th><th>Date</th></tr></thead>
+              <thead class="table-light"><tr><th scope="col">Employee</th><th scope="col">Amount</th><th scope="col">Type</th><th scope="col">Reason</th><th scope="col">Date</th></tr></thead>
               <tbody>
                 <?php if (empty($bonuses)): ?>
                   <tr><td colspan="5" class="text-center py-4 text-muted">No bonuses</td></tr>
@@ -78,7 +78,7 @@ ob_start();
         <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table table-hover mb-0">
-              <thead class="table-light"><tr><th>Employee</th><th>Base</th><th>HRA</th><th>Allowances</th><th>Deductions</th><th>Net</th><th>Status</th></tr></thead>
+              <thead class="table-light"><tr><th scope="col">Employee</th><th scope="col">Base</th><th scope="col">HRA</th><th scope="col">Allowances</th><th scope="col">Deductions</th><th scope="col">Net</th><th scope="col">Status</th></tr></thead>
               <tbody>
                 <?php if (empty($entries)): ?>
                   <tr><td colspan="7" class="text-center py-4 text-muted">No payroll entries</td></tr>

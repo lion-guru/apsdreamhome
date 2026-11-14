@@ -34,7 +34,7 @@ $statuses = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotia
             <div class="text-center py-5 text-muted"><i class="fas fa-robot fa-3x mb-3"></i><h5><?= __('assoc_wf_empty', [], 'No rules yet') ?></h5><p class="small mb-0"><?= __('assoc_wf_empty_desc', [], 'Example: when a lead is added → add note “Called within 5 minutes”.') ?></p></div>
         <?php else: ?>
         <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-            <thead class="bg-light"><tr><th><?= __('assoc_wf_th_rule', [], 'Rule') ?></th><th><?= __('assoc_wf_th_does', [], 'Does') ?></th><th><?= __('assoc_wf_th_state', [], 'State') ?></th><th></th></tr></thead>
+            <thead class="bg-light"><tr><th scope="col"><?= __('assoc_wf_th_rule', [], 'Rule') ?></th><th scope="col"><?= __('assoc_wf_th_does', [], 'Does') ?></th><th scope="col"><?= __('assoc_wf_th_state', [], 'State') ?></th><th scope="col"></th></tr></thead>
             <tbody>
             <?php foreach ($rules as $r):
                 $ap = json_decode($r['action_params'] ?? '', true) ?: [];

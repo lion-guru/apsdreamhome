@@ -92,15 +92,15 @@
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>Code</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Head</th>
-                                <th>Budget</th>
-                                <th>Designations</th>
-                                <th>Employees</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Code</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Head</th>
+                                <th scope="col">Budget</th>
+                                <th scope="col">Designations</th>
+                                <th scope="col">Employees</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

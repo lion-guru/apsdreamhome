@@ -13,7 +13,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>#</th><th>Customer</th><th>Phone</th><th>Type</th><th>Status</th><th>Notes</th><th>Date</th></tr></thead>
+                        <thead><tr><th scope="col">#</th><th scope="col">Customer</th><th scope="col">Phone</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Notes</th><th scope="col">Date</th></tr></thead>
                         <tbody>
                         <?php foreach ($services as $s): ?>
                             <tr>

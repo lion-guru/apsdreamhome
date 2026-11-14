@@ -589,13 +589,13 @@ if (!$activeBooking && !empty($bookings)) {
             <table class="pb-table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Due Date</th>
-                        <th class="text-end">Amount</th>
-                        <th>Status</th>
-                        <th>Paid Date</th>
-                        <th class="text-end">Paid Amt</th>
-                        <th class="text-center">Action</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Due Date</th>
+                        <th scope="col" class="text-end">Amount</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Paid Date</th>
+                        <th scope="col" class="text-end">Paid Amt</th>
+                        <th scope="col" class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -653,12 +653,12 @@ if (!$activeBooking && !empty($bookings)) {
             <table class="pb-table">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th class="text-end">Amount</th>
-                        <th>Method</th>
-                        <th>Status</th>
-                        <th class="text-center">Receipt</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Description</th>
+                        <th scope="col" class="text-end">Amount</th>
+                        <th scope="col">Method</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-center">Receipt</th>
                     </tr>
                 </thead>
                 <tbody>

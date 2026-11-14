@@ -93,13 +93,13 @@ $page_description = 'View extracted data from lead documents and files';
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>File Name</th>
-                            <th>Original Name</th>
-                            <th>Extracted Count</th>
-                            <th>Method</th>
-                            <th>Created By</th>
-                            <th>Date</th>
-                            <th>Actions</th>
+                            <th scope="col">File Name</th>
+                            <th scope="col">Original Name</th>
+                            <th scope="col">Extracted Count</th>
+                            <th scope="col">Method</th>
+                            <th scope="col">Created By</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

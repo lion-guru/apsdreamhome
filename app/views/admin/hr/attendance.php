@@ -102,12 +102,12 @@
                 <table class="table table-hover align-middle mb-0" id="attendanceTable">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-4">Employee</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Check In</th>
-                            <th>Check Out</th>
-                            <th>Notes</th>
+                            <th scope="col" class="ps-4">Employee</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Check In</th>
+                            <th scope="col">Check Out</th>
+                            <th scope="col">Notes</th>
                         </tr>
                     </thead>
                     <tbody>

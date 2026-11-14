@@ -64,7 +64,7 @@
                         <div class="table-responsive">
                             <table class="table table-sm table-hover mb-0" id="scheduleTable">
                                 <thead class="sticky-top bg-dark text-white"><tr>
-                                    <th>#</th><th>EMI</th><th>Principal</th><th>Interest</th><th>Balance</th>
+                                    <th scope="col">#</th><th scope="col">EMI</th><th scope="col">Principal</th><th scope="col">Interest</th><th scope="col">Balance</th>
                                 </tr></thead>
                                 <tbody></tbody>
                             </table>

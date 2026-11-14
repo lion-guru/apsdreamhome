@@ -81,14 +81,14 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Property Title</th>
-                            <th>Type</th>
-                            <th>Seller</th>
-                            <th>Location</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                            <th>Views</th>
-                            <th>Actions</th>
+                            <th scope="col">Property Title</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Seller</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Views</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -11,7 +11,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>Archive Name</th><th>Size</th><th>Entries</th><th>Date Range</th><th>Created</th><th>Actions</th></tr>
+                        <tr><th scope="col">Archive Name</th><th scope="col">Size</th><th scope="col">Entries</th><th scope="col">Date Range</th><th scope="col">Created</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($archives)): ?>

@@ -9,10 +9,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
     <table class="table table-sm table-hover mb-0">
         <thead>
             <tr>
-                <th>Member</th>
-                <th class="text-center">Bookings</th>
-                <th class="text-center">Revenue</th>
-                <th class="text-center">Status</th>
+                <th scope="col">Member</th>
+                <th scope="col" class="text-center">Bookings</th>
+                <th scope="col" class="text-center">Revenue</th>
+                <th scope="col" class="text-center">Status</th>
             </tr>
         </thead>
         <tbody>

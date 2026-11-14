@@ -80,10 +80,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <table class="ac-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Date</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Date</th>
                             </tr>
                         </thead>
                         <tbody>

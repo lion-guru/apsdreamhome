@@ -87,7 +87,7 @@ $recent_logs = $recent_logs ?? [];
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
-                                <tr><th>Time</th><th>Lead</th><th>Phone</th><th>Priority</th><th>Script</th><th>Status</th></tr>
+                                <tr><th scope="col">Time</th><th scope="col">Lead</th><th scope="col">Phone</th><th scope="col">Priority</th><th scope="col">Script</th><th scope="col">Status</th></tr>
                             </thead>
                             <tbody>
                                 <?php if (empty($today_queue)): ?>
@@ -113,7 +113,7 @@ $recent_logs = $recent_logs ?? [];
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light"><tr><th>Date</th><th>Lead</th><th>Phone</th><th>Time</th><th>Priority</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Lead</th><th scope="col">Phone</th><th scope="col">Time</th><th scope="col">Priority</th></tr></thead>
                             <tbody>
                                 <?php if (empty($upcoming)): ?>
                                     <tr><td colspan="5" class="text-center text-muted py-4">No upcoming calls.</td></tr>

@@ -93,8 +93,8 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                     <table class="aps-cp-table">
                         <thead>
                             <tr>
-                                <th><?= __('user_pay_installment_th_description', 'Description') ?></th>
-                                <th class="text-end"><?= __('user_pay_installment_th_amount', 'Amount') ?></th>
+                                <th scope="col"><?= __('user_pay_installment_th_description', 'Description') ?></th>
+                                <th scope="col" class="text-end"><?= __('user_pay_installment_th_amount', 'Amount') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -282,33 +282,33 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                             <table class="table table-bordered mb-3">
                                 <tbody>
                                     <tr>
-                                        <th class="bg-light" style="width:35%;">Account Beneficiary</th>
+                                        <th scope="row" class="bg-light" style="width:35%;">Account Beneficiary</th>
                                         <td><strong>APS Dream Home Private Limited</strong></td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">Bank Name</th>
+                                        <th scope="row" class="bg-light">Bank Name</th>
                                         <td>ICICI Bank Limited</td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">Account Number</th>
+                                        <th scope="row" class="bg-light">Account Number</th>
                                         <td>
                                             <span class="font-monospace fw-bold fs-6">002105001234</span>
                                             <button class="btn btn-sm btn-outline-secondary ms-2 py-0 px-2" onclick="navigator.clipboard.writeText('002105001234');alert('Account number copied!')" aria-label="Copy"><i class="fas fa-copy"></i></button>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">IFSC Code</th>
+                                        <th scope="row" class="bg-light">IFSC Code</th>
                                         <td>
                                             <span class="font-monospace fw-bold">ICIC0000021</span>
                                             <button class="btn btn-sm btn-outline-secondary ms-2 py-0 px-2" onclick="navigator.clipboard.writeText('ICIC0000021');alert('IFSC copied!')" aria-label="Copy"><i class="fas fa-copy"></i></button>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">Account Type</th>
+                                        <th scope="row" class="bg-light">Account Type</th>
                                         <td>Current Account</td>
                                     </tr>
                                     <tr>
-                                        <th class="bg-light">Branch</th>
+                                        <th scope="row" class="bg-light">Branch</th>
                                         <td>Golghar Main Branch, Gorakhpur (UP)</td>
                                     </tr>
                                 </tbody>

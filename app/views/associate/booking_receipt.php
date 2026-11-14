@@ -67,11 +67,11 @@ $receipts = $receipts ?? [];
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th><?= __('assoc_br_th_receipt', [], 'Receipt #') ?></th>
-                                <th><?= __('assoc_br_th_amount', [], 'Amount') ?></th>
-                                <th><?= __('assoc_br_th_mode', [], 'Mode') ?></th>
-                                <th><?= __('assoc_br_th_date', [], 'Date') ?></th>
-                                <th><?= __('assoc_br_th_status', [], 'Status') ?></th>
+                                <th scope="col"><?= __('assoc_br_th_receipt', [], 'Receipt #') ?></th>
+                                <th scope="col"><?= __('assoc_br_th_amount', [], 'Amount') ?></th>
+                                <th scope="col"><?= __('assoc_br_th_mode', [], 'Mode') ?></th>
+                                <th scope="col"><?= __('assoc_br_th_date', [], 'Date') ?></th>
+                                <th scope="col"><?= __('assoc_br_th_status', [], 'Status') ?></th>
                             </tr>
                         </thead>
                         <tbody>

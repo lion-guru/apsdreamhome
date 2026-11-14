@@ -15,7 +15,7 @@
 
     <?php if (!empty($breached)): ?>
     <div class="card border-0 shadow-sm mb-4"><div class="card-header bg-danger text-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-exclamation-triangle me-1"></i>Recent Breaches</h2></div>
-        <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Rule</th><th>Lead</th><th>Target</th><th>Actual</th><th>Status</th><th>Time</th></tr></thead><tbody>
+        <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th scope="col">Rule</th><th scope="col">Lead</th><th scope="col">Target</th><th scope="col">Actual</th><th scope="col">Status</th><th scope="col">Time</th></tr></thead><tbody>
         <?php foreach ($breached as $b): ?><tr><td><?= htmlspecialchars($b['rule_name'] ?? '') ?></td><td><?= htmlspecialchars($b['lead_name'] ?? '-') ?></td><td><?= $b['target_minutes'] ?>m</td><td><?= $b['response_time_seconds'] ? round($b['response_time_seconds']/60, 1).'m' : '-' ?></td><td><span class="badge bg-danger"><?= $b['status'] ?></span></td><td><?= date('d M H:i', strtotime($b['created_at'])) ?></td></tr><?php endforeach; ?>
         </tbody></table></div></div>
     </div>
@@ -23,7 +23,7 @@
 
     <?php if (!empty($pending)): ?>
     <div class="card border-0 shadow-sm mb-4"><div class="card-header bg-info text-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-hourglass-half me-1"></i>Pending SLAs (<?= count($pending) ?>)</h2></div>
-        <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Rule</th><th>Lead</th><th>Target</th><th>Elapsed</th><th>Started</th></tr></thead><tbody>
+        <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th scope="col">Rule</th><th scope="col">Lead</th><th scope="col">Target</th><th scope="col">Elapsed</th><th scope="col">Started</th></tr></thead><tbody>
         <?php foreach (array_slice($pending, 0, 20) as $p): ?><tr class="<?= $p['elapsed_minutes'] > $p['target_minutes'] ? 'table-danger' : '' ?>"><td><?= htmlspecialchars($p['rule_name'] ?? '') ?></td><td><?= htmlspecialchars($p['lead_name'] ?? '-') ?></td><td><?= $p['target_minutes'] ?>m</td><td><?= $p['elapsed_minutes'] ?>m</td><td><?= date('d M H:i', strtotime($p['started_at'])) ?></td></tr><?php endforeach; ?>
         </tbody></table></div></div>
     </div>
@@ -32,7 +32,7 @@
     <div class="row g-3">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm"><div class="card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-cog me-1"></i>Active Rules</h2></div>
-                <div class="card-body"><table class="table table-sm mb-0"><thead><tr><th>Name</th><th>Type</th><th>Target</th><th>Roles</th><th>Status</th></tr></thead><tbody>
+                <div class="card-body"><table class="table table-sm mb-0"><thead><tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Target</th><th scope="col">Roles</th><th scope="col">Status</th></tr></thead><tbody>
                 <?php foreach ($rules as $r): ?><tr><td><?= htmlspecialchars($r['name'] ?? '') ?></td><td><span class="badge bg-primary"><?= $r['rule_type'] ?></span></td><td><?= $r['target_minutes'] ?>m</td><td><small><?= htmlspecialchars($r['applies_to_roles'] ?? '') ?></small></td><td><span class="badge bg-<?= $r['is_active'] ? 'success' : 'secondary' ?>"><?= $r['is_active'] ? 'Active' : 'Off' ?></span></td></tr><?php endforeach; ?>
                 </tbody></table></div>
             </div>

@@ -11,12 +11,12 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Customer</th>
-                                <th>Phone</th>
-                                <th>Agent</th>
-                                <th>Scheduled Time</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Agent</th>
+                                <th scope="col">Scheduled Time</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

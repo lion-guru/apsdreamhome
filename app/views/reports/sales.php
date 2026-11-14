@@ -23,7 +23,7 @@
             <?php if (empty($salesData)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No sales data available for the selected period</p></div>
             <?php else: ?>
-            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th>Date</th><th>Invoice</th><th>Customer</th><th>Property</th><th>Amount</th><th>Status</th></tr></thead>
+            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Invoice</th><th scope="col">Customer</th><th scope="col">Property</th><th scope="col">Amount</th><th scope="col">Status</th></tr></thead>
                 <tbody><?php foreach ($salesData as $s): ?><tr><td><?= htmlspecialchars($s['date'] ?? '-') ?></td><td><code><?= htmlspecialchars($s['invoice'] ?? '-') ?></code></td><td><?= htmlspecialchars($s['customer'] ?? '-') ?></td><td><?= htmlspecialchars($s['property'] ?? '-') ?></td><td>₹<?= number_format($s['amount'] ?? 0) ?></td><td><span class="badge bg-<?= ($s['status'] ?? '') === 'completed' ? 'success' : 'warning' ?>"><?= ucfirst($s['status'] ?? '-') ?></span></td></tr><?php endforeach; ?></tbody></table></div></div>
             <?php endif; ?>
         </div>

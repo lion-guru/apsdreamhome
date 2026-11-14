@@ -57,7 +57,7 @@ ob_start();
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>#</th><th>Type</th><th>FY</th><th>Period</th><th>Records</th><th>Amount (?)</th><th>Status</th><th>ARN/Token</th><th>Created</th><th>Action</th></tr>
+                        <tr><th scope="col">#</th><th scope="col">Type</th><th scope="col">FY</th><th scope="col">Period</th><th scope="col">Records</th><th scope="col">Amount (?)</th><th scope="col">Status</th><th scope="col">ARN/Token</th><th scope="col">Created</th><th scope="col">Action</th></tr>
                     </thead>
                     <tbody>
                     <?php foreach ($submissions as $s):

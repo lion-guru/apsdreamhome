@@ -29,13 +29,13 @@ $contracts = $contracts ?? [];
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>PO / Contract #</th>
-                            <th>Title</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Created</th>
+                            <th scope="col">PO / Contract #</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Start Date</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Created</th>
                         </tr>
                     </thead>
                     <tbody>

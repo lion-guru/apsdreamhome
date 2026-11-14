@@ -107,15 +107,15 @@ ob_start();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
-                            <th>ID</th>
-                            <th>Collector</th>
-                            <th>Customer</th>
-                            <th>Amount</th>
-                            <th>Date</th>
-                            <th>Method</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Collector</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Method</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

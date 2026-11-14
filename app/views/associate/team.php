@@ -233,14 +233,14 @@ body {
                     <table class="modern-table">
                         <thead>
                             <tr>
-                                <th width="5%"><?= __('assoc_team_th_hash', [], '#') ?></th>
-                                <th><?= __('assoc_team_th_member', [], 'Member') ?></th>
-                                <th><?= __('assoc_team_th_rank', [], 'Rank') ?></th>
-                                <th class="text-end"><?= __('assoc_team_th_team_size', [], 'Team Size') ?></th>
-                                <th class="text-end"><?= __('assoc_team_th_sales', [], 'Lifetime Sales') ?></th>
-                                <th class="text-end"><?= __('assoc_team_th_earned', [], 'Earned') ?></th>
-                                <th><?= __('assoc_team_th_status', [], 'Status') ?></th>
-                                <th><?= __('assoc_team_th_joined', [], 'Joined') ?></th>
+                                <th scope="col" width="5%"><?= __('assoc_team_th_hash', [], '#') ?></th>
+                                <th scope="col"><?= __('assoc_team_th_member', [], 'Member') ?></th>
+                                <th scope="col"><?= __('assoc_team_th_rank', [], 'Rank') ?></th>
+                                <th scope="col" class="text-end"><?= __('assoc_team_th_team_size', [], 'Team Size') ?></th>
+                                <th scope="col" class="text-end"><?= __('assoc_team_th_sales', [], 'Lifetime Sales') ?></th>
+                                <th scope="col" class="text-end"><?= __('assoc_team_th_earned', [], 'Earned') ?></th>
+                                <th scope="col"><?= __('assoc_team_th_status', [], 'Status') ?></th>
+                                <th scope="col"><?= __('assoc_team_th_joined', [], 'Joined') ?></th>
                             </tr>
                         </thead>
                         <tbody>

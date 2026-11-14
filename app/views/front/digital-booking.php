@@ -173,12 +173,12 @@ $base = BASE_URL ?? '/apsdreamhome';
                 <table class="table table-sm table-bordered table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Due Date</th>
-                            <th>Principal</th>
-                            <th>Interest</th>
-                            <th>Total EMI</th>
-                            <th>Balance</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col">Principal</th>
+                            <th scope="col">Interest</th>
+                            <th scope="col">Total EMI</th>
+                            <th scope="col">Balance</th>
                         </tr>
                     </thead>
                     <tbody id="emiTableBody"></tbody>

@@ -30,11 +30,11 @@
                 <div class="table-responsive"><table class="table table-hover align-middle table-responsive">
                     <thead class="table-light">
                         <tr>
-                            <th>Property</th>
-                            <th>Location</th>
-                            <th>Panoramas</th>
-                            <th>Last Updated</th>
-                            <th>Actions</th>
+                            <th scope="col">Property</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Panoramas</th>
+                            <th scope="col">Last Updated</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

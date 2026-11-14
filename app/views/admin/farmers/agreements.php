@@ -52,7 +52,7 @@ $terminatedCount = $terminated_count ?? 0;
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>Agreement#</th><th>Farmer</th><th>Type</th><th>Amount</th><th>Status</th><th>Start Date</th><th>End Date</th><th>Signed</th><th>Actions</th></tr>
+                        <tr><th scope="col">Agreement#</th><th scope="col">Farmer</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">Start Date</th><th scope="col">End Date</th><th scope="col">Signed</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($agreements as $a): ?>

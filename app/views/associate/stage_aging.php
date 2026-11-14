@@ -18,7 +18,7 @@ $rows = $rows ?? [];
             </div>
         <?php else: ?>
         <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-            <thead class="bg-light"><tr><th><?= __('assoc_age_th_stage', [], 'Stage') ?></th><th class="text-end"><?= __('assoc_age_th_avg', [], 'Avg days') ?></th><th class="text-end"><?= __('assoc_age_th_exits', [], 'Exits') ?></th></tr></thead>
+            <thead class="bg-light"><tr><th scope="col"><?= __('assoc_age_th_stage', [], 'Stage') ?></th><th scope="col" class="text-end"><?= __('assoc_age_th_avg', [], 'Avg days') ?></th><th scope="col" class="text-end"><?= __('assoc_age_th_exits', [], 'Exits') ?></th></tr></thead>
             <tbody>
             <?php $max = max(array_column($rows, 'avg_days')) ?: 1; ?>
             <?php foreach ($rows as $r): $w = min(100, round($r['avg_days'] / $max * 100)); ?>

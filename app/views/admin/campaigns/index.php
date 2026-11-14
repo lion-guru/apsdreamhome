@@ -51,14 +51,14 @@ function getCampaignStatusColor($status) {
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Target Audience</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Budget</th>
-                            <th>Actions</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Target Audience</th>
+                            <th scope="col">Start Date</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Budget</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -29,11 +29,11 @@ $page_title = $page_title ?? 'Newsletter Subscribers';
                             <table class="table table-hover">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Email</th>
-                                        <th>Name</th>
-                                        <th>Subscribed</th>
-                                        <th>Status</th>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Subscribed</th>
+                                        <th scope="col">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>

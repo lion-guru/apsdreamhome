@@ -17,7 +17,7 @@ $stats = $stats ?? [];
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Colony</th><th>District</th><th class="text-center">Plots</th><th class="text-center">Avail / Booked / Sold</th><th class="text-end">Total Value</th><th class="text-center">Layout</th><th class="text-end">Dev Cost</th><th class="text-end">Actions</th></tr>
+                    <tr><th scope="col">Colony</th><th scope="col">District</th><th scope="col" class="text-center">Plots</th><th scope="col" class="text-center">Avail / Booked / Sold</th><th scope="col" class="text-end">Total Value</th><th scope="col" class="text-center">Layout</th><th scope="col" class="text-end">Dev Cost</th><th scope="col" class="text-end">Actions</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($colonies)): ?>

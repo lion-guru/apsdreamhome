@@ -47,10 +47,10 @@ $end_date = $end_date ?? date('Y-m-t');
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Shift</th>
-                            <th class="text-center">Assigned</th>
-                            <th>Employees</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Shift</th>
+                            <th scope="col" class="text-center">Assigned</th>
+                            <th scope="col">Employees</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,10 +89,10 @@ $end_date = $end_date ?? date('Y-m-t');
                 <table class="table table-sm mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Shift</th>
-                            <th class="text-center">Total Assignments</th>
-                            <th class="text-center">Days Covered</th>
-                            <th class="text-center">Avg. Employees/Day</th>
+                            <th scope="col">Shift</th>
+                            <th scope="col" class="text-center">Total Assignments</th>
+                            <th scope="col" class="text-center">Days Covered</th>
+                            <th scope="col" class="text-center">Avg. Employees/Day</th>
                         </tr>
                     </thead>
                     <tbody>

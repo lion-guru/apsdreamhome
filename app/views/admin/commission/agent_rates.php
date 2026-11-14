@@ -28,7 +28,7 @@
                 <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Rate Cards</div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-striped mb-0">
-                        <thead><tr><th>#</th><th>Sqft Range</th><th>Per Sqft</th><th>%</th><th>Status</th><th>Action</th></tr></thead>
+                        <thead><tr><th scope="col">#</th><th scope="col">Sqft Range</th><th scope="col">Per Sqft</th><th scope="col">%</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
                         <tbody>
                             <?php if (empty($rates ?? [])): ?>
                             <tr>

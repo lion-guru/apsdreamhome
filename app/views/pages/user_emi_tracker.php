@@ -99,15 +99,15 @@ $today = date('Y-m-d');
                 <table class="aps-cp-table">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Booking</th>
-                            <th>Plot / Colony</th>
-                            <th>Due Date</th>
-                            <th>Amount</th>
-                            <th>Paid</th>
-                            <th>Penalty</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Booking</th>
+                            <th scope="col">Plot / Colony</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Paid</th>
+                            <th scope="col">Penalty</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>

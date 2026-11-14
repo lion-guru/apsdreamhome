@@ -32,7 +32,7 @@
                 <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Bonus List</div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-striped mb-0">
-                        <thead><tr><th>#</th><th>Associate</th><th>%</th><th>Amount</th><th>Achievement</th><th>Date</th><th>Action</th></tr></thead>
+                        <thead><tr><th scope="col">#</th><th scope="col">Associate</th><th scope="col">%</th><th scope="col">Amount</th><th scope="col">Achievement</th><th scope="col">Date</th><th scope="col">Action</th></tr></thead>
                         <tbody>
                             <?php if (empty($bonuses ?? [])): ?>
                             <tr>

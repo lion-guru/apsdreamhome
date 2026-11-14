@@ -55,7 +55,7 @@
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($callLog)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
-                            <thead><tr><th>Customer</th><th>Phone</th><th>Duration</th><th>Status</th><th>Notes</th></tr></thead>
+                            <thead><tr><th scope="col">Customer</th><th scope="col">Phone</th><th scope="col">Duration</th><th scope="col">Status</th><th scope="col">Notes</th></tr></thead>
                             <tbody>
                                 <?php foreach ($callLog as $call): ?>
                                 <tr>

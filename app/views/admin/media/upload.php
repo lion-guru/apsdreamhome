@@ -103,7 +103,7 @@ document.getElementById('media_file').addEventListener('change', function(e) {
     if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = function(ev) {
-            content.innerHTML = '<img src="' + ev.target.result + '" class="img-fluid rounded" style="max-height:200px;">';
+            content.innerHTML = '<img alt="" src="' + ev.target.result + '" class="img-fluid rounded" style="max-height:200px;">';
         };
         reader.readAsDataURL(file);
     } else {

@@ -19,12 +19,12 @@
                         <div class="col-md-6">
                             <h5><?= __('booking_summary') ?></h5>
                             <table class="table table-sm">
-                                <tr><th><?= __('booking_number') ?> #</th><td>#<?= e($booking['id']) ?></td></tr>
-                                <tr><th><?= __('booking_plot') ?></th><td>#<?= htmlspecialchars($booking['plot_number'] ?? '') ?> - <?= htmlspecialchars($booking['colony_name'] ?? '') ?></td></tr>
-                                <tr><th><?= __('booking_total_price') ?></th><td><strong>&#8377;<?= number_format((float)$booking['total_amount'], 2) ?></strong></td></tr>
-                                <tr><th><?= __('booking_token_required') ?></th><td><strong class="text-primary">&#8377;<?= number_format($requiredToken, 2) ?></strong></td></tr>
-                                <tr><th><?= __('booking_already_paid') ?></th><td>&#8377;<?= number_format((float)$booking['amount'], 2) ?></td></tr>
-                                <tr><th><?= __('booking_token_due') ?></th><td><span class="text-danger">&#8377;<?= number_format($tokenDue, 2) ?></span></td></tr>
+                                <tr><th scope="col"><?= __('booking_number') ?> #</th><td>#<?= e($booking['id']) ?></td></tr>
+                                <tr><th scope="col"><?= __('booking_plot') ?></th><td>#<?= htmlspecialchars($booking['plot_number'] ?? '') ?> - <?= htmlspecialchars($booking['colony_name'] ?? '') ?></td></tr>
+                                <tr><th scope="col"><?= __('booking_total_price') ?></th><td><strong>&#8377;<?= number_format((float)$booking['total_amount'], 2) ?></strong></td></tr>
+                                <tr><th scope="col"><?= __('booking_token_required') ?></th><td><strong class="text-primary">&#8377;<?= number_format($requiredToken, 2) ?></strong></td></tr>
+                                <tr><th scope="col"><?= __('booking_already_paid') ?></th><td>&#8377;<?= number_format((float)$booking['amount'], 2) ?></td></tr>
+                                <tr><th scope="col"><?= __('booking_token_due') ?></th><td><span class="text-danger">&#8377;<?= number_format($tokenDue, 2) ?></span></td></tr>
                             </table>
                             <div class="progress mb-3">
                                 <div class="progress-bar bg-success"><?= e($tokenPercent) ?>%</div>

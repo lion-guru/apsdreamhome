@@ -82,13 +82,13 @@ $stat = $stat ?? ['in_progress' => 0, 'completed' => 0, 'failed' => 0, 'with_rec
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Call SID</th>
-                                <th>Lead</th>
-                                <th>Phone</th>
-                                <th>Agent</th>
-                                <th>Status</th>
-                                <th>Started</th>
-                                <th class="text-end">Actions</th>
+                                <th scope="col">Call SID</th>
+                                <th scope="col">Lead</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Agent</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Started</th>
+                                <th scope="col" class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -135,13 +135,13 @@ $stat = $stat ?? ['in_progress' => 0, 'completed' => 0, 'failed' => 0, 'with_rec
                     <table class="table table-sm mb-0">
                         <thead>
                             <tr>
-                                <th>Call SID</th>
-                                <th>Lead</th>
-                                <th>Phone</th>
-                                <th>Status</th>
-                                <th>Duration</th>
-                                <th>DTMF</th>
-                                <th>Recording</th>
+                                <th scope="col">Call SID</th>
+                                <th scope="col">Lead</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">DTMF</th>
+                                <th scope="col">Recording</th>
                             </tr>
                         </thead>
                         <tbody>

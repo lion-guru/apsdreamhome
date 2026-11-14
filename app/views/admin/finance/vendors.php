@@ -10,7 +10,7 @@
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-light"><tr><th><?php echo __('finance_vendor'); ?></th><th><?php echo __('finance_type'); ?></th><th class="text-end"><?php echo __('finance_payable'); ?></th><th class="text-end"><?php echo __('finance_tds'); ?></th><th class="text-end"><?php echo __('finance_gst'); ?></th><th><?php echo __('finance_bills'); ?></th></tr></thead>
+                <thead class="table-light"><tr><th scope="col"><?php echo __('finance_vendor'); ?></th><th scope="col"><?php echo __('finance_type'); ?></th><th scope="col" class="text-end"><?php echo __('finance_payable'); ?></th><th scope="col" class="text-end"><?php echo __('finance_tds'); ?></th><th scope="col" class="text-end"><?php echo __('finance_gst'); ?></th><th scope="col"><?php echo __('finance_bills'); ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($outstanding)): ?>
                     <tr><td colspan="6" class="text-center text-muted py-4"><?php echo __('finance_no_outstanding_vendor_dues'); ?></td></tr>
@@ -37,16 +37,16 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th><?php echo __('finance_date'); ?></th>
-                        <th><?php echo __('finance_vendor'); ?></th>
-                        <th><?php echo __('finance_type'); ?></th>
-                        <th><?php echo __('finance_bill_hash'); ?></th>
-                        <th><?= __('vendors_currency_abbr') ?></th>
-                        <th class="text-end"><?php echo __('finance_amount'); ?></th>
-                        <th class="text-end"><?php echo __('finance_tds'); ?></th>
-                        <th class="text-end"><?php echo __('finance_gst'); ?></th>
-                        <th class="text-end"><?= __('vendors_amount_inr') ?></th>
-                        <th><?php echo __('finance_status'); ?></th>
+                        <th scope="col"><?php echo __('finance_date'); ?></th>
+                        <th scope="col"><?php echo __('finance_vendor'); ?></th>
+                        <th scope="col"><?php echo __('finance_type'); ?></th>
+                        <th scope="col"><?php echo __('finance_bill_hash'); ?></th>
+                        <th scope="col"><?= __('vendors_currency_abbr') ?></th>
+                        <th scope="col" class="text-end"><?php echo __('finance_amount'); ?></th>
+                        <th scope="col" class="text-end"><?php echo __('finance_tds'); ?></th>
+                        <th scope="col" class="text-end"><?php echo __('finance_gst'); ?></th>
+                        <th scope="col" class="text-end"><?= __('vendors_amount_inr') ?></th>
+                        <th scope="col"><?php echo __('finance_status'); ?></th>
                     </tr>
                 </thead>
                 <tbody>

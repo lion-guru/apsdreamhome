@@ -111,15 +111,15 @@
                             <div class="table-responsive"><table class="table table-striped table-hover table-responsive">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>Month/Year</th>
-                                        <th>Basic Salary</th>
-                                        <th>Allowances</th>
-                                        <th>Bonus</th>
-                                        <th>Deductions</th>
-                                        <th>Net Salary</th>
-                                        <th>Payment Date</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Month/Year</th>
+                                        <th scope="col">Basic Salary</th>
+                                        <th scope="col">Allowances</th>
+                                        <th scope="col">Bonus</th>
+                                        <th scope="col">Deductions</th>
+                                        <th scope="col">Net Salary</th>
+                                        <th scope="col">Payment Date</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

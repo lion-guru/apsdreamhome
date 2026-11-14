@@ -104,13 +104,13 @@ $active = $active ?? 0;
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Developer Name</th>
-                                    <th>Email</th>
-                                    <th>API Key</th>
-                                    <th>Status</th>
-                                    <th>Created</th>
-                                    <th>Actions</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Developer Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">API Key</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Created</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

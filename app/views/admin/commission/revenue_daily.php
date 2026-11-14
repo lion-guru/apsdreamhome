@@ -39,7 +39,7 @@
                 <div class="card-header aps-cp-card-header"><i class="fas fa-table"></i> Daily Records</div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-striped mb-0">
-                        <thead><tr><th>Date</th><th>Agent</th><th>Revenue</th><th>Deals</th><th>Commission</th><th>Action</th></tr></thead>
+                        <thead><tr><th scope="col">Date</th><th scope="col">Agent</th><th scope="col">Revenue</th><th scope="col">Deals</th><th scope="col">Commission</th><th scope="col">Action</th></tr></thead>
                         <tbody>
                             <?php if (empty($daily ?? [])): ?>
                             <tr>

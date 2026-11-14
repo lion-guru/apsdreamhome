@@ -69,7 +69,7 @@ $commission = $price * $defaultRate / 100;
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
-                            <tr><th>Component</th><th>Rate</th><th>Amount (₹)</th><th>Paid To</th></tr>
+                            <tr><th scope="col">Component</th><th scope="col">Rate</th><th scope="col">Amount (₹)</th><th scope="col">Paid To</th></tr>
                         </thead>
                         <tbody>
                             <tr>

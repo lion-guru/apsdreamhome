@@ -129,11 +129,11 @@ if (!function_exists('cm_getProjectStatusClass')) {
                 <div class="table-responsive"><table class="table table-dark table-hover table-responsive">
                     <thead>
                         <tr>
-                            <th>Team Member</th>
-                            <th>Role</th>
-                            <th>Properties</th>
-                            <th>Sales</th>
-                            <th>Performance</th>
+                            <th scope="col">Team Member</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Properties</th>
+                            <th scope="col">Sales</th>
+                            <th scope="col">Performance</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -25,7 +25,7 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr><th>Date</th><th>Type</th><th>File</th><th>Records</th><th>Status</th><th>By</th></tr>
+                        <tr><th scope="col">Date</th><th scope="col">Type</th><th scope="col">File</th><th scope="col">Records</th><th scope="col">Status</th><th scope="col">By</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($activities)): ?>

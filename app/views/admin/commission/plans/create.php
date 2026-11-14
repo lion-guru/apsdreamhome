@@ -102,9 +102,9 @@ $ranks = [
                 <table class="table rank-table m-0">
                     <thead>
                         <tr>
-                            <th>#</th><th>Rank Name</th><th>Direct %</th><th>Team %</th>
-                            <th>Level Bonus %</th><th>Matching %</th><th>Leadership %</th>
-                            <th>Performance %</th><th>GBV Threshold (₹)</th>
+                            <th scope="col">#</th><th scope="col">Rank Name</th><th scope="col">Direct %</th><th scope="col">Team %</th>
+                            <th scope="col">Level Bonus %</th><th scope="col">Matching %</th><th scope="col">Leadership %</th>
+                            <th scope="col">Performance %</th><th scope="col">GBV Threshold (₹)</th>
                         </tr>
                     </thead>
                     <tbody>

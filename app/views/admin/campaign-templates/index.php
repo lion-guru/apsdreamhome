@@ -181,15 +181,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <table class="table table-dark mb-0">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>Subject</th>
-                                <th>Body Preview</th>
-                                <th>Status</th>
-                                <th>Used</th>
-                                <th>Created</th>
-                                <th>Actions</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Subject</th>
+                                <th scope="col">Body Preview</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Used</th>
+                                <th scope="col">Created</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

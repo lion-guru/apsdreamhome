@@ -29,7 +29,7 @@ $month_year = $month_year ?? date('Y-m');
     </div>
 
     <div class="card mb-4"><div class="card-header"><strong>Configuration</strong></div><div class="card-body p-0"><table class="table mb-0">
-        <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+        <thead><tr><th scope="col">Parameter</th><th scope="col">Value</th><th scope="col">Description</th></tr></thead>
         <tbody>
             <tr><td>PF Employee Rate</td><td><?= $config['pf_employee_rate'] ?? 12 ?>%</td><td>Employee contribution on PF wage</td></tr>
             <tr><td>PF Employer Rate</td><td><?= $config['pf_employer_rate'] ?? 12 ?>%</td><td>Employer contribution on PF wage</td></tr>

@@ -145,8 +145,8 @@ $stored = $health['stored_models'] ?? [];
             <table class="table table-hover mb-0 align-middle">
                 <thead>
                     <tr>
-                        <th>#</th><th>Title</th><th>Category</th><th>Source</th>
-                        <th class="text-center">Chunks</th><th>Status</th>
+                        <th scope="col">#</th><th scope="col">Title</th><th scope="col">Category</th><th scope="col">Source</th>
+                        <th scope="col" class="text-center">Chunks</th><th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>

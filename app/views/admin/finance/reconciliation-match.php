@@ -27,7 +27,7 @@
         <div class="aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-list me-2"></i>Reconciliation Items</h5></div>
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-                <thead class="table-light"><tr><th>Date</th><th>Description</th><th class="text-end">Amount</th><th>Type</th><th>Status</th><th>Matched Cashbook</th><th></th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Description</th><th scope="col" class="text-end">Amount</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Matched Cashbook</th><th scope="col"></th></tr></thead>
                 <tbody>
                 <?php if (empty($items)): ?>
                     <tr><td colspan="7" class="text-center text-muted py-4">No items — add some from the bank statement</td></tr>

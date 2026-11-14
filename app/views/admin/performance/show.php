@@ -191,12 +191,12 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 120px">Date</th>
-                            <th style="width": 120px>Actual Value</th>
-                            <th style="width: 100px">Progress %</th>
-                            <th style="width: 120px">Status</th>
-                            <th>Notes</th>
-                            <th style="width: 150px">Reviewed By</th>
+                            <th scope="col" style="width: 120px">Date</th>
+                            <th scope="col" style="width": 120px>Actual Value</th>
+                            <th scope="col" style="width: 100px">Progress %</th>
+                            <th scope="col" style="width: 120px">Status</th>
+                            <th scope="col">Notes</th>
+                            <th scope="col" style="width: 150px">Reviewed By</th>
                         </tr>
                     </thead>
                     <tbody>

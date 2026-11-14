@@ -335,9 +335,9 @@ foreach ($plans as $plan):
     <table class="comparison-table">
         <thead>
             <tr>
-                <th >Feature</th>
+                <th scope="col" >Feature</th>
                 <?php foreach ($plans as $p): ?>
-                    <th><?= htmlspecialchars($p['name'] ?? '') ?></th>
+                    <th scope="col"><?= htmlspecialchars($p['name'] ?? '') ?></th>
                 <?php endforeach; ?>
             </tr>
         </thead>

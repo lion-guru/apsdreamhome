@@ -143,7 +143,7 @@ $_ag = $agents ?? [];
                             <?php else: ?>
                             <div class="table-responsive">
                                 <table class="table table-sm table-hover">
-                                    <thead><tr><th>Time</th><th>Agent</th><th>Task</th><th>Status</th></tr></thead>
+                                    <thead><tr><th scope="col">Time</th><th scope="col">Agent</th><th scope="col">Task</th><th scope="col">Status</th></tr></thead>
                                     <tbody>
                                     <?php foreach ($_aa as $act): ?>
                                     <tr>

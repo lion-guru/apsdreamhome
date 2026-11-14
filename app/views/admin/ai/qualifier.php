@@ -35,7 +35,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                    <thead><tr><th>Lead</th><th>Score</th><th>Category</th><th>Qualified At</th></tr></thead>
+                    <thead><tr><th scope="col">Lead</th><th scope="col">Score</th><th scope="col">Category</th><th scope="col">Qualified At</th></tr></thead>
                     <tbody>
                         <?php if (!empty($recent)): ?>
                             <?php foreach ($recent as $r): ?>

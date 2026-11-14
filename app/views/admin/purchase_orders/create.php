@@ -22,7 +22,7 @@ $today = $today ?? date('Y-m-d');
             </div>
             <h5 class="mt-4">Line Items</h5>
             <table class="table table-bordered" id="itemsTable">
-                <thead><tr><th>Item</th><th>Description</th><th>Unit</th><th>Qty</th><th>Price</th><th>Disc %</th><th>Tax %</th><th>Total</th><th></th></tr></thead>
+                <thead><tr><th scope="col">Item</th><th scope="col">Description</th><th scope="col">Unit</th><th scope="col">Qty</th><th scope="col">Price</th><th scope="col">Disc %</th><th scope="col">Tax %</th><th scope="col">Total</th><th scope="col"></th></tr></thead>
                 <tbody>
                     <tr data-line="1">
                         <td><input type="text" name="items[1][item_name]" class="form-control form-control-sm" placeholder="Item name" required></td>

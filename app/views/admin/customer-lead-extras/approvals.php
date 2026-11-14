@@ -93,14 +93,14 @@ $page_description = 'Manage lead assignment and reassignment approval requests';
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>Assignment #</th>
-                            <th>Lead Name</th>
-                            <th>Requested By →' To</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Priority</th>
-                            <th>Request Date</th>
-                            <th>Actions</th>
+                            <th scope="col">Assignment #</th>
+                            <th scope="col">Lead Name</th>
+                            <th scope="col">Requested By →' To</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">Request Date</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

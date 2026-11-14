@@ -285,9 +285,9 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Amount</th>
-                                        <th>Balance</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Balance</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -325,10 +325,10 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>ID</th>
-                                        <th class="text-end">Amount</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
+                                        <th scope="col">ID</th>
+                                        <th scope="col" class="text-end">Amount</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>

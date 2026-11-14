@@ -15,7 +15,7 @@
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr><th><?php echo __('finance_date'); ?></th><th><?php echo __('finance_source'); ?></th><th><?php echo __('finance_category'); ?></th><th><?php echo __('finance_direction'); ?></th><th class="text-end"><?php echo __('finance_amount'); ?></th><th><?php echo __('finance_probability'); ?></th></tr>
+                    <tr><th scope="col"><?php echo __('finance_date'); ?></th><th scope="col"><?php echo __('finance_source'); ?></th><th scope="col"><?php echo __('finance_category'); ?></th><th scope="col"><?php echo __('finance_direction'); ?></th><th scope="col" class="text-end"><?php echo __('finance_amount'); ?></th><th scope="col"><?php echo __('finance_probability'); ?></th></tr>
                 </thead>
                 <tbody>
                 <?php if (empty($forecast)): ?>
@@ -39,7 +39,7 @@
         <div class="aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-balance-scale me-2"></i><?php echo __('finance_actual_vs_forecast'); ?></h5></div>
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-                <thead class="table-light"><tr><th><?php echo __('finance_date'); ?></th><th class="text-end"><?php echo __('finance_forecast_inflow'); ?></th><th class="text-end"><?php echo __('finance_forecast_outflow'); ?></th></tr></thead>
+                <thead class="table-light"><tr><th scope="col"><?php echo __('finance_date'); ?></th><th scope="col" class="text-end"><?php echo __('finance_forecast_inflow'); ?></th><th scope="col" class="text-end"><?php echo __('finance_forecast_outflow'); ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($actuals)): ?>
                     <tr><td colspan="3" class="text-center text-muted py-4"><?php echo __('finance_no_data'); ?></td></tr>

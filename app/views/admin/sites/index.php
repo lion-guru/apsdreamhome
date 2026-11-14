@@ -56,15 +56,15 @@ $active_page = 'sites';
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>Site Name</th>
-                        <th>Location</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Total Area</th>
-                        <th>Plots</th>
-                        <th>Properties</th>
-                        <th>Created</th>
-                        <th>Actions</th>
+                        <th scope="col">Site Name</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Total Area</th>
+                        <th scope="col">Plots</th>
+                        <th scope="col">Properties</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -121,10 +121,10 @@
                         <table class="table table-sm table-borderless mb-0 rank-table">
                             <thead>
                                 <tr >
-                                    <th class="ps-2 py-2">Rank</th>
-                                    <th class="py-2 text-center">Business</th>
-                                    <th class="py-2 text-center">Direct Sale %</th>
-                                    <th class="pe-2 py-2 text-end">Reward</th>
+                                    <th scope="col" class="ps-2 py-2">Rank</th>
+                                    <th scope="col" class="py-2 text-center">Business</th>
+                                    <th scope="col" class="py-2 text-center">Direct Sale %</th>
+                                    <th scope="col" class="pe-2 py-2 text-end">Reward</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -171,11 +171,11 @@
                         <table class="table table-sm table-borderless mb-0 rank-table">
                             <thead>
                                 <tr >
-                                    <th class="ps-2 py-2">Rank</th>
-                                    <th class="py-2 text-center">GBV Threshold</th>
-                                    <th class="py-2 text-center">Commission %</th>
-                                    <th class="py-2 text-center">Monthly Bonus</th>
-                                    <th class="pe-2 py-2 text-end">Reward</th>
+                                    <th scope="col" class="ps-2 py-2">Rank</th>
+                                    <th scope="col" class="py-2 text-center">GBV Threshold</th>
+                                    <th scope="col" class="py-2 text-center">Commission %</th>
+                                    <th scope="col" class="py-2 text-center">Monthly Bonus</th>
+                                    <th scope="col" class="pe-2 py-2 text-end">Reward</th>
                                 </tr>
                             </thead>
                             <tbody>

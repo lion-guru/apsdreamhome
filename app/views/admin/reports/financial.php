@@ -126,7 +126,7 @@ $netIncome = $netIncome ?? $totalReceipts;
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th></tr></thead>
+                        <thead><tr><th scope="col">ID</th><th scope="col">User</th><th scope="col">Amount</th><th scope="col">Method</th><th scope="col">Status</th><th scope="col">Date</th></tr></thead>
                         <tbody>
                         <?php foreach ($recentPayments as $p): ?>
                             <tr>

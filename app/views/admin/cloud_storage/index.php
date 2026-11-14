@@ -46,7 +46,7 @@ $driver = $driver ?? 's3';
 
     <div class="card"><div class="card-body p-0">
         <table class="table mb-0">
-            <thead><tr><th>Path</th><th>Size</th><th>Actions</th></tr></thead>
+            <thead><tr><th scope="col">Path</th><th scope="col">Size</th><th scope="col">Actions</th></tr></thead>
             <tbody>
             <?php if (empty($files)): ?>
                 <tr><td colspan="3" class="text-center text-muted py-4">No files in bucket</td></tr>

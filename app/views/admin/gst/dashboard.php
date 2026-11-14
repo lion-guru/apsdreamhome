@@ -146,15 +146,15 @@ $csrf = $this->getCsrfToken();
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Invoice #</th>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Customer</th>
-                                    <th>Taxable</th>
-                                    <th>Tax</th>
-                                    <th>Total</th>
-                                    <th>IRN</th>
-                                    <th class="text-end">Actions</th>
+                                    <th scope="col">Invoice #</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Taxable</th>
+                                    <th scope="col">Tax</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">IRN</th>
+                                    <th scope="col" class="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -202,10 +202,10 @@ $csrf = $this->getCsrfToken();
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Code</th>
-                                    <th>Description</th>
-                                    <th>Rate</th>
-                                    <th>Type</th>
+                                    <th scope="col">Code</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Rate</th>
+                                    <th scope="col">Type</th>
                                 </tr>
                             </thead>
                             <tbody>

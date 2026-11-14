@@ -93,7 +93,7 @@ $recent_shares = $recent_shares ?? [];
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
-                                    <tr><th>#</th><th>User</th><th class="text-end">Shares</th></tr>
+                                    <tr><th scope="col">#</th><th scope="col">User</th><th scope="col" class="text-end">Shares</th></tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($shares_by_user as $i => $u): ?>
@@ -119,7 +119,7 @@ $recent_shares = $recent_shares ?? [];
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
-                        <tr><th>Date</th><th>Sharer</th><th>Lead</th><th>Platform</th><th>Phone</th><th>Status</th></tr>
+                        <tr><th scope="col">Date</th><th scope="col">Sharer</th><th scope="col">Lead</th><th scope="col">Platform</th><th scope="col">Phone</th><th scope="col">Status</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($recent_shares)): ?>

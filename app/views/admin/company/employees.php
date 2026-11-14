@@ -32,13 +32,13 @@ $employeeUsers = $employeeUsers ?? [];
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Position</th>
-                                <th>Salary</th>
-                                <th>Join Date</th>
-                                <th>Status</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Salary</th>
+                                <th scope="col">Join Date</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>

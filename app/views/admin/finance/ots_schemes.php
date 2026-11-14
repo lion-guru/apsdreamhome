@@ -29,7 +29,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 </div></div>
 <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
     <div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Scheme</th><th>Period</th><th class="text-end">Waiver</th><th>Status</th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Scheme</th><th scope="col">Period</th><th scope="col" class="text-end">Waiver</th><th scope="col">Status</th></tr></thead>
         <tbody>
         <?php if (empty($rows)): ?>
             <tr><td colspan="4" class="text-center text-muted py-4">No schemes yet — launch the first above.</td></tr>

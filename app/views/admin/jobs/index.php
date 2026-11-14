@@ -36,14 +36,14 @@ $error = $error ?? null;
                 <table class="table table-hover mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th>Job Title</th>
-                            <th>Department</th>
-                            <th>Location</th>
-                            <th>Type</th>
-                            <th>Posted</th>
-                            <th>Status</th>
-                            <th>Applications</th>
-                            <th>Actions</th>
+                            <th scope="col">Job Title</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Posted</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Applications</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

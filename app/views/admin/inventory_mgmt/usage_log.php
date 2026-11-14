@@ -19,7 +19,7 @@ $colony_id = $colony_id ?? null;
     </div></div>
 
     <div class="card"><div class="card-body p-0"><table class="table mb-0">
-        <thead><tr><th>Date</th><th>Material</th><th>Category</th><th>Qty</th><th>Colony</th><th>Plot</th><th>Purpose</th><th>Used By</th><th>Notes</th></tr></thead>
+        <thead><tr><th scope="col">Date</th><th scope="col">Material</th><th scope="col">Category</th><th scope="col">Qty</th><th scope="col">Colony</th><th scope="col">Plot</th><th scope="col">Purpose</th><th scope="col">Used By</th><th scope="col">Notes</th></tr></thead>
         <tbody>
         <?php if (empty($logs)): ?><tr><td colspan="9" class="text-center text-muted py-4">No usage records found</td></tr>
         <?php else: foreach ($logs as $log): ?>

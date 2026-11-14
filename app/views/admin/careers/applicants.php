@@ -121,14 +121,14 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Applicant</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Position</th>
-                            <th>Status</th>
-                            <th>Applied On</th>
-                            <th>Actions</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Applicant</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Position</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Applied On</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

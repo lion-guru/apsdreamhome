@@ -149,7 +149,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
                     <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
                             <thead>
-                                <tr><th>Agent</th><th>Calls</th><th>Connected</th><th>Interested</th><th>Leads</th><th>Avg Dur</th></tr>
+                                <tr><th scope="col">Agent</th><th scope="col">Calls</th><th scope="col">Connected</th><th scope="col">Interested</th><th scope="col">Leads</th><th scope="col">Avg Dur</th></tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($agent_performance as $a): ?>
@@ -258,7 +258,7 @@ $provider_comparison = $analytics['provider_comparison'] ?? [];
                     <div class="table-responsive">
                         <table class="table table-sm mb-0">
                             <thead>
-                                <tr><th>Provider</th><th>Calls</th><th>Connected</th><th>Avg Dur</th><th>Interested</th></tr>
+                                <tr><th scope="col">Provider</th><th scope="col">Calls</th><th scope="col">Connected</th><th scope="col">Avg Dur</th><th scope="col">Interested</th></tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($provider_comparison as $p): ?>

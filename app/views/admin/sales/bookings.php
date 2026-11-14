@@ -57,15 +57,15 @@ $statusBadge = function ($s) {
             <table class="table table-hover table-sm">
                 <thead>
                     <tr>
-                        <th><?= __('sale_booking_num') ?></th>
-                        <th><?= __('sale_customer') ?></th>
-                        <th><?= __('sale_plot') ?></th>
-                        <th><?= __('sale_channel') ?></th>
-                        <th><?= __('sale_status') ?></th>
-                        <th class="text-end"><?= __('sale_agreement') ?></th>
-                        <th class="text-end"><?= __('sale_paid') ?></th>
-                        <th><?= __('sale_booking_date') ?></th>
-                        <th>Approval</th>
+                        <th scope="col"><?= __('sale_booking_num') ?></th>
+                        <th scope="col"><?= __('sale_customer') ?></th>
+                        <th scope="col"><?= __('sale_plot') ?></th>
+                        <th scope="col"><?= __('sale_channel') ?></th>
+                        <th scope="col"><?= __('sale_status') ?></th>
+                        <th scope="col" class="text-end"><?= __('sale_agreement') ?></th>
+                        <th scope="col" class="text-end"><?= __('sale_paid') ?></th>
+                        <th scope="col"><?= __('sale_booking_date') ?></th>
+                        <th scope="col">Approval</th>
                     </tr>
                 </thead>
                 <tbody>

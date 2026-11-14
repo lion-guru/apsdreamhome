@@ -81,7 +81,7 @@ ob_start();
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>#</th><th>Challan No</th><th>BSR Code</th><th>Section</th><th>AY</th><th>Deposited</th><th>Date</th><th>Via</th><th>Status</th><th>Action</th></tr>
+                        <tr><th scope="col">#</th><th scope="col">Challan No</th><th scope="col">BSR Code</th><th scope="col">Section</th><th scope="col">AY</th><th scope="col">Deposited</th><th scope="col">Date</th><th scope="col">Via</th><th scope="col">Status</th><th scope="col">Action</th></tr>
                     </thead>
                     <tbody>
                     <?php foreach ($challans as $c): ?>

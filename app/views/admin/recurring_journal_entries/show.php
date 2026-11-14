@@ -31,7 +31,7 @@ $lines = $lines ?? [];
         <p class="text-muted">No lines defined.</p>
         <?php else: ?>
         <table class="table">
-            <thead><tr><th>#</th><th>Account</th><th>Debit</th><th>Credit</th><th>Description</th></tr></thead>
+            <thead><tr><th scope="col">#</th><th scope="col">Account</th><th scope="col">Debit</th><th scope="col">Credit</th><th scope="col">Description</th></tr></thead>
             <tbody>
             <?php $tdr = 0; $tcr = 0; foreach ($lines as $i => $l): $tdr += (float)($l['debit_amount'] ?? 0); $tcr += (float)($l['credit_amount'] ?? 0); ?>
             <tr>

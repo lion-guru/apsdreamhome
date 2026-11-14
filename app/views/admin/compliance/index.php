@@ -63,7 +63,7 @@ $pendingTds = $pendingTds ?? 0;
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead><tr><th>Colony</th><th>Quarter</th><th>Year</th><th>Progress</th><th>Amount Withdrawn</th><th>Status</th></tr></thead>
+                                <thead><tr><th scope="col">Colony</th><th scope="col">Quarter</th><th scope="col">Year</th><th scope="col">Progress</th><th scope="col">Amount Withdrawn</th><th scope="col">Status</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($reraFilings as $r): ?>
                                     <tr>
@@ -94,7 +94,7 @@ $pendingTds = $pendingTds ?? 0;
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-sm mb-0">
-                                <thead><tr><th>Period</th><th>Type</th><th>Tax</th><th>Status</th></tr></thead>
+                                <thead><tr><th scope="col">Period</th><th scope="col">Type</th><th scope="col">Tax</th><th scope="col">Status</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($gstReturns as $g): ?>
                                     <tr>

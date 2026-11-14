@@ -102,13 +102,13 @@
                 <table class="table table-hover mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="border-0 ps-4">Name</th>
-                            <th class="border-0">Contact</th>
-                            <th class="border-0">Type</th>
-                            <th class="border-0">Message</th>
-                            <th class="border-0">Status</th>
-                            <th class="border-0">Date</th>
-                            <th class="border-0 text-end pe-4">Actions</th>
+                            <th scope="col" class="border-0 ps-4">Name</th>
+                            <th scope="col" class="border-0">Contact</th>
+                            <th scope="col" class="border-0">Type</th>
+                            <th scope="col" class="border-0">Message</th>
+                            <th scope="col" class="border-0">Status</th>
+                            <th scope="col" class="border-0">Date</th>
+                            <th scope="col" class="border-0 text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

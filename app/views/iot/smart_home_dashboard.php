@@ -49,7 +49,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Device</th><th>Type</th><th>Location</th><th>Status</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Device</th><th scope="col">Type</th><th scope="col">Location</th><th scope="col">Status</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($iot_devices)): ?>
                                     <?php foreach ($iot_devices as $d): ?>

@@ -17,14 +17,14 @@ $page_title = 'Customer Feedback Pipeline';
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Source</th>
-                        <th>Customer</th>
-                        <th>Channel</th>
-                        <th>Status</th>
-                        <th>Rating</th>
-                        <th>Sent</th>
-                        <th>Action</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Source</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Channel</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Rating</th>
+                        <th scope="col">Sent</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>

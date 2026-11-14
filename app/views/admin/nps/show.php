@@ -90,12 +90,12 @@ ob_start();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Respondent</th>
-                            <th>Score</th>
-                            <th>Category</th>
-                            <th>Follow-up</th>
-                            <th>Date</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Respondent</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Follow-up</th>
+                            <th scope="col">Date</th>
                         </tr>
                     </thead>
                     <tbody>

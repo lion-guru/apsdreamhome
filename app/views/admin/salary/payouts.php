@@ -31,7 +31,7 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-dark"><tr>
-                        <th>#</th><th>Batch</th><th>Employee</th><th>Amount</th><th>Date</th><th>Method</th><th>Reference</th><th>Status</th><th>Actions</th>
+                        <th scope="col">#</th><th scope="col">Batch</th><th scope="col">Employee</th><th scope="col">Amount</th><th scope="col">Date</th><th scope="col">Method</th><th scope="col">Reference</th><th scope="col">Status</th><th scope="col">Actions</th>
                     </tr></thead>
                     <tbody>
                         <?php if (empty($payouts ?? [])): ?>
@@ -81,7 +81,7 @@
                     </div>
                     <div class="mb-3"><label class="form-label">Notes</label><textarea aria-label="Notes" name="notes" class="form-control" rows="2"></textarea></div>
                     <table class="table table-bordered">
-                        <thead class="table-light"><tr><th>Employee</th><th>Amount (₹)</th></tr></thead>
+                        <thead class="table-light"><tr><th scope="col">Employee</th><th scope="col">Amount (₹)</th></tr></thead>
                         <tbody id="payoutRows">
                             <tr>
                                 <td>

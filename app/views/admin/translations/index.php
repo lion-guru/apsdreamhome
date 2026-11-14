@@ -60,11 +60,11 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Key</th>
+                            <th scope="col">Key</th>
                             <?php foreach ($supported_languages as $code => $info): ?>
-                                <th><?= htmlspecialchars($info['name'] ?? '') ?> (<?= $code ?>)</th>
+                                <th scope="col"><?= htmlspecialchars($info['name'] ?? '') ?> (<?= $code ?>)</th>
                             <?php endforeach; ?>
-                            <th class="text-center">Actions</th>
+                            <th scope="col" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="translationsTableBody">

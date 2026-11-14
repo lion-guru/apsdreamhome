@@ -133,15 +133,15 @@
           <table class="table table-hover aps-cp-table mb-0">
             <thead class="tenant-header">
               <tr>
-                <th>#</th>
-                <th>Contract #</th>
-                <th>Type</th>
-                <th>Party</th>
-                <th>Period</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Days Left</th>
-                <th>Actions</th>
+                <th scope="col">#</th>
+                <th scope="col">Contract #</th>
+                <th scope="col">Type</th>
+                <th scope="col">Party</th>
+                <th scope="col">Period</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Status</th>
+                <th scope="col">Days Left</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>

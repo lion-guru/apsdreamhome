@@ -54,9 +54,9 @@
             <table class="table table-bordered table-sm">
               <thead class="table-light">
                 <tr>
-                  <th>name</th><th>email</th><th>phone</th><th>company</th>
-                  <th>city</th><th>source</th><th>status</th><th>priority</th>
-                  <th>lead_score</th><th>assigned_to</th>
+                  <th scope="col">name</th><th scope="col">email</th><th scope="col">phone</th><th scope="col">company</th>
+                  <th scope="col">city</th><th scope="col">source</th><th scope="col">status</th><th scope="col">priority</th>
+                  <th scope="col">lead_score</th><th scope="col">assigned_to</th>
                 </tr>
               </thead>
               <tbody>

@@ -57,13 +57,13 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light small">
                             <tr>
-                                <th>Month</th>
-                                <th>Colony &amp; Plot</th>
-                                <th>Area (Sqft)</th>
-                                <th class="text-end">Amount Due</th>
-                                <th class="text-end">Paid</th>
-                                <th>Status</th>
-                                <th class="text-center">Action</th>
+                                <th scope="col">Month</th>
+                                <th scope="col">Colony &amp; Plot</th>
+                                <th scope="col">Area (Sqft)</th>
+                                <th scope="col" class="text-end">Amount Due</th>
+                                <th scope="col" class="text-end">Paid</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>

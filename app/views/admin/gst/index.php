@@ -9,16 +9,16 @@
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Invoice #</th>
-                            <th>Client</th>
-                            <th>GSTIN</th>
-                            <th>Amount</th>
-                            <th>GST Type</th>
-                            <th>GST Rate</th>
-                            <th>E-Invoice</th>
-                            <th>E-Way Bill</th>
-                            <th>Actions</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Invoice #</th>
+                            <th scope="col">Client</th>
+                            <th scope="col">GSTIN</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">GST Type</th>
+                            <th scope="col">GST Rate</th>
+                            <th scope="col">E-Invoice</th>
+                            <th scope="col">E-Way Bill</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

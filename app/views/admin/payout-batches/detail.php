@@ -202,17 +202,17 @@
                     <table class="table table-dark table-hover mb-0">
                         <thead>
                             <tr >
-                                <th >#</th>
-                                <th >Beneficiary</th>
-                                <th >Type</th>
-                                <th >Gross (₹)</th>
-                                <th >TDS (₹)</th>
-                                <th >Admin (₹)</th>
-                                <th >Net (₹)</th>
-                                <th >Status</th>
-                                <th >Ref</th>
+                                <th scope="col" >#</th>
+                                <th scope="col" >Beneficiary</th>
+                                <th scope="col" >Type</th>
+                                <th scope="col" >Gross (₹)</th>
+                                <th scope="col" >TDS (₹)</th>
+                                <th scope="col" >Admin (₹)</th>
+                                <th scope="col" >Net (₹)</th>
+                                <th scope="col" >Status</th>
+                                <th scope="col" >Ref</th>
                                 <?php if ($batch['status'] === 'processing'): ?>
-                                    <th >Action</th>
+                                    <th scope="col" >Action</th>
                                 <?php endif; ?>
                             </tr>
                         </thead>

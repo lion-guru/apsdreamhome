@@ -27,10 +27,10 @@ $upgrades = $upgrades ?? [];
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Associate</th>
-                                <th>Old Rank</th>
-                                <th>New Rank</th>
-                                <th>Upgrade Date</th>
+                                <th scope="col">Associate</th>
+                                <th scope="col">Old Rank</th>
+                                <th scope="col">New Rank</th>
+                                <th scope="col">Upgrade Date</th>
                             </tr>
                         </thead>
                         <tbody>

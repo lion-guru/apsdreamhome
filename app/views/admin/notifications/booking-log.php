@@ -128,13 +128,13 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="border-0 ps-3">Date & Time</th>
-                                <th class="border-0">Customer</th>
-                                <th class="border-0">Type</th>
-                                <th class="border-0">Channel</th>
-                                <th class="border-0">Status</th>
-                                <th class="border-0">Subject</th>
-                                <th class="border-0 pe-3">Details</th>
+                                <th scope="col" class="border-0 ps-3">Date & Time</th>
+                                <th scope="col" class="border-0">Customer</th>
+                                <th scope="col" class="border-0">Type</th>
+                                <th scope="col" class="border-0">Channel</th>
+                                <th scope="col" class="border-0">Status</th>
+                                <th scope="col" class="border-0">Subject</th>
+                                <th scope="col" class="border-0 pe-3">Details</th>
                             </tr>
                         </thead>
                         <tbody>

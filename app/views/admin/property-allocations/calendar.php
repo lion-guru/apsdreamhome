@@ -20,7 +20,7 @@
         <div class="card-body aps-cp-card-body">
             <div class="table-responsive"><table class="table table-striped">
                 <thead>
-                    <tr><th>Plot #</th><th>Title</th><th>Location</th><th>Area (sqft)</th><th>Price</th><th>Status</th></tr>
+                    <tr><th scope="col">Plot #</th><th scope="col">Title</th><th scope="col">Location</th><th scope="col">Area (sqft)</th><th scope="col">Price</th><th scope="col">Status</th></tr>
                 </thead>
                 <tbody>
                     <?php foreach ($all_properties as $p): ?>

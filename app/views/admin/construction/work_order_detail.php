@@ -131,16 +131,16 @@ $pct = $order['completion_pct'] ?? 0;
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Bill #</th>
-                        <th>Bill Date</th>
-                        <th>Measurement (MB Ref)</th>
-                        <th>Gross Bill</th>
-                        <th>Retention (<?= $order['retention_pct'] ?>%)</th>
-                        <th>TDS (<?= $order['tds_pct'] ?>%)</th>
-                        <th>Net Payable</th>
-                        <th>Status</th>
-                        <th>Disbursed</th>
-                        <th class="text-end">Actions</th>
+                        <th scope="col">Bill #</th>
+                        <th scope="col">Bill Date</th>
+                        <th scope="col">Measurement (MB Ref)</th>
+                        <th scope="col">Gross Bill</th>
+                        <th scope="col">Retention (<?= $order['retention_pct'] ?>%)</th>
+                        <th scope="col">TDS (<?= $order['tds_pct'] ?>%)</th>
+                        <th scope="col">Net Payable</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Disbursed</th>
+                        <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

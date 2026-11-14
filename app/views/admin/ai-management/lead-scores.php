@@ -18,11 +18,11 @@ $scores = $scores ?? [];
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>Lead Name</th>
-                        <th>Email</th>
-                        <th>AI Score</th>
-                        <th>Scored At</th>
-                        <th class="text-end">Actions</th>
+                        <th scope="col">Lead Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">AI Score</th>
+                        <th scope="col">Scored At</th>
+                        <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

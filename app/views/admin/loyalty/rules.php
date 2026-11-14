@@ -21,11 +21,11 @@ $rules = $rules ?? [];
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Event</th>
-                                <th>Points Awarded</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Event</th>
+                                <th scope="col">Points Awarded</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

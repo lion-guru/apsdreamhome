@@ -119,11 +119,11 @@ ob_start();
                 <table class="table table-sm mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Name</th>
-                            <th>Contact</th>
-                            <th>Channel</th>
-                            <th>Status</th>
-                            <th>Delivered At</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Channel</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Delivered At</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -43,7 +43,7 @@ $page_title = $page_title ?? 'users';
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Name</th><th>Email</th><th>Phone</th><th>Department</th><th>Designation</th><th>Salary</th><th>Status</th><th class="text-end">Actions</th></tr>
+                    <tr><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Phone</th><th scope="col">Department</th><th scope="col">Designation</th><th scope="col">Salary</th><th scope="col">Status</th><th scope="col" class="text-end">Actions</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($users)): ?>

@@ -88,15 +88,15 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <table class="table table-bordered table-sm m-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Level</th>
-                        <th>Direct %</th>
-                        <th>Team %</th>
-                        <th>Level Bonus %</th>
-                        <th>Matching %</th>
-                        <th>Leadership %</th>
-                        <th>Performance %</th>
-                        <th>Total %</th>
-                        <th>Amount (₹)</th>
+                        <th scope="col">Level</th>
+                        <th scope="col">Direct %</th>
+                        <th scope="col">Team %</th>
+                        <th scope="col">Level Bonus %</th>
+                        <th scope="col">Matching %</th>
+                        <th scope="col">Leadership %</th>
+                        <th scope="col">Performance %</th>
+                        <th scope="col">Total %</th>
+                        <th scope="col">Amount (₹)</th>
                     </tr>
                 </thead>
                 <tbody id="calcBody">

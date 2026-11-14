@@ -125,7 +125,7 @@
                     if (!empty($cats)):
                     ?>
                     <div class="table-responsive"><table class="table table-sm table-borderless mb-0">
-                        <thead><tr><th><?= __('dash_cf_category') ?></th><th class="text-end text-success"><?= __('dash_cf_inflow') ?></th><th class="text-end text-danger"><?= __('dash_cf_outflow') ?></th></tr></thead>
+                        <thead><tr><th scope="col"><?= __('dash_cf_category') ?></th><th scope="col" class="text-end text-success"><?= __('dash_cf_inflow') ?></th><th scope="col" class="text-end text-danger"><?= __('dash_cf_outflow') ?></th></tr></thead>
                         <tbody>
                         <?php foreach ($cats as $cat => $vals): ?>
                             <tr>
@@ -174,7 +174,7 @@
         <div class="aps-cp-card-body">
             <div class="table-responsive"><table class="table table-hover align-middle">
                 <thead class="table-light">
-                    <tr><th><?php echo __('finance_date'); ?></th><th><?php echo __('finance_type'); ?></th><th><?php echo __('finance_party'); ?></th><th><?php echo __('finance_mode'); ?></th><th class="text-end"><?php echo __('finance_amount'); ?></th><th><?php echo __('finance_voucher'); ?></th></tr>
+                    <tr><th scope="col"><?php echo __('finance_date'); ?></th><th scope="col"><?php echo __('finance_type'); ?></th><th scope="col"><?php echo __('finance_party'); ?></th><th scope="col"><?php echo __('finance_mode'); ?></th><th scope="col" class="text-end"><?php echo __('finance_amount'); ?></th><th scope="col"><?php echo __('finance_voucher'); ?></th></tr>
                 </thead>
                 <tbody>
                 <?php if (empty($recent_txns)): ?>

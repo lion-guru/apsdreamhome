@@ -43,7 +43,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <?php if (!empty($result['requests'])): ?>
                                         <div class="table-responsive">
                                             <table class="table table-sm">
-                                                <thead><tr><th><?= __('rera_table_id', [], 'ID') ?></th><th><?= __('rera_table_amount', [], 'Amount') ?></th><th><?= __('rera_table_status', [], 'Status') ?></th><th><?= __('rera_table_number', [], 'RERA #') ?></th><th><?= __('rera_table_date', [], 'Date') ?></th></tr></thead>
+                                                <thead><tr><th scope="col"><?= __('rera_table_id', [], 'ID') ?></th><th scope="col"><?= __('rera_table_amount', [], 'Amount') ?></th><th scope="col"><?= __('rera_table_status', [], 'Status') ?></th><th scope="col"><?= __('rera_table_number', [], 'RERA #') ?></th><th scope="col"><?= __('rera_table_date', [], 'Date') ?></th></tr></thead>
                                                 <tbody>
                                                     <?php foreach ($result['requests'] as $req): ?>
                                                     <tr>

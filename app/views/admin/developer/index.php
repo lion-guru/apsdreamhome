@@ -55,7 +55,7 @@ $webhooks = $webhooks ?? [];
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead><tr><th>App Name</th><th>Email</th><th>Status</th><th>Created</th></tr></thead>
+                                <thead><tr><th scope="col">App Name</th><th scope="col">Email</th><th scope="col">Status</th><th scope="col">Created</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($apps as $app): ?>
                                     <tr>

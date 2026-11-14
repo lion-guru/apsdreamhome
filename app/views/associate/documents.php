@@ -97,11 +97,11 @@ $statusBadges = [
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th><?= __('assoc_doc_col_type', [], 'Type') ?></th>
-                            <th><?= __('assoc_doc_col_name', [], 'Document Name') ?></th>
-                            <th><?= __('assoc_doc_col_date', [], 'Uploaded') ?></th>
-                            <th><?= __('assoc_doc_col_status', [], 'Status') ?></th>
-                            <th><?= __('assoc_doc_col_actions', [], 'Actions') ?></th>
+                            <th scope="col"><?= __('assoc_doc_col_type', [], 'Type') ?></th>
+                            <th scope="col"><?= __('assoc_doc_col_name', [], 'Document Name') ?></th>
+                            <th scope="col"><?= __('assoc_doc_col_date', [], 'Uploaded') ?></th>
+                            <th scope="col"><?= __('assoc_doc_col_status', [], 'Status') ?></th>
+                            <th scope="col"><?= __('assoc_doc_col_actions', [], 'Actions') ?></th>
                         </tr>
                     </thead>
                     <tbody>

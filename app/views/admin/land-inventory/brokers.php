@@ -124,14 +124,14 @@ $brokers = $brokers ?? [];
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Phone / PAN</th>
-                                    <th>Region</th>
-                                    <th>Commission Model</th>
-                                    <th>KYC</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Actions</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Phone / PAN</th>
+                                    <th scope="col">Region</th>
+                                    <th scope="col">Commission Model</th>
+                                    <th scope="col">KYC</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col" class="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

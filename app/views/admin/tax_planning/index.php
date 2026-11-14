@@ -109,13 +109,13 @@ $tds = $tds ?? ['challans' => [], 'total_paid' => 0, 'count' => 0];
                         <div class="card-header"><h3 class="card-title">Profit Summary (<?php echo htmlspecialchars($fy); ?>)</h3></div>
                         <div class="card-body p-0">
                             <table class="table mb-0">
-                                <tr><th>Income</th><td class="text-right"><?php echo number_format((float)($summary['income'] ?? 0), 2); ?></td></tr>
-                                <tr><th>Expense</th><td class="text-right"><?php echo number_format((float)($summary['expense'] ?? 0), 2); ?></td></tr>
-                                <tr><th>Profit</th><td class="text-right font-weight-bold"><?php echo number_format((float)($summary['profit'] ?? 0), 2); ?></td></tr>
-                                <tr><th>Tax @ <?php echo round(((float)($summary['rate'] ?? 0)) * 100, 2); ?>%</th><td class="text-right font-weight-bold"><?php echo number_format((float)($summary['tax'] ?? 0), 2); ?></td></tr>
-                                <tr><th>TDS Collected</th><td class="text-right"><?php echo number_format((float)($summary['tds_collected'] ?? 0), 2); ?></td></tr>
-                                <tr><th>Income Records</th><td class="text-right"><?php echo (int)($summary['income_count'] ?? 0); ?></td></tr>
-                                <tr><th>Expense Records</th><td class="text-right"><?php echo (int)($summary['expense_count'] ?? 0); ?></td></tr>
+                                <tr><th scope="col">Income</th><td class="text-right"><?php echo number_format((float)($summary['income'] ?? 0), 2); ?></td></tr>
+                                <tr><th scope="col">Expense</th><td class="text-right"><?php echo number_format((float)($summary['expense'] ?? 0), 2); ?></td></tr>
+                                <tr><th scope="col">Profit</th><td class="text-right font-weight-bold"><?php echo number_format((float)($summary['profit'] ?? 0), 2); ?></td></tr>
+                                <tr><th scope="col">Tax @ <?php echo round(((float)($summary['rate'] ?? 0)) * 100, 2); ?>%</th><td class="text-right font-weight-bold"><?php echo number_format((float)($summary['tax'] ?? 0), 2); ?></td></tr>
+                                <tr><th scope="col">TDS Collected</th><td class="text-right"><?php echo number_format((float)($summary['tds_collected'] ?? 0), 2); ?></td></tr>
+                                <tr><th scope="col">Income Records</th><td class="text-right"><?php echo (int)($summary['income_count'] ?? 0); ?></td></tr>
+                                <tr><th scope="col">Expense Records</th><td class="text-right"><?php echo (int)($summary['expense_count'] ?? 0); ?></td></tr>
                             </table>
                         </div>
                     </div>
@@ -125,7 +125,7 @@ $tds = $tds ?? ['challans' => [], 'total_paid' => 0, 'count' => 0];
                         <div class="card-header"><h3 class="card-title">TDS Challans</h3></div>
                         <div class="card-body p-0">
                             <table class="table table-sm mb-0">
-                                <thead><tr><th>Quarter</th><th>Deposit Date</th><th>Amount</th><th>Status</th></tr></thead>
+                                <thead><tr><th scope="col">Quarter</th><th scope="col">Deposit Date</th><th scope="col">Amount</th><th scope="col">Status</th></tr></thead>
                                 <tbody>
                                 <?php if (empty($tds['challans'])) : ?>
                                     <tr><td colspan="4" class="text-center text-muted py-2">No TDS challans</td></tr>
@@ -152,14 +152,14 @@ $tds = $tds ?? ['challans' => [], 'total_paid' => 0, 'count' => 0];
                     <table class="table table-striped mb-0">
                         <thead>
                             <tr>
-                                <th>Q</th>
-                                <th>Due Date</th>
-                                <th>Cumulative %</th>
-                                <th>Due Amount</th>
-                                <th>Paid</th>
-                                <th>Status</th>
-                                <th>Challan Ref</th>
-                                <th class="text-right">Action</th>
+                                <th scope="col">Q</th>
+                                <th scope="col">Due Date</th>
+                                <th scope="col">Cumulative %</th>
+                                <th scope="col">Due Amount</th>
+                                <th scope="col">Paid</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Challan Ref</th>
+                                <th scope="col" class="text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody>

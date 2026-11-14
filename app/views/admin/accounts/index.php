@@ -111,7 +111,7 @@ $incomeByCategory = $income_by_category ?? [];
                     <?php else: ?>
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
-                            <tr><th>Category</th><th class="text-end">Amount</th><th class="text-end">Count</th></tr>
+                            <tr><th scope="col">Category</th><th scope="col" class="text-end">Amount</th><th scope="col" class="text-end">Count</th></tr>
                         </thead>
                         <tbody>
                         <?php foreach ($incomeByCategory as $inc): ?>
@@ -138,7 +138,7 @@ $incomeByCategory = $income_by_category ?? [];
                     <?php else: ?>
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
-                            <tr><th>Category</th><th class="text-end">Amount</th><th class="text-end">Count</th></tr>
+                            <tr><th scope="col">Category</th><th scope="col" class="text-end">Amount</th><th scope="col" class="text-end">Count</th></tr>
                         </thead>
                         <tbody>
                         <?php foreach ($expenseByCategory as $exp): ?>
@@ -170,7 +170,7 @@ $incomeByCategory = $income_by_category ?? [];
                     <?php else: ?>
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
-                            <tr><th>Date</th><th>Category</th><th>Customer</th><th class="text-end">Amount</th></tr>
+                            <tr><th scope="col">Date</th><th scope="col">Category</th><th scope="col">Customer</th><th scope="col" class="text-end">Amount</th></tr>
                         </thead>
                         <tbody>
                         <?php foreach ($recentIncome as $inc): ?>
@@ -199,7 +199,7 @@ $incomeByCategory = $income_by_category ?? [];
                     <?php else: ?>
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
-                            <tr><th>Date</th><th>Category</th><th>Description</th><th class="text-end">Amount</th></tr>
+                            <tr><th scope="col">Date</th><th scope="col">Category</th><th scope="col">Description</th><th scope="col" class="text-end">Amount</th></tr>
                         </thead>
                         <tbody>
                         <?php foreach ($recentExpenses as $exp): ?>

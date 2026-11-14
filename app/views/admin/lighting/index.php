@@ -148,15 +148,15 @@ $currentColony = $current_colony ?? null;
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light text-muted small text-uppercase">
                         <tr>
-                            <th class="ps-3">Audit Date</th>
-                            <th>Colony</th>
-                            <th>Feeder Pillar</th>
-                            <th>Timer Mode</th>
-                            <th>Poles Functional / Total</th>
-                            <th>Uptime %</th>
-                            <th>Phase Balance</th>
-                            <th>Electrician</th>
-                            <th class="text-end pe-3">Actions</th>
+                            <th scope="col" class="ps-3">Audit Date</th>
+                            <th scope="col">Colony</th>
+                            <th scope="col">Feeder Pillar</th>
+                            <th scope="col">Timer Mode</th>
+                            <th scope="col">Poles Functional / Total</th>
+                            <th scope="col">Uptime %</th>
+                            <th scope="col">Phase Balance</th>
+                            <th scope="col">Electrician</th>
+                            <th scope="col" class="text-end pe-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

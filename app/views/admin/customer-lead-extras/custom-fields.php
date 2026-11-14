@@ -96,14 +96,14 @@ $page_description = 'Manage custom fields for lead tracking';
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>Field Name</th>
-                            <th>Field Label</th>
-                            <th>Type</th>
-                            <th>Group</th>
-                            <th>Required</th>
-                            <th>Active</th>
-                            <th>Sort Order</th>
-                            <th>Actions</th>
+                            <th scope="col">Field Name</th>
+                            <th scope="col">Field Label</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Group</th>
+                            <th scope="col">Required</th>
+                            <th scope="col">Active</th>
+                            <th scope="col">Sort Order</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

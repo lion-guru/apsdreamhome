@@ -69,14 +69,14 @@ foreach ($benefits as $b) { $rankColors[strtolower($b['rank_name'])] = $b['color
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Rank</th>
-                                    <th class="text-center">Members</th>
-                                    <th class="text-center">Direct Sale %</th>
-                                    <th class="text-center">L1 %</th>
-                                    <th class="text-center">L2 %</th>
-                                    <th class="text-center">L3 %</th>
-                                    <th class="text-end">Min Volume</th>
-                                    <th class="text-end">Min Legs</th>
+                                    <th scope="col">Rank</th>
+                                    <th scope="col" class="text-center">Members</th>
+                                    <th scope="col" class="text-center">Direct Sale %</th>
+                                    <th scope="col" class="text-center">L1 %</th>
+                                    <th scope="col" class="text-center">L2 %</th>
+                                    <th scope="col" class="text-center">L3 %</th>
+                                    <th scope="col" class="text-end">Min Volume</th>
+                                    <th scope="col" class="text-end">Min Legs</th>
                                 </tr>
                             </thead>
                             <tbody>

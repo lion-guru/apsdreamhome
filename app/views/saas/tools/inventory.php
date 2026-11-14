@@ -41,12 +41,12 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-3">Unit / Plot No.</th>
-                            <th>Project</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Progress</th>
-                            <th class="text-end pe-3">Action</th>
+                            <th scope="col" class="ps-3">Unit / Plot No.</th>
+                            <th scope="col">Project</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Progress</th>
+                            <th scope="col" class="text-end pe-3">Action</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -15,7 +15,7 @@
             <?php if (empty($users)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No customer data available</p></div>
             <?php else: ?>
-            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Properties</th><th>Total Spent</th><th>Joined</th><th>Status</th></tr></thead>
+            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th scope="col">Customer</th><th scope="col">Email</th><th scope="col">Phone</th><th scope="col">Properties</th><th scope="col">Total Spent</th><th scope="col">Joined</th><th scope="col">Status</th></tr></thead>
                 <tbody><?php foreach ($users as $c): ?><tr>
                     <td><?= htmlspecialchars($c['name'] ?? '-') ?></td><td><?= htmlspecialchars($c['email'] ?? '-') ?></td><td><?= htmlspecialchars($c['phone'] ?? '-') ?></td>
                     <td><?= number_format($c['properties_count'] ?? 0) ?></td><td>₹<?= number_format($c['total_spent'] ?? 0) ?></td>

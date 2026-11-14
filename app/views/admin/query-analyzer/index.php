@@ -56,14 +56,14 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <table class="table table-hover" id="tbl-slow-queries">
                             <thead>
                                 <tr>
-                                    <th>Query (truncated)</th>
-                                    <th class="text-center">Avg Time (ms)</th>
-                                    <th class="text-center">Max Time (ms)</th>
-                                    <th class="text-center">Exec Count</th>
-                                    <th class="text-center">Rows Sent</th>
-                                    <th class="text-center">Rows Examined</th>
-                                    <th class="text-center">DB</th>
-                                    <th></th>
+                                    <th scope="col">Query (truncated)</th>
+                                    <th scope="col" class="text-center">Avg Time (ms)</th>
+                                    <th scope="col" class="text-center">Max Time (ms)</th>
+                                    <th scope="col" class="text-center">Exec Count</th>
+                                    <th scope="col" class="text-center">Rows Sent</th>
+                                    <th scope="col" class="text-center">Rows Examined</th>
+                                    <th scope="col" class="text-center">DB</th>
+                                    <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody id="slow-queries-body"></tbody>
@@ -84,13 +84,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <table class="table table-hover" id="tbl-table-stats">
                             <thead>
                                 <tr>
-                                    <th>Table</th>
-                                    <th class="text-center">Rows</th>
-                                    <th class="text-center">Data Size</th>
-                                    <th class="text-center">Index Size</th>
-                                    <th class="text-center">Total Size</th>
-                                    <th class="text-center">Engine</th>
-                                    <th class="text-center">Updated</th>
+                                    <th scope="col">Table</th>
+                                    <th scope="col" class="text-center">Rows</th>
+                                    <th scope="col" class="text-center">Data Size</th>
+                                    <th scope="col" class="text-center">Index Size</th>
+                                    <th scope="col" class="text-center">Total Size</th>
+                                    <th scope="col" class="text-center">Engine</th>
+                                    <th scope="col" class="text-center">Updated</th>
                                 </tr>
                             </thead>
                             <tbody id="table-stats-body"></tbody>
@@ -111,13 +111,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <table class="table table-hover" id="tbl-index-stats">
                             <thead>
                                 <tr>
-                                    <th>Table</th>
-                                    <th>Index</th>
-                                    <th class="text-center">Column</th>
-                                    <th class="text-center">Seq</th>
-                                    <th class="text-center">Unique</th>
-                                    <th class="text-center">Type</th>
-                                    <th class="text-center">Cardinality</th>
+                                    <th scope="col">Table</th>
+                                    <th scope="col">Index</th>
+                                    <th scope="col" class="text-center">Column</th>
+                                    <th scope="col" class="text-center">Seq</th>
+                                    <th scope="col" class="text-center">Unique</th>
+                                    <th scope="col" class="text-center">Type</th>
+                                    <th scope="col" class="text-center">Cardinality</th>
                                 </tr>
                             </thead>
                             <tbody id="index-stats-body"></tbody>
@@ -156,15 +156,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                         <table class="table table-hover" id="tbl-processes">
                             <thead>
                                 <tr>
-                                    <th class="text-center">ID</th>
-                                    <th>User</th>
-                                    <th>Host</th>
-                                    <th>DB</th>
-                                    <th>Command</th>
-                                    <th class="text-center">Time (s)</th>
-                                    <th>State</th>
-                                    <th>Info (truncated)</th>
-                                    <th></th>
+                                    <th scope="col" class="text-center">ID</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Host</th>
+                                    <th scope="col">DB</th>
+                                    <th scope="col">Command</th>
+                                    <th scope="col" class="text-center">Time (s)</th>
+                                    <th scope="col">State</th>
+                                    <th scope="col">Info (truncated)</th>
+                                    <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody id="processes-body"></tbody>
@@ -199,9 +199,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <table class="table table-sm" id="explainTable">
                         <thead>
                             <tr>
-                                <th>id</th><th>select_type</th><th>table</th><th>partitions</th>
-                                <th>type</th><th>possible_keys</th><th>key</th><th>key_len</th>
-                                <th>ref</th><th>rows</th><th>filtered</th><th>Extra</th>
+                                <th scope="col">id</th><th scope="col">select_type</th><th scope="col">table</th><th scope="col">partitions</th>
+                                <th scope="col">type</th><th scope="col">possible_keys</th><th scope="col">key</th><th scope="col">key_len</th>
+                                <th scope="col">ref</th><th scope="col">rows</th><th scope="col">filtered</th><th scope="col">Extra</th>
                             </tr>
                         </thead>
                         <tbody id="explainBody"></tbody>

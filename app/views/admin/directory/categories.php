@@ -45,7 +45,7 @@
                     <div class="table-responsive">
                         <table class="table table-striped table-hover mb-0">
                             <thead class="table-dark">
-                                <tr><th>ID</th><th>Icon</th><th>Name</th><th>Slug</th><th>Listings</th><th>Active</th><th>Order</th><th>Actions</th></tr>
+                                <tr><th scope="col">ID</th><th scope="col">Icon</th><th scope="col">Name</th><th scope="col">Slug</th><th scope="col">Listings</th><th scope="col">Active</th><th scope="col">Order</th><th scope="col">Actions</th></tr>
                             </thead>
                             <tbody>
                                 <?php if (empty($categories ?? [])): ?>

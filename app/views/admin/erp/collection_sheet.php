@@ -51,7 +51,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
-                            <tr><th>#</th><th>Booking</th><th>Plot</th><th>Customer</th><th>Due Date</th><th class="text-end">Due</th><th class="text-end">Paid</th><th class="text-end">Outstanding</th><th>Status</th></tr>
+                            <tr><th scope="col">#</th><th scope="col">Booking</th><th scope="col">Plot</th><th scope="col">Customer</th><th scope="col">Due Date</th><th scope="col" class="text-end">Due</th><th scope="col" class="text-end">Paid</th><th scope="col" class="text-end">Outstanding</th><th scope="col">Status</th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($rows as $r):

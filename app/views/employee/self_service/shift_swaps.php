@@ -123,13 +123,13 @@ $completed_count = $completed_count ?? 0;
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Date</th>
-                                        <th>My Shift</th>
-                                        <th>Colleague</th>
-                                        <th>Colleague's Shift</th>
-                                        <th>Type</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">My Shift</th>
+                                        <th scope="col">Colleague</th>
+                                        <th scope="col">Colleague's Shift</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

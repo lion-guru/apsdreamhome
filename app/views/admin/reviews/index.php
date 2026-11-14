@@ -67,15 +67,15 @@ ob_start();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Customer</th>
-                            <th>Property</th>
-                            <th>Rating</th>
-                            <th>Review</th>
-                            <th>Helpful</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Property</th>
+                            <th scope="col">Rating</th>
+                            <th scope="col">Review</th>
+                            <th scope="col">Helpful</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -160,15 +160,15 @@ ob_start();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Customer</th>
-                            <th>Project / Location</th>
-                            <th>Rating</th>
-                            <th>Content</th>
-                            <th>Status</th>
-                            <th>Featured</th>
-                            <th>Date</th>
-                            <th>Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Project / Location</th>
+                            <th scope="col">Rating</th>
+                            <th scope="col">Content</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Featured</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -190,7 +190,7 @@ ob_start();
                                     <td>
                                         <strong><?= htmlspecialchars($t['customer_name'] ?? '') ?></strong>
                                         <?php if (!empty($t['client_photo'])): ?>
-                                            <br><img src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="rounded-circle mt-1" />
+                                            <br><img alt="" src="<?= BASE_URL ?>/assets/images/placeholder/property.svg" class="rounded-circle mt-1" />
                                         <?php endif; ?>
                                     </td>
                                     <td>

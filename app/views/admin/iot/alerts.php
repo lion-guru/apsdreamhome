@@ -106,7 +106,7 @@ $typeLabel = [
             <table class="table table-hover align-middle mb-0 small">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th><th>Severity</th><th>Alert</th><th>Device</th><th>Message</th><th>Age</th><th class="text-end">Action</th>
+                        <th scope="col">#</th><th scope="col">Severity</th><th scope="col">Alert</th><th scope="col">Device</th><th scope="col">Message</th><th scope="col">Age</th><th scope="col" class="text-end">Action</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -138,12 +138,12 @@ $closed = count(array_filter($grievances, fn($g) => $g['status'] === 'closed'));
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light small text-uppercase text-muted">
                             <tr>
-                                <th class="ps-3">Grievance #</th>
-                                <th>Subject & Category</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th>Submitted On</th>
-                                <th class="text-end pe-3">Action</th>
+                                <th scope="col" class="ps-3">Grievance #</th>
+                                <th scope="col">Subject & Category</th>
+                                <th scope="col">Priority</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Submitted On</th>
+                                <th scope="col" class="text-end pe-3">Action</th>
                             </tr>
                         </thead>
                         <tbody>

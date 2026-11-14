@@ -9,7 +9,7 @@
 
 <h2>Grouped by Transport/Class</h2>
 <table border="1" cellpadding="6">
-<tr><th>Transport</th><th>Class</th><th>Count</th><th>First</th><th>Last</th></tr>
+<tr><th scope="col">Transport</th><th scope="col">Class</th><th scope="col">Count</th><th scope="col">First</th><th scope="col">Last</th></tr>
 <?php foreach ($byTransport as $r): ?>
 <tr><td><?= htmlspecialchars($r['queue_name']) ?></td><td><?= htmlspecialchars($r['class_name'] ?? '-') ?></td><td><?= $r['count'] ?></td><td><?= $r['first_failed'] ?></td><td><?= $r['last_failed'] ?></td></tr>
 <?php endforeach; ?>
@@ -21,7 +21,7 @@
   <button type="submit">Cleanup Old (> <?= $retentionDays ?> days)</button>
 </form>
 <table border="1" cellpadding="6">
-<tr><th>ID</th><th>Queue</th><th>Class</th><th>Available</th><th>Created</th><th>Body preview</th><th>Actions</th></tr>
+<tr><th scope="col">ID</th><th scope="col">Queue</th><th scope="col">Class</th><th scope="col">Available</th><th scope="col">Created</th><th scope="col">Body preview</th><th scope="col">Actions</th></tr>
 <?php foreach ($failed as $m): 
   $body = json_decode($m['body'], true);
   $class = $body['class'] ?? '-';

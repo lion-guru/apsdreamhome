@@ -15,7 +15,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
-                            <tr><th>Category</th><th>Articles</th><th>Actions</th></tr>
+                            <tr><th scope="col">Category</th><th scope="col">Articles</th><th scope="col">Actions</th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($categories as $cat): ?>

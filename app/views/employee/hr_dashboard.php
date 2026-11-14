@@ -56,7 +56,7 @@
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($attendance)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
-                            <thead><tr><th>Employee</th><th>Date</th><th>Status</th></tr></thead>
+                            <thead><tr><th scope="col">Employee</th><th scope="col">Date</th><th scope="col">Status</th></tr></thead>
                             <tbody>
                                 <?php foreach ($attendance as $a): ?>
                                 <tr>

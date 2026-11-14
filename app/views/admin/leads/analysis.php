@@ -16,7 +16,7 @@
                         <p class="text-muted text-center py-3">No data</p>
                     <?php else: ?>
                         <div class="table-responsive"><table class="table table-sm mb-0">
-                            <thead><tr><th>Source</th><th>Total</th><th>Converted</th><th>Rate</th></tr></thead>
+                            <thead><tr><th scope="col">Source</th><th scope="col">Total</th><th scope="col">Converted</th><th scope="col">Rate</th></tr></thead>
                             <tbody>
                             <?php foreach ($by_source as $bs): ?>
                                 <tr>
@@ -40,7 +40,7 @@
                         <p class="text-muted text-center py-3">No data</p>
                     <?php else: ?>
                         <div class="table-responsive"><table class="table table-sm mb-0">
-                            <thead><tr><th>Month</th><th>Total</th><th>Converted</th><th>Rate</th></tr></thead>
+                            <thead><tr><th scope="col">Month</th><th scope="col">Total</th><th scope="col">Converted</th><th scope="col">Rate</th></tr></thead>
                             <tbody>
                             <?php foreach ($monthly as $m): ?>
                                 <tr>
@@ -62,7 +62,7 @@
             <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-map-marker-alt me-2"></i>Top Cities</h2></div>
             <div class="card-body p-0">
                 <div class="table-responsive"><table class="table table-sm mb-0">
-                    <thead><tr><th>City</th><th>Count</th></tr></thead>
+                    <thead><tr><th scope="col">City</th><th scope="col">Count</th></tr></thead>
                     <tbody>
                     <?php foreach ($by_city as $c): ?>
                         <tr><td><?= htmlspecialchars($c['city'] ?? '') ?></td><td><strong><?= $c['cnt'] ?></strong></td></tr>

@@ -14,7 +14,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Leads</th><th>Inquiries</th><th>Registered</th></tr></thead>
+                        <thead><tr><th scope="col">#</th><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Phone</th><th scope="col">Leads</th><th scope="col">Inquiries</th><th scope="col">Registered</th></tr></thead>
                         <tbody>
                         <?php foreach ($customers as $c): ?>
                             <tr>

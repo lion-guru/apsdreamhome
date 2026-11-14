@@ -68,7 +68,7 @@ $csrf_token = $csrf_token ?? '';
                 </div>
                 <div class="aps-cp-card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0" id="trackATable">
-                        <thead><tr><th>Beneficiary</th><th>Rate</th><th class="text-end">Amount</th></tr></thead>
+                        <thead><tr><th scope="col">Beneficiary</th><th scope="col">Rate</th><th scope="col" class="text-end">Amount</th></tr></thead>
                         <tbody></tbody>
                     </table></div>
                 </div>
@@ -81,7 +81,7 @@ $csrf_token = $csrf_token ?? '';
                 </div>
                 <div class="aps-cp-card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0" id="trackBTable">
-                        <thead><tr><th>Beneficiary</th><th>Rate</th><th class="text-end">Amount</th></tr></thead>
+                        <thead><tr><th scope="col">Beneficiary</th><th scope="col">Rate</th><th scope="col" class="text-end">Amount</th></tr></thead>
                         <tbody></tbody>
                     </table></div>
                 </div>
@@ -94,7 +94,7 @@ $csrf_token = $csrf_token ?? '';
                 </div>
                 <div class="aps-cp-card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0" id="trackCTable">
-                        <thead><tr><th>Description</th><th>Rate</th><th class="text-end">Amount</th></tr></thead>
+                        <thead><tr><th scope="col">Description</th><th scope="col">Rate</th><th scope="col" class="text-end">Amount</th></tr></thead>
                         <tbody></tbody>
                     </table></div>
                 </div>

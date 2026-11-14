@@ -17,7 +17,7 @@
         <div class="card-header aps-cp-card-header"><i class="fas fa-table"></i> Period-wise Analytics</div>
         <div class="card-body p-0">
             <div class="table-responsive"><table class="table table-striped mb-0">
-                <thead><tr><th>Associate</th><th>Period</th><th>Earned</th><th>Paid</th><th>Pending</th><th>Direct</th><th>Team</th><th>Bonus</th></tr></thead>
+                <thead><tr><th scope="col">Associate</th><th scope="col">Period</th><th scope="col">Earned</th><th scope="col">Paid</th><th scope="col">Pending</th><th scope="col">Direct</th><th scope="col">Team</th><th scope="col">Bonus</th></tr></thead>
                 <tbody>
                     <?php if (empty($analytics ?? [])): ?>
                     <tr>

@@ -109,17 +109,17 @@
                     <table class="table table-dark table-hover mb-0">
                         <thead>
                             <tr >
-                                <th >#</th>
-                                <th >Type</th>
-                                <th >Beneficiary</th>
-                                <th >Source</th>
-                                <th >Original (₹)</th>
-                                <th >New (₹)</th>
-                                <th >Diff (₹)</th>
-                                <th >Status</th>
-                                <th >Requested By</th>
-                                <th >Date</th>
-                                <th >Action</th>
+                                <th scope="col" >#</th>
+                                <th scope="col" >Type</th>
+                                <th scope="col" >Beneficiary</th>
+                                <th scope="col" >Source</th>
+                                <th scope="col" >Original (₹)</th>
+                                <th scope="col" >New (₹)</th>
+                                <th scope="col" >Diff (₹)</th>
+                                <th scope="col" >Status</th>
+                                <th scope="col" >Requested By</th>
+                                <th scope="col" >Date</th>
+                                <th scope="col" >Action</th>
                             </tr>
                         </thead>
                         <tbody>

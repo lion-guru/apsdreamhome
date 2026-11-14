@@ -62,10 +62,10 @@ $form16_list = $form16_list ?? [];
                                 <table class="table table-hover mb-0">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Financial Year</th>
-                                            <th>Status</th>
-                                            <th>Generated On</th>
-                                            <th class="text-center">Actions</th>
+                                            <th scope="col">Financial Year</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Generated On</th>
+                                            <th scope="col" class="text-center">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>

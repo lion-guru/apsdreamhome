@@ -121,14 +121,14 @@ foreach ($claims as $c) {
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr style="font-size: 12px;">
-                            <th>ID</th>
-                            <th>Associate Details</th>
-                            <th>Claim Type</th>
-                            <th>Month / Target</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Notes</th>
-                            <th class="text-end">Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Associate Details</th>
+                            <th scope="col">Claim Type</th>
+                            <th scope="col">Month / Target</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Notes</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 13px;">

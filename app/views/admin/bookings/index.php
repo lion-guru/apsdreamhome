@@ -200,19 +200,19 @@ $active_page = 'bookings';
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th width="30"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
-                        <th>
+                        <th scope="col" width="30"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
+                        <th scope="col">
                             <a href="?sort=booking_number&order=<?= $filters['order'] == 'ASC' ? 'DESC' : 'ASC' ?>&<?= http_build_query(array_diff_key($filters, ['sort' => '', 'order' => ''])) ?>">
                                 Booking # <i class="fas fa-sort"></i>
                             </a>
                         </th>
-                        <th><?= __('admin_property') ?></th>
-                        <th><?= __('admin_customer') ?></th>
-                        <th><?= __('admin_associate') ?></th>
-                        <th><?= __('admin_amount') ?></th>
-                        <th><?= __('admin_status') ?></th>
-                        <th><?= __('admin_date') ?></th>
-                        <th><?= __('admin_actions') ?></th>
+                        <th scope="col"><?= __('admin_property') ?></th>
+                        <th scope="col"><?= __('admin_customer') ?></th>
+                        <th scope="col"><?= __('admin_associate') ?></th>
+                        <th scope="col"><?= __('admin_amount') ?></th>
+                        <th scope="col"><?= __('admin_status') ?></th>
+                        <th scope="col"><?= __('admin_date') ?></th>
+                        <th scope="col"><?= __('admin_actions') ?></th>
                     </tr>
                 </thead>
                 <tbody>

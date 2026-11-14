@@ -101,12 +101,12 @@
               <table class="table table-hover aps-cp-table mb-0">
                 <thead class="tenant-header">
                   <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th class="text-end">Debit (Due)</th>
-                    <th class="text-end">Credit (Paid)</th>
-                    <th class="text-end">Balance</th>
-                    <th>Status</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Description</th>
+                    <th scope="col" class="text-end">Debit (Due)</th>
+                    <th scope="col" class="text-end">Credit (Paid)</th>
+                    <th scope="col" class="text-end">Balance</th>
+                    <th scope="col">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -138,11 +138,11 @@
                 </tbody>
                 <tfoot class="table-light">
                   <tr>
-                    <th colspan="2" class="text-end">Totals</th>
-                    <th class="text-end text-danger">₹<?= number_format(array_sum(array_column($ledger, 'debit')), 2) ?></th>
-                    <th class="text-end text-success">₹<?= number_format(array_sum(array_column($ledger, 'credit')), 2) ?></th>
-                    <th class="text-end fw-bold">₹<?= number_format(max(0, $stats['total_investment'] - $stats['total_paid']), 2) ?></th>
-                    <th></th>
+                    <th scope="col" colspan="2" class="text-end">Totals</th>
+                    <th scope="col" class="text-end text-danger">₹<?= number_format(array_sum(array_column($ledger, 'debit')), 2) ?></th>
+                    <th scope="col" class="text-end text-success">₹<?= number_format(array_sum(array_column($ledger, 'credit')), 2) ?></th>
+                    <th scope="col" class="text-end fw-bold">₹<?= number_format(max(0, $stats['total_investment'] - $stats['total_paid']), 2) ?></th>
+                    <th scope="col"></th>
                   </tr>
                 </tfoot>
               </table>

@@ -24,7 +24,7 @@ $rows = $rows ?? [];
             </div>
         <?php else: ?>
         <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-            <thead class="bg-light"><tr><th><?= __('assoc_trash_th_who', [], 'Who') ?></th><th><?= __('assoc_trash_th_status', [], 'Status') ?></th><th><?= __('assoc_trash_th_deleted', [], 'Deleted') ?></th><th></th></tr></thead>
+            <thead class="bg-light"><tr><th scope="col"><?= __('assoc_trash_th_who', [], 'Who') ?></th><th scope="col"><?= __('assoc_trash_th_status', [], 'Status') ?></th><th scope="col"><?= __('assoc_trash_th_deleted', [], 'Deleted') ?></th><th scope="col"></th></tr></thead>
             <tbody>
             <?php foreach ($rows as $r): ?>
                 <tr>

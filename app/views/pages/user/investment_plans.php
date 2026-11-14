@@ -64,7 +64,7 @@ ob_start();
     <div class="aps-cp-card-body">
         <div class="aps-cp-table-wrap">
             <table class="aps-cp-table">
-                <thead><tr><th><?= __('user_investment_plans_th_reference', null, 'Reference') ?></th><th><?= __('user_investment_plans_th_plan', null, 'Plan') ?></th><th><?= __('user_investment_plans_th_principal', null, 'Principal') ?></th><th><?= __('user_investment_plans_th_current_value', null, 'Current Value') ?></th><th><?= __('user_investment_plans_th_returns', null, 'Returns') ?></th><th><?= __('user_investment_plans_th_monthly_sip', null, 'Monthly SIP') ?></th><th><?= __('user_investment_plans_th_status', null, 'Status') ?></th></tr></thead>
+                <thead><tr><th scope="col"><?= __('user_investment_plans_th_reference', null, 'Reference') ?></th><th scope="col"><?= __('user_investment_plans_th_plan', null, 'Plan') ?></th><th scope="col"><?= __('user_investment_plans_th_principal', null, 'Principal') ?></th><th scope="col"><?= __('user_investment_plans_th_current_value', null, 'Current Value') ?></th><th scope="col"><?= __('user_investment_plans_th_returns', null, 'Returns') ?></th><th scope="col"><?= __('user_investment_plans_th_monthly_sip', null, 'Monthly SIP') ?></th><th scope="col"><?= __('user_investment_plans_th_status', null, 'Status') ?></th></tr></thead>
                 <tbody>
                 <?php foreach ($investments as $inv):
                     $cat = $inv['plan_category'] ?? 'sip';

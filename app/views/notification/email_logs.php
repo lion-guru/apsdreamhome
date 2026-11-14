@@ -19,10 +19,10 @@
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Recipient</th>
-                                            <th>Subject</th>
-                                            <th>Status</th>
-                                            <th>Sent</th>
+                                            <th scope="col">Recipient</th>
+                                            <th scope="col">Subject</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Sent</th>
                                         </tr>
                                     </thead>
                                     <tbody>

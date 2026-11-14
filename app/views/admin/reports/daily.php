@@ -65,8 +65,8 @@
             <div class="table-responsive"><table class="table table-bordered">
                 <thead class="table-light">
                     <tr>
-                        <th>Metric</th>
-                        <th>Value</th>
+                        <th scope="col">Metric</th>
+                        <th scope="col">Value</th>
                     </tr>
                 </thead>
                 <tbody>

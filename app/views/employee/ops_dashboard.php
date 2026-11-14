@@ -56,7 +56,7 @@
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($pendingOperations)): ?>
                         <div class="table-responsive"><table class="table table-sm table-hover mb-0">
-                            <thead><tr><th>Task</th><th>Assigned To</th><th>Due Date</th><th>Priority</th></tr></thead>
+                            <thead><tr><th scope="col">Task</th><th scope="col">Assigned To</th><th scope="col">Due Date</th><th scope="col">Priority</th></tr></thead>
                             <tbody>
                                 <?php foreach ($pendingOperations as $op): ?>
                                 <tr>

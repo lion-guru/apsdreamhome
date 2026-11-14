@@ -64,15 +64,15 @@
         <table class="table table-hover mb-0 align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>Plot #</th>
-                    <th>Colony</th>
-                    <th>Block</th>
-                    <th>Area (sqft)</th>
-                    <th>Price (₹)</th>
-                    <th>Status</th>
-                    <th>Customer</th>
-                    <th>Paid (₹)</th>
-                    <th>Booking</th>
+                    <th scope="col">Plot #</th>
+                    <th scope="col">Colony</th>
+                    <th scope="col">Block</th>
+                    <th scope="col">Area (sqft)</th>
+                    <th scope="col">Price (₹)</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Paid (₹)</th>
+                    <th scope="col">Booking</th>
                 </tr>
             </thead>
             <tbody>

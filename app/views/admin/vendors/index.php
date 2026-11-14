@@ -87,14 +87,14 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Vendor Name</th>
-                                <th>Type</th>
-                                <th>PAN</th>
-                                <th>Entity</th>
-                                <th>TDS</th>
-                                <th>KYC</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Vendor Name</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">PAN</th>
+                                <th scope="col">Entity</th>
+                                <th scope="col">TDS</th>
+                                <th scope="col">KYC</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

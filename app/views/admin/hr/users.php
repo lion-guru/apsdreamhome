@@ -9,11 +9,11 @@
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Employee Name</th>
-                        <th>Department</th>
-                        <th>Designation</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th scope="col">Employee Name</th>
+                        <th scope="col">Department</th>
+                        <th scope="col">Designation</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

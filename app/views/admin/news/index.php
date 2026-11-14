@@ -114,11 +114,11 @@ foreach ($newsList as $a) {
             <table class="table table-hover align-middle mb-0">
                 <thead style="background:#f8fafc;">
                     <tr>
-                        <th class="px-4" style="width:45%;">Article</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Views</th>
-                        <th>Date</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th scope="col" class="px-4" style="width:45%;">Article</th>
+                        <th scope="col" class="text-center">Status</th>
+                        <th scope="col" class="text-center">Views</th>
+                        <th scope="col">Date</th>
+                        <th scope="col" class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

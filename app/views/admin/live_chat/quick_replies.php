@@ -16,11 +16,11 @@ ob_start();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Title</th>
-                            <th>Shortcut</th>
-                            <th>Message</th>
-                            <th>Category</th>
-                            <th>Sort</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Shortcut</th>
+                            <th scope="col">Message</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Sort</th>
                         </tr>
                     </thead>
                     <tbody>

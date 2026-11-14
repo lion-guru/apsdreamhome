@@ -31,12 +31,12 @@ $logs = $logs ?? [];
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Time</th>
-                        <th>Direction</th>
-                        <th>Phone Number</th>
-                        <th>Matched Flow</th>
-                        <th>Message Content</th>
-                        <th>Status</th>
+                        <th scope="col">Time</th>
+                        <th scope="col">Direction</th>
+                        <th scope="col">Phone Number</th>
+                        <th scope="col">Matched Flow</th>
+                        <th scope="col">Message Content</th>
+                        <th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>

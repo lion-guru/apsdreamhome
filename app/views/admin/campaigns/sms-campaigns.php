@@ -34,7 +34,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
-                            <tr><th>Campaign</th><th>Channel</th><th>Status</th><th>Recipients</th><th>Date</th></tr>
+                            <tr><th scope="col">Campaign</th><th scope="col">Channel</th><th scope="col">Status</th><th scope="col">Recipients</th><th scope="col">Date</th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($campaigns as $c): ?>

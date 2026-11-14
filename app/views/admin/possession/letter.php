@@ -72,17 +72,17 @@ $price = htmlspecialchars(number_format(floatval($booking['property_price'] ?? 0
         <p>The property has been inspected and is found to be in complete accordance with the agreed specifications and approved layout plans. All amenities and utilities as per the agreement have been provided.</p>
 
         <div class="table-responsive"><table class="letter-table">
-            <tr><th>Booking Number</th><td><?= $bookingNumber ?></td></tr>
-            <tr><th>Property Title</th><td><?= $propertyTitle ?></td></tr>
-            <tr><th>Location</th><td><?= $propertyLocation ?></td></tr>
-            <tr><th>Colony</th><td><?= $colonyName ?></td></tr>
-            <tr><th>Plot Number</th><td><?= $plotNumber ?></td></tr>
-            <tr><th>Plot Dimensions</th><td><?= $width ?> ft x <?= $length ?> ft</td></tr>
-            <tr><th>Area</th><td><?= $areaSqft ?> sq. ft.</td></tr>
-            <tr><th>Total Consideration</th><td>&#8377; <?= $price ?></td></tr>
-            <tr><th>Possession Date</th><td><?= $possessionDate ?></td></tr>
-            <tr><th>Handover By</th><td><?= $handoverByName ?></td></tr>
-            <tr><th>Defect Liability Period</th><td><?= $defectPeriod ?> days (until <?= $defectEndDate ?>)</td></tr>
+            <tr><th scope="col">Booking Number</th><td><?= $bookingNumber ?></td></tr>
+            <tr><th scope="col">Property Title</th><td><?= $propertyTitle ?></td></tr>
+            <tr><th scope="col">Location</th><td><?= $propertyLocation ?></td></tr>
+            <tr><th scope="col">Colony</th><td><?= $colonyName ?></td></tr>
+            <tr><th scope="col">Plot Number</th><td><?= $plotNumber ?></td></tr>
+            <tr><th scope="col">Plot Dimensions</th><td><?= $width ?> ft x <?= $length ?> ft</td></tr>
+            <tr><th scope="col">Area</th><td><?= $areaSqft ?> sq. ft.</td></tr>
+            <tr><th scope="col">Total Consideration</th><td>&#8377; <?= $price ?></td></tr>
+            <tr><th scope="col">Possession Date</th><td><?= $possessionDate ?></td></tr>
+            <tr><th scope="col">Handover By</th><td><?= $handoverByName ?></td></tr>
+            <tr><th scope="col">Defect Liability Period</th><td><?= $defectPeriod ?> days (until <?= $defectEndDate ?>)</td></tr>
         </table></div>
 
         <div class="terms-box">

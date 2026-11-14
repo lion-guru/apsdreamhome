@@ -88,18 +88,18 @@ $active_page = 'menu-permissions';
                                         <table class="table table-bordered table-hover permission-matrix" data-role="<?= $roleKey ?>">
                                             <thead class="table-dark">
                                                 <tr>
-                                                    <th style="width: 35%;">Menu Item</th>
-                                                    <th style="width: 20%;">URL</th>
-                                                    <th class="text-center" style="width: 11%;">
+                                                    <th scope="col" style="width: 35%;">Menu Item</th>
+                                                    <th scope="col" style="width: 20%;">URL</th>
+                                                    <th scope="col" class="text-center" style="width: 11%;">
                                                         <i class="fas fa-eye" title="Can View - Menu visibility"></i>
                                                     </th>
-                                                    <th class="text-center" style="width: 11%;">
+                                                    <th scope="col" class="text-center" style="width: 11%;">
                                                         <i class="fas fa-plus" title="Can Create"></i>
                                                     </th>
-                                                    <th class="text-center" style="width: 11%;">
+                                                    <th scope="col" class="text-center" style="width: 11%;">
                                                         <i class="fas fa-edit" title="Can Edit"></i>
                                                     </th>
-                                                    <th class="text-center" style="width: 12%;">
+                                                    <th scope="col" class="text-center" style="width: 12%;">
                                                         <i class="fas fa-trash" title="Can Delete"></i>
                                                     </th>
                                                 </tr>
@@ -205,11 +205,11 @@ $active_page = 'menu-permissions';
                         <table class="table table-bordered table-hover" id="userPermissionsTable">
                             <thead class="table-dark">
                                 <tr>
-                                    <th style="width: 40%;">Menu Item</th>
-                                    <th class="text-center" style="width: 15%;">View</th>
-                                    <th class="text-center" style="width: 15%;">Create</th>
-                                    <th class="text-center" style="width: 15%;">Edit</th>
-                                    <th class="text-center" style="width: 15%;">Delete</th>
+                                    <th scope="col" style="width: 40%;">Menu Item</th>
+                                    <th scope="col" class="text-center" style="width: 15%;">View</th>
+                                    <th scope="col" class="text-center" style="width: 15%;">Create</th>
+                                    <th scope="col" class="text-center" style="width: 15%;">Edit</th>
+                                    <th scope="col" class="text-center" style="width: 15%;">Delete</th>
                                 </tr>
                             </thead>
                             <tbody id="userPermissionsBody">

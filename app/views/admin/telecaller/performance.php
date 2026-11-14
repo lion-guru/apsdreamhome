@@ -134,16 +134,16 @@ $ratingBadge = function($rating) {
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Telecaller</th>
-                            <th>Period Start</th>
-                            <th>Period End</th>
-                            <th>Total Calls</th>
-                            <th>Connected</th>
-                            <th>Converted</th>
-                            <th>Commission</th>
-                            <th>Target %</th>
-                            <th>Rating</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Telecaller</th>
+                            <th scope="col">Period Start</th>
+                            <th scope="col">Period End</th>
+                            <th scope="col">Total Calls</th>
+                            <th scope="col">Connected</th>
+                            <th scope="col">Converted</th>
+                            <th scope="col">Commission</th>
+                            <th scope="col">Target %</th>
+                            <th scope="col">Rating</th>
                         </tr>
                     </thead>
                     <tbody>

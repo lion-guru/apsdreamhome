@@ -57,15 +57,15 @@ $baseUrl = defined('BASE_URL') ? rtrim(BASE_URL, '/') : '';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Variants</th>
-                                <th>Traffic</th>
-                                <th class="text-end">Users</th>
-                                <th class="text-end">Conversions</th>
-                                <th>Winner</th>
-                                <th>Started</th>
-                                <th class="text-end">Actions</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Variants</th>
+                                <th scope="col">Traffic</th>
+                                <th scope="col" class="text-end">Users</th>
+                                <th scope="col" class="text-end">Conversions</th>
+                                <th scope="col">Winner</th>
+                                <th scope="col">Started</th>
+                                <th scope="col" class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

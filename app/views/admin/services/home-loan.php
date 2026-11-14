@@ -13,7 +13,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>#</th><th><?= __('admin_customer') ?></th><th><?= __('admin_phone') ?></th><th><?= __('admin_email') ?></th><th><?= __('admin_status') ?></th><th><?= __('admin_notes') ?></th><th><?= __('admin_date') ?></th></tr></thead>
+                        <thead><tr><th scope="col">#</th><th scope="col"><?= __('admin_customer') ?></th><th scope="col"><?= __('admin_phone') ?></th><th scope="col"><?= __('admin_email') ?></th><th scope="col"><?= __('admin_status') ?></th><th scope="col"><?= __('admin_notes') ?></th><th scope="col"><?= __('admin_date') ?></th></tr></thead>
                         <tbody>
                         <?php foreach ($services as $s): ?>
                             <tr>

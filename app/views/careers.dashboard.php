@@ -20,7 +20,7 @@
                     <?php if (empty($recentApplicants)): ?>
                     <div class="text-center py-4"><p class="text-muted mb-0">No applications yet</p></div>
                     <?php else: ?>
-                    <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th>Applicant</th><th>Position</th><th>Applied</th><th>Status</th></tr></thead>
+                    <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr><th scope="col">Applicant</th><th scope="col">Position</th><th scope="col">Applied</th><th scope="col">Status</th></tr></thead>
                         <tbody><?php foreach ($recentApplicants as $a): ?><tr><td><?= htmlspecialchars($a['name'] ?? '-') ?></td><td><?= htmlspecialchars($a['position'] ?? $a['job_title'] ?? '-') ?></td><td><?= htmlspecialchars($a['created_at'] ?? '-') ?></td>
                         <td><span class="badge bg-<?= ($a['status'] ?? '') === 'pending' ? 'warning' : (($a['status'] ?? '') === 'reviewed' ? 'info' : 'success') ?>"><?= ucfirst($a['status'] ?? 'pending') ?></span></td></tr><?php endforeach; ?></tbody></table></div>
                     <?php endif; ?>

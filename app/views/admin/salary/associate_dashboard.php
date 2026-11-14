@@ -76,16 +76,16 @@
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Rank</th>
-                                    <th>Total Sales</th>
-                                    <th>Registrations</th>
-                                    <th>Required</th>
-                                    <th>Status</th>
-                                    <th>Salary</th>
-                                    <th>Target Bonus</th>
-                                    <th>Actions</th>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Rank</th>
+                                    <th scope="col">Total Sales</th>
+                                    <th scope="col">Registrations</th>
+                                    <th scope="col">Required</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Salary</th>
+                                    <th scope="col">Target Bonus</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

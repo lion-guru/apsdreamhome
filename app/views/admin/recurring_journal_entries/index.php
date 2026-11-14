@@ -30,7 +30,7 @@ $statuses = $statuses ?? [];
     </div></div>
 
     <div class="card"><div class="card-body p-0"><table class="table mb-0">
-        <thead><tr><th>Template</th><th>Frequency</th><th>Next Execution</th><th>Last Executed</th><th>Count</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th scope="col">Template</th><th scope="col">Frequency</th><th scope="col">Next Execution</th><th scope="col">Last Executed</th><th scope="col">Count</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
         <tbody>
         <?php if (empty($rjes)): ?><tr><td colspan="7" class="text-center text-muted py-4">No recurring journal entries</td></tr>
         <?php else: foreach ($rjes as $r): ?>

@@ -7,7 +7,7 @@
     <div class="card aps-cp-card">
         <div class="card-body p-0">
             <div class="table-responsive"><table class="table table-striped mb-0">
-                <thead><tr><th>#</th><th>Associate</th><th>Property</th><th>Value</th><th>Level</th><th>%</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+                <thead><tr><th scope="col">#</th><th scope="col">Associate</th><th scope="col">Property</th><th scope="col">Value</th><th scope="col">Level</th><th scope="col">%</th><th scope="col">Amount</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Date</th><th scope="col">Action</th></tr></thead>
                 <tbody>
                     <?php if (empty($calculations ?? [])): ?>
                     <tr>

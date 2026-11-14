@@ -30,7 +30,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 </div></div>
 <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
     <div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>When</th><th>Colony</th><th>Milestone</th><th class="text-end">Buyers</th><th class="text-end">Sent</th><th class="text-end">Failed</th><th>Photo</th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">When</th><th scope="col">Colony</th><th scope="col">Milestone</th><th scope="col" class="text-end">Buyers</th><th scope="col" class="text-end">Sent</th><th scope="col" class="text-end">Failed</th><th scope="col">Photo</th></tr></thead>
         <tbody>
         <?php if (empty($history)): ?>
             <tr><td colspan="7" class="text-center text-muted py-4">No broadcasts yet.</td></tr>

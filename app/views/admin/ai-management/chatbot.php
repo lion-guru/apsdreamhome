@@ -73,12 +73,12 @@ $stats = $stats ?? ['total' => 0, 'avg_satisfaction' => 0, 'avg_response_time' =
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>User</th>
-                        <th>Query</th>
-                        <th>Score</th>
-                        <th>Response Time</th>
-                        <th>Date</th>
-                        <th class="text-end">Actions</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Query</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Response Time</th>
+                        <th scope="col">Date</th>
+                        <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

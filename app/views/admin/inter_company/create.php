@@ -120,7 +120,7 @@ $today = $today ?? date('Y-m-d');
                 <div class="card-header"><h5 class="card-title mb-0">Entities</h5></div>
                 <div class="card-body">
                     <table class="table table-sm">
-                        <thead><tr><th>Code</th><th>Name</th><th>Type</th><th>Currency</th></tr></thead>
+                        <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Currency</th></tr></thead>
                         <tbody>
                         <?php foreach ($entities as $e): ?>
                             <tr>

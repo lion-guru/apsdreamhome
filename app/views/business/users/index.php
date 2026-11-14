@@ -12,14 +12,14 @@
                 <table class="table table-hover align-middle" id="associatesTable">
                     <thead class="table-light">
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Sponsor</th>
-                            <th>Level</th>
-                            <th>Joining Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Sponsor</th>
+                            <th scope="col">Level</th>
+                            <th scope="col">Joining Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

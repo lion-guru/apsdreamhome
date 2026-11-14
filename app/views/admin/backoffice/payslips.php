@@ -12,7 +12,7 @@
   <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th><?= __('admin_employee_label') ?></th><th><?= __('admin_period_label') ?></th><th><?= __('admin_basic_label') ?></th><th><?= __('admin_hra_label') ?></th><th><?= __('admin_gross_label') ?></th><th><?= __('admin_deductions_label') ?></th><th><?= __('admin_net_label') ?></th><th><?= __('admin_status_label') ?></th><th><?= __('admin_action_label') ?></th></tr></thead>
+        <thead><tr><th scope="col"><?= __('admin_employee_label') ?></th><th scope="col"><?= __('admin_period_label') ?></th><th scope="col"><?= __('admin_basic_label') ?></th><th scope="col"><?= __('admin_hra_label') ?></th><th scope="col"><?= __('admin_gross_label') ?></th><th scope="col"><?= __('admin_deductions_label') ?></th><th scope="col"><?= __('admin_net_label') ?></th><th scope="col"><?= __('admin_status_label') ?></th><th scope="col"><?= __('admin_action_label') ?></th></tr></thead>
         <tbody>
           <?php if (empty($payslips)): ?>
             <tr><td colspan="9" class="text-center text-muted py-4"><?= __('admin_no_payslips_found') ?></td></tr>

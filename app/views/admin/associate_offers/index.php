@@ -112,12 +112,12 @@ $today = date('Y-m-d');
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light small">
                                 <tr>
-                                    <th>Campaign / Festival</th>
-                                    <th>Target Requirement</th>
-                                    <th>Reward &amp; Mode</th>
-                                    <th>Duration Window</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Actions</th>
+                                    <th scope="col">Campaign / Festival</th>
+                                    <th scope="col">Target Requirement</th>
+                                    <th scope="col">Reward &amp; Mode</th>
+                                    <th scope="col">Duration Window</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col" class="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -204,13 +204,13 @@ $today = date('Y-m-d');
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light small">
                                 <tr>
-                                    <th>Claim ID</th>
-                                    <th>Associate Details</th>
-                                    <th>Festival Campaign</th>
-                                    <th>Target Achieved</th>
-                                    <th>Mode &amp; Value</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Fulfillment Actions</th>
+                                    <th scope="col">Claim ID</th>
+                                    <th scope="col">Associate Details</th>
+                                    <th scope="col">Festival Campaign</th>
+                                    <th scope="col">Target Achieved</th>
+                                    <th scope="col">Mode &amp; Value</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col" class="text-end">Fulfillment Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

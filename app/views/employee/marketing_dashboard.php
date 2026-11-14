@@ -56,7 +56,7 @@
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($campaigns)): ?>
                         <div class="table-responsive"><table class="table table-sm table-hover mb-0">
-                            <thead><tr><th>Campaign</th><th>Type</th><th>Status</th><th class="text-end">Leads</th></tr></thead>
+                            <thead><tr><th scope="col">Campaign</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col" class="text-end">Leads</th></tr></thead>
                             <tbody>
                                 <?php foreach ($campaigns as $cmp): ?>
                                 <tr>

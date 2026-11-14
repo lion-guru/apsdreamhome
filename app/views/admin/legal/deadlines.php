@@ -80,12 +80,12 @@ $weekLater = date('Y-m-d', strtotime('+7 days'));
                         <table class="table table-hover align-middle mb-0">
                             <thead class="bg-light">
                                 <tr>
-                                    <th class="ps-4">#</th>
-                                    <th>Title</th>
-                                    <th>Type</th>
-                                    <th>Deadline</th>
-                                    <th>Assigned To</th>
-                                    <th>Status</th>
+                                    <th scope="col" class="ps-4">#</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Deadline</th>
+                                    <th scope="col">Assigned To</th>
+                                    <th scope="col">Status</th>
                                 </tr>
                             </thead>
                             <tbody>

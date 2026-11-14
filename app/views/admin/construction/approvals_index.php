@@ -96,13 +96,13 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light text-muted small text-uppercase">
                         <tr>
-                            <th class="ps-3">Permit Token</th>
-                            <th>Plot & Colony</th>
-                            <th>Buyer Details</th>
-                            <th>Building Specs</th>
-                            <th>Setbacks (F / R / L / R)</th>
-                            <th>Status</th>
-                            <th class="text-end pe-3">Actions</th>
+                            <th scope="col" class="ps-3">Permit Token</th>
+                            <th scope="col">Plot & Colony</th>
+                            <th scope="col">Buyer Details</th>
+                            <th scope="col">Building Specs</th>
+                            <th scope="col">Setbacks (F / R / L / R)</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end pe-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

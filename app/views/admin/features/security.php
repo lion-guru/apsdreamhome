@@ -26,7 +26,7 @@ ob_start();
         </div>
         <div class="card-body p-0">
           <div class="table-responsive"><table class="table mb-0">
-            <thead class="table-light"><tr><th>IP</th><th>Type</th><th>Reason</th><th>Expires</th></tr></thead>
+            <thead class="table-light"><tr><th scope="col">IP</th><th scope="col">Type</th><th scope="col">Reason</th><th scope="col">Expires</th></tr></thead>
             <tbody>
               <?php if (empty($blocked)): ?>
                 <tr><td colspan="4" class="text-center py-3 text-muted">No blocked IPs</td></tr>
@@ -49,7 +49,7 @@ ob_start();
         <div class="card-header bg-white"><strong>Failed Logins (last 24h)</strong></div>
         <div class="card-body p-0">
           <div class="table-responsive"><table class="table mb-0">
-            <thead class="table-light"><tr><th>Email</th><th>IP</th><th>Reason</th><th>Time</th></tr></thead>
+            <thead class="table-light"><tr><th scope="col">Email</th><th scope="col">IP</th><th scope="col">Reason</th><th scope="col">Time</th></tr></thead>
             <tbody>
               <?php if (empty($failed)): ?>
                 <tr><td colspan="4" class="text-center py-3 text-muted">No failed logins</td></tr>

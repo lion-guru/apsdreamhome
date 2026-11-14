@@ -143,19 +143,19 @@ foreach ($colonies as $c) {
           <table class="table table-hover align-middle mb-0">
             <thead class="table-dark">
               <tr>
-                <th>Colony</th>
-                <th class="text-center">Stage</th>
-                <th class="text-center">Health</th>
-                <th class="text-end">Area (acres)</th>
-                <th class="text-end">Plots</th>
-                <th class="text-end">Sold</th>
-                <th class="text-center">Occupancy</th>
-                <th class="text-end">Land Cost</th>
-                <th class="text-end">Dev Cost</th>
-                <th class="text-end">Revenue</th>
-                <th class="text-end">Profit</th>
-                <th class="text-center">Margin</th>
-                <th class="text-center">Actions</th>
+                <th scope="col">Colony</th>
+                <th scope="col" class="text-center">Stage</th>
+                <th scope="col" class="text-center">Health</th>
+                <th scope="col" class="text-end">Area (acres)</th>
+                <th scope="col" class="text-end">Plots</th>
+                <th scope="col" class="text-end">Sold</th>
+                <th scope="col" class="text-center">Occupancy</th>
+                <th scope="col" class="text-end">Land Cost</th>
+                <th scope="col" class="text-end">Dev Cost</th>
+                <th scope="col" class="text-end">Revenue</th>
+                <th scope="col" class="text-end">Profit</th>
+                <th scope="col" class="text-center">Margin</th>
+                <th scope="col" class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -373,18 +373,18 @@ document.addEventListener('DOMContentLoaded', function() {
           <table class="table table-hover align-middle mb-0">
             <thead class="table-dark">
               <tr>
-                <th>Colony</th>
-                <th class="text-center">Stage</th>
-                <th class="text-end">Area (acres)</th>
-                <th class="text-end">Plots</th>
-                <th class="text-end">Sold</th>
-                <th class="text-center">Occupancy</th>
-                <th class="text-end">Land Cost</th>
-                <th class="text-end">Dev Cost</th>
-                <th class="text-end">Revenue</th>
-                <th class="text-end">Profit</th>
-                <th class="text-center">Margin</th>
-                <th class="text-center">Actions</th>
+                <th scope="col">Colony</th>
+                <th scope="col" class="text-center">Stage</th>
+                <th scope="col" class="text-end">Area (acres)</th>
+                <th scope="col" class="text-end">Plots</th>
+                <th scope="col" class="text-end">Sold</th>
+                <th scope="col" class="text-center">Occupancy</th>
+                <th scope="col" class="text-end">Land Cost</th>
+                <th scope="col" class="text-end">Dev Cost</th>
+                <th scope="col" class="text-end">Revenue</th>
+                <th scope="col" class="text-end">Profit</th>
+                <th scope="col" class="text-center">Margin</th>
+                <th scope="col" class="text-center">Actions</th>
               </tr>
             </thead>
             <tbody>

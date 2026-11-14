@@ -10,11 +10,11 @@
                 <div class="card-header bg-transparent"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Device Info</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
-                        <tr><th>Name</th><td><?= htmlspecialchars($device['device_name'] ?? '-') ?></td></tr>
-                        <tr><th>Type</th><td><?= htmlspecialchars($device['device_type_name'] ?? '-') ?></td></tr>
-                        <tr><th>Location</th><td><?= htmlspecialchars($device['location'] ?? '-') ?></td></tr>
-                        <tr><th>Property</th><td><?= htmlspecialchars($device['property_title'] ?? '-') ?></td></tr>
-                        <tr><th>Status</th><td><span class="badge bg-<?= ($device['status'] ?? 'offline') === 'active' ? 'success' : 'danger' ?>"><?= ucfirst($device['status'] ?? 'offline') ?></span></td></tr>
+                        <tr><th scope="col">Name</th><td><?= htmlspecialchars($device['device_name'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">Type</th><td><?= htmlspecialchars($device['device_type_name'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">Location</th><td><?= htmlspecialchars($device['location'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">Property</th><td><?= htmlspecialchars($device['property_title'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">Status</th><td><span class="badge bg-<?= ($device['status'] ?? 'offline') === 'active' ? 'success' : 'danger' ?>"><?= ucfirst($device['status'] ?? 'offline') ?></span></td></tr>
                     </table></div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Command</th><th>User</th><th>Time</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Command</th><th scope="col">User</th><th scope="col">Time</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($device_history)): ?>
                                     <?php foreach ($device_history as $h): ?>

@@ -126,11 +126,11 @@ $employees = $employees ?? [];
                 <table class="table table-hover mb-0" id="onboardingTable">
                     <thead class="table-light">
                         <tr>
-                            <th>Employee</th>
-                            <th>Department</th>
-                            <th>Progress</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Progress</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

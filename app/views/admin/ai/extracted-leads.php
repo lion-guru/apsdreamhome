@@ -59,7 +59,7 @@ $convertedCount = $convertedCount ?? 0;
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Budget</th><th>Location</th><th>Interest</th><th>Timeline</th><th>Verified</th><th>Linked Lead</th><th>Date</th></tr></thead>
+                        <thead><tr><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Phone</th><th scope="col">Email</th><th scope="col">Budget</th><th scope="col">Location</th><th scope="col">Interest</th><th scope="col">Timeline</th><th scope="col">Verified</th><th scope="col">Linked Lead</th><th scope="col">Date</th></tr></thead>
                         <tbody>
                         <?php foreach ($extracted as $e): ?>
                             <tr>

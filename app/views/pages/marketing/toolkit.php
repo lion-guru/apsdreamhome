@@ -420,7 +420,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         }
         let html = '<div class="alert alert-success">Done! <a href="' + escapeHtml(data.url) + '" download class="btn btn-sm btn-success ms-2"><i class="fas fa-download me-1"></i>Download</a></div>';
         if (data.url) {
-            html += '<img src="' + escapeHtml(data.url) + '" class="img-fluid rounded mb-2" style="max-height:300px">';
+            html += '<img alt="" src="' + escapeHtml(data.url) + '" class="img-fluid rounded mb-2" style="max-height:300px">';
         }
         if (data.whatsapp_share) {
             html += '<a href="' + escapeHtml(data.whatsapp_share) + '" target="_blank" class="btn btn-success btn-sm w-100"><i class="fab fa-whatsapp me-1"></i>WhatsApp Share</a>';

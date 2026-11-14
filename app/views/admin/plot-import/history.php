@@ -22,12 +22,12 @@ $history = $history ?? [];
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>User</th>
-                                <th>Action</th>
-                                <th>Details</th>
-                                <th>IP Address</th>
-                                <th>Date</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">User</th>
+                                <th scope="col">Action</th>
+                                <th scope="col">Details</th>
+                                <th scope="col">IP Address</th>
+                                <th scope="col">Date</th>
                             </tr>
                         </thead>
                         <tbody>

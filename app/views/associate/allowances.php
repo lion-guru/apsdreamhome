@@ -186,12 +186,12 @@ $claims = $claims ?? [];
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr style="font-size: 12px;">
-                            <th>Visit ID</th>
-                            <th>Visitor / Client</th>
-                            <th>Visit Date</th>
-                            <th>Status</th>
-                            <th>Claim Status</th>
-                            <th class="text-end">Action</th>
+                            <th scope="col">Visit ID</th>
+                            <th scope="col">Visitor / Client</th>
+                            <th scope="col">Visit Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Claim Status</th>
+                            <th scope="col" class="text-end">Action</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 13px;">
@@ -259,13 +259,13 @@ $claims = $claims ?? [];
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr style="font-size: 12px;">
-                            <th>Claim ID</th>
-                            <th>Allowance Type</th>
-                            <th>Month / Date</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Details / Notes</th>
-                            <th>Approval Date</th>
+                            <th scope="col">Claim ID</th>
+                            <th scope="col">Allowance Type</th>
+                            <th scope="col">Month / Date</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Details / Notes</th>
+                            <th scope="col">Approval Date</th>
                         </tr>
                     </thead>
                     <tbody style="font-size: 13px;">

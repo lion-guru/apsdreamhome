@@ -92,14 +92,14 @@ $page_description = 'Manage course enrollments';
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>User</th>
-                        <th>Course</th>
-                        <th>Progress</th>
-                        <th>Status</th>
-                        <th>Enrolled</th>
-                        <th>Completed</th>
-                        <th>Score</th>
-                        <th>Actions</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Course</th>
+                        <th scope="col">Progress</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Enrolled</th>
+                        <th scope="col">Completed</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

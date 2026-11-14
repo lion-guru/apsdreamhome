@@ -90,9 +90,9 @@ $base = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT_NA
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Date</th>
-                                            <th>Revenue</th>
-                                            <th>Bookings</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Revenue</th>
+                                            <th scope="col">Bookings</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -146,10 +146,10 @@ $base = defined('BASE_URL') ? BASE_URL : ('/' . trim(dirname($_SERVER['SCRIPT_NA
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Property</th>
-                                    <th>Views</th>
-                                    <th>Inquiries</th>
-                                    <th>Conversion</th>
+                                    <th scope="col">Property</th>
+                                    <th scope="col">Views</th>
+                                    <th scope="col">Inquiries</th>
+                                    <th scope="col">Conversion</th>
                                 </tr>
                             </thead>
                             <tbody>

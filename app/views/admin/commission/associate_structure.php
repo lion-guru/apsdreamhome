@@ -35,7 +35,7 @@
                 <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Rank Benefits</div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-striped mb-0">
-                        <thead><tr><th>Rank</th><th>Direct %</th><th>Gen1 Override</th><th>Gen2 Override</th><th>Gen3 Override</th><th>Action</th></tr></thead>
+                        <thead><tr><th scope="col">Rank</th><th scope="col">Direct %</th><th scope="col">Gen1 Override</th><th scope="col">Gen2 Override</th><th scope="col">Gen3 Override</th><th scope="col">Action</th></tr></thead>
                         <tbody>
                             <?php if (empty($levels ?? [])): ?>
                             <tr>

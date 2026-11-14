@@ -64,9 +64,9 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
     <table class="table table-bordered mb-4">
         <thead class="table-light small">
             <tr>
-                <th>Description</th>
-                <th class="text-end">Calculation</th>
-                <th class="text-end">Amount (₹)</th>
+                <th scope="col">Description</th>
+                <th scope="col" class="text-end">Calculation</th>
+                <th scope="col" class="text-end">Amount (₹)</th>
             </tr>
         </thead>
         <tbody>

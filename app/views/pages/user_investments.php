@@ -64,14 +64,14 @@ $page_title = $page_title ?? 'My Investments';
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Plan</th>
-                            <th>Category</th>
-                            <th>Invested</th>
-                            <th>Current Value</th>
-                            <th>Returns</th>
-                            <th>Status</th>
-                            <th>Started</th>
-                            <th>Actions</th>
+                            <th scope="col">Plan</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Invested</th>
+                            <th scope="col">Current Value</th>
+                            <th scope="col">Returns</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Started</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

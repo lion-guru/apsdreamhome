@@ -44,11 +44,11 @@
                         <table class="table table-hover align-middle mb-0">
                             <thead class="bg-light">
                                 <tr>
-                                    <th class="ps-3">Campaign</th>
-                                    <th>Sent</th>
-                                    <th>Delivered</th>
-                                    <th>Read</th>
-                                    <th>Status</th>
+                                    <th scope="col" class="ps-3">Campaign</th>
+                                    <th scope="col">Sent</th>
+                                    <th scope="col">Delivered</th>
+                                    <th scope="col">Read</th>
+                                    <th scope="col">Status</th>
                                 </tr>
                             </thead>
                             <tbody>

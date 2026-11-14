@@ -26,7 +26,7 @@ ob_start();
     <div class="tab-pane fade show active" id="kpi">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Code</th><th>Name</th><th>Category</th><th>Unit</th><th>Target</th><th>Frequency</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col">Category</th><th scope="col">Unit</th><th scope="col">Target</th><th scope="col">Frequency</th></tr></thead>
           <tbody>
             <?php if (empty($kpis)): ?>
               <tr><td colspan="6" class="text-center py-3 text-muted">No KPIs</td></tr>
@@ -48,7 +48,7 @@ ob_start();
     <div class="tab-pane fade" id="fc">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Metric</th><th>Method</th><th>Periods</th><th>R²</th><th>Generated</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Metric</th><th scope="col">Method</th><th scope="col">Periods</th><th scope="col">R²</th><th scope="col">Generated</th></tr></thead>
           <tbody>
             <?php if (empty($forecasts)): ?>
               <tr><td colspan="5" class="text-center py-3 text-muted">No forecasts yet</td></tr>

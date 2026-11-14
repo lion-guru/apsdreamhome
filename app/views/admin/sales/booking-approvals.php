@@ -59,14 +59,14 @@ $statusBadge = function ($s) {
             <table class="table table-hover table-sm">
                 <thead>
                     <tr>
-                        <th>Booking #</th>
-                        <th>Customer</th>
-                        <th>Plot</th>
-                        <th>Associate</th>
-                        <th>Value</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th scope="col">Booking #</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Plot</th>
+                        <th scope="col">Associate</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

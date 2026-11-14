@@ -29,7 +29,7 @@
                 <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Levels (Plan <?= ($levels[0]['plan_id'] ?? '?') ?>)</div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-striped mb-0">
-                        <thead><tr><th>Plan</th><th>Level</th><th>Name</th><th>Rate %</th><th>Min Assoc</th><th>Direct %</th><th>Min Biz</th><th>Action</th></tr></thead>
+                        <thead><tr><th scope="col">Plan</th><th scope="col">Level</th><th scope="col">Name</th><th scope="col">Rate %</th><th scope="col">Min Assoc</th><th scope="col">Direct %</th><th scope="col">Min Biz</th><th scope="col">Action</th></tr></thead>
                         <tbody>
                             <?php if (empty($levels ?? [])): ?>
                             <tr>

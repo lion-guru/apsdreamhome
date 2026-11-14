@@ -120,13 +120,13 @@ $stats = [
                 <div class="table-responsive"><table class="table table-bordered table-hover table-responsive" id="projectsTable">
                     <thead class="table-light">
                         <tr>
-                            <th>Project Name</th>
-                            <th>Status</th>
-                            <th>Description</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Budget</th>
-                            <th>Actions</th>
+                            <th scope="col">Project Name</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Start Date</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Budget</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -28,16 +28,16 @@ $history = $history ?? [];
         <div class="table-responsive"><table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>Date</th>
-              <th>Calculated By</th>
-              <th class="text-end">Land</th>
-              <th class="text-end">Registry</th>
-              <th class="text-end">Development</th>
-              <th class="text-end">Approvals</th>
-              <th class="text-end">Cost ₹/sqft</th>
-              <th class="text-end">Recommended ₹/sqft</th>
-              <th class="text-end">Markup</th>
-              <th>Notes</th>
+              <th scope="col">Date</th>
+              <th scope="col">Calculated By</th>
+              <th scope="col" class="text-end">Land</th>
+              <th scope="col" class="text-end">Registry</th>
+              <th scope="col" class="text-end">Development</th>
+              <th scope="col" class="text-end">Approvals</th>
+              <th scope="col" class="text-end">Cost ₹/sqft</th>
+              <th scope="col" class="text-end">Recommended ₹/sqft</th>
+              <th scope="col" class="text-end">Markup</th>
+              <th scope="col">Notes</th>
             </tr>
           </thead>
           <tbody>

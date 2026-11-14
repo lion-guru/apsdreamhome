@@ -38,7 +38,7 @@ $es = $edit_structure ?? [];
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Employee</th><th>Basic</th><th>Gross</th><th>Net</th><th>PF</th><th>Effective</th><th>Status</th><th class="text-end">Actions</th></tr>
+                    <tr><th scope="col">Employee</th><th scope="col">Basic</th><th scope="col">Gross</th><th scope="col">Net</th><th scope="col">PF</th><th scope="col">Effective</th><th scope="col">Status</th><th scope="col" class="text-end">Actions</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($structures ?? [])): ?>

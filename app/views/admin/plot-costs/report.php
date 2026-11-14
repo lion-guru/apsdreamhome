@@ -71,9 +71,9 @@ $page_title = 'Cost Report - APS Dream Home';
                     <table class="table table-sm">
                         <thead>
                             <tr>
-                                <th>Category</th>
-                                <th class="text-end">Amount</th>
-                                <th class="text-end">%</th>
+                                <th scope="col">Category</th>
+                                <th scope="col" class="text-end">Amount</th>
+                                <th scope="col" class="text-end">%</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -89,9 +89,9 @@ $page_title = 'Cost Report - APS Dream Home';
                         </tbody>
                         <tfoot class="table-secondary">
                             <tr>
-                                <th>Total</th>
-                                <th class="text-end">?<?= number_format(floatval($report['total_investment'] ?? 0)) ?></th>
-                                <th class="text-end">100%</th>
+                                <th scope="col">Total</th>
+                                <th scope="col" class="text-end">?<?= number_format(floatval($report['total_investment'] ?? 0)) ?></th>
+                                <th scope="col" class="text-end">100%</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -138,14 +138,14 @@ $page_title = 'Cost Report - APS Dream Home';
                     <table class="table table-sm table-striped">
                         <thead>
                             <tr>
-                                <th>Plot #</th>
-                                <th class="text-end">Area (sqft)</th>
-                                <th class="text-end">Land Cost</th>
-                                <th class="text-end">Dev. Cost</th>
-                                <th class="text-end">Total Cost</th>
-                                <th class="text-end">Cost/sqft</th>
-                                <th class="text-end">Min Price</th>
-                                <th class="text-end">Selling Price</th>
+                                <th scope="col">Plot #</th>
+                                <th scope="col" class="text-end">Area (sqft)</th>
+                                <th scope="col" class="text-end">Land Cost</th>
+                                <th scope="col" class="text-end">Dev. Cost</th>
+                                <th scope="col" class="text-end">Total Cost</th>
+                                <th scope="col" class="text-end">Cost/sqft</th>
+                                <th scope="col" class="text-end">Min Price</th>
+                                <th scope="col" class="text-end">Selling Price</th>
                             </tr>
                         </thead>
                         <tbody>

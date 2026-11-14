@@ -20,11 +20,11 @@
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Code</th>
-                                <th>Name</th>
-                                <th>Subject</th>
-                                <th>Last Updated</th>
-                                <th>Actions</th>
+                                <th scope="col">Code</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Subject</th>
+                                <th scope="col">Last Updated</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

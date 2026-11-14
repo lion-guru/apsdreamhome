@@ -175,10 +175,10 @@ foreach ($statusSteps as $i => $step) {
                     <table class="table table-sm table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>#</th>
-                                <th><?= __('booking_conf_th_due_date', [], 'Due Date') ?></th>
-                                <th class="text-end"><?= __('booking_conf_th_amount', [], 'Amount') ?></th>
-                                <th class="text-center"><?= __('booking_conf_th_status', [], 'Status') ?></th>
+                                <th scope="col">#</th>
+                                <th scope="col"><?= __('booking_conf_th_due_date', [], 'Due Date') ?></th>
+                                <th scope="col" class="text-end"><?= __('booking_conf_th_amount', [], 'Amount') ?></th>
+                                <th scope="col" class="text-center"><?= __('booking_conf_th_status', [], 'Status') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -202,9 +202,9 @@ foreach ($statusSteps as $i => $step) {
                         </tbody>
                         <tfoot class="table-light">
                             <tr>
-                                <th colspan="2"><?= __('booking_conf_totals', [], 'Totals') ?></th>
-                                <th class="text-end">₹<?= number_format($totalPaid + $totalPending) ?></th>
-                                <th></th>
+                                <th scope="col" colspan="2"><?= __('booking_conf_totals', [], 'Totals') ?></th>
+                                <th scope="col" class="text-end">₹<?= number_format($totalPaid + $totalPending) ?></th>
+                                <th scope="col"></th>
                             </tr>
                         </tfoot>
                     </table>

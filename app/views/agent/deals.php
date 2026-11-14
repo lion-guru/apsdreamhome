@@ -77,11 +77,11 @@ $base = BASE_URL ?? ('/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'));
             <table class="table table-hover align-middle mb-0">
                 <thead >
                     <tr>
-                        <th class="px-3 py-3">Property</th>
-                        <th class="px-3 py-3">Customer</th>
-                        <th class="px-3 py-3">Amount</th>
-                        <th class="px-3 py-3">Status</th>
-                        <th class="px-3 py-3">Date</th>
+                        <th scope="col" class="px-3 py-3">Property</th>
+                        <th scope="col" class="px-3 py-3">Customer</th>
+                        <th scope="col" class="px-3 py-3">Amount</th>
+                        <th scope="col" class="px-3 py-3">Status</th>
+                        <th scope="col" class="px-3 py-3">Date</th>
                     </tr>
                 </thead>
                 <tbody>

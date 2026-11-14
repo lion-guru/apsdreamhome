@@ -15,7 +15,7 @@
             <?php if (empty($users)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No associate data available</p></div>
             <?php else: ?>
-            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th>#</th><th>Associate</th><th>Properties Sold</th><th>Total Sales</th><th>Commission</th><th>Rating</th><th>Status</th></tr></thead>
+            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th scope="col">#</th><th scope="col">Associate</th><th scope="col">Properties Sold</th><th scope="col">Total Sales</th><th scope="col">Commission</th><th scope="col">Rating</th><th scope="col">Status</th></tr></thead>
                 <tbody><?php $r = 1; foreach ($users as $a): ?><tr>
                     <td><?= $r++ ?></td><td><?= htmlspecialchars($a['name'] ?? '-') ?></td>
                     <td><?= number_format($a['properties_sold'] ?? 0) ?></td>

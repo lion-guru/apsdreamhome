@@ -136,17 +136,17 @@ $telecallerFilter = $telecallerFilter ?? '';
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Telecaller</th>
-                            <th>Date</th>
-                            <th>Leads</th>
-                            <th>Calls Made</th>
-                            <th>Connected</th>
-                            <th>Converted</th>
-                            <th>Callback</th>
-                            <th>Pending</th>
-                            <th>Target</th>
-                            <th>Actions</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Telecaller</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Leads</th>
+                            <th scope="col">Calls Made</th>
+                            <th scope="col">Connected</th>
+                            <th scope="col">Converted</th>
+                            <th scope="col">Callback</th>
+                            <th scope="col">Pending</th>
+                            <th scope="col">Target</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

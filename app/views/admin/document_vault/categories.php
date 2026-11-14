@@ -33,16 +33,16 @@ $categories = $categories ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 80px">ID</th>
-                            <th>Name</th>
-                            <th>Code</th>
-                            <th>Description</th>
-                            <th style="width: 100px">Mandatory</th>
-                            <th style="width: 100px">Retention</th>
-                            <th style="width: 150px">Types / Size</th>
-                            <th style="width: 100px">Expiry</th>
-                            <th style="width: 100px">Status</th>
-                            <th style="width: 150px">Actions</th>
+                            <th scope="col" style="width: 80px">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Description</th>
+                            <th scope="col" style="width: 100px">Mandatory</th>
+                            <th scope="col" style="width: 100px">Retention</th>
+                            <th scope="col" style="width: 150px">Types / Size</th>
+                            <th scope="col" style="width: 100px">Expiry</th>
+                            <th scope="col" style="width: 100px">Status</th>
+                            <th scope="col" style="width: 150px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

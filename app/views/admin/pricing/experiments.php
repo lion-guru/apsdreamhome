@@ -114,7 +114,7 @@ $statusBadge = [
                         <table class="table table-hover align-middle mb-0 small">
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th><th>Name</th><th>Colony</th><th>Status</th><th class="text-center">Assigned</th><th></th>
+                                    <th scope="col">#</th><th scope="col">Name</th><th scope="col">Colony</th><th scope="col">Status</th><th scope="col" class="text-center">Assigned</th><th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>

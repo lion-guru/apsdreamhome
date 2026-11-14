@@ -68,14 +68,14 @@
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th><?= __('cf_date') ?></th>
-                        <th><?= __('cf_direction') ?></th>
-                        <th><?= __('cf_category') ?></th>
-                        <th><?= __('cf_description') ?></th>
-                        <th class="text-end"><?= __('cf_amount') ?></th>
-                        <th class="text-end"><?= __('cf_probability') ?></th>
-                        <th class="text-end"><?= __('cf_weighted') ?></th>
-                        <th><?= __('cf_days_ahead') ?></th>
+                        <th scope="col"><?= __('cf_date') ?></th>
+                        <th scope="col"><?= __('cf_direction') ?></th>
+                        <th scope="col"><?= __('cf_category') ?></th>
+                        <th scope="col"><?= __('cf_description') ?></th>
+                        <th scope="col" class="text-end"><?= __('cf_amount') ?></th>
+                        <th scope="col" class="text-end"><?= __('cf_probability') ?></th>
+                        <th scope="col" class="text-end"><?= __('cf_weighted') ?></th>
+                        <th scope="col"><?= __('cf_days_ahead') ?></th>
                     </tr>
                 </thead>
                 <tbody>

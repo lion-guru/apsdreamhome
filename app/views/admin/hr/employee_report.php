@@ -47,7 +47,7 @@ $report = $report ?? null;
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0">
-                        <thead class="table-light"><tr><th>Date</th><th>Status</th><th>In</th><th>Out</th></tr></thead>
+                        <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Status</th><th scope="col">In</th><th scope="col">Out</th></tr></thead>
                         <tbody>
                             <?php if (empty($attendances ?? [])): ?>
                                 <tr><td colspan="4" class="text-center text-muted py-2">No records</td></tr>
@@ -76,7 +76,7 @@ $report = $report ?? null;
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0">
-                        <thead class="table-light"><tr><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead>
+                        <thead class="table-light"><tr><th scope="col">Type</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Days</th><th scope="col">Status</th></tr></thead>
                         <tbody>
                             <?php if (empty($leaves ?? [])): ?>
                                 <tr><td colspan="5" class="text-center text-muted py-2">No leaves</td></tr>
@@ -103,7 +103,7 @@ $report = $report ?? null;
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0">
-                        <thead class="table-light"><tr><th>Type</th><th>Amount</th><th>Month</th><th>Status</th></tr></thead>
+                        <thead class="table-light"><tr><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">Month</th><th scope="col">Status</th></tr></thead>
                         <tbody>
                             <?php if (empty($bonuses ?? [])): ?>
                                 <tr><td colspan="4" class="text-center text-muted py-2">No bonuses</td></tr>

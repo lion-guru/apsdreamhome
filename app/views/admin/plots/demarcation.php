@@ -122,14 +122,14 @@ $current_status = $current_status ?? 'all';
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-3">Token & Plot</th>
-                            <th>Township</th>
-                            <th>Surveyor</th>
-                            <th>Date</th>
-                            <th>4-Corner GPS Coordinates</th>
-                            <th>Status</th>
-                            <th>Handover</th>
-                            <th class="text-end pe-3">Actions</th>
+                            <th scope="col" class="ps-3">Token & Plot</th>
+                            <th scope="col">Township</th>
+                            <th scope="col">Surveyor</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">4-Corner GPS Coordinates</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Handover</th>
+                            <th scope="col" class="text-end pe-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

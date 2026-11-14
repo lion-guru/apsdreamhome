@@ -163,13 +163,13 @@ $claim = $claim ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 120px">Date</th>
-                            <th>Description</th>
-                            <th style="width: 120px">Amount</th>
-                            <th style="width: 120px">GST</th>
-                            <th style="width: 100px">GST %</th>
-                            <th style="width: 120px">HSN/SAC</th>
-                            <th style="width: 100px">Receipt</th>
+                            <th scope="col" style="width: 120px">Date</th>
+                            <th scope="col">Description</th>
+                            <th scope="col" style="width: 120px">Amount</th>
+                            <th scope="col" style="width: 120px">GST</th>
+                            <th scope="col" style="width: 100px">GST %</th>
+                            <th scope="col" style="width: 120px">HSN/SAC</th>
+                            <th scope="col" style="width: 100px">Receipt</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -210,12 +210,12 @@ $claim = $claim ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 80px">Level</th>
-                            <th>Approver</th>
-                            <th style="width: 150px">Role</th>
-                            <th style="width: 150px">Status</th>
-                            <th style="width: 180px">Action Time</th>
-                            <th>Comments</th>
+                            <th scope="col" style="width: 80px">Level</th>
+                            <th scope="col">Approver</th>
+                            <th scope="col" style="width: 150px">Role</th>
+                            <th scope="col" style="width: 150px">Status</th>
+                            <th scope="col" style="width: 180px">Action Time</th>
+                            <th scope="col">Comments</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -77,12 +77,12 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <table class="ac-table">
                         <thead>
                             <tr>
-                                <th >#</th>
-                                <th>Agent</th>
-                                <th>Email</th>
-                                <th >Sales</th>
-                                <th >Total Earned</th>
-                                <th ></th>
+                                <th scope="col" >#</th>
+                                <th scope="col">Agent</th>
+                                <th scope="col">Email</th>
+                                <th scope="col" >Sales</th>
+                                <th scope="col" >Total Earned</th>
+                                <th scope="col" ></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -122,11 +122,11 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <table class="ac-table">
                         <thead>
                             <tr>
-                                <th>Property</th>
-                                <th>Agent</th>
-                                <th>Commission %</th>
-                                <th>Status</th>
-                                <th>Assigned</th>
+                                <th scope="col">Property</th>
+                                <th scope="col">Agent</th>
+                                <th scope="col">Commission %</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Assigned</th>
                             </tr>
                         </thead>
                         <tbody>

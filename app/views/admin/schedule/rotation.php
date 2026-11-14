@@ -17,7 +17,7 @@ $departments = $departments ?? [];
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>Name</th><th>Shift Type</th><th>Department</th><th>Start Date</th><th>End Date</th><th>Assigned</th><th>Actions</th></tr></thead>
+                        <thead><tr><th scope="col">Name</th><th scope="col">Shift Type</th><th scope="col">Department</th><th scope="col">Start Date</th><th scope="col">End Date</th><th scope="col">Assigned</th><th scope="col">Actions</th></tr></thead>
                         <tbody>
                         <?php foreach ($rotations as $r): ?>
                             <tr>

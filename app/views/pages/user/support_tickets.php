@@ -102,13 +102,13 @@ $currentCategory = $category ?? null;
                 <table class="aps-cp-table">
                     <thead>
                         <tr>
-                            <th><?= __('user_support_tickets_col_ticket_number', 'Ticket #') ?></th>
-                            <th><?= __('user_support_tickets_col_subject', 'Subject') ?></th>
-                            <th><?= __('user_support_tickets_col_category', 'Category') ?></th>
-                            <th><?= __('user_support_tickets_col_priority', 'Priority') ?></th>
-                            <th><?= __('user_support_tickets_col_status', 'Status') ?></th>
-                            <th><?= __('user_support_tickets_col_replies', 'Replies') ?></th>
-                            <th><?= __('user_support_tickets_col_created', 'Created') ?></th>
+                            <th scope="col"><?= __('user_support_tickets_col_ticket_number', 'Ticket #') ?></th>
+                            <th scope="col"><?= __('user_support_tickets_col_subject', 'Subject') ?></th>
+                            <th scope="col"><?= __('user_support_tickets_col_category', 'Category') ?></th>
+                            <th scope="col"><?= __('user_support_tickets_col_priority', 'Priority') ?></th>
+                            <th scope="col"><?= __('user_support_tickets_col_status', 'Status') ?></th>
+                            <th scope="col"><?= __('user_support_tickets_col_replies', 'Replies') ?></th>
+                            <th scope="col"><?= __('user_support_tickets_col_created', 'Created') ?></th>
                         </tr>
                     </thead>
                     <tbody>

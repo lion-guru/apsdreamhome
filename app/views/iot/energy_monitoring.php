@@ -15,7 +15,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                    <thead class="table-light"><tr><th>Timestamp</th><th>Consumption (kWh)</th><th>Cost (₹)</th><th>Lighting</th><th>HVAC</th><th>Appliances</th><th>Other</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Timestamp</th><th scope="col">Consumption (kWh)</th><th scope="col">Cost (₹)</th><th scope="col">Lighting</th><th scope="col">HVAC</th><th scope="col">Appliances</th><th scope="col">Other</th></tr></thead>
                     <tbody>
                         <?php if (!empty($energy_data)): ?>
                             <?php foreach ($energy_data as $e): ?>

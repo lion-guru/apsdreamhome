@@ -61,7 +61,7 @@ $emiPlans = $emiPlans ?? [];
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>ID</th><th>Customer</th><th>Property</th><th>Amount</th><th>EMI</th><th>Rate</th><th>Tenure</th><th>Status</th><th>Start</th></tr></thead>
+                        <thead><tr><th scope="col">ID</th><th scope="col">Customer</th><th scope="col">Property</th><th scope="col">Amount</th><th scope="col">EMI</th><th scope="col">Rate</th><th scope="col">Tenure</th><th scope="col">Status</th><th scope="col">Start</th></tr></thead>
                         <tbody>
                         <?php foreach ($emiPlans as $ep): ?>
                             <tr>

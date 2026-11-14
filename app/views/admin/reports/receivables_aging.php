@@ -70,16 +70,16 @@ $buckets = $data['buckets'] ?? [];
                     <table class="table table-striped mb-0">
                         <thead>
                             <tr>
-                                <th>Booking</th>
-                                <th>Customer</th>
-                                <th>Colony</th>
-                                <th>Installment</th>
-                                <th>Due Date</th>
-                                <th>Age Days</th>
-                                <th>Amount</th>
-                                <th>Paid</th>
-                                <th>Outstanding</th>
-                                <th>Bucket</th>
+                                <th scope="col">Booking</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Colony</th>
+                                <th scope="col">Installment</th>
+                                <th scope="col">Due Date</th>
+                                <th scope="col">Age Days</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Paid</th>
+                                <th scope="col">Outstanding</th>
+                                <th scope="col">Bucket</th>
                             </tr>
                         </thead>
                         <tbody>

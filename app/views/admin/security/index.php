@@ -70,7 +70,7 @@ $recentBlocked = $recentBlocked ?? [];
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead><tr><th>User</th><th>Action</th><th>Details</th><th>IP</th><th>Time</th></tr></thead>
+                                <thead><tr><th scope="col">User</th><th scope="col">Action</th><th scope="col">Details</th><th scope="col">IP</th><th scope="col">Time</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($recentEvents as $ev): ?>
                                     <tr>

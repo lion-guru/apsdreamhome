@@ -34,13 +34,13 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <table class="table table-bordered table-hover mb-0 align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>Order</th>
-                            <th>Rank Name</th>
-                            <th>Min Legs</th>
-                            <th>Min Volume (₹)</th>
-                            <th>Direct %</th>
-                            <th>Commission Model</th>
-                            <th>Badge</th>
+                            <th scope="col">Order</th>
+                            <th scope="col">Rank Name</th>
+                            <th scope="col">Min Legs</th>
+                            <th scope="col">Min Volume (₹)</th>
+                            <th scope="col">Direct %</th>
+                            <th scope="col">Commission Model</th>
+                            <th scope="col">Badge</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -98,16 +98,16 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <table class="table table-bordered table-hover mb-0 align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Level Name</th>
-                            <th>Direct %</th>
-                            <th>Team %</th>
-                            <th>Diff %</th>
-                            <th>Matching %</th>
-                            <th>Leadership %</th>
-                            <th>Performance %</th>
-                            <th>Team Size</th>
-                            <th>Direct Refs</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Level Name</th>
+                            <th scope="col">Direct %</th>
+                            <th scope="col">Team %</th>
+                            <th scope="col">Diff %</th>
+                            <th scope="col">Matching %</th>
+                            <th scope="col">Leadership %</th>
+                            <th scope="col">Performance %</th>
+                            <th scope="col">Team Size</th>
+                            <th scope="col">Direct Refs</th>
                         </tr>
                     </thead>
                     <tbody>

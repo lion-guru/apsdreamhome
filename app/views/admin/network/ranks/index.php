@@ -24,16 +24,16 @@ $commColors = ['5' => 'secondary', '7' => 'info', '10' => 'primary', '12' => 'pr
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Rank</th>
-                            <th class="text-end">Min GBV</th>
-                            <th class="text-end">Max GBV</th>
-                            <th class="text-center">Commission %</th>
-                            <th class="text-center">Royalty Eligible</th>
-                            <th class="text-center">Pool Share %</th>
-                            <th>Reward</th>
-                            <th class="text-center">Active</th>
-                            <th class="text-center">Edit</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Rank</th>
+                            <th scope="col" class="text-end">Min GBV</th>
+                            <th scope="col" class="text-end">Max GBV</th>
+                            <th scope="col" class="text-center">Commission %</th>
+                            <th scope="col" class="text-center">Royalty Eligible</th>
+                            <th scope="col" class="text-center">Pool Share %</th>
+                            <th scope="col">Reward</th>
+                            <th scope="col" class="text-center">Active</th>
+                            <th scope="col" class="text-center">Edit</th>
                         </tr>
                     </thead>
                     <tbody>

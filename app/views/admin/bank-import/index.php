@@ -78,15 +78,15 @@
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
-                        <th>Filename</th>
-                        <th>Bank Account</th>
-                        <th>Import Date</th>
-                        <th class="text-center">Total</th>
-                        <th class="text-center">Matched</th>
-                        <th class="text-center">Unmatched</th>
-                        <th>Status</th>
-                        <th></th>
+                        <th scope="col">#</th>
+                        <th scope="col">Filename</th>
+                        <th scope="col">Bank Account</th>
+                        <th scope="col">Import Date</th>
+                        <th scope="col" class="text-center">Total</th>
+                        <th scope="col" class="text-center">Matched</th>
+                        <th scope="col" class="text-center">Unmatched</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>

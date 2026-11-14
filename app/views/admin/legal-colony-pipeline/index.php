@@ -163,16 +163,16 @@ function autoAdvance() {
       <table class="table table-dark table-hover mb-0">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Colony</th>
-            <th>Location</th>
-            <th>Pipeline Stage</th>
-            <th>Health</th>
-            <th>Plots</th>
-            <th>Available</th>
-            <th>Sold</th>
-            <th>Dev Cost</th>
-            <th>Actions</th>
+            <th scope="col">#</th>
+            <th scope="col">Colony</th>
+            <th scope="col">Location</th>
+            <th scope="col">Pipeline Stage</th>
+            <th scope="col">Health</th>
+            <th scope="col">Plots</th>
+            <th scope="col">Available</th>
+            <th scope="col">Sold</th>
+            <th scope="col">Dev Cost</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>

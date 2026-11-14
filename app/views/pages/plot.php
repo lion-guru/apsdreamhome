@@ -100,12 +100,12 @@ function get_plot_status_badge($status) {
             <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive" id="plotTable">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4 py-4 border-0 text-secondary fw-bold text-uppercase small"><?= __('plot_th_id', [], 'Plot ID') ?></th>
-                        <th class="py-4 border-0 text-secondary fw-bold text-uppercase small"><?= __('plot_th_status', [], 'Status') ?></th>
-                        <th class="py-4 border-0 text-secondary fw-bold text-uppercase small"><?= __('plot_th_dimensions', [], 'Dimensions (B x L)') ?></th>
-                        <th class="py-4 border-0 text-secondary fw-bold text-uppercase small"><?= __('plot_th_size', [], 'Total Size') ?></th>
-                        <th class="py-4 border-0 text-secondary fw-bold text-uppercase small"><?= __('plot_th_description', [], 'Description') ?></th>
-                        <th class="pe-4 py-4 border-0 text-secondary fw-bold text-uppercase small text-center"><?= __('plot_th_action', [], 'Action') ?></th>
+                        <th scope="col" class="ps-4 py-4 border-0 text-secondary fw-bold text-uppercase small"><?= __('plot_th_id', [], 'Plot ID') ?></th>
+                        <th scope="col" class="py-4 border-0 text-secondary fw-bold text-uppercase small"><?= __('plot_th_status', [], 'Status') ?></th>
+                        <th scope="col" class="py-4 border-0 text-secondary fw-bold text-uppercase small"><?= __('plot_th_dimensions', [], 'Dimensions (B x L)') ?></th>
+                        <th scope="col" class="py-4 border-0 text-secondary fw-bold text-uppercase small"><?= __('plot_th_size', [], 'Total Size') ?></th>
+                        <th scope="col" class="py-4 border-0 text-secondary fw-bold text-uppercase small"><?= __('plot_th_description', [], 'Description') ?></th>
+                        <th scope="col" class="pe-4 py-4 border-0 text-secondary fw-bold text-uppercase small text-center"><?= __('plot_th_action', [], 'Action') ?></th>
                     </tr>
                 </thead>
                 <tbody>

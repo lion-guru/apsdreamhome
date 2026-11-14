@@ -106,12 +106,12 @@ $base = BASE_URL ?? '';
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Name</th>
-                        <th>Slug</th>
-                        <th>Plan</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th>Action</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Slug</th>
+                        <th scope="col">Plan</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>

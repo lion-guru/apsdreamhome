@@ -123,7 +123,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     
     <script>
         // S471: a destructive action is a POST - it used to be a GET, which any
-        // third-party page could trigger with a single <img>.
+        // third-party page could trigger with a single <img alt="">.
         function apsPostAction(url) {
             var token = '';
             if (window.APS && APS.getCsrfToken) { token = APS.getCsrfToken(); }

@@ -49,7 +49,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         <?php else: ?>
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="table-light"><tr><th>Date</th><th>Type</th><th>Amount</th><th>Description</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">Description</th></tr></thead>
                 <tbody>
                 <?php foreach ($transactions as $t): ?>
                 <tr>
@@ -77,7 +77,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         <?php else: ?>
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="table-light"><tr><th>Date</th><th>Type</th><th>Amount</th><th>From</th><th>Status</th><th>Notes</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">From</th><th scope="col">Status</th><th scope="col">Notes</th></tr></thead>
                 <tbody>
                 <?php foreach ($commissions as $c): ?>
                 <tr>

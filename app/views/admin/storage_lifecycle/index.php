@@ -25,7 +25,7 @@ $rules = $rules ?? [];
             <div class="text-center text-muted py-5">No lifecycle rules. Add one above.</div>
         <?php else: ?>
         <table class="table mb-0">
-            <thead><tr><th>Prefix</th><th>Action</th><th>Days</th><th>Status</th><th>Last Run</th><th>Actions</th></tr></thead>
+            <thead><tr><th scope="col">Prefix</th><th scope="col">Action</th><th scope="col">Days</th><th scope="col">Status</th><th scope="col">Last Run</th><th scope="col">Actions</th></tr></thead>
             <tbody>
             <?php foreach ($rules as $r): ?>
                 <tr>

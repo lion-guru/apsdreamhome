@@ -64,7 +64,7 @@ $alertsOn = (int)($search['email_alerts'] ?? 0) === 1;
                                 $imgSrc = BASE_URL . '/' . ltrim($imgRaw, '/');
                             }
                             ?>
-                            <img src="<?= htmlspecialchars($imgSrc)?>" class="card-img-top"
+                            <img alt="" src="<?= htmlspecialchars($imgSrc)?>" class="card-img-top"
                                  onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                             <span class="badge bg-<?= ($p['listing_type'] ?? 'sell') === 'rent' ? 'info' : 'success' ?> position-absolute top-0 end-0 m-2">
                                 <?= ucfirst($p['listing_type'] ?? 'Sell') ?>

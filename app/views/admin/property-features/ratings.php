@@ -49,7 +49,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light"><tr><th class="ps-4">Property</th><th>User</th><th>Rating</th><th>Review</th><th>Verified</th><th>Helpful</th><th class="text-end pe-4">Date</th></tr></thead>
+                    <thead class="bg-light"><tr><th scope="col" class="ps-4">Property</th><th scope="col">User</th><th scope="col">Rating</th><th scope="col">Review</th><th scope="col">Verified</th><th scope="col">Helpful</th><th scope="col" class="text-end pe-4">Date</th></tr></thead>
                     <tbody>
                         <?php if (empty($ratings)): ?>
                             <tr><td colspan="7" class="text-center py-5 text-muted"><i class="fas fa-star fa-3x d-block mb-3"></i>No ratings yet</td></tr>
@@ -82,7 +82,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light"><tr><th class="ps-4">Property</th><th>Customer</th><th>Rating</th><th>Review</th><th>Status</th><th>Anonymous</th><th class="text-end pe-4">Actions</th></tr></thead>
+                    <thead class="bg-light"><tr><th scope="col" class="ps-4">Property</th><th scope="col">Customer</th><th scope="col">Rating</th><th scope="col">Review</th><th scope="col">Status</th><th scope="col">Anonymous</th><th scope="col" class="text-end pe-4">Actions</th></tr></thead>
                     <tbody>
                         <?php if (empty($reviews)): ?>
                             <tr><td colspan="7" class="text-center py-5 text-muted"><i class="fas fa-comment fa-3x d-block mb-3"></i>No reviews yet</td></tr>

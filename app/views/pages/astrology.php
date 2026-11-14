@@ -109,9 +109,9 @@ $page_description = 'Explore how Vedic astrology influences property selection a
                     <table class="table table-bordered">
                         <thead class="table-primary">
                             <tr>
-                                <th>Rashi (Sign)</th>
-                                <th>Lucky Direction</th>
-                                <th>Best Property Type</th>
+                                <th scope="col">Rashi (Sign)</th>
+                                <th scope="col">Lucky Direction</th>
+                                <th scope="col">Best Property Type</th>
                             </tr>
                         </thead>
                         <tbody>

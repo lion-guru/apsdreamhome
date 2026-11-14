@@ -6,7 +6,7 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
             <div class="table-responsive"><table class="table table-hover mb-0">
-                <thead class="table-light"><tr><th>ID</th><th>Name</th><th>Price</th><th>Direct Reward</th><th>Level Reward</th><th>Daily Cap</th><th>Status</th><th>Actions</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Price</th><th scope="col">Direct Reward</th><th scope="col">Level Reward</th><th scope="col">Daily Cap</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                 <tbody>
                     <?php if (empty($packages ?? [])): ?>
                     <tr>

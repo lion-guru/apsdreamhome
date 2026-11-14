@@ -9,7 +9,7 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
                         <?php foreach (($ins['market_growth'] ?? []) as $k => $v): ?>
-                            <tr><th class="w-50"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $k))) ?></th><td><?= htmlspecialchars($v ?? '') ?></td></tr>
+                            <tr><th scope="col" class="w-50"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $k))) ?></th><td><?= htmlspecialchars($v ?? '') ?></td></tr>
                         <?php endforeach; ?>
                     </table></div>
                 </div>

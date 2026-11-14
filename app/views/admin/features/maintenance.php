@@ -23,7 +23,7 @@ ob_start();
     <div class="tab-pane fade show active" id="mn">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Property</th><th>Type</th><th>Description</th><th>Scheduled</th><th>Est. Cost</th><th>Status</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Property</th><th scope="col">Type</th><th scope="col">Description</th><th scope="col">Scheduled</th><th scope="col">Est. Cost</th><th scope="col">Status</th></tr></thead>
           <tbody>
             <?php if (empty($maintenance)): ?>
               <tr><td colspan="6" class="text-center py-3 text-muted">No maintenance scheduled</td></tr>
@@ -45,7 +45,7 @@ ob_start();
     <div class="tab-pane fade" id="mkt">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Date</th><th>District</th><th>Type</th><th>Avg Price</th><th>Listings</th><th>Sold</th><th>% Change</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">District</th><th scope="col">Type</th><th scope="col">Avg Price</th><th scope="col">Listings</th><th scope="col">Sold</th><th scope="col">% Change</th></tr></thead>
           <tbody>
             <?php if (empty($marketData)): ?>
               <tr><td colspan="7" class="text-center py-3 text-muted">No market data</td></tr>

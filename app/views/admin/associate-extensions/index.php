@@ -11,16 +11,16 @@
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Points</th>
-                            <th>Badges</th>
-                            <th>Training %</th>
-                            <th>Visits</th>
-                            <th>Referrals</th>
-                            <th>Actions</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Points</th>
+                            <th scope="col">Badges</th>
+                            <th scope="col">Training %</th>
+                            <th scope="col">Visits</th>
+                            <th scope="col">Referrals</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

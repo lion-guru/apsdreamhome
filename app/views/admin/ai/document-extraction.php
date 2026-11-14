@@ -154,14 +154,14 @@ $total_pages = $total_pages ?? 1;
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>ID</th>
-                                <th>Document</th>
-                                <th>Type</th>
-                                <th>Engine</th>
-                                <th>Status</th>
-                                <th>Confidence</th>
-                                <th>Created</th>
-                                <th>Actions</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Document</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Engine</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Confidence</th>
+                                <th scope="col">Created</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

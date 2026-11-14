@@ -169,13 +169,13 @@ $completedCount = count($completedMeetings);
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Title</th>
-                                <th>Lead</th>
-                                <th>Agent</th>
-                                <th>Date & Time</th>
-                                <th>Status</th>
-                                <th>Meeting Type</th>
-                                <th class="text-center">Actions</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Lead</th>
+                                <th scope="col">Agent</th>
+                                <th scope="col">Date & Time</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Meeting Type</th>
+                                <th scope="col" class="text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

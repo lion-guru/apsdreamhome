@@ -142,7 +142,7 @@ $st = $stats ?? [];
                 <?php else: ?>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
-                            <thead class="table-light"><tr><th><?= __('admin_booking_label') ?></th><th><?= __('admin_customer_label') ?></th><th><?= __('admin_purpose_label') ?></th><th><?= __('admin_status_label') ?></th><th></th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col"><?= __('admin_booking_label') ?></th><th scope="col"><?= __('admin_customer_label') ?></th><th scope="col"><?= __('admin_purpose_label') ?></th><th scope="col"><?= __('admin_status_label') ?></th><th scope="col"></th></tr></thead>
                             <tbody>
                             <?php foreach ($recent_nocs as $n): ?>
                                 <tr>
@@ -174,7 +174,7 @@ $st = $stats ?? [];
                 <?php else: ?>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
-                            <thead class="table-light"><tr><th><?= __('admin_booking_label') ?></th><th><?= __('admin_customer_label') ?></th><th><?= __('admin_plot_label') ?></th><th><?= __('admin_cost_label') ?></th><th><?= __('admin_status_label') ?></th><th></th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col"><?= __('admin_booking_label') ?></th><th scope="col"><?= __('admin_customer_label') ?></th><th scope="col"><?= __('admin_plot_label') ?></th><th scope="col"><?= __('admin_cost_label') ?></th><th scope="col"><?= __('admin_status_label') ?></th><th scope="col"></th></tr></thead>
                             <tbody>
                             <?php foreach ($recent_registries as $r): ?>
                                 <tr>

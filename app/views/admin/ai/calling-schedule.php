@@ -63,7 +63,7 @@ $totalPending = $totalPending ?? 0;
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead><tr><th>Time</th><th>Lead</th><th>Phone</th><th>Priority</th><th>Attempts</th><th>Status</th></tr></thead>
+                                <thead><tr><th scope="col">Time</th><th scope="col">Lead</th><th scope="col">Phone</th><th scope="col">Priority</th><th scope="col">Attempts</th><th scope="col">Status</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($todayScheduled as $s): ?>
                                     <tr>

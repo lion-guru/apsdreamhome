@@ -80,14 +80,14 @@ $tasks = $tasks ?? [];
                 <table class="table table-bordered table-hover" id="tasksTable">
                     <thead>
                         <tr>
-                            <th>Status</th>
-                            <th>Name</th>
-                            <th>Schedule</th>
-                            <th>Last Run</th>
-                            <th>Next Run</th>
-                            <th>Runs</th>
-                            <th>Last Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Schedule</th>
+                            <th scope="col">Last Run</th>
+                            <th scope="col">Next Run</th>
+                            <th scope="col">Runs</th>
+                            <th scope="col">Last Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

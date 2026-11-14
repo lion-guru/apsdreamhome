@@ -117,13 +117,13 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th><?= __('assoc_cd_th_booking', [], 'Booking #') ?></th>
-                                <th><?= __('assoc_cd_th_plot', [], 'Plot') ?></th>
-                                <th><?= __('assoc_cd_th_colony', [], 'Colony') ?></th>
-                                <th><?= __('assoc_cd_th_amount', [], 'Amount') ?></th>
-                                <th><?= __('assoc_cd_th_paid', [], 'Paid') ?></th>
-                                <th><?= __('assoc_cd_th_status', [], 'Status') ?></th>
-                                <th><?= __('assoc_cd_th_date', [], 'Date') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_booking', [], 'Booking #') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_plot', [], 'Plot') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_colony', [], 'Colony') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_amount', [], 'Amount') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_paid', [], 'Paid') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_status', [], 'Status') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_date', [], 'Date') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -172,12 +172,12 @@ $isAssociate = ($customer['is_associate'] ?? 0) == 1;
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th><?= __('assoc_cd_th_receipt', [], 'Receipt #') ?></th>
-                                <th><?= __('assoc_cd_th_booking_ref', [], 'Booking') ?></th>
-                                <th><?= __('assoc_cd_th_amount', [], 'Amount') ?></th>
-                                <th><?= __('assoc_cd_th_mode', [], 'Mode') ?></th>
-                                <th><?= __('assoc_cd_th_date', [], 'Date') ?></th>
-                                <th><?= __('assoc_cd_th_status', [], 'Status') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_receipt', [], 'Receipt #') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_booking_ref', [], 'Booking') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_amount', [], 'Amount') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_mode', [], 'Mode') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_date', [], 'Date') ?></th>
+                                <th scope="col"><?= __('assoc_cd_th_status', [], 'Status') ?></th>
                             </tr>
                         </thead>
                         <tbody>

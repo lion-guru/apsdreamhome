@@ -36,7 +36,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>#</th><th>From</th><th>Level</th><th>Amount</th><th>Type</th><th>Status</th><th>Date</th></tr>
+                        <tr><th scope="col">#</th><th scope="col">From</th><th scope="col">Level</th><th scope="col">Amount</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Date</th></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($commissions as $i => $c): ?>

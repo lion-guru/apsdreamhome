@@ -11,7 +11,7 @@ $page_title = $page_title ?? 'Employee Bonuses';
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Employee</th><th>Bonus #</th><th>Type</th><th>Amount</th><th>Month/Year</th><th>Reason</th><th>Status</th></tr>
+                    <tr><th scope="col">Employee</th><th scope="col">Bonus #</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">Month/Year</th><th scope="col">Reason</th><th scope="col">Status</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($bonuses ?? [])): ?>

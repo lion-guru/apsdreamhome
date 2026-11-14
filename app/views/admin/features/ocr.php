@@ -37,7 +37,7 @@ ob_start();
     <div class="tab-pane fade show active" id="docs">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>ID</th><th>Status</th><th>Text Length</th><th>Processed</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">Status</th><th scope="col">Text Length</th><th scope="col">Processed</th></tr></thead>
           <tbody>
             <?php if (empty($documents)): ?>
               <tr><td colspan="4" class="text-center py-3 text-muted">No OCR documents</td></tr>
@@ -57,7 +57,7 @@ ob_start();
     <div class="tab-pane fade" id="cls">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Doc ID</th><th>Category</th><th>Confidence</th><th>Classified</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Doc ID</th><th scope="col">Category</th><th scope="col">Confidence</th><th scope="col">Classified</th></tr></thead>
           <tbody>
             <?php if (empty($classifications)): ?>
               <tr><td colspan="4" class="text-center py-3 text-muted">No classifications</td></tr>
@@ -77,7 +77,7 @@ ob_start();
     <div class="tab-pane fade" id="tmpl">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Name</th><th>Category</th><th>Active</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Name</th><th scope="col">Category</th><th scope="col">Active</th></tr></thead>
           <tbody>
             <?php if (empty($templates)): ?>
               <tr><td colspan="3" class="text-center py-3 text-muted">No templates</td></tr>
@@ -96,7 +96,7 @@ ob_start();
     <div class="tab-pane fade" id="exec">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>ID</th><th>Type</th><th>Status</th><th>Duration</th><th>Started</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Duration</th><th scope="col">Started</th></tr></thead>
           <tbody>
             <?php if (empty($executions)): ?>
               <tr><td colspan="5" class="text-center py-3 text-muted">No report runs</td></tr>

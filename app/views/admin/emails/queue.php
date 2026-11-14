@@ -38,7 +38,7 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr><th>To</th><th>Subject</th><th>Status</th><th>Attempts</th><th>Queued At</th><th>Sent At</th><th>Actions</th></tr>
+                        <tr><th scope="col">To</th><th scope="col">Subject</th><th scope="col">Status</th><th scope="col">Attempts</th><th scope="col">Queued At</th><th scope="col">Sent At</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($emails)): ?>

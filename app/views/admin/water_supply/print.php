@@ -50,39 +50,39 @@ $quality = $quality ?? [];
     <table class="table table-bordered mb-4">
         <tbody>
             <tr>
-                <th class="table-light w-25">Township / Colony:</th>
+                <th scope="row" class="table-light w-25">Township / Colony:</th>
                 <td class="w-25 fw-bold text-primary"><?= htmlspecialchars($log['colony_name'] ?? 'Colony #' . $log['colony_id']) ?></td>
-                <th class="table-light w-25">Log Date &amp; Shift:</th>
+                <th scope="row" class="table-light w-25">Log Date &amp; Shift:</th>
                 <td class="w-25 fw-bold"><?= htmlspecialchars($log['log_date']) ?> (<?= ucfirst($log['shift']) ?>)</td>
             </tr>
             <tr>
-                <th class="table-light">Borewell Pump Station:</th>
+                <th scope="row" class="table-light">Borewell Pump Station:</th>
                 <td><?= htmlspecialchars($log['pump_number']) ?></td>
-                <th class="table-light">Pumping Hours:</th>
+                <th scope="row" class="table-light">Pumping Hours:</th>
                 <td><?= $log['pump_start_time'] ? substr($log['pump_start_time'], 0, 5) : '--' ?> to <?= $log['pump_stop_time'] ? substr($log['pump_stop_time'], 0, 5) : '--' ?> (<?= number_format((float)$log['run_hours'], 1) ?> hrs)</td>
             </tr>
             <tr>
-                <th class="table-light">Water Pumped:</th>
+                <th scope="row" class="table-light">Water Pumped:</th>
                 <td class="fw-bold text-success fs-6"><?= number_format((float)$log['water_pumped_kl'], 1) ?> kL (<?= number_format((float)$log['water_pumped_kl'] * 1000) ?> Litres)</td>
-                <th class="table-light">Power Consumed:</th>
+                <th scope="row" class="table-light">Power Consumed:</th>
                 <td><?= number_format((float)$log['power_units_kwh'], 1) ?> kWh Units</td>
             </tr>
             <tr>
-                <th class="table-light">Overhead Tank (OHT) Level:</th>
+                <th scope="row" class="table-light">Overhead Tank (OHT) Level:</th>
                 <td><?= (int)$log['oht_level_pct'] ?>% Capacity</td>
-                <th class="table-light">Line Pressure:</th>
+                <th scope="row" class="table-light">Line Pressure:</th>
                 <td><?= number_format((float)$log['line_pressure_bar'], 2) ?> Bar</td>
             </tr>
             <tr>
-                <th class="table-light">Chlorination Dosing:</th>
+                <th scope="row" class="table-light">Chlorination Dosing:</th>
                 <td><?= number_format((float)$log['chlorine_dose_gm'], 1) ?> grams</td>
-                <th class="table-light">Pump Mechanical Health:</th>
+                <th scope="row" class="table-light">Pump Mechanical Health:</th>
                 <td class="text-capitalize fw-semibold"><?= str_replace('_', ' ', $log['pump_health']) ?></td>
             </tr>
             <tr>
-                <th class="table-light">Station Operator:</th>
+                <th scope="row" class="table-light">Station Operator:</th>
                 <td><?= htmlspecialchars($log['operator_name']) ?> (<?= htmlspecialchars($log['operator_phone'] ?? 'N/A') ?>)</td>
-                <th class="table-light">Observations / Notes:</th>
+                <th scope="row" class="table-light">Observations / Notes:</th>
                 <td><?= htmlspecialchars($log['remarks'] ?: 'All feeder lines pressurized normally.') ?></td>
             </tr>
         </tbody>

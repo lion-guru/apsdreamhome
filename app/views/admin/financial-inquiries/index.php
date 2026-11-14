@@ -94,14 +94,14 @@ $statusLabels = [
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Contact</th>
-                        <th>Service Interest</th>
-                        <th>Status</th>
-                        <th>Assigned</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Contact</th>
+                        <th scope="col">Service Interest</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Assigned</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -197,7 +197,7 @@ $ai_agents = $ai_agents ?? [];
                             <?php else: ?>
                             <div class="table-responsive">
                                 <table class="table table-sm table-hover mb-0">
-                                    <thead><tr><th>Channel</th><th>State</th><th>Caller</th><th>Action</th></tr></thead>
+                                    <thead><tr><th scope="col">Channel</th><th scope="col">State</th><th scope="col">Caller</th><th scope="col">Action</th></tr></thead>
                                     <tbody>
                                     <?php foreach ($channels as $ch): ?>
                                     <tr>
@@ -231,7 +231,7 @@ $ai_agents = $ai_agents ?? [];
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-hover text-nowrap mb-0">
-                                    <thead><tr><th>Time</th><th>Phone</th><th>Customer</th><th>Status</th><th>Duration</th></tr></thead>
+                                    <thead><tr><th scope="col">Time</th><th scope="col">Phone</th><th scope="col">Customer</th><th scope="col">Status</th><th scope="col">Duration</th></tr></thead>
                                     <tbody>
                                     <?php if (empty($recent_calls)): ?>
                                     <tr><td colspan="5" class="text-center text-muted py-3">No calls yet</td></tr>

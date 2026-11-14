@@ -61,7 +61,7 @@ $recent_assignments = $recent_assignments ?? [];
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-hover table-sm">
-                                        <thead class="sticky-top bg-light"><tr><th width="40"><input type="checkbox" id="checkAll" onchange="toggleAll()"></th><th>Lead</th><th>Contact</th><th>Score</th><th>Created</th></tr></thead>
+                                        <thead class="sticky-top bg-light"><tr><th scope="col" width="40"><input type="checkbox" id="checkAll" onchange="toggleAll()"></th><th scope="col">Lead</th><th scope="col">Contact</th><th scope="col">Score</th><th scope="col">Created</th></tr></thead>
                                         <tbody>
                                         <?php foreach ($unassigned as $l): ?>
                                             <tr>

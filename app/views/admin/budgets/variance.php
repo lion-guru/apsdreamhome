@@ -58,7 +58,7 @@ $filters = $filters ?? ['fiscal_year' => '', 'budget_id' => null];
         <div class="card-header"><strong>Department Budget Summary</strong></div>
         <div class="card-body p-0">
             <table class="table table-sm mb-0">
-                <thead class="table-light"><tr><th>Department</th><th>Code</th><th>Budget Count</th><th>Allocated</th><th>Spent</th><th>Committed</th><th>Remaining</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Department</th><th scope="col">Code</th><th scope="col">Budget Count</th><th scope="col">Allocated</th><th scope="col">Spent</th><th scope="col">Committed</th><th scope="col">Remaining</th></tr></thead>
                 <tbody>
                     <?php if (empty($deptSummary)): ?>
                     <tr><td colspan="7" class="text-center text-muted">No budget data found for this period</td></tr>
@@ -85,7 +85,7 @@ $filters = $filters ?? ['fiscal_year' => '', 'budget_id' => null];
         <div class="card-header"><strong>Budget Variance — Per Budget Detail</strong></div>
         <div class="card-body p-0">
             <table class="table table-sm mb-0">
-                <thead class="table-light"><tr><th>Budget Name</th><th>Department</th><th>Fiscal Year</th><th>Allocated</th><th>Spent</th><th>Committed</th><th>Available</th><th>Usage %</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Budget Name</th><th scope="col">Department</th><th scope="col">Fiscal Year</th><th scope="col">Allocated</th><th scope="col">Spent</th><th scope="col">Committed</th><th scope="col">Available</th><th scope="col">Usage %</th></tr></thead>
                 <tbody>
                     <?php foreach ($variance as $v): ?>
                     <?php $util = ((float)($v['allocated_amount'] ?? 0) > 0) ? (((float)($v['spent_amount'] ?? 0) + (float)($v['committed_amount'] ?? 0)) / (float)$v['allocated_amount']) * 100 : 0; ?>

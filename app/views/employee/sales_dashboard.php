@@ -56,7 +56,7 @@
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($deals)): ?>
                         <div class="table-responsive"><table class="table table-sm table-hover mb-0">
-                            <thead><tr><th>Customer</th><th>Property</th><th class="text-end">Value</th><th>Stage</th></tr></thead>
+                            <thead><tr><th scope="col">Customer</th><th scope="col">Property</th><th scope="col" class="text-end">Value</th><th scope="col">Stage</th></tr></thead>
                             <tbody>
                                 <?php foreach ($deals as $deal): ?>
                                 <tr>

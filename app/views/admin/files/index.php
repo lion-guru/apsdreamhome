@@ -140,12 +140,12 @@
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>File</th>
-                            <th>Category</th>
-                            <th>Size</th>
-                            <th>Uploaded</th>
-                            <th>Downloads</th>
-                            <th>Actions</th>
+                            <th scope="col">File</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Size</th>
+                            <th scope="col">Uploaded</th>
+                            <th scope="col">Downloads</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

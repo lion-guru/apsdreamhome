@@ -19,16 +19,16 @@
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Project Name</th>
-                            <th>District</th>
-                            <th>Progress</th>
-                            <th>Last Updated</th>
-                            <th>Manager</th>
-                            <th>Budget</th>
-                            <th>Spent</th>
-                            <th>Risk</th>
-                            <th>Actions</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Project Name</th>
+                            <th scope="col">District</th>
+                            <th scope="col">Progress</th>
+                            <th scope="col">Last Updated</th>
+                            <th scope="col">Manager</th>
+                            <th scope="col">Budget</th>
+                            <th scope="col">Spent</th>
+                            <th scope="col">Risk</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

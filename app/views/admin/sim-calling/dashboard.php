@@ -150,12 +150,12 @@
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>Time</th>
-                                <th>Phone</th>
-                                <th>Customer</th>
-                                <th>Status</th>
-                                <th>Duration</th>
-                                <th>Actions</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -204,7 +204,7 @@
                 </div>
                 <div class="card-body table-responsive p-0">
                     <table class="table table-sm">
-                        <thead><tr><th>Channel</th><th>State</th><th>Caller</th><th>Called</th><th></th></tr></thead>
+                        <thead><tr><th scope="col">Channel</th><th scope="col">State</th><th scope="col">Caller</th><th scope="col">Called</th><th scope="col"></th></tr></thead>
                         <tbody>
                             <?php foreach ($_ch as $ch): ?>
                             <tr>

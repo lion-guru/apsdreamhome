@@ -42,13 +42,13 @@ function statusColor($status) {
         <div class="card-header bg-white"><h5 class="mb-0"><i class="fab fa-php me-2"></i>PHP Environment</h5></div>
         <div class="card-body aps-cp-card-body">
           <div class="table-responsive"><table class="table table-sm mb-0">
-            <tr><th>Version</th><td><code><?= htmlspecialchars($php['version'] ?? '') ?></code></td></tr>
-            <tr><th>OS</th><td><?= htmlspecialchars($php['os'] ?? '') ?></td></tr>
-            <tr><th>SAPI</th><td><code><?= htmlspecialchars($php['sapi'] ?? '') ?></code></td></tr>
-            <tr><th>Max Execution Time</th><td><?= htmlspecialchars($php['max_execution_time'] ?? '') ?>s</td></tr>
-            <tr><th>Memory Limit</th><td><?= htmlspecialchars($php['memory_limit'] ?? '') ?></td></tr>
-            <tr><th>Upload Max</th><td><?= htmlspecialchars($php['upload_max_filesize'] ?? '') ?></td></tr>
-            <tr><th>POST Max</th><td><?= htmlspecialchars($php['post_max_size'] ?? '') ?></td></tr>
+            <tr><th scope="col">Version</th><td><code><?= htmlspecialchars($php['version'] ?? '') ?></code></td></tr>
+            <tr><th scope="col">OS</th><td><?= htmlspecialchars($php['os'] ?? '') ?></td></tr>
+            <tr><th scope="col">SAPI</th><td><code><?= htmlspecialchars($php['sapi'] ?? '') ?></code></td></tr>
+            <tr><th scope="col">Max Execution Time</th><td><?= htmlspecialchars($php['max_execution_time'] ?? '') ?>s</td></tr>
+            <tr><th scope="col">Memory Limit</th><td><?= htmlspecialchars($php['memory_limit'] ?? '') ?></td></tr>
+            <tr><th scope="col">Upload Max</th><td><?= htmlspecialchars($php['upload_max_filesize'] ?? '') ?></td></tr>
+            <tr><th scope="col">POST Max</th><td><?= htmlspecialchars($php['post_max_size'] ?? '') ?></td></tr>
           </table></div>
           <h6 class="mt-3">Loaded Extensions</h6>
           <div>
@@ -65,11 +65,11 @@ function statusColor($status) {
         <div class="card-header bg-white"><h5 class="mb-0"><i class="fas fa-database me-2"></i>Database</h5></div>
         <div class="card-body aps-cp-card-body">
           <div class="table-responsive"><table class="table table-sm mb-0">
-            <tr><th>Version</th><td><code><?= htmlspecialchars($db['version'] ?? 'unknown') ?></code></td></tr>
-            <tr><th>Total Tables</th><td><strong><?= $db['tables'] ?? 0 ?></strong></td></tr>
-            <tr><th>Database Size</th><td><?= $db['size_mb'] ?? 0 ?> MB</td></tr>
-            <tr><th>Throughput</th><td><?= $db['queries_per_sec'] ?? 0 ?> queries/sec</td></tr>
-            <tr><th>Uptime</th><td><?= $db['uptime_days'] ?? 0 ?> days</td></tr>
+            <tr><th scope="col">Version</th><td><code><?= htmlspecialchars($db['version'] ?? 'unknown') ?></code></td></tr>
+            <tr><th scope="col">Total Tables</th><td><strong><?= $db['tables'] ?? 0 ?></strong></td></tr>
+            <tr><th scope="col">Database Size</th><td><?= $db['size_mb'] ?? 0 ?> MB</td></tr>
+            <tr><th scope="col">Throughput</th><td><?= $db['queries_per_sec'] ?? 0 ?> queries/sec</td></tr>
+            <tr><th scope="col">Uptime</th><td><?= $db['uptime_days'] ?? 0 ?> days</td></tr>
           </table></div>
         </div>
       </div>
@@ -87,10 +87,10 @@ function statusColor($status) {
           </div>
           <h6>Cache</h6>
           <div class="table-responsive"><table class="table table-sm mb-0">
-            <tr><th>Files</th><td><?= $cache['files'] ?? 0 ?></td></tr>
-            <tr><th>Size</th><td><?= $cache['size_mb'] ?? 0 ?> MB</td></tr>
-            <tr><th>Writable</th><td><span class="badge bg-<?= ($cache['writable'] ?? false) ? 'success' : 'danger' ?>"><?= ($cache['writable'] ?? false) ? 'Yes' : 'No' ?></span></td></tr>
-            <tr><th>Path</th><td><code class="small"><?= htmlspecialchars($cache['path'] ?? '') ?></code></td></tr>
+            <tr><th scope="col">Files</th><td><?= $cache['files'] ?? 0 ?></td></tr>
+            <tr><th scope="col">Size</th><td><?= $cache['size_mb'] ?? 0 ?> MB</td></tr>
+            <tr><th scope="col">Writable</th><td><span class="badge bg-<?= ($cache['writable'] ?? false) ? 'success' : 'danger' ?>"><?= ($cache['writable'] ?? false) ? 'Yes' : 'No' ?></span></td></tr>
+            <tr><th scope="col">Path</th><td><code class="small"><?= htmlspecialchars($cache['path'] ?? '') ?></code></td></tr>
           </table></div>
         </div>
       </div>
@@ -102,7 +102,7 @@ function statusColor($status) {
         <div class="card-body p-0">
           <div class="table-responsive"><table class="table table-sm mb-0">
             <thead class="table-light">
-              <tr><th>Service</th><th>Status</th><th>Size</th><th>Path</th></tr>
+              <tr><th scope="col">Service</th><th scope="col">Status</th><th scope="col">Size</th><th scope="col">Path</th></tr>
             </thead>
             <tbody>
               <?php foreach ($services as $name => $info): ?>

@@ -50,15 +50,15 @@ ob_start();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Collector</th>
-                            <th>Date</th>
-                            <th>Submitted</th>
-                            <th>Verified</th>
-                            <th>Rejected</th>
-                            <th>Discrepancy</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Collector</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Submitted</th>
+                            <th scope="col">Verified</th>
+                            <th scope="col">Rejected</th>
+                            <th scope="col">Discrepancy</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

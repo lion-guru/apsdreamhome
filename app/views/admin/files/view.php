@@ -17,14 +17,14 @@ $file = $file ?? ['id' => 0, 'original_name' => '', 'file_type' => '', 'size_byt
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary"><?= htmlspecialchars($file['original_name'] ?? '') ?></h6></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-bordered">
-                        <tr><th >File Name</th><td><?= htmlspecialchars($file['original_name'] ?? '') ?></td></tr>
-                        <tr><th>Type</th><td><span class="badge bg-info"><?= htmlspecialchars($file['mime_type'] ?? $file['file_type'] ?? '') ?></span></td></tr>
-                        <tr><th>Category</th><td><span class="badge bg-primary"><?= htmlspecialchars($file['file_category'] ?? '') ?></span></td></tr>
-                        <tr><th>Size</th><td><?php $b = floatval($file['size_bytes'] ?? 0); echo $b >= 1048576 ? number_format($b / 1048576, 2) . ' MB' : ($b >= 1024 ? number_format($b / 1024, 2) . ' KB' : number_format($b) . ' B'); ?></td></tr>
-                        <tr><th>Uploaded By</th><td><?= htmlspecialchars($file['uploaded_by'] ?? '') ?></td></tr>
-                        <tr><th>Uploaded Date</th><td><?= htmlspecialchars($file['created_at'] ?? '') ?></td></tr>
-                        <tr><th>Downloads</th><td><?= number_format($file['download_count'] ?? 0) ?></td></tr>
-                        <tr><th>Description</th><td><?= htmlspecialchars($file['description'] ?? 'N/A') ?></td></tr>
+                        <tr><th scope="col" >File Name</th><td><?= htmlspecialchars($file['original_name'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Type</th><td><span class="badge bg-info"><?= htmlspecialchars($file['mime_type'] ?? $file['file_type'] ?? '') ?></span></td></tr>
+                        <tr><th scope="col">Category</th><td><span class="badge bg-primary"><?= htmlspecialchars($file['file_category'] ?? '') ?></span></td></tr>
+                        <tr><th scope="col">Size</th><td><?php $b = floatval($file['size_bytes'] ?? 0); echo $b >= 1048576 ? number_format($b / 1048576, 2) . ' MB' : ($b >= 1024 ? number_format($b / 1024, 2) . ' KB' : number_format($b) . ' B'); ?></td></tr>
+                        <tr><th scope="col">Uploaded By</th><td><?= htmlspecialchars($file['uploaded_by'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Uploaded Date</th><td><?= htmlspecialchars($file['created_at'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Downloads</th><td><?= number_format($file['download_count'] ?? 0) ?></td></tr>
+                        <tr><th scope="col">Description</th><td><?= htmlspecialchars($file['description'] ?? 'N/A') ?></td></tr>
                     </table></div>
                 </div>
             </div>

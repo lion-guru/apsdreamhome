@@ -56,12 +56,12 @@ $base = BASE_URL;
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th style="width: 15%">Config Key</th>
-                                        <th style="width: 20%">Old Value</th>
-                                        <th style="width: 20%">New Value</th>
-                                        <th style="width: 15%">Changed By</th>
-                                        <th style="width: 15%">Date</th>
-                                        <th style="width: 15%">Actions</th>
+                                        <th scope="col" style="width: 15%">Config Key</th>
+                                        <th scope="col" style="width: 20%">Old Value</th>
+                                        <th scope="col" style="width: 20%">New Value</th>
+                                        <th scope="col" style="width: 15%">Changed By</th>
+                                        <th scope="col" style="width: 15%">Date</th>
+                                        <th scope="col" style="width: 15%">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -150,11 +150,11 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Lead</th>
-                                    <th>Score</th>
-                                    <th>Status</th>
-                                    <th>Days Stale</th>
-                                    <th>Action</th>
+                                    <th scope="col">Lead</th>
+                                    <th scope="col">Score</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Days Stale</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -200,11 +200,11 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Lead</th>
-                                    <th>Status</th>
-                                    <th>Amount</th>
-                                    <th>Probability</th>
-                                    <th>Risk Factors</th>
+                                    <th scope="col">Lead</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Probability</th>
+                                    <th scope="col">Risk Factors</th>
                                 </tr>
                             </thead>
                             <tbody>

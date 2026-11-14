@@ -38,7 +38,7 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-dark"><tr>
-                        <th>#</th><th>Employee</th><th>Month</th><th>Year</th><th>Earnings</th><th>Deductions</th><th>Net Pay</th><th>Paid</th><th>Due</th><th>Date</th><th>Status</th><th>Actions</th>
+                        <th scope="col">#</th><th scope="col">Employee</th><th scope="col">Month</th><th scope="col">Year</th><th scope="col">Earnings</th><th scope="col">Deductions</th><th scope="col">Net Pay</th><th scope="col">Paid</th><th scope="col">Due</th><th scope="col">Date</th><th scope="col">Status</th><th scope="col">Actions</th>
                     </tr></thead>
                     <tbody>
                         <?php if (empty($tracker ?? [])): ?>

@@ -45,14 +45,14 @@
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
-                        <th>Customer</th>
-                        <th>Phone</th>
-                        <th>Agent</th>
-                        <th>Duration</th>
-                        <th>Status</th>
-                        <th>Date/Time</th>
-                        <th>Actions</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Agent</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date/Time</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

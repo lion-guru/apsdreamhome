@@ -145,14 +145,14 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
             <table class="table table-hover align-middle mb-0">
                 <thead >
                     <tr>
-                        <th class="px-3 py-3">Name</th>
-                        <th class="px-3 py-3">Contact</th>
-                        <th class="px-3 py-3">Property</th>
-                        <th class="px-3 py-3">Budget</th>
-                        <th class="px-3 py-3">Score</th>
-                        <th class="px-3 py-3">Status</th>
-                        <th class="px-3 py-3">Date</th>
-                        <th class="px-3 py-3">Actions</th>
+                        <th scope="col" class="px-3 py-3">Name</th>
+                        <th scope="col" class="px-3 py-3">Contact</th>
+                        <th scope="col" class="px-3 py-3">Property</th>
+                        <th scope="col" class="px-3 py-3">Budget</th>
+                        <th scope="col" class="px-3 py-3">Score</th>
+                        <th scope="col" class="px-3 py-3">Status</th>
+                        <th scope="col" class="px-3 py-3">Date</th>
+                        <th scope="col" class="px-3 py-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

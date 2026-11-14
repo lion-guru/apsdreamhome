@@ -127,13 +127,13 @@
                         <table class="table table-bordered mb-0">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Item</th>
-                                    <th class="text-center">Qty</th>
-                                    <th class="text-end">Rate</th>
-                                    <th class="text-end">Disc</th>
-                                    <th class="text-end">Tax</th>
-                                    <th class="text-end">Total</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Item</th>
+                                    <th scope="col" class="text-center">Qty</th>
+                                    <th scope="col" class="text-end">Rate</th>
+                                    <th scope="col" class="text-end">Disc</th>
+                                    <th scope="col" class="text-end">Tax</th>
+                                    <th scope="col" class="text-end">Total</th>
                                 </tr>
                             </thead>
                             <tbody>

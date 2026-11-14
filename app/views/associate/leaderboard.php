@@ -37,7 +37,7 @@ $badgeClass = ['Gold' => 'warning text-dark', 'Silver' => 'secondary', 'Bronze' 
             <div class="text-center text-muted py-4">No completed trips yet — be the first on the board this Sunday!</div>
         <?php else: ?>
         <div class="table-responsive"><table class="table table-hover mb-0">
-            <thead class="table-light"><tr><th>#</th><th>Associate</th><th class="text-end">Trips</th><th class="text-end">Visited</th><th class="text-end">Tokens</th><th class="text-end">Conv.</th><th>Badge</th></tr></thead>
+            <thead class="table-light"><tr><th scope="col">#</th><th scope="col">Associate</th><th scope="col" class="text-end">Trips</th><th scope="col" class="text-end">Visited</th><th scope="col" class="text-end">Tokens</th><th scope="col" class="text-end">Conv.</th><th scope="col">Badge</th></tr></thead>
             <tbody>
             <?php foreach ($board as $b): ?>
                 <tr class="<?= !empty($b['is_me']) ? 'table-primary fw-bold' : '' ?>">

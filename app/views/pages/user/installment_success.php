@@ -100,11 +100,11 @@ $instStatusColors = [
                     <table class="aps-cp-table">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th><?= __('user_installment_success_th_due_date', 'Due Date') ?></th>
-                                <th class="text-end"><?= __('user_installment_success_th_amount', 'Amount') ?></th>
-                                <th class="text-end"><?= __('user_installment_success_th_paid', 'Paid') ?></th>
-                                <th><?= __('user_installment_success_th_status', 'Status') ?></th>
+                                <th scope="col">#</th>
+                                <th scope="col"><?= __('user_installment_success_th_due_date', 'Due Date') ?></th>
+                                <th scope="col" class="text-end"><?= __('user_installment_success_th_amount', 'Amount') ?></th>
+                                <th scope="col" class="text-end"><?= __('user_installment_success_th_paid', 'Paid') ?></th>
+                                <th scope="col"><?= __('user_installment_success_th_status', 'Status') ?></th>
                             </tr>
                         </thead>
                         <tbody>

@@ -8,13 +8,13 @@ $page_title = 'Lead Call Recordings';
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Agent</th>
-                        <th>Status</th>
-                        <th>Duration</th>
-                        <th>Response</th>
-                        <th>Created</th>
-                        <th>Action</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Agent</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Response</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>

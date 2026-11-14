@@ -29,7 +29,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>Type</th><th>Reference</th><th>Date</th><th>Credits (t)</th><th>Rate</th><th>Value</th><th>Verified</th><th class="text-end">Actions</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Type</th><th scope="col">Reference</th><th scope="col">Date</th><th scope="col">Credits (t)</th><th scope="col">Rate</th><th scope="col">Value</th><th scope="col">Verified</th><th scope="col" class="text-end">Actions</th></tr></thead>
                     <tbody>
                     <?php foreach ($entries as $e): ?>
                         <tr>

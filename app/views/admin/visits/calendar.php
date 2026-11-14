@@ -49,13 +49,13 @@ ob_start();
                 <table class="table table-bordered mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="text-center">Mon</th>
-                            <th class="text-center">Tue</th>
-                            <th class="text-center">Wed</th>
-                            <th class="text-center">Thu</th>
-                            <th class="text-center">Fri</th>
-                            <th class="text-center">Sat</th>
-                            <th class="text-center text-danger">Sun</th>
+                            <th scope="col" class="text-center">Mon</th>
+                            <th scope="col" class="text-center">Tue</th>
+                            <th scope="col" class="text-center">Wed</th>
+                            <th scope="col" class="text-center">Thu</th>
+                            <th scope="col" class="text-center">Fri</th>
+                            <th scope="col" class="text-center">Sat</th>
+                            <th scope="col" class="text-center text-danger">Sun</th>
                         </tr>
                     </thead>
                     <tbody>

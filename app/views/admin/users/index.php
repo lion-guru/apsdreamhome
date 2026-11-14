@@ -287,19 +287,19 @@ $perPage = $per_page ?? 20;
             <table class="table table-hover mb-0" id="usersTable">
                 <thead class="bg-light">
                     <tr>
-                        <th class="border-0 ps-4" style="width: 40px;" data-col="select">
+                        <th scope="col" class="border-0 ps-4" style="width: 40px;" data-col="select">
                             <input type="checkbox" id="selectAll" class="form-check-input" title="Select all" aria-label="Select all users">
                         </th>
-                        <th class="border-0" data-col="user"><a href="<?= sortLink('name', 'User', $filters) ?>" class="text-decoration-none text-dark">User<?= $iconName ?? '' ?></a></th>
-                        <th class="border-0" data-col="email"><a href="<?= sortLink('email', 'Email', $filters) ?>" class="text-decoration-none text-dark">Email<?= $iconEmail ?? '' ?></a></th>
-                        <th class="border-0" data-col="role"><a href="<?= sortLink('role', 'Role', $filters) ?>" class="text-decoration-none text-dark">Role<?= $iconRole ?? '' ?></a></th>
-                        <th class="border-0" data-col="status"><a href="<?= sortLink('status', 'Status', $filters) ?>" class="text-decoration-none text-dark">Status<?= $iconStatus ?? '' ?></a></th>
-                        <th class="border-0" data-col="reg_status"><a href="<?= sortLink('registration_status', 'Reg. Status', $filters) ?>" class="text-decoration-none text-dark">Reg. Status<?= $iconReg ?? '' ?></a></th>
-                        <th class="border-0" data-col="phone"><a href="<?= sortLink('phone', 'Phone', $filters) ?>" class="text-decoration-none text-dark">Phone<?= $iconPhone ?? '' ?></a></th>
-                        <th class="border-0" data-col="joined"><a href="<?= sortLink('created_at', 'Joined', $filters) ?>" class="text-decoration-none text-dark">Joined<?= $iconCreated ?? '' ?></a></th>
-                        <th class="border-0" data-col="properties"><a href="<?= sortLink('property_count', 'Properties', $filters) ?>" class="text-decoration-none text-dark">Properties<?= $iconProperties ?? '' ?></a></th>
-                        <th class="border-0" data-col="bookings"><a href="<?= sortLink('booking_count', 'Bookings', $filters) ?>" class="text-decoration-none text-dark">Bookings<?= $iconBookings ?? '' ?></a></th>
-                        <th class="border-0 text-end pe-4" data-col="actions">Actions</th>
+                        <th scope="col" class="border-0" data-col="user"><a href="<?= sortLink('name', 'User', $filters) ?>" class="text-decoration-none text-dark">User<?= $iconName ?? '' ?></a></th>
+                        <th scope="col" class="border-0" data-col="email"><a href="<?= sortLink('email', 'Email', $filters) ?>" class="text-decoration-none text-dark">Email<?= $iconEmail ?? '' ?></a></th>
+                        <th scope="col" class="border-0" data-col="role"><a href="<?= sortLink('role', 'Role', $filters) ?>" class="text-decoration-none text-dark">Role<?= $iconRole ?? '' ?></a></th>
+                        <th scope="col" class="border-0" data-col="status"><a href="<?= sortLink('status', 'Status', $filters) ?>" class="text-decoration-none text-dark">Status<?= $iconStatus ?? '' ?></a></th>
+                        <th scope="col" class="border-0" data-col="reg_status"><a href="<?= sortLink('registration_status', 'Reg. Status', $filters) ?>" class="text-decoration-none text-dark">Reg. Status<?= $iconReg ?? '' ?></a></th>
+                        <th scope="col" class="border-0" data-col="phone"><a href="<?= sortLink('phone', 'Phone', $filters) ?>" class="text-decoration-none text-dark">Phone<?= $iconPhone ?? '' ?></a></th>
+                        <th scope="col" class="border-0" data-col="joined"><a href="<?= sortLink('created_at', 'Joined', $filters) ?>" class="text-decoration-none text-dark">Joined<?= $iconCreated ?? '' ?></a></th>
+                        <th scope="col" class="border-0" data-col="properties"><a href="<?= sortLink('property_count', 'Properties', $filters) ?>" class="text-decoration-none text-dark">Properties<?= $iconProperties ?? '' ?></a></th>
+                        <th scope="col" class="border-0" data-col="bookings"><a href="<?= sortLink('booking_count', 'Bookings', $filters) ?>" class="text-decoration-none text-dark">Bookings<?= $iconBookings ?? '' ?></a></th>
+                        <th scope="col" class="border-0 text-end pe-4" data-col="actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

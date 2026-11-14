@@ -33,12 +33,12 @@
                 <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>Job Info</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
-                        <tr><th>Department</th><td><?= htmlspecialchars(ucfirst($job['department'] ?? $job['category'] ?? 'General')) ?></td></tr>
-                        <tr><th>Type</th><td><?= htmlspecialchars(ucfirst($job['type'] ?? 'Full Time')) ?></td></tr>
-                        <tr><th>Location</th><td><?= htmlspecialchars($job['location'] ?? 'N/A') ?></td></tr>
-                        <tr><th>Salary</th><td><?= htmlspecialchars($job['salary'] ?? $job['salary_range'] ?? 'Negotiable') ?></td></tr>
-                        <tr><th>Posted</th><td><?= htmlspecialchars($job['created_at'] ?? 'N/A') ?></td></tr>
-                        <tr><th>Closing</th><td><?= htmlspecialchars($job['closing_date'] ?? $job['deadline'] ?? 'Open') ?></td></tr>
+                        <tr><th scope="col">Department</th><td><?= htmlspecialchars(ucfirst($job['department'] ?? $job['category'] ?? 'General')) ?></td></tr>
+                        <tr><th scope="col">Type</th><td><?= htmlspecialchars(ucfirst($job['type'] ?? 'Full Time')) ?></td></tr>
+                        <tr><th scope="col">Location</th><td><?= htmlspecialchars($job['location'] ?? 'N/A') ?></td></tr>
+                        <tr><th scope="col">Salary</th><td><?= htmlspecialchars($job['salary'] ?? $job['salary_range'] ?? 'Negotiable') ?></td></tr>
+                        <tr><th scope="col">Posted</th><td><?= htmlspecialchars($job['created_at'] ?? 'N/A') ?></td></tr>
+                        <tr><th scope="col">Closing</th><td><?= htmlspecialchars($job['closing_date'] ?? $job['deadline'] ?? 'Open') ?></td></tr>
                     </table>
                 </div>
             </div>

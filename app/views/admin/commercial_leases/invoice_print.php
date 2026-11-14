@@ -119,16 +119,16 @@ $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" . urle
         </tbody>
         <tfoot class="table-light">
             <tr>
-                <th colspan="3" class="text-end fw-bold">Total Demand Payable:</th>
-                <th class="text-end pe-3 fw-bold fs-6 text-primary">₹<?= number_format((float)$invoice['total_due'], 2) ?></th>
+                <th scope="col" colspan="3" class="text-end fw-bold">Total Demand Payable:</th>
+                <th scope="col" class="text-end pe-3 fw-bold fs-6 text-primary">₹<?= number_format((float)$invoice['total_due'], 2) ?></th>
             </tr>
             <tr>
-                <th colspan="3" class="text-end">Amount Paid to Date:</th>
-                <th class="text-end pe-3 text-success">₹<?= number_format((float)$invoice['paid_amount'], 2) ?></th>
+                <th scope="col" colspan="3" class="text-end">Amount Paid to Date:</th>
+                <th scope="col" class="text-end pe-3 text-success">₹<?= number_format((float)$invoice['paid_amount'], 2) ?></th>
             </tr>
             <tr>
-                <th colspan="3" class="text-end fw-bold">Balance Due:</th>
-                <th class="text-end pe-3 fw-bold text-danger">₹<?= number_format((float)($invoice['total_due'] - $invoice['paid_amount']), 2) ?></th>
+                <th scope="col" colspan="3" class="text-end fw-bold">Balance Due:</th>
+                <th scope="col" class="text-end pe-3 fw-bold text-danger">₹<?= number_format((float)($invoice['total_due'] - $invoice['paid_amount']), 2) ?></th>
             </tr>
         </tfoot>
     </table>

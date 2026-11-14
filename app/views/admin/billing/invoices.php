@@ -81,14 +81,14 @@ $totalPaid     = array_sum(array_map(fn($s) => (float)($s['amount'] ?? 0), array
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
-                        <th>Plan</th>
-                        <th>Cycle</th>
-                        <th>Amount</th>
-                        <th>Started</th>
-                        <th>Period</th>
-                        <th>Status</th>
-                        <th>Razorpay ID</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Plan</th>
+                        <th scope="col">Cycle</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Started</th>
+                        <th scope="col">Period</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Razorpay ID</th>
                     </tr>
                 </thead>
                 <tbody>

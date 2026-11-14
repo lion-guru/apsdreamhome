@@ -39,7 +39,7 @@ $filters = $filters ?? ['status'=>'','from_date'=>'','to_date'=>'','from_entity'
             <table class="table table-striped mb-0">
                 <thead>
                     <tr>
-                        <th>Number</th><th>Date</th><th>From Entity</th><th>To Entity</th><th>Type</th><th class="text-end">Amount (INR)</th><th>Status</th><th class="text-end">Actions</th>
+                        <th scope="col">Number</th><th scope="col">Date</th><th scope="col">From Entity</th><th scope="col">To Entity</th><th scope="col">Type</th><th scope="col" class="text-end">Amount (INR)</th><th scope="col">Status</th><th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

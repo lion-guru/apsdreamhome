@@ -145,16 +145,16 @@ $currentColony = $current_colony ?? null;
                     <table class="table table-hover align-middle mb-0" id="fireLogsTable">
                         <thead class="table-light">
                             <tr>
-                                <th>Date</th>
-                                <th>Colony</th>
-                                <th>Fire Zone</th>
-                                <th>Pressure (Bar)</th>
-                                <th>Jockey Pump</th>
-                                <th>Electric Pump</th>
-                                <th>Valves H/T</th>
-                                <th>NOC Status</th>
-                                <th>Fire Officer</th>
-                                <th class="text-end">Actions</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Colony</th>
+                                <th scope="col">Fire Zone</th>
+                                <th scope="col">Pressure (Bar)</th>
+                                <th scope="col">Jockey Pump</th>
+                                <th scope="col">Electric Pump</th>
+                                <th scope="col">Valves H/T</th>
+                                <th scope="col">NOC Status</th>
+                                <th scope="col">Fire Officer</th>
+                                <th scope="col" class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

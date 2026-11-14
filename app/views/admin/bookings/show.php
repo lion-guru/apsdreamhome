@@ -361,12 +361,12 @@ $extraHead = '<style>
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th><?= __('admin_date_label') ?></th>
-                            <th><?= __('admin_amount_label') ?></th>
-                            <th><?= __('admin_method_label') ?></th>
-                            <th><?= __('admin_transaction_id') ?></th>
-                            <th><?= __('admin_status_label') ?></th>
-                            <th><?= __('admin_receipt_label') ?></th>
+                            <th scope="col"><?= __('admin_date_label') ?></th>
+                            <th scope="col"><?= __('admin_amount_label') ?></th>
+                            <th scope="col"><?= __('admin_method_label') ?></th>
+                            <th scope="col"><?= __('admin_transaction_id') ?></th>
+                            <th scope="col"><?= __('admin_status_label') ?></th>
+                            <th scope="col"><?= __('admin_receipt_label') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -420,12 +420,12 @@ $extraHead = '<style>
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th><?= __('admin_date_label') ?></th>
-                            <th><?= __('admin_associate') ?></th>
-                            <th><?= __('admin_type_label') ?></th>
-                            <th><?= __('admin_amount_label') ?></th>
-                            <th><?= __('admin_status_label') ?></th>
-                            <th><?= __('admin_description_label') ?></th>
+                            <th scope="col"><?= __('admin_date_label') ?></th>
+                            <th scope="col"><?= __('admin_associate') ?></th>
+                            <th scope="col"><?= __('admin_type_label') ?></th>
+                            <th scope="col"><?= __('admin_amount_label') ?></th>
+                            <th scope="col"><?= __('admin_status_label') ?></th>
+                            <th scope="col"><?= __('admin_description_label') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -489,12 +489,12 @@ $extraHead = '<style>
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Due Date</th>
-                            <th>EMI Amount</th>
-                            <th>Paid Amount</th>
-                            <th>Balance</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col">EMI Amount</th>
+                            <th scope="col">Paid Amount</th>
+                            <th scope="col">Balance</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -552,12 +552,12 @@ $extraHead = '<style>
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Receipt #</th>
-                            <th>Date</th>
-                            <th>Mode</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Receipt #</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Mode</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -601,12 +601,12 @@ $extraHead = '<style>
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Associate</th>
-                            <th>Type</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Description</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Associate</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Description</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -690,13 +690,13 @@ $extraHead = '<style>
                     <table class="table table-bordered table-hover align-middle bg-white shadow-sm">
                         <thead class="table-light">
                             <tr>
-                                <th>दस्तावेज़ का नाम (Document)</th>
-                                <th>प्रकार (Type)</th>
-                                <th>दस्तावेज़ संख्या (Doc No.)</th>
-                                <th>कार्यालय भौतिक स्थान (Hard Copy Archive)</th>
-                                <th>दिनांक</th>
-                                <th>स्थिति (Status)</th>
-                                <th class="text-center">कार्रवाई (Action)</th>
+                                <th scope="col">दस्तावेज़ का नाम (Document)</th>
+                                <th scope="col">प्रकार (Type)</th>
+                                <th scope="col">दस्तावेज़ संख्या (Doc No.)</th>
+                                <th scope="col">कार्यालय भौतिक स्थान (Hard Copy Archive)</th>
+                                <th scope="col">दिनांक</th>
+                                <th scope="col">स्थिति (Status)</th>
+                                <th scope="col" class="text-center">कार्रवाई (Action)</th>
                             </tr>
                         </thead>
                         <tbody>

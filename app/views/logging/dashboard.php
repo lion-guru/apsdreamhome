@@ -65,7 +65,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>Level</th><th>Message</th><th>File</th><th>Line</th><th>Time</th></tr>
+                        <tr><th scope="col">Level</th><th scope="col">Message</th><th scope="col">File</th><th scope="col">Line</th><th scope="col">Time</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($logs)): ?>

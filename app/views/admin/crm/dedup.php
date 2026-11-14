@@ -26,7 +26,7 @@
                     <?php if (!empty($duplicates)): ?>
                         <div class="table-responsive">
                             <table class="table table-sm">
-                                <thead><tr><th>Lead 1</th><th>Lead 2</th><th>Match Field</th><th>Action</th></tr></thead>
+                                <thead><tr><th scope="col">Lead 1</th><th scope="col">Lead 2</th><th scope="col">Match Field</th><th scope="col">Action</th></tr></thead>
                                 <tbody>
                                     <?php foreach ($duplicates as $d): ?>
                                         <tr>

@@ -119,17 +119,17 @@ $filters = $filters ?? ['type' => '', 'status' => '', 'search' => '', 'date_from
             <table class="table table-hover table-striped mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th>#</th>
-                        <th>Agreement No</th>
-                        <th>Type</th>
-                        <th>Plot</th>
-                        <th>Colony</th>
-                        <th>Party A</th>
-                        <th>Party B</th>
-                        <th>Value</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th class="text-center">Actions</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Agreement No</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Plot</th>
+                        <th scope="col">Colony</th>
+                        <th scope="col">Party A</th>
+                        <th scope="col">Party B</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date</th>
+                        <th scope="col" class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

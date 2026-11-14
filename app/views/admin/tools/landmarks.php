@@ -138,12 +138,12 @@ $categories = $categories ?? [];
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th>Location</th>
-                                <th>Linked Colonies</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Location</th>
+                                <th scope="col">Linked Colonies</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -199,10 +199,10 @@ $categories = $categories ?? [];
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Colony</th>
-                                <th>Landmark</th>
-                                <th>Category</th>
-                                <th>Distance</th>
+                                <th scope="col">Colony</th>
+                                <th scope="col">Landmark</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Distance</th>
                             </tr>
                         </thead>
                         <tbody>

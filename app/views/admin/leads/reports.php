@@ -143,10 +143,10 @@
                                         <table class="table table-bordered table-hover">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th>Metric</th>
-                                                    <th>Value</th>
-                                                    <th>Change</th>
-                                                    <th>Status</th>
+                                                    <th scope="col">Metric</th>
+                                                    <th scope="col">Value</th>
+                                                    <th scope="col">Change</th>
+                                                    <th scope="col">Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -206,11 +206,11 @@
                                         <table class="table table-bordered table-hover">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th>Source</th>
-                                                    <th>Total Leads</th>
-                                                    <th>Converted</th>
-                                                    <th>Conversion Rate</th>
-                                                    <th>Average Budget</th>
+                                                    <th scope="col">Source</th>
+                                                    <th scope="col">Total Leads</th>
+                                                    <th scope="col">Converted</th>
+                                                    <th scope="col">Conversion Rate</th>
+                                                    <th scope="col">Average Budget</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

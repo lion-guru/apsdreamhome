@@ -83,7 +83,7 @@ $qs = $colonyId > 0 ? '&colony_id=' . $colonyId : '';
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
-                            <tr><th>Plot</th><th>Colony</th><th>Value</th><th>Listed</th><th>Age</th><th>Bucket</th><th></th></tr>
+                            <tr><th scope="col">Plot</th><th scope="col">Colony</th><th scope="col">Value</th><th scope="col">Listed</th><th scope="col">Age</th><th scope="col">Bucket</th><th scope="col"></th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($rows as $r):

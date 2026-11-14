@@ -63,11 +63,11 @@ $properties = $properties ?? [];
                             <table class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Property</th>
-                                        <th>Investment</th>
-                                        <th>Current Value</th>
-                                        <th>Return</th>
-                                        <th>ROI %</th>
+                                        <th scope="col">Property</th>
+                                        <th scope="col">Investment</th>
+                                        <th scope="col">Current Value</th>
+                                        <th scope="col">Return</th>
+                                        <th scope="col">ROI %</th>
                                     </tr>
                                 </thead>
                                 <tbody>

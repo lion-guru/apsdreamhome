@@ -87,9 +87,9 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Rank</th>
-                                            <th>Order</th>
-                                            <th>Benefits</th>
+                                            <th scope="col">Rank</th>
+                                            <th scope="col">Order</th>
+                                            <th scope="col">Benefits</th>
                                         </tr>
                                     </thead>
                                     <tbody>

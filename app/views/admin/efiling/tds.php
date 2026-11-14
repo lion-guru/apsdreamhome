@@ -47,7 +47,7 @@ ob_start();
         <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Section</th><th>Description</th><th class="text-end">Count</th><th class="text-end">Gross (?)</th><th class="text-end">TDS (?)</th><th class="text-end">Pending</th><th>Status</th></tr>
+                    <tr><th scope="col">Section</th><th scope="col">Description</th><th scope="col" class="text-end">Count</th><th scope="col" class="text-end">Gross (?)</th><th scope="col" class="text-end">TDS (?)</th><th scope="col" class="text-end">Pending</th><th scope="col">Status</th></tr>
                 </thead>
                 <tbody>
                 <?php foreach ($summary['by_section'] as $s): ?>
@@ -63,7 +63,7 @@ ob_start();
                 <?php endforeach; ?>
                 </tbody>
                 <tfoot class="table-light">
-                    <tr><th colspan="2">Total</th><th class="text-end"><?= $summary['totals']['total_records'] ?></th><th class="text-end">₹<?= number_format($summary['totals']['total_gross'], 0) ?></th><th class="text-end">₹<?= number_format($summary['totals']['total_tds'], 0) ?></th><th class="text-end"><span class="badge bg-warning"><?= $summary['totals']['pending_count'] ?></span></th><th></th></tr>
+                    <tr><th scope="col" colspan="2">Total</th><th scope="col" class="text-end"><?= $summary['totals']['total_records'] ?></th><th scope="col" class="text-end">₹<?= number_format($summary['totals']['total_gross'], 0) ?></th><th scope="col" class="text-end">₹<?= number_format($summary['totals']['total_tds'], 0) ?></th><th scope="col" class="text-end"><span class="badge bg-warning"><?= $summary['totals']['pending_count'] ?></span></th><th scope="col"></th></tr>
                 </tfoot>
             </table>
         </div>
@@ -112,7 +112,7 @@ ob_start();
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                    <thead class="table-light"><tr><th>ID</th><th>Date</th><th>Records</th><th>TDS (?)</th><th>Status</th><th>ARN/Token</th><th>Action</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">Date</th><th scope="col">Records</th><th scope="col">TDS (?)</th><th scope="col">Status</th><th scope="col">ARN/Token</th><th scope="col">Action</th></tr></thead>
                     <tbody>
                     <?php foreach ($submissions as $s): ?>
                         <tr>

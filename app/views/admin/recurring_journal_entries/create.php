@@ -54,7 +54,7 @@ $entryTypes = $entryTypes ?? [];
                     <table class="table table-bordered" id="linesTable">
                         <thead>
                         <tr>
-                            <th>Account</th><th>Debit</th><th>Credit</th><th>Line Description</th><th style="width:60px">Order</th><th style="width:60px">Action</th>
+                            <th scope="col">Account</th><th scope="col">Debit</th><th scope="col">Credit</th><th scope="col">Line Description</th><th scope="col" style="width:60px">Order</th><th scope="col" style="width:60px">Action</th>
                         </tr>
                         </thead>
                         <tbody id="linesBody">

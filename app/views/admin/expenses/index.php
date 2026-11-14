@@ -21,7 +21,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>#</th><th><?= __('admin_category') ?></th><th><?= __('admin_amount') ?></th><th><?= __('admin_description') ?></th><th><?= __('admin_payment') ?></th><th><?= __('admin_date') ?></th><th><?= __('admin_status') ?></th></tr></thead>
+                        <thead><tr><th scope="col">#</th><th scope="col"><?= __('admin_category') ?></th><th scope="col"><?= __('admin_amount') ?></th><th scope="col"><?= __('admin_description') ?></th><th scope="col"><?= __('admin_payment') ?></th><th scope="col"><?= __('admin_date') ?></th><th scope="col"><?= __('admin_status') ?></th></tr></thead>
                         <tbody>
                         <?php foreach ($expenses as $e): ?>
                             <tr>

@@ -56,14 +56,14 @@ $stats = $stats ?? ['total_pending' => 0, 'overdue' => 0, 'collected' => 0, 'tot
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th><?= __('assoc_emi_th_customer', [], 'Customer') ?></th>
-                            <th><?= __('assoc_emi_th_property', [], 'Property') ?></th>
-                            <th><?= __('assoc_emi_th_installment', [], 'Installment #') ?></th>
-                            <th><?= __('assoc_emi_th_amount', [], 'Amount') ?></th>
-                            <th><?= __('assoc_emi_th_due', [], 'Due Date') ?></th>
-                            <th><?= __('assoc_emi_th_status', [], 'Status') ?></th>
-                            <th><?= __('assoc_emi_th_paid_date', [], 'Paid Date') ?></th>
-                            <th><?= __('assoc_emi_th_action', [], 'Action') ?></th>
+                            <th scope="col"><?= __('assoc_emi_th_customer', [], 'Customer') ?></th>
+                            <th scope="col"><?= __('assoc_emi_th_property', [], 'Property') ?></th>
+                            <th scope="col"><?= __('assoc_emi_th_installment', [], 'Installment #') ?></th>
+                            <th scope="col"><?= __('assoc_emi_th_amount', [], 'Amount') ?></th>
+                            <th scope="col"><?= __('assoc_emi_th_due', [], 'Due Date') ?></th>
+                            <th scope="col"><?= __('assoc_emi_th_status', [], 'Status') ?></th>
+                            <th scope="col"><?= __('assoc_emi_th_paid_date', [], 'Paid Date') ?></th>
+                            <th scope="col"><?= __('assoc_emi_th_action', [], 'Action') ?></th>
                         </tr>
                     </thead>
                     <tbody>

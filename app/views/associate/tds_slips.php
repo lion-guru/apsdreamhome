@@ -48,7 +48,7 @@ $stColors = ['paid' => 'success', 'processing' => 'warning', 'pending' => 'secon
             <div class="text-center text-muted py-4">No payouts in FY <?= htmlspecialchars($fy) ?> yet.</div>
         <?php else: ?>
         <div class="table-responsive"><table class="table table-hover mb-0">
-            <thead class="table-light"><tr><th>Date</th><th class="text-end">Gross</th><th class="text-end">TDS</th><th class="text-end">Other Ded.</th><th class="text-end">Net</th><th>Mode</th><th>Ref / UTR</th><th>Status</th></tr></thead>
+            <thead class="table-light"><tr><th scope="col">Date</th><th scope="col" class="text-end">Gross</th><th scope="col" class="text-end">TDS</th><th scope="col" class="text-end">Other Ded.</th><th scope="col" class="text-end">Net</th><th scope="col">Mode</th><th scope="col">Ref / UTR</th><th scope="col">Status</th></tr></thead>
             <tbody>
             <?php foreach ($payouts as $p):
                 $ref = $p['transaction_ref'] ?: $p['cheque_number'] ?: '—'; ?>

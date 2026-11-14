@@ -193,10 +193,10 @@ $trend = $trend ?? [];
                 <table class="table table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th>Department</th>
-                            <th>Responses</th>
-                            <th>Avg Score</th>
-                            <th>Participation</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Responses</th>
+                            <th scope="col">Avg Score</th>
+                            <th scope="col">Participation</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -235,8 +235,8 @@ $trend = $trend ?? [];
                 <table class="table table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Responses</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Responses</th>
                         </tr>
                     </thead>
                     <tbody>

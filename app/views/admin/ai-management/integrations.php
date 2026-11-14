@@ -73,10 +73,10 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0];
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>Tool Name</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th class="text-end">Actions</th>
+                        <th scope="col">Tool Name</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -63,9 +63,9 @@ $filter_status = $filter_status ?? '';
         <?php else: ?>
         <div class="table-responsive"><table class="table table-hover mb-0">
             <thead class="table-light"><tr>
-                <th>Advance No</th><th>Employee</th><th class="text-end">Amount</th>
-                <th class="text-center">EMI/mo</th><th>Tenure</th><th>Start</th>
-                <th class="text-center">Status</th><th>Requested</th><th class="text-center">Actions</th>
+                <th scope="col">Advance No</th><th scope="col">Employee</th><th scope="col" class="text-end">Amount</th>
+                <th scope="col" class="text-center">EMI/mo</th><th scope="col">Tenure</th><th scope="col">Start</th>
+                <th scope="col" class="text-center">Status</th><th scope="col">Requested</th><th scope="col" class="text-center">Actions</th>
             </tr></thead>
             <tbody>
             <?php foreach ($advances as $a): ?>

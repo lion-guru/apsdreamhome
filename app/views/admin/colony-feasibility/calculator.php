@@ -84,7 +84,7 @@ $isSuccess   = $feasibility['success'] ?? false;
         <div class="card-header"><strong>Cost Component Breakdown</strong></div>
         <div class="card-body">
           <div class="table-responsive"><table class="table table-sm mb-0">
-            <thead><tr><th>Component</th><th class="text-end">Amount</th><th class="text-end">₹/sqft</th></tr></thead>
+            <thead><tr><th scope="col">Component</th><th scope="col" class="text-end">Amount</th><th scope="col" class="text-end">₹/sqft</th></tr></thead>
             <tbody>
               <tr>
                 <td><i class="fas fa-map text-primary me-2"></i>Land (L)</td>
@@ -229,7 +229,7 @@ $isSuccess   = $feasibility['success'] ?? false;
     <div class="card-body p-0">
       <div class="table-responsive"><table class="table table-sm table-hover mb-0">
         <thead class="table-light">
-          <tr><th>Date</th><th>By</th><th class="text-end">Cost ₹/sqft</th><th class="text-end">Recommended ₹/sqft</th><th class="text-end">Markup</th></tr>
+          <tr><th scope="col">Date</th><th scope="col">By</th><th scope="col" class="text-end">Cost ₹/sqft</th><th scope="col" class="text-end">Recommended ₹/sqft</th><th scope="col" class="text-end">Markup</th></tr>
         </thead>
         <tbody>
           <?php foreach (array_slice($history, 0, 5) as $h): ?>

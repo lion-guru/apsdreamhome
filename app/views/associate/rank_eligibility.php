@@ -189,12 +189,12 @@ $nextConfig = $nextRank ? ($rankConfig[$nextRank] ?? null) : null;
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th><?= __('assoc_mlm_rank', [], 'Rank') ?></th>
-                        <th><?= __('assoc_rank_biz_target', [], 'Business Target') ?></th>
-                        <th><?= __('assoc_rank_team_required', [], 'Team Required') ?></th>
-                        <th><?= __('assoc_rank_comm_rate', [], 'Commission Rate') ?></th>
-                        <th><?= __('assoc_rank_reward_label', [], 'Reward') ?></th>
-                        <th><?= __('assoc_book_th_status', [], 'Status') ?></th>
+                        <th scope="col"><?= __('assoc_mlm_rank', [], 'Rank') ?></th>
+                        <th scope="col"><?= __('assoc_rank_biz_target', [], 'Business Target') ?></th>
+                        <th scope="col"><?= __('assoc_rank_team_required', [], 'Team Required') ?></th>
+                        <th scope="col"><?= __('assoc_rank_comm_rate', [], 'Commission Rate') ?></th>
+                        <th scope="col"><?= __('assoc_rank_reward_label', [], 'Reward') ?></th>
+                        <th scope="col"><?= __('assoc_book_th_status', [], 'Status') ?></th>
                     </tr>
                 </thead>
                 <tbody>

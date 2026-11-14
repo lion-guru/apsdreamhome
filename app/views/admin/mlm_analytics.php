@@ -58,7 +58,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Level</th><th>Count</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Level</th><th scope="col">Count</th></tr></thead>
                             <tbody>
                                 <?php foreach (($mlmData['level_distribution'] ?? []) as $lv): ?>
                                 <tr><td><?= ($lv['level'] ?? '') ?></td><td><?= ($lv['count'] ?? 0) ?></td></tr>
@@ -80,7 +80,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Month</th><th>Commission</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Month</th><th scope="col">Commission</th></tr></thead>
                             <tbody>
                                 <?php foreach (($mlmData['commission_trends'] ?? []) as $ct): ?>
                                 <tr><td><?= ($ct['month'] ?? '') ?></td><td>₹<?= number_format($ct['commission'] ?? 0) ?></td></tr>
@@ -104,7 +104,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>#</th><th>Associate</th><th>Earnings</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">#</th><th scope="col">Associate</th><th scope="col">Earnings</th></tr></thead>
                             <tbody>
                                 <?php foreach (($mlmData['top_performers'] ?? []) as $i => $tp): ?>
                                 <tr>

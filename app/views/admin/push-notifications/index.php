@@ -59,10 +59,10 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Title</th>
-                                <th>Body</th>
-                                <th>Status</th>
-                                <th>Sent At</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Body</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Sent At</th>
                             </tr>
                         </thead>
                         <tbody>

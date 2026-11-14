@@ -180,11 +180,11 @@ $typeLabels = [
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th><?php echo __('assoc_comm_th_property', [], 'Property'); ?></th>
-                                <th><?php echo __('assoc_comm_th_type', [], 'Type'); ?></th>
-                                <th><?php echo __('assoc_comm_th_amount', [], 'Amount'); ?></th>
-                                <th><?php echo __('assoc_comm_th_status', [], 'Status'); ?></th>
-                                <th><?php echo __('assoc_comm_th_date', [], 'Date'); ?></th>
+                                <th scope="col"><?php echo __('assoc_comm_th_property', [], 'Property'); ?></th>
+                                <th scope="col"><?php echo __('assoc_comm_th_type', [], 'Type'); ?></th>
+                                <th scope="col"><?php echo __('assoc_comm_th_amount', [], 'Amount'); ?></th>
+                                <th scope="col"><?php echo __('assoc_comm_th_status', [], 'Status'); ?></th>
+                                <th scope="col"><?php echo __('assoc_comm_th_date', [], 'Date'); ?></th>
                             </tr>
                         </thead>
                         <tbody>

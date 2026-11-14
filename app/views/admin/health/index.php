@@ -14,7 +14,7 @@
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <table class="table mb-0 align-middle">
-                <thead><tr><th style="width:60px">State</th><th>Service</th><th>Detail</th></tr></thead>
+                <thead><tr><th scope="col" style="width:60px">State</th><th scope="col">Service</th><th scope="col">Detail</th></tr></thead>
                 <tbody>
                 <?php foreach (($checks ?? []) as $c): ?>
                     <tr>

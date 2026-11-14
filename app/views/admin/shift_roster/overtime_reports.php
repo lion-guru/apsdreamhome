@@ -117,7 +117,7 @@ $end_date = $end_date ?? date('Y-m-t');
                     <div class="table-responsive">
                         <table class="table table-sm mb-0">
                             <thead>
-                                <tr><th>Department</th><th class="text-end">Hours</th></tr>
+                                <tr><th scope="col">Department</th><th scope="col" class="text-end">Hours</th></tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($depts as $dept => $hours): ?>
@@ -148,13 +148,13 @@ $end_date = $end_date ?? date('Y-m-t');
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Employee</th>
-                            <th>Department</th>
-                            <th class="text-center">Hours</th>
-                            <th>Reason</th>
-                            <th class="text-center">Status</th>
-                            <th>Approved By</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Department</th>
+                            <th scope="col" class="text-center">Hours</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col" class="text-center">Status</th>
+                            <th scope="col">Approved By</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -48,11 +48,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <table class="table table-hover align-middle">
                         <thead class="bg-light">
                             <tr>
-                                <th><?= __('alerts_th_search', null, 'Search Name') ?></th>
-                                <th><?= __('alerts_th_filters', null, 'Filters') ?></th>
-                                <th><?= __('alerts_th_last_run', null, 'Last Run') ?></th>
-                                <th><?= __('alerts_th_email_alerts', null, 'Email Alerts') ?></th>
-                                <th><?= __('alerts_th_action', null, 'Action') ?></th>
+                                <th scope="col"><?= __('alerts_th_search', null, 'Search Name') ?></th>
+                                <th scope="col"><?= __('alerts_th_filters', null, 'Filters') ?></th>
+                                <th scope="col"><?= __('alerts_th_last_run', null, 'Last Run') ?></th>
+                                <th scope="col"><?= __('alerts_th_email_alerts', null, 'Email Alerts') ?></th>
+                                <th scope="col"><?= __('alerts_th_action', null, 'Action') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,11 +118,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th><?= __('alerts_th_sent', null, 'Sent At') ?></th>
-                                <th><?= __('alerts_th_search', null, 'Search') ?></th>
-                                <th><?= __('alerts_th_property', null, 'Property') ?></th>
-                                <th><?= __('alerts_th_status', null, 'Status') ?></th>
-                                <th><?= __('alerts_th_error', null, 'Error') ?></th>
+                                <th scope="col"><?= __('alerts_th_sent', null, 'Sent At') ?></th>
+                                <th scope="col"><?= __('alerts_th_search', null, 'Search') ?></th>
+                                <th scope="col"><?= __('alerts_th_property', null, 'Property') ?></th>
+                                <th scope="col"><?= __('alerts_th_status', null, 'Status') ?></th>
+                                <th scope="col"><?= __('alerts_th_error', null, 'Error') ?></th>
                             </tr>
                         </thead>
                         <tbody>

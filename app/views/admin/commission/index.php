@@ -105,7 +105,7 @@ $stats = $stats ?? [];
                 <div class="card-header aps-cp-card-header"><i class="fas fa-dollar-sign"></i> Agent Commission Rates</div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0">
-                        <thead><tr><th>Range (sqft)</th><th>Per sqft</th><th>Status</th></tr></thead>
+                        <thead><tr><th scope="col">Range (sqft)</th><th scope="col">Per sqft</th><th scope="col">Status</th></tr></thead>
                         <tbody>
                             <?php if (empty($stats['agent_rates'] ?? [])): ?>
                             <tr>
@@ -135,7 +135,7 @@ $stats = $stats ?? [];
                 <div class="card-header aps-cp-card-header"><i class="fas fa-layer-group"></i> Associate Structure</div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0">
-                        <thead><tr><th>Level</th><th>Name</th><th>%</th></tr></thead>
+                        <thead><tr><th scope="col">Level</th><th scope="col">Name</th><th scope="col">%</th></tr></thead>
                         <tbody>
                             <?php if (empty($stats['structure_levels'] ?? [])): ?>
                             <tr>
@@ -165,7 +165,7 @@ $stats = $stats ?? [];
                 <div class="card-header aps-cp-card-header"><i class="fas fa-phone"></i> Telecaller Rules</div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-sm mb-0">
-                        <thead><tr><th>Rule</th><th>Type</th><th>Amount</th></tr></thead>
+                        <thead><tr><th scope="col">Rule</th><th scope="col">Type</th><th scope="col">Amount</th></tr></thead>
                         <tbody>
                             <?php if (empty($tc_rules ?? [])): ?>
                             <tr>

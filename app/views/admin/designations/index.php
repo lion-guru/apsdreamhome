@@ -90,14 +90,14 @@
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>Designation</th>
-                                <th>Department</th>
-                                <th>Level</th>
-                                <th>Salary Band</th>
-                                <th>Sub-Role</th>
-                                <th>Dashboard</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Designation</th>
+                                <th scope="col">Department</th>
+                                <th scope="col">Level</th>
+                                <th scope="col">Salary Band</th>
+                                <th scope="col">Sub-Role</th>
+                                <th scope="col">Dashboard</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

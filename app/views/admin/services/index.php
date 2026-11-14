@@ -132,12 +132,12 @@ if (!is_dir(__DIR__)) {
             <table class="table table-hover mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="border-0 ps-4">Customer</th>
-                        <th class="border-0">Service</th>
-                        <th class="border-0">Property</th>
-                        <th class="border-0">Status</th>
-                        <th class="border-0">Date</th>
-                        <th class="border-0 text-end pe-4">Actions</th>
+                        <th scope="col" class="border-0 ps-4">Customer</th>
+                        <th scope="col" class="border-0">Service</th>
+                        <th scope="col" class="border-0">Property</th>
+                        <th scope="col" class="border-0">Status</th>
+                        <th scope="col" class="border-0">Date</th>
+                        <th scope="col" class="border-0 text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

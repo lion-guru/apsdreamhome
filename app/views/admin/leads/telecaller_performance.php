@@ -19,8 +19,8 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>#</th><th>Name</th><th>Role</th><th>Leads Assigned</th>
-            <th>Conversions</th><th>Conversion Rate</th><th>Avg Score</th><th>Last Activity</th>
+            <th scope="col">#</th><th scope="col">Name</th><th scope="col">Role</th><th scope="col">Leads Assigned</th>
+            <th scope="col">Conversions</th><th scope="col">Conversion Rate</th><th scope="col">Avg Score</th><th scope="col">Last Activity</th>
           </tr>
         </thead>
         <tbody>

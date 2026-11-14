@@ -30,7 +30,7 @@ $badge = ['pending' => 'warning', 'verified' => 'success', 'rejected' => 'danger
     </div>
 <?php else: ?>
     <div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>#</th><th>Buyer</th><th>Booking</th><th>Country</th><th>Account</th><th>FIRC No.</th><th>Docs</th><th>Status</th><th>Action</th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">#</th><th scope="col">Buyer</th><th scope="col">Booking</th><th scope="col">Country</th><th scope="col">Account</th><th scope="col">FIRC No.</th><th scope="col">Docs</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
         <tbody>
         <?php foreach ($rows as $r): ?>
             <tr>

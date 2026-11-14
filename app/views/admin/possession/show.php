@@ -96,24 +96,24 @@ $isDelayed = $currentStatus === 'delayed';
             <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle"></i> Booking Info</h5></div>
             <div class="card-body aps-cp-card-body">
                 <div class="table-responsive"><table class="table table-bordered table-sm">
-                    <tr><th >Booking #</th><td><strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong></td></tr>
-                    <tr><th>Property</th><td><?= htmlspecialchars($booking['property_title'] ?? '') ?> <small class="text-muted">(<?= htmlspecialchars($booking['property_location'] ?? '') ?>)</small></td></tr>
-                    <tr><th>Plot #</th><td><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></td></tr>
-                    <tr><th>Colony</th><td><?= htmlspecialchars($booking['colony_name'] ?? 'N/A') ?></td></tr>
-                    <tr><th>Area</th><td><?= number_format($booking['area_sqft'] ?? 0) ?> sqft</td></tr>
-                    <tr><th>Buyer</th><td><?= htmlspecialchars($booking['customer_name'] ?? '') ?><br><small><?= htmlspecialchars($booking['customer_email'] ?? '') ?> / <?= htmlspecialchars($booking['customer_phone'] ?? '') ?></small></td></tr>
-                    <tr><th>Possession Status</th><td><span class="badge bg-<?= $possessionLabels[$currentStatus]['class'] ?? 'secondary' ?> fs-6"><?= $possessionLabels[$currentStatus]['label'] ?? ucfirst($currentStatus) ?></span></td></tr>
+                    <tr><th scope="col" >Booking #</th><td><strong><?= htmlspecialchars($booking['booking_number'] ?? 'N/A') ?></strong></td></tr>
+                    <tr><th scope="col">Property</th><td><?= htmlspecialchars($booking['property_title'] ?? '') ?> <small class="text-muted">(<?= htmlspecialchars($booking['property_location'] ?? '') ?>)</small></td></tr>
+                    <tr><th scope="col">Plot #</th><td><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></td></tr>
+                    <tr><th scope="col">Colony</th><td><?= htmlspecialchars($booking['colony_name'] ?? 'N/A') ?></td></tr>
+                    <tr><th scope="col">Area</th><td><?= number_format($booking['area_sqft'] ?? 0) ?> sqft</td></tr>
+                    <tr><th scope="col">Buyer</th><td><?= htmlspecialchars($booking['customer_name'] ?? '') ?><br><small><?= htmlspecialchars($booking['customer_email'] ?? '') ?> / <?= htmlspecialchars($booking['customer_phone'] ?? '') ?></small></td></tr>
+                    <tr><th scope="col">Possession Status</th><td><span class="badge bg-<?= $possessionLabels[$currentStatus]['class'] ?? 'secondary' ?> fs-6"><?= $possessionLabels[$currentStatus]['label'] ?? ucfirst($currentStatus) ?></span></td></tr>
                     <?php if (!empty($booking['possession_date'])): ?>
-                        <tr><th>Possession Date</th><td><?= date('d M Y', strtotime($booking['possession_date'])) ?></td></tr>
+                        <tr><th scope="col">Possession Date</th><td><?= date('d M Y', strtotime($booking['possession_date'])) ?></td></tr>
                     <?php endif; ?>
                     <?php if (!empty($booking['possession_letter_number'])): ?>
-                        <tr><th>Letter #</th><td><?= htmlspecialchars($booking['possession_letter_number'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Letter #</th><td><?= htmlspecialchars($booking['possession_letter_number'] ?? '') ?></td></tr>
                     <?php endif; ?>
                     <?php if (!empty($booking['handover_by_name'])): ?>
-                        <tr><th>Handover By</th><td><?= htmlspecialchars($booking['handover_by_name'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Handover By</th><td><?= htmlspecialchars($booking['handover_by_name'] ?? '') ?></td></tr>
                     <?php endif; ?>
                     <?php if (!empty($booking['defect_liability_end_date'])): ?>
-                        <tr><th>Defect Liability Until</th><td><?= date('d M Y', strtotime($booking['defect_liability_end_date'])) ?> <small class="text-muted">(<?= intval($booking['defect_liability_period'] ?? 0) ?> days)</small></td></tr>
+                        <tr><th scope="col">Defect Liability Until</th><td><?= date('d M Y', strtotime($booking['defect_liability_end_date'])) ?> <small class="text-muted">(<?= intval($booking['defect_liability_period'] ?? 0) ?> days)</small></td></tr>
                     <?php endif; ?>
                 </table></div>
             </div>

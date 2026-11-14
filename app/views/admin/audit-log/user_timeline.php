@@ -14,7 +14,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0 align-middle">
-                        <thead><tr><th>Time</th><th>Action</th><th>Entity</th><th>Status</th><th>Description</th><th></th></tr></thead>
+                        <thead><tr><th scope="col">Time</th><th scope="col">Action</th><th scope="col">Entity</th><th scope="col">Status</th><th scope="col">Description</th><th scope="col"></th></tr></thead>
                         <tbody>
                         <?php foreach ($timeline as $t): ?>
                             <tr>

@@ -56,15 +56,15 @@ $totalCompleted = $totalCompleted ?? 0;
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Campaign Name</th>
-                            <th>Status</th>
-                            <th>Scheduled</th>
-                            <th>Completed</th>
-                            <th>Calls Made</th>
-                            <th>Interested</th>
-                            <th>Created</th>
-                            <th>Actions</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Campaign Name</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Scheduled</th>
+                            <th scope="col">Completed</th>
+                            <th scope="col">Calls Made</th>
+                            <th scope="col">Interested</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

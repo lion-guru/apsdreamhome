@@ -20,11 +20,11 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Colony</th>
-                            <th>RERA Number</th>
-                            <th class="text-center">RERA Projects</th>
-                            <th class="text-center">Milestones</th>
-                            <th class="text-end">Action</th>
+                            <th scope="col">Colony</th>
+                            <th scope="col">RERA Number</th>
+                            <th scope="col" class="text-center">RERA Projects</th>
+                            <th scope="col" class="text-center">Milestones</th>
+                            <th scope="col" class="text-end">Action</th>
                         </tr>
                     </thead>
                     <tbody>

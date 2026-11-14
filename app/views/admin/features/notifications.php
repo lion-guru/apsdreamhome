@@ -19,7 +19,7 @@ ob_start();
         <div class="tab-pane fade show active" id="tmpl">
           <div class="card shadow-sm"><div class="card-body p-0">
             <div class="table-responsive"><table class="table mb-0">
-              <thead class="table-light"><tr><th>Code</th><th>Channel</th><th>Subject</th><th>Body</th></tr></thead>
+              <thead class="table-light"><tr><th scope="col">Code</th><th scope="col">Channel</th><th scope="col">Subject</th><th scope="col">Body</th></tr></thead>
               <tbody>
                 <?php if (empty($templates)): ?>
                   <tr><td colspan="4" class="text-center py-3 text-muted">No templates</td></tr>
@@ -39,7 +39,7 @@ ob_start();
         <div class="tab-pane fade" id="sms">
           <div class="card shadow-sm"><div class="card-body p-0">
             <div class="table-responsive"><table class="table mb-0">
-              <thead class="table-light"><tr><th>Code</th><th>Category</th><th>Body</th></tr></thead>
+              <thead class="table-light"><tr><th scope="col">Code</th><th scope="col">Category</th><th scope="col">Body</th></tr></thead>
               <tbody>
                 <?php if (empty($smsTemplates)): ?>
                   <tr><td colspan="3" class="text-center py-3 text-muted">No SMS templates</td></tr>

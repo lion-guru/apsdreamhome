@@ -127,14 +127,14 @@ $totalPages = ceil(($stats['total'] ?? 0) / 20);
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>ID</th>
-                                <th>User</th>
-                                <th>Role</th>
-                                <th class="text-end">Amount</th>
-                                <th>Bank</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                                <th class="text-end">Actions</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">User</th>
+                                <th scope="col">Role</th>
+                                <th scope="col" class="text-end">Amount</th>
+                                <th scope="col">Bank</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Created</th>
+                                <th scope="col" class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -29,14 +29,14 @@
             <table class="table table-hover mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th class="border-0 ps-4">
+                        <th scope="col" class="border-0 ps-4">
                             <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)" aria-label="Select all rows">
                         </th>
-                        <th class="border-0">User</th>
-                        <th class="border-0">Role</th>
-                        <th class="border-0">Registered</th>
-                        <th class="border-0">Referral</th>
-                        <th class="border-0 text-end pe-4">Actions</th>
+                        <th scope="col" class="border-0">User</th>
+                        <th scope="col" class="border-0">Role</th>
+                        <th scope="col" class="border-0">Registered</th>
+                        <th scope="col" class="border-0">Referral</th>
+                        <th scope="col" class="border-0 text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -4,7 +4,7 @@
 
 <h2>Queue Depths</h2>
 <table border="1" cellpadding="6">
-<tr><th>Queue</th><th>Depth</th><th>Oldest Available</th><th>Newest Created</th><th>Oldest Created</th></tr>
+<tr><th scope="col">Queue</th><th scope="col">Depth</th><th scope="col">Oldest Available</th><th scope="col">Newest Created</th><th scope="col">Oldest Created</th></tr>
 <?php foreach ($queueDepths as $q): ?>
 <tr><td><?= htmlspecialchars($q['queue_name']) ?></td><td><?= $q['depth'] ?></td><td><?= $q['oldest_available'] ?></td><td><?= $q['newest'] ?></td><td><?= $q['oldest'] ?></td></tr>
 <?php endforeach; ?>
@@ -17,7 +17,7 @@
 
 <h2>Failed by Transport/Class</h2>
 <table border="1" cellpadding="6">
-<tr><th>Transport</th><th>Class</th><th>Count</th><th>First</th><th>Last</th></tr>
+<tr><th scope="col">Transport</th><th scope="col">Class</th><th scope="col">Count</th><th scope="col">First</th><th scope="col">Last</th></tr>
 <?php foreach ($byTransport as $r): ?>
 <tr><td><?= htmlspecialchars($r['queue_name']) ?></td><td><?= htmlspecialchars($r['class_name'] ?? '-') ?></td><td><?= $r['count'] ?></td><td><?= $r['first_failed'] ?></td><td><?= $r['last_failed'] ?></td></tr>
 <?php endforeach; ?>

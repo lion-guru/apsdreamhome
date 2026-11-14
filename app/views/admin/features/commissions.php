@@ -18,7 +18,7 @@ ob_start();
     <div class="tab-pane fade show active" id="ar">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Rule Type</th><th>Name</th><th>Output</th><th>Priority</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Rule Type</th><th scope="col">Name</th><th scope="col">Output</th><th scope="col">Priority</th></tr></thead>
           <tbody>
             <?php if (empty($agentRates)): ?>
               <tr><td colspan="4" class="text-center py-3 text-muted">No rules</td></tr>
@@ -38,7 +38,7 @@ ob_start();
     <div class="tab-pane fade" id="hp">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Agent ID</th><th>Fixed</th><th>Variable %</th><th>Threshold</th><th>Valid From</th><th>Status</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Agent ID</th><th scope="col">Fixed</th><th scope="col">Variable %</th><th scope="col">Threshold</th><th scope="col">Valid From</th><th scope="col">Status</th></tr></thead>
           <tbody>
             <?php if (empty($hybridPlans)): ?>
               <tr><td colspan="6" class="text-center py-3 text-muted">No plans</td></tr>
@@ -60,7 +60,7 @@ ob_start();
     <div class="tab-pane fade" id="fs">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Tier</th><th>Base %</th><th>Bonus</th><th>Min Sales</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Tier</th><th scope="col">Base %</th><th scope="col">Bonus</th><th scope="col">Min Sales</th></tr></thead>
           <tbody>
             <?php if (empty($farmerStructures)): ?>
               <tr><td colspan="4" class="text-center py-3 text-muted">No structures</td></tr>
@@ -80,7 +80,7 @@ ob_start();
     <div class="tab-pane fade" id="mr">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Rank</th><th>Min Downline</th><th>Commission %</th><th>Bonus</th><th>Perks</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Rank</th><th scope="col">Min Downline</th><th scope="col">Commission %</th><th scope="col">Bonus</th><th scope="col">Perks</th></tr></thead>
           <tbody>
             <?php if (empty($mlmRanks)): ?>
               <tr><td colspan="5" class="text-center py-3 text-muted">No ranks</td></tr>

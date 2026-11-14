@@ -34,11 +34,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <div class="table-responsive"><table class="table table-sm table-hover">
                 <thead>
                     <tr>
-                        <th><?= __('sale_year') ?></th>
-                        <th><?= __('sale_quarter') ?></th>
-                        <th class="text-end"><?= __('sale_escrow_withdrawn') ?></th>
-                        <th class="text-end"><?= __('sale_construction_pct') ?></th>
-                        <th><?= __('sale_submitted') ?></th>
+                        <th scope="col"><?= __('sale_year') ?></th>
+                        <th scope="col"><?= __('sale_quarter') ?></th>
+                        <th scope="col" class="text-end"><?= __('sale_escrow_withdrawn') ?></th>
+                        <th scope="col" class="text-end"><?= __('sale_construction_pct') ?></th>
+                        <th scope="col"><?= __('sale_submitted') ?></th>
                     </tr>
                 </thead>
                 <tbody>

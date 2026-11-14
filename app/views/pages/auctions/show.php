@@ -165,11 +165,11 @@ ob_start();
                         <table class="table table-hover align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th><?= __('auction_lot_title', [], 'Title') ?></th>
-                                    <th><?= __('auction_status', [], 'Status') ?></th>
-                                    <th class="text-end"><?= __('auction_start_price', [], 'Starting Price') ?></th>
-                                    <th class="text-end"><?= __('auction_current_price', [], 'Current Price') ?></th>
-                                    <th class="text-end"><?= __('auction_bids_count', [], 'Bids') ?></th>
+                                    <th scope="col"><?= __('auction_lot_title', [], 'Title') ?></th>
+                                    <th scope="col"><?= __('auction_status', [], 'Status') ?></th>
+                                    <th scope="col" class="text-end"><?= __('auction_start_price', [], 'Starting Price') ?></th>
+                                    <th scope="col" class="text-end"><?= __('auction_current_price', [], 'Current Price') ?></th>
+                                    <th scope="col" class="text-end"><?= __('auction_bids_count', [], 'Bids') ?></th>
                                 </tr>
                             </thead>
                             <tbody>

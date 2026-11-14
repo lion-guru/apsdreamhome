@@ -118,17 +118,17 @@ $arrears = $arrears ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Employee</th>
-                            <th>Period</th>
-                            <th>Basic Arrears</th>
-                            <th>Gross Arrears</th>
-                            <th>Deductions</th>
-                            <th class="text-success">Net Arrears</th>
-                            <th>Payment Date</th>
-                            <th>Status</th>
-                            <th>Remarks</th>
-                            <th>Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Period</th>
+                            <th scope="col">Basic Arrears</th>
+                            <th scope="col">Gross Arrears</th>
+                            <th scope="col">Deductions</th>
+                            <th scope="col" class="text-success">Net Arrears</th>
+                            <th scope="col">Payment Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Remarks</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

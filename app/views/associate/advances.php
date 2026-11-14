@@ -109,11 +109,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Ref / Date</th>
-                                <th>Requested</th>
-                                <th>Approved</th>
-                                <th>Recovered</th>
-                                <th>Status</th>
+                                <th scope="col">Ref / Date</th>
+                                <th scope="col">Requested</th>
+                                <th scope="col">Approved</th>
+                                <th scope="col">Recovered</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>

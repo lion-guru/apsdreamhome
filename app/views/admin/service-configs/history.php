@@ -13,7 +13,7 @@ $history = $history ?? [];
                 <div class="text-center text-muted py-5"><i class="fas fa-history fa-3x mb-3"></i><p>No configuration changes recorded yet.</p></div>
             <?php else: ?>
             <table class="table mb-0">
-                <thead><tr><th>Service</th><th>Key</th><th>Old Value</th><th>New Value</th><th>Notes</th><th>When</th></tr></thead>
+                <thead><tr><th scope="col">Service</th><th scope="col">Key</th><th scope="col">Old Value</th><th scope="col">New Value</th><th scope="col">Notes</th><th scope="col">When</th></tr></thead>
                 <tbody>
                 <?php foreach ($history as $h): ?>
                     <tr>

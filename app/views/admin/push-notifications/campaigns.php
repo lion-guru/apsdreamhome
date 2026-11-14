@@ -80,13 +80,13 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr >
-                                <th >Campaign</th>
-                                <th >Channel</th>
-                                <th >Target</th>
-                                <th >Recipients</th>
-                                <th >Sent</th>
-                                <th >Status</th>
-                                <th >Actions</th>
+                                <th scope="col" >Campaign</th>
+                                <th scope="col" >Channel</th>
+                                <th scope="col" >Target</th>
+                                <th scope="col" >Recipients</th>
+                                <th scope="col" >Sent</th>
+                                <th scope="col" >Status</th>
+                                <th scope="col" >Actions</th>
                             </tr>
                         </thead>
                         <tbody>

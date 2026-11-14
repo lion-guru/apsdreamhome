@@ -71,13 +71,13 @@ $stats = $stats ?? ['total' => 0, 'under_construction' => 0, 'completed' => 0, '
                 <table class="table table-hover align-middle mb-0" id="projectsTable">
                     <thead style="background:#f8fafc;">
                         <tr>
-                            <th class="px-4">Project Name</th>
-                            <th>Colony / Location</th>
-                            <th class="text-center">Status</th>
-                            <th>Progress</th>
-                            <th>Plots</th>
-                            <th>Price Range</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th scope="col" class="px-4">Project Name</th>
+                            <th scope="col">Colony / Location</th>
+                            <th scope="col" class="text-center">Status</th>
+                            <th scope="col">Progress</th>
+                            <th scope="col">Plots</th>
+                            <th scope="col">Price Range</th>
+                            <th scope="col" class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

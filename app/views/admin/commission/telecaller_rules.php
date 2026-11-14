@@ -39,7 +39,7 @@
                 <div class="card-header aps-cp-card-header"><i class="fas fa-list"></i> Rules</div>
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-striped mb-0">
-                        <thead><tr><th>Rule</th><th>Type</th><th>Amount</th><th>%</th><th>Min Calls</th><th>Target</th><th>Active</th><th>Action</th></tr></thead>
+                        <thead><tr><th scope="col">Rule</th><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">%</th><th scope="col">Min Calls</th><th scope="col">Target</th><th scope="col">Active</th><th scope="col">Action</th></tr></thead>
                         <tbody>
                             <?php if (empty($rules ?? [])): ?>
                             <tr>

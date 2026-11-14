@@ -145,13 +145,13 @@ $filters = $filters ?? [];
                 <table class="table table-hover mb-0" id="holidaysTable">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Region</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Region</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

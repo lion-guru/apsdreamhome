@@ -34,12 +34,12 @@ $categories = $categories ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Name</th>
-                            <th>Code</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th>Plots Count</th>
-                            <th class="text-center">Actions</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Plots Count</th>
+                            <th scope="col" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

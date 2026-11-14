@@ -88,10 +88,10 @@ $flash = $flash ?? [];
             <div class="table-responsive"><table class="table table-sm table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Type</th>
-                        <th>Filename</th>
-                        <th>Size</th>
-                        <th>Generated</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Filename</th>
+                        <th scope="col">Size</th>
+                        <th scope="col">Generated</th>
                     </tr>
                 </thead>
                 <tbody>

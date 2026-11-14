@@ -39,7 +39,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                    <thead><tr><th>Phone</th><th>Duration</th><th>Status</th><th>Time</th></tr></thead>
+                    <thead><tr><th scope="col">Phone</th><th scope="col">Duration</th><th scope="col">Status</th><th scope="col">Time</th></tr></thead>
                     <tbody>
                         <?php if (!empty($calls)): ?>
                             <?php foreach ($calls as $c): ?>

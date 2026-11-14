@@ -95,18 +95,18 @@
                     <table class="table table-striped table-hover mb-0">
                         <thead class="table-dark">
                             <tr>
-                                <th>#</th>
-                                <th>Milestone</th>
-                                <th>Category</th>
-                                <th>Status</th>
-                                <th>Progress</th>
-                                <th>Start</th>
-                                <th>Expected</th>
-                                <th>Contractor</th>
-                                <th>Est. Cost</th>
-                                <th>Actual Cost</th>
-                                <th>Photo</th>
-                                <th class="text-end">Actions</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Milestone</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Progress</th>
+                                <th scope="col">Start</th>
+                                <th scope="col">Expected</th>
+                                <th scope="col">Contractor</th>
+                                <th scope="col">Est. Cost</th>
+                                <th scope="col">Actual Cost</th>
+                                <th scope="col">Photo</th>
+                                <th scope="col" class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -78,14 +78,14 @@ $summary = $summary ?? ['total' => 0, 'active' => 0, 'returned' => 0, 'issues' =
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Asset</th>
-                                        <th>Type</th>
-                                        <th>Serial Number</th>
-                                        <th>Assigned Date</th>
-                                        <th>Expected Return</th>
-                                        <th>Condition</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Asset</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Serial Number</th>
+                                        <th scope="col">Assigned Date</th>
+                                        <th scope="col">Expected Return</th>
+                                        <th scope="col">Condition</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

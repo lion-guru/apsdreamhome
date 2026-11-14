@@ -26,9 +26,9 @@ $e = $enrollment ?? [];
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm">
-                        <tr><th>Name</th><td><?php echo htmlspecialchars($e['user_name'] ?? '-'); ?></td></tr>
-                        <tr><th>Email</th><td><?php echo htmlspecialchars($e['user_email'] ?? '-'); ?></td></tr>
-                        <tr><th>Phone</th><td><?php echo htmlspecialchars($e['user_phone'] ?? '-'); ?></td></tr>
+                        <tr><th scope="col">Name</th><td><?php echo htmlspecialchars($e['user_name'] ?? '-'); ?></td></tr>
+                        <tr><th scope="col">Email</th><td><?php echo htmlspecialchars($e['user_email'] ?? '-'); ?></td></tr>
+                        <tr><th scope="col">Phone</th><td><?php echo htmlspecialchars($e['user_phone'] ?? '-'); ?></td></tr>
                     </table></div>
                 </div>
             </div>
@@ -42,11 +42,11 @@ $e = $enrollment ?? [];
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm">
-                        <tr><th>Course</th><td><?php echo htmlspecialchars($e['course_title'] ?? '-'); ?></td></tr>
-                        <tr><th>Category</th><td><span class="badge bg-info"><?php echo ucfirst($e['course_category'] ?? '-'); ?></span></td></tr>
-                        <tr><th>Difficulty</th><td><span class="badge bg-secondary"><?php echo ucfirst($e['difficulty_level'] ?? '-'); ?></span></td></tr>
-                        <tr><th>Duration</th><td><?php echo $e['course_duration_hours'] ?? 0; ?> hrs</td></tr>
-                        <tr><th>Mandatory</th><td><?php echo ($e['is_mandatory'] ?? 0) ? '<span class="badge bg-danger">Yes</span>' : '<span class="badge bg-secondary">No</span>'; ?></td></tr>
+                        <tr><th scope="col">Course</th><td><?php echo htmlspecialchars($e['course_title'] ?? '-'); ?></td></tr>
+                        <tr><th scope="col">Category</th><td><span class="badge bg-info"><?php echo ucfirst($e['course_category'] ?? '-'); ?></span></td></tr>
+                        <tr><th scope="col">Difficulty</th><td><span class="badge bg-secondary"><?php echo ucfirst($e['difficulty_level'] ?? '-'); ?></span></td></tr>
+                        <tr><th scope="col">Duration</th><td><?php echo $e['course_duration_hours'] ?? 0; ?> hrs</td></tr>
+                        <tr><th scope="col">Mandatory</th><td><?php echo ($e['is_mandatory'] ?? 0) ? '<span class="badge bg-danger">Yes</span>' : '<span class="badge bg-secondary">No</span>'; ?></td></tr>
                     </table></div>
                 </div>
             </div>
@@ -68,7 +68,7 @@ $e = $enrollment ?? [];
                         </div>
                     </div>
                     <div class="table-responsive"><table class="table table-sm">
-                        <tr><th>Status</th>
+                        <tr><th scope="col">Status</th>
                             <td>
                                 <span class="badge bg-<?php echo match($e['status'] ?? '') {
                                     'active' => 'success', 'completed' => 'info', 'dropped' => 'danger',
@@ -76,12 +76,12 @@ $e = $enrollment ?? [];
                                 }; ?>"><?php echo ucfirst($e['status'] ?? 'unknown'); ?></span>
                             </td>
                         </tr>
-                        <tr><th>Final Score</th><td><?php echo $e['final_score'] !== null ? $e['final_score'] . '%' : '-'; ?></td></tr>
-                        <tr><th>Passing Score</th><td><?php echo $e['passing_score_percentage'] ?? 0; ?>%</td></tr>
-                        <tr><th>Attempts</th><td><?php echo $e['attempts_count'] ?? 0; ?></td></tr>
-                        <tr><th>Enrolled At</th><td><?php echo $e['enrolled_at'] ?? '-'; ?></td></tr>
-                        <tr><th>Completed At</th><td><?php echo $e['completed_at'] ?? '-'; ?></td></tr>
-                        <tr><th>Last Accessed</th><td><?php echo $e['last_accessed_at'] ?? '-'; ?></td></tr>
+                        <tr><th scope="col">Final Score</th><td><?php echo $e['final_score'] !== null ? $e['final_score'] . '%' : '-'; ?></td></tr>
+                        <tr><th scope="col">Passing Score</th><td><?php echo $e['passing_score_percentage'] ?? 0; ?>%</td></tr>
+                        <tr><th scope="col">Attempts</th><td><?php echo $e['attempts_count'] ?? 0; ?></td></tr>
+                        <tr><th scope="col">Enrolled At</th><td><?php echo $e['enrolled_at'] ?? '-'; ?></td></tr>
+                        <tr><th scope="col">Completed At</th><td><?php echo $e['completed_at'] ?? '-'; ?></td></tr>
+                        <tr><th scope="col">Last Accessed</th><td><?php echo $e['last_accessed_at'] ?? '-'; ?></td></tr>
                     </table></div>
                 </div>
             </div>
@@ -95,10 +95,10 @@ $e = $enrollment ?? [];
                 </div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm">
-                        <tr><th>Certificate Issued</th>
+                        <tr><th scope="col">Certificate Issued</th>
                             <td><?php echo ($e['certificate_issued'] ?? 0) ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>'; ?></td>
                         </tr>
-                        <tr><th>Certificate URL</th>
+                        <tr><th scope="col">Certificate URL</th>
                             <td>
                                 <?php if (!empty($e['certificate_url'])): ?>
                                 <a href="<?php echo htmlspecialchars($e['certificate_url'] ?? ''); ?>" target="_blank" class="btn btn-sm btn-outline-primary">

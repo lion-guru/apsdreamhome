@@ -18,17 +18,17 @@
         <table class="table table-bordered table-hover bg-white">
             <thead class="table-dark">
                 <tr>
-                    <th>#</th>
-                    <th>Level</th>
-                    <th>Direct %</th>
-                    <th>Team %</th>
-                    <th>Diff %</th>
-                    <th>Matching</th>
-                    <th>Team Size</th>
-                    <th>Direct Refs</th>
-                    <th>Monthly Target</th>
-                    <th>Joining Fee</th>
-                    <th>Action</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Direct %</th>
+                    <th scope="col">Team %</th>
+                    <th scope="col">Diff %</th>
+                    <th scope="col">Matching</th>
+                    <th scope="col">Team Size</th>
+                    <th scope="col">Direct Refs</th>
+                    <th scope="col">Monthly Target</th>
+                    <th scope="col">Joining Fee</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>

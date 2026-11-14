@@ -15,7 +15,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>Name</th><th>Device</th><th>Trigger</th><th>Action</th><th>Last Triggered</th><th class="text-end">Actions</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Name</th><th scope="col">Device</th><th scope="col">Trigger</th><th scope="col">Action</th><th scope="col">Last Triggered</th><th scope="col" class="text-end">Actions</th></tr></thead>
                     <tbody>
                     <?php foreach ($automations as $a): ?>
                         <tr>

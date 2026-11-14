@@ -269,10 +269,10 @@ unset($_SESSION['success'], $_SESSION['flash_success'],
             <table class="table table-sm mb-0 align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>Key Pattern</th>
-                        <th>TTL</th>
-                        <th>Purpose</th>
-                        <th>Invalidation Hook</th>
+                        <th scope="col">Key Pattern</th>
+                        <th scope="col">TTL</th>
+                        <th scope="col">Purpose</th>
+                        <th scope="col">Invalidation Hook</th>
                     </tr>
                 </thead>
                 <tbody>

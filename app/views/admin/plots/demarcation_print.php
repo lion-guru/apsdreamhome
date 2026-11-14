@@ -105,11 +105,11 @@ $dem = $dem ?? [];
             <table class="table table-bordered table-condensed text-center align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Corner</th>
-                        <th>Direction</th>
-                        <th>Latitude (WGS84)</th>
-                        <th>Longitude (WGS84)</th>
-                        <th>Physical Marker</th>
+                        <th scope="col">Corner</th>
+                        <th scope="col">Direction</th>
+                        <th scope="col">Latitude (WGS84)</th>
+                        <th scope="col">Longitude (WGS84)</th>
+                        <th scope="col">Physical Marker</th>
                     </tr>
                 </thead>
                 <tbody>

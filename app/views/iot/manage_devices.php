@@ -29,7 +29,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                    <thead class="table-light"><tr><th>ID</th><th>Name</th><th>Type</th><th>Property</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Property</th><th scope="col">Location</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                     <tbody>
                         <?php if (!empty($devices)): ?>
                             <?php foreach ($devices as $d): ?>

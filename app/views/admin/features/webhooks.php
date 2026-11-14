@@ -69,12 +69,12 @@ ob_start();
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>Name</th>
-              <th>URL</th>
-              <th>Events</th>
-              <th>Status</th>
-              <th>Created</th>
-              <th>Actions</th>
+              <th scope="col">Name</th>
+              <th scope="col">URL</th>
+              <th scope="col">Events</th>
+              <th scope="col">Status</th>
+              <th scope="col">Created</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -126,13 +126,13 @@ ob_start();
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>ID</th>
-              <th>Endpoint</th>
-              <th>Event</th>
-              <th>Attempt</th>
-              <th>Status</th>
-              <th>Response</th>
-              <th>Time</th>
+              <th scope="col">ID</th>
+              <th scope="col">Endpoint</th>
+              <th scope="col">Event</th>
+              <th scope="col">Attempt</th>
+              <th scope="col">Status</th>
+              <th scope="col">Response</th>
+              <th scope="col">Time</th>
             </tr>
           </thead>
           <tbody>

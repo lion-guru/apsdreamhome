@@ -27,27 +27,27 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <div class="table-responsive"><table class="table table-sm m-0">
                                 <tbody>
                                     <tr>
-                                        <th>Direct %</th>
+                                        <th scope="row">Direct %</th>
                                         <td class="text-end"><?= number_format((float)$rb['direct_sale_pct'], 2) ?>%</td>
                                     </tr>
                                     <tr>
-                                        <th>L1 %</th>
+                                        <th scope="row">L1 %</th>
                                         <td class="text-end"><?= number_format((float)$rb['l1_pct'], 2) ?>%</td>
                                     </tr>
                                     <tr>
-                                        <th>L2 %</th>
+                                        <th scope="row">L2 %</th>
                                         <td class="text-end"><?= number_format((float)$rb['l2_pct'], 2) ?>%</td>
                                     </tr>
                                     <tr>
-                                        <th>L3 %</th>
+                                        <th scope="row">L3 %</th>
                                         <td class="text-end"><?= number_format((float)$rb['l3_pct'], 2) ?>%</td>
                                     </tr>
                                     <tr>
-                                        <th>Qualifying Volume</th>
+                                        <th scope="row">Qualifying Volume</th>
                                         <td class="text-end">&#8377;<?= number_format((float)($rb['min_qualifying_volume'] ?? 0)) ?></td>
                                     </tr>
                                     <tr>
-                                        <th>Legs Required</th>
+                                        <th scope="row">Legs Required</th>
                                         <td class="text-end"><?= (int)($rb['min_leg_count'] ?? 0) ?></td>
                                     </tr>
                                 </tbody>

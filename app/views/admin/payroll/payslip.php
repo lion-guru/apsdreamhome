@@ -116,14 +116,14 @@ $pid = (int)($payslip['id'] ?? 0);
     <div><span>LOP Days</span><?= (int)($payslip['lop_days'] ?? 0) ?></div>
   </div>
   <table>
-    <tr><th>Earnings</th><th class="num">Amount (₹)</th></tr>
+    <tr><th scope="col">Earnings</th><th scope="col" class="num">Amount (₹)</th></tr>
     <tr><td>Basic Salary</td><td class="num"><?= number_format($basic, 2) ?></td></tr>
     <tr><td>House Rent Allowance (HRA)</td><td class="num"><?= number_format($hra, 2) ?></td></tr>
     <tr><td>Other Allowances</td><td class="num"><?= number_format($allow, 2) ?></td></tr>
     <tr class="total"><td>Gross Earnings</td><td class="num">₹<?= number_format($gross, 2) ?></td></tr>
   </table>
   <table>
-    <tr><th>Deductions</th><th class="num">Amount (₹)</th></tr>
+    <tr><th scope="col">Deductions</th><th scope="col" class="num">Amount (₹)</th></tr>
     <tr><td>Provident Fund (12% of basic)</td><td class="num"><?= number_format($pf, 2) ?></td></tr>
     <tr><td>ESI (0.75%)</td><td class="num"><?= number_format($esi, 2) ?></td></tr>
     <tr><td>TDS</td><td class="num"><?= number_format($tds, 2) ?></td></tr>

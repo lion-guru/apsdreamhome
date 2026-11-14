@@ -118,14 +118,14 @@ $summary = $summary ?? ['total_requests' => 0, 'total_hours' => 0, 'total_amount
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Time</th>
-                                        <th>Duration</th>
-                                        <th>Rate</th>
-                                        <th>Amount</th>
-                                        <th>Reason</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Time</th>
+                                        <th scope="col">Duration</th>
+                                        <th scope="col">Rate</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Reason</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

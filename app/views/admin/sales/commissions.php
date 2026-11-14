@@ -38,13 +38,13 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <table class="table table-sm table-hover">
                 <thead>
                     <tr>
-                        <th><?= __('sale_booking_num') ?></th>
-                        <th><?= __('sale_beneficiary') ?></th>
-                        <th><?= __('sale_type') ?></th>
-                        <th><?= __('sale_lvl') ?></th>
-                        <th class="text-end"><?= __('sale_pct') ?></th>
-                        <th class="text-end"><?= __('sale_amount') ?></th>
-                        <th><?= __('sale_status') ?></th>
+                        <th scope="col"><?= __('sale_booking_num') ?></th>
+                        <th scope="col"><?= __('sale_beneficiary') ?></th>
+                        <th scope="col"><?= __('sale_type') ?></th>
+                        <th scope="col"><?= __('sale_lvl') ?></th>
+                        <th scope="col" class="text-end"><?= __('sale_pct') ?></th>
+                        <th scope="col" class="text-end"><?= __('sale_amount') ?></th>
+                        <th scope="col"><?= __('sale_status') ?></th>
                     </tr>
                 </thead>
                 <tbody>

@@ -92,7 +92,7 @@ $pct = ($stats['plots'] ?? 0) > 0 ? round(100 * ($stats['linked'] ?? 0) / $stats
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">
-                    <thead class="table-light"><tr><th>#</th><th>Area sqft</th><th class="text-end">Total</th><th class="text-end">Advance paid</th><th class="text-end">Balance</th><th>Status</th><th>Registry No</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">#</th><th scope="col">Area sqft</th><th scope="col" class="text-end">Total</th><th scope="col" class="text-end">Advance paid</th><th scope="col" class="text-end">Balance</th><th scope="col">Status</th><th scope="col">Registry No</th></tr></thead>
                     <tbody>
                     <?php foreach ($deals as $d): ?>
                         <tr>
@@ -118,8 +118,8 @@ $pct = ($stats['plots'] ?? 0) > 0 ? round(100 * ($stats['linked'] ?? 0) / $stats
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">
                     <thead class="table-light"><tr>
-                        <th>Gata</th><th>Village</th><th class="text-end">Acres / Bigha</th><th>Kisan (owner)</th>
-                        <th class="text-end">Plots A/B/S</th><th class="text-end">Plot value</th><th>Kisan hissa + payment</th><th>Mutation</th>
+                        <th scope="col">Gata</th><th scope="col">Village</th><th scope="col" class="text-end">Acres / Bigha</th><th scope="col">Kisan (owner)</th>
+                        <th scope="col" class="text-end">Plots A/B/S</th><th scope="col" class="text-end">Plot value</th><th scope="col">Kisan hissa + payment</th><th scope="col">Mutation</th>
                     </tr></thead>
                     <tbody>
                     <?php foreach ($parcels as $pc):

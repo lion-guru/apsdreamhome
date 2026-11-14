@@ -15,7 +15,7 @@
                         <p class="text-muted text-center py-3"><?= __('admin_no_data') ?></p>
                     <?php else: ?>
                         <table class="table table-sm mb-0">
-                            <thead><tr><th><?= __('admin_action') ?></th><th><?= __('admin_count') ?></th></tr></thead>
+                            <thead><tr><th scope="col"><?= __('admin_action') ?></th><th scope="col"><?= __('admin_count') ?></th></tr></thead>
                             <tbody>
                             <?php foreach ($top_actions as $a): ?>
                                 <tr>
@@ -38,7 +38,7 @@
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead><tr><th><?= __('admin_time') ?></th><th><?= __('admin_user') ?></th><th><?= __('admin_action') ?></th><th><?= __('admin_details') ?></th><th><?= __('admin_ip') ?></th></tr></thead>
+                                <thead><tr><th scope="col"><?= __('admin_time') ?></th><th scope="col"><?= __('admin_user') ?></th><th scope="col"><?= __('admin_action') ?></th><th scope="col"><?= __('admin_details') ?></th><th scope="col"><?= __('admin_ip') ?></th></tr></thead>
                                 <tbody>
                                 <?php foreach ($logs as $l): ?>
                                     <tr>

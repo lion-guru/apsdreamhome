@@ -24,13 +24,13 @@ $page_description = 'Manage course modules';
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Course</th>
-                        <th>Module Title</th>
-                        <th>Order</th>
-                        <th>Content Type</th>
-                        <th>Duration</th>
-                        <th>Required</th>
-                        <th>Actions</th>
+                        <th scope="col">Course</th>
+                        <th scope="col">Module Title</th>
+                        <th scope="col">Order</th>
+                        <th scope="col">Content Type</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Required</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

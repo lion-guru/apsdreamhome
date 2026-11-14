@@ -48,7 +48,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>Month</th><th>Revenue</th><th>Transactions</th><th>Success Rate</th><th>Avg Value</th></tr>
+                        <tr><th scope="col">Month</th><th scope="col">Revenue</th><th scope="col">Transactions</th><th scope="col">Success Rate</th><th scope="col">Avg Value</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($payment_stats['monthly'] ?? [])): ?>

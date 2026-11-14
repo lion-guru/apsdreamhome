@@ -71,7 +71,7 @@ $day_of_week = $day_of_week ?? date('w');
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-sm mb-0">
-                                <thead><tr><th>Employee</th><th>Shift</th><th>Time</th><th>Status</th></tr></thead>
+                                <thead><tr><th scope="col">Employee</th><th scope="col">Shift</th><th scope="col">Time</th><th scope="col">Status</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($today_shifts as $shift): ?>
                                     <tr>

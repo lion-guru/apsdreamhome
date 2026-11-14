@@ -100,14 +100,14 @@ $page_title = $page_title ?? 'Sales Management';
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-4">Sale #</th>
-                            <th>Property</th>
-                            <th>Customer</th>
-                            <th>Associate</th>
-                            <th>Value</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th scope="col" class="ps-4">Sale #</th>
+                            <th scope="col">Property</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Associate</th>
+                            <th scope="col">Value</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date</th>
+                            <th scope="col" class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -18,7 +18,7 @@
             <h5>Available Endpoints</h5>
             <div class="table-responsive">
                 <table class="table table-sm">
-                    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+                    <thead><tr><th scope="col">Method</th><th scope="col">Endpoint</th><th scope="col">Description</th></tr></thead>
                     <tbody>
                         <tr><td>GET</td><td>/properties</td><td>List all properties</td></tr>
                         <tr><td>GET</td><td>/properties/{id}</td><td>Property details</td></tr>

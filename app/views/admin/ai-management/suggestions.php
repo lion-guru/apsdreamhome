@@ -18,12 +18,12 @@ $suggestions = $suggestions ?? [];
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>User</th>
-                        <th>Property</th>
-                        <th>Score</th>
-                        <th>Reason</th>
-                        <th>Algorithm</th>
-                        <th>Date</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Property</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Reason</th>
+                        <th scope="col">Algorithm</th>
+                        <th scope="col">Date</th>
                     </tr>
                 </thead>
                 <tbody>

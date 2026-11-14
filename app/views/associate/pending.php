@@ -16,12 +16,12 @@ $properties = $properties ?? [];
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th><?= __('assoc_pending_th_title') ?></th>
-                                <th><?= __('assoc_pending_th_type') ?></th>
-                                <th><?= __('assoc_pending_th_price') ?></th>
-                                <th><?= __('assoc_pending_th_status') ?></th>
-                                <th><?= __('assoc_pending_th_date') ?></th>
-                                <th><?= __('assoc_pending_th_action') ?></th>
+                                <th scope="col"><?= __('assoc_pending_th_title') ?></th>
+                                <th scope="col"><?= __('assoc_pending_th_type') ?></th>
+                                <th scope="col"><?= __('assoc_pending_th_price') ?></th>
+                                <th scope="col"><?= __('assoc_pending_th_status') ?></th>
+                                <th scope="col"><?= __('assoc_pending_th_date') ?></th>
+                                <th scope="col"><?= __('assoc_pending_th_action') ?></th>
                             </tr>
                         </thead>
                         <tbody>

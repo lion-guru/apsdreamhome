@@ -21,7 +21,7 @@
     <div class="row g-3">
         <div class="col-md-8">
             <div class="card border-0 shadow-sm"><div class="card-header"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-link me-1"></i>Top Clicked Links</h2></div>
-                <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>URL</th><th>Clicks</th><th>Unique</th></tr></thead><tbody>
+                <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th scope="col">URL</th><th scope="col">Clicks</th><th scope="col">Unique</th></tr></thead><tbody>
                 <?php if (empty($top_links)): ?><tr><td colspan="3" class="text-center py-3 text-muted">No click data yet</td></tr>
                 <?php else: foreach ($top_links as $l): ?><tr><td><small><?= htmlspecialchars(substr($l['link_url'], 0, 60)) ?></small></td><td><span class="badge bg-primary"><?= $l['clicks'] ?></span></td><td><?= $l['unique_clicks'] ?></td></tr><?php endforeach; endif; ?>
                 </tbody></table></div></div>

@@ -79,13 +79,13 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>To</th>
-                                    <th>Subject</th>
-                                    <th>Status</th>
-                                    <th>Attempts</th>
-                                    <th>Created</th>
-                                    <th>Sent</th>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">To</th>
+                                    <th scope="col">Subject</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Attempts</th>
+                                    <th scope="col">Created</th>
+                                    <th scope="col">Sent</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -133,13 +133,13 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Phone</th>
-                                    <th>Message</th>
-                                    <th>Status</th>
-                                    <th>Attempts</th>
-                                    <th>Created</th>
-                                    <th>Sent</th>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Message</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Attempts</th>
+                                    <th scope="col">Created</th>
+                                    <th scope="col">Sent</th>
                                 </tr>
                             </thead>
                             <tbody>

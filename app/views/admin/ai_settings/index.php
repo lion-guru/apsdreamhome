@@ -185,7 +185,7 @@ $chainOrder = ['groq', 'openrouter', 'gemini'];
                         <p class="text-muted small mb-0">No AI calls logged yet in this window.</p>
                     <?php else: ?>
                         <table class="table table-sm align-middle mb-0">
-                            <thead><tr><th>Engine</th><th class="text-end">Calls</th><th class="text-end">Avg ms</th><th class="text-end">Errors</th></tr></thead>
+                            <thead><tr><th scope="col">Engine</th><th scope="col" class="text-end">Calls</th><th scope="col" class="text-end">Avg ms</th><th scope="col" class="text-end">Errors</th></tr></thead>
                             <tbody>
                             <?php foreach ($usage['by_engine'] as $u): ?>
                                 <tr>

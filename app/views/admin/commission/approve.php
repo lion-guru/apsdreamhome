@@ -18,11 +18,11 @@ $commissions = $commissions ?? [];
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Agent</th>
-                                <th>Property</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                                <th>Actions</th>
+                                <th scope="col">Agent</th>
+                                <th scope="col">Property</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

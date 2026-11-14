@@ -28,7 +28,7 @@ $statuses = $statuses ?? [];
     </div></div>
 
     <div class="card"><div class="card-body p-0"><table class="table mb-0">
-        <thead><tr><th>Code</th><th>Name</th><th>Category</th><th>Purchase Date</th><th>Cost</th><th>Book Value</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col">Category</th><th scope="col">Purchase Date</th><th scope="col">Cost</th><th scope="col">Book Value</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
         <tbody>
         <?php if (empty($assets)): ?><tr><td colspan="8" class="text-center text-muted py-4">No assets found</td></tr>
         <?php else: foreach ($assets as $a): ?>

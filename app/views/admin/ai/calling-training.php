@@ -85,7 +85,7 @@ $page_title = $page_title ?? 'AI Calling Training';
                 <div class="card shadow-sm border-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light"><tr><th>Name</th><th>Language</th><th>Gender</th><th>Provider</th><th>Status</th><th>Calls Used</th><th>Actions</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Name</th><th scope="col">Language</th><th scope="col">Gender</th><th scope="col">Provider</th><th scope="col">Status</th><th scope="col">Calls Used</th><th scope="col">Actions</th></tr></thead>
                             <tbody>
                             <?php foreach ($voiceModels as $vm): ?>
                                 <tr>
@@ -117,7 +117,7 @@ $page_title = $page_title ?? 'AI Calling Training';
                 <div class="card shadow-sm border-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light"><tr><th>Script</th><th>Code</th><th>Category</th><th>Duration</th><th>Calls</th><th>Connected</th><th>Status</th><th>Actions</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Script</th><th scope="col">Code</th><th scope="col">Category</th><th scope="col">Duration</th><th scope="col">Calls</th><th scope="col">Connected</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                             <tbody>
                             <?php foreach ($scripts as $s): ?>
                                 <tr>
@@ -150,7 +150,7 @@ $page_title = $page_title ?? 'AI Calling Training';
                 <div class="card shadow-sm border-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light"><tr><th>Intent</th><th>Code</th><th>Category</th><th>Priority</th><th>Triggers</th><th>Avg Confidence</th><th>Status</th><th>Actions</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Intent</th><th scope="col">Code</th><th scope="col">Category</th><th scope="col">Priority</th><th scope="col">Triggers</th><th scope="col">Avg Confidence</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                             <tbody>
                             <?php foreach ($intents as $i): ?>
                                 <tr>
@@ -186,7 +186,7 @@ $page_title = $page_title ?? 'AI Calling Training';
                 <div class="card shadow-sm border-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light"><tr><th>Script</th><th>Calls Made</th><th>Connected</th><th>Interested</th><th>Conv. Rate</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Script</th><th scope="col">Calls Made</th><th scope="col">Connected</th><th scope="col">Interested</th><th scope="col">Conv. Rate</th></tr></thead>
                             <tbody>
                             <?php foreach ($scriptPerformance as $sp): ?>
                                 <tr>

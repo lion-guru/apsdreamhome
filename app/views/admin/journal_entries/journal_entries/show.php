@@ -122,13 +122,13 @@ $lines = $lines ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Account Code</th>
-                            <th>Account Name</th>
-                            <th>Type</th>
-                            <th class="text-end">Debit</th>
-                            <th class="text-end">Credit</th>
-                            <th>Description</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Account Code</th>
+                            <th scope="col">Account Name</th>
+                            <th scope="col">Type</th>
+                            <th scope="col" class="text-end">Debit</th>
+                            <th scope="col" class="text-end">Credit</th>
+                            <th scope="col">Description</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -10,12 +10,12 @@
         <table class="table table-bordered table-hover bg-white">
             <thead class="table-dark">
                 <tr>
-                    <th>Rule</th>
-                    <th>Rank</th>
-                    <th>Rate (%)</th>
-                    <th>Priority</th>
-                    <th>Active</th>
-                    <th>Action</th>
+                    <th scope="col">Rule</th>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Rate (%)</th>
+                    <th scope="col">Priority</th>
+                    <th scope="col">Active</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>

@@ -22,7 +22,7 @@ $milestones = $milestones ?? [];
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white fw-bold">Blocks</div>
             <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-                <thead class="table-light"><tr><th>Block</th><th class="text-center">Plots</th><th class="text-center">Available</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Block</th><th scope="col" class="text-center">Plots</th><th scope="col" class="text-center">Available</th></tr></thead>
                 <tbody>
                     <?php if (empty($blocks)): ?><tr><td colspan="3" class="text-center text-muted py-3">No blocks</td></tr><?php endif; ?>
                     <?php foreach ($blocks as $b): ?><tr><td><?= htmlspecialchars($b['block'] ?? '') ?></td><td class="text-center"><?= (int)($b['plot_count'] ?? 0) ?></td><td class="text-center"><?= (int)($b['available'] ?? 0) ?></td></tr><?php endforeach; ?>
@@ -34,7 +34,7 @@ $milestones = $milestones ?? [];
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white fw-bold">Milestones</div>
             <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-                <thead class="table-light"><tr><th>Category</th><th>Status</th><th>Date</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Category</th><th scope="col">Status</th><th scope="col">Date</th></tr></thead>
                 <tbody>
                     <?php if (empty($milestones)): ?><tr><td colspan="3" class="text-center text-muted py-3">No milestones</td></tr><?php endif; ?>
                     <?php foreach ($milestones as $m): ?><tr><td><?= htmlspecialchars($m['category'] ?? $m['title'] ?? '') ?></td><td><?= htmlspecialchars($m['status'] ?? '') ?></td><td><?= htmlspecialchars($m['created_at'] ?? '') ?></td></tr><?php endforeach; ?>

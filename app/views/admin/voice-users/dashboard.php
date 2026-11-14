@@ -48,11 +48,11 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Customer</th>
-                                <th>Agent</th>
-                                <th>Duration</th>
-                                <th>Status</th>
-                                <th>Time</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Agent</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Time</th>
                             </tr>
                         </thead>
                         <tbody>

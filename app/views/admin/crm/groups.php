@@ -10,7 +10,7 @@
                         <p class="text-muted text-center py-3">No data</p>
                     <?php else: ?>
                         <table class="table table-sm mb-0">
-                            <thead><tr><th>Status</th><th>Count</th></tr></thead>
+                            <thead><tr><th scope="col">Status</th><th scope="col">Count</th></tr></thead>
                             <tbody>
                             <?php foreach ($statuses as $s): ?>
                                 <tr>
@@ -32,7 +32,7 @@
                         <p class="text-muted text-center py-3">No data</p>
                     <?php else: ?>
                         <table class="table table-sm mb-0">
-                            <thead><tr><th>Source</th><th>Count</th></tr></thead>
+                            <thead><tr><th scope="col">Source</th><th scope="col">Count</th></tr></thead>
                             <tbody>
                             <?php foreach ($sources as $s): ?>
                                 <tr>
@@ -55,7 +55,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Source</th><th>Status</th><th>Assigned</th><th>Created</th></tr></thead>
+                        <thead><tr><th scope="col">#</th><th scope="col">Name</th><th scope="col">Phone</th><th scope="col">Source</th><th scope="col">Status</th><th scope="col">Assigned</th><th scope="col">Created</th></tr></thead>
                         <tbody>
                         <?php foreach ($leads as $l): ?>
                             <tr>

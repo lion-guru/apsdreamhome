@@ -29,12 +29,12 @@
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>Period</th>
-                                <th>Entries</th>
-                                <th>Total Gross</th>
-                                <th>Total Net</th>
-                                <th>Status</th>
-                                <th>Generated At</th>
+                                <th scope="col">Period</th>
+                                <th scope="col">Entries</th>
+                                <th scope="col">Total Gross</th>
+                                <th scope="col">Total Net</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Generated At</th>
                             </tr>
                         </thead>
                         <tbody>

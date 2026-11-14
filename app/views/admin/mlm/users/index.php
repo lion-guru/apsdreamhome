@@ -9,15 +9,15 @@
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Sponsor</th>
-                        <th>Level</th>
-                        <th>Total Downline</th>
-                        <th>Earnings</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Sponsor</th>
+                        <th scope="col">Level</th>
+                        <th scope="col">Total Downline</th>
+                        <th scope="col">Earnings</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

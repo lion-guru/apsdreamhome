@@ -67,12 +67,12 @@ $today = $today ?? date('Y-m-d');
                     <table class="table table-bordered" id="linesTable">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 5%">#</th>
-                                <th style="width: 30%">Account <span class="text-danger">*</span></th>
-                                <th style="width: 15%">Debit <span class="text-danger">*</span></th>
-                                <th style="width: 15%">Credit <span class="text-danger">*</span></th>
-                                <th style="width: 30%">Description</th>
-                                <th style="width: 5%">Action</th>
+                                <th scope="col" style="width: 5%">#</th>
+                                <th scope="col" style="width: 30%">Account <span class="text-danger">*</span></th>
+                                <th scope="col" style="width: 15%">Debit <span class="text-danger">*</span></th>
+                                <th scope="col" style="width: 15%">Credit <span class="text-danger">*</span></th>
+                                <th scope="col" style="width: 30%">Description</th>
+                                <th scope="col" style="width: 5%">Action</th>
                             </tr>
                         </thead>
                         <tbody>

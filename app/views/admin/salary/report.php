@@ -68,7 +68,7 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-dark"><tr>
-                        <th>#</th><th>Employee</th><th>Email</th><th>Gross</th><th>Deductions</th><th>Net</th><th>Date</th><th>Method</th><th>Status</th>
+                        <th scope="col">#</th><th scope="col">Employee</th><th scope="col">Email</th><th scope="col">Gross</th><th scope="col">Deductions</th><th scope="col">Net</th><th scope="col">Date</th><th scope="col">Method</th><th scope="col">Status</th>
                     </tr></thead>
                     <tbody>
                         <?php if (empty($payments ?? [])): ?>

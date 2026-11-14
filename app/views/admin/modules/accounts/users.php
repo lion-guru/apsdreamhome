@@ -108,18 +108,18 @@ $users = $users ?? [];
             <table class="table table-hover" id="usersTable">
                 <thead class="table-dark">
                     <tr>
-                        <th>
+                        <th scope="col">
                             <input type="checkbox" id="selectAllUsers" onchange="toggleAllUsers()">
                         </th>
-                        <th>User ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Location</th>
-                        <th>Activity</th>
-                        <th>Actions</th>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Activity</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

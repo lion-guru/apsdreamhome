@@ -54,14 +54,14 @@
                 <table class="table table-hover align-middle mb-0" id="reportTable">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-4">Employee</th>
-                            <th class="text-center text-success"><i class="fas fa-check-circle me-1"></i> Present</th>
-                            <th class="text-center text-danger"><i class="fas fa-times-circle me-1"></i> Absent</th>
-                            <th class="text-center text-warning"><i class="fas fa-adjust me-1"></i> Half Day</th>
-                            <th class="text-center text-info"><i class="fas fa-plane-departure me-1"></i> Leave</th>
-                            <th class="text-center text-secondary"><i class="fas fa-calendar-day me-1"></i> Holiday</th>
-                            <th class="text-center">Total Days</th>
-                            <th >Attendance Rate</th>
+                            <th scope="col" class="ps-4">Employee</th>
+                            <th scope="col" class="text-center text-success"><i class="fas fa-check-circle me-1"></i> Present</th>
+                            <th scope="col" class="text-center text-danger"><i class="fas fa-times-circle me-1"></i> Absent</th>
+                            <th scope="col" class="text-center text-warning"><i class="fas fa-adjust me-1"></i> Half Day</th>
+                            <th scope="col" class="text-center text-info"><i class="fas fa-plane-departure me-1"></i> Leave</th>
+                            <th scope="col" class="text-center text-secondary"><i class="fas fa-calendar-day me-1"></i> Holiday</th>
+                            <th scope="col" class="text-center">Total Days</th>
+                            <th scope="col" >Attendance Rate</th>
                         </tr>
                     </thead>
                     <tbody>

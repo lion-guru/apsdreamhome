@@ -23,7 +23,7 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-dark"><tr>
-                        <th>#</th><th>Employee</th><th>Field</th><th>Old Value</th><th>New Value</th><th>Changed By</th><th>Changed At</th>
+                        <th scope="col">#</th><th scope="col">Employee</th><th scope="col">Field</th><th scope="col">Old Value</th><th scope="col">New Value</th><th scope="col">Changed By</th><th scope="col">Changed At</th>
                     </tr></thead>
                     <tbody>
                         <?php if (empty($history ?? [])): ?>

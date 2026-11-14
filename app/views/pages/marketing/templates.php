@@ -96,7 +96,7 @@ $categories = ['festival' => 'Festival', 'offer' => 'Offer', 'launch' => 'Launch
                 return;
             }
             let html = '<div class="alert alert-success">Done! <a href="' + data.url + '" download class="btn btn-sm btn-success ms-2">Download</a></div>';
-            html += '<img src="' + data.url + '" class="img-fluid rounded mb-2">';
+            html += '<img alt="" src="' + data.url + '" class="img-fluid rounded mb-2">';
             if (data.whatsapp_share) {
                 html += '<a href="' + data.whatsapp_share + '" target="_blank" class="btn btn-success btn-sm w-100">WhatsApp Share</a>';
             }

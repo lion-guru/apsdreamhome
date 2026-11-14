@@ -298,11 +298,11 @@ $waAdvisorUrl = "https://api.whatsapp.com/send?phone=919235306634&text=" . urlen
                     <table class="table table-bordered table-sm align-middle text-center mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Tenure</th>
-                                <th>Interest Rate</th>
-                                <th>Monthly EMI</th>
-                                <th>Total Interest</th>
-                                <th>Total Payable</th>
+                                <th scope="col">Tenure</th>
+                                <th scope="col">Interest Rate</th>
+                                <th scope="col">Monthly EMI</th>
+                                <th scope="col">Total Interest</th>
+                                <th scope="col">Total Payable</th>
                             </tr>
                         </thead>
                         <tbody>

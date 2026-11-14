@@ -110,11 +110,11 @@ ob_start();
                         <table class="table table-hover align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th>Title</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Starting Price</th>
-                                    <th class="text-end">Current Price</th>
-                                    <th class="text-end">Bids</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col" class="text-end">Starting Price</th>
+                                    <th scope="col" class="text-end">Current Price</th>
+                                    <th scope="col" class="text-end">Bids</th>
                                 </tr>
                             </thead>
                             <tbody>

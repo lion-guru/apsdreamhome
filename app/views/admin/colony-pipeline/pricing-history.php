@@ -52,14 +52,14 @@ $plans = $plans ?? [];
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Version</th>
-                                        <th>Name</th>
-                                        <th>Base Price</th>
-                                        <th>Premiums</th>
-                                        <th>Status</th>
-                                        <th>Created By</th>
-                                        <th>Created At</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Version</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Base Price</th>
+                                        <th scope="col">Premiums</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Created By</th>
+                                        <th scope="col">Created At</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

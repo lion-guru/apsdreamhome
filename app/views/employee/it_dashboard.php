@@ -56,7 +56,7 @@
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($deployments)): ?>
                         <div class="table-responsive"><table class="table table-sm table-hover mb-0">
-                            <thead><tr><th>Version</th><th>Date</th><th>Deployed By</th><th>Status</th></tr></thead>
+                            <thead><tr><th scope="col">Version</th><th scope="col">Date</th><th scope="col">Deployed By</th><th scope="col">Status</th></tr></thead>
                             <tbody>
                                 <?php foreach ($deployments as $dep): ?>
                                 <tr>

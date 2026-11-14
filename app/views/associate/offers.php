@@ -462,13 +462,13 @@ foreach ($claims as $cl) {
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light small">
                             <tr>
-                                <th>Claim ID</th>
-                                <th>Festival Campaign</th>
-                                <th>Reward Type</th>
-                                <th>Mode</th>
-                                <th>Value</th>
-                                <th>Submitted On</th>
-                                <th>Status</th>
+                                <th scope="col">Claim ID</th>
+                                <th scope="col">Festival Campaign</th>
+                                <th scope="col">Reward Type</th>
+                                <th scope="col">Mode</th>
+                                <th scope="col">Value</th>
+                                <th scope="col">Submitted On</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>

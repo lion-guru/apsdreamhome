@@ -19,9 +19,9 @@
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Template</th>
-                                            <th>Status</th>
-                                            <th>Last Used</th>
+                                            <th scope="col">Template</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Last Used</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -46,9 +46,9 @@
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Template</th>
-                                            <th>Status</th>
-                                            <th>Last Used</th>
+                                            <th scope="col">Template</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Last Used</th>
                                         </tr>
                                     </thead>
                                     <tbody>

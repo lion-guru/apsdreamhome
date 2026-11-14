@@ -63,16 +63,16 @@ $installments = $installments ?? [];
             <table class="table table-hover mb-0 align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
-                        <th>Booking</th>
-                        <th>Plot</th>
-                        <th>Colony</th>
-                        <th>Installment #</th>
-                        <th>Due Date</th>
-                        <th>Amount Due</th>
-                        <th>Amount Paid</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Booking</th>
+                        <th scope="col">Plot</th>
+                        <th scope="col">Colony</th>
+                        <th scope="col">Installment #</th>
+                        <th scope="col">Due Date</th>
+                        <th scope="col">Amount Due</th>
+                        <th scope="col">Amount Paid</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -50,72 +50,72 @@ $log = $log ?? [];
 
         <table class="grid-table">
             <tr>
-                <th>Certificate Ref ID</th>
+                <th scope="col">Certificate Ref ID</th>
                 <td><strong>APS-RWH-<?= str_pad((string)$log['id'], 6, '0', STR_PAD_LEFT) ?></strong></td>
             </tr>
             <tr>
-                <th>Township Colony</th>
+                <th scope="col">Township Colony</th>
                 <td><strong><?= htmlspecialchars($log['colony_name'] ?? 'N/A') ?></strong> (<?= htmlspecialchars($log['district_name'] ?? 'Gorakhpur') ?>)</td>
             </tr>
             <tr>
-                <th>Audit Date</th>
+                <th scope="col">Audit Date</th>
                 <td><strong><?= date('d F Y', strtotime($log['audit_date'])) ?></strong></td>
             </tr>
             <tr>
-                <th>Recharge Shaft / Pit Ref</th>
+                <th scope="col">Recharge Shaft / Pit Ref</th>
                 <td><strong><?= htmlspecialchars($log['pit_identifier'] ?? 'Pit-1') ?></strong></td>
             </tr>
             <tr>
-                <th>Recharge Structure Type</th>
+                <th scope="col">Recharge Structure Type</th>
                 <td><?= htmlspecialchars(str_replace('_', ' ', ucfirst($log['recharge_type'] ?? 'borewell_recharge_shaft'))) ?></td>
             </tr>
             <tr>
-                <th>Catchment Area Serviced</th>
+                <th scope="col">Catchment Area Serviced</th>
                 <td><strong><?= number_format((float)($log['catchment_area_sqft'] ?? 0)) ?> Sq.Ft</strong> (Paved Avenue & Rooftop Runoff)</td>
             </tr>
             <tr>
-                <th>Daily Recharge Capacity</th>
+                <th scope="col">Daily Recharge Capacity</th>
                 <td><strong><?= number_format((float)($log['recharge_capacity_kl'] ?? 0), 1) ?> kL / Day</strong></td>
             </tr>
             <tr>
-                <th>Static Water Table Depth</th>
+                <th scope="col">Static Water Table Depth</th>
                 <td><?= $log['water_table_depth_ft'] ? number_format((float)$log['water_table_depth_ft'], 1) . ' Ft Below Ground Level (BGL)' : 'Unrecorded' ?></td>
             </tr>
             <tr>
-                <th>Filtration Media Grade</th>
+                <th scope="col">Filtration Media Grade</th>
                 <td><?= htmlspecialchars(str_replace('_', ' ', ucfirst($log['filtration_media_status'] ?? 'clean_gravel_sand'))) ?></td>
             </tr>
             <tr>
-                <th>Desilting Silt Traps</th>
+                <th scope="col">Desilting Silt Traps</th>
                 <td>
                     <?= !empty($log['desilting_chambers_cleared']) ? '<span class="badge badge-success">DESILTED & CLEARED</span>' : '<span class="badge badge-danger">ATTENTION REQUIRED</span>' ?>
                 </td>
             </tr>
             <tr>
-                <th>Monsoon Inflow Readiness</th>
+                <th scope="col">Monsoon Inflow Readiness</th>
                 <td>
                     <span class="badge badge-success"><?= htmlspecialchars(str_replace('_', ' ', ucfirst($log['monsoon_readiness_score'] ?? 'optimal_ready'))) ?></span>
                 </td>
             </tr>
             <tr>
-                <th>UP Groundwater Dept NOC</th>
+                <th scope="col">UP Groundwater Dept NOC</th>
                 <td>
                     <span class="badge badge-info"><?= htmlspecialchars(str_replace('_', ' ', ucfirst($log['up_groundwater_noc_status'] ?? 'compliant_valid'))) ?></span>
                 </td>
             </tr>
             <?php if (!empty($log['maintenance_actions_done'])): ?>
             <tr>
-                <th>Maintenance Completed</th>
+                <th scope="col">Maintenance Completed</th>
                 <td><?= htmlspecialchars($log['maintenance_actions_done']) ?></td>
             </tr>
             <?php endif; ?>
             <tr>
-                <th>Environmental Officer</th>
+                <th scope="col">Environmental Officer</th>
                 <td><?= htmlspecialchars($log['environmental_officer_name'] ?: 'Township Environmental Engineer') ?> <?= !empty($log['officer_contact']) ? '(' . htmlspecialchars($log['officer_contact']) . ')' : '' ?></td>
             </tr>
             <?php if (!empty($log['remarks'])): ?>
             <tr>
-                <th>Engineering Remarks</th>
+                <th scope="col">Engineering Remarks</th>
                 <td><?= nl2br(htmlspecialchars($log['remarks'])) ?></td>
             </tr>
             <?php endif; ?>

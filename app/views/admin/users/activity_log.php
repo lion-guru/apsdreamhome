@@ -52,12 +52,12 @@ $actionIcons = [
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th ></th>
-                        <th>Action</th>
-                        <th>Details</th>
-                        <th>Admin</th>
-                        <th>IP Address</th>
-                        <th>Date & Time</th>
+                        <th scope="col" ></th>
+                        <th scope="col">Action</th>
+                        <th scope="col">Details</th>
+                        <th scope="col">Admin</th>
+                        <th scope="col">IP Address</th>
+                        <th scope="col">Date & Time</th>
                     </tr>
                 </thead>
                 <tbody>

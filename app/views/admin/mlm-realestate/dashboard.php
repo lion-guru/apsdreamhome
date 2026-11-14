@@ -94,7 +94,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
-                            <thead class="table-light"><tr><th>ID</th><th>Agent</th><th>Amount</th><th>Paid</th><th>Status</th><th>Date</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">Agent</th><th scope="col">Amount</th><th scope="col">Paid</th><th scope="col">Status</th><th scope="col">Date</th></tr></thead>
                             <tbody>
                                 <?php if (!empty($recent_bookings)): foreach ($recent_bookings as $b): ?>
                                 <tr>

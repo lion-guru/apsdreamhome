@@ -108,16 +108,16 @@ $total = $total ?? 0;
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Settlement No</th>
-                            <th>Employee</th>
-                            <th>Exit Type</th>
-                            <th>Last Working Day</th>
-                            <th class="text-end">Earnings</th>
-                            <th class="text-end">Deductions</th>
-                            <th class="text-end text-success">Net Payable</th>
-                            <th class="text-center">Status</th>
-                            <th>Created</th>
-                            <th class="text-center">Actions</th>
+                            <th scope="col">Settlement No</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Exit Type</th>
+                            <th scope="col">Last Working Day</th>
+                            <th scope="col" class="text-end">Earnings</th>
+                            <th scope="col" class="text-end">Deductions</th>
+                            <th scope="col" class="text-end text-success">Net Payable</th>
+                            <th scope="col" class="text-center">Status</th>
+                            <th scope="col">Created</th>
+                            <th scope="col" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -28,7 +28,7 @@
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr><th><?= __('gst_date') ?></th><th><?= __('gst_type') ?></th><th><?= __('gst_party_invoice') ?></th><th><?= __('gst_gstin') ?></th><th class="text-end"><?= __('gst_taxable') ?></th><th class="text-end"><?= __('gst_cgst') ?></th><th class="text-end"><?= __('gst_sgst') ?></th><th class="text-end"><?= __('gst_igst') ?></th><th class="text-end"><?= __('gst_total_tax') ?></th></tr>
+                    <tr><th scope="col"><?= __('gst_date') ?></th><th scope="col"><?= __('gst_type') ?></th><th scope="col"><?= __('gst_party_invoice') ?></th><th scope="col"><?= __('gst_gstin') ?></th><th scope="col" class="text-end"><?= __('gst_taxable') ?></th><th scope="col" class="text-end"><?= __('gst_cgst') ?></th><th scope="col" class="text-end"><?= __('gst_sgst') ?></th><th scope="col" class="text-end"><?= __('gst_igst') ?></th><th scope="col" class="text-end"><?= __('gst_total_tax') ?></th></tr>
                 </thead>
                 <tbody>
                 <?php if (empty($entries)): ?>

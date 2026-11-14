@@ -156,7 +156,7 @@ ob_start();
         <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Type</th><th>Period</th><th>Status</th><th>Records</th><th>TDS Amount</th><th>Portal Ref</th><th>Date</th></tr>
+                    <tr><th scope="col">Type</th><th scope="col">Period</th><th scope="col">Status</th><th scope="col">Records</th><th scope="col">TDS Amount</th><th scope="col">Portal Ref</th><th scope="col">Date</th></tr>
                 </thead>
                 <tbody>
                 <?php foreach ($submissions as $s): ?>

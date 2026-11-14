@@ -81,16 +81,16 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th class="ps-3">Date &amp; Outage Reason</th>
-                        <th>Colony</th>
-                        <th>DG Unit &amp; Timing</th>
-                        <th>Run Hours</th>
-                        <th>Diesel Consumed</th>
-                        <th>Total Cost (₹)</th>
-                        <th>Power Output</th>
-                        <th>Engine Health</th>
-                        <th>Operator</th>
-                        <th class="text-end pe-3">Action</th>
+                        <th scope="col" class="ps-3">Date &amp; Outage Reason</th>
+                        <th scope="col">Colony</th>
+                        <th scope="col">DG Unit &amp; Timing</th>
+                        <th scope="col">Run Hours</th>
+                        <th scope="col">Diesel Consumed</th>
+                        <th scope="col">Total Cost (₹)</th>
+                        <th scope="col">Power Output</th>
+                        <th scope="col">Engine Health</th>
+                        <th scope="col">Operator</th>
+                        <th scope="col" class="text-end pe-3">Action</th>
                     </tr>
                 </thead>
                 <tbody>

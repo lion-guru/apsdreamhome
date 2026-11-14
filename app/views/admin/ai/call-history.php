@@ -91,14 +91,14 @@ $base = BASE_URL . '/admin/ai-calling/history';
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Phone</th>
-                            <th>Lead</th>
-                            <th>Status</th>
-                            <th>Response</th>
-                            <th>Duration</th>
-                            <th>Agent</th>
-                            <th>Date</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Lead</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Response</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Agent</th>
+                            <th scope="col">Date</th>
                         </tr>
                     </thead>
                     <tbody>

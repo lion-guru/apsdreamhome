@@ -25,12 +25,12 @@ $page_description = 'Manage marketplace applications and integrations';
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>App Name</th>
-                            <th>Provider</th>
-                            <th>URL</th>
-                            <th>Created</th>
-                            <th>Actions</th>
+                            <th scope="col">#</th>
+                            <th scope="col">App Name</th>
+                            <th scope="col">Provider</th>
+                            <th scope="col">URL</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -41,7 +41,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>Report</th><th>Type</th><th>Period</th><th>Generated</th><th>Actions</th></tr>
+                        <tr><th scope="col">Report</th><th scope="col">Type</th><th scope="col">Period</th><th scope="col">Generated</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($reports)): ?>

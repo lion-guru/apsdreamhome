@@ -75,7 +75,7 @@ $filterTo = $_GET['to'] ?? '';
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>ID</th><th>Lead</th><th>Phone</th><th>Agent</th><th>Duration</th><th>Response</th><th>Sentiment</th><th>Status</th><th>Date</th><th>Details</th></tr></thead>
+                        <thead><tr><th scope="col">ID</th><th scope="col">Lead</th><th scope="col">Phone</th><th scope="col">Agent</th><th scope="col">Duration</th><th scope="col">Response</th><th scope="col">Sentiment</th><th scope="col">Status</th><th scope="col">Date</th><th scope="col">Details</th></tr></thead>
                         <tbody>
                         <?php foreach ($sessions as $s): ?>
                             <tr>

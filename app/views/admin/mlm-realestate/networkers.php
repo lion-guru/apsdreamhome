@@ -7,7 +7,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Package</th><th>Wallet</th><th>Downline</th><th>RERA</th><th>Registered</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Phone</th><th scope="col">Package</th><th scope="col">Wallet</th><th scope="col">Downline</th><th scope="col">RERA</th><th scope="col">Registered</th></tr></thead>
                     <tbody>
                         <?php if (empty($networkers ?? [])): ?>
                         <tr>

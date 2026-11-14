@@ -109,12 +109,12 @@ $attendanceRate = $totalDays > 0 ? round(($workingDays / $totalDays) * 100) : 0;
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Date</th>
-                                <th>Day</th>
-                                <th>Check In</th>
-                                <th>Check Out</th>
-                                <th class="text-end">Hours</th>
-                                <th>Status</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Day</th>
+                                <th scope="col">Check In</th>
+                                <th scope="col">Check Out</th>
+                                <th scope="col" class="text-end">Hours</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>

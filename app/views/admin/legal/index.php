@@ -57,7 +57,7 @@ $categories = $categories ?? [];
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead><tr><th>#</th><th>Title</th><th>Customer</th><th>Status</th><th>Created</th></tr></thead>
+                                <thead><tr><th scope="col">#</th><th scope="col">Title</th><th scope="col">Customer</th><th scope="col">Status</th><th scope="col">Created</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($recent as $d): ?>
                                     <tr>

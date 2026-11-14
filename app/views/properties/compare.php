@@ -35,10 +35,10 @@
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Properties</th>
-                                        <th>Created</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Properties</th>
+                                        <th scope="col">Created</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

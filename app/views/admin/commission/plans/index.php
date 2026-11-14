@@ -84,17 +84,17 @@ $statusBadge = fn($s) => match($s) {
             <table class="table table-dark-custom m-0">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Plan Name</th>
-                        <th>Code</th>
-                        <th>Version</th>
-                        <th>Type</th>
-                        <th>Levels</th>
-                        <th>Global Cap</th>
-                        <th>Track A/B/C</th>
-                        <th>Status</th>
-                        <th>Effective</th>
-                        <th class="text-end">Actions</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Plan Name</th>
+                        <th scope="col">Code</th>
+                        <th scope="col">Version</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Levels</th>
+                        <th scope="col">Global Cap</th>
+                        <th scope="col">Track A/B/C</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Effective</th>
+                        <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

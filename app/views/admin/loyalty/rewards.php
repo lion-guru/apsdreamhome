@@ -21,12 +21,12 @@ $rewards = $rewards ?? [];
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Points Required</th>
-                                <th>Stock</th>
-                                <th>Category</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Points Required</th>
+                                <th scope="col">Stock</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

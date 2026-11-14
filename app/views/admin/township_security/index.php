@@ -96,13 +96,13 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-3">Date &amp; Shift</th>
-                                <th>Colony &amp; Gate</th>
-                                <th>Security Guard</th>
-                                <th>Agency &amp; Supervisor</th>
-                                <th>Status</th>
-                                <th>Boom Barrier</th>
-                                <th>Visitors</th>
+                                <th scope="col" class="ps-3">Date &amp; Shift</th>
+                                <th scope="col">Colony &amp; Gate</th>
+                                <th scope="col">Security Guard</th>
+                                <th scope="col">Agency &amp; Supervisor</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Boom Barrier</th>
+                                <th scope="col">Visitors</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -157,13 +157,13 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-3">Token &amp; Time</th>
-                                <th>Colony &amp; Location</th>
-                                <th>Category</th>
-                                <th>Severity</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th class="text-end pe-3">Action</th>
+                                <th scope="col" class="ps-3">Token &amp; Time</th>
+                                <th scope="col">Colony &amp; Location</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Severity</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-end pe-3">Action</th>
                             </tr>
                         </thead>
                         <tbody>

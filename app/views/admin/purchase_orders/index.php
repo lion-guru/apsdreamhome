@@ -26,7 +26,7 @@ $statuses = $statuses ?? [];
     </div></div>
 
     <div class="card"><div class="card-body p-0"><table class="table mb-0">
-        <thead><tr><th>PO Number</th><th>Vendor</th><th>Date</th><th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th scope="col">PO Number</th><th scope="col">Vendor</th><th scope="col">Date</th><th scope="col">Amount</th><th scope="col">Payment</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
         <tbody>
         <?php if (empty($orders)): ?><tr><td colspan="7" class="text-center text-muted py-4">No purchase orders found</td></tr>
         <?php else: foreach ($orders as $o): ?>

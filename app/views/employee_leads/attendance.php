@@ -74,13 +74,13 @@
                             <div class="table-responsive"><table class="table table-striped table-hover table-responsive">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Check In</th>
-                                        <th>Check Out</th>
-                                        <th>Status</th>
-                                        <th>Hours Worked</th>
-                                        <th>Location</th>
-                                        <th>Notes</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Check In</th>
+                                        <th scope="col">Check Out</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Hours Worked</th>
+                                        <th scope="col">Location</th>
+                                        <th scope="col">Notes</th>
                                     </tr>
                                 </thead>
                                 <tbody>

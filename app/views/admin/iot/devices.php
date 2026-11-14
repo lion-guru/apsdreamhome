@@ -28,7 +28,7 @@ $cats = ['security'=>'Security','energy'=>'Energy','water'=>'Water','climate'=>'
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>Name</th><th>UID</th><th>Category</th><th>Location</th><th>Status</th><th>Last Seen</th><th class="text-end">Actions</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Name</th><th scope="col">UID</th><th scope="col">Category</th><th scope="col">Location</th><th scope="col">Status</th><th scope="col">Last Seen</th><th scope="col" class="text-end">Actions</th></tr></thead>
                     <tbody>
                     <?php foreach ($devices as $d): ?>
                         <tr>

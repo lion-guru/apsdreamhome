@@ -90,7 +90,7 @@ $docTypes = [
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                                <tr><th>Type</th><th>Doc #</th><th>Date</th><th>Status</th><th>File</th><th>Remarks</th></tr>
+                                <tr><th scope="col">Type</th><th scope="col">Doc #</th><th scope="col">Date</th><th scope="col">Status</th><th scope="col">File</th><th scope="col">Remarks</th></tr>
                             </thead>
                             <tbody>
                             <?php foreach ($documents as $d): ?>

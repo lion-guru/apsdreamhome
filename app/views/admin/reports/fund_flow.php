@@ -97,10 +97,10 @@ $components = $data['components'] ?? [];
                     <table class="table mb-0">
                         <thead>
                             <tr>
-                                <th>Component</th>
-                                <th class="text-right">Opening</th>
-                                <th class="text-right">Closing</th>
-                                <th class="text-right">Change</th>
+                                <th scope="col">Component</th>
+                                <th scope="col" class="text-right">Opening</th>
+                                <th scope="col" class="text-right">Closing</th>
+                                <th scope="col" class="text-right">Change</th>
                             </tr>
                         </thead>
                         <tbody>

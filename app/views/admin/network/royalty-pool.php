@@ -113,11 +113,11 @@ $monthName    = date('F', mktime(0, 0, 0, $month, 1, $year));
                 <table class="table table-sm table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Member Name</th>
-                            <th>Email</th>
-                            <th class="text-end">Share %</th>
-                            <th class="text-end">Amount (₹)</th>
-                            <th class="text-center">Distributed At</th>
+                            <th scope="col">Member Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col" class="text-end">Share %</th>
+                            <th scope="col" class="text-end">Amount (₹)</th>
+                            <th scope="col" class="text-center">Distributed At</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -137,9 +137,9 @@ $monthName    = date('F', mktime(0, 0, 0, $month, 1, $year));
                     </tbody>
                     <tfoot class="table-dark">
                         <tr>
-                            <th colspan="3" class="text-end">Total Distributed:</th>
-                            <th class="text-end">₹<?= number_format($totalDistributed, 2) ?></th>
-                            <th></th>
+                            <th scope="col" colspan="3" class="text-end">Total Distributed:</th>
+                            <th scope="col" class="text-end">₹<?= number_format($totalDistributed, 2) ?></th>
+                            <th scope="col"></th>
                         </tr>
                     </tfoot>
                 </table>

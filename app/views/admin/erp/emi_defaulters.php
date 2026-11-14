@@ -46,7 +46,7 @@ $badge = ['grace' => 'success', 'warning' => 'warning', 'late' => 'orange', 'cri
         <div class="table-responsive">
             <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark">
-                    <tr><th>Customer</th><th>Booking / Plot</th><th>EMI #</th><th>Due Date</th><th class="text-end">Due</th><th class="text-end">Penalty</th><th>Aging</th><th>Reminders</th><th>Action</th></tr>
+                    <tr><th scope="col">Customer</th><th scope="col">Booking / Plot</th><th scope="col">EMI #</th><th scope="col">Due Date</th><th scope="col" class="text-end">Due</th><th scope="col" class="text-end">Penalty</th><th scope="col">Aging</th><th scope="col">Reminders</th><th scope="col">Action</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($rows)): ?>

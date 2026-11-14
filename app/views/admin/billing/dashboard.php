@@ -109,7 +109,7 @@ $base = BASE_URL ?? '';
             <div class="card-body">
                 <?php if (!empty($trend)): ?>
                     <table class="table table-sm mb-0">
-                        <thead><tr><th>Month</th><th>New Subs</th><th class="text-end">Revenue</th></tr></thead>
+                        <thead><tr><th scope="col">Month</th><th scope="col">New Subs</th><th scope="col" class="text-end">Revenue</th></tr></thead>
                         <tbody>
                             <?php foreach ($trend as $row): ?>
                                 <tr>
@@ -139,13 +139,13 @@ $base = BASE_URL ?? '';
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Tenant</th>
-                        <th>Plan</th>
-                        <th>Cycle</th>
-                        <th>Amount</th>
-                        <th>Period End</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th scope="col">Tenant</th>
+                        <th scope="col">Plan</th>
+                        <th scope="col">Cycle</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Period End</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -6,7 +6,7 @@
   <div class="aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th>ID</th><th>Name</th><th>Badge</th><th>Price</th><th>Duration</th><th>Priority</th><th>Active</th><th>Purchases</th><th>Actions</th></tr></thead>
+        <thead><tr><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Badge</th><th scope="col">Price</th><th scope="col">Duration</th><th scope="col">Priority</th><th scope="col">Active</th><th scope="col">Purchases</th><th scope="col">Actions</th></tr></thead>
         <tbody>
           <?php if (empty($packages)): ?>
             <tr>

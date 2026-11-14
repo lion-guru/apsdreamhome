@@ -26,15 +26,15 @@ $land_records = $land_records ?? [];
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-4">#</th>
-                            <th>Survey Number</th>
-                            <th>Location</th>
-                            <th>Area</th>
-                            <th>Type</th>
-                            <th>Owner</th>
-                            <th>Cost</th>
-                            <th>Status</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th scope="col" class="ps-4">#</th>
+                            <th scope="col">Survey Number</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Area</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Owner</th>
+                            <th scope="col">Cost</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -188,10 +188,10 @@
           <table class="table table-hover aps-cp-table mb-0">
             <thead class="tenant-header">
               <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Description</th>
-                <th>By</th>
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Description</th>
+                <th scope="col">By</th>
               </tr>
             </thead>
             <tbody>

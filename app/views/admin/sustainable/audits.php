@@ -15,7 +15,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>Project</th><th>Audit Date</th><th>Auditor</th><th>Score</th><th>Annual kWh</th><th>Solar (kWp)</th><th>CO₂ (t/yr)</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Project</th><th scope="col">Audit Date</th><th scope="col">Auditor</th><th scope="col">Score</th><th scope="col">Annual kWh</th><th scope="col">Solar (kWp)</th><th scope="col">CO₂ (t/yr)</th><th scope="col">Status</th><th scope="col" class="text-end">Actions</th></tr></thead>
                     <tbody>
                     <?php foreach ($audits as $a): ?>
                         <tr>

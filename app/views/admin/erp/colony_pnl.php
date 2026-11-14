@@ -75,7 +75,7 @@ function pnl_color($v) { return $v >= 0 ? 'success' : 'danger'; }
         <div class="table-responsive">
             <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark">
-                    <tr><th>Colony</th><th>Plots</th><th class="text-end">Land</th><th class="text-end">Dev</th><th class="text-end">Cost</th><th class="text-end">Value</th><th class="text-end">Collected</th><th class="text-end">Outstanding</th><th class="text-end">Realized</th><th class="text-end">Projected</th><th class="text-end">Margin</th></tr>
+                    <tr><th scope="col">Colony</th><th scope="col">Plots</th><th scope="col" class="text-end">Land</th><th scope="col" class="text-end">Dev</th><th scope="col" class="text-end">Cost</th><th scope="col" class="text-end">Value</th><th scope="col" class="text-end">Collected</th><th scope="col" class="text-end">Outstanding</th><th scope="col" class="text-end">Realized</th><th scope="col" class="text-end">Projected</th><th scope="col" class="text-end">Margin</th></tr>
                 </thead>
                 <tbody>
                     <?php foreach ($rows as $r): ?>

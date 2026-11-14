@@ -23,15 +23,15 @@ $base   = defined('BASE_URL') ? BASE_URL : '';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark">
                             <tr>
-                                <th>Name</th>
-                                <th>Email / Phone</th>
-                                <th class="text-end">Basic Salary</th>
-                                <th class="text-end">HRA</th>
-                                <th class="text-end">TA/DA</th>
-                                <th class="text-end">Allowance</th>
-                                <th class="text-center">Incentive</th>
-                                <th class="text-center">Effective From</th>
-                                <th class="text-center">Actions</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email / Phone</th>
+                                <th scope="col" class="text-end">Basic Salary</th>
+                                <th scope="col" class="text-end">HRA</th>
+                                <th scope="col" class="text-end">TA/DA</th>
+                                <th scope="col" class="text-end">Allowance</th>
+                                <th scope="col" class="text-center">Incentive</th>
+                                <th scope="col" class="text-center">Effective From</th>
+                                <th scope="col" class="text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

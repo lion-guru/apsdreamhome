@@ -28,7 +28,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
     <div class="card mb-4"><div class="card-header fw-bold">Employees</div>
         <div class="table-responsive"><table class="table table-hover mb-0">
-            <thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Workload</th><th>Last active</th><th>Actions</th></tr></thead>
+            <thead><tr><th scope="col">Name</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Workload</th><th scope="col">Last active</th><th scope="col">Actions</th></tr></thead>
             <tbody>
             <?php foreach ($employees as $e): ?>
                 <tr>
@@ -86,7 +86,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
     <div class="card"><div class="card-header fw-bold">Task Queue</div>
         <div class="table-responsive"><table class="table table-hover mb-0">
-            <thead><tr><th>#</th><th>Employee</th><th>Type</th><th>Lead</th><th>Status</th><th>Created</th><th>Result</th></tr></thead>
+            <thead><tr><th scope="col">#</th><th scope="col">Employee</th><th scope="col">Type</th><th scope="col">Lead</th><th scope="col">Status</th><th scope="col">Created</th><th scope="col">Result</th></tr></thead>
             <tbody>
             <?php foreach ($queue as $q): ?>
                 <tr>

@@ -90,12 +90,12 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Timestamp</th>
-                                <th>Mode</th>
-                                <th>Tasks Run</th>
-                                <th>Errors</th>
-                                <th>Duration</th>
-                                <th>Details</th>
+                                <th scope="col">Timestamp</th>
+                                <th scope="col">Mode</th>
+                                <th scope="col">Tasks Run</th>
+                                <th scope="col">Errors</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">Details</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -166,7 +166,7 @@ function showDetails(data) {
         if (data.results) {
             html += '<h6 class="mb-3">Task Results</h6>';
             html += '<div class="table-responsive"><table class="table table-sm table-bordered">';
-            html += '<thead><tr><th>Task</th><th>Status</th><th>Details</th></tr></thead><tbody>';
+            html += '<thead><tr><th scope="col">Task</th><th scope="col">Status</th><th scope="col">Details</th></tr></thead><tbody>';
             foreach (data.results as $key => $val) {
                 if (is_array($val)) {
                     $status = isset($val['success']) && $val['success'] ? '<span class="badge bg-success">OK</span>' : '<span class="badge bg-danger">FAIL</span>';

@@ -11,7 +11,7 @@ $page_title = $page_title ?? 'KPI Definitions';
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Name</th><th>Category</th><th>Unit</th><th>Default Target</th><th>Weightage</th><th>Status</th></tr>
+                    <tr><th scope="col">Name</th><th scope="col">Category</th><th scope="col">Unit</th><th scope="col">Default Target</th><th scope="col">Weightage</th><th scope="col">Status</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($kpis ?? [])): ?>

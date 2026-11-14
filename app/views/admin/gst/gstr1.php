@@ -50,9 +50,9 @@ $csrf = $this->getCsrfToken();
                             <thead class="table-light">
                                 <tr>
                                     <?php if ($section === 'HSN'): ?>
-                                        <th>HSN</th><th>UOM</th><th>Qty</th><th>Taxable</th><th>CGST</th><th>SGST</th><th>IGST</th><th>Cess</th>
+                                        <th scope="col">HSN</th><th scope="col">UOM</th><th scope="col">Qty</th><th scope="col">Taxable</th><th scope="col">CGST</th><th scope="col">SGST</th><th scope="col">IGST</th><th scope="col">Cess</th>
                                     <?php else: ?>
-                                        <th>GSTIN</th><th>Invoice #</th><th>Date</th><th>Value</th><th>Taxable</th><th>CGST</th><th>SGST</th><th>IGST</th><th>Cess</th><th>POS</th><th>Type</th><th>RC</th>
+                                        <th scope="col">GSTIN</th><th scope="col">Invoice #</th><th scope="col">Date</th><th scope="col">Value</th><th scope="col">Taxable</th><th scope="col">CGST</th><th scope="col">SGST</th><th scope="col">IGST</th><th scope="col">Cess</th><th scope="col">POS</th><th scope="col">Type</th><th scope="col">RC</th>
                                     <?php endif; ?>
                                 </tr>
                             </thead>

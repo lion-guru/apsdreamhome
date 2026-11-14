@@ -23,7 +23,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light"><tr><th class="ps-4">#</th><th>Property</th><th>Issue</th><th>Priority</th><th>Status</th><th>Reported By</th><th class="text-end pe-4">Date</th></tr></thead>
+                    <thead class="bg-light"><tr><th scope="col" class="ps-4">#</th><th scope="col">Property</th><th scope="col">Issue</th><th scope="col">Priority</th><th scope="col">Status</th><th scope="col">Reported By</th><th scope="col" class="text-end pe-4">Date</th></tr></thead>
                     <tbody>
                         <?php if (empty($requests)): ?>
                             <tr><td colspan="7" class="text-center py-5 text-muted"><i class="fas fa-tools fa-3x d-block mb-3"></i>No maintenance requests</td></tr>

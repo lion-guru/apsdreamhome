@@ -22,7 +22,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Type</th><th>Count</th><th>Avg Price</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Type</th><th scope="col">Count</th><th scope="col">Avg Price</th></tr></thead>
                             <tbody>
                                 <?php foreach (($propData['type_distribution'] ?? []) as $row): ?>
                                 <tr>
@@ -48,7 +48,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Price Range</th><th>Count</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Price Range</th><th scope="col">Count</th></tr></thead>
                             <tbody>
                                 <?php foreach (($propData['price_distribution'] ?? []) as $row): ?>
                                 <tr>
@@ -75,7 +75,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>City</th><th>State</th><th>Properties</th><th>Avg Price</th><th>users</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">City</th><th scope="col">State</th><th scope="col">Properties</th><th scope="col">Avg Price</th><th scope="col">users</th></tr></thead>
                             <tbody>
                                 <?php foreach (($propData['location_performance'] ?? []) as $loc): ?>
                                 <tr>
@@ -103,7 +103,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Age Group</th><th>Count</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Age Group</th><th scope="col">Count</th></tr></thead>
                             <tbody>
                                 <?php foreach (($propData['property_age'] ?? []) as $age): ?>
                                 <tr>

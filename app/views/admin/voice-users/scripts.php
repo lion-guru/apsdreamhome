@@ -9,11 +9,11 @@
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Script Name</th>
-                        <th>Language</th>
-                        <th>Agent</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th scope="col">Script Name</th>
+                        <th scope="col">Language</th>
+                        <th scope="col">Agent</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -71,15 +71,15 @@ $page_title = 'Bank Reconciliation';
                     <table class="table table-striped table-hover mb-0">
                         <thead class="table-dark">
                             <tr>
-                                <th width="40"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()" aria-label="Select all rows"></th>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Amount</th>
-                                <th>Bank Name</th>
-                                <th>Account</th>
-                                <th>Cheque No</th>
-                                <th>Description</th>
-                                <th>Actions</th>
+                                <th scope="col" width="40"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()" aria-label="Select all rows"></th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Bank Name</th>
+                                <th scope="col">Account</th>
+                                <th scope="col">Cheque No</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

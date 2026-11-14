@@ -313,7 +313,7 @@ $formatRank = function (?string $rank): string {
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
-                            <tr><th><?php echo __('assoc_dash_customer', [], 'Customer'); ?></th><th><?php echo __('assoc_dash_plot', [], 'Plot'); ?></th><th><?php echo __('assoc_dash_amount', [], 'Amount'); ?></th><th><?php echo __('assoc_dash_status', [], 'Status'); ?></th><th><?php echo __('assoc_dash_date', [], 'Date'); ?></th></tr>
+                            <tr><th scope="col"><?php echo __('assoc_dash_customer', [], 'Customer'); ?></th><th scope="col"><?php echo __('assoc_dash_plot', [], 'Plot'); ?></th><th scope="col"><?php echo __('assoc_dash_amount', [], 'Amount'); ?></th><th scope="col"><?php echo __('assoc_dash_status', [], 'Status'); ?></th><th scope="col"><?php echo __('assoc_dash_date', [], 'Date'); ?></th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($recent_bookings as $b): ?>
@@ -345,12 +345,12 @@ $formatRank = function (?string $rank): string {
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th><?php echo __('assoc_dash_name', [], 'Name'); ?></th>
-                                <th><?php echo __('assoc_dash_contact', [], 'Contact'); ?></th>
-                                <th><?php echo __('assoc_dash_interest', [], 'Interest'); ?></th>
-                                <th><?php echo __('assoc_dash_status', [], 'Status'); ?></th>
-                                <th><?php echo __('assoc_dash_date', [], 'Date'); ?></th>
-                                <th><?php echo __('assoc_dash_action', [], 'Action'); ?></th>
+                                <th scope="col"><?php echo __('assoc_dash_name', [], 'Name'); ?></th>
+                                <th scope="col"><?php echo __('assoc_dash_contact', [], 'Contact'); ?></th>
+                                <th scope="col"><?php echo __('assoc_dash_interest', [], 'Interest'); ?></th>
+                                <th scope="col"><?php echo __('assoc_dash_status', [], 'Status'); ?></th>
+                                <th scope="col"><?php echo __('assoc_dash_date', [], 'Date'); ?></th>
+                                <th scope="col"><?php echo __('assoc_dash_action', [], 'Action'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -387,10 +387,10 @@ $formatRank = function (?string $rank): string {
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th><?php echo __('assoc_dash_type', [], 'Type'); ?></th>
-                                <th><?php echo __('assoc_dash_amount', [], 'Amount'); ?></th>
-                                <th><?php echo __('assoc_dash_status', [], 'Status'); ?></th>
-                                <th><?php echo __('assoc_dash_date', [], 'Date'); ?></th>
+                                <th scope="col"><?php echo __('assoc_dash_type', [], 'Type'); ?></th>
+                                <th scope="col"><?php echo __('assoc_dash_amount', [], 'Amount'); ?></th>
+                                <th scope="col"><?php echo __('assoc_dash_status', [], 'Status'); ?></th>
+                                <th scope="col"><?php echo __('assoc_dash_date', [], 'Date'); ?></th>
                             </tr>
                         </thead>
                         <tbody>

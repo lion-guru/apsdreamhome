@@ -149,7 +149,7 @@ function exportAsPDF($data) {
             <h2>Recent Users</h2>
             <div class="table-responsive"><table>
                 <thead>
-                    <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th></tr>
+                    <tr><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Created</th></tr>
                 </thead>
                 <tbody>';
         foreach (array_slice($data['users'], 0, 10) as $user) {
@@ -169,7 +169,7 @@ function exportAsPDF($data) {
             <h2>Recent Properties</h2>
             <div class="table-responsive"><table>
                 <thead>
-                    <tr><th>Title</th><th>Location</th><th>Price</th><th>Status</th><th>Created</th></tr>
+                    <tr><th scope="col">Title</th><th scope="col">Location</th><th scope="col">Price</th><th scope="col">Status</th><th scope="col">Created</th></tr>
                 </thead>
                 <tbody>';
         foreach (array_slice($data['properties'], 0, 10) as $property) {

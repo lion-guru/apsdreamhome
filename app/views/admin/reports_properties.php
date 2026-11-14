@@ -61,7 +61,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Date</th><th>Views</th><th>Favorites</th><th>Inquiries</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Views</th><th scope="col">Favorites</th><th scope="col">Inquiries</th></tr></thead>
                             <tbody>
                                 <?php foreach (($properties['property_trends'] ?? $property_trends ?? []) as $pt): ?>
                                 <tr>
@@ -88,7 +88,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Property</th><th>Views</th><th>Favorites</th><th>Inquiries</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Property</th><th scope="col">Views</th><th scope="col">Favorites</th><th scope="col">Inquiries</th></tr></thead>
                             <tbody>
                                 <?php foreach (($top_performers ?? $properties['top_performers'] ?? []) as $tp): ?>
                                 <tr>

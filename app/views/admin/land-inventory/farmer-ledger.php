@@ -127,18 +127,18 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
             <table class="table table-hover mb-0" id="farmerLedgerTable">
                 <thead class="table-light sticky-top">
                     <tr>
-                        <th style="width: 40px;">#</th>
-                        <th>Farmer / Land Owner</th>
-                        <th>Contact</th>
-                        <th>Location</th>
-                        <th>Land Details</th>
-                        <th>Leads</th>
-                        <th>Deals</th>
-                        <th class="text-end">Deal Value</th>
-                        <th class="text-end">Advance Paid</th>
-                        <th class="text-end">Balance</th>
-                        <th>Latest Milestone</th>
-                        <th style="width: 100px;">Actions</th>
+                        <th scope="col" style="width: 40px;">#</th>
+                        <th scope="col">Farmer / Land Owner</th>
+                        <th scope="col">Contact</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Land Details</th>
+                        <th scope="col">Leads</th>
+                        <th scope="col">Deals</th>
+                        <th scope="col" class="text-end">Deal Value</th>
+                        <th scope="col" class="text-end">Advance Paid</th>
+                        <th scope="col" class="text-end">Balance</th>
+                        <th scope="col">Latest Milestone</th>
+                        <th scope="col" style="width: 100px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -54,16 +54,16 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Colony</th>
-                        <th>Attribute</th>
-                        <th>Condition</th>
-                        <th>Charge Type</th>
-                        <th>Value</th>
-                        <th>Priority</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Colony</th>
+                        <th scope="col">Attribute</th>
+                        <th scope="col">Condition</th>
+                        <th scope="col">Charge Type</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Priority</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

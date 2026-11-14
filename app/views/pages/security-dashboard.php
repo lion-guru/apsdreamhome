@@ -89,11 +89,11 @@ $base = $base ?? BASE_URL;
                             <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                                 <thead class="table-light">
                                     <tr>
-                                        <th><?= __('security_dash_th_action', [], 'Action') ?></th>
-                                        <th><?= __('security_dash_th_description', [], 'Description') ?></th>
-                                        <th><?= __('security_dash_th_ip', [], 'IP') ?></th>
-                                        <th><?= __('security_dash_th_severity', [], 'Severity') ?></th>
-                                        <th><?= __('security_dash_th_time', [], 'Time') ?></th>
+                                        <th scope="col"><?= __('security_dash_th_action', [], 'Action') ?></th>
+                                        <th scope="col"><?= __('security_dash_th_description', [], 'Description') ?></th>
+                                        <th scope="col"><?= __('security_dash_th_ip', [], 'IP') ?></th>
+                                        <th scope="col"><?= __('security_dash_th_severity', [], 'Severity') ?></th>
+                                        <th scope="col"><?= __('security_dash_th_time', [], 'Time') ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>

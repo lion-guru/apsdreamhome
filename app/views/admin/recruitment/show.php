@@ -186,12 +186,12 @@ $applications = $applications ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 80px">#</th>
-                            <th>Candidate</th>
-                            <th style="width: 150px">Stage</th>
-                            <th style="width: 120px">Applied</th>
-                            <th style="width: 120px">Screened By</th>
-                            <th style="width: 120px">Actions</th>
+                            <th scope="col" style="width: 80px">#</th>
+                            <th scope="col">Candidate</th>
+                            <th scope="col" style="width: 150px">Stage</th>
+                            <th scope="col" style="width: 120px">Applied</th>
+                            <th scope="col" style="width: 120px">Screened By</th>
+                            <th scope="col" style="width: 120px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

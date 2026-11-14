@@ -163,7 +163,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                         <h6 >Track A: Slab Differential Breakdown</h6>
                         <div >
                             <table class="table sim-table m-0">
-                                <thead><tr><th>Recipient</th><th>Type</th><th>Rate</th><th>Amount</th><th>% of Sale</th></tr></thead>
+                                <thead><tr><th scope="col">Recipient</th><th scope="col">Type</th><th scope="col">Rate</th><th scope="col">Amount</th><th scope="col">% of Sale</th></tr></thead>
                                 <tbody>
                                     <?php foreach ($r['track_a_entries'] as $e): ?>
                                     <tr>
@@ -210,7 +210,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 <h6 >All Ranks at ₹<?= number_format($_POST['sale_amount'] ?? 1500000) ?> — <?= htmlspecialchars($result['plan']['name'] ?? '') ?></h6>
                 <div >
                     <table class="table sim-table m-0">
-                        <thead><tr><th>Rank</th><th>Direct Rate</th><th>Track A</th><th>Track B</th><th>Track C</th><th>Total Payout</th><th>Payout %</th></tr></thead>
+                        <thead><tr><th scope="col">Rank</th><th scope="col">Direct Rate</th><th scope="col">Track A</th><th scope="col">Track B</th><th scope="col">Track C</th><th scope="col">Total Payout</th><th scope="col">Payout %</th></tr></thead>
                         <tbody>
                             <?php foreach ($result['rank_results'] as $rr): ?>
                             <?php if ($rr['success']): ?>
@@ -299,7 +299,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 </div>
                 <?php if (!empty($ws['per_package'])): ?>
                 <table class="table sim-table">
-                    <thead><tr><th>Package</th><th>Activations</th><th>Revenue</th><th>L1 Payout</th><th>L2 Payout</th><th>Total</th></tr></thead>
+                    <thead><tr><th scope="col">Package</th><th scope="col">Activations</th><th scope="col">Revenue</th><th scope="col">L1 Payout</th><th scope="col">L2 Payout</th><th scope="col">Total</th></tr></thead>
                     <tbody>
                         <?php foreach ($ws['per_package'] as $pp): ?>
                         <tr>
@@ -387,11 +387,11 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                         <table class="table table-dark table-hover align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Mode</th>
-                                    <th>Description</th>
-                                    <th>Created</th>
-                                    <th class="text-end">Actions</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Mode</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Created</th>
+                                    <th scope="col" class="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

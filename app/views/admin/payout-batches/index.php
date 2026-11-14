@@ -55,16 +55,16 @@
                     <table class="table table-dark table-hover mb-0">
                         <thead>
                             <tr >
-                                <th >#</th>
-                                <th >Name</th>
-                                <th >Type</th>
-                                <th >Period</th>
-                                <th >Entries</th>
-                                <th >Total (₹)</th>
-                                <th >Status</th>
-                                <th >Created By</th>
-                                <th >Date</th>
-                                <th >Action</th>
+                                <th scope="col" >#</th>
+                                <th scope="col" >Name</th>
+                                <th scope="col" >Type</th>
+                                <th scope="col" >Period</th>
+                                <th scope="col" >Entries</th>
+                                <th scope="col" >Total (₹)</th>
+                                <th scope="col" >Status</th>
+                                <th scope="col" >Created By</th>
+                                <th scope="col" >Date</th>
+                                <th scope="col" >Action</th>
                             </tr>
                         </thead>
                         <tbody>

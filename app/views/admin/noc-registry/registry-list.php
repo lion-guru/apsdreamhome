@@ -41,16 +41,16 @@ $status_filter = $status_filter ?? null;
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th><?= __('admin_booking_label') ?></th>
-                            <th><?= __('admin_customer_label') ?></th>
-                            <th><?= __('admin_plot_label') ?></th>
-                            <th><?= __('admin_stamp_duty') ?></th>
-                            <th><?= __('admin_reg_fee') ?></th>
-                            <th><?= __('admin_total_cost') ?></th>
-                            <th><?= __('admin_status_label') ?></th>
-                            <th><?= __('admin_reg_no') ?></th>
-                            <th></th>
+                            <th scope="col">#</th>
+                            <th scope="col"><?= __('admin_booking_label') ?></th>
+                            <th scope="col"><?= __('admin_customer_label') ?></th>
+                            <th scope="col"><?= __('admin_plot_label') ?></th>
+                            <th scope="col"><?= __('admin_stamp_duty') ?></th>
+                            <th scope="col"><?= __('admin_reg_fee') ?></th>
+                            <th scope="col"><?= __('admin_total_cost') ?></th>
+                            <th scope="col"><?= __('admin_status_label') ?></th>
+                            <th scope="col"><?= __('admin_reg_no') ?></th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>

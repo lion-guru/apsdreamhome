@@ -11,7 +11,7 @@
         <div class="card-header"><h5 class="mb-0">Top 20 Earners</h5></div>
         <div class="card-body">
           <table class="table table-sm">
-            <thead><tr><th>#</th><th>Name</th><th>Total Earned</th><th>TXNs</th></tr></thead>
+            <thead><tr><th scope="col">#</th><th scope="col">Name</th><th scope="col">Total Earned</th><th scope="col">TXNs</th></tr></thead>
             <tbody>
               <?php foreach ($topEarners as $i => $e): ?>
               <tr>

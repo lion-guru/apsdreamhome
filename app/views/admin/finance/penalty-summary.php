@@ -134,14 +134,14 @@
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th><?= __('pen_booking') ?></th>
-                        <th><?= __('pen_plot') ?></th>
-                        <th><?= __('pen_customer') ?></th>
-                        <th><?= __('pen_installment_no') ?></th>
-                        <th><?= __('pen_due_date') ?></th>
-                        <th class="text-center"><?= __('pen_days_overdue') ?></th>
-                        <th class="text-end"><?= __('pen_amount') ?></th>
-                        <th class="text-end"><?= __('pen_accrued_penalty') ?></th>
+                        <th scope="col"><?= __('pen_booking') ?></th>
+                        <th scope="col"><?= __('pen_plot') ?></th>
+                        <th scope="col"><?= __('pen_customer') ?></th>
+                        <th scope="col"><?= __('pen_installment_no') ?></th>
+                        <th scope="col"><?= __('pen_due_date') ?></th>
+                        <th scope="col" class="text-center"><?= __('pen_days_overdue') ?></th>
+                        <th scope="col" class="text-end"><?= __('pen_amount') ?></th>
+                        <th scope="col" class="text-end"><?= __('pen_accrued_penalty') ?></th>
                     </tr>
                 </thead>
                 <tbody>

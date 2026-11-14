@@ -24,7 +24,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>#</th><th><?= __('admin_referrer') ?></th><th><?= __('admin_referred_email') ?></th><th><?= __('admin_code') ?></th><th><?= __('admin_status') ?></th><th><?= __('admin_date') ?></th><th><?= __('admin_actions') ?></th></tr></thead>
+                        <thead><tr><th scope="col">#</th><th scope="col"><?= __('admin_referrer') ?></th><th scope="col"><?= __('admin_referred_email') ?></th><th scope="col"><?= __('admin_code') ?></th><th scope="col"><?= __('admin_status') ?></th><th scope="col"><?= __('admin_date') ?></th><th scope="col"><?= __('admin_actions') ?></th></tr></thead>
                         <tbody>
                         <?php foreach ($referrals as $r): ?>
                             <tr>

@@ -12,7 +12,7 @@ $events = $events ?? [];
         <div class="text-center text-muted py-5"><i class="fas fa-calendar-times fa-3x mb-3"></i><p>No upcoming events</p></div>
         <?php else: ?>
         <table class="table mb-0">
-            <thead><tr><th>Event</th><th>Start</th><th>End</th><th>Location</th></tr></thead>
+            <thead><tr><th scope="col">Event</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Location</th></tr></thead>
             <tbody>
             <?php foreach ($events as $e): ?>
                 <tr>

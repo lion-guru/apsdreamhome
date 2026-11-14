@@ -27,39 +27,39 @@ $active_page = 'agreements';
             <div class="card-body aps-cp-card-body">
                 <div class="table-responsive"><table class="table table-sm table-borderless">
                     <tr>
-                        <th class="text-muted">Customer:</th>
+                        <th scope="col" class="text-muted">Customer:</th>
                         <td><?= htmlspecialchars($booking['customer_name'] ?? 'N/A') ?></td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Email:</th>
+                        <th scope="col" class="text-muted">Email:</th>
                         <td><?= htmlspecialchars($booking['customer_email'] ?? 'N/A') ?></td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Phone:</th>
+                        <th scope="col" class="text-muted">Phone:</th>
                         <td><?= htmlspecialchars($booking['customer_phone'] ?? 'N/A') ?></td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Plot No:</th>
+                        <th scope="col" class="text-muted">Plot No:</th>
                         <td><?= htmlspecialchars($booking['plot_number'] ?? 'N/A') ?></td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Colony:</th>
+                        <th scope="col" class="text-muted">Colony:</th>
                         <td><?= htmlspecialchars($booking['colony_name'] ?? 'N/A') ?></td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Block:</th>
+                        <th scope="col" class="text-muted">Block:</th>
                         <td><?= htmlspecialchars($booking['block'] ?? 'N/A') ?></td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Area:</th>
+                        <th scope="col" class="text-muted">Area:</th>
                         <td><?= number_format(floatval($booking['area_sqft'] ?? 0), 2) ?> sq.ft.</td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Amount:</th>
+                        <th scope="col" class="text-muted">Amount:</th>
                         <td><strong>Rs. <?= number_format(floatval($booking['total_amount'] ?? $booking['total_price'] ?? 0), 2) ?></strong></td>
                     </tr>
                     <tr>
-                        <th class="text-muted">Status:</th>
+                        <th scope="col" class="text-muted">Status:</th>
                         <td><span class="badge bg-<?= match($booking['status'] ?? '') { 'confirmed' => 'success', 'completed' => 'info', 'cancelled' => 'danger', default => 'warning' } ?>"><?= ucfirst($booking['status'] ?? 'N/A') ?></span></td>
                     </tr>
                 </table></div>

@@ -31,15 +31,15 @@ $preview_year = $preview_year ?? date('Y');
                     <h6>Current Salary Structure</h6>
                     <?php if ($current_structure): ?>
                     <table class="table table-sm table-bordered">
-                        <tr><th>Basic Salary</th><td>₹<?= number_format($current_structure['basic_salary'] ?? 0, 2) ?></td></tr>
-                        <tr><th>HRA</th><td>₹<?= number_format($current_structure['hra'] ?? 0, 2) ?></td></tr>
-                        <tr><th>Conveyance</th><td>₹<?= number_format($current_structure['conveyance'] ?? 0, 2) ?></td></tr>
-                        <tr><th>Medical Allowance</th><td>₹<?= number_format($current_structure['medical_allowance'] ?? 0, 2) ?></td></tr>
-                        <tr><th>Special Allowance</th><td>₹<?= number_format($current_structure['special_allowance'] ?? 0, 2) ?></td></tr>
-                        <tr><th>Other Allowances</th><td>₹<?= number_format($current_structure['other_allowances'] ?? 0, 2) ?></td></tr>
-                        <tr><th>PF (Employee)</th><td>₹<?= number_format($current_structure['pf_employee'] ?? 0, 2) ?></td></tr>
-                        <tr><th>TDS</th><td>₹<?= number_format($current_structure['tds'] ?? 0, 2) ?></td></tr>
-                        <tr class="table-primary"><th>Gross Salary</th><td><strong>₹<?= number_format(($current_structure['basic_salary']??0)+($current_structure['hra']??0)+($current_structure['conveyance']??0)+($current_structure['medical_allowance']??0)+($current_structure['special_allowance']??0)+($current_structure['other_allowances']??0), 2) ?></strong></td></tr>
+                        <tr><th scope="col">Basic Salary</th><td>₹<?= number_format($current_structure['basic_salary'] ?? 0, 2) ?></td></tr>
+                        <tr><th scope="col">HRA</th><td>₹<?= number_format($current_structure['hra'] ?? 0, 2) ?></td></tr>
+                        <tr><th scope="col">Conveyance</th><td>₹<?= number_format($current_structure['conveyance'] ?? 0, 2) ?></td></tr>
+                        <tr><th scope="col">Medical Allowance</th><td>₹<?= number_format($current_structure['medical_allowance'] ?? 0, 2) ?></td></tr>
+                        <tr><th scope="col">Special Allowance</th><td>₹<?= number_format($current_structure['special_allowance'] ?? 0, 2) ?></td></tr>
+                        <tr><th scope="col">Other Allowances</th><td>₹<?= number_format($current_structure['other_allowances'] ?? 0, 2) ?></td></tr>
+                        <tr><th scope="col">PF (Employee)</th><td>₹<?= number_format($current_structure['pf_employee'] ?? 0, 2) ?></td></tr>
+                        <tr><th scope="col">TDS</th><td>₹<?= number_format($current_structure['tds'] ?? 0, 2) ?></td></tr>
+                        <tr class="table-primary"><th scope="col">Gross Salary</th><td><strong>₹<?= number_format(($current_structure['basic_salary']??0)+($current_structure['hra']??0)+($current_structure['conveyance']??0)+($current_structure['medical_allowance']??0)+($current_structure['special_allowance']??0)+($current_structure['other_allowances']??0), 2) ?></strong></td></tr>
                     </table>
                     <?php else: ?>
                     <div class="alert alert-warning">No active salary structure found</div>
@@ -175,17 +175,17 @@ $preview_year = $preview_year ?? date('Y');
                     <table class="table table-sm table-striped table-bordered">
                         <thead class="table-dark">
                             <tr>
-                                <th>Month</th>
-                                <th>Old Basic</th>
-                                <th>New Basic</th>
-                                <th>Basic Diff</th>
-                                <th>Old Gross</th>
-                                <th>New Gross</th>
-                                <th>Gross Diff</th>
-                                <th>Old Net</th>
-                                <th>New Net</th>
-                                <th>Net Arrears</th>
-                                <th>Already Paid</th>
+                                <th scope="col">Month</th>
+                                <th scope="col">Old Basic</th>
+                                <th scope="col">New Basic</th>
+                                <th scope="col">Basic Diff</th>
+                                <th scope="col">Old Gross</th>
+                                <th scope="col">New Gross</th>
+                                <th scope="col">Gross Diff</th>
+                                <th scope="col">Old Net</th>
+                                <th scope="col">New Net</th>
+                                <th scope="col">Net Arrears</th>
+                                <th scope="col">Already Paid</th>
                             </tr>
                         </thead>
                         <tbody>

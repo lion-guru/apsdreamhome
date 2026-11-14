@@ -28,7 +28,7 @@
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead class="table-light">
-                                <tr><th>Source Table</th><th>Title / Name</th><th>Type</th><th>Description</th><th>Date</th></tr>
+                                <tr><th scope="col">Source Table</th><th scope="col">Title / Name</th><th scope="col">Type</th><th scope="col">Description</th><th scope="col">Date</th></tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($results as $r): ?>

@@ -102,13 +102,13 @@ $pagination = $pagination ?? ['current_page' => 1, 'per_page' => 20, 'total' => 
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Category</th>
-                            <th>Amount</th>
-                            <th>Description</th>
-                            <th>Reference</th>
-                            <th>Balance After</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Reference</th>
+                            <th scope="col">Balance After</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -93,13 +93,13 @@ $requests = $requests ?? [];
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Leave Type</th>
-                                        <th>Total Entitled</th>
-                                        <th>Availed</th>
-                                        <th>Balance</th>
-                                        <th>Encashable</th>
-                                        <th>Rate</th>
-                                        <th>Est. Amount</th>
+                                        <th scope="col">Leave Type</th>
+                                        <th scope="col">Total Entitled</th>
+                                        <th scope="col">Availed</th>
+                                        <th scope="col">Balance</th>
+                                        <th scope="col">Encashable</th>
+                                        <th scope="col">Rate</th>
+                                        <th scope="col">Est. Amount</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -137,13 +137,13 @@ $requests = $requests ?? [];
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Reference</th>
-                                        <th>Leave Type</th>
-                                        <th>Days</th>
-                                        <th>Amount</th>
-                                        <th>Applied</th>
-                                        <th>Status</th>
-                                        <th>Processed</th>
+                                        <th scope="col">Reference</th>
+                                        <th scope="col">Leave Type</th>
+                                        <th scope="col">Days</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Applied</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Processed</th>
                                     </tr>
                                 </thead>
                                 <tbody>

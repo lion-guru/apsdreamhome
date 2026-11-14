@@ -126,12 +126,12 @@ function lvDays($d) { return (int)$d; }
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-3">Type</th>
-                            <th>Period</th>
-                            <th class="text-center">Days</th>
-                            <th>Reason</th>
-                            <th>Status</th>
-                            <th class="text-end pe-3">Actions</th>
+                            <th scope="col" class="ps-3">Type</th>
+                            <th scope="col">Period</th>
+                            <th scope="col" class="text-center">Days</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end pe-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

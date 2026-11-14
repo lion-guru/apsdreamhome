@@ -16,7 +16,7 @@
 
   <div class="card"><div class="card-body table-responsive">
     <table class="table table-hover align-middle">
-      <thead><tr><th>ID</th><th>Amount</th><th>Total</th><th>Booking</th><th>Customer</th><th>User</th><th>Status</th><th>Gateway</th><th>Date</th><th>Action</th></tr></thead>
+      <thead><tr><th scope="col">ID</th><th scope="col">Amount</th><th scope="col">Total</th><th scope="col">Booking</th><th scope="col">Customer</th><th scope="col">User</th><th scope="col">Status</th><th scope="col">Gateway</th><th scope="col">Date</th><th scope="col">Action</th></tr></thead>
       <tbody>
       <?php if (empty($orphans)): ?>
         <tr><td colspan="10" class="text-center text-muted py-4"><i class="fas fa-check-circle me-1"></i> Koi orphan payment nahi — sab clean! 🎉</td></tr>

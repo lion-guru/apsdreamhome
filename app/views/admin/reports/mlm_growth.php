@@ -157,13 +157,13 @@ $report = $report ?? [
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Rank</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Referral Code</th>
-                            <th>Direct Referrals</th>
-                            <th>Commissions (30d)</th>
-                            <th>Joined</th>
+                            <th scope="col">Rank</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Referral Code</th>
+                            <th scope="col">Direct Referrals</th>
+                            <th scope="col">Commissions (30d)</th>
+                            <th scope="col">Joined</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -204,10 +204,10 @@ $report = $report ?? [
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Period</th>
-                            <th>New users</th>
-                            <th>New Referrals</th>
-                            <th>Total Commissions</th>
+                            <th scope="col">Period</th>
+                            <th scope="col">New users</th>
+                            <th scope="col">New Referrals</th>
+                            <th scope="col">Total Commissions</th>
                         </tr>
                     </thead>
                     <tbody>

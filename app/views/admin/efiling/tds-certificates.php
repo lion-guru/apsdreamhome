@@ -53,7 +53,7 @@ ob_start();
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>#</th><th>Certificate No</th><th>Section</th><th>AY</th><th>Quarter</th><th>TDS (?)</th><th>Status</th><th>Issued</th><th>Action</th></tr>
+                        <tr><th scope="col">#</th><th scope="col">Certificate No</th><th scope="col">Section</th><th scope="col">AY</th><th scope="col">Quarter</th><th scope="col">TDS (?)</th><th scope="col">Status</th><th scope="col">Issued</th><th scope="col">Action</th></tr>
                     </thead>
                     <tbody>
                     <?php foreach ($certificates as $c): ?>

@@ -61,7 +61,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Date</th><th>Inquiries</th><th>Responses</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Inquiries</th><th scope="col">Responses</th></tr></thead>
                             <tbody>
                                 <?php foreach (($inquiry_trends ?? $inquiries['inquiry_trends'] ?? []) as $it): ?>
                                 <tr>
@@ -87,7 +87,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Time Range</th><th>Count</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Time Range</th><th scope="col">Count</th></tr></thead>
                             <tbody>
                                 <?php foreach (($response_times ?? $inquiries['response_times'] ?? []) as $rt): ?>
                                 <tr>
@@ -114,7 +114,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Agent</th><th>Assigned</th><th>Responses</th><th>Avg Response Time</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Agent</th><th scope="col">Assigned</th><th scope="col">Responses</th><th scope="col">Avg Response Time</th></tr></thead>
                             <tbody>
                                 <?php foreach (($agent_performance ?? $inquiries['agent_performance'] ?? []) as $ap): ?>
                                 <tr>

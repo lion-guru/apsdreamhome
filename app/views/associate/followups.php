@@ -82,13 +82,13 @@ $today = date('Y-m-d');
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th><?= __('assoc_fu_th_task', [], 'Task') ?></th>
-                            <th><?= __('assoc_fu_th_lead', [], 'Lead') ?></th>
-                            <th><?= __('assoc_fu_th_due', [], 'Due Date') ?></th>
-                            <th><?= __('assoc_fu_th_type', [], 'Type') ?></th>
-                            <th><?= __('assoc_fu_th_priority', [], 'Priority') ?></th>
-                            <th><?= __('assoc_fu_th_status', [], 'Status') ?></th>
-                            <th><?= __('assoc_fu_th_action', [], 'Action') ?></th>
+                            <th scope="col"><?= __('assoc_fu_th_task', [], 'Task') ?></th>
+                            <th scope="col"><?= __('assoc_fu_th_lead', [], 'Lead') ?></th>
+                            <th scope="col"><?= __('assoc_fu_th_due', [], 'Due Date') ?></th>
+                            <th scope="col"><?= __('assoc_fu_th_type', [], 'Type') ?></th>
+                            <th scope="col"><?= __('assoc_fu_th_priority', [], 'Priority') ?></th>
+                            <th scope="col"><?= __('assoc_fu_th_status', [], 'Status') ?></th>
+                            <th scope="col"><?= __('assoc_fu_th_action', [], 'Action') ?></th>
                         </tr>
                     </thead>
                     <tbody>

@@ -518,14 +518,14 @@ function timeAgo($dt) {
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th ><i class="fas fa-hashtag"></i></th>
-                                        <th>Type</th>
-                                        <th>Direction</th>
-                                        <th>Subject</th>
-                                        <th>Outcome</th>
-                                        <th>Duration</th>
-                                        <th>Date</th>
-                                        <th>By</th>
+                                        <th scope="col" ><i class="fas fa-hashtag"></i></th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Direction</th>
+                                        <th scope="col">Subject</th>
+                                        <th scope="col">Outcome</th>
+                                        <th scope="col">Duration</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">By</th>
                                     </tr>
                                 </thead>
                                 <tbody>

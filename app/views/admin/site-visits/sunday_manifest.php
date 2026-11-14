@@ -32,7 +32,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
             <h5 class="mb-1">Cab Dispatch — <?= $e($t['vehicle_no'] ?? '') ?> (<?= $e($t['vehicle_name'] ?? '') ?>, cap <?= (int)($t['capacity'] ?? 0) ?>)</h5>
             <p class="text-muted small mb-2"><?= $e($date) ?> · Driver: <strong><?= $e($t['driver_name'] ?? '—') ?></strong> (<?= $e($t['driver_phone'] ?? '') ?>) · → <?= $e($t['colony_name'] ?? '') ?> · Associate: <?= $e($t['associate_name'] ?? '—') ?></p>
             <table class="kv">
-                <tr><th>#</th><th>Customer</th><th>Phone</th><th>Pickup Point</th><th>Family</th></tr>
+                <tr><th scope="col">#</th><th scope="col">Customer</th><th scope="col">Phone</th><th scope="col">Pickup Point</th><th scope="col">Family</th></tr>
                 <?php $i = 1; foreach (($t['passengers'] ?? []) as $p): ?>
                     <tr><td><?= $i++ ?></td><td><?= $e($p['visitor_name'] ?? '') ?></td><td><?= $e($p['visitor_phone'] ?? '') ?></td><td><?= $e($p['pickup_location'] ?? $t['pickup_point'] ?? '') ?></td><td><?= $e($p['family_count'] ?? 1) ?></td></tr>
                 <?php endforeach; ?>

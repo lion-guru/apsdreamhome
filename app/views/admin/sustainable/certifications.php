@@ -14,7 +14,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>Name</th><th>Code</th><th>Authority</th><th>Level</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Name</th><th scope="col">Code</th><th scope="col">Authority</th><th scope="col">Level</th><th scope="col">Status</th><th scope="col" class="text-end">Actions</th></tr></thead>
                     <tbody>
                     <?php foreach ($certs as $c): ?>
                         <tr>

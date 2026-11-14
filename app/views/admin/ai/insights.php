@@ -113,7 +113,7 @@ $insights = $insights ?? [];
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light"><tr><th>Lead</th><th>Phone</th><th>Status</th><th>Score</th><th>Last Updated</th><th>Days Stale</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Lead</th><th scope="col">Phone</th><th scope="col">Status</th><th scope="col">Score</th><th scope="col">Last Updated</th><th scope="col">Days Stale</th></tr></thead>
                     <tbody>
                         <?php foreach ($staleLeads as $lead): ?>
                         <tr>
@@ -138,7 +138,7 @@ $insights = $insights ?? [];
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light"><tr><th>Script</th><th>Total Calls</th><th>Interested</th><th>Conversion Rate</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Script</th><th scope="col">Total Calls</th><th scope="col">Interested</th><th scope="col">Conversion Rate</th></tr></thead>
                     <tbody>
                         <?php foreach ($topPerformingScripts as $s): ?>
                         <tr>

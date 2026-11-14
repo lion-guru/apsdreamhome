@@ -175,15 +175,15 @@ $statusBadge = [
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Colony</th>
-                            <th class="text-end">Current Rs/sqft</th>
-                            <th class="text-end">Suggested</th>
-                            <th class="text-end">Δ%</th>
-                            <th class="text-end">Confidence</th>
-                            <th>Status</th>
-                            <th>Reasoning</th>
-                            <th class="text-end">Actions</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Colony</th>
+                            <th scope="col" class="text-end">Current Rs/sqft</th>
+                            <th scope="col" class="text-end">Suggested</th>
+                            <th scope="col" class="text-end">Δ%</th>
+                            <th scope="col" class="text-end">Confidence</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Reasoning</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -252,8 +252,8 @@ $statusBadge = [
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th><th>Colony</th><th>Name</th><th>Type</th><th>Version</th>
-                            <th>Samples</th><th>RMSE</th><th>R²</th><th>Trained</th>
+                            <th scope="col">#</th><th scope="col">Colony</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Version</th>
+                            <th scope="col">Samples</th><th scope="col">RMSE</th><th scope="col">R²</th><th scope="col">Trained</th>
                         </tr>
                     </thead>
                     <tbody>

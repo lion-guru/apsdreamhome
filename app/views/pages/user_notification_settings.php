@@ -25,12 +25,12 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th ><?php echo __('notif_pref_type', [], 'Notification Type'); ?></th>
-                                <th class="text-center"><i class="fas fa-envelope"></i><br><small><?php echo __('notif_pref_email', [], 'Email'); ?></small></th>
-                                <th class="text-center"><i class="fas fa-mobile-alt"></i><br><small><?php echo __('notif_pref_sms', [], 'SMS'); ?></small></th>
-                                <th class="text-center"><i class="fab fa-whatsapp"></i><br><small><?php echo __('notif_pref_whatsapp', [], 'WhatsApp'); ?></small></th>
-                                <th class="text-center"><i class="fas fa-bell"></i><br><small><?php echo __('notif_pref_push', [], 'Push'); ?></small></th>
-                                <th class="text-center"><i class="fas fa-globe"></i><br><small><?php echo __('notif_pref_inapp', [], 'In-App'); ?></small></th>
+                                <th scope="col" ><?php echo __('notif_pref_type', [], 'Notification Type'); ?></th>
+                                <th scope="col" class="text-center"><i class="fas fa-envelope"></i><br><small><?php echo __('notif_pref_email', [], 'Email'); ?></small></th>
+                                <th scope="col" class="text-center"><i class="fas fa-mobile-alt"></i><br><small><?php echo __('notif_pref_sms', [], 'SMS'); ?></small></th>
+                                <th scope="col" class="text-center"><i class="fab fa-whatsapp"></i><br><small><?php echo __('notif_pref_whatsapp', [], 'WhatsApp'); ?></small></th>
+                                <th scope="col" class="text-center"><i class="fas fa-bell"></i><br><small><?php echo __('notif_pref_push', [], 'Push'); ?></small></th>
+                                <th scope="col" class="text-center"><i class="fas fa-globe"></i><br><small><?php echo __('notif_pref_inapp', [], 'In-App'); ?></small></th>
                             </tr>
                         </thead>
                         <tbody>

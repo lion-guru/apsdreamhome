@@ -155,15 +155,15 @@ foreach ($all_plots as $p) { $byColony[$p['colony_id']][] = $p; }
                         <h5 id="ppNumber" class="mb-1"></h5>
                         <div class="mb-2"><span id="ppStatus" class="badge"></span></div>
                         <table class="table table-sm small mb-2">
-                            <tr><th class="w-50">Block</th><td id="ppBlock"></td></tr>
-                            <tr><th>Area</th><td id="ppArea"></td></tr>
-                            <tr><th>Size</th><td id="ppSize"></td></tr>
-                            <tr><th>Facing</th><td id="ppFacing"></td></tr>
-                            <tr><th>Corner</th><td id="ppCorner"></td></tr>
-                            <tr><th>Total Price</th><td id="ppPrice" class="fw-bold text-success"></td></tr>
-                            <tr><th>Rate / sqft</th><td id="ppPps"></td></tr>
-                            <tr id="ppHoldRow" class="d-none"><th>Held By</th><td id="ppHolder"></td></tr>
-                            <tr id="ppHoldLeftRow" class="d-none"><th>Hold Left</th><td id="ppHoldLeft" class="text-warning fw-bold"></td></tr>
+                            <tr><th scope="col" class="w-50">Block</th><td id="ppBlock"></td></tr>
+                            <tr><th scope="col">Area</th><td id="ppArea"></td></tr>
+                            <tr><th scope="col">Size</th><td id="ppSize"></td></tr>
+                            <tr><th scope="col">Facing</th><td id="ppFacing"></td></tr>
+                            <tr><th scope="col">Corner</th><td id="ppCorner"></td></tr>
+                            <tr><th scope="col">Total Price</th><td id="ppPrice" class="fw-bold text-success"></td></tr>
+                            <tr><th scope="col">Rate / sqft</th><td id="ppPps"></td></tr>
+                            <tr id="ppHoldRow" class="d-none"><th scope="col">Held By</th><td id="ppHolder"></td></tr>
+                            <tr id="ppHoldLeftRow" class="d-none"><th scope="col">Hold Left</th><td id="ppHoldLeft" class="text-warning fw-bold"></td></tr>
                         </table>
                         <div id="ppVastu" class="d-none rounded-3 p-2 mb-2 small" style="background:#fffbeb;border:1px solid #fde68a;">
                             <div class="d-flex justify-content-between align-items-center">

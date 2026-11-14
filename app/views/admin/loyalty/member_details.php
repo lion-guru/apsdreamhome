@@ -15,16 +15,16 @@ $points_history = $points_history ?? [];
                 <div class="card-header py-3"><h6 class="m-0 fw-bold text-primary">Member Info</h6></div>
                 <div class="card-body aps-cp-card-body">
                     <table class="table table-sm">
-                        <tr><th>Name</th><td><?= htmlspecialchars($member['name'] ?? '') ?></td></tr>
-                        <tr><th>Email</th><td><?= htmlspecialchars($member['email'] ?? '') ?></td></tr>
-                        <tr><th>Phone</th><td><?= htmlspecialchars($member['phone'] ?? 'N/A') ?></td></tr>
-                        <tr><th>Tier</th><td><?php $t = $member['tier'] ?? 'bronze'; ?>
+                        <tr><th scope="col">Name</th><td><?= htmlspecialchars($member['name'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Email</th><td><?= htmlspecialchars($member['email'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Phone</th><td><?= htmlspecialchars($member['phone'] ?? 'N/A') ?></td></tr>
+                        <tr><th scope="col">Tier</th><td><?php $t = $member['tier'] ?? 'bronze'; ?>
                             <span class="badge bg-<?= $t === 'diamond' ? 'dark' : ($t === 'platinum' ? 'primary' : ($t === 'gold' ? 'warning' : ($t === 'silver' ? 'secondary' : 'light text-dark'))) ?>"><?= ucfirst($t) ?></span>
                         </td></tr>
-                        <tr><th>Points</th><td><strong class="text-warning"><?= number_format(intval($member['points'] ?? 0)) ?></strong></td></tr>
-                        <tr><th>Status</th><td><span class="badge bg-<?= ($member['status'] ?? 'active') === 'active' ? 'success' : 'danger' ?>"><?= ucfirst($member['status'] ?? 'active') ?></span></td></tr>
-                        <tr><th>Joined</th><td><?= htmlspecialchars($member['join_date'] ?? $member['created_at'] ?? '') ?></td></tr>
-                        <tr><th>Total Redeemed</th><td><?= number_format(intval($member['total_redeemed'] ?? 0)) ?> pts</td></tr>
+                        <tr><th scope="col">Points</th><td><strong class="text-warning"><?= number_format(intval($member['points'] ?? 0)) ?></strong></td></tr>
+                        <tr><th scope="col">Status</th><td><span class="badge bg-<?= ($member['status'] ?? 'active') === 'active' ? 'success' : 'danger' ?>"><?= ucfirst($member['status'] ?? 'active') ?></span></td></tr>
+                        <tr><th scope="col">Joined</th><td><?= htmlspecialchars($member['join_date'] ?? $member['created_at'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Total Redeemed</th><td><?= number_format(intval($member['total_redeemed'] ?? 0)) ?> pts</td></tr>
                     </table>
                 </div>
             </div>
@@ -38,7 +38,7 @@ $points_history = $points_history ?? [];
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-sm table-hover">
-                                <thead><tr><th>Date</th><th>Type</th><th>Points</th><th>Description</th></tr></thead>
+                                <thead><tr><th scope="col">Date</th><th scope="col">Type</th><th scope="col">Points</th><th scope="col">Description</th></tr></thead>
                                 <tbody>
                                     <?php foreach ($points_history as $h): ?>
                                     <tr>
@@ -65,7 +65,7 @@ $points_history = $points_history ?? [];
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-sm table-hover">
-                                <thead><tr><th>Reward</th><th>Points Spent</th><th>Date</th><th>Status</th></tr></thead>
+                                <thead><tr><th scope="col">Reward</th><th scope="col">Points Spent</th><th scope="col">Date</th><th scope="col">Status</th></tr></thead>
                                 <tbody>
                                     <?php foreach ($rewards as $r): ?>
                                     <tr>

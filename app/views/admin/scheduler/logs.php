@@ -20,12 +20,12 @@ $logs = $logs ?? [];
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Task Name</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Duration</th>
-                                <th>Status</th>
-                                <th>Output</th>
+                                <th scope="col">Task Name</th>
+                                <th scope="col">Start Time</th>
+                                <th scope="col">End Time</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Output</th>
                             </tr>
                         </thead>
                         <tbody>

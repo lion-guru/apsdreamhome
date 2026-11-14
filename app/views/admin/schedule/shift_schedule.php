@@ -23,9 +23,9 @@ $department_id = $department_id ?? '';
         <table class="table table-bordered table-sm">
             <thead class="table-light">
                 <tr>
-                    <th >Employee</th>
+                    <th scope="col" >Employee</th>
                     <?php foreach ($week_dates as $wd): ?>
-                        <th class="text-center <?= !empty($wd['is_today']) ? 'table-primary' : '' ?>">
+                        <th scope="col" class="text-center <?= !empty($wd['is_today']) ? 'table-primary' : '' ?>">
                             <?= htmlspecialchars($wd['day'] ?? '') ?><br><small><?= htmlspecialchars($wd['date'] ?? '') ?></small>
                         </th>
                     <?php endforeach; ?>

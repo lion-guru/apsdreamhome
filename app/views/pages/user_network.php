@@ -156,11 +156,11 @@ try {
                                 <div class="table-responsive"><table class="table table-hover table-responsive">
                                     <thead>
                                         <tr>
-                                            <th><?php echo __('network_th_name', [], 'Name'); ?></th>
-                                            <th><?php echo __('network_th_contact', [], 'Contact'); ?></th>
-                                            <th><?php echo __('network_th_type', [], 'Type'); ?></th>
-                                            <th><?php echo __('network_th_team', [], 'Team'); ?></th>
-                                            <th><?php echo __('network_th_joined', [], 'Joined'); ?></th>
+                                            <th scope="col"><?php echo __('network_th_name', [], 'Name'); ?></th>
+                                            <th scope="col"><?php echo __('network_th_contact', [], 'Contact'); ?></th>
+                                            <th scope="col"><?php echo __('network_th_type', [], 'Type'); ?></th>
+                                            <th scope="col"><?php echo __('network_th_team', [], 'Team'); ?></th>
+                                            <th scope="col"><?php echo __('network_th_joined', [], 'Joined'); ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>

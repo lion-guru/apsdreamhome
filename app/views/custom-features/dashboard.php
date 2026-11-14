@@ -79,9 +79,9 @@ $recentActivities = $stats['recent_activities'] ?? [];
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th>Action</th>
-              <th>Description</th>
-              <th>Time</th>
+              <th scope="col">Action</th>
+              <th scope="col">Description</th>
+              <th scope="col">Time</th>
             </tr>
           </thead>
           <tbody>

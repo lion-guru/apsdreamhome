@@ -49,14 +49,14 @@ $total_pages = $total_pages ?? 1;
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Employee</th>
-                            <th>Date</th>
-                            <th class="text-center">Hours</th>
-                            <th>Reason</th>
-                            <th class="text-center">Status</th>
-                            <th>Submitted</th>
-                            <th class="text-center">Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Date</th>
+                            <th scope="col" class="text-center">Hours</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col" class="text-center">Status</th>
+                            <th scope="col">Submitted</th>
+                            <th scope="col" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -40,11 +40,11 @@ $extraHead = '<style>
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th><?= __('user_inquiries_col_type') ?></th>
-                                <th><?= __('user_inquiries_col_message') ?></th>
-                                <th><?= __('user_inquiries_col_status') ?></th>
-                                <th><?= __('user_inquiries_col_priority') ?></th>
-                                <th><?= __('user_inquiries_col_date') ?></th>
+                                <th scope="col"><?= __('user_inquiries_col_type') ?></th>
+                                <th scope="col"><?= __('user_inquiries_col_message') ?></th>
+                                <th scope="col"><?= __('user_inquiries_col_status') ?></th>
+                                <th scope="col"><?= __('user_inquiries_col_priority') ?></th>
+                                <th scope="col"><?= __('user_inquiries_col_date') ?></th>
                             </tr>
                         </thead>
                         <tbody>

@@ -29,24 +29,24 @@ $error = $error ?? null;
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <table class="table table-sm">
-                            <tr><th style="width:160px">ID</th><td>#<?= $u['id'] ?? '' ?></td></tr>
-                            <tr><th>Language</th><td><?= htmlspecialchars(strtoupper($u['language'] ?? 'hi')) ?></td></tr>
-                            <tr><th>Duration</th><td><?= (int)($u['duration_seconds'] ?? 0) ?> seconds</td></tr>
-                            <tr><th>File Size</th><td><?php
+                            <tr><th scope="col" style="width:160px">ID</th><td>#<?= $u['id'] ?? '' ?></td></tr>
+                            <tr><th scope="col">Language</th><td><?= htmlspecialchars(strtoupper($u['language'] ?? 'hi')) ?></td></tr>
+                            <tr><th scope="col">Duration</th><td><?= (int)($u['duration_seconds'] ?? 0) ?> seconds</td></tr>
+                            <tr><th scope="col">File Size</th><td><?php
                                 $bytes = (int)($u['file_size_bytes'] ?? 0);
                                 if ($bytes >= 1048576) echo round($bytes / 1048576, 2) . ' MB';
                                 elseif ($bytes >= 1024) echo round($bytes / 1024, 1) . ' KB';
                                 else echo $bytes . ' B';
                             ?></td></tr>
-                            <tr><th>Status</th><td>
+                            <tr><th scope="col">Status</th><td>
                                 <?php
                                 $statusColors = ['pending' => 'warning', 'processed' => 'success', 'failed' => 'danger', 'deleted' => 'secondary'];
                                 $color = $statusColors[$u['status']] ?? 'secondary';
                                 ?>
                                 <span class="badge bg-<?= $color ?> fs-6"><?= ucfirst($u['status'] ?? 'Pending') ?></span>
                             </td></tr>
-                            <tr><th>Created</th><td><?= date('d M Y H:i', strtotime($u['created_at'] ?? 'now')) ?></td></tr>
-                            <tr><th>Updated</th><td><?= date('d M Y H:i', strtotime($u['updated_at'] ?? 'now')) ?></td></tr>
+                            <tr><th scope="col">Created</th><td><?= date('d M Y H:i', strtotime($u['created_at'] ?? 'now')) ?></td></tr>
+                            <tr><th scope="col">Updated</th><td><?= date('d M Y H:i', strtotime($u['updated_at'] ?? 'now')) ?></td></tr>
                         </table>
                     </div>
                 </div>
@@ -57,9 +57,9 @@ $error = $error ?? null;
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <table class="table table-sm">
-                            <tr><th style="width:160px">Name</th><td><?= htmlspecialchars($u['user_name'] ?? '—') ?></td></tr>
-                            <tr><th>Phone</th><td><?= htmlspecialchars($u['user_phone'] ?? '—') ?></td></tr>
-                            <tr><th>User ID</th><td><?= (int)($u['user_id'] ?? 0) ?></td></tr>
+                            <tr><th scope="col" style="width:160px">Name</th><td><?= htmlspecialchars($u['user_name'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">Phone</th><td><?= htmlspecialchars($u['user_phone'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">User ID</th><td><?= (int)($u['user_id'] ?? 0) ?></td></tr>
                         </table>
                     </div>
                 </div>
@@ -109,8 +109,8 @@ $error = $error ?? null;
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive">
                         <table class="table table-sm">
-                            <tr><th style="width:160px">Processed By</th><td><?= htmlspecialchars($u['processed_by_name'] ?? '—') ?></td></tr>
-                            <tr><th>Processed At</th><td><?= !empty($u['processed_at']) ? date('d M Y H:i', strtotime($u['processed_at'])) : '—' ?></td></tr>
+                            <tr><th scope="col" style="width:160px">Processed By</th><td><?= htmlspecialchars($u['processed_by_name'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">Processed At</th><td><?= !empty($u['processed_at']) ? date('d M Y H:i', strtotime($u['processed_at'])) : '—' ?></td></tr>
                         </table>
                     </div>
                 </div>

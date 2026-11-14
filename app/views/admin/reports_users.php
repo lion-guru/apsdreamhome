@@ -61,7 +61,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Month</th><th>Registrations</th><th>Active</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Month</th><th scope="col">Registrations</th><th scope="col">Active</th></tr></thead>
                             <tbody>
                                 <?php foreach (($user_growth ?? $users['user_growth'] ?? []) as $ug): ?>
                                 <tr>
@@ -87,7 +87,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Activity</th><th>Count</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Activity</th><th scope="col">Count</th></tr></thead>
                             <tbody>
                                 <?php foreach (($user_activity ?? $users['user_activity'] ?? []) as $ua): ?>
                                 <tr>

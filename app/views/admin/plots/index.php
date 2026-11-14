@@ -146,14 +146,14 @@ $totalValue = array_sum(array_column($plotList, 'total_price'));
                 <table class="table table-hover align-middle mb-0">
                     <thead style="background:#f8fafc;">
                         <tr>
-                            <th class="px-4">Plot No.</th>
-                            <th>Colony</th>
-                            <th>Size (sqft)</th>
-                            <th>Price</th>
-                            <th>Rate/sqft</th>
-                            <th>Status</th>
-                            <th>Owner / Buyer</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th scope="col" class="px-4">Plot No.</th>
+                            <th scope="col">Colony</th>
+                            <th scope="col">Size (sqft)</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Rate/sqft</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Owner / Buyer</th>
+                            <th scope="col" class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

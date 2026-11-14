@@ -30,7 +30,7 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr><th>Timestamp</th><th>User</th><th>Action</th><th>Entity</th><th>Entity ID</th><th>Description</th><th>IP</th></tr>
+                        <tr><th scope="col">Timestamp</th><th scope="col">User</th><th scope="col">Action</th><th scope="col">Entity</th><th scope="col">Entity ID</th><th scope="col">Description</th><th scope="col">IP</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($auditLogs)): ?>

@@ -98,7 +98,7 @@ $recentLearning = $recentLearning ?? [];
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead><tr><th>Intent</th><th>Type</th><th>Lang</th><th>Hits</th><th>Success</th><th>Accuracy</th></tr></thead>
+                                <thead><tr><th scope="col">Intent</th><th scope="col">Type</th><th scope="col">Lang</th><th scope="col">Hits</th><th scope="col">Success</th><th scope="col">Accuracy</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($topIntents as $ti): ?>
                                     <tr>

@@ -140,8 +140,8 @@ $page_title = $page_title ?? 'Import Org Chart';
                         <table class="table table-sm table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Node</th>
-                                    <th>Error</th>
+                                    <th scope="col">Node</th>
+                                    <th scope="col">Error</th>
                                 </tr>
                             </thead>
                             <tbody id="errorsTableBody"></tbody>

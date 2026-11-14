@@ -181,16 +181,16 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Member</th>
-                                <th>Rank</th>
-                                <th>Position</th>
-                                <th>Level</th>
-                                <th class="text-end">Commission</th>
-                                <th class="text-end">Business Volume</th>
-                                <th class="text-end">Left BV</th>
-                                <th class="text-end">Right BV</th>
-                                <th>Joined</th>
-                                <th>Status</th>
+                                <th scope="col">Member</th>
+                                <th scope="col">Rank</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Level</th>
+                                <th scope="col" class="text-end">Commission</th>
+                                <th scope="col" class="text-end">Business Volume</th>
+                                <th scope="col" class="text-end">Left BV</th>
+                                <th scope="col" class="text-end">Right BV</th>
+                                <th scope="col">Joined</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>

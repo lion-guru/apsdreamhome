@@ -170,16 +170,16 @@ $csrf = $this->getCsrfToken();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Assessment Year</th>
-                            <th>Tax Type</th>
-                            <th>Authority</th>
-                            <th>Colony / Plot</th>
-                            <th>Category</th>
-                            <th>Net Tax</th>
-                            <th>Due Date</th>
-                            <th>Status</th>
-                            <th>Notice #</th>
-                            <th class="text-end">Actions</th>
+                            <th scope="col">Assessment Year</th>
+                            <th scope="col">Tax Type</th>
+                            <th scope="col">Authority</th>
+                            <th scope="col">Colony / Plot</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Net Tax</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Notice #</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

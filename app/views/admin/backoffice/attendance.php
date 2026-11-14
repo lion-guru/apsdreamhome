@@ -53,7 +53,7 @@ $today = $today ?? date('Y-m-d');
     <div class="card-header aps-cp-card-header"><strong><?= __('admin_todays_records') ?></strong></div>
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th><?= __('admin_employee_label') ?></th><th><?= __('admin_date_label') ?></th><th><?= __('admin_status_label') ?></th><th><?= __('admin_check_in') ?></th><th><?= __('admin_check_out') ?></th><th><?= __('admin_hours_label') ?></th><th><?= __('admin_ot_label') ?></th><th><?= __('admin_late_min') ?></th></tr></thead>
+        <thead><tr><th scope="col"><?= __('admin_employee_label') ?></th><th scope="col"><?= __('admin_date_label') ?></th><th scope="col"><?= __('admin_status_label') ?></th><th scope="col"><?= __('admin_check_in') ?></th><th scope="col"><?= __('admin_check_out') ?></th><th scope="col"><?= __('admin_hours_label') ?></th><th scope="col"><?= __('admin_ot_label') ?></th><th scope="col"><?= __('admin_late_min') ?></th></tr></thead>
         <tbody>
           <?php if (empty($records)): ?>
             <tr><td colspan="8" class="text-center text-muted py-4"><?= __('admin_no_records_today') ?></td></tr>

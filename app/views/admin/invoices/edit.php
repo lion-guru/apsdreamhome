@@ -82,16 +82,16 @@
                             <table class="table table-bordered mb-0" id="itemsTable">
                                 <thead class="table-light">
                                     <tr>
-                                        <th >#</th>
-                                        <th >Item Name <span class="text-danger">*</span></th>
-                                        <th >Description</th>
-                                        <th >Type</th>
-                                        <th >Qty</th>
-                                        <th >Unit Price</th>
-                                        <th >Disc %</th>
-                                        <th >Tax %</th>
-                                        <th >Line Total</th>
-                                        <th ></th>
+                                        <th scope="col" >#</th>
+                                        <th scope="col" >Item Name <span class="text-danger">*</span></th>
+                                        <th scope="col" >Description</th>
+                                        <th scope="col" >Type</th>
+                                        <th scope="col" >Qty</th>
+                                        <th scope="col" >Unit Price</th>
+                                        <th scope="col" >Disc %</th>
+                                        <th scope="col" >Tax %</th>
+                                        <th scope="col" >Line Total</th>
+                                        <th scope="col" ></th>
                                     </tr>
                                 </thead>
                                 <tbody id="itemsBody">

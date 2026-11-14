@@ -78,7 +78,7 @@ $roleBadge = ['mason' => 'warning text-dark', 'helper' => 'info text-dark', 'ope
 
 <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
     <div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Worker</th><th>Role</th><th>Colony</th><th class="text-end">Wage</th><th>Present</th><th>Work done</th><th></th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Worker</th><th scope="col">Role</th><th scope="col">Colony</th><th scope="col" class="text-end">Wage</th><th scope="col">Present</th><th scope="col">Work done</th><th scope="col"></th></tr></thead>
         <tbody>
         <?php if (empty($logs)): ?>
             <tr><td colspan="7" class="text-center text-muted py-4">No muster entries for <?= $e($work_date) ?> — add the first above.</td></tr>

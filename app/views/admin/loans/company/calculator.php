@@ -78,7 +78,7 @@ $offers = $offers ?? [];
 
                         <table class="table table-bordered">
                             <thead class="table-light">
-                                <tr><th></th><th>Standard Loan</th><th>With Offer</th><th>Difference</th></tr>
+                                <tr><th scope="col"></th><th scope="col">Standard Loan</th><th scope="col">With Offer</th><th scope="col">Difference</th></tr>
                             </thead>
                             <tbody>
                                 <tr>
@@ -104,8 +104,8 @@ $offers = $offers ?? [];
                                     <td colspan="3">₹<?= number_format($calculation['original_price']) ?></td>
                                 </tr>
                                 <tr class="table-info">
-                                    <th>Interest Waived</th>
-                                    <th colspan="3" class="text-success">₹<?= number_format($calculation['waived_amount']) ?> (<?= $calculation['interest_free_months'] ?> months interest-free)</th>
+                                    <th scope="row">Interest Waived</th>
+                                    <th scope="row" colspan="3" class="text-success">₹<?= number_format($calculation['waived_amount']) ?> (<?= $calculation['interest_free_months'] ?> months interest-free)</th>
                                 </tr>
                             </tbody>
                         </table>

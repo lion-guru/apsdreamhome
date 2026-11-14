@@ -75,7 +75,7 @@ $isAssign = ($mode ?? '') === 'assign';
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>Employee</th><th>Shift</th><th>Date</th><th>Start</th><th>End</th><th>Duration</th><th>Status</th></tr>
+                        <tr><th scope="col">Employee</th><th scope="col">Shift</th><th scope="col">Date</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Duration</th><th scope="col">Status</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($schedule ?? [])): ?>

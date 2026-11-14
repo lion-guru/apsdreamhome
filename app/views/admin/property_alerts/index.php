@@ -127,18 +127,18 @@ ob_start();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>User</th>
-                            <th>Contact</th>
-                            <th>Type</th>
-                            <th>Listing</th>
-                            <th>Location</th>
-                            <th>Price Range</th>
-                            <th>Frequency</th>
-                            <th>Channels</th>
-                            <th>Notified</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">User</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Listing</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Price Range</th>
+                            <th scope="col">Frequency</th>
+                            <th scope="col">Channels</th>
+                            <th scope="col">Notified</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -226,12 +226,12 @@ ob_start();
                 <table class="table table-sm mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Time</th>
-                            <th>Subscriber</th>
-                            <th>Property ID</th>
-                            <th>Channel</th>
-                            <th>Status</th>
-                            <th>Message</th>
+                            <th scope="col">Time</th>
+                            <th scope="col">Subscriber</th>
+                            <th scope="col">Property ID</th>
+                            <th scope="col">Channel</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Message</th>
                         </tr>
                     </thead>
                     <tbody>

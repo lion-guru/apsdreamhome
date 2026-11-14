@@ -75,12 +75,12 @@ $filters = $filters ?? ['channel' => '', 'direction' => '', 'date_from' => '', '
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Time</th>
-                                <th>Channel</th>
-                                <th>Direction</th>
-                                <th>Contact</th>
-                                <th>Message</th>
-                                <th>Status</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Channel</th>
+                                <th scope="col">Direction</th>
+                                <th scope="col">Contact</th>
+                                <th scope="col">Message</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>

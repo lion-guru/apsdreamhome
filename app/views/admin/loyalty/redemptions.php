@@ -18,12 +18,12 @@ $redemptions = $redemptions ?? [];
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Member</th>
-                                <th>Reward</th>
-                                <th>Points Spent</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Member</th>
+                                <th scope="col">Reward</th>
+                                <th scope="col">Points Spent</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

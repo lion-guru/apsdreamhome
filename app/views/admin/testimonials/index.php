@@ -105,12 +105,12 @@ $avgRating = $total > 0 ? round($avgRating / $total, 1) : 0;
             <table class="table table-hover align-middle mb-0" id="testimonialsTable">
                 <thead style="background:#f8fafc;">
                     <tr>
-                        <th class="px-4">Customer</th>
-                        <th>Review</th>
-                        <th class="text-center">Rating</th>
-                        <th class="text-center">Status</th>
-                        <th>Date</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th scope="col" class="px-4">Customer</th>
+                        <th scope="col">Review</th>
+                        <th scope="col" class="text-center">Rating</th>
+                        <th scope="col" class="text-center">Status</th>
+                        <th scope="col">Date</th>
+                        <th scope="col" class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

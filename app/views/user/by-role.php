@@ -19,12 +19,12 @@ $total_count = $total_count ?? 0;
       <table class="table table-striped table-hover">
         <thead class="table-dark">
           <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Status</th>
-            <th>Joined</th>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Status</th>
+            <th scope="col">Joined</th>
           </tr>
         </thead>
         <tbody>

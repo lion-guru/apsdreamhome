@@ -55,15 +55,15 @@ $csrf = $this->getCsrfToken();
                     <table class="table table-bordered gstr3b-table">
                         <thead>
                             <tr class="section-header">
-                                <th colspan="6" class="text-center">GSTR-3B Summary - <?= htmlspecialchars($period) ?></th>
+                                <th scope="col" colspan="6" class="text-center">GSTR-3B Summary - <?= htmlspecialchars($period) ?></th>
                             </tr>
                             <tr class="table-light">
-                                <th>Table</th>
-                                <th>Description</th>
-                                <th class="text-end">Taxable Value</th>
-                                <th class="text-end">IGST</th>
-                                <th class="text-end">CGST</th>
-                                <th class="text-end">SGST</th>
+                                <th scope="col">Table</th>
+                                <th scope="col">Description</th>
+                                <th scope="col" class="text-end">Taxable Value</th>
+                                <th scope="col" class="text-end">IGST</th>
+                                <th scope="col" class="text-end">CGST</th>
+                                <th scope="col" class="text-end">SGST</th>
                             </tr>
                         </thead>
                         <tbody>

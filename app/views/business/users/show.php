@@ -84,9 +84,9 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Activity</th>
-                                    <th>Details</th>
-                                    <th>Date</th>
+                                    <th scope="col">Activity</th>
+                                    <th scope="col">Details</th>
+                                    <th scope="col">Date</th>
                                 </tr>
                             </thead>
                             <tbody>

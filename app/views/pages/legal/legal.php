@@ -61,10 +61,10 @@
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="ps-4"><?php echo __('doc_name', [], 'Document Name'); ?></th>
-                                        <th><?php echo __('category', [], 'Category'); ?></th>
-                                        <th><?php echo __('date_published', [], 'Date Published'); ?></th>
-                                        <th class="text-end pe-4"><?php echo __('action', [], 'Action'); ?></th>
+                                        <th scope="col" class="ps-4"><?php echo __('doc_name', [], 'Document Name'); ?></th>
+                                        <th scope="col"><?php echo __('category', [], 'Category'); ?></th>
+                                        <th scope="col"><?php echo __('date_published', [], 'Date Published'); ?></th>
+                                        <th scope="col" class="text-end pe-4"><?php echo __('action', [], 'Action'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>

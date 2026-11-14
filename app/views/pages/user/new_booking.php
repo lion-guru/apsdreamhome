@@ -134,13 +134,13 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
                 <table class="aps-cp-table">
                     <thead>
                         <tr>
-                            <th><?= __('user_new_booking_th_plot_no', 'Plot No') ?></th>
-                            <th><?= __('user_new_booking_th_block', 'Block') ?></th>
-                            <th><?= __('user_new_booking_th_area', 'Area (sqft)') ?></th>
-                            <th><?= __('user_new_booking_th_dimensions', 'Dimensions') ?></th>
-                            <th><?= __('user_new_booking_th_facing', 'Facing') ?></th>
-                            <th><?= __('user_new_booking_th_price', 'Price') ?></th>
-                            <th class="text-end"><?= __('user_new_booking_th_action', 'Action') ?></th>
+                            <th scope="col"><?= __('user_new_booking_th_plot_no', 'Plot No') ?></th>
+                            <th scope="col"><?= __('user_new_booking_th_block', 'Block') ?></th>
+                            <th scope="col"><?= __('user_new_booking_th_area', 'Area (sqft)') ?></th>
+                            <th scope="col"><?= __('user_new_booking_th_dimensions', 'Dimensions') ?></th>
+                            <th scope="col"><?= __('user_new_booking_th_facing', 'Facing') ?></th>
+                            <th scope="col"><?= __('user_new_booking_th_price', 'Price') ?></th>
+                            <th scope="col" class="text-end"><?= __('user_new_booking_th_action', 'Action') ?></th>
                         </tr>
                     </thead>
                     <tbody>

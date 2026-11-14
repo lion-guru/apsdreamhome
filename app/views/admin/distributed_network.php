@@ -10,7 +10,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>ID</th><th>Node Name</th><th>Type</th><th>Region</th><th>Status</th><th>Latency</th><th>Last Sync</th></tr>
+                        <tr><th scope="col">ID</th><th scope="col">Node Name</th><th scope="col">Type</th><th scope="col">Region</th><th scope="col">Status</th><th scope="col">Latency</th><th scope="col">Last Sync</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($networks)): ?>

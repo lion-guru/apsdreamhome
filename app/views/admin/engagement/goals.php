@@ -19,12 +19,12 @@ $goals = $goals ?? [];
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Target</th>
-                                <th>Progress</th>
-                                <th>Deadline</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Target</th>
+                                <th scope="col">Progress</th>
+                                <th scope="col">Deadline</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

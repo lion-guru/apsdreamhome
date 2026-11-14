@@ -30,7 +30,7 @@ $cid = (int)($colony['id'] ?? 0);
 </div>
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Plot No</th><th>Block</th><th class="text-end">Area (sqft)</th><th class="text-end">₹/sqft</th><th class="text-end">Total Price</th><th>Status</th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Plot No</th><th scope="col">Block</th><th scope="col" class="text-end">Area (sqft)</th><th scope="col" class="text-end">₹/sqft</th><th scope="col" class="text-end">Total Price</th><th scope="col">Status</th></tr></thead>
         <tbody>
             <?php if (empty($plots)): ?><tr><td colspan="6" class="text-center text-muted py-3">No plots found</td></tr><?php endif; ?>
             <?php foreach ($plots as $p): ?><tr><td class="fw-medium"><?= htmlspecialchars($p['plot_number'] ?? '') ?></td><td><?= htmlspecialchars($p['block'] ?? '') ?></td><td class="text-end"><?= htmlspecialchars($p['area_sqft'] ?? '') ?></td><td class="text-end">₹<?= number_format($p['price_per_sqft'] ?? 0, 0) ?></td><td class="text-end">₹<?= number_format($p['total_price'] ?? 0, 0) ?></td><td><span class="badge bg-<?= ($p['status'] ?? '') === 'available' ? 'success' : (($p['status'] ?? '') === 'sold' ? 'primary' : 'warning') ?>"><?= htmlspecialchars($p['status'] ?? '') ?></span></td></tr><?php endforeach; ?>

@@ -23,7 +23,7 @@ $rows = $rows ?? [];
                 <button type="submit" class="btn btn-success btn-sm"><i class="fab fa-whatsapp me-1"></i><?= __('assoc_rev_broadcast', [], 'WhatsApp Selected') ?></button>
             </div>
             <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-                <thead class="bg-light"><tr><th></th><th><?= __('assoc_rev_th_lead', [], 'Lead') ?></th><th><?= __('assoc_rev_th_status', [], 'Status') ?></th><th><?= __('assoc_rev_th_idle', [], 'Idle') ?></th><th></th></tr></thead>
+                <thead class="bg-light"><tr><th scope="col"></th><th scope="col"><?= __('assoc_rev_th_lead', [], 'Lead') ?></th><th scope="col"><?= __('assoc_rev_th_status', [], 'Status') ?></th><th scope="col"><?= __('assoc_rev_th_idle', [], 'Idle') ?></th><th scope="col"></th></tr></thead>
                 <tbody>
                 <?php foreach ($rows as $r): ?>
                     <tr>

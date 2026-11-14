@@ -62,15 +62,15 @@ foreach ($schedule as $s) {
             <table class="table table-sm table-hover">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th><?= __('sale_due_date') ?></th>
-                        <th><?= __('sale_type') ?></th>
-                        <th class="text-end"><?= __('sale_principal') ?></th>
-                        <th class="text-end"><?= __('sale_interest') ?></th>
-                        <th class="text-end"><?= __('sale_total') ?></th>
-                        <th class="text-end"><?= __('sale_paid') ?></th>
-                        <th><?= __('sale_status') ?></th>
-                        <th><?= __('sale_action') ?></th>
+                        <th scope="col">#</th>
+                        <th scope="col"><?= __('sale_due_date') ?></th>
+                        <th scope="col"><?= __('sale_type') ?></th>
+                        <th scope="col" class="text-end"><?= __('sale_principal') ?></th>
+                        <th scope="col" class="text-end"><?= __('sale_interest') ?></th>
+                        <th scope="col" class="text-end"><?= __('sale_total') ?></th>
+                        <th scope="col" class="text-end"><?= __('sale_paid') ?></th>
+                        <th scope="col"><?= __('sale_status') ?></th>
+                        <th scope="col"><?= __('sale_action') ?></th>
                     </tr>
                 </thead>
                 <tbody>

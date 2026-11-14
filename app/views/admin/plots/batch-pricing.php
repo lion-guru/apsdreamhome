@@ -78,7 +78,7 @@ $statuses = ['available' => 'Available', 'hold' => 'Hold', 'reserved' => 'Reserv
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
-                            <tr><th>Plot</th><th class="text-end">Old Rate</th><th class="text-end">New Rate</th><th class="text-end">Old Total</th><th class="text-end">New Total</th><th class="text-end">Diff</th></tr>
+                            <tr><th scope="col">Plot</th><th scope="col" class="text-end">Old Rate</th><th scope="col" class="text-end">New Rate</th><th scope="col" class="text-end">Old Total</th><th scope="col" class="text-end">New Total</th><th scope="col" class="text-end">Diff</th></tr>
                         </thead>
                         <tbody>
                             <?php $tOld = 0; $tNew = 0; foreach ($preview as $r): $tOld += $r['old_total']; $tNew += $r['new_total']; ?>
@@ -95,7 +95,7 @@ $statuses = ['available' => 'Available', 'hold' => 'Hold', 'reserved' => 'Reserv
                             <?php endforeach; ?>
                         </tbody>
                         <tfoot class="table-light">
-                            <tr><th colspan="3" class="text-end">Totals (<?= count($preview) ?> plots)</th><th class="text-end">₹<?= number_format($tOld) ?></th><th class="text-end">₹<?= number_format($tNew) ?></th><th class="text-end">₹<?= number_format($tNew - $tOld) ?></th></tr>
+                            <tr><th scope="col" colspan="3" class="text-end">Totals (<?= count($preview) ?> plots)</th><th scope="col" class="text-end">₹<?= number_format($tOld) ?></th><th scope="col" class="text-end">₹<?= number_format($tNew) ?></th><th scope="col" class="text-end">₹<?= number_format($tNew - $tOld) ?></th></tr>
                         </tfoot>
                     </table>
                 </div>

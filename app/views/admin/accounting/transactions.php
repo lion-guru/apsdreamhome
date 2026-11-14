@@ -27,11 +27,11 @@
                 <table class="table table-hover align-middle mb-0 datatable">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-4"><?= h($mlSupport->translate('Date')) ?></th>
-                            <th><?= h($mlSupport->translate('Description')) ?></th>
-                            <th><?= h($mlSupport->translate('Category/Source')) ?></th>
-                            <th><?= h($mlSupport->translate('Type')) ?></th>
-                            <th class="text-end pe-4"><?= h($mlSupport->translate('Amount')) ?></th>
+                            <th scope="col" class="ps-4"><?= h($mlSupport->translate('Date')) ?></th>
+                            <th scope="col"><?= h($mlSupport->translate('Description')) ?></th>
+                            <th scope="col"><?= h($mlSupport->translate('Category/Source')) ?></th>
+                            <th scope="col"><?= h($mlSupport->translate('Type')) ?></th>
+                            <th scope="col" class="text-end pe-4"><?= h($mlSupport->translate('Amount')) ?></th>
                         </tr>
                     </thead>
                     <tbody>

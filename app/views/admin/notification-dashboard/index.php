@@ -161,7 +161,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <h3><i class="fas fa-tags"></i>Notification Types</h3>
                     <?php if (!empty($type_stats)): ?>
                         <table class="table table-dark table-hover">
-                            <thead><tr><th>Type</th><th class="text-end">Count</th></tr></thead>
+                            <thead><tr><th scope="col">Type</th><th scope="col" class="text-end">Count</th></tr></thead>
                             <tbody>
                                 <?php foreach ($type_stats as $t): ?>
                                     <tr>
@@ -230,11 +230,11 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <table class="table table-dark table-hover">
                     <thead>
                         <tr>
-                            <th>Time</th>
-                            <th>Type</th>
-                            <th>Channel</th>
-                            <th>Recipient</th>
-                            <th>Status</th>
+                            <th scope="col">Time</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Channel</th>
+                            <th scope="col">Recipient</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>

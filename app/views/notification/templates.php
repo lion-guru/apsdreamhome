@@ -22,10 +22,10 @@
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
-                                            <th>Channel</th>
-                                            <th>Subject/Message</th>
-                                            <th>Status</th>
-                                            <th>Date</th>
+                                            <th scope="col">Channel</th>
+                                            <th scope="col">Subject/Message</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Date</th>
                                         </tr>
                                     </thead>
                                     <tbody>

@@ -93,14 +93,14 @@ $resolved = $resolved ?? 0;
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-4">#</th>
-                            <th>Title</th>
-                            <th>Parties</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Assigned To</th>
-                            <th>Filed Date</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th scope="col" class="ps-4">#</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Parties</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Assigned To</th>
+                            <th scope="col">Filed Date</th>
+                            <th scope="col" class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

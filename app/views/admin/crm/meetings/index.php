@@ -15,7 +15,7 @@
         <div class="col-md-2"><div class="mtg-stat"><div class="val text-warning"><?= $stats['no_show'] ?? 0 ?></div><div class="lbl">No Show</div></div></div>
     </div>
 
-    <div class="card border-0 shadow-sm"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th>Title</th><th>Lead</th><th>Agent</th><th>Type</th><th>Date/Time</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+    <div class="card border-0 shadow-sm"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th scope="col">Title</th><th scope="col">Lead</th><th scope="col">Agent</th><th scope="col">Type</th><th scope="col">Date/Time</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead><tbody>
     <?php if (empty($meetings)): ?><tr><td colspan="7" class="text-center py-4 text-muted">No meetings scheduled</td></tr>
     <?php else: foreach ($meetings as $m): ?><tr>
         <td class="fw-bold"><?= htmlspecialchars($m['title'] ?? '') ?></td>

@@ -7,7 +7,7 @@
   <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th><?= __('admin_employee_label') ?></th><th><?= __('admin_type_label') ?></th><th><?= __('admin_from_label') ?></th><th><?= __('admin_to_label') ?></th><th><?= __('admin_days_label') ?></th><th><?= __('admin_reason_label') ?></th><th><?= __('admin_actions_label') ?></th></tr></thead>
+        <thead><tr><th scope="col"><?= __('admin_employee_label') ?></th><th scope="col"><?= __('admin_type_label') ?></th><th scope="col"><?= __('admin_from_label') ?></th><th scope="col"><?= __('admin_to_label') ?></th><th scope="col"><?= __('admin_days_label') ?></th><th scope="col"><?= __('admin_reason_label') ?></th><th scope="col"><?= __('admin_actions_label') ?></th></tr></thead>
         <tbody>
           <?php if (empty($leaves)): ?>
             <tr><td colspan="7" class="text-center text-muted py-4"><?= __('admin_no_pending_leaves') ?></td></tr>

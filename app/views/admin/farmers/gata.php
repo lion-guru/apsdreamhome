@@ -21,7 +21,7 @@ $gataRecords = $gata_records ?? [];
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>Gata ID</th><th>Site</th><th>Gata No</th><th>Total Area</th><th>Available Area</th></tr>
+                        <tr><th scope="col">Gata ID</th><th scope="col">Site</th><th scope="col">Gata No</th><th scope="col">Total Area</th><th scope="col">Available Area</th></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($gataRecords as $g): ?>

@@ -54,12 +54,12 @@
                         <table class="table table-hover table-center mb-0 datatable">
                             <thead>
                                 <tr>
-                                    <th><?php echo h($mlSupport->translate('Associate ID')); ?></th>
-                                    <th><?php echo h($mlSupport->translate('Associate Name')); ?></th>
-                                    <th><?php echo h($mlSupport->translate('Transaction ID')); ?></th>
-                                    <th><?php echo h($mlSupport->translate('Amount')); ?></th>
-                                    <th><?php echo h($mlSupport->translate('Approved Date')); ?></th>
-                                    <th><?php echo h($mlSupport->translate('Status')); ?></th>
+                                    <th scope="col"><?php echo h($mlSupport->translate('Associate ID')); ?></th>
+                                    <th scope="col"><?php echo h($mlSupport->translate('Associate Name')); ?></th>
+                                    <th scope="col"><?php echo h($mlSupport->translate('Transaction ID')); ?></th>
+                                    <th scope="col"><?php echo h($mlSupport->translate('Amount')); ?></th>
+                                    <th scope="col"><?php echo h($mlSupport->translate('Approved Date')); ?></th>
+                                    <th scope="col"><?php echo h($mlSupport->translate('Status')); ?></th>
                                 </tr>
                             </thead>
                             <tbody>

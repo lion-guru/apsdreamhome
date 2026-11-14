@@ -235,15 +235,15 @@ foreach ($nodes as $n) {
                     <table class="table table-hover align-middle mb-0" id="listTable">
                         <thead class="bg-light">
                             <tr>
-                                <th><?php echo __('assoc_net_th_hash', [], '#'); ?></th>
-                                <th><?php echo __('assoc_net_th_member', [], 'Member'); ?></th>
-                                <th><?php echo __('assoc_net_th_gen', [], 'Gen'); ?></th>
-                                <th><?php echo __('assoc_net_th_rank', [], 'Rank'); ?></th>
-                                <th><?php echo __('assoc_net_th_position', [], 'Position'); ?></th>
-                                <th><?php echo __('assoc_net_th_level', [], 'Level'); ?></th>
-                                <th class="text-end"><?php echo __('assoc_net_th_commission', [], 'Commission'); ?></th>
-                                <th class="text-end"><?php echo __('assoc_net_th_bv', [], 'BV'); ?></th>
-                                <th><?php echo __('assoc_net_th_joined', [], 'Joined'); ?></th>
+                                <th scope="col"><?php echo __('assoc_net_th_hash', [], '#'); ?></th>
+                                <th scope="col"><?php echo __('assoc_net_th_member', [], 'Member'); ?></th>
+                                <th scope="col"><?php echo __('assoc_net_th_gen', [], 'Gen'); ?></th>
+                                <th scope="col"><?php echo __('assoc_net_th_rank', [], 'Rank'); ?></th>
+                                <th scope="col"><?php echo __('assoc_net_th_position', [], 'Position'); ?></th>
+                                <th scope="col"><?php echo __('assoc_net_th_level', [], 'Level'); ?></th>
+                                <th scope="col" class="text-end"><?php echo __('assoc_net_th_commission', [], 'Commission'); ?></th>
+                                <th scope="col" class="text-end"><?php echo __('assoc_net_th_bv', [], 'BV'); ?></th>
+                                <th scope="col"><?php echo __('assoc_net_th_joined', [], 'Joined'); ?></th>
                             </tr>
                         </thead>
                         <tbody>

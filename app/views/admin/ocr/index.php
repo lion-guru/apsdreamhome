@@ -159,14 +159,14 @@ $doc_type_labels = $doc_type_labels ?? [];
                     <table class="ocr-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>File</th>
-                                <th>Type</th>
-                                <th>OCR Status</th>
-                                <th>Confidence</th>
-                                <th>Validation</th>
-                                <th>Uploaded</th>
-                                <th>Actions</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">File</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">OCR Status</th>
+                                <th scope="col">Confidence</th>
+                                <th scope="col">Validation</th>
+                                <th scope="col">Uploaded</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

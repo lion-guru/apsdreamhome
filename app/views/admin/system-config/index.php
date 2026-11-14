@@ -174,11 +174,11 @@ $base = BASE_URL;
                                 <table class="table table-hover mb-0">
                                     <thead class="table-light">
                                         <tr>
-                                            <th style="width: 30%">Key</th>
-                                            <th style="width: 40%">Value</th>
-                                            <th style="width: 15%">Type</th>
-                                            <th style="width: 10%">Flags</th>
-                                            <th style="width: 5%">Actions</th>
+                                            <th scope="col" style="width: 30%">Key</th>
+                                            <th scope="col" style="width: 40%">Value</th>
+                                            <th scope="col" style="width: 15%">Type</th>
+                                            <th scope="col" style="width: 10%">Flags</th>
+                                            <th scope="col" style="width: 5%">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -255,10 +255,10 @@ $base = BASE_URL;
                             <table class="table table-hover">
                                 <thead class="table-light">
                                     <tr>
-                                        <th style="width: 5%"><input type="checkbox" id="selectAllConfigs"></th>
-                                        <th>Key</th>
-                                        <th>Type</th>
-                                        <th>Value</th>
+                                        <th scope="col" style="width: 5%"><input type="checkbox" id="selectAllConfigs"></th>
+                                        <th scope="col">Key</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Value</th>
                                     </tr>
                                 </thead>
                                 <tbody>

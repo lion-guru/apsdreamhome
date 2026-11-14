@@ -50,12 +50,12 @@ $limit = $limit ?? 50;
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th >Received</th>
-                        <th>Document</th>
-                        <th>Directive</th>
-                        <th>Blocked URI</th>
-                        <th>Source</th>
-                        <th>IP</th>
+                        <th scope="col" >Received</th>
+                        <th scope="col">Document</th>
+                        <th scope="col">Directive</th>
+                        <th scope="col">Blocked URI</th>
+                        <th scope="col">Source</th>
+                        <th scope="col">IP</th>
                     </tr>
                 </thead>
                 <tbody>

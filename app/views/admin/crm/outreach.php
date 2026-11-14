@@ -109,7 +109,7 @@ $lead_stats = $lead_stats ?? ['total' => 0, 'with_phone' => 0, 'new' => 0, 'cont
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="bg-light">
-                                <tr><th>Name</th><th>Type</th><th>Leads</th><th>Sent</th><th>Status</th><th>Date</th><th>Action</th></tr>
+                                <tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Leads</th><th scope="col">Sent</th><th scope="col">Status</th><th scope="col">Date</th><th scope="col">Action</th></tr>
                             </thead>
                             <tbody>
                                 <?php if (empty($campaigns)): ?>

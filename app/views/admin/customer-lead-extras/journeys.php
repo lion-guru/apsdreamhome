@@ -96,13 +96,13 @@ $page_description = 'Track and analyze customer journeys';
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>Customer</th>
-                            <th>Journey</th>
-                            <th>Started</th>
-                            <th>Last Touch</th>
-                            <th>Duration</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Journey</th>
+                            <th scope="col">Started</th>
+                            <th scope="col">Last Touch</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

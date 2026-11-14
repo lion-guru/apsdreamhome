@@ -55,9 +55,9 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Locale Code</th>
-                            <th>Name</th>
-                            <th>Actions</th>
+                            <th scope="col">Locale Code</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -69,13 +69,13 @@ $employee_id = $employee_id ?? 0;
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Employee</th>
-                            <th>Shift</th>
-                            <th>Timing</th>
-                            <th>Duration</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Shift</th>
+                            <th scope="col">Timing</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

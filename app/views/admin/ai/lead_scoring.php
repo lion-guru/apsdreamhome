@@ -55,11 +55,11 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th><?= h($mlSupport->translate('Name')) ?></th>
-                                    <th><?= h($mlSupport->translate('Status')) ?></th>
-                                    <th><?= h($mlSupport->translate('Score')) ?></th>
-                                    <th><?= h($mlSupport->translate('AI Summary')) ?></th>
-                                    <th><?= h($mlSupport->translate('Action')) ?></th>
+                                    <th scope="col"><?= h($mlSupport->translate('Name')) ?></th>
+                                    <th scope="col"><?= h($mlSupport->translate('Status')) ?></th>
+                                    <th scope="col"><?= h($mlSupport->translate('Score')) ?></th>
+                                    <th scope="col"><?= h($mlSupport->translate('AI Summary')) ?></th>
+                                    <th scope="col"><?= h($mlSupport->translate('Action')) ?></th>
                                 </tr>
                             </thead>
                             <tbody>

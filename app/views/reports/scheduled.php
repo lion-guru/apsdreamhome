@@ -10,7 +10,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
-                    <thead class="table-light"><tr><th>Report Name</th><th>Type</th><th>Frequency</th><th>Next Run</th><th>Last Run</th><th>Recipients</th><th>Status</th><th>Actions</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Report Name</th><th scope="col">Type</th><th scope="col">Frequency</th><th scope="col">Next Run</th><th scope="col">Last Run</th><th scope="col">Recipients</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                     <tbody><?php foreach ($scheduledReports as $sr): ?>
                         <tr><td><?= htmlspecialchars($sr['title'] ?? $sr['name'] ?? '-') ?></td><td><?= htmlspecialchars(ucfirst($sr['type'] ?? '-')) ?></td><td><?= htmlspecialchars(ucfirst($sr['frequency'] ?? '-')) ?></td><td><?= htmlspecialchars($sr['next_run'] ?? '-') ?></td><td><?= htmlspecialchars($sr['last_run'] ?? '-') ?></td><td><?= htmlspecialchars($sr['recipients'] ?? '-') ?></td>
                         <td><span class="badge bg-<?= ($sr['status'] ?? '') === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($sr['status'] ?? 'unknown') ?></span></td>

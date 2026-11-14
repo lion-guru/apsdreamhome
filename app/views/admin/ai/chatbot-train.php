@@ -57,7 +57,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <?php if (!empty($training_data)): ?>
                         <div class="table-responsive">
                             <table class="table table-hover">
-                                <thead><tr><th>Intent</th><th>Category</th><th>Question</th><th>Frequency</th><th>Status</th><th>Actions</th></tr></thead>
+                                <thead><tr><th scope="col">Intent</th><th scope="col">Category</th><th scope="col">Question</th><th scope="col">Frequency</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                                 <tbody>
                                     <?php foreach ($training_data as $item): ?>
                                     <tr>

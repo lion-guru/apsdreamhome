@@ -32,16 +32,16 @@ $method = $method ?? 'weighted_average';
             <table class="table table-striped mb-0">
                 <thead>
                     <tr>
-                        <th>Material</th>
-                        <th>Category</th>
-                        <th>Unit</th>
-                        <th class="text-end">Qty</th>
-                        <th class="text-end">Unit Cost</th>
-                        <th class="text-end">Value</th>
-                        <th class="text-end">Book Value</th>
-                        <th>Status</th>
-                        <th>Location</th>
-                        <th class="text-end">Method</th>
+                        <th scope="col">Material</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col" class="text-end">Qty</th>
+                        <th scope="col" class="text-end">Unit Cost</th>
+                        <th scope="col" class="text-end">Value</th>
+                        <th scope="col" class="text-end">Book Value</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Location</th>
+                        <th scope="col" class="text-end">Method</th>
                     </tr>
                 </thead>
                 <tbody>

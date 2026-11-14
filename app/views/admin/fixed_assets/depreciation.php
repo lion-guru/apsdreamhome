@@ -19,7 +19,7 @@ $year = $year ?? null;
         <div class="p-4 text-center text-muted">No depreciation records found</div>
         <?php else: ?>
         <table class="table mb-0">
-            <thead><tr><th>Asset</th><th>Category</th><th>Method</th><th>Period</th><th>Opening</th><th>Depreciation</th><th>Closing</th><th>Posted</th></tr></thead>
+            <thead><tr><th scope="col">Asset</th><th scope="col">Category</th><th scope="col">Method</th><th scope="col">Period</th><th scope="col">Opening</th><th scope="col">Depreciation</th><th scope="col">Closing</th><th scope="col">Posted</th></tr></thead>
             <tbody>
             <?php foreach ($report as $r): ?>
                 <tr>

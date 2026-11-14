@@ -151,13 +151,13 @@
                             <div class="table-responsive"><table class="table table-bordered table-hover table-responsive" id="farmersTable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th>Farmer</th>
-                                        <th>Contact Information</th>
-                                        <th>Location</th>
-                                        <th>Land Holdings</th>
-                                        <th>Status</th>
-                                        <th>Joined</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Farmer</th>
+                                        <th scope="col">Contact Information</th>
+                                        <th scope="col">Location</th>
+                                        <th scope="col">Land Holdings</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Joined</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

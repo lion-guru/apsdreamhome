@@ -108,8 +108,8 @@ foreach ($plots as $plot) {
                             <div class="table-responsive"><table class="table table-hover align-middle plot-status-table table-responsive">
                                 <thead class="table-light">
                                     <tr>
-                                        <th><?= __('plots_avail_plot_no', [], 'Plot No.') ?></th>
-                                        <th><?= __('plots_avail_current_status', [], 'Current Status') ?></th>
+                                        <th scope="col"><?= __('plots_avail_plot_no', [], 'Plot No.') ?></th>
+                                        <th scope="col"><?= __('plots_avail_current_status', [], 'Current Status') ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>

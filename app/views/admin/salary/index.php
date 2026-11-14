@@ -84,7 +84,7 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light"><tr>
-                        <th>#</th><th>Employee</th><th>Gross</th><th>Deductions</th><th>Net</th><th>Date</th><th>Status</th>
+                        <th scope="col">#</th><th scope="col">Employee</th><th scope="col">Gross</th><th scope="col">Deductions</th><th scope="col">Net</th><th scope="col">Date</th><th scope="col">Status</th>
                     </tr></thead>
                     <tbody>
                         <?php if (empty($recent_payments ?? [])): ?>

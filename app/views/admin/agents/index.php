@@ -46,14 +46,14 @@ $activeAgents = $activeAgents ?? 0;
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Status</th>
-                            <th>Deals</th>
-                            <th>Commission</th>
-                            <th>Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Deals</th>
+                            <th scope="col">Commission</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

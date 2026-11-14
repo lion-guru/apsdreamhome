@@ -73,8 +73,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <table class="table table-sm">
                                         <thead>
                                             <tr>
-                                                <th>Month</th>
-                                                <th>Users</th>
+                                                <th scope="col">Month</th>
+                                                <th scope="col">Users</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -115,8 +115,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <table class="table table-sm">
                                         <thead>
                                             <tr>
-                                                <th>Month</th>
-                                                <th>Views</th>
+                                                <th scope="col">Month</th>
+                                                <th scope="col">Views</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -151,8 +151,8 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <table class="table table-sm">
                                         <thead>
                                             <tr>
-                                                <th>Month</th>
-                                                <th>Amount</th>
+                                                <th scope="col">Month</th>
+                                                <th scope="col">Amount</th>
                                             </tr>
                                         </thead>
                                         <tbody>

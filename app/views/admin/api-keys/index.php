@@ -84,13 +84,13 @@ $extraHead .= '<style>
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Service</th>
-                            <th>Key Name</th>
-                            <th>Key Value (Masked)</th>
-                            <th>Status</th>
-                            <th>Usage</th>
-                            <th>Last Used</th>
-                            <th>Actions</th>
+                            <th scope="col">Service</th>
+                            <th scope="col">Key Name</th>
+                            <th scope="col">Key Value (Masked)</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Usage</th>
+                            <th scope="col">Last Used</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

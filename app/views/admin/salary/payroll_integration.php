@@ -10,7 +10,7 @@
                 <div class="card-body aps-cp-card-body">
                     <p>This system has <strong>two salary modules</strong> working together:</p>
                     <div class="table-responsive"><table class="table table-bordered">
-                        <thead class="table-light"><tr><th>Module</th><th>Table</th><th>Records</th><th>Total Paid</th></tr></thead>
+                        <thead class="table-light"><tr><th scope="col">Module</th><th scope="col">Table</th><th scope="col">Records</th><th scope="col">Total Paid</th></tr></thead>
                         <tbody>
                             <tr>
                                 <td><strong>Salary Module</strong> (New)</td>

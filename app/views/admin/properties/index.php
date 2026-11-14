@@ -187,16 +187,16 @@ foreach ($properties as $p) {
             <table class="table table-hover align-middle mb-0">
                 <thead style="background:#f8fafc;">
                     <tr>
-                        <th width="30" class="px-3"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all properties"></th>
-                        <th>Property</th>
-                        <th>Site</th>
-                        <th>Type</th>
-                        <th>Price</th>
-                        <th>Area</th>
-                        <th>Bed/Bath</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th class="text-end pe-3">Actions</th>
+                        <th scope="col" width="30" class="px-3"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all properties"></th>
+                        <th scope="col">Property</th>
+                        <th scope="col">Site</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Area</th>
+                        <th scope="col">Bed/Bath</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Created</th>
+                        <th scope="col" class="text-end pe-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

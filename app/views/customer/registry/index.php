@@ -39,12 +39,12 @@ $bookings = $bookings ?? [];
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Token #</th>
-                                <th>Colony & Plot</th>
-                                <th>SRO Office</th>
-                                <th>Slot Date</th>
-                                <th>Status</th>
-                                <th class="text-end">Gatepass Slip</th>
+                                <th scope="col">Token #</th>
+                                <th scope="col">Colony & Plot</th>
+                                <th scope="col">SRO Office</th>
+                                <th scope="col">Slot Date</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-end">Gatepass Slip</th>
                             </tr>
                         </thead>
                         <tbody>

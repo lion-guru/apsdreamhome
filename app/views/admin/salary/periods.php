@@ -12,7 +12,7 @@ $periods = $periods ?? [];
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Period</th><th>Status</th><th>Locked At</th><th class="text-end">Actions</th></tr>
+                    <tr><th scope="col">Period</th><th scope="col">Status</th><th scope="col">Locked At</th><th scope="col" class="text-end">Actions</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($periods)): ?>

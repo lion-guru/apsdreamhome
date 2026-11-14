@@ -53,10 +53,10 @@ $byFeature = $byFeature ?? [];
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>Feature</th>
-                        <th>User</th>
-                        <th>Action</th>
-                        <th>Date</th>
+                        <th scope="col">Feature</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Action</th>
+                        <th scope="col">Date</th>
                     </tr>
                 </thead>
                 <tbody>

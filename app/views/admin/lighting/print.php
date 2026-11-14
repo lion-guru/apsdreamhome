@@ -52,31 +52,31 @@ $uptime = (float)($log['uptime_percent'] ?? 100.0);
 
         <table class="grid-table">
             <tr>
-                <th>Certificate Ref ID</th>
+                <th scope="col">Certificate Ref ID</th>
                 <td><strong>APS-LIGHT-<?= str_pad((string)$log['id'], 6, '0', STR_PAD_LEFT) ?></strong></td>
             </tr>
             <tr>
-                <th>Township Colony</th>
+                <th scope="col">Township Colony</th>
                 <td><strong><?= htmlspecialchars($log['colony_name'] ?? 'N/A') ?></strong> (<?= htmlspecialchars($log['district_name'] ?? 'Gorakhpur') ?>)</td>
             </tr>
             <tr>
-                <th>Audit Date</th>
+                <th scope="col">Audit Date</th>
                 <td><strong><?= date('d F Y', strtotime($log['audit_date'])) ?></strong></td>
             </tr>
             <tr>
-                <th>Feeder Pillar Identifier</th>
+                <th scope="col">Feeder Pillar Identifier</th>
                 <td><strong><?= htmlspecialchars($log['feeder_pillar_code'] ?? 'FP-1') ?></strong></td>
             </tr>
             <tr>
-                <th>Timer Control Mode</th>
+                <th scope="col">Timer Control Mode</th>
                 <td><?= htmlspecialchars(str_replace('_', ' ', ucfirst($log['timer_mode'] ?? 'astronomical_timer'))) ?></td>
             </tr>
             <tr>
-                <th>Operational Timings</th>
+                <th scope="col">Operational Timings</th>
                 <td>ON: <?= $log['on_time'] ? date('h:i A', strtotime($log['on_time'])) : '18:15' ?> | OFF: <?= $log['off_time'] ? date('h:i A', strtotime($log['off_time'])) : '05:45' ?></td>
             </tr>
             <tr>
-                <th>Poles Illumination Audit</th>
+                <th scope="col">Poles Illumination Audit</th>
                 <td>
                     <strong><?= (int)$log['poles_functional'] ?> Functional</strong> / <?= (int)$log['total_poles_connected'] ?> Total Connected Poles
                     <?php if ((int)$log['poles_faulty'] > 0): ?>
@@ -87,7 +87,7 @@ $uptime = (float)($log['uptime_percent'] ?? 100.0);
                 </td>
             </tr>
             <tr>
-                <th>Luminance Uptime Percentage</th>
+                <th scope="col">Luminance Uptime Percentage</th>
                 <td>
                     <span class="badge <?= ($uptime >= 95) ? 'badge-success' : (($uptime >= 80) ? 'badge-warning' : 'badge-danger') ?>" style="font-size: 13px;">
                         <?= number_format($uptime, 2) ?>% Uptime
@@ -95,26 +95,26 @@ $uptime = (float)($log['uptime_percent'] ?? 100.0);
                 </td>
             </tr>
             <tr>
-                <th>Phase Balance (R-Y-B)</th>
+                <th scope="col">Phase Balance (R-Y-B)</th>
                 <td><?= htmlspecialchars(str_replace('_', ' ', ucfirst($log['phase_balance_status'] ?? 'balanced_ryb'))) ?></td>
             </tr>
             <tr>
-                <th>Armoured Cable & Joint Health</th>
+                <th scope="col">Armoured Cable & Joint Health</th>
                 <td><?= htmlspecialchars(str_replace('_', ' ', ucfirst($log['cable_health'] ?? 'healthy_underground'))) ?></td>
             </tr>
             <?php if (!empty($log['faulty_pole_numbers'])): ?>
             <tr>
-                <th>Faulty Poles / Replacement Tag</th>
+                <th scope="col">Faulty Poles / Replacement Tag</th>
                 <td style="color: #b91c1c;"><strong><?= htmlspecialchars($log['faulty_pole_numbers']) ?></strong></td>
             </tr>
             <?php endif; ?>
             <tr>
-                <th>Duty Electrician / Contact</th>
+                <th scope="col">Duty Electrician / Contact</th>
                 <td><?= htmlspecialchars($log['electrician_name'] ?: 'Duty Staff') ?> <?= !empty($log['electrician_phone']) ? '(' . htmlspecialchars($log['electrician_phone']) . ')' : '' ?></td>
             </tr>
             <?php if (!empty($log['remarks'])): ?>
             <tr>
-                <th>Engineering Remarks</th>
+                <th scope="col">Engineering Remarks</th>
                 <td><?= nl2br(htmlspecialchars($log['remarks'])) ?></td>
             </tr>
             <?php endif; ?>

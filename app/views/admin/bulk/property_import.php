@@ -101,14 +101,14 @@ $csrf = $csrf ?? '';
                     <table class="table table-sm table-striped">
                         <thead class="table-light">
                             <tr>
-                                <th>Row</th>
-                                <th>Status</th>
-                                <th>Title</th>
-                                <th>Type</th>
-                                <th>Listing</th>
-                                <th>Price</th>
-                                <th>City</th>
-                                <th>Owner</th>
+                                <th scope="col">Row</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Listing</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">City</th>
+                                <th scope="col">Owner</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -188,7 +188,7 @@ $csrf = $csrf ?? '';
                     <h6 class="mt-4">First <?= count($result['errors']) ?> error(s):</h6>
                     <div class="table-responsive">
                         <table class="table table-sm">
-                            <thead><tr><th>#</th><th>Error</th></tr></thead>
+                            <thead><tr><th scope="col">#</th><th scope="col">Error</th></tr></thead>
                             <tbody>
                                 <?php foreach ($result['errors'] as $i => $e): ?>
                                     <tr><td><?= $i + 1 ?></td><td><code class="small"><?= htmlspecialchars($e ?? '') ?></code></td></tr>

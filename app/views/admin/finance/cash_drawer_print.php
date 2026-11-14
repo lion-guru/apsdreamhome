@@ -45,8 +45,8 @@ $denom = json_decode($sheet['denominations_json'] ?? '{}', true) ?: [];
     <table class="table table-bordered mb-4">
         <thead class="table-light small">
             <tr>
-                <th>Particulars</th>
-                <th class="text-end">Amount (₹)</th>
+                <th scope="col">Particulars</th>
+                <th scope="col" class="text-end">Amount (₹)</th>
             </tr>
         </thead>
         <tbody>
@@ -89,9 +89,9 @@ $denom = json_decode($sheet['denominations_json'] ?? '{}', true) ?: [];
     <table class="table table-bordered table-sm mb-4 text-center small">
         <thead class="table-light">
             <tr>
-                <th>Denomination</th>
-                <th>Count (Nos.)</th>
-                <th class="text-end">Total Amount (₹)</th>
+                <th scope="col">Denomination</th>
+                <th scope="col">Count (Nos.)</th>
+                <th scope="col" class="text-end">Total Amount (₹)</th>
             </tr>
         </thead>
         <tbody>

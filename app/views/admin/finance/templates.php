@@ -8,7 +8,7 @@
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr><th><?php echo __('finance_name'); ?></th><th><?php echo __('finance_type'); ?></th><th><?php echo __('finance_subject'); ?></th><th><?php echo __('finance_active'); ?></th><th><?php echo __('finance_created'); ?></th><th></th></tr>
+                    <tr><th scope="col"><?php echo __('finance_name'); ?></th><th scope="col"><?php echo __('finance_type'); ?></th><th scope="col"><?php echo __('finance_subject'); ?></th><th scope="col"><?php echo __('finance_active'); ?></th><th scope="col"><?php echo __('finance_created'); ?></th><th scope="col"></th></tr>
                 </thead>
                 <tbody>
                 <?php if (empty($templates)): ?>

@@ -50,7 +50,7 @@
             <?php if (!empty($recent_events ?? [])): ?>
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
-                    <thead class="table-light"><tr><th>ID</th><th>Name</th><th>Type</th><th>Priority</th><th>Date</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Priority</th><th scope="col">Date</th></tr></thead>
                     <tbody>
                         <?php foreach (($recent_events ?? []) as $e): ?>
                         <tr>

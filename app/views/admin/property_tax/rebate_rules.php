@@ -99,16 +99,16 @@ $csrf = $this->getCsrfToken();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Code</th>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Value</th>
-                            <th>Max Amount</th>
-                            <th>Applicable To</th>
-                            <th>Conditions</th>
-                            <th>Period</th>
-                            <th>Status</th>
-                            <th class="text-end">Actions</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Value</th>
+                            <th scope="col">Max Amount</th>
+                            <th scope="col">Applicable To</th>
+                            <th scope="col">Conditions</th>
+                            <th scope="col">Period</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

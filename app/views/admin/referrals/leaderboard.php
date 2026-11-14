@@ -58,12 +58,12 @@ $current_period = $current_period ?? 'all';
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th width="60" class="text-center">Rank</th>
-                            <th>Name</th>
-                            <th class="text-center">Tier</th>
-                            <th class="text-center">Referrals</th>
-                            <th class="text-center">Signups</th>
-                            <th class="text-center">Bookings</th>
+                            <th scope="col" width="60" class="text-center">Rank</th>
+                            <th scope="col">Name</th>
+                            <th scope="col" class="text-center">Tier</th>
+                            <th scope="col" class="text-center">Referrals</th>
+                            <th scope="col" class="text-center">Signups</th>
+                            <th scope="col" class="text-center">Bookings</th>
                         </tr>
                     </thead>
                     <tbody>

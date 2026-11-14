@@ -89,14 +89,14 @@ $today = date('Y-m-d');
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Campaign &amp; Festival</th>
-                            <th>Discount / Value</th>
-                            <th>Promo Code</th>
-                            <th>Colony Scope</th>
-                            <th class="text-center">Validity Window</th>
-                            <th class="text-center">Redemptions</th>
-                            <th>Status</th>
-                            <th style="width:160px" class="text-end">Actions</th>
+                            <th scope="col">Campaign &amp; Festival</th>
+                            <th scope="col">Discount / Value</th>
+                            <th scope="col">Promo Code</th>
+                            <th scope="col">Colony Scope</th>
+                            <th scope="col" class="text-center">Validity Window</th>
+                            <th scope="col" class="text-center">Redemptions</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" style="width:160px" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

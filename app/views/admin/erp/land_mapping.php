@@ -12,19 +12,19 @@
         <table class="table table-hover mb-0 align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>Farmer</th>
-                    <th>Phone</th>
-                    <th>Khasra #</th>
-                    <th>Land Area</th>
-                    <th>Purchase (₹)</th>
-                    <th>Date</th>
-                    <th>Registry #</th>
-                    <th>Colony</th>
-                    <th>Block</th>
-                    <th>Plot #</th>
-                    <th>Plot Area</th>
-                    <th>Sale Price (₹)</th>
-                    <th>Status</th>
+                    <th scope="col">Farmer</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Khasra #</th>
+                    <th scope="col">Land Area</th>
+                    <th scope="col">Purchase (₹)</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Registry #</th>
+                    <th scope="col">Colony</th>
+                    <th scope="col">Block</th>
+                    <th scope="col">Plot #</th>
+                    <th scope="col">Plot Area</th>
+                    <th scope="col">Sale Price (₹)</th>
+                    <th scope="col">Status</th>
                 </tr>
             </thead>
             <tbody>

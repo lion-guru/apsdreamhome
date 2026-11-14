@@ -121,12 +121,12 @@
                                     <table class="table table-hover align-middle">
                                         <thead class="table-light">
                                             <tr>
-                                                <th>Version</th>
-                                                <th>Status</th>
-                                                <th>Changed By</th>
-                                                <th>Date</th>
-                                                <th>Summary</th>
-                                                <th>Actions</th>
+                                                <th scope="col">Version</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Changed By</th>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Summary</th>
+                                                <th scope="col">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>

@@ -83,14 +83,14 @@ $tickets = $tickets ?? [];
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Ticket #</th>
-                                        <th>Category</th>
-                                        <th>Subject</th>
-                                        <th>Priority</th>
-                                        <th>Status</th>
-                                        <th>Created</th>
-                                        <th>Updated</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Ticket #</th>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Subject</th>
+                                        <th scope="col">Priority</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Created</th>
+                                        <th scope="col">Updated</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

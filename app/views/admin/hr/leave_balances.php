@@ -27,7 +27,7 @@ $page_title = $page_title ?? 'Leave Balances';
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Employee</th><th>Leave Type</th><th>Allocated</th><th>Used</th><th>Remaining</th><th>Carried Forward</th></tr>
+                    <tr><th scope="col">Employee</th><th scope="col">Leave Type</th><th scope="col">Allocated</th><th scope="col">Used</th><th scope="col">Remaining</th><th scope="col">Carried Forward</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($balances ?? [])): ?>

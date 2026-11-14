@@ -28,21 +28,21 @@
                     </div>
                     <div class="card-body aps-cp-card-body">
                         <div class="table-responsive"><table class="table table-bordered mb-0">
-                            <tr><th >Booking ID</th><td>#<?= $b['id'] ?></td></tr>
-                            <tr><th>Booking Number</th><td><?= htmlspecialchars($b['booking_number'] ?? 'N/A') ?></td></tr>
-                            <tr><th>Customer</th><td>
+                            <tr><th scope="col" >Booking ID</th><td>#<?= $b['id'] ?></td></tr>
+                            <tr><th scope="col">Booking Number</th><td><?= htmlspecialchars($b['booking_number'] ?? 'N/A') ?></td></tr>
+                            <tr><th scope="col">Customer</th><td>
                                 <?= htmlspecialchars($b['customer_name'] ?? 'N/A') ?>
                                 <?php if ($b['customer_phone'] ?? ''): ?><br><small class="text-muted">📞 <?= htmlspecialchars($b['customer_phone'] ?? '') ?></small><?php endif; ?>
                                 <?php if ($b['customer_email'] ?? ''): ?><br><small class="text-muted">✓ <?= htmlspecialchars($b['customer_email'] ?? '') ?></small><?php endif; ?>
                             </td></tr>
-                            <tr><th>Plot</th><td>
+                            <tr><th scope="col">Plot</th><td>
                                 Plot #<?= htmlspecialchars($b['plot_number'] ?? 'N/A') ?>
                                 <?php if ($b['block'] ?? ''): ?> | Block <?= htmlspecialchars($b['block'] ?? '') ?><?php endif; ?>
                                 <?php if ($b['colony_name'] ?? ''): ?><br><small><?= htmlspecialchars($b['colony_name'] ?? '') ?></small><?php endif; ?>
                             </td></tr>
-                            <tr><th>Total Amount</th><td><strong>₹<?= number_format((float)$status['total_amount'], 2) ?></strong></td></tr>
-                            <tr><th>Paid Amount</th><td>₹<?= number_format((float)$status['paid_amount'], 2) ?></td></tr>
-                            <tr><th>Token Progress</th><td>
+                            <tr><th scope="col">Total Amount</th><td><strong>₹<?= number_format((float)$status['total_amount'], 2) ?></strong></td></tr>
+                            <tr><th scope="col">Paid Amount</th><td>₹<?= number_format((float)$status['paid_amount'], 2) ?></td></tr>
+                            <tr><th scope="col">Token Progress</th><td>
                                 <div class="progress">
                                     <div class="progress-bar bg-<?= $status['token_percentage'] >= 25 ? 'success' : 'danger' ?>">
                                         <?= $status['token_percentage'] ?>%
@@ -50,7 +50,7 @@
                                 </div>
                                 <small class="text-muted">Deadline: <?= htmlspecialchars($status['token_deadline'] ?? 'N/A') ?></small>
                             </td></tr>
-                            <tr><th>Token Requirement Met</th><td>
+                            <tr><th scope="col">Token Requirement Met</th><td>
                                 <span class="badge bg-<?= $status['token_met'] ? 'success' : 'danger' ?>">
                                     <?= $status['token_met'] ? 'Yes (25% paid)' : 'No (pending)' ?>
                                 </span>
@@ -58,18 +58,18 @@
                                     <br><small class="text-warning">✓ Awaiting 25% token payment before approval</small>
                                 <?php endif; ?>
                             </td></tr>
-                            <tr><th>Payment Status</th><td><?= htmlspecialchars($b['payment_status'] ?? 'N/A') ?></td></tr>
-                            <tr><th>Booking Type</th><td><?= htmlspecialchars($b['booking_type'] ?? 'N/A') ?></td></tr>
-                            <tr><th>Booking Date</th><td><?= htmlspecialchars($b['booking_date'] ?? 'N/A') ?></td></tr>
-                            <tr><th>Created</th><td><?= htmlspecialchars($b['created_at'] ?? 'N/A') ?></td></tr>
+                            <tr><th scope="col">Payment Status</th><td><?= htmlspecialchars($b['payment_status'] ?? 'N/A') ?></td></tr>
+                            <tr><th scope="col">Booking Type</th><td><?= htmlspecialchars($b['booking_type'] ?? 'N/A') ?></td></tr>
+                            <tr><th scope="col">Booking Date</th><td><?= htmlspecialchars($b['booking_date'] ?? 'N/A') ?></td></tr>
+                            <tr><th scope="col">Created</th><td><?= htmlspecialchars($b['created_at'] ?? 'N/A') ?></td></tr>
                             <?php if ($b['confirmed_at'] ?? ''): ?>
-                            <tr><th>Confirmed At</th><td><?= htmlspecialchars($b['confirmed_at'] ?? '') ?></td></tr>
+                            <tr><th scope="col">Confirmed At</th><td><?= htmlspecialchars($b['confirmed_at'] ?? '') ?></td></tr>
                             <?php endif; ?>
                             <?php if ($b['cancellation_reason'] ?? ''): ?>
-                            <tr><th>Cancellation Reason</th><td class="text-danger"><?= htmlspecialchars($b['cancellation_reason'] ?? '') ?></td></tr>
+                            <tr><th scope="col">Cancellation Reason</th><td class="text-danger"><?= htmlspecialchars($b['cancellation_reason'] ?? '') ?></td></tr>
                             <?php endif; ?>
                             <?php if ($b['notes'] ?? ''): ?>
-                            <tr><th>Notes</th><td><?= nl2br(htmlspecialchars($b['notes'] ?? '')) ?></td></tr>
+                            <tr><th scope="col">Notes</th><td><?= nl2br(htmlspecialchars($b['notes'] ?? '')) ?></td></tr>
                             <?php endif; ?>
                         </table></div>
                     </div>
@@ -86,7 +86,7 @@
                         </div>
                         <?php if (!empty($status['emis'])): ?>
                         <div class="table-responsive"><table class="table table-sm">
-                            <thead><tr><th>#</th><th>Due</th><th>Amount</th><th>Status</th></tr></thead>
+                            <thead><tr><th scope="col">#</th><th scope="col">Due</th><th scope="col">Amount</th><th scope="col">Status</th></tr></thead>
                             <tbody>
                             <?php foreach ($status['emis'] as $emi): ?>
                                 <tr>

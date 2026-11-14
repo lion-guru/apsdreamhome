@@ -130,12 +130,12 @@ $page_title = $page_title ?? 'Referral Leaderboard';
                 <table class="table table-hover align-middle mb-0" id="leaderboardTable">
                     <thead class="table-light">
                         <tr>
-                            <th class="px-3 py-3" style="width:60px">Rank</th>
-                            <th class="px-3 py-3">Referrer</th>
-                            <th class="px-3 py-3" style="width:100px">Code</th>
-                            <th class="px-3 py-3" style="width:120px">Referrals</th>
-                            <th class="px-3 py-3" style="width:120px">Bookings</th>
-                            <th class="px-3 py-3" style="width:80px">Tier</th>
+                            <th scope="col" class="px-3 py-3" style="width:60px">Rank</th>
+                            <th scope="col" class="px-3 py-3">Referrer</th>
+                            <th scope="col" class="px-3 py-3" style="width:100px">Code</th>
+                            <th scope="col" class="px-3 py-3" style="width:120px">Referrals</th>
+                            <th scope="col" class="px-3 py-3" style="width:120px">Bookings</th>
+                            <th scope="col" class="px-3 py-3" style="width:80px">Tier</th>
                         </tr>
                     </thead>
                     <tbody>

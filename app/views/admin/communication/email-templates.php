@@ -43,13 +43,13 @@ $templates = $templates ?? [];
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Name</th>
-                                <th>Subject</th>
-                                <th>Category</th>
-                                <th>Variables</th>
-                                <th>Status</th>
-                                <th>Updated</th>
-                                <th class="text-end">Actions</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Subject</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Variables</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Updated</th>
+                                <th scope="col" class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

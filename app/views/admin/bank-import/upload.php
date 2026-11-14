@@ -79,10 +79,10 @@
                         <table class="table table-sm table-bordered mb-3">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Column</th>
-                                    <th>Accepted Header Names</th>
-                                    <th>Format</th>
-                                    <th>Required</th>
+                                    <th scope="col">Column</th>
+                                    <th scope="col">Accepted Header Names</th>
+                                    <th scope="col">Format</th>
+                                    <th scope="col">Required</th>
                                 </tr>
                             </thead>
                             <tbody>

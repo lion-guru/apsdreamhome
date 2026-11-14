@@ -31,7 +31,7 @@ $filters = $filters ?? ['status'=>''];
     </div></div>
 
     <div class="card"><div class="card-body p-0"><table class="table mb-0">
-        <thead><tr><th>Type</th><th>Description</th><th>Amount</th><th>Frequency</th><th>Next Due</th><th>Last Run</th><th>Count</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th scope="col">Type</th><th scope="col">Description</th><th scope="col">Amount</th><th scope="col">Frequency</th><th scope="col">Next Due</th><th scope="col">Last Run</th><th scope="col">Count</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
         <tbody>
         <?php if (empty($transactions)): ?>
             <tr><td colspan="9" class="text-center text-muted py-4">No recurring transactions found</td></tr>

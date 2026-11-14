@@ -142,11 +142,11 @@
     <div class="section-title">PAYMENT HISTORY</div>
     <div class="table-responsive"><table class="payments">
         <tr>
-            <th>#</th>
-            <th>Date</th>
-            <th>Method</th>
-            <th>Transaction ID</th>
-            <th>Amount</th>
+            <th scope="col">#</th>
+            <th scope="col">Date</th>
+            <th scope="col">Method</th>
+            <th scope="col">Transaction ID</th>
+            <th scope="col">Amount</th>
         </tr>
         <?php $pi = 1; ?>
         <?php foreach ($data['payments'] as $pmt): ?>
@@ -172,11 +172,11 @@
     ?>
     <div class="table-responsive"><table class="installments">
         <tr>
-            <th>#</th>
-            <th>Installment Type</th>
-            <th>Due Date</th>
-            <th>Amount</th>
-            <th>Remarks</th>
+            <th scope="col">#</th>
+            <th scope="col">Installment Type</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Remarks</th>
         </tr>
         <tr>
             <td>0</td>

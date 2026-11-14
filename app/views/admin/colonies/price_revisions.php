@@ -34,7 +34,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 </div></div>
 <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
     <div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Colony</th><th>Title</th><th class="text-end">Current</th><th class="text-end">New</th><th>Effective</th><th>Status</th><th></th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Colony</th><th scope="col">Title</th><th scope="col" class="text-end">Current</th><th scope="col" class="text-end">New</th><th scope="col">Effective</th><th scope="col">Status</th><th scope="col"></th></tr></thead>
         <tbody>
         <?php if (empty($rows)): ?>
             <tr><td colspan="7" class="text-center text-muted py-4">No revisions scheduled.</td></tr>

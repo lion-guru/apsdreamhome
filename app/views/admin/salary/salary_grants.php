@@ -18,7 +18,7 @@ $users = $users ?? [];
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-white fw-bold">Salary Tiers (lifetime business volume → monthly grant)</div>
     <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th class="text-end">Volume ≥</th><th class="text-center">Window</th><th class="text-end">Monthly</th><th class="text-center">Months</th></tr></thead>
+        <thead class="table-light"><tr><th scope="col" class="text-end">Volume ≥</th><th scope="col" class="text-center">Window</th><th scope="col" class="text-end">Monthly</th><th scope="col" class="text-center">Months</th></tr></thead>
         <tbody>
             <?php foreach ($tiers as $t): ?><tr><td class="text-end">₹<?= number_format($t['volume_threshold'] ?? 0, 0) ?></td><td class="text-center"><?= (int)($t['window_days'] ?? 0) ?> days</td><td class="text-end">₹<?= number_format($t['monthly_grant'] ?? 0, 0) ?></td><td class="text-center"><?= (int)($t['months'] ?? 0) ?></td></tr><?php endforeach; ?>
         </tbody>
@@ -27,7 +27,7 @@ $users = $users ?? [];
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white fw-bold">Active &amp; Past Grants</div>
     <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Associate</th><th class="text-end">Volume</th><th class="text-end">Monthly</th><th class="text-center">Paid</th><th>Status</th><th>Activated</th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Associate</th><th scope="col" class="text-end">Volume</th><th scope="col" class="text-end">Monthly</th><th scope="col" class="text-center">Paid</th><th scope="col">Status</th><th scope="col">Activated</th></tr></thead>
         <tbody>
             <?php if (empty($grants)): ?><tr><td colspan="6" class="text-center text-muted py-3">No grants yet</td></tr><?php endif; ?>
             <?php foreach ($grants as $g): ?>

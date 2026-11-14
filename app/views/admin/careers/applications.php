@@ -28,16 +28,16 @@ $job = $job ?? null;
                 <table class="table table-bordered" id="applicationsTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Experience</th>
-                            <th>Current Company</th>
-                            <th>Resume</th>
-                            <th>Status</th>
-                            <th>Applied</th>
-                            <th>Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Experience</th>
+                            <th scope="col">Current Company</th>
+                            <th scope="col">Resume</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Applied</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

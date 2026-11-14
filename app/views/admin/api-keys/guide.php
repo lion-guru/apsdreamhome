@@ -198,10 +198,10 @@ $currentKeys = $this->db->query("SELECT * FROM api_keys WHERE is_active = 1")->f
             <div class="table-responsive"><table class="table mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Service</th>
-                        <th>Key Name</th>
-                        <th>Status</th>
-                        <th>Usage</th>
+                        <th scope="col">Service</th>
+                        <th scope="col">Key Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Usage</th>
                     </tr>
                 </thead>
                 <tbody>

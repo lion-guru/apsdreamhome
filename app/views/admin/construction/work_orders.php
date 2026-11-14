@@ -119,14 +119,14 @@ $current_status = $current_status ?? 'all';
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Order #</th>
-                        <th>Colony</th>
-                        <th>Work Scope</th>
-                        <th>Contractor</th>
-                        <th>Contract Sum</th>
-                        <th>Billed / Progress</th>
-                        <th>Status</th>
-                        <th class="text-end">Actions</th>
+                        <th scope="col">Order #</th>
+                        <th scope="col">Colony</th>
+                        <th scope="col">Work Scope</th>
+                        <th scope="col">Contractor</th>
+                        <th scope="col">Contract Sum</th>
+                        <th scope="col">Billed / Progress</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

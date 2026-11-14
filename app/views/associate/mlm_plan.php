@@ -253,11 +253,11 @@ foreach ($rank_benefits as $rb) {
             <table class="table table-bordered mb-0 bg-white">
                 <thead class="table-warning text-dark">
                     <tr class="text-center">
-                        <th>Business Target</th>
-                        <th>Time Duration</th>
-                        <th>Monthly Salary</th>
-                        <th>Duration</th>
-                        <th>Total Salary Benefit</th>
+                        <th scope="col">Business Target</th>
+                        <th scope="col">Time Duration</th>
+                        <th scope="col">Monthly Salary</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Total Salary Benefit</th>
                     </tr>
                 </thead>
                 <tbody class="text-center align-middle">
@@ -344,12 +344,12 @@ foreach ($rank_benefits as $rb) {
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th><?= __('assoc_mlm_rank', [], 'Rank') ?></th>
-                        <th>Downline Legs</th>
-                        <th>Business Target</th>
-                        <th>Commission %</th>
-                        <th>Reward (उपहार)</th>
-                        <th>Override %</th>
+                        <th scope="col"><?= __('assoc_mlm_rank', [], 'Rank') ?></th>
+                        <th scope="col">Downline Legs</th>
+                        <th scope="col">Business Target</th>
+                        <th scope="col">Commission %</th>
+                        <th scope="col">Reward (उपहार)</th>
+                        <th scope="col">Override %</th>
                     </tr>
                 </thead>
                 <tbody>

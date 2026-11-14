@@ -24,14 +24,14 @@ $summary = $summary ?? ['entries' => 0, 'gross' => 0, 'tds' => 0, 'total' => 0];
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Section</th>
-                    <th>Date</th>
-                    <th>Gross</th>
-                    <th>Rate</th>
-                    <th>TDS</th>
-                    <th>Status</th>
-                    <th>Reference</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Section</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Gross</th>
+                    <th scope="col">Rate</th>
+                    <th scope="col">TDS</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Reference</th>
                 </tr>
             </thead>
             <tbody>

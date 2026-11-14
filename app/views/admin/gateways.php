@@ -68,15 +68,15 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                     <table class="table table-sm table-striped mb-0">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th><?= __('admin_gw_th_action', null, 'Action') ?></th>
-                                <th><?= __('admin_gw_th_recipient', null, 'Recipient') ?></th>
-                                <th><?= __('admin_gw_th_status', null, 'Status') ?></th>
-                                <th>HTTP</th>
-                                <th><?= __('admin_gw_th_duration', null, 'Duration') ?></th>
-                                <th><?= __('admin_gw_th_cost', null, 'Cost') ?></th>
-                                <th><?= __('admin_gw_th_when', null, 'When') ?></th>
-                                <th><?= __('admin_gw_th_error', null, 'Error') ?></th>
+                                <th scope="col">#</th>
+                                <th scope="col"><?= __('admin_gw_th_action', null, 'Action') ?></th>
+                                <th scope="col"><?= __('admin_gw_th_recipient', null, 'Recipient') ?></th>
+                                <th scope="col"><?= __('admin_gw_th_status', null, 'Status') ?></th>
+                                <th scope="col">HTTP</th>
+                                <th scope="col"><?= __('admin_gw_th_duration', null, 'Duration') ?></th>
+                                <th scope="col"><?= __('admin_gw_th_cost', null, 'Cost') ?></th>
+                                <th scope="col"><?= __('admin_gw_th_when', null, 'When') ?></th>
+                                <th scope="col"><?= __('admin_gw_th_error', null, 'Error') ?></th>
                             </tr>
                         </thead>
                         <tbody>

@@ -189,7 +189,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
             </div>
             <div class="table-responsive">
               <table class="table table-dark table-sm mb-0">
-                <thead><tr><th>Owner</th><th>Village</th><th>Area</th><th>Expected</th><th>Status</th></tr></thead>
+                <thead><tr><th scope="col">Owner</th><th scope="col">Village</th><th scope="col">Area</th><th scope="col">Expected</th><th scope="col">Status</th></tr></thead>
                 <tbody>
                   <?php foreach (array_slice($landLeads['data'], 0, 5) as $lead): ?>
                     <tr>
@@ -266,7 +266,7 @@ $readiness   = $pipeline['readiness'] ?? ['checks' => [], 'readiness_pct' => 0, 
               <h6 class="text-muted mb-3">Milestones</h6>
               <div class="table-responsive">
                 <table class="table table-dark table-sm mb-0">
-                  <thead><tr><th>Milestone</th><th>Type</th><th>Planned</th><th>Status</th></tr></thead>
+                  <thead><tr><th scope="col">Milestone</th><th scope="col">Type</th><th scope="col">Planned</th><th scope="col">Status</th></tr></thead>
                   <tbody>
                     <?php foreach ($milestones as $m): ?>
                       <tr>

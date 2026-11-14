@@ -208,9 +208,9 @@
                         <table class="table table-bordered mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th >Feature</th>
+                                    <th scope="col" >Feature</th>
                                     <?php foreach ($properties as $property): ?>
-                                    <th >
+                                    <th scope="col" >
                                         <?= htmlspecialchars($property['title'] ?? '') ?>
                                     </th>
                                     <?php endforeach; ?>

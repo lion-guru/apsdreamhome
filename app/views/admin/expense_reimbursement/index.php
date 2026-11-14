@@ -132,14 +132,14 @@ $totalPages = $perPage > 0 ? max(1, ceil($total / $perPage)) : 1;
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 120px">Claim #</th>
-                            <th>Employee</th>
-                            <th style="width: 150px">Category</th>
-                            <th style="width: 120px">Amount</th>
-                            <th style="width: 100px">Date</th>
-                            <th style="width: 120px">Status</th>
-                            <th style="width: 120px">Submitted</th>
-                            <th style="width: 150px">Actions</th>
+                            <th scope="col" style="width: 120px">Claim #</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col" style="width: 150px">Category</th>
+                            <th scope="col" style="width: 120px">Amount</th>
+                            <th scope="col" style="width: 100px">Date</th>
+                            <th scope="col" style="width: 120px">Status</th>
+                            <th scope="col" style="width: 120px">Submitted</th>
+                            <th scope="col" style="width: 150px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

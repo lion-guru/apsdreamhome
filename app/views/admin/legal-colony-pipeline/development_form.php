@@ -99,7 +99,7 @@ $costs  = $costs ?? [];
         <div class="card-header bg-dark text-white"><strong><i class="fas fa-list me-1"></i> Recorded Costs</strong></div>
         <div class="table-responsive">
           <table class="table table-dark table-sm mb-0">
-            <thead><tr><th>Type</th><th>Amount</th><th>GST</th><th>Paid</th><th>Status</th></tr></thead>
+            <thead><tr><th scope="col">Type</th><th scope="col">Amount</th><th scope="col">GST</th><th scope="col">Paid</th><th scope="col">Status</th></tr></thead>
             <tbody>
               <?php if (empty($costs)): ?>
                 <tr><td colspan="5" class="text-center text-muted">No costs recorded yet</td></tr>

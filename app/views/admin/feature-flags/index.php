@@ -53,7 +53,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0 align-middle">
-                        <thead><tr><th>Key</th><th>Name</th><th>Group</th><th>Status</th><th>Rollout</th><th>Updated</th><th class="text-end">Actions</th></tr></thead>
+                        <thead><tr><th scope="col">Key</th><th scope="col">Name</th><th scope="col">Group</th><th scope="col">Status</th><th scope="col">Rollout</th><th scope="col">Updated</th><th scope="col" class="text-end">Actions</th></tr></thead>
                         <tbody>
                         <?php foreach ($flags as $f): ?>
                             <tr>

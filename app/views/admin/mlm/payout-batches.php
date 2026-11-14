@@ -27,16 +27,16 @@ $statusBadge = function ($s) {
         <div class="table-responsive"><table class="table table-hover m-0">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Batch Number</th>
-                    <th>Period</th>
-                    <th>Associates</th>
-                    <th class="text-end">Gross</th>
-                    <th class="text-end">TDS (5%)</th>
-                    <th class="text-end">Net</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th></th>
+                    <th scope="col">#</th>
+                    <th scope="col">Batch Number</th>
+                    <th scope="col">Period</th>
+                    <th scope="col">Associates</th>
+                    <th scope="col" class="text-end">Gross</th>
+                    <th scope="col" class="text-end">TDS (5%)</th>
+                    <th scope="col" class="text-end">Net</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Created</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>

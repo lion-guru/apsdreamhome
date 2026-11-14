@@ -63,16 +63,16 @@ $filters = $filters ?? [];
                 <table class="table table-bordered table-hover" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Task Name</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Priority</th>
-                            <th>Progress</th>
-                            <th>Worker</th>
-                            <th>Retries</th>
-                            <th>Created</th>
-                            <th>Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Task Name</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">Progress</th>
+                            <th scope="col">Worker</th>
+                            <th scope="col">Retries</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -31,7 +31,7 @@ $categories = $categories ?? [];
             <div class="aps-cp-card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>Doc #</th><th>Title</th><th>Customer</th><th>Category</th><th>Status</th><th>KYC</th><th>Created</th><th>Actions</th></tr></thead>
+                        <thead><tr><th scope="col">Doc #</th><th scope="col">Title</th><th scope="col">Customer</th><th scope="col">Category</th><th scope="col">Status</th><th scope="col">KYC</th><th scope="col">Created</th><th scope="col">Actions</th></tr></thead>
                         <tbody>
                         <?php foreach ($documents as $d): ?>
                             <tr>

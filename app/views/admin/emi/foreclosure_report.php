@@ -119,10 +119,10 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Month</th>
-                            <th class="text-center">Total Attempts</th>
-                            <th class="text-center">Successful</th>
-                            <th class="text-end">Amount Collected</th>
+                            <th scope="col">Month</th>
+                            <th scope="col" class="text-center">Total Attempts</th>
+                            <th scope="col" class="text-center">Successful</th>
+                            <th scope="col" class="text-end">Amount Collected</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -160,12 +160,12 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Customer</th>
-                                <th>Property</th>
-                                <th>Status</th>
-                                <th class="text-end">Amount</th>
-                                <th>Date</th>
-                                <th>Foreclosed By</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Property</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-end">Amount</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Foreclosed By</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -110,13 +110,13 @@ $filters = $filters ?? [];
                     <table class="aps-cp-table">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Customer</th>
-                                <th>Collector</th>
-                                <th>Amount</th>
-                                <th>Method</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Collector</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Method</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

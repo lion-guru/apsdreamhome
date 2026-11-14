@@ -84,14 +84,14 @@ function salMonth($date) {
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Period</th>
-                                <th class="text-end">Basic</th>
-                                <th class="text-end">HRA</th>
-                                <th class="text-end">Allowances</th>
-                                <th class="text-end">Deductions</th>
-                                <th class="text-end">Net Pay</th>
-                                <th>Status</th>
-                                <th class="text-end">Action</th>
+                                <th scope="col">Period</th>
+                                <th scope="col" class="text-end">Basic</th>
+                                <th scope="col" class="text-end">HRA</th>
+                                <th scope="col" class="text-end">Allowances</th>
+                                <th scope="col" class="text-end">Deductions</th>
+                                <th scope="col" class="text-end">Net Pay</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-end">Action</th>
                             </tr>
                         </thead>
                         <tbody>

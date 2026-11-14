@@ -172,7 +172,7 @@ function inr($n) { return '₹' . number_format($n); }
             </div>
           <?php else: ?>
             <table class="table table-sm table-hover mb-0">
-              <thead><tr><th>Type</th><th class="text-end">Amount</th><th class="text-end">GST</th><th class="text-end">Paid</th></tr></thead>
+              <thead><tr><th scope="col">Type</th><th scope="col" class="text-end">Amount</th><th scope="col" class="text-end">GST</th><th scope="col" class="text-end">Paid</th></tr></thead>
               <tbody>
               <?php
               $grandTotal = 0;
@@ -209,7 +209,7 @@ function inr($n) { return '₹' . number_format($n); }
             </div>
           <?php else: ?>
             <table class="table table-sm table-hover mb-0">
-              <thead><tr><th>Block</th><th class="text-end">Plots</th><th class="text-end">Available</th><th class="text-end">Sold</th><th class="text-end">Value</th></tr></thead>
+              <thead><tr><th scope="col">Block</th><th scope="col" class="text-end">Plots</th><th scope="col" class="text-end">Available</th><th scope="col" class="text-end">Sold</th><th scope="col" class="text-end">Value</th></tr></thead>
               <tbody>
               <?php foreach ($blockBreakdown as $b): ?>
                 <tr>
@@ -240,7 +240,7 @@ function inr($n) { return '₹' . number_format($n); }
             </div>
           <?php else: ?>
             <table class="table table-sm table-hover mb-0">
-              <thead><tr><th>Type</th><th class="text-end">Count</th><th class="text-end">Area (sqft)</th><th class="text-end">Value</th><th class="text-end">Avg ₹/sqft</th></tr></thead>
+              <thead><tr><th scope="col">Type</th><th scope="col" class="text-end">Count</th><th scope="col" class="text-end">Area (sqft)</th><th scope="col" class="text-end">Value</th><th scope="col" class="text-end">Avg ₹/sqft</th></tr></thead>
               <tbody>
               <?php foreach ($typeBreakdown as $t): ?>
                 <tr>

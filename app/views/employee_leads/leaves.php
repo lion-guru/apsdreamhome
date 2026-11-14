@@ -49,14 +49,14 @@
                             <div class="table-responsive"><table class="table table-striped table-hover table-responsive">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>Leave Type</th>
-                                        <th>From Date</th>
-                                        <th>To Date</th>
-                                        <th>Total Days</th>
-                                        <th>Status</th>
-                                        <th>Reason</th>
-                                        <th>Applied Date</th>
-                                        <th>Actions</th>
+                                        <th scope="col">Leave Type</th>
+                                        <th scope="col">From Date</th>
+                                        <th scope="col">To Date</th>
+                                        <th scope="col">Total Days</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Reason</th>
+                                        <th scope="col">Applied Date</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

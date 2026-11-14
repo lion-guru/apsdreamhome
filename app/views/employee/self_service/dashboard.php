@@ -370,13 +370,13 @@ $current_fy = $current_fy ?? (date('Y') . '-' . (date('Y') + 1));
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Month</th>
-                                    <th>Basic</th>
-                                    <th>Gross</th>
-                                    <th>Deductions</th>
-                                    <th class="text-success">Net Pay</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th scope="col">Month</th>
+                                    <th scope="col">Basic</th>
+                                    <th scope="col">Gross</th>
+                                    <th scope="col">Deductions</th>
+                                    <th scope="col" class="text-success">Net Pay</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -423,10 +423,10 @@ $current_fy = $current_fy ?? (date('Y') . '-' . (date('Y') + 1));
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Leave Type</th>
-                                    <th class="text-center">Allocated</th>
-                                    <th class="text-center">Used</th>
-                                    <th class="text-center text-success">Remaining</th>
+                                    <th scope="col">Leave Type</th>
+                                    <th scope="col" class="text-center">Allocated</th>
+                                    <th scope="col" class="text-center">Used</th>
+                                    <th scope="col" class="text-center text-success">Remaining</th>
                                 </tr>
                             </thead>
                             <tbody>

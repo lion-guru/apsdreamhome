@@ -160,12 +160,12 @@ $cid = (int)($colony['id'] ?? 0);
                         <table class="table table-hover mb-0">
                             <thead class="bg-light">
                                 <tr>
-                                    <th>Plot #</th>
-                                    <th>Block/Sector</th>
-                                    <th>Area (sqft)</th>
-                                    <th>Price</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th scope="col">Plot #</th>
+                                    <th scope="col">Block/Sector</th>
+                                    <th scope="col">Area (sqft)</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

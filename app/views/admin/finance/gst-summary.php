@@ -21,7 +21,7 @@
                         <tr><td>CGST</td><td class="text-end">₹<?= number_format((float)($summary['output']['cgst'] ?? 0), 2) ?></td></tr>
                         <tr><td>SGST</td><td class="text-end">₹<?= number_format((float)($summary['output']['sgst'] ?? 0), 2) ?></td></tr>
                         <tr><td>IGST</td><td class="text-end">₹<?= number_format((float)($summary['output']['igst'] ?? 0), 2) ?></td></tr>
-                        <tr class="table-light"><th>Total</th><th class="text-end">₹<?= number_format((float)($summary['output']['tax'] ?? 0), 2) ?></th></tr>
+                        <tr class="table-light"><th scope="col">Total</th><th scope="col" class="text-end">₹<?= number_format((float)($summary['output']['tax'] ?? 0), 2) ?></th></tr>
                     </table></div>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                         <tr><td>CGST</td><td class="text-end">₹<?= number_format((float)($summary['input']['cgst'] ?? 0), 2) ?></td></tr>
                         <tr><td>SGST</td><td class="text-end">₹<?= number_format((float)($summary['input']['sgst'] ?? 0), 2) ?></td></tr>
                         <tr><td>IGST</td><td class="text-end">₹<?= number_format((float)($summary['input']['igst'] ?? 0), 2) ?></td></tr>
-                        <tr class="table-light"><th>Total ITC</th><th class="text-end">₹<?= number_format((float)($summary['input']['tax'] ?? 0), 2) ?></th></tr>
+                        <tr class="table-light"><th scope="col">Total ITC</th><th scope="col" class="text-end">₹<?= number_format((float)($summary['input']['tax'] ?? 0), 2) ?></th></tr>
                     </table></div>
                 </div>
             </div>

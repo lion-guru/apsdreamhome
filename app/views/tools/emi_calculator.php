@@ -44,9 +44,9 @@
               <small class="text-muted">Monthly EMI</small>
             </div>
             <table class="table table-bordered">
-              <tr><th>Total Payment</th><td id="totalPayment">₹0</td></tr>
-              <tr><th>Total Interest</th><td id="totalInterest">₹0</td></tr>
-              <tr><th>Interest % of Principal</th><td id="interestPercent">0%</td></tr>
+              <tr><th scope="col">Total Payment</th><td id="totalPayment">₹0</td></tr>
+              <tr><th scope="col">Total Interest</th><td id="totalInterest">₹0</td></tr>
+              <tr><th scope="col">Interest % of Principal</th><td id="interestPercent">0%</td></tr>
             </table>
           </div>
           <div id="noResults" class="text-center text-muted">

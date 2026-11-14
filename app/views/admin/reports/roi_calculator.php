@@ -199,13 +199,13 @@ $properties = $properties ?? [];
                         <table class="table table-sm table-bordered" id="cashFlowTable">
                             <thead>
                                 <tr>
-                                    <th>Year</th>
-                                    <th>Rental Income</th>
-                                    <th>EMI Paid</th>
-                                    <th>Expenses</th>
-                                    <th>Net Cash Flow</th>
-                                    <th>Property Value</th>
-                                    <th>Equity</th>
+                                    <th scope="col">Year</th>
+                                    <th scope="col">Rental Income</th>
+                                    <th scope="col">EMI Paid</th>
+                                    <th scope="col">Expenses</th>
+                                    <th scope="col">Net Cash Flow</th>
+                                    <th scope="col">Property Value</th>
+                                    <th scope="col">Equity</th>
                                 </tr>
                             </thead>
                             <tbody>

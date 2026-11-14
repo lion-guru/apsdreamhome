@@ -110,7 +110,7 @@ $documents = $documents ?? $pending_documents ?? [];
                 <div class="card-body aps-cp-card-body">
                     <?php if (!empty($documents)): ?>
                         <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-hover mb-0 table-responsive">
-                            <thead><tr><th>Document</th><th>Submitted By</th><th>Date</th><th>Priority</th><th>Action</th></tr></thead>
+                            <thead><tr><th scope="col">Document</th><th scope="col">Submitted By</th><th scope="col">Date</th><th scope="col">Priority</th><th scope="col">Action</th></tr></thead>
                             <tbody>
                                 <?php foreach ($documents as $doc): ?>
                                 <tr>

@@ -60,12 +60,12 @@ $activeLoans = $activeLoans ?? 0;
                 <table class="table table-hover mb-0" id="farmersTable">
                     <thead class="table-light">
                         <tr>
-                            <th>Farmer Name</th>
-                            <th>Mobile</th>
-                            <th>Holdings</th>
-                            <th>Total Land Area</th>
-                            <th>Location</th>
-                            <th>Actions</th>
+                            <th scope="col">Farmer Name</th>
+                            <th scope="col">Mobile</th>
+                            <th scope="col">Holdings</th>
+                            <th scope="col">Total Land Area</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

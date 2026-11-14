@@ -85,12 +85,12 @@ $byStatus = $stats['by_status'] ?? [];
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Channel</th>
-                            <th>Status</th>
-                            <th>Delivered</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Channel</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Delivered</th>
                         </tr>
                     </thead>
                     <tbody>

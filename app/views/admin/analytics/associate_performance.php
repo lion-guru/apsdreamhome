@@ -23,7 +23,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light"><tr><th class="ps-4">#</th><th>Name</th><th>Code</th><th>Sales This Month</th><th>Leads Generated</th><th>Conversion Rate</th><th class="text-end pe-4">Rating</th></tr></thead>
+                    <thead class="bg-light"><tr><th scope="col" class="ps-4">#</th><th scope="col">Name</th><th scope="col">Code</th><th scope="col">Sales This Month</th><th scope="col">Leads Generated</th><th scope="col">Conversion Rate</th><th scope="col" class="text-end pe-4">Rating</th></tr></thead>
                     <tbody>
                         <?php if (empty($users)): ?>
                             <tr><td colspan="7" class="text-center py-5 text-muted"><i class="fas fa-chart-simple fa-3x d-block mb-3"></i>No associate data available</td></tr>

@@ -94,17 +94,17 @@
                     <table class="table table-hover text-nowrap table-sm">
                         <thead>
                             <tr>
-                                <th>Employee</th>
-                                <th>Dept</th>
-                                <th>Basic</th>
-                                <th>HRA</th>
-                                <th>Gross</th>
-                                <th>PF (EE)</th>
-                                <th>ESI</th>
-                                <th>TDS</th>
-                                <th>PT</th>
-                                <th>Total Ded.</th>
-                                <th>Net Pay</th>
+                                <th scope="col">Employee</th>
+                                <th scope="col">Dept</th>
+                                <th scope="col">Basic</th>
+                                <th scope="col">HRA</th>
+                                <th scope="col">Gross</th>
+                                <th scope="col">PF (EE)</th>
+                                <th scope="col">ESI</th>
+                                <th scope="col">TDS</th>
+                                <th scope="col">PT</th>
+                                <th scope="col">Total Ded.</th>
+                                <th scope="col">Net Pay</th>
                             </tr>
                         </thead>
                         <tbody>

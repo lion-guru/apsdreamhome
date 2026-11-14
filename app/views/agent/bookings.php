@@ -17,14 +17,14 @@ $items = $items ?? [];
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Booking No</th>
-                    <th>Plot</th>
-                    <th>Colony</th>
-                    <th>Customer</th>
-                    <th>Value</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Booking No</th>
+                    <th scope="col">Plot</th>
+                    <th scope="col">Colony</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>

@@ -38,7 +38,7 @@ async function morningPostWidget(btn) {
             el.innerHTML = '<div class="alert alert-danger py-1 small">' + (data.message || 'Failed') + '</div>';
         } else {
             let html = '<div class="d-flex gap-2 align-items-center flex-wrap mt-2">';
-            html += '<img src="' + data.url + '" style="max-height:150px" class="rounded">';
+            html += '<img alt="" src="' + data.url + '" style="max-height:150px" class="rounded">';
             html += '<div><a href="' + data.url + '" download class="btn btn-sm btn-success mb-1"><i class="fas fa-download me-1"></i>Download</a><br>';
             if (data.whatsapp_share) {
                 html += '<a href="' + data.whatsapp_share + '" target="_blank" class="btn btn-success btn-sm"><i class="fab fa-whatsapp me-1"></i>Status Lagao</a>';

@@ -89,15 +89,15 @@ $statusColors = [
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Owner</th>
-                            <th>Location</th>
-                            <th>Area</th>
-                            <th>Expected ₹</th>
-                            <th>Source</th>
-                            <th>Status</th>
-                            <th>Created</th>
-                            <th class="text-end">Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Owner</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Area</th>
+                            <th scope="col">Expected ₹</th>
+                            <th scope="col">Source</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Created</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

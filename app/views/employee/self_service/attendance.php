@@ -118,14 +118,14 @@ $next_month = $next_month ?? date('Y-m', strtotime($month . ' +1 month'));
                                 <table class="table table-hover mb-0">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Date</th>
-                                            <th>Day</th>
-                                            <th>Check In</th>
-                                            <th>Check Out</th>
-                                            <th>Hours</th>
-                                            <th>Overtime</th>
-                                            <th>Status</th>
-                                            <th>Late</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Day</th>
+                                            <th scope="col">Check In</th>
+                                            <th scope="col">Check Out</th>
+                                            <th scope="col">Hours</th>
+                                            <th scope="col">Overtime</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Late</th>
                                         </tr>
                                     </thead>
                                     <tbody>

@@ -25,12 +25,12 @@ $payments = $payments ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Amount</th>
-                            <th>Payment Method</th>
-                            <th>Bank Reference</th>
-                            <th>Status</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Payment Method</th>
+                            <th scope="col">Bank Reference</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>

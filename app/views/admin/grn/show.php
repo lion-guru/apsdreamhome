@@ -38,7 +38,7 @@ $items = $items ?? [];
         <p class="text-muted">No items recorded.</p>
         <?php else: ?>
         <table class="table">
-            <thead><tr><th>Item</th><th>Unit</th><th>Ordered</th><th>Received</th><th>Accepted</th><th>Rejected</th><th>Unit Price</th><th>Line Total</th><th>Quality Remarks</th></tr></thead>
+            <thead><tr><th scope="col">Item</th><th scope="col">Unit</th><th scope="col">Ordered</th><th scope="col">Received</th><th scope="col">Accepted</th><th scope="col">Rejected</th><th scope="col">Unit Price</th><th scope="col">Line Total</th><th scope="col">Quality Remarks</th></tr></thead>
             <tbody>
             <?php foreach ($items as $it): ?>
             <tr>

@@ -26,7 +26,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 </div></div>
 <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
     <div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Race</th><th>Window</th><th class="text-end">Target</th><th>Prize</th><th>Status</th><th></th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Race</th><th scope="col">Window</th><th scope="col" class="text-end">Target</th><th scope="col">Prize</th><th scope="col">Status</th><th scope="col"></th></tr></thead>
         <tbody>
         <?php if (empty($rows)): ?>
             <tr><td colspan="6" class="text-center text-muted py-4">No races yet — launch the first above.</td></tr>

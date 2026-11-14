@@ -202,10 +202,10 @@ $active_page = 'bookings';
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Action</th>
-                        <th>User</th>
-                        <th>Changes</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Action</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Changes</th>
                     </tr>
                 </thead>
                 <tbody>

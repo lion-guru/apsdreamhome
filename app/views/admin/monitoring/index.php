@@ -77,10 +77,10 @@
                 <table class="table table-sm mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-4">Check</th>
-                            <th>Status</th>
-                            <th>Message</th>
-                            <th>Details</th>
+                            <th scope="col" class="ps-4">Check</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Message</th>
+                            <th scope="col">Details</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -123,10 +123,10 @@
                         <table class="table table-sm mb-0">
                             <thead class="bg-light">
                                 <tr>
-                                    <th class="ps-4">Level</th>
-                                    <th>Message</th>
-                                    <th>Source</th>
-                                    <th class="text-end pe-4">When</th>
+                                    <th scope="col" class="ps-4">Level</th>
+                                    <th scope="col">Message</th>
+                                    <th scope="col">Source</th>
+                                    <th scope="col" class="text-end pe-4">When</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -172,9 +172,9 @@
                         <table class="table table-sm mb-0">
                             <thead class="bg-light">
                                 <tr>
-                                    <th class="ps-4">Severity</th>
-                                    <th>Source</th>
-                                    <th class="text-end pe-4">When</th>
+                                    <th scope="col" class="ps-4">Severity</th>
+                                    <th scope="col">Source</th>
+                                    <th scope="col" class="text-end pe-4">When</th>
                                 </tr>
                             </thead>
                             <tbody>

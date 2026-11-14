@@ -45,12 +45,12 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="ps-3">Date</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th class="text-end pe-3">Action</th>
+                            <th scope="col" class="ps-3">Date</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end pe-3">Action</th>
                         </tr>
                     </thead>
                     <tbody>

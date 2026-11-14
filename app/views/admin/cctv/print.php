@@ -49,35 +49,35 @@ $log = $log ?? [];
     <table class="table table-bordered mb-4">
         <tbody>
             <tr>
-                <th class="table-light w-25">Township / Colony:</th>
+                <th scope="row" class="table-light w-25">Township / Colony:</th>
                 <td class="w-25 fw-bold text-primary"><?= htmlspecialchars($log['colony_name'] ?? 'Colony #' . $log['colony_id']) ?></td>
-                <th class="table-light w-25">Audit Date:</th>
+                <th scope="row" class="table-light w-25">Audit Date:</th>
                 <td class="w-25 fw-bold"><?= htmlspecialchars($log['audit_date']) ?></td>
             </tr>
             <tr>
-                <th class="table-light">NVR Station Unit:</th>
+                <th scope="row" class="table-light">NVR Station Unit:</th>
                 <td><?= htmlspecialchars($log['nvr_identifier']) ?></td>
-                <th class="table-light">Recording Retention:</th>
+                <th scope="row" class="table-light">Recording Retention:</th>
                 <td><?= (int)$log['recording_retention_days'] ?> Days Local Storage</td>
             </tr>
             <tr>
-                <th class="table-light">NVR HDD Storage:</th>
+                <th scope="row" class="table-light">NVR HDD Storage:</th>
                 <td class="text-capitalize fw-semibold"><?= str_replace('_', ' ', $log['hdd_storage_status']) ?></td>
-                <th class="table-light">Night Vision IR Status:</th>
+                <th scope="row" class="table-light">Night Vision IR Status:</th>
                 <td class="text-capitalize"><?= str_replace('_', ' ', $log['night_vision_ir_status']) ?></td>
             </tr>
             <tr>
-                <th class="table-light">Offline / Blind Spots:</th>
+                <th scope="row" class="table-light">Offline / Blind Spots:</th>
                 <td colspan="3" class="text-danger fw-semibold"><?= htmlspecialchars($log['offline_camera_locations'] ?: 'None (100% Perimeter Coverage)') ?></td>
             </tr>
             <tr>
-                <th class="table-light">Footage Exports Today:</th>
+                <th scope="row" class="table-light">Footage Exports Today:</th>
                 <td><?= (int)$log['footage_exported_count'] ?> incident clips logged</td>
-                <th class="table-light">Auditing Technician:</th>
+                <th scope="row" class="table-light">Auditing Technician:</th>
                 <td><?= htmlspecialchars($log['cctv_technician_name']) ?> (<?= htmlspecialchars($log['technician_phone'] ?? 'N/A') ?>)</td>
             </tr>
             <tr>
-                <th class="table-light">Observations / Remarks:</th>
+                <th scope="row" class="table-light">Observations / Remarks:</th>
                 <td colspan="3"><?= htmlspecialchars($log['remarks'] ?: 'Central control room feeds inspected and confirmed functional.') ?></td>
             </tr>
         </tbody>

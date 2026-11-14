@@ -249,15 +249,15 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
             <table class="aps-cp-table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th><?= __('user_booking_detail_th_due_date', 'Due Date') ?></th>
-                        <th class="text-end"><?= __('user_booking_detail_th_amount', 'Amount') ?></th>
-                        <th class="text-end"><?= __('user_booking_detail_th_principal', 'Principal') ?></th>
-                        <th class="text-end"><?= __('user_booking_detail_th_interest', 'Interest') ?></th>
-                        <th><?= __('user_booking_detail_th_status', 'Status') ?></th>
-                        <th><?= __('user_booking_detail_th_paid_date', 'Paid Date') ?></th>
-                        <th class="text-end"><?= __('user_booking_detail_th_paid_amount', 'Paid Amount') ?></th>
-                        <th class="text-end"><?= __('user_booking_detail_th_action', 'Action') ?></th>
+                        <th scope="col">#</th>
+                        <th scope="col"><?= __('user_booking_detail_th_due_date', 'Due Date') ?></th>
+                        <th scope="col" class="text-end"><?= __('user_booking_detail_th_amount', 'Amount') ?></th>
+                        <th scope="col" class="text-end"><?= __('user_booking_detail_th_principal', 'Principal') ?></th>
+                        <th scope="col" class="text-end"><?= __('user_booking_detail_th_interest', 'Interest') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_status', 'Status') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_paid_date', 'Paid Date') ?></th>
+                        <th scope="col" class="text-end"><?= __('user_booking_detail_th_paid_amount', 'Paid Amount') ?></th>
+                        <th scope="col" class="text-end"><?= __('user_booking_detail_th_action', 'Action') ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -315,12 +315,12 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
             <table class="aps-cp-table">
                 <thead>
                     <tr>
-                        <th><?= __('user_booking_detail_th_receipt_number', 'Receipt #') ?></th>
-                        <th><?= __('user_booking_detail_th_date', 'Date') ?></th>
-                        <th><?= __('user_booking_detail_th_amount', 'Amount') ?></th>
-                        <th><?= __('user_booking_detail_th_payment_mode', 'Payment Mode') ?></th>
-                        <th><?= __('user_booking_detail_th_reference', 'Reference') ?></th>
-                        <th><?= __('user_booking_detail_th_status', 'Status') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_receipt_number', 'Receipt #') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_date', 'Date') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_amount', 'Amount') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_payment_mode', 'Payment Mode') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_reference', 'Reference') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_status', 'Status') ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -382,10 +382,10 @@ $payPct = $totalVal > 0 ? round(($total_paid / $totalVal) * 100) : 0;
             <table class="aps-cp-table">
                 <thead>
                     <tr>
-                        <th><?= __('user_booking_detail_th_document', 'Document') ?></th>
-                        <th><?= __('user_booking_detail_th_type', 'Type') ?></th>
-                        <th><?= __('user_booking_detail_th_status', 'Status') ?></th>
-                        <th><?= __('user_booking_detail_th_uploaded', 'Uploaded') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_document', 'Document') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_type', 'Type') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_status', 'Status') ?></th>
+                        <th scope="col"><?= __('user_booking_detail_th_uploaded', 'Uploaded') ?></th>
                     </tr>
                 </thead>
                 <tbody>

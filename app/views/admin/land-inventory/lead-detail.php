@@ -115,22 +115,22 @@ $nextOptions = $statusAdvance[$currentStatus] ?? [];
                 <div class="aps-cp-card-body tab-content">
                     <div class="tab-pane fade show active" id="overview">
                         <table class="table table-sm">
-                            <tr><th width="200">Owner</th><td><?= htmlspecialchars($lead['land_owner_name'] ?? '—') ?></td></tr>
-                            <tr><th>Phone</th><td><?= htmlspecialchars($lead['owner_phone'] ?? '—') ?></td></tr>
-                            <tr><th>Email</th><td><?= htmlspecialchars($lead['owner_email'] ?? '—') ?></td></tr>
-                            <tr><th>Source</th><td><?= htmlspecialchars(ucfirst($lead['lead_source'] ?? '—')) ?></td></tr>
-                            <tr><th>Survey #</th><td><?= htmlspecialchars($lead['survey_number'] ?? '—') ?></td></tr>
-                            <tr><th>Village</th><td><?= htmlspecialchars($lead['village'] ?? '—') ?></td></tr>
-                            <tr><th>Tehsil</th><td><?= htmlspecialchars($lead['tehsil'] ?? '—') ?></td></tr>
-                            <tr><th>District</th><td><?= htmlspecialchars($lead['district'] ?? '—') ?></td></tr>
-                            <tr><th>State</th><td><?= htmlspecialchars($lead['state'] ?? '—') ?></td></tr>
-                            <tr><th>Pincode</th><td><?= htmlspecialchars($lead['pincode'] ?? '—') ?></td></tr>
-                            <tr><th>GPS</th><td><?= htmlspecialchars($lead['gps_lat'] ?? '—') ?>, <?= htmlspecialchars($lead['gps_lng'] ?? '—') ?></td></tr>
-                            <tr><th>Area (Acres)</th><td><?= number_format((float)($lead['area_acres'] ?? 0), 2) ?></td></tr>
-                            <tr><th>Area (sqft)</th><td><?= number_format((float)($lead['area_sqft'] ?? 0), 2) ?></td></tr>
-                            <tr><th>Expected Price</th><td>₹<?= number_format((float)($lead['expected_price'] ?? 0)) ?></td></tr>
-                            <tr><th>Notes</th><td><?= nl2br(htmlspecialchars($lead['notes'] ?? '—')) ?></td></tr>
-                            <tr><th>Created</th><td><?= htmlspecialchars($lead['created_at'] ?? '—') ?></td></tr>
+                            <tr><th scope="col" width="200">Owner</th><td><?= htmlspecialchars($lead['land_owner_name'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">Phone</th><td><?= htmlspecialchars($lead['owner_phone'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">Email</th><td><?= htmlspecialchars($lead['owner_email'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">Source</th><td><?= htmlspecialchars(ucfirst($lead['lead_source'] ?? '—')) ?></td></tr>
+                            <tr><th scope="col">Survey #</th><td><?= htmlspecialchars($lead['survey_number'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">Village</th><td><?= htmlspecialchars($lead['village'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">Tehsil</th><td><?= htmlspecialchars($lead['tehsil'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">District</th><td><?= htmlspecialchars($lead['district'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">State</th><td><?= htmlspecialchars($lead['state'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">Pincode</th><td><?= htmlspecialchars($lead['pincode'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">GPS</th><td><?= htmlspecialchars($lead['gps_lat'] ?? '—') ?>, <?= htmlspecialchars($lead['gps_lng'] ?? '—') ?></td></tr>
+                            <tr><th scope="col">Area (Acres)</th><td><?= number_format((float)($lead['area_acres'] ?? 0), 2) ?></td></tr>
+                            <tr><th scope="col">Area (sqft)</th><td><?= number_format((float)($lead['area_sqft'] ?? 0), 2) ?></td></tr>
+                            <tr><th scope="col">Expected Price</th><td>₹<?= number_format((float)($lead['expected_price'] ?? 0)) ?></td></tr>
+                            <tr><th scope="col">Notes</th><td><?= nl2br(htmlspecialchars($lead['notes'] ?? '—')) ?></td></tr>
+                            <tr><th scope="col">Created</th><td><?= htmlspecialchars($lead['created_at'] ?? '—') ?></td></tr>
                         </table>
                     </div>
 
@@ -140,7 +140,7 @@ $nextOptions = $statusAdvance[$currentStatus] ?? [];
                         </a>
                         <div class="table-responsive">
                             <table class="table table-sm">
-                                <thead><tr><th>Type</th><th>Doc #</th><th>Status</th><th>Date</th></tr></thead>
+                                <thead><tr><th scope="col">Type</th><th scope="col">Doc #</th><th scope="col">Status</th><th scope="col">Date</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($documents as $d): ?>
                                     <tr>
@@ -168,7 +168,7 @@ $nextOptions = $statusAdvance[$currentStatus] ?? [];
                         </a>
                         <div class="table-responsive">
                             <table class="table table-sm">
-                                <thead><tr><th>Date</th><th>Risk</th><th>Encroach</th><th>Observations</th></tr></thead>
+                                <thead><tr><th scope="col">Date</th><th scope="col">Risk</th><th scope="col">Encroach</th><th scope="col">Observations</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($visits as $v): ?>
                                     <tr>
@@ -192,7 +192,7 @@ $nextOptions = $statusAdvance[$currentStatus] ?? [];
                         </a>
                         <div class="table-responsive">
                             <table class="table table-sm">
-                                <thead><tr><th>Date</th><th>Advocate</th><th>Status</th><th>Title Chain</th><th>Encumbrance</th></tr></thead>
+                                <thead><tr><th scope="col">Date</th><th scope="col">Advocate</th><th scope="col">Status</th><th scope="col">Title Chain</th><th scope="col">Encumbrance</th></tr></thead>
                                 <tbody>
                                 <?php foreach ($opinions as $o): ?>
                                     <tr>
@@ -220,11 +220,11 @@ $nextOptions = $statusAdvance[$currentStatus] ?? [];
                                 </a>
                             </div>
                             <table class="table table-sm">
-                                <tr><th>Total Consideration</th><td>₹<?= number_format((float)($deal['total_consideration'] ?? 0)) ?></td></tr>
-                                <tr><th>Advance Paid</th><td>₹<?= number_format((float)($deal['advance_paid'] ?? 0)) ?></td></tr>
-                                <tr><th>Balance</th><td>₹<?= number_format((float)($deal['balance_amount'] ?? 0)) ?></td></tr>
-                                <tr><th>Status</th><td><?= htmlspecialchars($deal['status'] ?? '—') ?></td></tr>
-                                <tr><th>Registration Date</th><td><?= htmlspecialchars($deal['registration_date'] ?? '—') ?></td></tr>
+                                <tr><th scope="col">Total Consideration</th><td>₹<?= number_format((float)($deal['total_consideration'] ?? 0)) ?></td></tr>
+                                <tr><th scope="col">Advance Paid</th><td>₹<?= number_format((float)($deal['advance_paid'] ?? 0)) ?></td></tr>
+                                <tr><th scope="col">Balance</th><td>₹<?= number_format((float)($deal['balance_amount'] ?? 0)) ?></td></tr>
+                                <tr><th scope="col">Status</th><td><?= htmlspecialchars($deal['status'] ?? '—') ?></td></tr>
+                                <tr><th scope="col">Registration Date</th><td><?= htmlspecialchars($deal['registration_date'] ?? '—') ?></td></tr>
                             </table>
                         <?php else: ?>
                             <p class="text-muted">No closed deal yet. Advance the lead to "Sale Agreement" then close the deal from the Deals page.</p>

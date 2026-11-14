@@ -40,16 +40,16 @@ $csrf = $this->getCsrfToken();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Mode</th>
-                            <th>Ref/Chq #</th>
-                            <th>Base Tax</th>
-                            <th>Penalty</th>
-                            <th>Rebate</th>
-                            <th>Total</th>
-                            <th>Receipt</th>
-                            <th>Status</th>
-                            <th class="text-end">Actions</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Mode</th>
+                            <th scope="col">Ref/Chq #</th>
+                            <th scope="col">Base Tax</th>
+                            <th scope="col">Penalty</th>
+                            <th scope="col">Rebate</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Receipt</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

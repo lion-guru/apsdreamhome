@@ -119,7 +119,7 @@ $controlSplit = (float)($e['traffic_allocation']['control_split_pct'] ?? 0);
             <div class="table-responsive">
                 <table class="table table-sm align-middle mb-0 small">
                     <thead class="table-light">
-                        <tr><th>Key</th><th>Label</th><th class="text-end">Base Rs./sqft</th><th class="text-end">Traffic split</th></tr>
+                        <tr><th scope="col">Key</th><th scope="col">Label</th><th scope="col" class="text-end">Base Rs./sqft</th><th scope="col" class="text-end">Traffic split</th></tr>
                     </thead>
                     <tbody>
                         <tr class="table-secondary-subtle">
@@ -154,9 +154,9 @@ $controlSplit = (float)($e['traffic_allocation']['control_split_pct'] ?? 0);
                     <table class="table table-sm align-middle mb-2 small">
                         <thead class="table-light">
                             <tr>
-                                <th>Variant</th><th class="text-end">Base</th><th class="text-end">Assigned</th>
-                                <th class="text-end">Converted</th><th class="text-end">Conv. rate</th>
-                                <th class="text-end">Avg realized Rs./sqft</th><th class="text-end">Revenue</th>
+                                <th scope="col">Variant</th><th scope="col" class="text-end">Base</th><th scope="col" class="text-end">Assigned</th>
+                                <th scope="col" class="text-end">Converted</th><th scope="col" class="text-end">Conv. rate</th>
+                                <th scope="col" class="text-end">Avg realized Rs./sqft</th><th scope="col" class="text-end">Revenue</th>
                             </tr>
                         </thead>
                         <tbody>

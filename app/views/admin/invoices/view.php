@@ -44,7 +44,7 @@
 
                     <div class="table-responsive"><table class="table table-bordered">
                         <thead class="table-dark">
-                            <tr><th>#</th><th>Item</th><th>Qty</th><th>Rate</th><th>Discount</th><th>Tax</th><th>Total</th></tr>
+                            <tr><th scope="col">#</th><th scope="col">Item</th><th scope="col">Qty</th><th scope="col">Rate</th><th scope="col">Discount</th><th scope="col">Tax</th><th scope="col">Total</th></tr>
                         </thead>
                         <tbody>
                             <?php $i = 0; foreach (($invoice['items'] ?? []) as $item): $i++; ?>
@@ -83,7 +83,7 @@
                     <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-money-bill me-1"></i>Payments</h5></div>
                     <div class="card-body p-0">
                         <div class="table-responsive"><table class="table table-sm mb-0">
-                            <thead><tr><th>Date</th><th>Amount</th><th>Method</th></tr></thead>
+                            <thead><tr><th scope="col">Date</th><th scope="col">Amount</th><th scope="col">Method</th></tr></thead>
                             <tbody>
                                 <?php foreach ($invoice['payments'] as $p): ?>
                                     <tr>

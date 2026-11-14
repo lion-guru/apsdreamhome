@@ -39,7 +39,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <?php else: ?>
             <div class="table-responsive">
                 <table class="aps-cp-table">
-                    <thead><tr><th>Property</th><th>Seller</th><th>Last Message</th><th></th></tr></thead>
+                    <thead><tr><th scope="col">Property</th><th scope="col">Seller</th><th scope="col">Last Message</th><th scope="col"></th></tr></thead>
                     <tbody>
                         <?php foreach ($sent as $t): ?>
                             <tr>
@@ -75,7 +75,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <?php else: ?>
             <div class="table-responsive">
                 <table class="aps-cp-table">
-                    <thead><tr><th>Buyer</th><th>Phone</th><th>Message</th><th></th></tr></thead>
+                    <thead><tr><th scope="col">Buyer</th><th scope="col">Phone</th><th scope="col">Message</th><th scope="col"></th></tr></thead>
                     <tbody>
                         <?php foreach ($received as $t): ?>
                             <tr>

@@ -125,7 +125,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
             <div >
                 <table class="table rank-table m-0">
                     <thead>
-                        <tr><th>#</th><th>Level</th><th>Direct %</th><th>Team %</th><th>Level Bonus %</th><th>Matching %</th><th>Leadership %</th><th>Performance %</th><th>GBV Threshold</th><th>Row Total</th></tr>
+                        <tr><th scope="col">#</th><th scope="col">Level</th><th scope="col">Direct %</th><th scope="col">Team %</th><th scope="col">Level Bonus %</th><th scope="col">Matching %</th><th scope="col">Leadership %</th><th scope="col">Performance %</th><th scope="col">GBV Threshold</th><th scope="col">Row Total</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($levels)): ?>

@@ -4,7 +4,7 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-sm">
-                    <thead><tr><th>Name</th><th>Phone</th><th>Source</th><th>Status</th><th>Action</th></tr></thead>
+                    <thead><tr><th scope="col">Name</th><th scope="col">Phone</th><th scope="col">Source</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
                     <tbody>
                         <?php if (!empty($leads)): ?>
                             <?php foreach ($leads as $l): ?>

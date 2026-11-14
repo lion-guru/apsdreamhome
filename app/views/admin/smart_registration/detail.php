@@ -224,10 +224,10 @@ $behavior = $behavior ?? [];
                             <table class="table table-sm mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Time</th>
-                                        <th>Event Type</th>
-                                        <th>Page</th>
-                                        <th>Details</th>
+                                        <th scope="col">Time</th>
+                                        <th scope="col">Event Type</th>
+                                        <th scope="col">Page</th>
+                                        <th scope="col">Details</th>
                                     </tr>
                                 </thead>
                                 <tbody>

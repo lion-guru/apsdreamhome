@@ -77,13 +77,13 @@ $stats = $stats ?? ['total_paid'=>0,'total_count'=>0,'this_month'=>0,'last_payme
                 <table class="aps-cp-table">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Booking</th>
-                            <th>Plot / Colony</th>
-                            <th>Installment</th>
-                            <th>Amount</th>
-                            <th>Method</th>
-                            <th>Reference</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Booking</th>
+                            <th scope="col">Plot / Colony</th>
+                            <th scope="col">Installment</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Method</th>
+                            <th scope="col">Reference</th>
                         </tr>
                     </thead>
                     <tbody>

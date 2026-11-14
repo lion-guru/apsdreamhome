@@ -93,10 +93,10 @@ $base = BASE_URL;
                             <table class="table table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Type</th>
-                                        <th>Property</th>
-                                        <th>User</th>
-                                        <th>Date</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Property</th>
+                                        <th scope="col">User</th>
+                                        <th scope="col">Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>

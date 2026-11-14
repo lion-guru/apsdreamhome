@@ -110,15 +110,15 @@ $repayments = $repayments ?? [];
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Due Date</th>
-                                        <th>Principal</th>
-                                        <th>Interest</th>
-                                        <th>Total Due</th>
-                                        <th>Paid</th>
-                                        <th>Paid Amount</th>
-                                        <th>Paid Date</th>
-                                        <th>Status</th>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Due Date</th>
+                                        <th scope="col">Principal</th>
+                                        <th scope="col">Interest</th>
+                                        <th scope="col">Total Due</th>
+                                        <th scope="col">Paid</th>
+                                        <th scope="col">Paid Amount</th>
+                                        <th scope="col">Paid Date</th>
+                                        <th scope="col">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -172,11 +172,11 @@ $repayments = $repayments ?? [];
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Installment</th>
-                                        <th>Paid Date</th>
-                                        <th>Paid Amount</th>
-                                        <th>Payment Mode</th>
-                                        <th>Transaction Ref</th>
+                                        <th scope="col">Installment</th>
+                                        <th scope="col">Paid Date</th>
+                                        <th scope="col">Paid Amount</th>
+                                        <th scope="col">Payment Mode</th>
+                                        <th scope="col">Transaction Ref</th>
                                     </tr>
                                 </thead>
                                 <tbody>

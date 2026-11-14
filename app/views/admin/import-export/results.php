@@ -22,7 +22,7 @@
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr><th>Row</th><th>Field</th><th>Value</th><th>Error</th></tr>
+                        <tr><th scope="col">Row</th><th scope="col">Field</th><th scope="col">Value</th><th scope="col">Error</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($result['errors_list'])): ?>

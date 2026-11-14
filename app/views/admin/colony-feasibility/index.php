@@ -21,13 +21,13 @@
         <div class="table-responsive"><table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>Colony</th>
-              <th class="text-center">Plots</th>
-              <th class="text-end">Current Price</th>
-              <th class="text-end">Recommended ₹/sqft</th>
-              <th class="text-end">Cost Basis ₹/sqft</th>
-              <th class="text-center">Last Calculated</th>
-              <th class="text-center">Action</th>
+              <th scope="col">Colony</th>
+              <th scope="col" class="text-center">Plots</th>
+              <th scope="col" class="text-end">Current Price</th>
+              <th scope="col" class="text-end">Recommended ₹/sqft</th>
+              <th scope="col" class="text-end">Cost Basis ₹/sqft</th>
+              <th scope="col" class="text-center">Last Calculated</th>
+              <th scope="col" class="text-center">Action</th>
             </tr>
           </thead>
           <tbody>

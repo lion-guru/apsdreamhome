@@ -10,7 +10,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>ID</th><th>Alert Type</th><th>Entity</th><th>Risk Score</th><th>Status</th><th>Detected At</th></tr>
+                        <tr><th scope="col">ID</th><th scope="col">Alert Type</th><th scope="col">Entity</th><th scope="col">Risk Score</th><th scope="col">Status</th><th scope="col">Detected At</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($fraud_alerts)): ?>

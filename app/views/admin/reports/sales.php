@@ -27,7 +27,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light"><tr><th class="ps-4">Period</th><th>Sales Count</th><th>Revenue</th><th>Avg. Deal</th><th class="text-end pe-4">Growth</th></tr></thead>
+                    <thead class="bg-light"><tr><th scope="col" class="ps-4">Period</th><th scope="col">Sales Count</th><th scope="col">Revenue</th><th scope="col">Avg. Deal</th><th scope="col" class="text-end pe-4">Growth</th></tr></thead>
                     <tbody>
                         <?php if (empty($salesData)): ?>
                             <tr><td colspan="5" class="text-center py-5 text-muted"><i class="fas fa-chart-line fa-3x d-block mb-3"></i>No sales data available</td></tr>

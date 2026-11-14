@@ -18,13 +18,13 @@
                 <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i>Personal Info</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
-                        <tr><th>Name</th><td><?= htmlspecialchars($farmer['name'] ?? '-') ?></td></tr>
-                        <tr><th>Phone</th><td><?= htmlspecialchars($farmer['phone'] ?? '-') ?></td></tr>
-                        <tr><th>Email</th><td><?= htmlspecialchars($farmer['email'] ?? '-') ?></td></tr>
-                        <tr><th>Address</th><td><?= htmlspecialchars($farmer['address'] ?? '-') ?></td></tr>
-                        <tr><th>State</th><td><?= htmlspecialchars($farmer['state_name'] ?? '-') ?></td></tr>
-                        <tr><th>District</th><td><?= htmlspecialchars($farmer['district_name'] ?? '-') ?></td></tr>
-                        <tr><th>Status</th><td><span class="badge bg-<?= ($farmer['status'] ?? '') === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($farmer['status'] ?? '-') ?></span></td></tr>
+                        <tr><th scope="col">Name</th><td><?= htmlspecialchars($farmer['name'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">Phone</th><td><?= htmlspecialchars($farmer['phone'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">Email</th><td><?= htmlspecialchars($farmer['email'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">Address</th><td><?= htmlspecialchars($farmer['address'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">State</th><td><?= htmlspecialchars($farmer['state_name'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">District</th><td><?= htmlspecialchars($farmer['district_name'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">Status</th><td><span class="badge bg-<?= ($farmer['status'] ?? '') === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($farmer['status'] ?? '-') ?></span></td></tr>
                     </table></div>
                 </div>
             </div>
@@ -34,10 +34,10 @@
                 <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-id-card me-2"></i>KYC & Bank Details</h2></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
-                        <tr><th>Aadhar Number</th><td><?= htmlspecialchars($farmer['aadhar_number'] ?? '-') ?></td></tr>
-                        <tr><th>PAN Number</th><td><?= htmlspecialchars($farmer['pan_number'] ?? '-') ?></td></tr>
-                        <tr><th>Bank Account</th><td><?= htmlspecialchars($farmer['bank_account'] ?? '-') ?></td></tr>
-                        <tr><th>IFSC Code</th><td><?= htmlspecialchars($farmer['ifsc_code'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">Aadhar Number</th><td><?= htmlspecialchars($farmer['aadhar_number'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">PAN Number</th><td><?= htmlspecialchars($farmer['pan_number'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">Bank Account</th><td><?= htmlspecialchars($farmer['bank_account'] ?? '-') ?></td></tr>
+                        <tr><th scope="col">IFSC Code</th><td><?= htmlspecialchars($farmer['ifsc_code'] ?? '-') ?></td></tr>
                     </table></div>
                 </div>
             </div>
@@ -49,7 +49,7 @@
             <?php if (empty($land_holdings)): ?>
             <p class="text-muted text-center py-3 mb-0">No land holdings recorded yet</p>
             <?php else: ?>
-            <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-responsive"><thead><tr><th>Khasra #</th><th>Area</th><th>Type</th><th>Location</th><th>Status</th></tr></thead>
+            <div class="table-responsive"><div class="table-responsive"><table class="table table-sm table-responsive"><thead><tr><th scope="col">Khasra #</th><th scope="col">Area</th><th scope="col">Type</th><th scope="col">Location</th><th scope="col">Status</th></tr></thead>
                 <tbody><?php foreach ($land_holdings as $lh): ?><tr>
                     <td><?= htmlspecialchars($lh['khasra_number'] ?? '-') ?></td>
                     <td><?= number_format($lh['land_area'] ?? 0, 2) ?> <?= htmlspecialchars($lh['land_area_unit'] ?? 'sqft') ?></td>

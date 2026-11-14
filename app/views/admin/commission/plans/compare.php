@@ -104,18 +104,18 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <table class="table compare-table m-0">
                     <thead>
                         <tr>
-                            <th>Rank</th>
-                            <th class="plan-a">Direct % (A)</th>
-                            <th class="plan-b">Direct % (B)</th>
-                            <th>Î”</th>
-                            <th class="plan-a">Team % (A)</th>
-                            <th class="plan-b">Team % (B)</th>
-                            <th>Î”</th>
-                            <th class="plan-a">Level % (A)</th>
-                            <th class="plan-b">Level % (B)</th>
-                            <th>Î”</th>
-                            <th class="plan-a">Target (A)</th>
-                            <th class="plan-b">Target (B)</th>
+                            <th scope="col">Rank</th>
+                            <th scope="col" class="plan-a">Direct % (A)</th>
+                            <th scope="col" class="plan-b">Direct % (B)</th>
+                            <th scope="col">Î”</th>
+                            <th scope="col" class="plan-a">Team % (A)</th>
+                            <th scope="col" class="plan-b">Team % (B)</th>
+                            <th scope="col">Î”</th>
+                            <th scope="col" class="plan-a">Level % (A)</th>
+                            <th scope="col" class="plan-b">Level % (B)</th>
+                            <th scope="col">Î”</th>
+                            <th scope="col" class="plan-a">Target (A)</th>
+                            <th scope="col" class="plan-b">Target (B)</th>
                         </tr>
                     </thead>
                     <tbody>

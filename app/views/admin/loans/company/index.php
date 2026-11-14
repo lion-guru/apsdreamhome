@@ -87,7 +87,7 @@ $offers = $offers ?? [];
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead><tr>
-                            <th>Loan #</th><th>Customer</th><th>Amount</th><th>EMI</th><th>Tenure</th><th>Paid</th><th>Balance</th><th>Status</th><th>Actions</th>
+                            <th scope="col">Loan #</th><th scope="col">Customer</th><th scope="col">Amount</th><th scope="col">EMI</th><th scope="col">Tenure</th><th scope="col">Paid</th><th scope="col">Balance</th><th scope="col">Status</th><th scope="col">Actions</th>
                         </tr></thead>
                         <tbody>
                         <?php foreach ($loans as $l): ?>

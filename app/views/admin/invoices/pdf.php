@@ -127,13 +127,13 @@
     <div class="table-responsive"><table class="items">
         <thead>
             <tr>
-                <th >#</th>
-                <th >Description</th>
-                <th class=" text-center">Qty</th>
-                <th class=" text-right">Unit Price</th>
-                <th class=" text-right">Disc %</th>
-                <th class=" text-right">Tax %</th>
-                <th class=" text-right">Amount</th>
+                <th scope="col" >#</th>
+                <th scope="col" >Description</th>
+                <th scope="col" class=" text-center">Qty</th>
+                <th scope="col" class=" text-right">Unit Price</th>
+                <th scope="col" class=" text-right">Disc %</th>
+                <th scope="col" class=" text-right">Tax %</th>
+                <th scope="col" class=" text-right">Amount</th>
             </tr>
         </thead>
         <tbody>

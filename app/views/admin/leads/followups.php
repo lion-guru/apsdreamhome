@@ -7,7 +7,7 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>Lead</th><th>Phone</th><th>Due Date</th><th>Assigned</th><th>Status</th></tr></thead>
+                        <thead><tr><th scope="col">Lead</th><th scope="col">Phone</th><th scope="col">Due Date</th><th scope="col">Assigned</th><th scope="col">Status</th></tr></thead>
                         <tbody>
                         <?php foreach ($pending as $p): ?>
                             <tr>
@@ -32,7 +32,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>Date</th><th>Lead</th><th>Type</th><th>Description</th></tr></thead>
+                        <thead><tr><th scope="col">Date</th><th scope="col">Lead</th><th scope="col">Type</th><th scope="col">Description</th></tr></thead>
                         <tbody>
                         <?php foreach ($recent as $r): ?>
                             <tr>

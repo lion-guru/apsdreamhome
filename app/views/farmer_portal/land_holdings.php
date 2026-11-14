@@ -25,13 +25,13 @@ $land_holdings = $land_holdings ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th>Plot #</th>
-                            <th>Area (sq.ft)</th>
-                            <th>Village</th>
-                            <th>District</th>
-                            <th>Acquisition Status</th>
-                            <th>Amount</th>
-                            <th>Payment Status</th>
+                            <th scope="col">Plot #</th>
+                            <th scope="col">Area (sq.ft)</th>
+                            <th scope="col">Village</th>
+                            <th scope="col">District</th>
+                            <th scope="col">Acquisition Status</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Payment Status</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -120,7 +120,7 @@ $plot_gata = $plot_gata ?? null;
         <div class="aps-cp-card">
             <div class="aps-cp-card-body p-0">
                 <div class="table-responsive"><table class="table table-sm m-0">
-                    <thead><tr><th>#</th><th><?= __('sale_due_date') ?></th><th><?= __('sale_type') ?></th><th class="text-end"><?= __('sale_amount') ?></th><th class="text-end"><?= __('sale_paid') ?></th><th><?= __('sale_status') ?></th><th><?= __('sale_actions') ?></th></tr></thead>
+                    <thead><tr><th scope="col">#</th><th scope="col"><?= __('sale_due_date') ?></th><th scope="col"><?= __('sale_type') ?></th><th scope="col" class="text-end"><?= __('sale_amount') ?></th><th scope="col" class="text-end"><?= __('sale_paid') ?></th><th scope="col"><?= __('sale_status') ?></th><th scope="col"><?= __('sale_actions') ?></th></tr></thead>
                     <tbody>
                         <?php if (empty($schedule)): ?>
                             <tr><td colspan="7" class="text-center text-muted py-3"><?= __('sale_no_schedule') ?></td></tr>
@@ -157,7 +157,7 @@ $plot_gata = $plot_gata ?? null;
     <div class="tab-pane fade" id="rcpt">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-sm m-0">
-                <thead><tr><th><?= __('sale_receipt_num') ?></th><th><?= __('sale_date') ?></th><th><?= __('sale_mode') ?></th><th><?= __('sale_status') ?></th><th class="text-end"><?= __('sale_amount') ?></th><th><?= __('sale_collected_by') ?></th><th></th></tr></thead>
+                <thead><tr><th scope="col"><?= __('sale_receipt_num') ?></th><th scope="col"><?= __('sale_date') ?></th><th scope="col"><?= __('sale_mode') ?></th><th scope="col"><?= __('sale_status') ?></th><th scope="col" class="text-end"><?= __('sale_amount') ?></th><th scope="col"><?= __('sale_collected_by') ?></th><th scope="col"></th></tr></thead>
                 <tbody>
                 <?php if (empty($receipts)): ?>
                     <tr><td colspan="7" class="text-center text-muted py-3"><?= __('sale_no_receipts') ?></td></tr>
@@ -191,7 +191,7 @@ $plot_gata = $plot_gata ?? null;
     <div class="tab-pane fade" id="dl">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-sm m-0">
-                <thead><tr><th><?= __('sale_letter_num') ?></th><th><?= __('sale_generated') ?></th><th><?= __('sale_sent') ?></th><th><?= __('sale_type') ?></th></tr></thead>
+                <thead><tr><th scope="col"><?= __('sale_letter_num') ?></th><th scope="col"><?= __('sale_generated') ?></th><th scope="col"><?= __('sale_sent') ?></th><th scope="col"><?= __('sale_type') ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($demand_letters)): ?>
                     <tr><td colspan="4" class="text-center text-muted py-3"><?= __('sale_none') ?></td></tr>
@@ -210,7 +210,7 @@ $plot_gata = $plot_gata ?? null;
     <div class="tab-pane fade" id="comm">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-sm m-0">
-                <thead><tr><th><?= __('sale_level') ?></th><th><?= __('sale_beneficiary') ?></th><th><?= __('sale_type') ?></th><th class="text-end"><?= __('sale_pct') ?></th><th class="text-end"><?= __('sale_amount') ?></th><th><?= __('sale_status') ?></th></tr></thead>
+                <thead><tr><th scope="col"><?= __('sale_level') ?></th><th scope="col"><?= __('sale_beneficiary') ?></th><th scope="col"><?= __('sale_type') ?></th><th scope="col" class="text-end"><?= __('sale_pct') ?></th><th scope="col" class="text-end"><?= __('sale_amount') ?></th><th scope="col"><?= __('sale_status') ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($commissions)): ?>
                     <tr><td colspan="6" class="text-center text-muted py-3"><?= __('sale_no_commissions') ?></td></tr>
@@ -231,7 +231,7 @@ $plot_gata = $plot_gata ?? null;
     <div class="tab-pane fade" id="doc">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-sm m-0">
-                <thead><tr><th><?= __('sale_document') ?></th><th><?= __('sale_type') ?></th><th><?= __('sale_uploaded') ?></th><th><?= __('sale_verified') ?></th></tr></thead>
+                <thead><tr><th scope="col"><?= __('sale_document') ?></th><th scope="col"><?= __('sale_type') ?></th><th scope="col"><?= __('sale_uploaded') ?></th><th scope="col"><?= __('sale_verified') ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($documents)): ?>
                     <tr><td colspan="4" class="text-center text-muted py-3"><?= __('sale_no_documents') ?></td></tr>
@@ -263,7 +263,7 @@ $plot_gata = $plot_gata ?? null;
                 </div>
             <?php endif; ?>
             <div class="table-responsive"><table class="table table-sm m-0">
-                <thead><tr><th>Name</th><th>Relation</th><th>Gender</th><th>Aadhaar</th><th>PAN</th><th class="text-end">Share %</th><th></th></tr></thead>
+                <thead><tr><th scope="col">Name</th><th scope="col">Relation</th><th scope="col">Gender</th><th scope="col">Aadhaar</th><th scope="col">PAN</th><th scope="col" class="text-end">Share %</th><th scope="col"></th></tr></thead>
                 <tbody>
                 <?php if (empty($co_owners)): ?>
                     <tr><td colspan="7" class="text-center text-muted py-3">No joint owners — sole allotment.</td></tr>
@@ -315,7 +315,7 @@ $plot_gata = $plot_gata ?? null;
     <div class="tab-pane fade" id="hist">
         <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-sm m-0">
-                <thead><tr><th><?= __('sale_date') ?></th><th><?= __('sale_from') ?></th><th><?= __('sale_to') ?></th><th><?= __('sale_by') ?></th><th><?= __('sale_note') ?></th></tr></thead>
+                <thead><tr><th scope="col"><?= __('sale_date') ?></th><th scope="col"><?= __('sale_from') ?></th><th scope="col"><?= __('sale_to') ?></th><th scope="col"><?= __('sale_by') ?></th><th scope="col"><?= __('sale_note') ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($history)): ?>
                     <tr><td colspan="5" class="text-center text-muted py-3"><?= __('sale_no_history') ?></td></tr>

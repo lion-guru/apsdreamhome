@@ -81,20 +81,20 @@ $csrf = $this->getCsrfToken();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Invoice #</th>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Customer</th>
-                            <th>GSTIN</th>
-                            <th>Place of Supply</th>
-                            <th>Taxable</th>
-                            <th>CGST</th>
-                            <th>SGST</th>
-                            <th>IGST</th>
-                            <th>Total</th>
-                            <th>IRN Status</th>
-                            <th>GSTR-1</th>
-                            <th class="text-end">Actions</th>
+                            <th scope="col">Invoice #</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">GSTIN</th>
+                            <th scope="col">Place of Supply</th>
+                            <th scope="col">Taxable</th>
+                            <th scope="col">CGST</th>
+                            <th scope="col">SGST</th>
+                            <th scope="col">IGST</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">IRN Status</th>
+                            <th scope="col">GSTR-1</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

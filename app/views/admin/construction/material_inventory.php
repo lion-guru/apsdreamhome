@@ -104,16 +104,16 @@
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Material</th>
-                            <th>Category</th>
-                            <th>Stock</th>
-                            <th>Unit</th>
-                            <th>Unit Cost</th>
-                            <th>Total Value</th>
-                            <th>Supplier</th>
-                            <th>Last Restocked</th>
-                            <th>Status</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Material</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Stock</th>
+                            <th scope="col">Unit</th>
+                            <th scope="col">Unit Cost</th>
+                            <th scope="col">Total Value</th>
+                            <th scope="col">Supplier</th>
+                            <th scope="col">Last Restocked</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -181,13 +181,13 @@
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Material</th>
-                            <th>Colony</th>
-                            <th>Quantity</th>
-                            <th>Purpose</th>
-                            <th>Used By</th>
-                            <th>Usage Date</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Material</th>
+                            <th scope="col">Colony</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Purpose</th>
+                            <th scope="col">Used By</th>
+                            <th scope="col">Usage Date</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -87,11 +87,11 @@ $legalSlugs = ['terms-conditions','privacy-policy','refund-policy','disclaimer',
                 <table class="table table-hover align-middle mb-0" id="pagesTable">
                     <thead style="background:#f8fafc;">
                         <tr>
-                            <th class="px-4">Title</th>
-                            <th>Slug / URL</th>
-                            <th class="text-center">Status</th>
-                            <th>Last Updated</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th scope="col" class="px-4">Title</th>
+                            <th scope="col">Slug / URL</th>
+                            <th scope="col" class="text-center">Status</th>
+                            <th scope="col">Last Updated</th>
+                            <th scope="col" class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

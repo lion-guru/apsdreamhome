@@ -188,10 +188,10 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 <table class="table table-hover mb-0">
                     <thead class="bg-light">
                             <tr>
-                                <th><?= __('saved_th_date', null, 'Date') ?></th>
-                                <th><?= __('saved_th_search', null, 'Search') ?></th>
-                                <th><?= __('saved_th_property', null, 'Property') ?></th>
-                                <th><?= __('saved_th_status', null, 'Status') ?></th>
+                                <th scope="col"><?= __('saved_th_date', null, 'Date') ?></th>
+                                <th scope="col"><?= __('saved_th_search', null, 'Search') ?></th>
+                                <th scope="col"><?= __('saved_th_property', null, 'Property') ?></th>
+                                <th scope="col"><?= __('saved_th_status', null, 'Status') ?></th>
                             </tr>
                     </thead>
                     <tbody>

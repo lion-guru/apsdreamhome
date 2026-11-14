@@ -73,13 +73,13 @@ $stats = $stats ?? ['total' => 0, 'published' => 0, 'draft' => 0];
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>Type</th>
-                        <th>Title</th>
-                        <th>Model</th>
-                        <th>Tokens</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th class="text-end">Actions</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Model</th>
+                        <th scope="col">Tokens</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date</th>
+                        <th scope="col" class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

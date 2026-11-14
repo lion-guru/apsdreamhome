@@ -121,13 +121,13 @@
                                     <table class="table table-hover mb-0">
                                         <thead class="table-light">
                                             <tr>
-                                                <th></th>
-                                                <th>Name</th>
-                                                <th>Entity</th>
-                                                <th>Filters</th>
-                                                <th>Uses</th>
-                                                <th>Last Used</th>
-                                                <th></th>
+                                                <th scope="col"></th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Entity</th>
+                                                <th scope="col">Filters</th>
+                                                <th scope="col">Uses</th>
+                                                <th scope="col">Last Used</th>
+                                                <th scope="col"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
         // S471: a destructive action is a POST - it used to be a GET, which any
-        // third-party page could trigger with a single <img>.
+        // third-party page could trigger with a single <img alt="">.
         function apsPostAction(url) {
             var token = '';
             if (window.APS && APS.getCsrfToken) { token = APS.getCsrfToken(); }

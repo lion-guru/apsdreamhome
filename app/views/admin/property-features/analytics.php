@@ -45,11 +45,11 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Feature Name</th>
-                                <th>Type</th>
-                                <th>Usage Count</th>
-                                <th>Properties Using</th>
-                                <th>Status</th>
+                                <th scope="col">Feature Name</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Usage Count</th>
+                                <th scope="col">Properties Using</th>
+                                <th scope="col">Status</th>
                             </tr>
                         </thead>
                         <tbody>

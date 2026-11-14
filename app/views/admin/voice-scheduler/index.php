@@ -67,7 +67,7 @@
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-light"><tr>
-                            <th>Lead</th><th>Phone</th><th>Scheduled</th><th>Agent</th><th>Priority</th><th>Action</th>
+                            <th scope="col">Lead</th><th scope="col">Phone</th><th scope="col">Scheduled</th><th scope="col">Agent</th><th scope="col">Priority</th><th scope="col">Action</th>
                         </tr></thead>
                         <tbody>
                         <?php foreach ($pendingCalls as $c): ?>

@@ -24,14 +24,14 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Platform</th>
-                                    <th>Objective</th>
-                                    <th>Status</th>
-                                    <th>Daily Budget</th>
-                                    <th>Spend</th>
-                                    <th>Leads</th>
-                                    <th>CPL</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Platform</th>
+                                    <th scope="col">Objective</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Daily Budget</th>
+                                    <th scope="col">Spend</th>
+                                    <th scope="col">Leads</th>
+                                    <th scope="col">CPL</th>
                                 </tr>
                             </thead>
                             <tbody>

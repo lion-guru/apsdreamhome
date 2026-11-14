@@ -20,15 +20,15 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Plan</th>
-                                <th>Category</th>
-                                <th>Expected Return</th>
-                                <th>Tenure</th>
-                                <th>Total Investments</th>
-                                <th class="text-end">Total Principal</th>
-                                <th class="text-end">Current Value</th>
-                                <th class="text-end">Total Returns</th>
-                                <th class="text-end">Avg Return %</th>
+                                <th scope="col">Plan</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Expected Return</th>
+                                <th scope="col">Tenure</th>
+                                <th scope="col">Total Investments</th>
+                                <th scope="col" class="text-end">Total Principal</th>
+                                <th scope="col" class="text-end">Current Value</th>
+                                <th scope="col" class="text-end">Total Returns</th>
+                                <th scope="col" class="text-end">Avg Return %</th>
                             </tr>
                         </thead>
                         <tbody>

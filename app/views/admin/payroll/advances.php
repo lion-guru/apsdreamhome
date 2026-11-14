@@ -39,14 +39,14 @@
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
-                            <th>Employee</th>
-                            <th>Amount (₹)</th>
-                            <th>Reason</th>
-                            <th>Approved By</th>
-                            <th>Repay EMI</th>
-                            <th>Date</th>
-                            <th>Status</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Amount (₹)</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">Approved By</th>
+                            <th scope="col">Repay EMI</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Status</th>
                         </tr>
                     </thead>
                     <tbody>

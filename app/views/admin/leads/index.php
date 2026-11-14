@@ -169,15 +169,15 @@ $base = BASE_URL ?? '';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th width="30"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all leads"></th>
-                                <th>Lead</th>
-                                <th>Contact</th>
-                                <th>Source</th>
-                                <th>Status</th>
-                                <th>Score</th>
-                                <th>Assigned</th>
-                                <th>Created</th>
-                                <th width="120">Actions</th>
+                                <th scope="col" width="30"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all leads"></th>
+                                <th scope="col">Lead</th>
+                                <th scope="col">Contact</th>
+                                <th scope="col">Source</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Score</th>
+                                <th scope="col">Assigned</th>
+                                <th scope="col">Created</th>
+                                <th scope="col" width="120">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

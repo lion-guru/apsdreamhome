@@ -51,7 +51,7 @@ ob_start();
         <div class="aps-cp-table-wrap">
             <table class="aps-cp-table">
                 <thead>
-                    <tr><th><?= __('user_insurance_th_policy', null, 'Policy #') ?></th><th><?= __('user_insurance_th_plan', null, 'Plan') ?></th><th><?= __('user_insurance_th_category', null, 'Category') ?></th><th><?= __('user_insurance_th_sum_insured', null, 'Sum Insured') ?></th><th><?= __('user_insurance_th_premium', null, 'Premium') ?></th><th><?= __('user_insurance_th_valid_till', null, 'Valid Till') ?></th><th><?= __('user_insurance_th_status', null, 'Status') ?></th></tr>
+                    <tr><th scope="col"><?= __('user_insurance_th_policy', null, 'Policy #') ?></th><th scope="col"><?= __('user_insurance_th_plan', null, 'Plan') ?></th><th scope="col"><?= __('user_insurance_th_category', null, 'Category') ?></th><th scope="col"><?= __('user_insurance_th_sum_insured', null, 'Sum Insured') ?></th><th scope="col"><?= __('user_insurance_th_premium', null, 'Premium') ?></th><th scope="col"><?= __('user_insurance_th_valid_till', null, 'Valid Till') ?></th><th scope="col"><?= __('user_insurance_th_status', null, 'Status') ?></th></tr>
                 </thead>
                 <tbody>
                 <?php foreach ($policies as $p):

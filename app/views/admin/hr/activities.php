@@ -10,7 +10,7 @@ $page_title = $page_title ?? 'Employee Activities';
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Employee</th><th>Activity</th><th>Type</th><th>IP Address</th><th>Date/Time</th></tr>
+                    <tr><th scope="col">Employee</th><th scope="col">Activity</th><th scope="col">Type</th><th scope="col">IP Address</th><th scope="col">Date/Time</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($activities ?? [])): ?>

@@ -92,16 +92,16 @@ $stats = $stats ?? ['total'=>0,'open'=>0,'registered'=>0,'lost'=>0,'pipeline_val
             <table class="table table-hover align-middle mb-0" id="acqTable">
                 <thead style="background:#f8fafc;">
                     <tr>
-                        <th class="px-4">Deal #</th>
-                        <th>Land Lead</th>
-                        <th>Owner</th>
-                        <th>Survey #</th>
-                        <th>Final Price</th>
-                        <th>Stamp Duty</th>
-                        <th>Reg Fee</th>
-                        <th class="text-center">Status</th>
-                        <th>Reg Date</th>
-                        <th class="text-end pe-4">Action</th>
+                        <th scope="col" class="px-4">Deal #</th>
+                        <th scope="col">Land Lead</th>
+                        <th scope="col">Owner</th>
+                        <th scope="col">Survey #</th>
+                        <th scope="col">Final Price</th>
+                        <th scope="col">Stamp Duty</th>
+                        <th scope="col">Reg Fee</th>
+                        <th scope="col" class="text-center">Status</th>
+                        <th scope="col">Reg Date</th>
+                        <th scope="col" class="text-end pe-4">Action</th>
                     </tr>
                 </thead>
                 <tbody>

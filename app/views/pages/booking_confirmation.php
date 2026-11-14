@@ -66,12 +66,12 @@ foreach ($statusSteps as $i => $step) {
             <div class="conf-card">
                 <h5 class="fw-bold mb-3"><i class="fas fa-file-invoice"></i> <?= __('booking_details') ?></h5>
                 <table class="table">
-                    <tr><th ><?= __('booking_number') ?></th><td><strong>#<?= $booking['id'] ?> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</strong></td></tr>
-                    <tr><th><?= __('booking_plot') ?></th><td><?= htmlspecialchars($booking['plot_number'] ?? '') ?> — <?= htmlspecialchars($booking['colony_name'] ?? '') ?></td></tr>
-                    <tr><th><?= __('booking_dimension') ?></th><td><?= htmlspecialchars($booking['dimension_label'] ?? '') ?> | <?= number_format(floatval($booking['area_sqft'] ?? 0)) ?> sqft</td></tr>
-                    <tr><th><?= __('booking_total_price') ?></th><td class="fw-bold fs-5 text-primary">₹<?= number_format(intval($booking['total_amount'] ?? $booking['plot_price'] ?? 0)) ?></td></tr>
-                    <tr><th><?= __('booking_status') ?></th><td><span class="badge bg-<?= e($currentStatus) === 'confirmed' || e($currentStatus) === 'completed' ? 'success' : (e($currentStatus) === 'cancelled' ? 'danger' : 'warning') ?> fs-6"><?= ucfirst(e($currentStatus)) ?></span></td></tr>
-                    <tr><th><?= __('booking_date') ?></th><td><?= date('d M Y', strtotime($booking['booking_date'] ?? $booking['created_at'] ?? 'now')) ?></td></tr>
+                    <tr><th scope="col" ><?= __('booking_number') ?></th><td><strong>#<?= $booking['id'] ?> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</strong></td></tr>
+                    <tr><th scope="col"><?= __('booking_plot') ?></th><td><?= htmlspecialchars($booking['plot_number'] ?? '') ?> — <?= htmlspecialchars($booking['colony_name'] ?? '') ?></td></tr>
+                    <tr><th scope="col"><?= __('booking_dimension') ?></th><td><?= htmlspecialchars($booking['dimension_label'] ?? '') ?> | <?= number_format(floatval($booking['area_sqft'] ?? 0)) ?> sqft</td></tr>
+                    <tr><th scope="col"><?= __('booking_total_price') ?></th><td class="fw-bold fs-5 text-primary">₹<?= number_format(intval($booking['total_amount'] ?? $booking['plot_price'] ?? 0)) ?></td></tr>
+                    <tr><th scope="col"><?= __('booking_status') ?></th><td><span class="badge bg-<?= e($currentStatus) === 'confirmed' || e($currentStatus) === 'completed' ? 'success' : (e($currentStatus) === 'cancelled' ? 'danger' : 'warning') ?> fs-6"><?= ucfirst(e($currentStatus)) ?></span></td></tr>
+                    <tr><th scope="col"><?= __('booking_date') ?></th><td><?= date('d M Y', strtotime($booking['booking_date'] ?? $booking['created_at'] ?? 'now')) ?></td></tr>
                 </table>
 
                 <?php if ($plot['corner_plot'] ?? false): ?><span class="badge bg-primary me-1"><?= __('badge_corner_plot') ?></span><?php endif; ?>
@@ -84,7 +84,7 @@ foreach ($statusSteps as $i => $step) {
                 <h5 class="fw-bold mb-3"><i class="fas fa-calendar-alt"></i> <?= __('payment_schedule') ?></h5>
                 <div class="table-responsive">
                     <table class="table">
-                        <thead><tr><th>#</th><th><?= __('emi_due_date') ?></th><th><?= __('emi_amount') ?></th><th><?= __('emi_paid') ?></th><th><?= __('booking_status') ?></th></tr></thead>
+                        <thead><tr><th scope="col">#</th><th scope="col"><?= __('emi_due_date') ?></th><th scope="col"><?= __('emi_amount') ?></th><th scope="col"><?= __('emi_paid') ?></th><th scope="col"><?= __('booking_status') ?></th></tr></thead>
                         <tbody>
                             <?php foreach ($emis as $emi): ?>
                             <tr>

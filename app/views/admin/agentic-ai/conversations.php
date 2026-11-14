@@ -29,7 +29,7 @@ $_ag = $agents ?? [];
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                <tr><th>ID</th><th>Lead</th><th>Channel</th><th>Agent</th><th>Status</th><th>Last Message</th><th>Actions</th></tr>
+                                <tr><th scope="col">ID</th><th scope="col">Lead</th><th scope="col">Channel</th><th scope="col">Agent</th><th scope="col">Status</th><th scope="col">Last Message</th><th scope="col">Actions</th></tr>
                             </thead>
                             <tbody>
                             <?php foreach ($_convs as $c): ?>

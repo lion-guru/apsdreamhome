@@ -58,13 +58,13 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
-                                <th>Associate</th>
-                                <th>Type</th>
-                                <th>Amount</th>
-                                <th>Bank</th>
-                                <th>IFSC</th>
-                                <th>Approved</th>
+                                <th scope="col"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
+                                <th scope="col">Associate</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Bank</th>
+                                <th scope="col">IFSC</th>
+                                <th scope="col">Approved</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -111,11 +111,11 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Associate</th>
-                                <th>Type</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th>Paid On</th>
+                                <th scope="col">Associate</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Paid On</th>
                             </tr>
                         </thead>
                         <tbody>

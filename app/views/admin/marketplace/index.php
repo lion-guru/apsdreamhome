@@ -146,7 +146,7 @@ $builderStats = $builderStats ?? ['total_builders' => 0, 'active_subscriptions' 
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>ID</th><th>Property</th><th>Type</th><th>Price</th><th>Location</th><th>Seller</th><th>Premium</th><th>Status</th><th>Views</th><th>Actions</th></tr></thead>
+                        <thead><tr><th scope="col">ID</th><th scope="col">Property</th><th scope="col">Type</th><th scope="col">Price</th><th scope="col">Location</th><th scope="col">Seller</th><th scope="col">Premium</th><th scope="col">Status</th><th scope="col">Views</th><th scope="col">Actions</th></tr></thead>
                         <tbody>
                         <?php foreach ($recentListings as $p): ?>
                             <tr>
@@ -207,11 +207,11 @@ $builderStats = $builderStats ?? ['total_builders' => 0, 'active_subscriptions' 
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Property</th>
-                                <th>Seller</th>
-                                <th>Amount</th>
-                                <th>Date</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Property</th>
+                                <th scope="col">Seller</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -248,10 +248,10 @@ $builderStats = $builderStats ?? ['total_builders' => 0, 'active_subscriptions' 
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Builder</th>
-                                <th>Email</th>
-                                <th>Listings</th>
-                                <th>Total Value</th>
+                                <th scope="col">Builder</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Listings</th>
+                                <th scope="col">Total Value</th>
                             </tr>
                         </thead>
                         <tbody>

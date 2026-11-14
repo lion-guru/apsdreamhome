@@ -30,14 +30,14 @@ $page_description = 'Manage issued certificates';
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Certificate #</th>
-                        <th>Associate</th>
-                        <th>Course</th>
-                        <th>Type</th>
-                        <th>Score</th>
-                        <th>Issued</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th scope="col">Certificate #</th>
+                        <th scope="col">Associate</th>
+                        <th scope="col">Course</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Issued</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

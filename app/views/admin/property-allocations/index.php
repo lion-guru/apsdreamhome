@@ -77,14 +77,14 @@
                 <table class="table table-bordered table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th>Allocation #</th>
-                            <th>Customer</th>
-                            <th>Property</th>
-                            <th>Booking Amount</th>
-                            <th>Total Price</th>
-                            <th>Status</th>
-                            <th>Created</th>
-                            <th>Actions</th>
+                            <th scope="col">Allocation #</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Property</th>
+                            <th scope="col">Booking Amount</th>
+                            <th scope="col">Total Price</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

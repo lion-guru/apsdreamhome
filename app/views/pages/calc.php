@@ -92,8 +92,8 @@ if ($amount > 0 && $mon > 0 && $int > 0) {
                         <div class="table-responsive"><table class="table table-hover align-middle table-responsive">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="py-3 ps-4 border-0 rounded-start"><?php echo __('emi_description', 'Description'); ?></th>
-                                    <th class="py-3 text-end pe-4 border-0 rounded-end"><?php echo __('emi_amount', 'Amount'); ?></th>
+                                    <th scope="col" class="py-3 ps-4 border-0 rounded-start"><?php echo __('emi_description', 'Description'); ?></th>
+                                    <th scope="col" class="py-3 text-end pe-4 border-0 rounded-end"><?php echo __('emi_amount', 'Amount'); ?></th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -42,14 +42,14 @@ $logs = $logs ?? [];
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Integration</th>
-                                    <th>Action</th>
-                                    <th>Direction</th>
-                                    <th>Status</th>
-                                    <th>Error Message</th>
-                                    <th>Created</th>
-                                    <th>Processed</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Integration</th>
+                                    <th scope="col">Action</th>
+                                    <th scope="col">Direction</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Error Message</th>
+                                    <th scope="col">Created</th>
+                                    <th scope="col">Processed</th>
                                 </tr>
                             </thead>
                             <tbody>

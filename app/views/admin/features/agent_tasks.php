@@ -22,7 +22,7 @@ ob_start();
     <div class="tab-pane fade show active" id="tsk">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>ID</th><th>Agent</th><th>Type</th><th>Priority</th><th>Status</th><th>Created</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">Agent</th><th scope="col">Type</th><th scope="col">Priority</th><th scope="col">Status</th><th scope="col">Created</th></tr></thead>
           <tbody>
             <?php if (empty($tasks)): ?>
               <tr><td colspan="6" class="text-center py-3 text-muted">No tasks</td></tr>
@@ -44,7 +44,7 @@ ob_start();
     <div class="tab-pane fade" id="exe">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Task</th><th>Agent</th><th>Status</th><th>Duration</th><th>Completed</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Task</th><th scope="col">Agent</th><th scope="col">Status</th><th scope="col">Duration</th><th scope="col">Completed</th></tr></thead>
           <tbody>
             <?php if (empty($executions)): ?>
               <tr><td colspan="5" class="text-center py-3 text-muted">No executions</td></tr>
@@ -65,7 +65,7 @@ ob_start();
     <div class="tab-pane fade" id="wfl">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Name</th><th>Trigger</th><th>Status</th><th>Created</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Name</th><th scope="col">Trigger</th><th scope="col">Status</th><th scope="col">Created</th></tr></thead>
           <tbody>
             <?php if (empty($workflows)): ?>
               <tr><td colspan="4" class="text-center py-3 text-muted">No workflows</td></tr>

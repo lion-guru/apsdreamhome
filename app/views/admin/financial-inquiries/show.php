@@ -32,15 +32,15 @@ $sl = $statusLabels[$inquiry['status']] ?? ['label' => $inquiry['status'], 'clas
             </div>
             <div class="card-body aps-cp-card-body">
                 <table class="table table-bordered">
-                    <tr><th style="width:200px">Name</th><td><?= htmlspecialchars($inquiry['name'] ?? '') ?></td></tr>
-                    <tr><th>Email</th><td><?= htmlspecialchars($inquiry['email'] ?? '-') ?></td></tr>
-                    <tr><th>Phone</th><td><?= htmlspecialchars($inquiry['phone'] ?? '-') ?></td></tr>
-                    <tr><th>Service Interest</th><td><span class="badge bg-light text-dark"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $inquiry['service_interest'] ?? 'General'))) ?></span></td></tr>
-                    <tr><th>Message</th><td><?= nl2br(htmlspecialchars($inquiry['message'] ?? '-')) ?></td></tr>
-                    <tr><th>Current Status</th><td><span class="badge bg-<?= $sl['class'] ?> fs-6"><?= $sl['label'] ?></span></td></tr>
-                    <tr><th>Submitted</th><td><?= date('d M Y h:i A', strtotime($inquiry['created_at'])) ?></td></tr>
+                    <tr><th scope="col" style="width:200px">Name</th><td><?= htmlspecialchars($inquiry['name'] ?? '') ?></td></tr>
+                    <tr><th scope="col">Email</th><td><?= htmlspecialchars($inquiry['email'] ?? '-') ?></td></tr>
+                    <tr><th scope="col">Phone</th><td><?= htmlspecialchars($inquiry['phone'] ?? '-') ?></td></tr>
+                    <tr><th scope="col">Service Interest</th><td><span class="badge bg-light text-dark"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $inquiry['service_interest'] ?? 'General'))) ?></span></td></tr>
+                    <tr><th scope="col">Message</th><td><?= nl2br(htmlspecialchars($inquiry['message'] ?? '-')) ?></td></tr>
+                    <tr><th scope="col">Current Status</th><td><span class="badge bg-<?= $sl['class'] ?> fs-6"><?= $sl['label'] ?></span></td></tr>
+                    <tr><th scope="col">Submitted</th><td><?= date('d M Y h:i A', strtotime($inquiry['created_at'])) ?></td></tr>
                     <?php if (!empty($inquiry['updated_at']) && $inquiry['updated_at'] !== $inquiry['created_at']): ?>
-                        <tr><th>Last Updated</th><td><?= date('d M Y h:i A', strtotime($inquiry['updated_at'])) ?></td></tr>
+                        <tr><th scope="col">Last Updated</th><td><?= date('d M Y h:i A', strtotime($inquiry['updated_at'])) ?></td></tr>
                     <?php endif; ?>
                 </table>
 

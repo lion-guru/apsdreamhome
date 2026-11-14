@@ -46,15 +46,15 @@ $leads = $leads ?? [];
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Email</th>
-                                <th>Source</th>
-                                <th>Status</th>
-                                <th>Score</th>
-                                <th>Budget</th>
-                                <th>Assigned</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Source</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Score</th>
+                                <th scope="col">Budget</th>
+                                <th scope="col">Assigned</th>
                             </tr>
                         </thead>
                         <tbody>

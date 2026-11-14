@@ -46,12 +46,12 @@ $third_party = $third_party ?? [];
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Service Name</th>
-                                    <th>API URL</th>
-                                    <th>Status</th>
-                                    <th>Created</th>
-                                    <th>Actions</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Service Name</th>
+                                    <th scope="col">API URL</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Created</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -102,10 +102,10 @@ $third_party = $third_party ?? [];
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Type</th>
-                                    <th>API Token</th>
-                                    <th>Created</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">API Token</th>
+                                    <th scope="col">Created</th>
                                 </tr>
                             </thead>
                             <tbody>

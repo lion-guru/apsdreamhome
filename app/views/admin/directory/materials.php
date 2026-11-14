@@ -9,7 +9,7 @@
             <div class="table-responsive">
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
-                        <tr><th>ID</th><th>Material</th><th>Category</th><th>Brand</th><th>Price</th><th>Unit</th><th>Supplier</th><th>Date</th><th>Status</th><th>Actions</th></tr>
+                        <tr><th scope="col">ID</th><th scope="col">Material</th><th scope="col">Category</th><th scope="col">Brand</th><th scope="col">Price</th><th scope="col">Unit</th><th scope="col">Supplier</th><th scope="col">Date</th><th scope="col">Status</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($materials)): ?>

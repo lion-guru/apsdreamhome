@@ -54,23 +54,23 @@
         </div>
 
         <table class="table table-bordered">
-            <tr><th ><?= __('receipt_booking_number', [], 'Booking Number') ?></th><td><strong>#<?= $booking['id'] ?></strong> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</td></tr>
-            <tr><th><?= __('receipt_plot_details', [], 'Plot Details') ?></th><td>
+            <tr><th scope="col" ><?= __('receipt_booking_number', [], 'Booking Number') ?></th><td><strong>#<?= $booking['id'] ?></strong> (<?= htmlspecialchars($booking['booking_number'] ?? '') ?>)</td></tr>
+            <tr><th scope="col"><?= __('receipt_plot_details', [], 'Plot Details') ?></th><td>
                 <strong><?= __('receipt_plot_no', [], 'Plot #') ?><?= htmlspecialchars($booking['plot_number'] ?? '') ?></strong><br>
                 <?= htmlspecialchars($booking['colony_name'] ?? '') ?>
                 <?php if (!empty($booking['district_name'])): ?>, <?= htmlspecialchars($booking['district_name'] ?? '') ?><?php endif; ?>
                 <?php if (!empty($booking['state_name'])): ?>, <?= htmlspecialchars($booking['state_name'] ?? '') ?><?php endif; ?>
             </td></tr>
-            <tr><th><?= __('receipt_plot_size', [], 'Plot Size') ?></th><td>
+            <tr><th scope="col"><?= __('receipt_plot_size', [], 'Plot Size') ?></th><td>
                 <?php if (!empty($booking['dimension_label'])): ?><?= htmlspecialchars($booking['dimension_label'] ?? '') ?> — <?php endif; ?>
                 <?= number_format(floatval($booking['area_sqft'] ?? 0)) ?> sqft
             </td></tr>
-            <tr><th><?= __('receipt_block', [], 'Block') ?></th><td><?= htmlspecialchars($booking['block'] ?? 'N/A') ?></td></tr>
-            <tr><th><?= __('receipt_customer', [], 'Customer') ?></th><td><?= htmlspecialchars($user['name'] ?? $booking['customer_name'] ?? '') ?><br>
+            <tr><th scope="col"><?= __('receipt_block', [], 'Block') ?></th><td><?= htmlspecialchars($booking['block'] ?? 'N/A') ?></td></tr>
+            <tr><th scope="col"><?= __('receipt_customer', [], 'Customer') ?></th><td><?= htmlspecialchars($user['name'] ?? $booking['customer_name'] ?? '') ?><br>
                 <?= htmlspecialchars($user['email'] ?? '') ?><br>
                 <?= htmlspecialchars($user['phone'] ?? '') ?>
             </td></tr>
-            <tr><th><?= __('receipt_type', [], 'Booking Type') ?></th><td><?= htmlspecialchars($booking['booking_type'] ?? __('receipt_standard', [], 'Standard')) ?></td></tr>
+            <tr><th scope="col"><?= __('receipt_type', [], 'Booking Type') ?></th><td><?= htmlspecialchars($booking['booking_type'] ?? __('receipt_standard', [], 'Standard')) ?></td></tr>
         </table>
 
         <div class="amount-box">
@@ -92,7 +92,7 @@
             <hr>
             <div class="label mb-2"><?= __('receipt_payment_schedule', [], 'Payment Schedule') ?></div>
             <table class="table table-sm mb-0">
-                <thead><tr><th>#</th><th><?= __('receipt_th_due_date', [], 'Due Date') ?></th><th><?= __('receipt_th_amount', [], 'Amount') ?></th><th><?= __('receipt_th_paid', [], 'Paid') ?></th><th><?= __('receipt_th_status', [], 'Status') ?></th></tr></thead>
+                <thead><tr><th scope="col">#</th><th scope="col"><?= __('receipt_th_due_date', [], 'Due Date') ?></th><th scope="col"><?= __('receipt_th_amount', [], 'Amount') ?></th><th scope="col"><?= __('receipt_th_paid', [], 'Paid') ?></th><th scope="col"><?= __('receipt_th_status', [], 'Status') ?></th></tr></thead>
                 <tbody>
                     <?php foreach ($emis as $emi): ?>
                     <tr>

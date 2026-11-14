@@ -9,15 +9,15 @@ $progress_data = $progress_data ?? [];
         <table class="table table-bordered table-hover bg-white">
             <thead class="table-dark">
                 <tr>
-                    <th>Name</th>
-                    <th>Current Level</th>
-                    <th>Next Level</th>
-                    <th>Team Size</th>
-                    <th>Team Progress</th>
-                    <th>Direct Refs</th>
-                    <th>Direct Progress</th>
-                    <th>Sales</th>
-                    <th>Sales Progress</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Current Level</th>
+                    <th scope="col">Next Level</th>
+                    <th scope="col">Team Size</th>
+                    <th scope="col">Team Progress</th>
+                    <th scope="col">Direct Refs</th>
+                    <th scope="col">Direct Progress</th>
+                    <th scope="col">Sales</th>
+                    <th scope="col">Sales Progress</th>
                 </tr>
             </thead>
             <tbody>

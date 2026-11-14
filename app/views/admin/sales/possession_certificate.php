@@ -32,7 +32,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 </div></div>
 <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
     <div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Cert No.</th><th>Handover</th><th>Status</th><th>Engineer</th><th>Photo</th><th>Issued</th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Cert No.</th><th scope="col">Handover</th><th scope="col">Status</th><th scope="col">Engineer</th><th scope="col">Photo</th><th scope="col">Issued</th></tr></thead>
         <tbody>
         <?php if (empty($certs)): ?>
             <tr><td colspan="6" class="text-center text-muted py-4">No certificates issued yet.</td></tr>

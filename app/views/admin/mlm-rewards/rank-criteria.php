@@ -31,12 +31,12 @@ $criteria = $criteria ?? [];
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Rank</th>
-                                <th>Min Monthly Sales (₹)</th>
-                                <th>Min Team Size</th>
-                                <th>Min Active Downlines</th>
-                                <th>Min Monthly Commission (₹)</th>
-                                <th>Actions</th>
+                                <th scope="col">Rank</th>
+                                <th scope="col">Min Monthly Sales (₹)</th>
+                                <th scope="col">Min Team Size</th>
+                                <th scope="col">Min Active Downlines</th>
+                                <th scope="col">Min Monthly Commission (₹)</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

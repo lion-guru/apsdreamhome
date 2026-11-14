@@ -37,7 +37,7 @@
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr><th><?php echo __('finance_date'); ?></th><th><?php echo __('finance_cheque_hash'); ?></th><th><?php echo __('finance_bank'); ?></th><th><?php echo __('finance_payee'); ?></th><th><?php echo __('finance_purpose'); ?></th><th class="text-end"><?php echo __('finance_amount'); ?></th><th><?php echo __('finance_status'); ?></th><th></th></tr>
+                    <tr><th scope="col"><?php echo __('finance_date'); ?></th><th scope="col"><?php echo __('finance_cheque_hash'); ?></th><th scope="col"><?php echo __('finance_bank'); ?></th><th scope="col"><?php echo __('finance_payee'); ?></th><th scope="col"><?php echo __('finance_purpose'); ?></th><th scope="col" class="text-end"><?php echo __('finance_amount'); ?></th><th scope="col"><?php echo __('finance_status'); ?></th><th scope="col"></th></tr>
                 </thead>
                 <tbody>
                 <?php if (empty($cheques)): ?>
@@ -77,7 +77,7 @@
         <div class="aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2 text-danger"></i><?php echo __('finance_bounce_log'); ?></h5></div>
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-                <thead class="table-light"><tr><th><?php echo __('finance_cheque_hash'); ?></th><th><?php echo __('finance_reason'); ?></th><th><?php echo __('finance_bank_charges'); ?></th><th><?php echo __('finance_date'); ?></th></tr></thead>
+                <thead class="table-light"><tr><th scope="col"><?php echo __('finance_cheque_hash'); ?></th><th scope="col"><?php echo __('finance_reason'); ?></th><th scope="col"><?php echo __('finance_bank_charges'); ?></th><th scope="col"><?php echo __('finance_date'); ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($bounce_log)): ?>
                     <tr><td colspan="4" class="text-center text-muted py-4"><?php echo __('finance_no_bounced_cheques'); ?></td></tr>

@@ -112,12 +112,12 @@ foreach ($surveys as $s) {
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4">Survey</th>
-                                <th>Type</th>
-                                <th>Deadline</th>
-                                <th>Privacy</th>
-                                <th>Status</th>
-                                <th class="text-end pe-4">Action</th>
+                                <th scope="col" class="ps-4">Survey</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Deadline</th>
+                                <th scope="col">Privacy</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="text-end pe-4">Action</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -93,14 +93,14 @@ $stats = $stats ?? ['total' => 0, 'confirmed' => 0, 'pending' => 0, 'total_value
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th><?= __('assoc_book_th_booking', [], 'Booking #') ?></th>
-                            <th><?= __('assoc_book_th_property', [], 'Property') ?></th>
-                            <th><?= __('assoc_book_th_customer', [], 'Customer') ?></th>
-                            <th><?= __('assoc_book_th_amount', [], 'Amount') ?></th>
-                            <th><?= __('assoc_book_th_paid', [], 'Paid') ?></th>
-                            <th><?= __('assoc_book_th_status', [], 'Status') ?></th>
-                            <th><?= __('assoc_book_th_date', [], 'Date') ?></th>
-                            <th><?= __('assoc_book_th_action', [], 'Action') ?></th>
+                            <th scope="col"><?= __('assoc_book_th_booking', [], 'Booking #') ?></th>
+                            <th scope="col"><?= __('assoc_book_th_property', [], 'Property') ?></th>
+                            <th scope="col"><?= __('assoc_book_th_customer', [], 'Customer') ?></th>
+                            <th scope="col"><?= __('assoc_book_th_amount', [], 'Amount') ?></th>
+                            <th scope="col"><?= __('assoc_book_th_paid', [], 'Paid') ?></th>
+                            <th scope="col"><?= __('assoc_book_th_status', [], 'Status') ?></th>
+                            <th scope="col"><?= __('assoc_book_th_date', [], 'Date') ?></th>
+                            <th scope="col"><?= __('assoc_book_th_action', [], 'Action') ?></th>
                         </tr>
                     </thead>
                     <tbody>

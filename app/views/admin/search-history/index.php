@@ -91,14 +91,14 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th style="width:60px">ID</th>
-                                <th>User Name</th>
-                                <th>User Role</th>
-                                <th>Entity Type</th>
-                                <th>Filters</th>
-                                <th style="width:80px">Results</th>
-                                <th>IP Address</th>
-                                <th>Date</th>
+                                <th scope="col" style="width:60px">ID</th>
+                                <th scope="col">User Name</th>
+                                <th scope="col">User Role</th>
+                                <th scope="col">Entity Type</th>
+                                <th scope="col">Filters</th>
+                                <th scope="col" style="width:80px">Results</th>
+                                <th scope="col">IP Address</th>
+                                <th scope="col">Date</th>
                             </tr>
                         </thead>
                         <tbody>

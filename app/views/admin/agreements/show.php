@@ -199,7 +199,7 @@ $nextStatuses = [
                 <div class="card-body p-0">
                     <div class="table-responsive"><table class="table table-hover table-striped mb-0">
                         <thead>
-                            <tr><th>Doc #</th><th>Type</th><th>Generated</th><th class="text-center">Actions</th></tr>
+                            <tr><th scope="col">Doc #</th><th scope="col">Type</th><th scope="col">Generated</th><th scope="col" class="text-center">Actions</th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($documents as $d): ?>

@@ -46,7 +46,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
     <div class="card shadow-sm">
         <div class="card-header bg-white fw-bold">Structure History</div>
         <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-            <thead class="table-light"><tr><th class="text-end">Basic</th><th class="text-end">HRA</th><th class="text-end">TA/DA</th><th class="text-end">Allow.</th><th class="text-center">Incentive</th><th class="text-center">Effective</th><th>Set By</th></tr></thead>
+            <thead class="table-light"><tr><th scope="col" class="text-end">Basic</th><th scope="col" class="text-end">HRA</th><th scope="col" class="text-end">TA/DA</th><th scope="col" class="text-end">Allow.</th><th scope="col" class="text-center">Incentive</th><th scope="col" class="text-center">Effective</th><th scope="col">Set By</th></tr></thead>
             <tbody>
                 <?php if (empty($history)): ?><tr><td colspan="7" class="text-center text-muted py-3">No structures yet</td></tr><?php endif; ?>
                 <?php foreach ($history as $h): ?>

@@ -141,9 +141,9 @@ Holi,2026-03-14,religious,IN,Festival of Colors,0,0,1,
                         <table class="table table-sm table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Row</th>
-                                    <th>Field</th>
-                                    <th>Error</th>
+                                    <th scope="col">Row</th>
+                                    <th scope="col">Field</th>
+                                    <th scope="col">Error</th>
                                 </tr>
                             </thead>
                             <tbody id="errorsTableBody"></tbody>
@@ -157,10 +157,10 @@ Holi,2026-03-14,religious,IN,Festival of Colors,0,0,1,
                         <table class="table table-sm table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Region</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Region</th>
                                 </tr>
                             </thead>
                             <tbody id="createdTableBody"></tbody>

@@ -60,11 +60,11 @@ $responses = $responses ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 50px">#</th>
-                            <th>Employee</th>
-                            <th>Submitted</th>
-                            <th>Completion Time</th>
-                            <th style="width: 100px">Actions</th>
+                            <th scope="col" style="width: 50px">#</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Submitted</th>
+                            <th scope="col">Completion Time</th>
+                            <th scope="col" style="width: 100px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

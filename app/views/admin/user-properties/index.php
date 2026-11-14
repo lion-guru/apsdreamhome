@@ -119,18 +119,18 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th style="width:50px;">
+                                    <th scope="col" style="width:50px;">
                                         <input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all">
                                     </th>
-                                    <th>ID</th>
-                                    <th>Property</th>
-                                    <th>Owner</th>
-                                    <th>Location</th>
-                                    <th>Price</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Property</th>
+                                    <th scope="col">Owner</th>
+                                    <th scope="col">Location</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

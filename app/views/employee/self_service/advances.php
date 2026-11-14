@@ -98,14 +98,14 @@ $summary = $summary ?? ['total_advances' => 0, 'total_pending' => 0, 'total_repa
                 <table class="table table-hover mb-0" id="advancesTable">
                     <thead class="table-light">
                         <tr>
-                            <th>Type</th>
-                            <th>Amount</th>
-                            <th>EMI/Installments</th>
-                            <th>Status</th>
-                            <th>Requested</th>
-                            <th>Approved</th>
-                            <th>Repayment Progress</th>
-                            <th>Actions</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">EMI/Installments</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Requested</th>
+                            <th scope="col">Approved</th>
+                            <th scope="col">Repayment Progress</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -194,14 +194,14 @@ $summary = $summary ?? ['total_advances' => 0, 'total_pending' => 0, 'total_repa
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Advance Type</th>
-                            <th>Installment #</th>
-                            <th>Due Date</th>
-                            <th>Total Amount</th>
-                            <th>Paid</th>
-                            <th>Balance</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Advance Type</th>
+                            <th scope="col">Installment #</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col">Total Amount</th>
+                            <th scope="col">Paid</th>
+                            <th scope="col">Balance</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

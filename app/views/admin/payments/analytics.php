@@ -23,7 +23,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <div class="table-responsive">
                                 <table class="table table-sm">
                                     <thead>
-                                        <tr><th>Date</th><th>Count</th><th>Amount</th></tr>
+                                        <tr><th scope="col">Date</th><th scope="col">Count</th><th scope="col">Amount</th></tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($analytics_data['trends'] as $trend): ?>
@@ -52,7 +52,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <div class="table-responsive">
                                 <table class="table table-sm">
                                     <thead>
-                                        <tr><th>Method</th><th>Count</th><th>Total</th></tr>
+                                        <tr><th scope="col">Method</th><th scope="col">Count</th><th scope="col">Total</th></tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($analytics_data['methods'] as $method): ?>

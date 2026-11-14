@@ -81,16 +81,16 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th style="width: 50px;">
+                                    <th scope="col" style="width: 50px;">
                                         <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" aria-label="Select all rows">
                                     </th>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Code</th>
-                                    <th>State</th>
-                                    <th>Colonies</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Code</th>
+                                    <th scope="col">State</th>
+                                    <th scope="col">Colonies</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

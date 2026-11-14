@@ -60,14 +60,14 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Platform</th>
-                                    <th>Account</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                    <th>Leads</th>
-                                    <th>Campaigns</th>
-                                    <th>Last Sync</th>
-                                    <th class="text-end">Actions</th>
+                                    <th scope="col">Platform</th>
+                                    <th scope="col">Account</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Leads</th>
+                                    <th scope="col">Campaigns</th>
+                                    <th scope="col">Last Sync</th>
+                                    <th scope="col" class="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

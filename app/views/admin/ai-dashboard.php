@@ -116,7 +116,7 @@ $content = ob_start();
                 <div class="card-header aps-cp-card-header"><i class="fas fa-chart-bar"></i> Top Detected Intents</div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table">
-                        <thead><tr><th>Intent</th><th>Count</th></tr></thead>
+                        <thead><tr><th scope="col">Intent</th><th scope="col">Count</th></tr></thead>
                         <tbody>
                             <?php foreach ($topIntents as $i): ?>
                                 <tr>
@@ -139,11 +139,11 @@ $content = ob_start();
                     <div class="table-responsive"><table class="table">
                         <thead>
                             <tr>
-                                <th>Lead</th>
-                                <th>Phone</th>
-                                <th>Score</th>
-                                <th>Grade</th>
-                                <th>Predicted Action</th>
+                                <th scope="col">Lead</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Score</th>
+                                <th scope="col">Grade</th>
+                                <th scope="col">Predicted Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -174,7 +174,7 @@ $content = ob_start();
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table">
                         <thead>
-                            <tr><th>Type</th><th>District</th><th>R-sq</th><th>Samples</th><th>Trained At</th></tr>
+                            <tr><th scope="col">Type</th><th scope="col">District</th><th scope="col">R-sq</th><th scope="col">Samples</th><th scope="col">Trained At</th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($priceModels as $m): ?>

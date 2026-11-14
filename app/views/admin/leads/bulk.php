@@ -45,8 +45,8 @@
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
-                                <th>#</th><th>Name</th><th>Phone</th><th>Source</th><th>Status</th><th>Assigned</th>
+                                <th scope="col"><input type="checkbox" id="selectAll" class="form-check-input" aria-label="Select all rows"></th>
+                                <th scope="col">#</th><th scope="col">Name</th><th scope="col">Phone</th><th scope="col">Source</th><th scope="col">Status</th><th scope="col">Assigned</th>
                             </tr>
                         </thead>
                         <tbody>

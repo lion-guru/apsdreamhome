@@ -149,10 +149,10 @@ $notifications = $notifications ?? [];
                             <div class="table-responsive"><table class="table table-hover align-middle table-responsive">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Date</th>
-                                        <th>Type</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>

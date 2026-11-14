@@ -8,7 +8,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Score</th><th>Probability</th><th>Status</th><th>Assigned</th></tr></thead>
+                        <thead><tr><th scope="col">#</th><th scope="col">Name</th><th scope="col">Phone</th><th scope="col">Score</th><th scope="col">Probability</th><th scope="col">Status</th><th scope="col">Assigned</th></tr></thead>
                         <tbody>
                         <?php foreach ($scored as $s): ?>
                             <tr>

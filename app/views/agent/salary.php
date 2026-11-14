@@ -45,7 +45,7 @@ $payroll = $payroll ?? ['success' => false];
     <?php if (!empty($history)): ?>
     <div class="card mb-4"><div class="card-header fw-bold">Revision History</div>
         <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
-            <thead class="table-light"><tr><th class="text-end">Basic</th><th class="text-end">HRA</th><th class="text-end">TA/DA</th><th class="text-end">Allow.</th><th class="text-center">Effective</th></tr></thead>
+            <thead class="table-light"><tr><th scope="col" class="text-end">Basic</th><th scope="col" class="text-end">HRA</th><th scope="col" class="text-end">TA/DA</th><th scope="col" class="text-end">Allow.</th><th scope="col" class="text-center">Effective</th></tr></thead>
             <tbody>
                 <?php foreach ($history as $h): ?>
                 <tr>

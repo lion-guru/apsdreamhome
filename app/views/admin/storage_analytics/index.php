@@ -32,7 +32,7 @@ $lastBackup = $lastBackup ?? null;
         <div class="col-md-6">
             <div class="card"><div class="card-header fw-bold">Size by Folder</div>
                 <div class="card-body p-0"><table class="table mb-0">
-                    <thead><tr><th>Folder</th><th class="text-end">Size</th></tr></thead>
+                    <thead><tr><th scope="col">Folder</th><th scope="col" class="text-end">Size</th></tr></thead>
                     <tbody>
                     <?php foreach ($byPrefix as $p => $sz): ?>
                         <tr><td><?= htmlspecialchars($p) ?></td><td class="text-end"><?= number_format($sz / 1024, 1) ?> KB</td></tr>
@@ -45,7 +45,7 @@ $lastBackup = $lastBackup ?? null;
         <div class="col-md-6">
             <div class="card"><div class="card-header fw-bold">Size by File Type</div>
                 <div class="card-body p-0"><table class="table mb-0">
-                    <thead><tr><th>Type</th><th class="text-end">Size</th></tr></thead>
+                    <thead><tr><th scope="col">Type</th><th scope="col" class="text-end">Size</th></tr></thead>
                     <tbody>
                     <?php foreach ($byType as $t => $sz): ?>
                         <tr><td><?= htmlspecialchars($t) ?></td><td class="text-end"><?= number_format($sz / 1024, 1) ?> KB</td></tr>

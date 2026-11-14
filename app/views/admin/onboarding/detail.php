@@ -122,12 +122,12 @@ $templates = $templates ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 40%">Item</th>
-                            <th style="width: 15%">Category</th>
-                            <th style="width: 15%">Assigned To</th>
-                            <th style="width: 10%">Due</th>
-                            <th style="width: 10%">Status</th>
-                            <th style="width: 10%">Actions</th>
+                            <th scope="col" style="width: 40%">Item</th>
+                            <th scope="col" style="width: 15%">Category</th>
+                            <th scope="col" style="width: 15%">Assigned To</th>
+                            <th scope="col" style="width: 10%">Due</th>
+                            <th scope="col" style="width: 10%">Status</th>
+                            <th scope="col" style="width: 10%">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

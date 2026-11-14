@@ -18,7 +18,7 @@ $headerClass = $headerClass ?? 'table-light';
                     <thead class="<?php echo htmlspecialchars($headerClass ?? ''); ?>">
                         <tr>
                             <?php foreach($headers as $header): ?>
-                                <th <?php echo isset($header['width']) ? 'class=""' : ''; ?>>
+                                <th scope="col" <?php echo isset($header['width']) ? 'class=""' : ''; ?>>
                                     <?php echo htmlspecialchars($header['title'] ?? ''); ?>
                                 </th>
                             <?php endforeach; ?>

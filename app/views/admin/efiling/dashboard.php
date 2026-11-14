@@ -90,7 +90,7 @@ ob_start();
                 <?php else: ?>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
-                            <thead class="table-light"><tr><th>Type</th><th>Description</th><th>Due</th><th>Status</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Type</th><th scope="col">Description</th><th scope="col">Due</th><th scope="col">Status</th></tr></thead>
                             <tbody>
                             <?php foreach ($overdue_deadlines as $d):
                                 $daysOverdue = (int)((time() - strtotime($d['due_date'])) / 86400);
@@ -122,7 +122,7 @@ ob_start();
                 <?php else: ?>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
-                            <thead class="table-light"><tr><th>Type</th><th>Description</th><th>Due</th><th>Days</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Type</th><th scope="col">Description</th><th scope="col">Due</th><th scope="col">Days</th></tr></thead>
                             <tbody>
                             <?php foreach ($upcoming_deadlines as $d):
                                 $daysLeft = max(0, (int)((strtotime($d['due_date']) - time()) / 86400));
@@ -156,7 +156,7 @@ ob_start();
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>Type</th><th>FY</th><th>Period</th><th>Records</th><th>Amount</th><th>Status</th><th>Date</th></tr>
+                        <tr><th scope="col">Type</th><th scope="col">FY</th><th scope="col">Period</th><th scope="col">Records</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">Date</th></tr>
                     </thead>
                     <tbody>
                     <?php foreach ($recent_submissions as $s): ?>

@@ -136,11 +136,11 @@ $reuseLabel = $reuseLabelMap[$log['water_reuse_purpose'] ?? ''] ?? ucwords(str_r
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>Parameter</th>
-                    <th>Inlet (Raw Sewage)</th>
-                    <th>Outlet (Treated)</th>
-                    <th>Statutory Limit</th>
-                    <th>Status</th>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">Inlet (Raw Sewage)</th>
+                    <th scope="col">Outlet (Treated)</th>
+                    <th scope="col">Statutory Limit</th>
+                    <th scope="col">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -185,7 +185,7 @@ $reuseLabel = $reuseLabelMap[$log['water_reuse_purpose'] ?? ''] ?? ucwords(str_r
         <div class="section-title">🔧 Operational & Sludge Management Details</div>
         <table class="data-table">
             <tr>
-                <th>Treated Water Reuse Purpose</th>
+                <th scope="col">Treated Water Reuse Purpose</th>
                 <td colspan="3"><?= htmlspecialchars($reuseLabel) ?></td>
             </tr>
             <tr>

@@ -31,13 +31,13 @@ $shift_types = $shift_types ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Name</th>
-                            <th>Code</th>
-                            <th>Timing</th>
-                            <th>Duration</th>
-                            <th>Color</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Timing</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Color</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

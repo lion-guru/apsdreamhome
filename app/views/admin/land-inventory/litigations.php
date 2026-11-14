@@ -47,7 +47,7 @@ $stBadge = ['pending' => 'warning text-dark', 'decided_in_favor' => 'success', '
 </div></div>
 <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
     <div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Khasra / Village</th><th>Court / Case</th><th>Parties</th><th>Stay</th><th>Next Hearing</th><th>Status</th><th></th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Khasra / Village</th><th scope="col">Court / Case</th><th scope="col">Parties</th><th scope="col">Stay</th><th scope="col">Next Hearing</th><th scope="col">Status</th><th scope="col"></th></tr></thead>
         <tbody>
         <?php if (empty($rows)): ?>
             <tr><td colspan="7" class="text-center text-muted py-4">No cases tracked — clean title landscape. Add one above when a dispute surfaces.</td></tr>

@@ -9,49 +9,49 @@
     <table class="table table-bordered table-hover">
       <thead class="table-light">
         <tr>
-          <th></th>
+          <th scope="col"></th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
-          <th><?= htmlspecialchars($prop['title'] ?? '') ?></th>
+          <th scope="col"><?= htmlspecialchars($prop['title'] ?? '') ?></th>
           <?php endforeach; ?>
         </tr>
       </thead>
       <tbody>
-        <tr><th>Price</th>
+        <tr><th scope="row">Price</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
           <td>₹<?= number_format($prop['price']) ?></td>
           <?php endforeach; ?>
         </tr>
-        <tr><th>Location</th>
+        <tr><th scope="row">Location</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
           <td><?= htmlspecialchars($prop['location'] ?? '') ?></td>
           <?php endforeach; ?>
         </tr>
-        <tr><th>Type</th>
+        <tr><th scope="row">Type</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
           <td><?= htmlspecialchars($prop['type'] ?? '') ?></td>
           <?php endforeach; ?>
         </tr>
-        <tr><th>Bedrooms</th>
+        <tr><th scope="row">Bedrooms</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
           <td><?= $prop['bedrooms'] ?></td>
           <?php endforeach; ?>
         </tr>
-        <tr><th>Bathrooms</th>
+        <tr><th scope="row">Bathrooms</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
           <td><?= $prop['bathrooms'] ?></td>
           <?php endforeach; ?>
         </tr>
-        <tr><th>Area (sqft)</th>
+        <tr><th scope="row">Area (sqft)</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
           <td><?= number_format($prop['area_sqft']) ?></td>
           <?php endforeach; ?>
         </tr>
-        <tr><th>Status</th>
+        <tr><th scope="row">Status</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
           <td><?= htmlspecialchars(ucfirst($prop['status'])) ?></td>
           <?php endforeach; ?>
         </tr>
-        <tr><th>City</th>
+        <tr><th scope="row">City</th>
           <?php foreach (array_slice($properties, 0, 4) as $prop): ?>
           <td><?= htmlspecialchars($prop['city'] ?? '') ?></td>
           <?php endforeach; ?>

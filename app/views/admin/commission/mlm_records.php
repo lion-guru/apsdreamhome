@@ -8,7 +8,7 @@
     <div class="card aps-cp-card">
         <div class="card-body p-0">
             <div class="table-responsive"><table class="table table-striped mb-0">
-                <thead><tr><th>#</th><th>Associate</th><th>Customer</th><th>Booking Amt</th><th>Total Comm.</th><th>Status</th><th>Created</th><th>Action</th></tr></thead>
+                <thead><tr><th scope="col">#</th><th scope="col">Associate</th><th scope="col">Customer</th><th scope="col">Booking Amt</th><th scope="col">Total Comm.</th><th scope="col">Status</th><th scope="col">Created</th><th scope="col">Action</th></tr></thead>
                 <tbody>
                     <?php if (empty($records ?? [])): ?>
                     <tr>

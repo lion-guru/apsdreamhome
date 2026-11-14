@@ -121,16 +121,16 @@ $documents = $documents ?? [];
                         <div class="card-header aps-cp-card-header"><h5 class="mb-0">Basic Information</h5></div>
                         <div class="card-body aps-cp-card-body">
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th >Plot Number</th><td><?= htmlspecialchars($plot['plot_number'] ?? '') ?></td></tr>
-                                <tr><th>Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector'] ?? '') : '' ?></td></tr>
-                                <tr><th>Type</th><td><?= ucfirst(htmlspecialchars($plot['plot_type'] ?? 'residential')) ?></td></tr>
-                                <tr><th>Status</th><td>
+                                <tr><th scope="col" >Plot Number</th><td><?= htmlspecialchars($plot['plot_number'] ?? '') ?></td></tr>
+                                <tr><th scope="col">Block / Sector</th><td><?= htmlspecialchars($plot['block'] ?? '') ?> <?= !empty($plot['sector']) ? '/ Sector ' . htmlspecialchars($plot['sector'] ?? '') : '' ?></td></tr>
+                                <tr><th scope="col">Type</th><td><?= ucfirst(htmlspecialchars($plot['plot_type'] ?? 'residential')) ?></td></tr>
+                                <tr><th scope="col">Status</th><td>
                                     <span class="badge bg-<?= ($plot['status'] ?? '') === 'available' ? 'success' : (($plot['status'] ?? '') === 'booked' ? 'warning' : (($plot['status'] ?? '') === 'sold' ? 'danger' : 'secondary')) ?> fs-6">
                                         <?= ucfirst(htmlspecialchars($plot['status'] ?? 'available')) ?>
                                     </span>
                                 </td></tr>
-                                <tr><th>Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? '') ?></td></tr>
-                                <tr><th>Location</th><td><?= htmlspecialchars(($plot['state_name'] ?? '') . (!empty($plot['district_name']) ? ', ' . $plot['district_name'] : '')) ?></td></tr>
+                                <tr><th scope="col">Colony</th><td><?= htmlspecialchars($plot['colony_name'] ?? '') ?></td></tr>
+                                <tr><th scope="col">Location</th><td><?= htmlspecialchars(($plot['state_name'] ?? '') . (!empty($plot['district_name']) ? ', ' . $plot['district_name'] : '')) ?></td></tr>
                             </table></div>
                         </div>
                     </div>
@@ -142,7 +142,7 @@ $documents = $documents ?? [];
                         <div class="card-header aps-cp-card-header"><h5 class="mb-0">Dimensions & Area</h5></div>
                         <div class="card-body aps-cp-card-body">
                             <div class="table-responsive"><table class="table table-bordered">
-                                <tr><th >Dimensions</th>
+                                <tr><th scope="col" >Dimensions</th>
                                     <td>
                                         <?php if (!empty($plot['dimension_label'])): ?>
                                             <span class="badge bg-primary fs-6 px-3 py-2"><?= htmlspecialchars($plot['dimension_label'] ?? '') ?></span>
@@ -154,11 +154,11 @@ $documents = $documents ?? [];
                                         <?php endif; ?>
                                     </td>
                                 </tr>
-                                <tr><th>Area (sqft)</th><td><strong><?= number_format($plot['area_sqft'] ?? 0) ?></strong> sqft</td></tr>
-                                <tr><th>Area (sqm)</th><td><?= number_format($plot['area_sqm'] ?? 0, 2) ?> sqm</td></tr>
-                                <tr><th>Frontage / Depth</th><td><?= ($plot['frontage_ft'] ?? 0) > 0 ? floatval($plot['frontage_ft']) . ' ft' : 'N/A' ?> / <?= ($plot['depth_ft'] ?? 0) > 0 ? floatval($plot['depth_ft']) . ' ft' : 'N/A' ?></td></tr>
-                                <tr><th>Road Width</th><td><?= ($plot['road_width_ft'] ?? 0) > 0 ? floatval($plot['road_width_ft']) . ' ft' : 'N/A' ?></td></tr>
-                                <tr><th>Facing</th><td><?= htmlspecialchars(ucfirst($plot['facing'] ?? 'N/A')) ?></td></tr>
+                                <tr><th scope="col">Area (sqft)</th><td><strong><?= number_format($plot['area_sqft'] ?? 0) ?></strong> sqft</td></tr>
+                                <tr><th scope="col">Area (sqm)</th><td><?= number_format($plot['area_sqm'] ?? 0, 2) ?> sqm</td></tr>
+                                <tr><th scope="col">Frontage / Depth</th><td><?= ($plot['frontage_ft'] ?? 0) > 0 ? floatval($plot['frontage_ft']) . ' ft' : 'N/A' ?> / <?= ($plot['depth_ft'] ?? 0) > 0 ? floatval($plot['depth_ft']) . ' ft' : 'N/A' ?></td></tr>
+                                <tr><th scope="col">Road Width</th><td><?= ($plot['road_width_ft'] ?? 0) > 0 ? floatval($plot['road_width_ft']) . ' ft' : 'N/A' ?></td></tr>
+                                <tr><th scope="col">Facing</th><td><?= htmlspecialchars(ucfirst($plot['facing'] ?? 'N/A')) ?></td></tr>
                             </table></div>
                         </div>
                     </div>
@@ -178,16 +178,16 @@ $documents = $documents ?? [];
                         <p class="text-muted mb-0">Is plot ka koi gata linked nahi — <a href="<?= BASE_URL ?>/admin/plots/<?= (int)($plot['id'] ?? 0) ?>/edit">edit plot</a> ya Link Desk se jodo.</p>
                     <?php else: ?>
                         <div class="table-responsive"><table class="table table-bordered mb-0">
-                            <tr><th style="width:220px">Gata / Khasra</th><td><strong><?= htmlspecialchars($land['parcel']['khasra_no'] ?? $land['gata']) ?></strong><?= !empty($land['parcel']['village']) ? ' <span class="text-muted">(' . htmlspecialchars($land['parcel']['village']) . ')</span>' : '' ?></td></tr>
-                            <tr><th>Kisan (owner)</th><td><?= htmlspecialchars($land['parcel']['owner_name'] ?? '— darj nahi —') ?><?= !empty($land['parcel']['owner_phone']) ? ' <span class="text-muted">' . htmlspecialchars($land['parcel']['owner_phone']) . '</span>' : '' ?></td></tr>
-                            <tr><th>Rakba</th><td><?= number_format((float)($land['parcel']['area_acres'] ?? 0), 2) ?> acre / <?= number_format((float)($land['parcel']['area_bigha'] ?? 0), 2) ?> bigha <span class="text-muted">(mutation: <?= htmlspecialchars($land['parcel']['mutation_status'] ?? '—') ?>)</span></td></tr>
-                            <tr><th>Kisan hissa + payment</th><td class="small">
+                            <tr><th scope="col" style="width:220px">Gata / Khasra</th><td><strong><?= htmlspecialchars($land['parcel']['khasra_no'] ?? $land['gata']) ?></strong><?= !empty($land['parcel']['village']) ? ' <span class="text-muted">(' . htmlspecialchars($land['parcel']['village']) . ')</span>' : '' ?></td></tr>
+                            <tr><th scope="col">Kisan (owner)</th><td><?= htmlspecialchars($land['parcel']['owner_name'] ?? '— darj nahi —') ?><?= !empty($land['parcel']['owner_phone']) ? ' <span class="text-muted">' . htmlspecialchars($land['parcel']['owner_phone']) . '</span>' : '' ?></td></tr>
+                            <tr><th scope="col">Rakba</th><td><?= number_format((float)($land['parcel']['area_acres'] ?? 0), 2) ?> acre / <?= number_format((float)($land['parcel']['area_bigha'] ?? 0), 2) ?> bigha <span class="text-muted">(mutation: <?= htmlspecialchars($land['parcel']['mutation_status'] ?? '—') ?>)</span></td></tr>
+                            <tr><th scope="col">Kisan hissa + payment</th><td class="small">
                                 <?php if (empty($land['holdings'])): ?><span class="text-muted">—</span><?php endif; ?>
                                 <?php foreach (($land['holdings'] ?? []) as $h): ?>
                                     <div><?= htmlspecialchars($h['farmer_name'] ?? ('#' . ($h['farmer_id'] ?? 0))) ?> · <?= htmlspecialchars($h['land_area'] ?? '') ?> <?= htmlspecialchars($h['land_area_unit'] ?? '') ?> · <?= htmlspecialchars($h['acquisition_status'] ?? '') ?> · <?= htmlspecialchars($h['payment_status'] ?? '') ?> ₹<?= number_format((float)($h['payment_received'] ?? 0), 0) ?></div>
                                 <?php endforeach; ?>
                             </td></tr>
-                            <tr><th>Colony deal</th><td class="small">
+                            <tr><th scope="col">Colony deal</th><td class="small">
                                 <?php if (empty($land['deal'])): ?><span class="text-muted">—</span><?php else: ?>
                                     Paid ₹<?= number_format((float)($land['deal']['advance_paid'] ?? 0), 0) ?> · Baki ₹<?= number_format((float)($land['deal']['balance_amount'] ?? 0), 0) ?> · <?= htmlspecialchars($land['deal']['status'] ?? '') ?> · <?= htmlspecialchars($land['deal']['registration_number'] ?? '—') ?>
                                 <?php endif; ?>
@@ -236,7 +236,7 @@ $documents = $documents ?? [];
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-history"></i> Price Change History</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-striped">
-                        <thead><tr><th>Date</th><th>Old Price</th><th>New Price</th><th>Change Type</th><th>Reason</th><th>Changed By</th></tr></thead>
+                        <thead><tr><th scope="col">Date</th><th scope="col">Old Price</th><th scope="col">New Price</th><th scope="col">Change Type</th><th scope="col">Reason</th><th scope="col">Changed By</th></tr></thead>
                         <tbody>
                             <?php foreach ($priceHistory as $ph): ?>
                             <tr>
@@ -280,7 +280,7 @@ $documents = $documents ?? [];
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-book"></i> Related Bookings</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-striped">
-                        <thead><tr><th>Booking #</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+                        <thead><tr><th scope="col">Booking #</th><th scope="col">Customer</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">Date</th></tr></thead>
                         <tbody>
                             <?php foreach ($bookings as $bk): ?>
                             <tr>
@@ -303,7 +303,7 @@ $documents = $documents ?? [];
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0">Status History</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-striped">
-                        <thead><tr><th>Date</th><th>Old Status</th><th>New Status</th><th>Changed By</th><th>Reason</th></tr></thead>
+                        <thead><tr><th scope="col">Date</th><th scope="col">Old Status</th><th scope="col">New Status</th><th scope="col">Changed By</th><th scope="col">Reason</th></tr></thead>
                         <tbody>
                             <?php foreach ($history as $h): ?>
                             <tr>

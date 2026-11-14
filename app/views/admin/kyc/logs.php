@@ -25,13 +25,13 @@ ob_start();
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>ID</th>
-                                <th>Type</th>
-                                <th>Identifier</th>
-                                <th>Status</th>
-                                <th>Message</th>
-                                <th>IP Address</th>
-                                <th>Time</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Identifier</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Message</th>
+                                <th scope="col">IP Address</th>
+                                <th scope="col">Time</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -13,13 +13,13 @@
                         <p class="text-muted small">Payment Confirmation</p>
                     </div>
                     <div class="table-responsive"><table class="table table-bordered table-responsive">
-                        <tr><th class="bg-light">Order ID</th><td>#<?= h($receipt['order_id'] ?? 'N/A') ?></td></tr>
-                        <tr><th class="bg-light">Customer</th><td><?= h($receipt['customer_name'] ?? 'N/A') ?></td></tr>
-                        <tr><th class="bg-light">Property</th><td><?= h($receipt['property_title'] ?? 'N/A') ?></td></tr>
-                        <tr><th class="bg-light">Amount</th><td>₹<?= number_format($receipt['amount'] ?? 0) ?></td></tr>
-                        <tr><th class="bg-light">Payment Date</th><td><?= h($receipt['payment_date'] ?? date('Y-m-d H:i:s')) ?></td></tr>
-                        <tr><th class="bg-light">Transaction ID</th><td><code><?= h($receipt['transaction_id'] ?? 'N/A') ?></code></td></tr>
-                        <tr><th class="bg-light">Payment Method</th><td><?= h(ucfirst($receipt['payment_method'] ?? 'N/A')) ?></td></tr>
+                        <tr><th scope="col" class="bg-light">Order ID</th><td>#<?= h($receipt['order_id'] ?? 'N/A') ?></td></tr>
+                        <tr><th scope="col" class="bg-light">Customer</th><td><?= h($receipt['customer_name'] ?? 'N/A') ?></td></tr>
+                        <tr><th scope="col" class="bg-light">Property</th><td><?= h($receipt['property_title'] ?? 'N/A') ?></td></tr>
+                        <tr><th scope="col" class="bg-light">Amount</th><td>₹<?= number_format($receipt['amount'] ?? 0) ?></td></tr>
+                        <tr><th scope="col" class="bg-light">Payment Date</th><td><?= h($receipt['payment_date'] ?? date('Y-m-d H:i:s')) ?></td></tr>
+                        <tr><th scope="col" class="bg-light">Transaction ID</th><td><code><?= h($receipt['transaction_id'] ?? 'N/A') ?></code></td></tr>
+                        <tr><th scope="col" class="bg-light">Payment Method</th><td><?= h(ucfirst($receipt['payment_method'] ?? 'N/A')) ?></td></tr>
                     </table></div>
                     <div class="alert alert-danger py-2 px-3 mt-3 mb-0 small text-start border-start border-4 border-danger" style="background-color: #fff8f8; color: #721c24;">
                         <strong>वैधानिक सूचना (Master Deed धारा 2.1 व 2.9):</strong> यदि यह भुगतान प्लॉट बुकिंग/टोकन राशि का है, तो यह राशि पूर्णतः <strong>नॉन-रिफंडेबल (Non-Refundable / वापस नहीं होगी)</strong> है।

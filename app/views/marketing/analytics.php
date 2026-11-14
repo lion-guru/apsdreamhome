@@ -72,7 +72,7 @@
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                             <thead class="table-light">
-                                <tr><th>Campaign</th><th>Impressions</th><th>Clicks</th><th>CTR</th><th>Leads</th><th>Cost/Lead</th><th>ROI</th></tr>
+                                <tr><th scope="col">Campaign</th><th scope="col">Impressions</th><th scope="col">Clicks</th><th scope="col">CTR</th><th scope="col">Leads</th><th scope="col">Cost/Lead</th><th scope="col">ROI</th></tr>
                             </thead>
                             <tbody>
                                 <?php if (!empty($analytics['campaigns'] ?? [])): ?>

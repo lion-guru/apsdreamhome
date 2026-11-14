@@ -260,9 +260,9 @@ $budgetPct  = $budget > 0 ? min(100, round(($spent / $budget) * 100)) : 0;
                     </div>
                 </div>
                 <table class="table table-sm mb-0">
-                    <tr><th class="text-muted fw-normal">Budget</th><td class="text-end fw-bold">₹<?= number_format($budget, 0) ?></td></tr>
-                    <tr><th class="text-muted fw-normal">Spent</th><td class="text-end fw-bold text-<?= $spent > $budget ? 'danger' : 'dark' ?>">₹<?= number_format($spent, 0) ?></td></tr>
-                    <tr><th class="text-muted fw-normal">Remaining</th><td class="text-end fw-bold text-success">₹<?= number_format($remaining, 0) ?></td></tr>
+                    <tr><th scope="col" class="text-muted fw-normal">Budget</th><td class="text-end fw-bold">₹<?= number_format($budget, 0) ?></td></tr>
+                    <tr><th scope="col" class="text-muted fw-normal">Spent</th><td class="text-end fw-bold text-<?= $spent > $budget ? 'danger' : 'dark' ?>">₹<?= number_format($spent, 0) ?></td></tr>
+                    <tr><th scope="col" class="text-muted fw-normal">Remaining</th><td class="text-end fw-bold text-success">₹<?= number_format($remaining, 0) ?></td></tr>
                 </table>
                 <?php else: ?>
                     <p class="text-muted text-center py-2 mb-0 small">Budget not set. <a href="<?= BASE_URL ?>/admin/projects/progress/<?= $pId ?>">Set budget →</a></p>

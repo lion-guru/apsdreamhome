@@ -65,13 +65,13 @@ ob_start();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Title</th>
-                            <th>Question</th>
-                            <th>Status</th>
-                            <th>Responses</th>
-                            <th>Created</th>
-                            <th>Actions</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Question</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Responses</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

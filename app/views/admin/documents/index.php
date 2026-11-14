@@ -125,14 +125,14 @@
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Title</th>
-                                <th>Type</th>
-                                <th>File</th>
-                                <th>Size</th>
-                                <th>Uploaded By</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Actions</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">File</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Uploaded By</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -84,8 +84,8 @@ $isEligible   = $eligibility['eligible'] ?? false;
                 <table class="table table-bordered mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th >#</th>
-                            <th>Blocking Reason</th>
+                            <th scope="col" >#</th>
+                            <th scope="col">Blocking Reason</th>
                         </tr>
                     </thead>
                     <tbody>

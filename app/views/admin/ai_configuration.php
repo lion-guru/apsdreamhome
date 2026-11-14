@@ -40,7 +40,7 @@
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                             <thead class="table-light">
-                                <tr><th>Model</th><th>Version</th><th>Status</th></tr>
+                                <tr><th scope="col">Model</th><th scope="col">Version</th><th scope="col">Status</th></tr>
                             </thead>
                             <tbody>
                                 <?php if (!empty($models)): ?>

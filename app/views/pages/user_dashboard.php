@@ -197,13 +197,13 @@ $dashBookingCount = count($dashBookings);
                     <table class="aps-cp-table">
                         <thead>
                             <tr>
-                                <th><?= __('dash_th_plot', null, 'Plot') ?></th>
-                                <th><?= __('dash_th_colony', null, 'Colony') ?></th>
-                                <th><?= __('dash_th_amount', null, 'Amount') ?></th>
-                                <th><?= __('dash_th_token_paid', null, 'Token Paid') ?></th>
-                                <th><?= __('dash_th_status', null, 'Status') ?></th>
-                                <th><?= __('dash_th_date', null, 'Date') ?></th>
-                                <th class="text-end"><?= __('dash_th_action', null, 'Action') ?></th>
+                                <th scope="col"><?= __('dash_th_plot', null, 'Plot') ?></th>
+                                <th scope="col"><?= __('dash_th_colony', null, 'Colony') ?></th>
+                                <th scope="col"><?= __('dash_th_amount', null, 'Amount') ?></th>
+                                <th scope="col"><?= __('dash_th_token_paid', null, 'Token Paid') ?></th>
+                                <th scope="col"><?= __('dash_th_status', null, 'Status') ?></th>
+                                <th scope="col"><?= __('dash_th_date', null, 'Date') ?></th>
+                                <th scope="col" class="text-end"><?= __('dash_th_action', null, 'Action') ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -319,14 +319,14 @@ $dashBookingCount = count($dashBookings);
                     <table class="aps-cp-table aps-cp-table--compact">
                         <thead>
                             <tr>
-                                <th>Booking</th>
-                                <th>Plot</th>
-                                <th>Installment</th>
-                                <th>Due Date</th>
-                                <th class="text-end">Amount</th>
-                                <th class="text-end">Penalty</th>
-                                <th>Days</th>
-                                <th></th>
+                                <th scope="col">Booking</th>
+                                <th scope="col">Plot</th>
+                                <th scope="col">Installment</th>
+                                <th scope="col">Due Date</th>
+                                <th scope="col" class="text-end">Amount</th>
+                                <th scope="col" class="text-end">Penalty</th>
+                                <th scope="col">Days</th>
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -424,10 +424,10 @@ $dashBookingCount = count($dashBookings);
                     <table class="aps-cp-table">
                         <thead>
                             <tr>
-                                <th><?= __('dash_th_subject', null, 'Subject') ?></th>
-                                <th><?= __('dash_th_type', null, 'Type') ?></th>
-                                <th><?= __('dash_th_status', null, 'Status') ?></th>
-                                <th><?= __('dash_th_date', null, 'Date') ?></th>
+                                <th scope="col"><?= __('dash_th_subject', null, 'Subject') ?></th>
+                                <th scope="col"><?= __('dash_th_type', null, 'Type') ?></th>
+                                <th scope="col"><?= __('dash_th_status', null, 'Status') ?></th>
+                                <th scope="col"><?= __('dash_th_date', null, 'Date') ?></th>
                             </tr>
                         </thead>
                         <tbody>

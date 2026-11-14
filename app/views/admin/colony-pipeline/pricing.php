@@ -27,7 +27,7 @@ $cid = (int)($colony['id'] ?? 0);
         <div class="card border-0 shadow-sm mb-3">
             <div class="card-header bg-white fw-bold">Price Bands</div>
             <div class="card-body p-0"><table class="table table-hover mb-0">
-                <thead class="table-light"><tr><th>Band</th><th class="text-center">Plots</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Band</th><th scope="col" class="text-center">Plots</th></tr></thead>
                 <tbody>
                     <?php if (empty($price_bands)): ?><tr><td colspan="2" class="text-center text-muted py-3">No data</td></tr><?php endif; ?>
                     <?php foreach ($price_bands as $b): ?><tr><td><?= htmlspecialchars($b['price_band'] ?? '') ?></td><td class="text-center"><?= (int)($b['plot_count'] ?? 0) ?></td></tr><?php endforeach; ?>
@@ -37,7 +37,7 @@ $cid = (int)($colony['id'] ?? 0);
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white fw-bold">Dev Cost by Type</div>
             <div class="card-body p-0"><table class="table table-hover mb-0">
-                <thead class="table-light"><tr><th>Type</th><th class="text-end">Amount</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Type</th><th scope="col" class="text-end">Amount</th></tr></thead>
                 <tbody>
                     <?php if (empty($dev_costs)): ?><tr><td colspan="2" class="text-center text-muted py-3">No costs</td></tr><?php endif; ?>
                     <?php foreach ($dev_costs as $d): ?><tr><td><?= htmlspecialchars($d['cost_type'] ?? '') ?></td><td class="text-end">₹<?= number_format($d['total_amount'] ?? 0, 0) ?></td></tr><?php endforeach; ?>
@@ -63,7 +63,7 @@ $cid = (int)($colony['id'] ?? 0);
         <div class="card border-0 shadow-sm">
             <div class="card-header bg-white fw-bold">Pending Approvals (<?= count($pending_approvals) ?>)</div>
             <div class="card-body p-0"><table class="table table-hover mb-0">
-                <thead class="table-light"><tr><th>Plot</th><th class="text-end">Amount</th><th>By</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Plot</th><th scope="col" class="text-end">Amount</th><th scope="col">By</th></tr></thead>
                 <tbody>
                     <?php if (empty($pending_approvals)): ?><tr><td colspan="3" class="text-center text-muted py-3">None pending</td></tr><?php endif; ?>
                     <?php foreach ($pending_approvals as $p): ?><tr><td><?= htmlspecialchars($p['plot_number'] ?? '') ?> (<?= htmlspecialchars($p['block'] ?? '') ?>)</td><td class="text-end">₹<?= number_format($p['amount'] ?? $p['total_price'] ?? 0, 0) ?></td><td><?= htmlspecialchars($p['requested_by_name'] ?? '') ?></td></tr><?php endforeach; ?>

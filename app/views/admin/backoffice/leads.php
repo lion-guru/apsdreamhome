@@ -37,7 +37,7 @@
   <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th><?= __('admin_hash_label') ?></th><th><?= __('admin_lead_label') ?></th><th><?= __('admin_contact_label') ?></th><th><?= __('admin_source_label') ?></th><th><?= __('admin_type_label') ?></th><th><?= __('admin_priority_label') ?></th><th><?= __('admin_score_label') ?></th><th><?= __('admin_status_label') ?></th><th><?= __('admin_follow_up') ?></th><th></th></tr></thead>
+        <thead><tr><th scope="col"><?= __('admin_hash_label') ?></th><th scope="col"><?= __('admin_lead_label') ?></th><th scope="col"><?= __('admin_contact_label') ?></th><th scope="col"><?= __('admin_source_label') ?></th><th scope="col"><?= __('admin_type_label') ?></th><th scope="col"><?= __('admin_priority_label') ?></th><th scope="col"><?= __('admin_score_label') ?></th><th scope="col"><?= __('admin_status_label') ?></th><th scope="col"><?= __('admin_follow_up') ?></th><th scope="col"></th></tr></thead>
         <tbody>
           <?php if (empty($leads)): ?>
             <tr><td colspan="10" class="text-center text-muted py-4"><?= __('admin_no_leads') ?></td></tr>

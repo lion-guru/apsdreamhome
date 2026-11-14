@@ -15,7 +15,7 @@
             <?php if (empty($activities)): ?>
             <div class="text-center py-4"><p class="text-muted mb-0">No recent user activity found</p></div>
             <?php else: ?>
-            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th>User</th><th>Role</th><th>Action</th><th>IP Address</th><th>Date/Time</th></tr></thead>
+            <div class="table-responsive"><div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive"><thead class="table-light"><tr><th scope="col">User</th><th scope="col">Role</th><th scope="col">Action</th><th scope="col">IP Address</th><th scope="col">Date/Time</th></tr></thead>
                 <tbody><?php foreach ($activities as $a): ?><tr><td><?= htmlspecialchars($a['user_name'] ?? $a['user'] ?? '-') ?></td><td><?= htmlspecialchars(ucfirst($a['role'] ?? '-')) ?></td><td><?= htmlspecialchars($a['action'] ?? '-') ?></td><td><code><?= htmlspecialchars($a['ip_address'] ?? '-') ?></code></td><td><?= htmlspecialchars($a['created_at'] ?? '-') ?></td></tr><?php endforeach; ?></tbody></table></div></div>
             <?php endif; ?>
         </div>

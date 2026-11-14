@@ -72,7 +72,7 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                     <div class="text-center text-muted py-4">No trips scheduled yet.</div>
                 <?php else: ?>
                 <div class="table-responsive"><table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>Date</th><th>Route</th><th>Cab &amp; Associate</th><th>Funnel</th><th>Status</th><th></th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Route</th><th scope="col">Cab &amp; Associate</th><th scope="col">Funnel</th><th scope="col">Status</th><th scope="col"></th></tr></thead>
                     <tbody>
                     <?php foreach ($trips as $t):
                         $conv = ((int)$t['customers_visited'] > 0) ? round(((int)$t['tokens_collected'] * 100) / (int)$t['customers_visited'], 1) : 0; ?>

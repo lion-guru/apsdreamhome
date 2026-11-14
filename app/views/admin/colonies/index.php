@@ -150,13 +150,13 @@ foreach ($colonies as $c) {
             <table class="table table-hover align-middle mb-0" id="coloniesTable">
                 <thead style="background:#f8fafc;">
                     <tr>
-                        <th class="px-4">Colony Name</th>
-                        <th>District / State</th>
-                        <th class="text-center">Plots</th>
-                        <th class="text-center">Available</th>
-                        <th>Starting Price</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th scope="col" class="px-4">Colony Name</th>
+                        <th scope="col">District / State</th>
+                        <th scope="col" class="text-center">Plots</th>
+                        <th scope="col" class="text-center">Available</th>
+                        <th scope="col">Starting Price</th>
+                        <th scope="col" class="text-center">Status</th>
+                        <th scope="col" class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

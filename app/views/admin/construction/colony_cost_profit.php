@@ -47,9 +47,9 @@ $grandMargin = ($grand['contracted'] ?? 0) > 0 ? round($grandProfit * 100 / $gra
         <?php else: ?>
         <div class="table-responsive"><table class="table table-hover mb-0">
             <thead class="table-light"><tr>
-                <th>Colony</th><th class="text-end">Civil Work</th><th class="text-end">Material Used</th>
-                <th class="text-end">Total Cost</th><th class="text-end">Contracted</th><th class="text-end">Collected</th>
-                <th class="text-end">Profit</th><th class="text-end">Margin</th><th></th>
+                <th scope="col">Colony</th><th scope="col" class="text-end">Civil Work</th><th scope="col" class="text-end">Material Used</th>
+                <th scope="col" class="text-end">Total Cost</th><th scope="col" class="text-end">Contracted</th><th scope="col" class="text-end">Collected</th>
+                <th scope="col" class="text-end">Profit</th><th scope="col" class="text-end">Margin</th><th scope="col"></th>
             </tr></thead>
             <tbody>
             <?php foreach ($rows as $r): ?>

@@ -14,12 +14,12 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
                 <h4 class="text-success fw-bold">OFFICIALLY VERIFIED DOCUMENT</h4>
                 <p class="text-muted">Issued by APS Dream Home ERP — verified live from database records.</p>
                 <table class="table table-sm text-start mt-3">
-                    <tr><th style="width:40%">Document Type</th><td><?= $e($doc['label'] ?? $doc_type) ?></td></tr>
-                    <tr><th>Reference No.</th><td class="fw-bold"><?= $e($doc['ref'] ?? $ref_no) ?></td></tr>
-                    <tr><th>Issued To</th><td><?= $e($doc['who'] ?? '') ?></td></tr>
-                    <tr><th>Plot / Colony</th><td><?= $e($doc['plot'] ?? '') ?></td></tr>
-                    <tr><th>Value / Status</th><td><?= $e($doc['amount'] ?? '') ?></td></tr>
-                    <tr><th>Issue Date</th><td><?= $e($doc['date'] ?? '') ?></td></tr>
+                    <tr><th scope="col" style="width:40%">Document Type</th><td><?= $e($doc['label'] ?? $doc_type) ?></td></tr>
+                    <tr><th scope="col">Reference No.</th><td class="fw-bold"><?= $e($doc['ref'] ?? $ref_no) ?></td></tr>
+                    <tr><th scope="col">Issued To</th><td><?= $e($doc['who'] ?? '') ?></td></tr>
+                    <tr><th scope="col">Plot / Colony</th><td><?= $e($doc['plot'] ?? '') ?></td></tr>
+                    <tr><th scope="col">Value / Status</th><td><?= $e($doc['amount'] ?? '') ?></td></tr>
+                    <tr><th scope="col">Issue Date</th><td><?= $e($doc['date'] ?? '') ?></td></tr>
                 </table>
                 <p class="small text-muted mt-3">If anyone asks for money against this document, call our office first — verified amount above is final.</p>
             </div>

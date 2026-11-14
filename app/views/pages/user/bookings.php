@@ -124,15 +124,15 @@ $statusLabels = [
                 <table class="aps-cp-table">
                     <thead>
                         <tr>
-                            <th><?= __('user_bookings_col_booking', 'Booking #') ?></th>
-                            <th><?= __('user_bookings_col_plot', 'Plot') ?></th>
-                            <th><?= __('user_bookings_col_colony', 'Colony') ?></th>
-                            <th><?= __('user_bookings_col_status', 'Status') ?></th>
-                            <th><?= __('user_bookings_col_date', 'Booking Date') ?></th>
-                            <th><?= __('user_bookings_col_total', 'Total Value') ?></th>
-                            <th><?= __('user_bookings_col_paid', 'Paid') ?></th>
-                            <th><?= __('user_bookings_col_pending', 'Pending') ?></th>
-                            <th class="text-end"><?= __('user_bookings_col_action', 'Action') ?></th>
+                            <th scope="col"><?= __('user_bookings_col_booking', 'Booking #') ?></th>
+                            <th scope="col"><?= __('user_bookings_col_plot', 'Plot') ?></th>
+                            <th scope="col"><?= __('user_bookings_col_colony', 'Colony') ?></th>
+                            <th scope="col"><?= __('user_bookings_col_status', 'Status') ?></th>
+                            <th scope="col"><?= __('user_bookings_col_date', 'Booking Date') ?></th>
+                            <th scope="col"><?= __('user_bookings_col_total', 'Total Value') ?></th>
+                            <th scope="col"><?= __('user_bookings_col_paid', 'Paid') ?></th>
+                            <th scope="col"><?= __('user_bookings_col_pending', 'Pending') ?></th>
+                            <th scope="col" class="text-end"><?= __('user_bookings_col_action', 'Action') ?></th>
                         </tr>
                     </thead>
                     <tbody>

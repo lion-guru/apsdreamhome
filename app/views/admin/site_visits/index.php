@@ -75,13 +75,13 @@ $executives = $executives ?? [];
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Visitor</th>
-                                <th>Date & Time</th>
-                                <th>Lead</th>
-                                <th>Associate</th>
-                                <th>Status</th>
-                                <th>Rating</th>
-                                <th>Action</th>
+                                <th scope="col">Visitor</th>
+                                <th scope="col">Date & Time</th>
+                                <th scope="col">Lead</th>
+                                <th scope="col">Associate</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Rating</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>

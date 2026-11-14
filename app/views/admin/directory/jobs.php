@@ -9,7 +9,7 @@
             <div class="table-responsive">
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
-                        <tr><th>ID</th><th>Title</th><th>Type</th><th>Category</th><th>Company</th><th>Location</th><th>Type</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+                        <tr><th scope="col">ID</th><th scope="col">Title</th><th scope="col">Type</th><th scope="col">Category</th><th scope="col">Company</th><th scope="col">Location</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Date</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($jobs)): ?>

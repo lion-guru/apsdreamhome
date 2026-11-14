@@ -23,7 +23,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-bordered table-hover table-responsive">
                     <thead class="table-light">
-                        <tr><?php foreach (array_keys($data[0] ?? []) as $col): ?><th><?= htmlspecialchars(ucwords(str_replace('_', ' ', $col))) ?></th><?php endforeach; ?></tr>
+                        <tr><?php foreach (array_keys($data[0] ?? []) as $col): ?><th scope="col"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $col))) ?></th><?php endforeach; ?></tr>
                     </thead>
                     <tbody><?php foreach ($data as $row): ?>
                         <tr><?php foreach ($row as $cell): ?><td><?= htmlspecialchars($cell ?? '-') ?></td><?php endforeach; ?></tr>

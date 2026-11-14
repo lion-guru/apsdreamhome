@@ -23,7 +23,7 @@
                         <div class="col-md-6"><strong>Payment Date:</strong> <?= htmlspecialchars($payment['payment_date'] ?? '') ?></div>
                     </div>
                     <div class="table-responsive"><table class="table table-bordered mt-3">
-                        <tr><th>Description</th><th class="text-end">Amount</th></tr>
+                        <tr><th scope="col">Description</th><th scope="col" class="text-end">Amount</th></tr>
                         <tr><td>Gross Salary</td><td class="text-end">₹<?= number_format($payment['gross_amount'] ?? 0, 2) ?></td></tr>
                         <tr><td>Total Deductions</td><td class="text-end text-danger">- ₹<?= number_format($payment['deduction_amount'] ?? 0, 2) ?></td></tr>
                         <tr class="table-success"><td><strong>Net Salary</strong></td><td class="text-end"><strong>₹<?= number_format($payment['net_amount'] ?? 0, 2) ?></strong></td></tr>

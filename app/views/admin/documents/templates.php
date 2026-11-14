@@ -67,7 +67,7 @@
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead class="table-light">
-                                    <tr><th>Name</th><th>Type</th><th>Category</th><th>Status</th><th>Actions</th></tr>
+                                    <tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Category</th><th scope="col">Status</th><th scope="col">Actions</th></tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($templates as $t): ?>

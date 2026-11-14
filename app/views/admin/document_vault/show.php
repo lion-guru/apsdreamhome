@@ -199,10 +199,10 @@ $document = $document ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 150px">Date</th>
-                            <th style="width: 120px">Action</th>
-                            <th style="width: 150px">Verified By</th>
-                            <th>Comments</th>
+                            <th scope="col" style="width: 150px">Date</th>
+                            <th scope="col" style="width: 120px">Action</th>
+                            <th scope="col" style="width: 150px">Verified By</th>
+                            <th scope="col">Comments</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -69,14 +69,14 @@
                             <table class="table table-hover">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Rule Name</th>
-                                        <th>Source Pattern</th>
-                                        <th>City Pattern</th>
-                                        <th>Budget Range</th>
-                                        <th>Priority</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Rule Name</th>
+                                        <th scope="col">Source Pattern</th>
+                                        <th scope="col">City Pattern</th>
+                                        <th scope="col">Budget Range</th>
+                                        <th scope="col">Priority</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

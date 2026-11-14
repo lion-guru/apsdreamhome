@@ -18,19 +18,19 @@
                         <div class="col-12">
                             <div class="table-responsive"><table class="table table-bordered">
                                 <tr>
-                                    <th class="w-25">ID</th>
+                                    <th scope="col" class="w-25">ID</th>
                                     <td><?php echo e($article['id']); ?></td>
                                 </tr>
                                 <tr>
-                                    <th>Title</th>
+                                    <th scope="col">Title</th>
                                     <td><?php echo htmlspecialchars($article['title'] ?? ''); ?></td>
                                 </tr>
                                 <tr>
-                                    <th>Category</th>
+                                    <th scope="col">Category</th>
                                     <td><?php echo htmlspecialchars($article['category'] ?? '-'); ?></td>
                                 </tr>
                                 <tr>
-                                    <th>Status</th>
+                                    <th scope="col">Status</th>
                                     <td>
                                         <?php if ($article['status'] == 'published'): ?>
                                             <span class="badge bg-success">Published</span>
@@ -40,11 +40,11 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Views</th>
+                                    <th scope="col">Views</th>
                                     <td><?php echo $article['views'] ?? 0; ?></td>
                                 </tr>
                                 <tr>
-                                    <th>Created Date</th>
+                                    <th scope="col">Created Date</th>
                                     <td><?php echo date('Y-m-d H:i:s', strtotime($article['created_at'])); ?></td>
                                 </tr>
                             </table></div>

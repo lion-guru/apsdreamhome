@@ -134,7 +134,7 @@ $early_settlement = $early_settlement ?? [];
                 <div class="table-responsive">
                     <table class="table table-sm table-hover mb-0">
                         <thead class="sticky-top bg-white"><tr>
-                            <th>#</th><th>Due Date</th><th>Principal</th><th>Interest</th><th>Total</th><th>Paid</th><th>Penalty</th><th>Status</th><th>Paid At</th>
+                            <th scope="col">#</th><th scope="col">Due Date</th><th scope="col">Principal</th><th scope="col">Interest</th><th scope="col">Total</th><th scope="col">Paid</th><th scope="col">Penalty</th><th scope="col">Status</th><th scope="col">Paid At</th>
                         </tr></thead>
                         <tbody>
                         <?php foreach ($installments as $inst): ?>
@@ -249,7 +249,7 @@ $early_settlement = $early_settlement ?? [];
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-sm mb-0">
-                        <thead><tr><th>Date</th><th>Action</th><th>Description</th></tr></thead>
+                        <thead><tr><th scope="col">Date</th><th scope="col">Action</th><th scope="col">Description</th></tr></thead>
                         <tbody>
                         <?php foreach ($activity_log as $log): ?>
                             <tr>

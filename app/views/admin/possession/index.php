@@ -112,13 +112,13 @@ $defectLabels = [
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>Booking #</th>
-                        <th>Property / Plot</th>
-                        <th>Customer</th>
-                        <th>Possession Status</th>
-                        <th>Possession Date</th>
-                        <th>Letter #</th>
-                        <th>Actions</th>
+                        <th scope="col">Booking #</th>
+                        <th scope="col">Property / Plot</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Possession Status</th>
+                        <th scope="col">Possession Date</th>
+                        <th scope="col">Letter #</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -111,10 +111,10 @@ $current_page = 'mlm_dashboard';
                                 <table class="table table-hover mb-0">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Rank</th>
-                                            <th class="text-center">Direct</th>
-                                            <th class="text-center">Volume</th>
-                                            <th class="text-center">Team</th>
+                                            <th scope="col">Rank</th>
+                                            <th scope="col" class="text-center">Direct</th>
+                                            <th scope="col" class="text-center">Volume</th>
+                                            <th scope="col" class="text-center">Team</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -151,11 +151,11 @@ $current_page = 'mlm_dashboard';
                                 <table class="table table-hover mb-0 align-middle">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Date</th>
-                                            <th>Type</th>
-                                            <th>Booking</th>
-                                            <th class="text-end">Amount</th>
-                                            <th>Status</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Type</th>
+                                            <th scope="col">Booking</th>
+                                            <th scope="col" class="text-end">Amount</th>
+                                            <th scope="col">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -222,11 +222,11 @@ $current_page = 'mlm_dashboard';
                                 <table class="table table-hover mb-0 align-middle">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Date</th>
-                                            <th>Period</th>
-                                            <th class="text-end">Amount</th>
-                                            <th>Status</th>
-                                            <th class="text-end">Action</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Period</th>
+                                            <th scope="col" class="text-end">Amount</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col" class="text-end">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>

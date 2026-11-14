@@ -16,7 +16,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>#</th><th>Member</th><th>Amount</th><th>Method</th><th>Status</th><th>Processed Date</th><th>Actions</th></tr>
+                        <tr><th scope="col">#</th><th scope="col">Member</th><th scope="col">Amount</th><th scope="col">Method</th><th scope="col">Status</th><th scope="col">Processed Date</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($payouts as $i => $p): ?>

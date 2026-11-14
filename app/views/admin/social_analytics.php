@@ -48,7 +48,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>Platform</th><th>Followers</th><th>Engagement</th><th>Posts</th><th>Growth</th></tr>
+                        <tr><th scope="col">Platform</th><th scope="col">Followers</th><th scope="col">Engagement</th><th scope="col">Posts</th><th scope="col">Growth</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($social_stats['platforms'] ?? [])): ?>

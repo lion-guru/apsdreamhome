@@ -218,11 +218,11 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th><?= __('assoc_ref_name', [], 'Name') ?></th>
-                        <th><?= __('assoc_ref_contact', [], 'Contact') ?></th>
-                        <th><?= __('assoc_ref_status', [], 'Status') ?></th>
-                        <th><?= __('assoc_ref_source', [], 'Source') ?></th>
-                        <th><?= __('assoc_ref_date', [], 'Date') ?></th>
+                        <th scope="col"><?= __('assoc_ref_name', [], 'Name') ?></th>
+                        <th scope="col"><?= __('assoc_ref_contact', [], 'Contact') ?></th>
+                        <th scope="col"><?= __('assoc_ref_status', [], 'Status') ?></th>
+                        <th scope="col"><?= __('assoc_ref_source', [], 'Source') ?></th>
+                        <th scope="col"><?= __('assoc_ref_date', [], 'Date') ?></th>
                     </tr>
                 </thead>
                 <tbody>

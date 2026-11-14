@@ -187,13 +187,13 @@ $recentCalls = $recentCalls ?? [];
                         <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Time</th>
-                                    <th>Agent</th>
-                                    <th>Lead</th>
-                                    <th>Phone</th>
-                                    <th>Duration</th>
-                                    <th>Status</th>
-                                    <th>Interest</th>
+                                    <th scope="col">Time</th>
+                                    <th scope="col">Agent</th>
+                                    <th scope="col">Lead</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Duration</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Interest</th>
                                 </tr>
                             </thead>
                             <tbody>

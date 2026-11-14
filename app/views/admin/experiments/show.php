@@ -123,10 +123,10 @@ $variantNames = array_keys($results);
                     <div class="table-responsive"><table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Variant</th>
-                                <th class="text-end">Users</th>
-                                <th class="text-end">Conv.</th>
-                                <th class="text-end">Rate</th>
+                                <th scope="col">Variant</th>
+                                <th scope="col" class="text-end">Users</th>
+                                <th scope="col" class="text-end">Conv.</th>
+                                <th scope="col" class="text-end">Rate</th>
                             </tr>
                         </thead>
                         <tbody>

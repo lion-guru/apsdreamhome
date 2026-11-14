@@ -28,7 +28,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>Severity</th><th>Alert</th><th>Source</th><th>Count</th><th>First Seen</th><th>Last Seen</th><th>Status</th><th>Actions</th></tr>
+                        <tr><th scope="col">Severity</th><th scope="col">Alert</th><th scope="col">Source</th><th scope="col">Count</th><th scope="col">First Seen</th><th scope="col">Last Seen</th><th scope="col">Status</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($alerts)): ?>

@@ -12,7 +12,7 @@
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead class="table-light">
-                            <tr><th>ID</th><th>Document</th><th>Classification Type</th><th>Classification Value</th><th>Classified By</th><th>Date</th></tr>
+                            <tr><th scope="col">ID</th><th scope="col">Document</th><th scope="col">Classification Type</th><th scope="col">Classification Value</th><th scope="col">Classified By</th><th scope="col">Date</th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($records as $r): ?>

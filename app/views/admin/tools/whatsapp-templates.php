@@ -93,13 +93,13 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th>Language</th>
-                                <th>Content Preview</th>
-                                <th>Status</th>
-                                <th>Updated</th>
-                                <th>Actions</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Language</th>
+                                <th scope="col">Content Preview</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Updated</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

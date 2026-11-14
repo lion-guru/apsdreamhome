@@ -187,10 +187,10 @@ $data = $data ?? [];
                                 <div class="table-responsive"><table class="table table-bordered table-responsive">
                                     <thead>
                                         <tr>
-                                            <th>Metric</th>
-                                            <th>Current</th>
-                                            <th>Target</th>
-                                            <th>Status</th>
+                                            <th scope="col">Metric</th>
+                                            <th scope="col">Current</th>
+                                            <th scope="col">Target</th>
+                                            <th scope="col">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>

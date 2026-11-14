@@ -21,16 +21,16 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <div class="table-responsive"><table class="table table-hover m-0">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Current Rank</th>
-                    <th>Next Rank</th>
-                    <th>Legs</th>
-                    <th>Lifetime Sales</th>
-                    <th>Progress</th>
-                    <th>Status</th>
-                    <th></th>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Current Rank</th>
+                    <th scope="col">Next Rank</th>
+                    <th scope="col">Legs</th>
+                    <th scope="col">Lifetime Sales</th>
+                    <th scope="col">Progress</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>

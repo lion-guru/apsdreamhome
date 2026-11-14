@@ -99,7 +99,7 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>Source</th><th>Total Leads</th><th>This Month</th><th>Conversion</th><th>Actions</th></tr>
+                        <tr><th scope="col">Source</th><th scope="col">Total Leads</th><th scope="col">This Month</th><th scope="col">Conversion</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($sourceData)): ?>

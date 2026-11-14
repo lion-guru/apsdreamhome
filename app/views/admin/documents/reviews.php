@@ -63,7 +63,7 @@
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead class="table-light">
-                                    <tr><th>Document</th><th>Reviewer</th><th>Status</th><th>Comments</th><th>Reviewed At</th></tr>
+                                    <tr><th scope="col">Document</th><th scope="col">Reviewer</th><th scope="col">Status</th><th scope="col">Comments</th><th scope="col">Reviewed At</th></tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($reviews as $r): ?>

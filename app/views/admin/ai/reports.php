@@ -84,7 +84,7 @@ $leadQualified = $leadQualified ?? [];
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr><th>Script</th><th>Total Calls</th><th>Completed</th><th>Interested</th><th>Success Rate</th><th>Interest Rate</th></tr>
+                        <tr><th scope="col">Script</th><th scope="col">Total Calls</th><th scope="col">Completed</th><th scope="col">Interested</th><th scope="col">Success Rate</th><th scope="col">Interest Rate</th></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($callsByScript as $s): ?>

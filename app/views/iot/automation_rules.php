@@ -9,7 +9,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                    <thead class="table-light"><tr><th>Rule Name</th><th>Trigger</th><th>Action</th><th>Status</th><th>Created</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Rule Name</th><th scope="col">Trigger</th><th scope="col">Action</th><th scope="col">Status</th><th scope="col">Created</th></tr></thead>
                     <tbody>
                         <?php if (!empty($automation_rules)): ?>
                             <?php foreach ($automation_rules as $r): ?>

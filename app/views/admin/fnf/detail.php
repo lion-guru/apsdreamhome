@@ -95,7 +95,7 @@ $components = is_array($components) ? $components : [];
             <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>Component</th><th>Description</th><th class="text-end">Amount (₹)</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Component</th><th scope="col">Description</th><th scope="col" class="text-end">Amount (₹)</th></tr></thead>
                     <tbody>
                         <?php foreach ($components as $key => $comp): ?>
                         <?php

@@ -31,7 +31,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light"><tr><th class="ps-4">Name</th><th>Email</th><th>Phone</th><th>Applied</th><th>Status</th><th class="text-end pe-4">Actions</th></tr></thead>
+                            <thead class="bg-light"><tr><th scope="col" class="ps-4">Name</th><th scope="col">Email</th><th scope="col">Phone</th><th scope="col">Applied</th><th scope="col">Status</th><th scope="col" class="text-end pe-4">Actions</th></tr></thead>
                             <tbody>
                                 <?php if (empty($applicants)): ?>
                                     <tr><td colspan="6" class="text-center py-4 text-muted"><i class="fas fa-inbox fa-2x d-block mb-2"></i>No applications yet</td></tr>

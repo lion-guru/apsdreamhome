@@ -107,15 +107,15 @@ $base = BASE_URL ?? '';
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th >#</th>
-                        <th>Tenant</th>
-                        <th>Plan</th>
-                        <th>Status</th>
-                        <th>Users</th>
-                        <th>Leads</th>
-                        <th>Contact</th>
-                        <th>Created</th>
-                        <th >Actions</th>
+                        <th scope="col" >#</th>
+                        <th scope="col">Tenant</th>
+                        <th scope="col">Plan</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Users</th>
+                        <th scope="col">Leads</th>
+                        <th scope="col">Contact</th>
+                        <th scope="col">Created</th>
+                        <th scope="col" >Actions</th>
                     </tr>
                 </thead>
                 <tbody>

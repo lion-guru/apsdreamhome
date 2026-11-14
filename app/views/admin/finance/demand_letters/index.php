@@ -151,15 +151,15 @@
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Letter #</th>
-                                    <th>Booking #</th>
-                                    <th>Colony</th>
-                                    <th>Customer Name</th>
-                                    <th class="text-end">Amount</th>
-                                    <th class="text-center">Status</th>
-                                    <th>Due Date</th>
-                                    <th>Overdue</th>
-                                    <th class="text-center">Actions</th>
+                                    <th scope="col">Letter #</th>
+                                    <th scope="col">Booking #</th>
+                                    <th scope="col">Colony</th>
+                                    <th scope="col">Customer Name</th>
+                                    <th scope="col" class="text-end">Amount</th>
+                                    <th scope="col" class="text-center">Status</th>
+                                    <th scope="col">Due Date</th>
+                                    <th scope="col">Overdue</th>
+                                    <th scope="col" class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

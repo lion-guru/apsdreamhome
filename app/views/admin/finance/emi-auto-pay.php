@@ -101,14 +101,14 @@ $isTestMode = $isTestMode ?? true;
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Customer</th>
-                            <th>Booking</th>
-                            <th>Plot</th>
-                            <th class="text-end">Amount</th>
-                            <th>Mandate ID</th>
-                            <th>Status</th>
-                            <th>Next Payment</th>
-                            <th class="text-center">Actions</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Booking</th>
+                            <th scope="col">Plot</th>
+                            <th scope="col" class="text-end">Amount</th>
+                            <th scope="col">Mandate ID</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Next Payment</th>
+                            <th scope="col" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -157,13 +157,13 @@ $isTestMode = $isTestMode ?? true;
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Customer</th>
-                            <th>Booking</th>
-                            <th>Amount</th>
-                            <th>Transaction ID</th>
-                            <th>Error</th>
-                            <th class="text-center">Action</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Booking</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Transaction ID</th>
+                            <th scope="col">Error</th>
+                            <th scope="col" class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>

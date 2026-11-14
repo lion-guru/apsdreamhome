@@ -29,7 +29,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light"><tr><th class="ps-4">#</th><th>Property</th><th>Price</th><th>User</th><th>Email</th><th class="text-end pe-4">Date Favorited</th></tr></thead>
+                    <thead class="bg-light"><tr><th scope="col" class="ps-4">#</th><th scope="col">Property</th><th scope="col">Price</th><th scope="col">User</th><th scope="col">Email</th><th scope="col" class="text-end pe-4">Date Favorited</th></tr></thead>
                     <tbody>
                         <?php if (empty($favorites)): ?>
                             <tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-heart fa-3x d-block mb-3"></i><?= !empty($search) ? 'No favorites match your search' : 'No favorites yet' ?></td></tr>

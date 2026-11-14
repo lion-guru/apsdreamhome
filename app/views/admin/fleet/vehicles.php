@@ -46,7 +46,7 @@ $types = ['innova' => 'Innova', 'bolero' => 'Bolero', 'scorpio' => 'Scorpio', 'e
                     <div class="text-center text-muted py-4">No vehicles yet. Add the first cab.</div>
                 <?php else: ?>
                 <div class="table-responsive"><table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>Vehicle</th><th>Type</th><th>Capacity</th><th>Driver</th><th>Status</th><th></th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Vehicle</th><th scope="col">Type</th><th scope="col">Capacity</th><th scope="col">Driver</th><th scope="col">Status</th><th scope="col"></th></tr></thead>
                     <tbody>
                     <?php foreach ($vehicles as $v): ?>
                         <tr class="<?= empty($v['is_active']) ? 'table-secondary' : '' ?>">

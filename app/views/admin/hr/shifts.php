@@ -11,7 +11,7 @@ $page_title = $page_title ?? 'Shift Types';
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Name</th><th>Code</th><th>Start</th><th>End</th><th>Duration</th><th>Break</th><th>Color</th><th>Status</th></tr>
+                    <tr><th scope="col">Name</th><th scope="col">Code</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Duration</th><th scope="col">Break</th><th scope="col">Color</th><th scope="col">Status</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($shifts ?? [])): ?>

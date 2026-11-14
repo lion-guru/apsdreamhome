@@ -18,13 +18,13 @@ $members = $members ?? [];
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Points</th>
-                                <th>Tier</th>
-                                <th>Join Date</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Points</th>
+                                <th scope="col">Tier</th>
+                                <th scope="col">Join Date</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

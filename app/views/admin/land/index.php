@@ -25,7 +25,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light"><tr><th class="ps-4">#</th><th>Survey Number</th><th>Location</th><th>Area (sqft)</th><th>Type</th><th>Cost</th><th>Status</th><th class="text-end pe-4">Actions</th></tr></thead>
+                    <thead class="bg-light"><tr><th scope="col" class="ps-4">#</th><th scope="col">Survey Number</th><th scope="col">Location</th><th scope="col">Area (sqft)</th><th scope="col">Type</th><th scope="col">Cost</th><th scope="col">Status</th><th scope="col" class="text-end pe-4">Actions</th></tr></thead>
                     <tbody>
                         <?php if (empty($landRecords)): ?>
                             <tr>

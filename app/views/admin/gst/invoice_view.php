@@ -91,20 +91,20 @@ $invoice = $invoice ?? [];
                 <table class="table table-bordered table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>HSN</th>
-                            <th>Description</th>
-                            <th>UOM</th>
-                            <th class="text-end">Qty</th>
-                            <th class="text-end">Rate</th>
-                            <th class="text-end">Disc</th>
-                            <th class="text-end">Taxable</th>
-                            <th>GST%</th>
-                            <th class="text-end">CGST</th>
-                            <th class="text-end">SGST</th>
-                            <th class="text-end">IGST</th>
-                            <th class="text-end">Cess</th>
-                            <th class="text-end">Total</th>
+                            <th scope="col">#</th>
+                            <th scope="col">HSN</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">UOM</th>
+                            <th scope="col" class="text-end">Qty</th>
+                            <th scope="col" class="text-end">Rate</th>
+                            <th scope="col" class="text-end">Disc</th>
+                            <th scope="col" class="text-end">Taxable</th>
+                            <th scope="col">GST%</th>
+                            <th scope="col" class="text-end">CGST</th>
+                            <th scope="col" class="text-end">SGST</th>
+                            <th scope="col" class="text-end">IGST</th>
+                            <th scope="col" class="text-end">Cess</th>
+                            <th scope="col" class="text-end">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -131,14 +131,14 @@ $invoice = $invoice ?? [];
                     </tbody>
                     <tfoot class="table-light">
                         <tr>
-                            <th colspan="7" class="text-end">Totals</th>
-                            <th class="text-end">₹<?= number_format($invoice['taxable_value'], 2) ?></th>
-                            <th></th>
-                            <th class="text-end">₹<?= number_format($invoice['cgst_amount'], 2) ?></th>
-                            <th class="text-end">₹<?= number_format($invoice['sgst_amount'], 2) ?></th>
-                            <th class="text-end">₹<?= number_format($invoice['igst_amount'], 2) ?></th>
-                            <th class="text-end">₹<?= number_format($invoice['cess_amount'], 2) ?></th>
-                            <th class="text-end">₹<?= number_format($invoice['total_amount'], 2) ?></th>
+                            <th scope="col" colspan="7" class="text-end">Totals</th>
+                            <th scope="col" class="text-end">₹<?= number_format($invoice['taxable_value'], 2) ?></th>
+                            <th scope="col"></th>
+                            <th scope="col" class="text-end">₹<?= number_format($invoice['cgst_amount'], 2) ?></th>
+                            <th scope="col" class="text-end">₹<?= number_format($invoice['sgst_amount'], 2) ?></th>
+                            <th scope="col" class="text-end">₹<?= number_format($invoice['igst_amount'], 2) ?></th>
+                            <th scope="col" class="text-end">₹<?= number_format($invoice['cess_amount'], 2) ?></th>
+                            <th scope="col" class="text-end">₹<?= number_format($invoice['total_amount'], 2) ?></th>
                         </tr>
                     </tfoot>
                 </table>

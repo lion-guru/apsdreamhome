@@ -45,7 +45,7 @@
             <?php if (!empty($referrals ?? [])): ?>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light"><tr><th>Name</th><th>Email</th><th>Status</th><th>Commission</th><th>Date</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">Name</th><th scope="col">Email</th><th scope="col">Status</th><th scope="col">Commission</th><th scope="col">Date</th></tr></thead>
                     <tbody>
                         <?php foreach (($referrals ?? []) as $r): ?>
                         <tr>

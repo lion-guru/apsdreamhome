@@ -11,7 +11,7 @@ $page_title = $page_title ?? 'Leave Types';
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Name</th><th>Code</th><th>Days/Year</th><th>Max Consecutive</th><th>Paid</th><th>Color</th><th>Status</th></tr>
+                    <tr><th scope="col">Name</th><th scope="col">Code</th><th scope="col">Days/Year</th><th scope="col">Max Consecutive</th><th scope="col">Paid</th><th scope="col">Color</th><th scope="col">Status</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($types ?? [])): ?>

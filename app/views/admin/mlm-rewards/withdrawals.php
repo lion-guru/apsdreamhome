@@ -75,13 +75,13 @@ $stats = $stats ?? [];
                     <table class="table table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th>Associate</th>
-                                <th>Amount (₹)</th>
-                                <th>Balance (₹)</th>
-                                <th>Method</th>
-                                <th>Status</th>
-                                <th>Request Date</th>
-                                <th>Actions</th>
+                                <th scope="col">Associate</th>
+                                <th scope="col">Amount (₹)</th>
+                                <th scope="col">Balance (₹)</th>
+                                <th scope="col">Method</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Request Date</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

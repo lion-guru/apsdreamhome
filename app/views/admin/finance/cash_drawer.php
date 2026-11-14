@@ -78,7 +78,7 @@ $denoms = [500, 200, 100, 50, 20, 10];
 <?php if (!empty($history)): ?>
 <div class="aps-cp-card"><div class="aps-cp-card-body p-0">
     <div class="table-responsive"><table class="table table-hover mb-0">
-        <thead class="table-light"><tr><th>Date</th><th class="text-end">System</th><th class="text-end">Physical</th><th class="text-end">Diff</th><th>Status</th></tr></thead>
+        <thead class="table-light"><tr><th scope="col">Date</th><th scope="col" class="text-end">System</th><th scope="col" class="text-end">Physical</th><th scope="col" class="text-end">Diff</th><th scope="col">Status</th></tr></thead>
         <tbody>
         <?php foreach ($history as $h): ?>
             <tr>

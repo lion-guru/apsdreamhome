@@ -24,15 +24,15 @@
         <table class="table table-bordered table-hover bg-white">
             <thead class="table-dark">
                 <tr>
-                    <th>Plot #</th>
-                    <th>Block</th>
-                    <th>Area (sqft)</th>
-                    <th>Price (₹)</th>
-                    <th>Rate/sqft</th>
-                    <th>Status</th>
-                    <th>Facing</th>
-                    <th>Customer</th>
-                    <th>Actions</th>
+                    <th scope="col">Plot #</th>
+                    <th scope="col">Block</th>
+                    <th scope="col">Area (sqft)</th>
+                    <th scope="col">Price (₹)</th>
+                    <th scope="col">Rate/sqft</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Facing</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>

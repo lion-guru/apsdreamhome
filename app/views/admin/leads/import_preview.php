@@ -36,15 +36,15 @@ $success_rows = $total_rows - $error_rows;
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Source</th>
-                            <th>Budget</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Errors</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Source</th>
+                            <th scope="col">Budget</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Errors</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -86,14 +86,14 @@ $current_status = $current_status ?? null;
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-3">Token & Date</th>
-                            <th>Customer & Plot</th>
-                            <th>Capacity</th>
-                            <th>Cost & Subsidies</th>
-                            <th>Net Payable</th>
-                            <th>DISCOM / Consumer</th>
-                            <th>Status</th>
-                            <th class="text-end pe-3">Actions</th>
+                            <th scope="col" class="ps-3">Token & Date</th>
+                            <th scope="col">Customer & Plot</th>
+                            <th scope="col">Capacity</th>
+                            <th scope="col">Cost & Subsidies</th>
+                            <th scope="col">Net Payable</th>
+                            <th scope="col">DISCOM / Consumer</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end pe-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

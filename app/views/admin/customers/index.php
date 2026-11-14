@@ -96,12 +96,12 @@ $filters = $filters ?? ['search' => '', 'status' => ''];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-4">Customer</th>
-                            <th>Contact</th>
-                            <th>Status</th>
-                            <th>Bookings</th>
-                            <th>Joined</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th scope="col" class="ps-4">Customer</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Bookings</th>
+                            <th scope="col">Joined</th>
+                            <th scope="col" class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

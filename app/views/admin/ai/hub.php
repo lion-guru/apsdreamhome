@@ -203,10 +203,10 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="table-light">
                                         <tr>
-                                            <th class="small fw-bold"><?= h($mlSupport->translate('Name')) ?></th>
-                                            <th class="small fw-bold"><?= h($mlSupport->translate('Trigger')) ?></th>
-                                            <th class="small fw-bold"><?= h($mlSupport->translate('Status')) ?></th>
-                                            <th class="small fw-bold"><?= h($mlSupport->translate('Last Run')) ?></th>
+                                            <th scope="col" class="small fw-bold"><?= h($mlSupport->translate('Name')) ?></th>
+                                            <th scope="col" class="small fw-bold"><?= h($mlSupport->translate('Trigger')) ?></th>
+                                            <th scope="col" class="small fw-bold"><?= h($mlSupport->translate('Status')) ?></th>
+                                            <th scope="col" class="small fw-bold"><?= h($mlSupport->translate('Last Run')) ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -331,7 +331,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
-                                    <tr><th>Name</th><th>Type</th><th>Audience</th><th>Status</th><th>Recipients</th><th>Sent</th><th>Opened</th><th>Created</th></tr>
+                                    <tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Audience</th><th scope="col">Status</th><th scope="col">Recipients</th><th scope="col">Sent</th><th scope="col">Opened</th><th scope="col">Created</th></tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach (array_slice($campaigns_list ?? [], 0, 10) as $c): ?>

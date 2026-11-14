@@ -62,7 +62,7 @@
                     <div class="table-responsive">
                         <table class="table table-striped mb-0">
                             <thead class="table-light">
-                                <tr><th>Material</th><th>Brand</th><th>Price</th><th>Unit</th><th>Supplier</th><th>Location</th><th>Updated</th></tr>
+                                <tr><th scope="col">Material</th><th scope="col">Brand</th><th scope="col">Price</th><th scope="col">Unit</th><th scope="col">Supplier</th><th scope="col">Location</th><th scope="col">Updated</th></tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($items as $m): ?>

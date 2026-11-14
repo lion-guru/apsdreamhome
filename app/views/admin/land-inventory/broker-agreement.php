@@ -242,8 +242,8 @@ $rateDesc = $contract['rate_description'] ?? 'As per agreed terms';
         <table class="table table-sm table-custom-bordered mb-3">
             <thead class="table-light">
                 <tr>
-                    <th width="30%">Parameter</th>
-                    <th width="70%">Agreed Specifics</th>
+                    <th scope="col" width="30%">Parameter</th>
+                    <th scope="col" width="70%">Agreed Specifics</th>
                 </tr>
             </thead>
             <tbody>

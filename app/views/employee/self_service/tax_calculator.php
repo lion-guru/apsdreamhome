@@ -209,7 +209,7 @@ if ($employeeId) {
                                 <h6 class="mb-3"><i class="fas fa-list me-2"></i>Tax Breakdown</h6>
                                 <div class="table-responsive">
                                     <table class="table table-sm table-hover" id="oldBreakdownTable">
-                                        <thead class="table-light"><tr><th>Slab</th><th class="text-end">Tax</th></tr></thead>
+                                        <thead class="table-light"><tr><th scope="col">Slab</th><th scope="col" class="text-end">Tax</th></tr></thead>
                                         <tbody></tbody>
                                     </table>
                                 </div>
@@ -242,7 +242,7 @@ if ($employeeId) {
                                 <h6 class="mb-3"><i class="fas fa-list me-2"></i>Tax Breakdown</h6>
                                 <div class="table-responsive">
                                     <table class="table table-sm table-hover" id="newBreakdownTable">
-                                        <thead class="table-light"><tr><th>Slab</th><th class="text-end">Tax</th></tr></thead>
+                                        <thead class="table-light"><tr><th scope="col">Slab</th><th scope="col" class="text-end">Tax</th></tr></thead>
                                         <tbody></tbody>
                                     </table>
                                 </div>
@@ -293,7 +293,7 @@ if ($employeeId) {
                             <div class="col-md-6">
                                 <h6 class="text-warning"><i class="fas fa-sun me-1"></i>Old Regime Slabs</h6>
                                 <table class="table table-sm table-bordered">
-                                    <thead class="table-light"><tr><th>Income Range</th><th class="text-center">Rate</th></tr></thead>
+                                    <thead class="table-light"><tr><th scope="col">Income Range</th><th scope="col" class="text-center">Rate</th></tr></thead>
                                     <tbody>
                                         <tr><td>₹0 - ₹2,50,000</td><td class="text-center">0%</td></tr>
                                         <tr><td>₹2,50,001 - ₹5,00,000</td><td class="text-center">5%</td></tr>
@@ -306,7 +306,7 @@ if ($employeeId) {
                             <div class="col-md-6">
                                 <h6 class="text-primary"><i class="fas fa-moon me-1"></i>New Regime Slabs</h6>
                                 <table class="table table-sm table-bordered">
-                                    <thead class="table-light"><tr><th>Income Range</th><th class="text-center">Rate</th></tr></thead>
+                                    <thead class="table-light"><tr><th scope="col">Income Range</th><th scope="col" class="text-center">Rate</th></tr></thead>
                                     <tbody>
                                         <tr><td>₹0 - ₹3,00,000</td><td class="text-center">0%</td></tr>
                                         <tr><td>₹3,00,001 - ₹6,00,000</td><td class="text-center">5%</td></tr>

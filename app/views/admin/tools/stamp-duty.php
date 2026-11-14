@@ -84,12 +84,12 @@ $total_circle_rates = $total_circle_rates ?? 0;
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>State</th>
-                                        <th>Property Type</th>
-                                        <th>Stamp Rate</th>
-                                        <th>Registration</th>
-                                        <th>Total Buyer Cost</th>
-                                        <th>Updated</th>
+                                        <th scope="col">State</th>
+                                        <th scope="col">Property Type</th>
+                                        <th scope="col">Stamp Rate</th>
+                                        <th scope="col">Registration</th>
+                                        <th scope="col">Total Buyer Cost</th>
+                                        <th scope="col">Updated</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -134,12 +134,12 @@ $total_circle_rates = $total_circle_rates ?? 0;
                             <table class="table table-hover mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>State</th>
-                                        <th>District</th>
-                                        <th>Area Type</th>
-                                        <th>Rate/sqft (₹)</th>
-                                        <th>Rate/sqm (₹)</th>
-                                        <th>Effective From</th>
+                                        <th scope="col">State</th>
+                                        <th scope="col">District</th>
+                                        <th scope="col">Area Type</th>
+                                        <th scope="col">Rate/sqft (₹)</th>
+                                        <th scope="col">Rate/sqm (₹)</th>
+                                        <th scope="col">Effective From</th>
                                     </tr>
                                 </thead>
                                 <tbody>

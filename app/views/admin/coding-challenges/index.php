@@ -94,15 +94,15 @@ $difficultyLabels = [
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Slug</th>
-                        <th>Category</th>
-                        <th>Difficulty</th>
-                        <th>Points</th>
-                        <th>Status</th>
-                        <th>Created</th>
-                        <th>Actions</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Slug</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Difficulty</th>
+                        <th scope="col">Points</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

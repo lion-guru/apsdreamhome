@@ -21,7 +21,7 @@ $month = $month ?? date('Y-m');
   <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th><?= __('bko_employee') ?></th><th><?= __('bko_date') ?></th><th><?= __('bko_status') ?></th><th><?= __('bko_check_in') ?></th><th><?= __('bko_check_out') ?></th><th><?= __('bko_hours') ?></th><th><?= __('bko_ot') ?></th><th><?= __('bko_late') ?></th></tr></thead>
+        <thead><tr><th scope="col"><?= __('bko_employee') ?></th><th scope="col"><?= __('bko_date') ?></th><th scope="col"><?= __('bko_status') ?></th><th scope="col"><?= __('bko_check_in') ?></th><th scope="col"><?= __('bko_check_out') ?></th><th scope="col"><?= __('bko_hours') ?></th><th scope="col"><?= __('bko_ot') ?></th><th scope="col"><?= __('bko_late') ?></th></tr></thead>
         <tbody>
           <?php if (empty($records)): ?>
             <tr><td colspan="8" class="text-center text-muted py-4"><?= __('bko_no_records_month') ?></td></tr>

@@ -11,7 +11,7 @@ $page_title = $page_title ?? 'Performance Reviews';
         <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Employee</th><th>KPI</th><th>Period</th><th>Target</th><th>Actual</th><th>Achievement</th><th>Score</th><th>Status</th></tr>
+                    <tr><th scope="col">Employee</th><th scope="col">KPI</th><th scope="col">Period</th><th scope="col">Target</th><th scope="col">Actual</th><th scope="col">Achievement</th><th scope="col">Score</th><th scope="col">Status</th></tr>
                 </thead>
                 <tbody>
                     <?php if (empty($reviews ?? [])): ?>

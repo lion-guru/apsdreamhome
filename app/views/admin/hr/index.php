@@ -53,7 +53,7 @@ $page_title = $page_title ?? 'HR Dashboard';
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead class="table-light"><tr><th>Name</th><th>Department</th><th>Designation</th><th>Status</th></tr></thead>
+                        <thead class="table-light"><tr><th scope="col">Name</th><th scope="col">Department</th><th scope="col">Designation</th><th scope="col">Status</th></tr></thead>
                         <tbody>
                             <?php if (empty($active_employees)): ?>
                                 <tr><td colspan="4" class="text-center text-muted py-3">No active users</td></tr>

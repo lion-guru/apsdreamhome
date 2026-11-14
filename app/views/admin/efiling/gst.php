@@ -22,7 +22,7 @@ ob_start();
         <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
                 <thead class="table-light">
-                    <tr><th>Month</th><th class="text-end">Output Tax</th><th class="text-end">Input Tax (ITC)</th><th class="text-end">Net Payable</th><th>Invoices</th></tr>
+                    <tr><th scope="col">Month</th><th scope="col" class="text-end">Output Tax</th><th scope="col" class="text-end">Input Tax (ITC)</th><th scope="col" class="text-end">Net Payable</th><th scope="col">Invoices</th></tr>
                 </thead>
                 <tbody>
                 <?php
@@ -42,7 +42,7 @@ ob_start();
                 <?php endforeach; ?>
                 </tbody>
                 <tfoot class="table-light">
-                    <tr><th>Total</th><th class="text-end">?<?= number_format($totalOut, 0) ?></th><th class="text-end">?<?= number_format($totalIn, 0) ?></th><th class="text-end">?<?= number_format($totalNet, 0) ?></th><th></th></tr>
+                    <tr><th scope="col">Total</th><th scope="col" class="text-end">?<?= number_format($totalOut, 0) ?></th><th scope="col" class="text-end">?<?= number_format($totalIn, 0) ?></th><th scope="col" class="text-end">?<?= number_format($totalNet, 0) ?></th><th scope="col"></th></tr>
                 </tfoot>
             </table>
         </div>
@@ -134,7 +134,7 @@ ob_start();
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-sm mb-0">
-                    <thead class="table-light"><tr><th>ID</th><th>Type</th><th>Period</th><th>Records</th><th>Amount (?)</th><th>Status</th><th>ARN</th><th>Action</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">Type</th><th scope="col">Period</th><th scope="col">Records</th><th scope="col">Amount (?)</th><th scope="col">Status</th><th scope="col">ARN</th><th scope="col">Action</th></tr></thead>
                     <tbody>
                     <?php foreach ($submissions as $s): ?>
                         <tr>

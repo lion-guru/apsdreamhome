@@ -108,14 +108,14 @@
             <table class="table table-bordered table-sm">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
-                        <th>Type</th>
-                        <th>Due Date</th>
-                        <th>Amount</th>
-                        <th>Paid</th>
-                        <th>Shortfall</th>
-                        <th>Penalty</th>
-                        <th>Status</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Due Date</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Paid</th>
+                        <th scope="col">Shortfall</th>
+                        <th scope="col">Penalty</th>
+                        <th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>

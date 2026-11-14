@@ -138,12 +138,12 @@ $page_description = 'Monitor and analyze lead interactions and events';
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>Lead</th>
-                            <th>Event Type</th>
-                            <th>Source</th>
-                            <th>Time</th>
-                            <th>IP Address</th>
-                            <th>Actions</th>
+                            <th scope="col">Lead</th>
+                            <th scope="col">Event Type</th>
+                            <th scope="col">Source</th>
+                            <th scope="col">Time</th>
+                            <th scope="col">IP Address</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

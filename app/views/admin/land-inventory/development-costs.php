@@ -122,7 +122,7 @@ $colonyId = (int)($colony['id'] ?? 0);
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
-                                <tr><th>Date</th><th>Type</th><th>Description</th><th>Vendor</th><th>Amount</th><th>Per Sqft</th><th>Cap</th></tr>
+                                <tr><th scope="col">Date</th><th scope="col">Type</th><th scope="col">Description</th><th scope="col">Vendor</th><th scope="col">Amount</th><th scope="col">Per Sqft</th><th scope="col">Cap</th></tr>
                             </thead>
                             <tbody>
                             <?php foreach ($costs as $c): ?>

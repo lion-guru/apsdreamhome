@@ -24,7 +24,7 @@
             <div class="table-responsive">
                 <div class="table-responsive"><table class="table table-hover align-middle mb-0 table-responsive">
                     <thead class="table-light">
-                        <tr><th>Campaign</th><th>Type</th><th>Status</th><th>Budget</th><th>Spent</th><th>Leads</th><th>Conv.</th><th>Start</th><th>End</th><th>Actions</th></tr>
+                        <tr><th scope="col">Campaign</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Budget</th><th scope="col">Spent</th><th scope="col">Leads</th><th scope="col">Conv.</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($campaigns)): ?>

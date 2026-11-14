@@ -50,13 +50,13 @@
                 <table class="table table-hover align-middle mb-0" id="leavesTable">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-4">Employee</th>
-                            <th>Leave Type</th>
-                            <th>Duration</th>
-                            <th>Total Days</th>
-                            <th>Reason</th>
-                            <th>Status</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th scope="col" class="ps-4">Employee</th>
+                            <th scope="col">Leave Type</th>
+                            <th scope="col">Duration</th>
+                            <th scope="col">Total Days</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

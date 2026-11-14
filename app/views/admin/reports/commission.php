@@ -26,7 +26,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light"><tr><th class="ps-4">Associate</th><th>Sales Count</th><th>Total Sales</th><th>Commission</th><th>Paid</th><th>Pending</th><th class="text-end pe-4">Status</th></tr></thead>
+                    <thead class="bg-light"><tr><th scope="col" class="ps-4">Associate</th><th scope="col">Sales Count</th><th scope="col">Total Sales</th><th scope="col">Commission</th><th scope="col">Paid</th><th scope="col">Pending</th><th scope="col" class="text-end pe-4">Status</th></tr></thead>
                     <tbody>
                         <?php if (empty($commissionData)): ?>
                             <tr><td colspan="7" class="text-center py-5 text-muted"><i class="fas fa-coins fa-3x d-block mb-3"></i>No commission data available</td></tr>

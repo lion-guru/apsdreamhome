@@ -7,7 +7,7 @@
     <div class="card aps-cp-card">
         <div class="card-body p-0">
             <div class="table-responsive"><table class="table table-striped mb-0">
-                <thead><tr><th>#</th><th>Commission ID</th><th>Action</th><th>Details</th><th>Date</th></tr></thead>
+                <thead><tr><th scope="col">#</th><th scope="col">Commission ID</th><th scope="col">Action</th><th scope="col">Details</th><th scope="col">Date</th></tr></thead>
                 <tbody>
                     <?php if (empty($ledger ?? [])): ?>
                     <tr>

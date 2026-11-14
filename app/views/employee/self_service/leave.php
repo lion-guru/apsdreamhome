@@ -128,13 +128,13 @@ $leave_types = $leave_types ?? [];
                                 <table class="table table-hover mb-0">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Leave Type</th>
-                                            <th>Period</th>
-                                            <th class="text-center">Days</th>
-                                            <th>Reason</th>
-                                            <th class="text-center">Status</th>
-                                            <th>Applied On</th>
-                                            <th>Actions</th>
+                                            <th scope="col">Leave Type</th>
+                                            <th scope="col">Period</th>
+                                            <th scope="col" class="text-center">Days</th>
+                                            <th scope="col">Reason</th>
+                                            <th scope="col" class="text-center">Status</th>
+                                            <th scope="col">Applied On</th>
+                                            <th scope="col">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>

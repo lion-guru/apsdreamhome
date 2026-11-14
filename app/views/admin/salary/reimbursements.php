@@ -60,8 +60,8 @@ $filter_status = $filter_status ?? '';
         <?php else: ?>
         <div class="table-responsive"><table class="table table-hover mb-0">
             <thead class="table-light"><tr>
-                <th>Employee</th><th>Type</th><th>Expense Date</th><th class="text-end">Amount</th>
-                <th>Description</th><th>Receipt</th><th class="text-center">Status</th><th>Submitted</th><th class="text-center">Actions</th>
+                <th scope="col">Employee</th><th scope="col">Type</th><th scope="col">Expense Date</th><th scope="col" class="text-end">Amount</th>
+                <th scope="col">Description</th><th scope="col">Receipt</th><th scope="col" class="text-center">Status</th><th scope="col">Submitted</th><th scope="col" class="text-center">Actions</th>
             </tr></thead>
             <tbody>
             <?php foreach ($claims as $c): ?>

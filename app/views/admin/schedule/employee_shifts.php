@@ -63,7 +63,7 @@ $filters = $filters ?? [];
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
-                        <thead><tr><th>Employee</th><th>Department</th><th>Shift</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead>
+                        <thead><tr><th scope="col">Employee</th><th scope="col">Department</th><th scope="col">Shift</th><th scope="col">Date</th><th scope="col">Time</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
                         <tbody>
                         <?php foreach ($assignments as $a): ?>
                             <tr>

@@ -89,16 +89,16 @@ $employee_id = $employee_id ?? 0;
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Asset</th>
-                            <th>Category</th>
-                            <th>Serial No.</th>
-                            <th>Employee</th>
-                            <th>Assigned</th>
-                            <th class="text-end">Purchase Value</th>
-                            <th class="text-end">Current Value</th>
-                            <th class="text-center">Status</th>
-                            <th>Returned</th>
-                            <th class="text-center">Actions</th>
+                            <th scope="col">Asset</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Serial No.</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Assigned</th>
+                            <th scope="col" class="text-end">Purchase Value</th>
+                            <th scope="col" class="text-end">Current Value</th>
+                            <th scope="col" class="text-center">Status</th>
+                            <th scope="col">Returned</th>
+                            <th scope="col" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -148,11 +148,11 @@ foreach ($results as $variant => $r) {
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Variant</th>
-                        <th class="text-end">Users</th>
-                        <th class="text-end">Conversions</th>
-                        <th class="text-end">Rate</th>
-                        <th>Visual</th>
+                        <th scope="col">Variant</th>
+                        <th scope="col" class="text-end">Users</th>
+                        <th scope="col" class="text-end">Conversions</th>
+                        <th scope="col" class="text-end">Rate</th>
+                        <th scope="col">Visual</th>
                     </tr>
                 </thead>
                 <tbody>

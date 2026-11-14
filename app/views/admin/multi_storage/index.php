@@ -31,7 +31,7 @@ $driverLabels = [
         <div class="card-header fw-bold">Provider Status Overview</div>
         <div class="card-body p-0">
             <table class="table mb-0">
-                <thead><tr><th>Provider</th><th>Status</th><th>Latency</th><th>Failures</th><th>Last Check</th><th>Actions</th></tr></thead>
+                <thead><tr><th scope="col">Provider</th><th scope="col">Status</th><th scope="col">Latency</th><th scope="col">Failures</th><th scope="col">Last Check</th><th scope="col">Actions</th></tr></thead>
                 <tbody>
                 <?php foreach ($providerNames as $name): ?>
                     <?php $h = $health[$name] ?? ['healthy' => false, 'latency_ms' => 'N/A', 'consecutive_failures' => 0, 'last_check' => 'Never', 'last_error' => 'Not checked']; ?>

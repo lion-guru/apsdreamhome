@@ -54,7 +54,7 @@ $month_years = $month_years ?? [];
             <table class="table table-striped mb-0">
                 <thead>
                     <tr>
-                        <th>Emp ID</th><th>Name</th><th>Department</th><th class="text-end">Basic</th><th class="text-end">Gross</th><th class="text-end">PF Wage</th><th class="text-end">ESI Wage</th><th class="text-end">PF Emp</th><th class="text-end">PF Er</th><th class="text-end">ESI Emp</th><th class="text-end">ESI Er</th><th class="text-end">Total</th>
+                        <th scope="col">Emp ID</th><th scope="col">Name</th><th scope="col">Department</th><th scope="col" class="text-end">Basic</th><th scope="col" class="text-end">Gross</th><th scope="col" class="text-end">PF Wage</th><th scope="col" class="text-end">ESI Wage</th><th scope="col" class="text-end">PF Emp</th><th scope="col" class="text-end">PF Er</th><th scope="col" class="text-end">ESI Emp</th><th scope="col" class="text-end">ESI Er</th><th scope="col" class="text-end">Total</th>
                     </tr>
                 </thead>
                 <tbody>

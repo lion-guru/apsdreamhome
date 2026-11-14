@@ -14,24 +14,24 @@ unset($_SESSION['kyc_verify_results']);
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>KYC Details</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm">
-                        <tr><th >ID</th><td>#<?= $r['id'] ?? '' ?></td></tr>
-                        <tr><th>Legal Name</th><td><strong><?= htmlspecialchars($r['legal_name'] ?? '—') ?></strong></td></tr>
-                        <tr><th>PAN</th><td><code><?= htmlspecialchars($r['pan_number'] ?? '—') ?></code></td></tr>
-                        <tr><th>Aadhaar</th><td><code><?= htmlspecialchars($r['aadhaar_number'] ?? '—') ?></code></td></tr>
-                        <tr><th>Date of Birth</th><td><?= htmlspecialchars($r['dob'] ?? '—') ?></td></tr>
-                        <tr><th>Status</th>
+                        <tr><th scope="col" >ID</th><td>#<?= $r['id'] ?? '' ?></td></tr>
+                        <tr><th scope="col">Legal Name</th><td><strong><?= htmlspecialchars($r['legal_name'] ?? '—') ?></strong></td></tr>
+                        <tr><th scope="col">PAN</th><td><code><?= htmlspecialchars($r['pan_number'] ?? '—') ?></code></td></tr>
+                        <tr><th scope="col">Aadhaar</th><td><code><?= htmlspecialchars($r['aadhaar_number'] ?? '—') ?></code></td></tr>
+                        <tr><th scope="col">Date of Birth</th><td><?= htmlspecialchars($r['dob'] ?? '—') ?></td></tr>
+                        <tr><th scope="col">Status</th>
                             <td>
                                 <span class="badge bg-<?= match($r['status'] ?? 'pending') { 'approved' => 'success', 'rejected' => 'danger', 'pending' => 'warning', default => 'secondary' } ?> fs-6">
                                     <?= ucfirst($r['status'] ?? 'Pending') ?>
                                 </span>
                             </td>
                         </tr>
-                        <tr><th>Submitted</th><td><?= date('M j, Y H:i', strtotime($r['created_at'] ?? 'now')) ?></td></tr>
+                        <tr><th scope="col">Submitted</th><td><?= date('M j, Y H:i', strtotime($r['created_at'] ?? 'now')) ?></td></tr>
                         <?php if (!empty($r['rejection_reason'])): ?>
-                        <tr><th>Rejection Reason</th><td class="text-danger"><?= htmlspecialchars($r['rejection_reason'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Rejection Reason</th><td class="text-danger"><?= htmlspecialchars($r['rejection_reason'] ?? '') ?></td></tr>
                         <?php endif; ?>
                         <?php if (!empty($r['verified_at'])): ?>
-                        <tr><th>Verified At</th><td><?= date('M j, Y H:i', strtotime($r['verified_at'])) ?></td></tr>
+                        <tr><th scope="col">Verified At</th><td><?= date('M j, Y H:i', strtotime($r['verified_at'])) ?></td></tr>
                         <?php endif; ?>
                     </table></div>
                 </div>
@@ -41,10 +41,10 @@ unset($_SESSION['kyc_verify_results']);
                 <div class="card-header aps-cp-card-header"><h5 class="mb-0"><i class="fas fa-user me-2"></i>User Info</h5></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm">
-                        <tr><th >Name</th><td><?= htmlspecialchars($r['user_name'] ?? '') ?></td></tr>
-                        <tr><th>Email</th><td><?= htmlspecialchars($r['user_email'] ?? '') ?></td></tr>
-                        <tr><th>Phone</th><td><?= htmlspecialchars($r['user_phone'] ?? '') ?></td></tr>
-                        <tr><th>User ID</th><td><?= (int)($r['user_id'] ?? 0) ?></td></tr>
+                        <tr><th scope="col" >Name</th><td><?= htmlspecialchars($r['user_name'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Email</th><td><?= htmlspecialchars($r['user_email'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Phone</th><td><?= htmlspecialchars($r['user_phone'] ?? '') ?></td></tr>
+                        <tr><th scope="col">User ID</th><td><?= (int)($r['user_id'] ?? 0) ?></td></tr>
                     </table></div>
                 </div>
             </div>

@@ -18,7 +18,7 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th><th>Customer</th><th>Agent</th><th>Plot</th><th>Total</th><th>Paid</th><th>Mode</th><th>Status</th><th>Date</th><th>Actions</th>
+                            <th scope="col">ID</th><th scope="col">Customer</th><th scope="col">Agent</th><th scope="col">Plot</th><th scope="col">Total</th><th scope="col">Paid</th><th scope="col">Mode</th><th scope="col">Status</th><th scope="col">Date</th><th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

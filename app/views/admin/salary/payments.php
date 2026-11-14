@@ -55,16 +55,16 @@
                 <table class="table table-bordered table-hover w-100" id="paymentsTable">
                     <thead class="table-light">
                         <tr>
-                            <th>Payment ID</th>
-                            <th>Employee</th>
-                            <th>Month/Year</th>
-                            <th class="text-success">Gross Amount</th>
-                            <th class="text-danger">Deductions</th>
-                            <th class="text-primary">Net Amount</th>
-                            <th>Date</th>
-                            <th>Method</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th scope="col">Payment ID</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col">Month/Year</th>
+                            <th scope="col" class="text-success">Gross Amount</th>
+                            <th scope="col" class="text-danger">Deductions</th>
+                            <th scope="col" class="text-primary">Net Amount</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Method</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

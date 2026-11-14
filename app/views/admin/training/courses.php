@@ -107,15 +107,15 @@ $filters = $filters ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 80px">Code</th>
-                            <th>Title</th>
-                            <th style="width: 150px">Category</th>
-                            <th style="width: 100px">Format</th>
-                            <th style="width: 100px">Duration</th>
-                            <th style="width: 120px">Assigned</th>
-                            <th style="width: 120px">Completed</th>
-                            <th style="width: 100px">Status</th>
-                            <th style="width: 150px">Actions</th>
+                            <th scope="col" style="width: 80px">Code</th>
+                            <th scope="col">Title</th>
+                            <th scope="col" style="width: 150px">Category</th>
+                            <th scope="col" style="width: 100px">Format</th>
+                            <th scope="col" style="width: 100px">Duration</th>
+                            <th scope="col" style="width: 120px">Assigned</th>
+                            <th scope="col" style="width: 120px">Completed</th>
+                            <th scope="col" style="width: 100px">Status</th>
+                            <th scope="col" style="width: 150px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

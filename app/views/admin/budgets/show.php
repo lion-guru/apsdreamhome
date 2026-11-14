@@ -111,7 +111,7 @@ $variance = $variance ?? [];
                     <div class="p-4 text-center text-muted">No expenses recorded</div>
                     <?php else: ?>
                     <table class="table table-sm mb-0">
-                        <thead class="table-light"><tr><th>Date</th><th>Vendor</th><th>Amount</th><th>Status</th></tr></thead>
+                        <thead class="table-light"><tr><th scope="col">Date</th><th scope="col">Vendor</th><th scope="col">Amount</th><th scope="col">Status</th></tr></thead>
                         <tbody>
                             <?php foreach ($expenses as $exp): ?>
                             <tr>

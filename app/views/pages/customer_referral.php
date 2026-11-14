@@ -271,11 +271,11 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                         <table class="aps-cp-table">
                             <thead>
                                 <tr>
-                                    <th><?= __('referral_table_name') ?></th>
-                                    <th><?= __('referral_table_contact') ?></th>
-                                    <th><?= __('referral_table_status') ?></th>
-                                    <th><?= __('referral_table_joined') ?></th>
-                                    <th class="text-end"><?= __('referral_table_commission') ?></th>
+                                    <th scope="col"><?= __('referral_table_name') ?></th>
+                                    <th scope="col"><?= __('referral_table_contact') ?></th>
+                                    <th scope="col"><?= __('referral_table_status') ?></th>
+                                    <th scope="col"><?= __('referral_table_joined') ?></th>
+                                    <th scope="col" class="text-end"><?= __('referral_table_commission') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -325,10 +325,10 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                         <table class="aps-cp-table">
                             <thead>
                                 <tr>
-                                    <th><?= __('referral_earnings_referred') ?></th>
-                                    <th><?= __('referral_earnings_date') ?></th>
-                                    <th class="text-end"><?= __('referral_earnings_amount') ?></th>
-                                    <th><?= __('referral_earnings_status') ?></th>
+                                    <th scope="col"><?= __('referral_earnings_referred') ?></th>
+                                    <th scope="col"><?= __('referral_earnings_date') ?></th>
+                                    <th scope="col" class="text-end"><?= __('referral_earnings_amount') ?></th>
+                                    <th scope="col"><?= __('referral_earnings_status') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -419,10 +419,10 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
                     <table class="aps-cp-table">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th class="text-center">Referrals</th>
-                                <th class="text-end">Earned</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col" class="text-center">Referrals</th>
+                                <th scope="col" class="text-end">Earned</th>
                             </tr>
                         </thead>
                         <tbody>

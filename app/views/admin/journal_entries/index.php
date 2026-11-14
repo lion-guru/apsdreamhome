@@ -63,16 +63,16 @@ $types = $types ?? ['manual', 'system', 'adjustment', 'closing'];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Journal #</th>
-                            <th>Date</th>
-                            <th>Reference</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th class="text-end">Debit</th>
-                            <th class="text-end">Credit</th>
-                            <th>Status</th>
-                            <th>Created By</th>
-                            <th class="text-end">Actions</th>
+                            <th scope="col">Journal #</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Reference</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Description</th>
+                            <th scope="col" class="text-end">Debit</th>
+                            <th scope="col" class="text-end">Credit</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Created By</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

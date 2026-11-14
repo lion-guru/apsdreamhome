@@ -17,7 +17,7 @@
   <div class="card aps-cp-card">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
-        <thead><tr><th><?= __('bko_employee') ?></th><th><?= __('bko_type') ?></th><th><?= __('bko_from') ?></th><th><?= __('bko_to') ?></th><th><?= __('bko_days') ?></th><th><?= __('bko_status') ?></th><th><?= __('bko_approved_by') ?></th></tr></thead>
+        <thead><tr><th scope="col"><?= __('bko_employee') ?></th><th scope="col"><?= __('bko_type') ?></th><th scope="col"><?= __('bko_from') ?></th><th scope="col"><?= __('bko_to') ?></th><th scope="col"><?= __('bko_days') ?></th><th scope="col"><?= __('bko_status') ?></th><th scope="col"><?= __('bko_approved_by') ?></th></tr></thead>
         <tbody>
           <?php if (empty($leaves)): ?>
             <tr><td colspan="7" class="text-center text-muted py-4"><?= __('bko_no_records') ?></td></tr>

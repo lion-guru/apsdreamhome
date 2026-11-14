@@ -19,7 +19,7 @@
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-dark"><tr>
-                        <th>#</th><th>Employee</th><th>Month</th><th>Year</th><th>Basic Pay</th><th>Allowances</th><th>Deductions</th><th>Gross</th><th>Net</th><th>Date</th><th>Status</th>
+                        <th scope="col">#</th><th scope="col">Employee</th><th scope="col">Month</th><th scope="col">Year</th><th scope="col">Basic Pay</th><th scope="col">Allowances</th><th scope="col">Deductions</th><th scope="col">Gross</th><th scope="col">Net</th><th scope="col">Date</th><th scope="col">Status</th>
                     </tr></thead>
                     <tbody>
                         <?php if (empty($records ?? [])): ?>

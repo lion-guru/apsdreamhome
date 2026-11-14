@@ -40,13 +40,13 @@ $applications = $applications ?? [];
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light text-muted small text-uppercase">
                         <tr>
-                            <th class="ps-3">Permit Token</th>
-                            <th>Plot & Township</th>
-                            <th>Building Type</th>
-                            <th>Built-up Area</th>
-                            <th>Status</th>
-                            <th>Validity</th>
-                            <th class="text-end pe-3">Action</th>
+                            <th scope="col" class="ps-3">Permit Token</th>
+                            <th scope="col">Plot & Township</th>
+                            <th scope="col">Building Type</th>
+                            <th scope="col">Built-up Area</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Validity</th>
+                            <th scope="col" class="text-end pe-3">Action</th>
                         </tr>
                     </thead>
                     <tbody>

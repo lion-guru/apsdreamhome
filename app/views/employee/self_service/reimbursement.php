@@ -83,14 +83,14 @@ $claim_types = $claim_types ?? [];
                                 <table class="table table-hover mb-0" id="claimsTable">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Date</th>
-                                            <th>Type</th>
-                                            <th>Description</th>
-                                            <th class="text-end">Amount</th>
-                                            <th class="text-center">Status</th>
-                                            <th>Submitted</th>
-                                            <th>Processed</th>
-                                            <th class="text-center">Actions</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Type</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col" class="text-end">Amount</th>
+                                            <th scope="col" class="text-center">Status</th>
+                                            <th scope="col">Submitted</th>
+                                            <th scope="col">Processed</th>
+                                            <th scope="col" class="text-center">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>

@@ -67,14 +67,14 @@ $statusColors = [
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Session</th>
-                            <th>User</th>
-                            <th>Role</th>
-                            <th>Action</th>
-                            <th>Step</th>
-                            <th>Status</th>
-                            <th>Created</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Session</th>
+                            <th scope="col">User</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Action</th>
+                            <th scope="col">Step</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Created</th>
                         </tr>
                     </thead>
                     <tbody>

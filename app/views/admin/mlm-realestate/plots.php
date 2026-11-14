@@ -27,7 +27,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover table-sm mb-0">
-                    <thead class="table-light sticky-top"><tr><th>Block</th><th>Plot No</th><th>Size</th><th>Dimension</th><th>Basic Price</th><th>PLC</th><th>Total</th><th>Status</th></tr></thead>
+                    <thead class="table-light sticky-top"><tr><th scope="col">Block</th><th scope="col">Plot No</th><th scope="col">Size</th><th scope="col">Dimension</th><th scope="col">Basic Price</th><th scope="col">PLC</th><th scope="col">Total</th><th scope="col">Status</th></tr></thead>
                     <tbody>
                         <?php foreach ($plots as $p): ?>
                         <tr>

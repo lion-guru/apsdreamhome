@@ -14,7 +14,7 @@
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead><tr>
-                            <th>#</th><th>Agent Name</th><th>Listings</th><th>Inquiries</th><th>Deals Closed</th><th>Conversion</th><th>Revenue</th><th>Rating</th>
+                            <th scope="col">#</th><th scope="col">Agent Name</th><th scope="col">Listings</th><th scope="col">Inquiries</th><th scope="col">Deals Closed</th><th scope="col">Conversion</th><th scope="col">Revenue</th><th scope="col">Rating</th>
                         </tr></thead>
                         <tbody>
                             <?php $i=1; foreach ($users as $a): ?>

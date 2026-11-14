@@ -113,12 +113,12 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Action</th>
-                                    <th class="text-center">Started</th>
-                                    <th class="text-center">Completed</th>
-                                    <th class="text-center">Cancelled</th>
-                                    <th class="text-center">Dropped</th>
-                                    <th class="text-center">Rate</th>
+                                    <th scope="col">Action</th>
+                                    <th scope="col" class="text-center">Started</th>
+                                    <th scope="col" class="text-center">Completed</th>
+                                    <th scope="col" class="text-center">Cancelled</th>
+                                    <th scope="col" class="text-center">Dropped</th>
+                                    <th scope="col" class="text-center">Rate</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -179,10 +179,10 @@ $overallRate = $totalStarts > 0 ? round(($totalCompleted / $totalStarts) * 100, 
                 <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th class="text-center">Started</th>
-                            <th class="text-center">Completed</th>
-                            <th class="text-center">Rate</th>
+                            <th scope="col">Date</th>
+                            <th scope="col" class="text-center">Started</th>
+                            <th scope="col" class="text-center">Completed</th>
+                            <th scope="col" class="text-center">Rate</th>
                         </tr>
                     </thead>
                     <tbody>

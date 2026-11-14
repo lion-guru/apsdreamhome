@@ -26,7 +26,7 @@
             <div class="table-responsive">
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
-                        <tr><th>ID</th><th>Business</th><th>Category</th><th>City</th><th>Phone</th><th>Status</th><th>Views</th><th>Rating</th><th>Actions</th></tr>
+                        <tr><th scope="col">ID</th><th scope="col">Business</th><th scope="col">Category</th><th scope="col">City</th><th scope="col">Phone</th><th scope="col">Status</th><th scope="col">Views</th><th scope="col">Rating</th><th scope="col">Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($listings)): ?>

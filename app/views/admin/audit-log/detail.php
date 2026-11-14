@@ -11,15 +11,15 @@
                 <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Event</h2></div>
                 <div class="card-body">
                     <table class="table table-sm mb-0">
-                        <tr><th style="width:35%">Action</th><td><span class="badge bg-primary"><?= htmlspecialchars($log['action'] ?? '') ?></span> <small class="text-muted"><?= htmlspecialchars($log['action_type'] ?? '') ?></small></td></tr>
-                        <tr><th>Status</th><td><?= htmlspecialchars($log['status'] ?? '') ?><?= !empty($log['error_message']) ? ' — <small class="text-danger">' . htmlspecialchars($log['error_message']) . '</small>' : '' ?></td></tr>
-                        <tr><th>Description</th><td><?= nl2br(htmlspecialchars($log['description'] ?? '')) ?></td></tr>
-                        <tr><th>Entity</th><td><?= htmlspecialchars(trim(($log['entity_type'] ?? '') . ' #' . ($log['entity_id'] ?? ''), ' #')) ?: '—' ?>
+                        <tr><th scope="col" style="width:35%">Action</th><td><span class="badge bg-primary"><?= htmlspecialchars($log['action'] ?? '') ?></span> <small class="text-muted"><?= htmlspecialchars($log['action_type'] ?? '') ?></small></td></tr>
+                        <tr><th scope="col">Status</th><td><?= htmlspecialchars($log['status'] ?? '') ?><?= !empty($log['error_message']) ? ' — <small class="text-danger">' . htmlspecialchars($log['error_message']) . '</small>' : '' ?></td></tr>
+                        <tr><th scope="col">Description</th><td><?= nl2br(htmlspecialchars($log['description'] ?? '')) ?></td></tr>
+                        <tr><th scope="col">Entity</th><td><?= htmlspecialchars(trim(($log['entity_type'] ?? '') . ' #' . ($log['entity_id'] ?? ''), ' #')) ?: '—' ?>
                             <?php if (!empty($log['entity_type']) && !empty($log['entity_id'])): ?>
                                 <a href="<?= BASE_URL ?>/admin/audit-log/entity?entity_type=<?= urlencode($log['entity_type']) ?>&entity_id=<?= (int)$log['entity_id'] ?>" class="ms-2 small">full timeline</a>
                             <?php endif; ?>
                         </td></tr>
-                        <tr><th>Time</th><td><?= htmlspecialchars($log['created_at'] ?? '') ?></td></tr>
+                        <tr><th scope="col">Time</th><td><?= htmlspecialchars($log['created_at'] ?? '') ?></td></tr>
                     </table>
                 </div>
             </div>
@@ -29,15 +29,15 @@
                 <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Actor & Request</h2></div>
                 <div class="card-body">
                     <table class="table table-sm mb-0">
-                        <tr><th style="width:35%">User</th><td>#<?= (int)($log['user_id'] ?? 0) ?> (<?= htmlspecialchars($log['user_role'] ?? '') ?>)
+                        <tr><th scope="col" style="width:35%">User</th><td>#<?= (int)($log['user_id'] ?? 0) ?> (<?= htmlspecialchars($log['user_role'] ?? '') ?>)
                             <?php if (!empty($log['user_id'])): ?>
                                 <a href="<?= BASE_URL ?>/admin/audit-log/user/<?= (int)$log['user_id'] ?>" class="ms-2 small">user timeline</a>
                             <?php endif; ?>
                         </td></tr>
-                        <tr><th>IP</th><td><code class="small"><?= htmlspecialchars($log['ip_address'] ?? '') ?></code></td></tr>
-                        <tr><th>Method / URL</th><td><small><code><?= htmlspecialchars(($log['request_method'] ?? '') . ' ' . ($log['request_url'] ?? '')) ?></code></small></td></tr>
-                        <tr><th>User Agent</th><td><small class="text-muted"><?= htmlspecialchars(substr($log['user_agent'] ?? '', 0, 120)) ?></small></td></tr>
-                        <tr><th>Session</th><td><small><code><?= htmlspecialchars(substr($log['session_id'] ?? '', 0, 24)) ?></code></small></td></tr>
+                        <tr><th scope="col">IP</th><td><code class="small"><?= htmlspecialchars($log['ip_address'] ?? '') ?></code></td></tr>
+                        <tr><th scope="col">Method / URL</th><td><small><code><?= htmlspecialchars(($log['request_method'] ?? '') . ' ' . ($log['request_url'] ?? '')) ?></code></small></td></tr>
+                        <tr><th scope="col">User Agent</th><td><small class="text-muted"><?= htmlspecialchars(substr($log['user_agent'] ?? '', 0, 120)) ?></small></td></tr>
+                        <tr><th scope="col">Session</th><td><small><code><?= htmlspecialchars(substr($log['session_id'] ?? '', 0, 24)) ?></code></small></td></tr>
                     </table>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                 <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Same-entity history (<?= count($related) ?>)</h2></div>
                 <div class="card-body p-0">
                     <table class="table table-sm table-hover mb-0">
-                        <thead><tr><th>Time</th><th>Action</th><th>User</th><th>Status</th><th></th></tr></thead>
+                        <thead><tr><th scope="col">Time</th><th scope="col">Action</th><th scope="col">User</th><th scope="col">Status</th><th scope="col"></th></tr></thead>
                         <tbody>
                         <?php foreach ($related as $r): ?>
                             <tr>

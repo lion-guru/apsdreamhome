@@ -114,9 +114,9 @@ if (!function_exists('getTypeIconClass')) {
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr class="text-muted small">
-                            <th>Source</th>
-                            <th class="text-center">Count</th>
-                            <th class="text-end">Earned</th>
+                            <th scope="col">Source</th>
+                            <th scope="col" class="text-center">Count</th>
+                            <th scope="col" class="text-end">Earned</th>
                         </tr>
                     </thead>
                     <tbody>

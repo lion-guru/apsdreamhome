@@ -29,7 +29,7 @@ $widgetId = $widget['id'] ?? 'table_' . uniqid();
                 <thead>
                     <tr>
                         <?php foreach ($columns as $col): ?>
-                        <th><?= htmlspecialchars($col['label'] ?? $col['key'] ?? '') ?></th>
+                        <th scope="col"><?= htmlspecialchars($col['label'] ?? $col['key'] ?? '') ?></th>
                         <?php endforeach; ?>
                     </tr>
                 </thead>

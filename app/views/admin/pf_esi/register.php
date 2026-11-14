@@ -29,7 +29,7 @@ $status = $status ?? '';
     <?php } ?>
 
     <div class="card"><div class="card-body p-0"><table class="table mb-0">
-        <thead><tr><th></th><th>Employee</th><th>Department</th><th>Basic</th><th>Gross</th><th>PF Wage</th><th>PF Emp</th><th>PF Empr</th><th>ESI Wage</th><th>ESI Emp</th><th>ESI Empr</th><th>Total Ded</th><th>Status</th></tr></thead>
+        <thead><tr><th scope="col"></th><th scope="col">Employee</th><th scope="col">Department</th><th scope="col">Basic</th><th scope="col">Gross</th><th scope="col">PF Wage</th><th scope="col">PF Emp</th><th scope="col">PF Empr</th><th scope="col">ESI Wage</th><th scope="col">ESI Emp</th><th scope="col">ESI Empr</th><th scope="col">Total Ded</th><th scope="col">Status</th></tr></thead>
         <tbody>
         <?php if (empty($deductions)) { ?><tr><td colspan="13" class="text-center text-muted py-4">No records found</td></tr>
         <?php } else { foreach ($deductions as $d) { ?>

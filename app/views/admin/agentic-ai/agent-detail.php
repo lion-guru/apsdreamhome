@@ -38,7 +38,7 @@ $_escalations = $escalations ?? [];
                             <?php else: ?>
                             <div class="table-responsive">
                                 <table class="table table-sm table-hover">
-                                    <thead><tr><th>Time</th><th>Task</th><th>Status</th><th>Confidence</th></tr></thead>
+                                    <thead><tr><th scope="col">Time</th><th scope="col">Task</th><th scope="col">Status</th><th scope="col">Confidence</th></tr></thead>
                                     <tbody>
                                     <?php foreach ($_tasks as $t): ?>
                                     <tr>

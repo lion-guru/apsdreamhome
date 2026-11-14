@@ -126,14 +126,14 @@ $status_filter = $status_filter ?? '';
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Transaction ID</th>
-                                <th>Document Type</th>
-                                <th>Signer</th>
-                                <th>Aadhaar</th>
-                                <th>Status</th>
-                                <th>Provider</th>
-                                <th>Created</th>
-                                <th>Actions</th>
+                                <th scope="col">Transaction ID</th>
+                                <th scope="col">Document Type</th>
+                                <th scope="col">Signer</th>
+                                <th scope="col">Aadhaar</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Provider</th>
+                                <th scope="col">Created</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

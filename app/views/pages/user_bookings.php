@@ -30,14 +30,14 @@ $bookings = $bookings ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th><?php echo __('bookings_th_plot', [], 'Plot'); ?></th>
-                            <th><?php echo __('bookings_th_colony', [], 'Colony'); ?></th>
-                            <th><?php echo __('bookings_th_total', [], 'Total'); ?></th>
-                            <th><?php echo __('bookings_th_token', [], 'Token Paid'); ?></th>
-                            <th><?php echo __('bookings_th_status', [], 'Status'); ?></th>
-                            <th><?php echo __('bookings_th_date', [], 'Date'); ?></th>
-                            <th><?php echo __('bookings_th_actions', [], 'Actions'); ?></th>
+                            <th scope="col">#</th>
+                            <th scope="col"><?php echo __('bookings_th_plot', [], 'Plot'); ?></th>
+                            <th scope="col"><?php echo __('bookings_th_colony', [], 'Colony'); ?></th>
+                            <th scope="col"><?php echo __('bookings_th_total', [], 'Total'); ?></th>
+                            <th scope="col"><?php echo __('bookings_th_token', [], 'Token Paid'); ?></th>
+                            <th scope="col"><?php echo __('bookings_th_status', [], 'Status'); ?></th>
+                            <th scope="col"><?php echo __('bookings_th_date', [], 'Date'); ?></th>
+                            <th scope="col"><?php echo __('bookings_th_actions', [], 'Actions'); ?></th>
                         </tr>
                     </thead>
                     <tbody>

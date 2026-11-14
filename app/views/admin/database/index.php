@@ -32,7 +32,7 @@
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover table-sm mb-0 align-middle">
-                        <thead><tr><th>Table</th><th class="text-end">Rows (est)</th><th class="text-end">Data MB</th><th class="text-end">Index MB</th><th class="text-end">Total MB</th></tr></thead>
+                        <thead><tr><th scope="col">Table</th><th scope="col" class="text-end">Rows (est)</th><th scope="col" class="text-end">Data MB</th><th scope="col" class="text-end">Index MB</th><th scope="col" class="text-end">Total MB</th></tr></thead>
                         <tbody>
                         <?php foreach ($tables as $t): ?>
                             <tr>

@@ -102,14 +102,14 @@ ob_start();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Recipient</th>
-                            <th>Step</th>
-                            <th>Total Sent</th>
-                            <th>Status</th>
-                            <th>Enrolled</th>
-                            <th>Last Sent</th>
-                            <th>Next Send</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Recipient</th>
+                            <th scope="col">Step</th>
+                            <th scope="col">Total Sent</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Enrolled</th>
+                            <th scope="col">Last Sent</th>
+                            <th scope="col">Next Send</th>
                         </tr>
                     </thead>
                     <tbody>

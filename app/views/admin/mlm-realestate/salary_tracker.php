@@ -10,7 +10,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>ID</th><th>User</th><th>Target Volume</th><th>Achieved In</th><th>Monthly Payout</th><th>Duration</th><th>Start</th><th>End</th><th>Status</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">User</th><th scope="col">Target Volume</th><th scope="col">Achieved In</th><th scope="col">Monthly Payout</th><th scope="col">Duration</th><th scope="col">Start</th><th scope="col">End</th><th scope="col">Status</th></tr></thead>
                     <tbody>
                         <?php if (empty($trackers ?? [])): ?>
                         <tr>

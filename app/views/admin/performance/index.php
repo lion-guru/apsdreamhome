@@ -119,13 +119,13 @@ $stats = $stats ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 30%">Goal</th>
-                            <th style="width: 15%">Employee</th>
-                            <th style="width: 10%">Type</th>
-                            <th style="width: 10%">Progress</th>
-                            <th style="width: 10%">Status</th>
-                            <th style="width: 15%">Period</th>
-                            <th style="width: 15%">Actions</th>
+                            <th scope="col" style="width: 30%">Goal</th>
+                            <th scope="col" style="width: 15%">Employee</th>
+                            <th scope="col" style="width: 10%">Type</th>
+                            <th scope="col" style="width: 10%">Progress</th>
+                            <th scope="col" style="width: 10%">Status</th>
+                            <th scope="col" style="width: 15%">Period</th>
+                            <th scope="col" style="width: 15%">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

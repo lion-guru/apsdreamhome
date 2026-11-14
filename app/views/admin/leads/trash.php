@@ -54,12 +54,12 @@ $base = BASE_URL ?? '';
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Lead</th>
-                            <th>Contact</th>
-                            <th>Status</th>
-                            <th>Score</th>
-                            <th>Deleted At</th>
-                            <th>Actions</th>
+                            <th scope="col">Lead</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Deleted At</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

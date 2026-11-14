@@ -4,7 +4,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light"><tr><th>ID</th><th>User</th><th>Email</th><th>Amount</th><th>Status</th><th>RERA #</th><th>RERA Approved</th><th>Date</th><th>Action</th></tr></thead>
+                    <thead class="table-light"><tr><th scope="col">ID</th><th scope="col">User</th><th scope="col">Email</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">RERA #</th><th scope="col">RERA Approved</th><th scope="col">Date</th><th scope="col">Action</th></tr></thead>
                     <tbody>
                         <?php if (empty($requests ?? [])): ?>
                         <tr>

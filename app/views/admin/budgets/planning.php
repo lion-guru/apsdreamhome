@@ -52,7 +52,7 @@ $filters = $filters ?? ['fiscal_year' => '', 'department_id' => null];
             <div class="p-4 text-center text-muted">No planning items found</div>
             <?php else: ?>
             <table class="table table-sm mb-0">
-                <thead class="table-light"><tr><th>Line Item</th><th>Department</th><th>Fiscal Year</th><th>Category</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Total</th><th>Status</th></tr></thead>
+                <thead class="table-light"><tr><th scope="col">Line Item</th><th scope="col">Department</th><th scope="col">Fiscal Year</th><th scope="col">Category</th><th scope="col">Q1</th><th scope="col">Q2</th><th scope="col">Q3</th><th scope="col">Q4</th><th scope="col">Total</th><th scope="col">Status</th></tr></thead>
                 <tbody>
                     <?php foreach ($planning as $p): ?>
                     <?php $total = (float)($p['q1_amount'] ?? 0) + (float)($p['q2_amount'] ?? 0) + (float)($p['q3_amount'] ?? 0) + (float)($p['q4_amount'] ?? 0); ?>

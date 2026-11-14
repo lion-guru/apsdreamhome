@@ -25,7 +25,7 @@ $statuses = $statuses ?? [];
     </div></div>
 
     <div class="card"><div class="card-body p-0"><table class="table mb-0">
-        <thead><tr><th>Title</th><th>Report Type</th><th>Frequency</th><th>Format</th><th>Next Run</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th scope="col">Title</th><th scope="col">Report Type</th><th scope="col">Frequency</th><th scope="col">Format</th><th scope="col">Next Run</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
         <tbody>
         <?php if (empty($reports)): ?><tr><td colspan="7" class="text-center text-muted py-4">No scheduled reports</td></tr>
         <?php else: foreach ($reports as $r): ?>

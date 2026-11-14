@@ -31,7 +31,7 @@ $statuses = $statuses ?? [];
     </div></div>
 
     <div class="card"><div class="card-body p-0"><table class="table mb-0">
-        <thead><tr><th>Name</th><th>Category</th><th>SKU</th><th>Stock</th><th>Min</th><th>Unit Cost</th><th>Value</th><th>Status</th><th>Location</th><th>Actions</th></tr></thead>
+        <thead><tr><th scope="col">Name</th><th scope="col">Category</th><th scope="col">SKU</th><th scope="col">Stock</th><th scope="col">Min</th><th scope="col">Unit Cost</th><th scope="col">Value</th><th scope="col">Status</th><th scope="col">Location</th><th scope="col">Actions</th></tr></thead>
         <tbody>
         <?php if (empty($materials)): ?>
             <tr><td colspan="10" class="text-center text-muted py-4">No materials found</td></tr>

@@ -158,15 +158,15 @@ $statusColors = [
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th style="width: 50px;">#</th>
-                        <th>Customer</th>
-                        <th>Contact</th>
-                        <th>Interested In</th>
-                        <th>Message Preview</th>
-                        <th>Priority</th>
-                        <th>Status</th>
-                        <th>Received</th>
-                        <th class="text-end" style="width: 140px;">Action</th>
+                        <th scope="col" style="width: 50px;">#</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Contact</th>
+                        <th scope="col">Interested In</th>
+                        <th scope="col">Message Preview</th>
+                        <th scope="col">Priority</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Received</th>
+                        <th scope="col" class="text-end" style="width: 140px;">Action</th>
                     </tr>
                 </thead>
                 <tbody>

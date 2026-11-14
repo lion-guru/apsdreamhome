@@ -69,9 +69,9 @@
                 <div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-info-circle me-2"></i><?= __('auth_account_info') ?></h2></div>
                 <div class="card-body aps-cp-card-body">
                     <div class="table-responsive"><table class="table table-sm table-responsive">
-                        <tr><th><?= __('auth_member_since') ?></th><td><?= htmlspecialchars($user['created_at'] ?? 'N/A') ?></td></tr>
-                        <tr><th><?= __('auth_account_status') ?></th><td><span class="badge bg-success"><?= htmlspecialchars(ucfirst($user['status'] ?? 'Active')) ?></span></td></tr>
-                        <tr><th><?= __('auth_last_login') ?></th><td><?= htmlspecialchars($user['last_login'] ?? 'N/A') ?></td></tr>
+                        <tr><th scope="col"><?= __('auth_member_since') ?></th><td><?= htmlspecialchars($user['created_at'] ?? 'N/A') ?></td></tr>
+                        <tr><th scope="col"><?= __('auth_account_status') ?></th><td><span class="badge bg-success"><?= htmlspecialchars(ucfirst($user['status'] ?? 'Active')) ?></span></td></tr>
+                        <tr><th scope="col"><?= __('auth_last_login') ?></th><td><?= htmlspecialchars($user['last_login'] ?? 'N/A') ?></td></tr>
                     </table></div>
                 </div>
             </div>

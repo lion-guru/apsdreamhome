@@ -236,13 +236,13 @@ $offer = $offer ?? null;
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 100px">Round</th>
-                            <th>Type</th>
-                            <th style="width: 150px">Interviewer</th>
-                            <th style="width: 150px">Scheduled</th>
-                            <th style="width: 100px">Status</th>
-                            <th style="width: 100px">Feedback</th>
-                            <th style="width: 120px">Actions</th>
+                            <th scope="col" style="width: 100px">Round</th>
+                            <th scope="col">Type</th>
+                            <th scope="col" style="width: 150px">Interviewer</th>
+                            <th scope="col" style="width: 150px">Scheduled</th>
+                            <th scope="col" style="width: 100px">Status</th>
+                            <th scope="col" style="width: 100px">Feedback</th>
+                            <th scope="col" style="width: 120px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

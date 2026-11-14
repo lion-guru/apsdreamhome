@@ -44,14 +44,14 @@ $applications = $applications ?? [];
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Plan</th>
-                                        <th>Version</th>
-                                        <th>Base Price</th>
-                                        <th>Plots Updated</th>
-                                        <th>Total Value</th>
-                                        <th>Applied By</th>
-                                        <th>Applied At</th>
-                                        <th>Details</th>
+                                        <th scope="col">Plan</th>
+                                        <th scope="col">Version</th>
+                                        <th scope="col">Base Price</th>
+                                        <th scope="col">Plots Updated</th>
+                                        <th scope="col">Total Value</th>
+                                        <th scope="col">Applied By</th>
+                                        <th scope="col">Applied At</th>
+                                        <th scope="col">Details</th>
                                     </tr>
                                 </thead>
                                 <tbody>

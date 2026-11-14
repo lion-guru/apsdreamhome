@@ -126,13 +126,13 @@ $page_title = 'Deal Tracking - APS Dream Home';
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Lead</th>
-                            <th>Property</th>
-                            <th>Deal Value</th>
-                            <th>Stage</th>
-                            <th>Expected Close</th>
-                            <th>Assigned To</th>
-                            <th>Actions</th>
+                            <th scope="col">Lead</th>
+                            <th scope="col">Property</th>
+                            <th scope="col">Deal Value</th>
+                            <th scope="col">Stage</th>
+                            <th scope="col">Expected Close</th>
+                            <th scope="col">Assigned To</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

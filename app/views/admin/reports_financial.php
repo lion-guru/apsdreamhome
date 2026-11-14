@@ -52,7 +52,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Month</th><th>Revenue</th><th>Commission</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Month</th><th scope="col">Revenue</th><th scope="col">Commission</th></tr></thead>
                             <tbody>
                                 <?php foreach (($revenue_data ?? $finData['revenue_data'] ?? []) as $rev): ?>
                                 <tr>
@@ -78,7 +78,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Agent</th><th>Properties Sold</th><th>Commission</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Agent</th><th scope="col">Properties Sold</th><th scope="col">Commission</th></tr></thead>
                             <tbody>
                                 <?php foreach (($commission_data ?? $finData['commission_data'] ?? []) as $comm): ?>
                                 <tr>
@@ -106,7 +106,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <div class="table-responsive"><table class="table table-hover mb-0 table-responsive">
-                            <thead class="table-light"><tr><th>Category</th><th>Amount</th></tr></thead>
+                            <thead class="table-light"><tr><th scope="col">Category</th><th scope="col">Amount</th></tr></thead>
                             <tbody>
                                 <?php foreach (($expense_data ?? $finData['expense_data'] ?? []) as $exp): ?>
                                 <tr>

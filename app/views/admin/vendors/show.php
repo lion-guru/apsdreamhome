@@ -226,10 +226,10 @@ $contracts = $contracts ?? [];
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>PO #</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
+                                        <th scope="col">PO #</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>

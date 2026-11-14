@@ -38,7 +38,7 @@ ob_start();
     <div class="tab-pane fade show active" id="bud">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Category</th><th>Department</th><th>Allocated</th><th>Spent</th><th>Period</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Category</th><th scope="col">Department</th><th scope="col">Allocated</th><th scope="col">Spent</th><th scope="col">Period</th></tr></thead>
           <tbody>
             <?php if (empty($budgets)): ?>
               <tr><td colspan="5" class="text-center py-3 text-muted">No budgets</td></tr>
@@ -59,7 +59,7 @@ ob_start();
     <div class="tab-pane fade" id="exp">
       <div class="card shadow-sm"><div class="card-body p-0">
         <div class="table-responsive"><table class="table mb-0">
-          <thead class="table-light"><tr><th>Description</th><th>Amount</th><th>Date</th><th>Status</th><th>Category</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Description</th><th scope="col">Amount</th><th scope="col">Date</th><th scope="col">Status</th><th scope="col">Category</th></tr></thead>
           <tbody>
             <?php if (empty($expenses)): ?>
               <tr><td colspan="5" class="text-center py-3 text-muted">No expenses</td></tr>
@@ -83,7 +83,7 @@ ob_start();
           <h6>Tax Slabs</h6>
           <div class="card shadow-sm"><div class="card-body p-0">
             <div class="table-responsive"><table class="table mb-0">
-              <thead class="table-light"><tr><th>Type</th><th>State</th><th>Min</th><th>Max</th><th>Rate</th></tr></thead>
+              <thead class="table-light"><tr><th scope="col">Type</th><th scope="col">State</th><th scope="col">Min</th><th scope="col">Max</th><th scope="col">Rate</th></tr></thead>
               <tbody>
                 <?php if (empty($taxSlabs)): ?>
                   <tr><td colspan="5" class="text-center py-3 text-muted">No tax slabs</td></tr>
@@ -104,7 +104,7 @@ ob_start();
           <h6>GST Returns</h6>
           <div class="card shadow-sm"><div class="card-body p-0">
             <div class="table-responsive"><table class="table mb-0">
-              <thead class="table-light"><tr><th>Period</th><th>Sales</th><th>Tax</th><th>Filed</th></tr></thead>
+              <thead class="table-light"><tr><th scope="col">Period</th><th scope="col">Sales</th><th scope="col">Tax</th><th scope="col">Filed</th></tr></thead>
               <tbody>
                 <?php if (empty($gstReturns)): ?>
                   <tr><td colspan="4" class="text-center py-3 text-muted">No returns</td></tr>

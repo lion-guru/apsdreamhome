@@ -26,7 +26,7 @@ foreach ($rows as $r) {
             </div>
         <?php else: ?>
         <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-            <thead class="bg-light"><tr><th><?= __('assoc_tp_th_member', [], 'Member') ?></th><th class="text-end"><?= __('assoc_tp_th_leads', [], 'Leads') ?></th><th class="text-end"><?= __('assoc_tp_th_open', [], 'Open') ?></th><th class="text-end"><?= __('assoc_tp_th_won', [], 'Won') ?></th><th class="text-end"><?= __('assoc_tp_th_bookings', [], 'Bookings') ?></th><th class="text-end"><?= __('assoc_tp_th_revenue', [], 'Revenue') ?></th></tr></thead>
+            <thead class="bg-light"><tr><th scope="col"><?= __('assoc_tp_th_member', [], 'Member') ?></th><th scope="col" class="text-end"><?= __('assoc_tp_th_leads', [], 'Leads') ?></th><th scope="col" class="text-end"><?= __('assoc_tp_th_open', [], 'Open') ?></th><th scope="col" class="text-end"><?= __('assoc_tp_th_won', [], 'Won') ?></th><th scope="col" class="text-end"><?= __('assoc_tp_th_bookings', [], 'Bookings') ?></th><th scope="col" class="text-end"><?= __('assoc_tp_th_revenue', [], 'Revenue') ?></th></tr></thead>
             <tbody>
             <?php foreach ($rows as $r): ?>
                 <tr><td><strong><?= htmlspecialchars($r['name'] ?? '') ?></strong></td><td class="text-end"><?= number_format($r['leads']) ?></td><td class="text-end"><?= number_format($r['open']) ?></td><td class="text-end text-success fw-bold"><?= number_format($r['won']) ?></td><td class="text-end"><?= number_format($r['bookings']) ?></td><td class="text-end">₹<?= number_format($r['revenue'], 0) ?></td></tr>
@@ -41,7 +41,7 @@ foreach ($rows as $r) {
     <div class="card border-danger shadow-sm mt-3">
         <div class="card-header bg-danger text-white fw-bold"><i class="fas fa-bell me-2"></i><?= __('assoc_tp_esc', [], 'Needs Attention — overdue follow-ups in your team') ?></div>
         <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
-            <thead class="bg-light"><tr><th><?= __('assoc_tp_esc_who', [], 'Owner') ?></th><th><?= __('assoc_tp_esc_lead', [], 'Lead') ?></th><th><?= __('assoc_tp_esc_due', [], 'Due') ?></th></tr></thead>
+            <thead class="bg-light"><tr><th scope="col"><?= __('assoc_tp_esc_who', [], 'Owner') ?></th><th scope="col"><?= __('assoc_tp_esc_lead', [], 'Lead') ?></th><th scope="col"><?= __('assoc_tp_esc_due', [], 'Due') ?></th></tr></thead>
             <tbody>
             <?php foreach ($esc as $e): ?>
                 <tr><td><?= htmlspecialchars($e['owner_name'] ?? '') ?> <small class="text-muted">(<?= htmlspecialchars($e['followup_type'] ?? '') ?>)</small></td><td><?= htmlspecialchars($e['lead_name'] ?? ('#' . $e['id'])) ?> <small class="text-muted"><?= htmlspecialchars($e['phone'] ?? '') ?></small></td><td><span class="badge bg-danger"><?= htmlspecialchars($e['followup_date'] ?? '') ?></span></td></tr>

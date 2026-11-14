@@ -49,39 +49,39 @@ $log = $log ?? [];
     <table class="table table-bordered mb-4">
         <tbody>
             <tr>
-                <th class="table-light w-25">Township / Colony:</th>
+                <th scope="row" class="table-light w-25">Township / Colony:</th>
                 <td class="w-25 fw-bold text-primary"><?= htmlspecialchars($log['colony_name'] ?? 'Colony #' . $log['colony_id']) ?></td>
-                <th class="table-light w-25">Date of Operation:</th>
+                <th scope="row" class="table-light w-25">Date of Operation:</th>
                 <td class="w-25 fw-bold"><?= htmlspecialchars($log['log_date']) ?></td>
             </tr>
             <tr>
-                <th class="table-light">DG Unit Specification:</th>
+                <th scope="row" class="table-light">DG Unit Specification:</th>
                 <td><?= htmlspecialchars($log['genset_number']) ?></td>
-                <th class="table-light">Operating Window:</th>
+                <th scope="row" class="table-light">Operating Window:</th>
                 <td><?= $log['start_time'] ? substr($log['start_time'], 0, 5) : '--' ?> to <?= $log['stop_time'] ? substr($log['stop_time'], 0, 5) : '--' ?></td>
             </tr>
             <tr>
-                <th class="table-light">Diesel Consumed:</th>
+                <th scope="row" class="table-light">Diesel Consumed:</th>
                 <td class="fw-bold text-danger fs-6"><?= number_format((float)$log['diesel_consumed_litres'], 1) ?> Litres</td>
-                <th class="table-light">Fuel Expense Incurred:</th>
+                <th scope="row" class="table-light">Fuel Expense Incurred:</th>
                 <td class="fw-bold text-dark fs-6">₹<?= number_format((float)$log['diesel_expense_inr'], 2) ?> (@ ₹<?= number_format((float)$log['diesel_rate_per_litre'], 2) ?>/L)</td>
             </tr>
             <tr>
-                <th class="table-light">Power Generated:</th>
+                <th scope="row" class="table-light">Power Generated:</th>
                 <td><?= number_format((float)$log['power_generated_kwh'], 1) ?> kWh Units</td>
-                <th class="table-light">Efficiency Index:</th>
+                <th scope="row" class="table-light">Efficiency Index:</th>
                 <td><?= number_format((float)$log['fuel_efficiency_kwh_per_litre'], 2) ?> kWh / Litre</td>
             </tr>
             <tr>
-                <th class="table-light">Closing Diesel Stock:</th>
+                <th scope="row" class="table-light">Closing Diesel Stock:</th>
                 <td><?= number_format((float)$log['diesel_closing_stock_litres'], 1) ?> Litres in Tank</td>
-                <th class="table-light">Engine Mechanical Health:</th>
+                <th scope="row" class="table-light">Engine Mechanical Health:</th>
                 <td class="text-capitalize fw-semibold"><?= str_replace('_', ' ', $log['mechanical_status']) ?></td>
             </tr>
             <tr>
-                <th class="table-light">Attendant / Operator:</th>
+                <th scope="row" class="table-light">Attendant / Operator:</th>
                 <td><?= htmlspecialchars($log['operator_name']) ?> (<?= htmlspecialchars($log['operator_phone'] ?? 'N/A') ?>)</td>
-                <th class="table-light">Observations / Remarks:</th>
+                <th scope="row" class="table-light">Observations / Remarks:</th>
                 <td><?= htmlspecialchars($log['remarks'] ?: 'Township critical loads maintained smoothly.') ?></td>
             </tr>
         </tbody>

@@ -60,14 +60,14 @@
                         <table class="table table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th><input type="checkbox" id="selectAll" aria-label="Select all rows"></th>
-                                    <th>Lead</th>
-                                    <th>Current Assignee</th>
-                                    <th>Requested Assignee</th>
-                                    <th>Requested By</th>
-                                    <th>Reason</th>
-                                    <th>Requested</th>
-                                    <th>Actions</th>
+                                    <th scope="col"><input type="checkbox" id="selectAll" aria-label="Select all rows"></th>
+                                    <th scope="col">Lead</th>
+                                    <th scope="col">Current Assignee</th>
+                                    <th scope="col">Requested Assignee</th>
+                                    <th scope="col">Requested By</th>
+                                    <th scope="col">Reason</th>
+                                    <th scope="col">Requested</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -127,7 +127,7 @@
                 <div class="table-responsive">
                     <table class="table table-sm">
                         <thead>
-                            <tr><th>Lead</th><th>From</th><th>To</th><th>Requested By</th><th>Status</th><th>Approved By</th><th>Date</th></tr>
+                            <tr><th scope="col">Lead</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Requested By</th><th scope="col">Status</th><th scope="col">Approved By</th><th scope="col">Date</th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($history as $h): ?>

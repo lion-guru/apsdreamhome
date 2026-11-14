@@ -80,12 +80,12 @@
                             <table class="table table-striped table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Pair</th>
-                                        <th>Rate</th>
-                                        <th>Source</th>
-                                        <th>Fetched</th>
-                                        <th>Status</th>
-                                        <th class="text-right">Actions</th>
+                                        <th scope="col">Pair</th>
+                                        <th scope="col">Rate</th>
+                                        <th scope="col">Source</th>
+                                        <th scope="col">Fetched</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col" class="text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -26,7 +26,7 @@ $statuses = $statuses ?? [];
     </div></div>
 
     <div class="card"><div class="card-body p-0"><table class="table mb-0">
-        <thead><tr><th>GRN Number</th><th>PO Number</th><th>Vendor</th><th>Amount</th><th>Status</th><th>Received</th><th>Actions</th></tr></thead>
+        <thead><tr><th scope="col">GRN Number</th><th scope="col">PO Number</th><th scope="col">Vendor</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">Received</th><th scope="col">Actions</th></tr></thead>
         <tbody>
         <?php if (empty($grns)): ?><tr><td colspan="7" class="text-center text-muted py-4">No GRNs found</td></tr>
         <?php else: foreach ($grns as $g): ?>

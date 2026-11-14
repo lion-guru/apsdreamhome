@@ -24,14 +24,14 @@ $error = $error ?? null;
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Language</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Usage</th>
-                            <th>Created</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Language</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Usage</th>
+                            <th scope="col">Created</th>
                         </tr>
                     </thead>
                     <tbody>

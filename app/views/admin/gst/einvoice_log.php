@@ -27,16 +27,16 @@ $csrf = $this->getCsrfToken();
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Invoice #</th>
-                            <th>Invoice Date</th>
-                            <th>IRN</th>
-                            <th>Status</th>
-                            <th>ACK No</th>
-                            <th>ACK Date</th>
-                            <th>Error</th>
-                            <th>API Endpoint</th>
-                            <th>Created</th>
-                            <th class="text-end">Actions</th>
+                            <th scope="col">Invoice #</th>
+                            <th scope="col">Invoice Date</th>
+                            <th scope="col">IRN</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">ACK No</th>
+                            <th scope="col">ACK Date</th>
+                            <th scope="col">Error</th>
+                            <th scope="col">API Endpoint</th>
+                            <th scope="col">Created</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

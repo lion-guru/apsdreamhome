@@ -42,7 +42,7 @@ ob_start();
     <div class="card-body p-0">
       <div class="table-responsive">
         <table class="table mb-0">
-          <thead class="table-light"><tr><th>Min Price</th><th>Max Price</th><th>Rate</th><th>Description</th></tr></thead>
+          <thead class="table-light"><tr><th scope="col">Min Price</th><th scope="col">Max Price</th><th scope="col">Rate</th><th scope="col">Description</th></tr></thead>
           <tbody>
             <?php foreach ($commissionStructure as $cs): ?>
               <tr>

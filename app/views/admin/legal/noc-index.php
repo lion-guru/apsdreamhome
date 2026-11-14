@@ -36,16 +36,16 @@
                     <table class="table table-hover table-sm">
                         <thead class="table-light">
                             <tr>
-                                <th>ID</th>
-                                <th>Booking</th>
-                                <th>Customer</th>
-                                <th>Plot</th>
-                                <th>Reg. No.</th>
-                                <th>Sub-Registrar Office</th>
-                                <th>Reg. Date</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th></th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Booking</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Plot</th>
+                                <th scope="col">Reg. No.</th>
+                                <th scope="col">Sub-Registrar Office</th>
+                                <th scope="col">Reg. Date</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Status</th>
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -92,14 +92,14 @@
                     <table class="table table-hover table-sm">
                         <thead class="table-light">
                             <tr>
-                                <th>ID</th>
-                                <th>Booking</th>
-                                <th>Customer</th>
-                                <th>Plot</th>
-                                <th>Type</th>
-                                <th>Requested</th>
-                                <th>Status</th>
-                                <th></th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Booking</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Plot</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Requested</th>
+                                <th scope="col">Status</th>
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>

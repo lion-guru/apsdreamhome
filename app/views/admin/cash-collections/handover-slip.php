@@ -28,7 +28,7 @@ $slipNo = 'CHS-' . str_replace('-', '', $date) . '-' . substr(md5($date . count(
             <div class="table-responsive">
                 <table class="table table-bordered mb-0">
                     <thead class="table-light">
-                        <tr><th>Cashier</th><th class="text-center">Receipts</th><th class="text-end">Cash Total</th></tr>
+                        <tr><th scope="col">Cashier</th><th scope="col" class="text-center">Receipts</th><th scope="col" class="text-end">Cash Total</th></tr>
                     </thead>
                     <tbody>
                         <?php if (empty($by_cashier)): ?>
@@ -42,7 +42,7 @@ $slipNo = 'CHS-' . str_replace('-', '', $date) . '-' . substr(md5($date . count(
                         <?php endforeach; endif; ?>
                     </tbody>
                     <tfoot class="table-light">
-                        <tr><th colspan="2" class="text-end">Grand Total Cash</th><th class="text-end">Rs.<?= number_format((float)$grand_total, 2) ?></th></tr>
+                        <tr><th scope="col" colspan="2" class="text-end">Grand Total Cash</th><th scope="col" class="text-end">Rs.<?= number_format((float)$grand_total, 2) ?></th></tr>
                     </tfoot>
                 </table>
             </div>
@@ -50,7 +50,7 @@ $slipNo = 'CHS-' . str_replace('-', '', $date) . '-' . substr(md5($date . count(
             <h6 class="mt-4 mb-2">Receipt-wise breakup</h6>
             <div class="table-responsive">
                 <table class="table table-sm">
-                    <thead><tr><th>#</th><th>Customer</th><th>Cashier</th><th>Booking</th><th class="text-end">Amount</th><th>Status</th></tr></thead>
+                    <thead><tr><th scope="col">#</th><th scope="col">Customer</th><th scope="col">Cashier</th><th scope="col">Booking</th><th scope="col" class="text-end">Amount</th><th scope="col">Status</th></tr></thead>
                     <tbody>
                         <?php foreach ($rows as $r): ?>
                         <tr>

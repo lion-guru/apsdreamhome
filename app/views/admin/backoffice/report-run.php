@@ -30,7 +30,7 @@
         <div class="table-responsive">
           <?php if (!empty($result['rows'])): ?>
             <table class="table table-hover mb-0">
-              <thead><tr><?php foreach (array_keys($result['rows'][0] ?? []) as $col): ?><th><?= htmlspecialchars($col ?? '') ?></th><?php endforeach; ?></tr></thead>
+              <thead><tr><?php foreach (array_keys($result['rows'][0] ?? []) as $col): ?><th scope="col"><?= htmlspecialchars($col ?? '') ?></th><?php endforeach; ?></tr></thead>
               <tbody>
                 <?php foreach ($result['rows'] as $row): ?>
                   <tr><?php foreach ($row as $val): ?><td><?= htmlspecialchars($val ?? '') ?></td><?php endforeach; ?></tr>

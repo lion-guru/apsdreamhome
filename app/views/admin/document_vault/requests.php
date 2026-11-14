@@ -84,13 +84,13 @@ $filters = $filters ?? [];
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 120px">Request #</th>
-                            <th>Employee</th>
-                            <th style="width: 150px">Category</th>
-                            <th style="width: 120px">Due Date</th>
-                            <th style="width: 100px">Priority</th>
-                            <th style="width: 120px">Status</th>
-                            <th style="width: 150px">Actions</th>
+                            <th scope="col" style="width: 120px">Request #</th>
+                            <th scope="col">Employee</th>
+                            <th scope="col" style="width: 150px">Category</th>
+                            <th scope="col" style="width: 120px">Due Date</th>
+                            <th scope="col" style="width: 100px">Priority</th>
+                            <th scope="col" style="width: 120px">Status</th>
+                            <th scope="col" style="width: 150px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

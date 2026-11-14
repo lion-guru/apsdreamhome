@@ -82,14 +82,14 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <table class="aag-table">
                 <thead>
                     <tr>
-                        <th>Title</th>
-                        <th>Agent</th>
-                        <th>Property</th>
-                        <th >Commission</th>
-                        <th>Status</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th >Actions</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Agent</th>
+                        <th scope="col">Property</th>
+                        <th scope="col" >Commission</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Start Date</th>
+                        <th scope="col">End Date</th>
+                        <th scope="col" >Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -22,7 +22,7 @@
     <div class="aps-cp-card">
         <div class="aps-cp-card-body p-0">
             <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-                <thead class="table-light"><tr><th><?php echo __('finance_certificate_hash'); ?></th><th><?php echo __('finance_deductee'); ?></th><th><?php echo __('finance_pan'); ?></th><th><?php echo __('finance_fy'); ?></th><th><?php echo __('finance_quarter'); ?></th><th class="text-end"><?php echo __('finance_tds_amt'); ?></th><th><?php echo __('finance_issued'); ?></th></tr></thead>
+                <thead class="table-light"><tr><th scope="col"><?php echo __('finance_certificate_hash'); ?></th><th scope="col"><?php echo __('finance_deductee'); ?></th><th scope="col"><?php echo __('finance_pan'); ?></th><th scope="col"><?php echo __('finance_fy'); ?></th><th scope="col"><?php echo __('finance_quarter'); ?></th><th scope="col" class="text-end"><?php echo __('finance_tds_amt'); ?></th><th scope="col"><?php echo __('finance_issued'); ?></th></tr></thead>
                 <tbody>
                 <?php if (empty($certificates)): ?>
                     <tr><td colspan="7" class="text-center text-muted py-4"><?php echo __('finance_no_certificates_issued_for'); ?> <?= htmlspecialchars($fy ?? '') ?></td></tr>

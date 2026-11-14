@@ -54,7 +54,7 @@ ob_start();
             <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0">
                     <thead class="table-light">
-                        <tr><th>Type</th><th>Period</th><th>Description</th><th>Due Date</th><th>Days</th><th>Penalty/Day</th><th>Status</th></tr>
+                        <tr><th scope="col">Type</th><th scope="col">Period</th><th scope="col">Description</th><th scope="col">Due Date</th><th scope="col">Days</th><th scope="col">Penalty/Day</th><th scope="col">Status</th></tr>
                     </thead>
                     <tbody>
                     <?php foreach ($deadlines as $d):

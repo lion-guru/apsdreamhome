@@ -51,15 +51,15 @@ $statuses = $statuses ?? ['draft', 'submitted', 'approved', 'rejected'];
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Budget Name</th>
-                        <th>Department</th>
-                        <th>Fiscal Year</th>
-                        <th>Allocated</th>
-                        <th>Spent</th>
-                        <th>Committed</th>
-                        <th>Remaining</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th scope="col">Budget Name</th>
+                        <th scope="col">Department</th>
+                        <th scope="col">Fiscal Year</th>
+                        <th scope="col">Allocated</th>
+                        <th scope="col">Spent</th>
+                        <th scope="col">Committed</th>
+                        <th scope="col">Remaining</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -41,30 +41,30 @@ $certNo = 'TDS16A-' . date('Ymd') . '-' . ($_SESSION['user_id'] ?? 0);
 
     <div class="sec-title">Deductor (Company)</div>
     <table class="info-table">
-        <tr><th>Name</th><td>APS Dream Home</td></tr>
-        <tr><th>TAN</th><td><?= htmlspecialchars($tan) ?></td></tr>
-        <tr><th>Section</th><td>194H — Commission / Brokerage @ <?= htmlspecialchars((string)$rate) ?>%</td></tr>
+        <tr><th scope="col">Name</th><td>APS Dream Home</td></tr>
+        <tr><th scope="col">TAN</th><td><?= htmlspecialchars($tan) ?></td></tr>
+        <tr><th scope="col">Section</th><td>194H — Commission / Brokerage @ <?= htmlspecialchars((string)$rate) ?>%</td></tr>
     </table>
 
     <div class="sec-title">Deductee (Associate)</div>
     <table class="info-table">
-        <tr><th>Name</th><td><?= htmlspecialchars($me['name'] ?? '') ?></td></tr>
-        <tr><th>Associate Code</th><td><?= htmlspecialchars($me['referral_code'] ?? '') ?></td></tr>
-        <tr><th>PAN</th><td><?= htmlspecialchars(!empty($me['pan_number']) ? strtoupper($me['pan_number']) : 'NOT FURNISHED (higher TDS u/s 206AA may apply)') ?></td></tr>
-        <tr><th>Phone / Email</th><td><?= htmlspecialchars(trim(($me['phone'] ?? '') . ' / ' . ($me['email'] ?? ''), ' /')) ?></td></tr>
+        <tr><th scope="col">Name</th><td><?= htmlspecialchars($me['name'] ?? '') ?></td></tr>
+        <tr><th scope="col">Associate Code</th><td><?= htmlspecialchars($me['referral_code'] ?? '') ?></td></tr>
+        <tr><th scope="col">PAN</th><td><?= htmlspecialchars(!empty($me['pan_number']) ? strtoupper($me['pan_number']) : 'NOT FURNISHED (higher TDS u/s 206AA may apply)') ?></td></tr>
+        <tr><th scope="col">Phone / Email</th><td><?= htmlspecialchars(trim(($me['phone'] ?? '') . ' / ' . ($me['email'] ?? ''), ' /')) ?></td></tr>
     </table>
 
     <div class="sec-title">Deduction Summary — FY <?= htmlspecialchars($fy) ?></div>
     <table class="info-table">
-        <tr><th>Total Commission Paid (Gross)</th><td>₹<?= number_format($gross, 2) ?></td></tr>
-        <tr><th>Total TDS Deducted &amp; Deposited</th><td>₹<?= number_format($tds, 2) ?></td></tr>
-        <tr><th>Total Net Paid</th><td>₹<?= number_format($net, 2) ?></td></tr>
-        <tr><th>No. of Payouts</th><td><?= count($payouts) ?></td></tr>
+        <tr><th scope="col">Total Commission Paid (Gross)</th><td>₹<?= number_format($gross, 2) ?></td></tr>
+        <tr><th scope="col">Total TDS Deducted &amp; Deposited</th><td>₹<?= number_format($tds, 2) ?></td></tr>
+        <tr><th scope="col">Total Net Paid</th><td>₹<?= number_format($net, 2) ?></td></tr>
+        <tr><th scope="col">No. of Payouts</th><td><?= count($payouts) ?></td></tr>
     </table>
 
     <div class="sec-title">Payout-wise Breakup</div>
     <table class="info-table">
-        <tr><th>Date</th><th>Gross (₹)</th><th>TDS (₹)</th><th>Net (₹)</th><th>UTR / Ref</th></tr>
+        <tr><th scope="col">Date</th><th scope="col">Gross (₹)</th><th scope="col">TDS (₹)</th><th scope="col">Net (₹)</th><th scope="col">UTR / Ref</th></tr>
         <?php if (empty($payouts)): ?>
             <tr><td colspan="5" class="text-center text-muted">No payouts in this financial year.</td></tr>
         <?php else: ?>

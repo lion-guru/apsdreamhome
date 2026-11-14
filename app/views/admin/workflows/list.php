@@ -21,7 +21,7 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light"><tr><th class="ps-4">#</th><th>Name</th><th>Type</th><th>Assigned To</th><th>Priority</th><th>Status</th><th>Due Date</th><th class="text-end pe-4">Actions</th></tr></thead>
+                    <thead class="bg-light"><tr><th scope="col" class="ps-4">#</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Assigned To</th><th scope="col">Priority</th><th scope="col">Status</th><th scope="col">Due Date</th><th scope="col" class="text-end pe-4">Actions</th></tr></thead>
                     <tbody>
                         <?php if (empty($workflows)): ?>
                             <tr><td colspan="8" class="text-center py-5 text-muted"><i class="fas fa-diagram-project fa-3x d-block mb-3"></i>No workflows created</td></tr>

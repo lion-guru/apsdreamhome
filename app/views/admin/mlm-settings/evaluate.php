@@ -42,13 +42,13 @@ $total_count = $total_count ?? 0;
         <table class="table table-bordered table-hover bg-white">
             <thead class="table-dark">
                 <tr>
-                    <th>User ID</th>
-                    <th>Current Level</th>
-                    <th>Eligible Level</th>
-                    <th>Team Size</th>
-                    <th>Direct Refs</th>
-                    <th>Monthly Sales</th>
-                    <th>Result</th>
+                    <th scope="col">User ID</th>
+                    <th scope="col">Current Level</th>
+                    <th scope="col">Eligible Level</th>
+                    <th scope="col">Team Size</th>
+                    <th scope="col">Direct Refs</th>
+                    <th scope="col">Monthly Sales</th>
+                    <th scope="col">Result</th>
                 </tr>
             </thead>
             <tbody>

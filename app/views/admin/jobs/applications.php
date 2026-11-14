@@ -70,14 +70,14 @@ $error = $error ?? null;
                 <table class="table table-hover mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th>Candidate</th>
-                            <th>Job Position</th>
-                            <th>Contact</th>
-                            <th>Experience</th>
-                            <th>Applied</th>
-                            <th>Status</th>
-                            <th>Resume</th>
-                            <th>Actions</th>
+                            <th scope="col">Candidate</th>
+                            <th scope="col">Job Position</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Experience</th>
+                            <th scope="col">Applied</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Resume</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

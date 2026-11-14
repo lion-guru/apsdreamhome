@@ -91,14 +91,14 @@
                                     <div class="table-responsive"><table class="table table-striped table-responsive" id="mcpKeysTable">
                                         <thead>
                                             <tr>
-                                                <th>Service</th>
-                                                <th>Key Name</th>
-                                                <th>Type</th>
-                                                <th>Description</th>
-                                                <th>Status</th>
-                                                <th>Usage</th>
-                                                <th>Last Used</th>
-                                                <th>Actions</th>
+                                                <th scope="col">Service</th>
+                                                <th scope="col">Key Name</th>
+                                                <th scope="col">Type</th>
+                                                <th scope="col">Description</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Usage</th>
+                                                <th scope="col">Last Used</th>
+                                                <th scope="col">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody id="mcpKeysTableBody">
@@ -121,14 +121,14 @@
                                     <div class="table-responsive"><table class="table table-striped table-responsive" id="userKeysTable">
                                         <thead>
                                             <tr>
-                                                <th>API Key</th>
-                                                <th>Name</th>
-                                                <th>User ID</th>
-                                                <th>Permissions</th>
-                                                <th>Rate Limit</th>
-                                                <th>Status</th>
-                                                <th>Last Used</th>
-                                                <th>Actions</th>
+                                                <th scope="col">API Key</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">User ID</th>
+                                                <th scope="col">Permissions</th>
+                                                <th scope="col">Rate Limit</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Last Used</th>
+                                                <th scope="col">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody id="userKeysTableBody">

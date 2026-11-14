@@ -12,7 +12,7 @@ $token = $token ?? '';
     </div>
     <div class="card border-0 shadow-sm mt-3"><div class="card-header bg-white fw-bold"><?= __('assoc_ip_valid', [], 'First valid rows') ?></div>
         <div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0">
-            <thead class="bg-light"><tr><th><?= __('assoc_ip_th_name', [], 'Name') ?></th><th><?= __('assoc_ip_th_phone', [], 'Phone') ?></th><th><?= __('assoc_ip_th_email', [], 'Email') ?></th></tr></thead>
+            <thead class="bg-light"><tr><th scope="col"><?= __('assoc_ip_th_name', [], 'Name') ?></th><th scope="col"><?= __('assoc_ip_th_phone', [], 'Phone') ?></th><th scope="col"><?= __('assoc_ip_th_email', [], 'Email') ?></th></tr></thead>
             <tbody>
             <?php foreach ($rows as $r): ?>
                 <tr><td><?= htmlspecialchars($r['name'] ?? '') ?></td><td><?= htmlspecialchars($r['phone'] ?? '') ?></td><td><?= htmlspecialchars($r['email'] ?? '') ?></td></tr>
@@ -23,7 +23,7 @@ $token = $token ?? '';
     <?php if (!empty($skipped)): ?>
     <div class="card border-0 shadow-sm mt-3"><div class="card-header bg-white fw-bold text-warning"><i class="fas fa-exclamation-triangle me-2"></i><?= __('assoc_ip_skipped', [], 'Skipped rows') ?></div>
         <div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0">
-            <thead class="bg-light"><tr><th><?= __('assoc_ip_th_row', [], 'Row') ?></th><th><?= __('assoc_ip_th_why', [], 'Why') ?></th></tr></thead>
+            <thead class="bg-light"><tr><th scope="col"><?= __('assoc_ip_th_row', [], 'Row') ?></th><th scope="col"><?= __('assoc_ip_th_why', [], 'Why') ?></th></tr></thead>
             <tbody>
             <?php foreach ($skipped as $s): ?>
                 <tr><td><?= (int)($s['row'] ?? 0) ?></td><td><?= htmlspecialchars($s['reason'] ?? '') ?></td></tr>

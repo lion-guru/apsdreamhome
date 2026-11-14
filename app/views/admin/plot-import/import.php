@@ -81,9 +81,9 @@ unset($_SESSION['import_errors']);
                     <table class="table table-sm table-bordered">
                         <thead>
                             <tr>
-                                <th>Column</th>
-                                <th>Required</th>
-                                <th>Description</th>
+                                <th scope="col">Column</th>
+                                <th scope="col">Required</th>
+                                <th scope="col">Description</th>
                             </tr>
                         </thead>
                         <tbody>
