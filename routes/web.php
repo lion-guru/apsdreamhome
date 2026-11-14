@@ -2674,6 +2674,9 @@ $router->get('/admin/accounts', 'App\\Http\\Controllers\\Admin\\MoneyWorkflowCon
 // Developer Tools
 $router->get('/admin/dev-tools', 'App\\Http\\Controllers\\Admin\\AdminController@devTools');
 
+// Migration Audit - read-only visibility into schema_migrations vs database/migrations/
+$router->get('/admin/migrations', 'App\\Http\\Controllers\\Admin\\MigrationAuditController@index');
+
 // Invoices (merged into MoneyWorkflowController)
 $router->get('/admin/invoices', 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@invoices');
 $router->get('/admin/invoices/view/{id}', 'App\\Http\\Controllers\\Admin\\MoneyWorkflowController@viewInvoice');
