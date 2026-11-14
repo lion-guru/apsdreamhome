@@ -284,11 +284,20 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
                 $lead = $this->db->fetch("SELECT name, phone, email, property_interest, budget_range, city, state FROM leads WHERE id = ?", [$session['lead_id']]);
                 if ($lead) {
                     $this->db->execute(
-                        "INSERT INTO ai_call_extracted_leads (lead_id, session_id, name, phone, email, property_interest, budget_range, city, state, source, summary, extracted_at)
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'voice_call', ?, NOW())",
+                        "INSERT INTO ai_call_extracted_leads (call_session_id, lead_id, session_id, name, phone, email, property_interest, budget_range, city, state, source, summary, extracted_at, created_at)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'voice_call', ?, NOW(), NOW())",
                         [
-                            $session['lead_id'], $sessionId, $lead['name'], $lead['phone'], $lead['email'],
-                            $lead['property_interest'], $lead['budget_range'], $lead['city'], $lead['state'], $summary
+                            (int) ($session['id'] ?? 0),
+                            $session['lead_id'],
+                            $sessionId,
+                            $lead['name'],
+                            $lead['phone'],
+                            $lead['email'],
+                            $lead['property_interest'],
+                            $lead['budget_range'],
+                            $lead['city'],
+                            $lead['state'],
+                            $summary,
                         ]
                     );
                 }
@@ -297,7 +306,7 @@ class VoiceAgentController extends \App\Http\Controllers\BaseController
             if ($outcome === 'followup_needed') {
                 $this->db->execute(
                     "INSERT INTO ai_calling_schedule (lead_id, user_id, phone, agent_type, scheduled_date, scheduled_time, priority, status, created_at)
-                     VALUES (?, ?, ?, ?, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00:00', 'medium', 'scheduled', NOW())",
+                     VALUES (?, ?, ?, ?, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '09:00:00', 'medium', 'pending', NOW())",
                     [$session['lead_id'], $session['lead_id'], $session['phone'] ?? '', 'followup']
                 );
             }

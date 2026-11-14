@@ -23,7 +23,7 @@ echo "Time: " . date('Y-m-d H:i:s') . "\n";
 
 try {
     $db            = Database::getInstance()->getConnection();
-    $notifications = new NotificationService();
+    $notifications = new NotificationService($db);
 
     $stmt = $db->prepare("
         SELECT md.*, u.id AS user_id, u.email, u.name, p.plot_number, c.name AS colony_name

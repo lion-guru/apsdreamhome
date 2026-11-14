@@ -21,7 +21,7 @@ echo "Time: " . date('Y-m-d H:i:s') . "\n";
 
 try {
     $db = Database::getInstance()->getConnection();
-    $notifications = new NotificationService();
+    $notifications = new NotificationService($db);
 
     // Live schema: material_inventory (cement/steel/sand/bundle of construction materials).
     // Status discontinued/out_of_stock items are excluded so the alert fires only for

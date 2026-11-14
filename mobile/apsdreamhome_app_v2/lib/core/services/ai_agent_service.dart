@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:dio/dio.dart';
 import '../constants/app_constants.dart';
+import 'api_service.dart';
 
 /// AI Agent Roles
 enum AIAgentRole {
@@ -48,16 +49,46 @@ class AIAgentConfig {
   });
 }
 
-/// AI Agent Service — connects to backend AI APIs
+/// AI Agent Service - connects to backend AI APIs
 /// Falls back gracefully to mock responses when API is unavailable.
 class AIAgentService {
   static final AIAgentService _instance = AIAgentService._internal();
   factory AIAgentService() => _instance;
-  AIAgentService._internal();
+
+  /// Normalize the base URL once. AppConstants.baseUrl ships WITHOUT a
+  /// trailing slash, and Dio concatenates baseUrl+path directly - so every
+  /// AI call was hitting 'https://host/apsdreamhomeapi/v2/...' and silently
+  /// degrading to canned mock responses.
+  static String _normalizedBaseUrl() {
+    final b = AppConstants.baseUrl;
+    return b.endsWith('/') ? b : '$b/';
+  }
+  AIAgentService._internal() {
+    // Every AI backend call needs the same Bearer token the rest of the app
+    // uses. Nothing in the app ever called setAuthToken() (grep confirms zero
+    // call sites), so all /ai-agent/* calls left without Authorization and
+    // the server answered 401 - silently served by mock fallbacks instead.
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          try {
+            final token = await ApiService().getToken();
+            if (token != null && token.isNotEmpty) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
+          } catch (_) {
+            // Unauthenticated (guest) - server answered 401 and the caller
+            // falls back to mock; never crash the interceptor.
+          }
+          handler.next(options);
+        },
+      ),
+    );
+  }
 
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: AppConstants.baseUrl,
+      baseUrl: _normalizedBaseUrl(),
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 60),
       headers: {
@@ -80,7 +111,7 @@ class AIAgentService {
 
   /// Initialize the AI Agent Service
   Future<void> initialize() async {
-    _dio.options.baseUrl = AppConstants.baseUrl;
+    // baseUrl fixed at construction; do not reassign without the trailing slash (see _normalizedBaseUrl)
     developer.log('AI Agent Service initialized with baseUrl: ${AppConstants.baseUrl}');
   }
 
@@ -108,7 +139,7 @@ class AIAgentService {
     String message, {
     Map<String, dynamic>? context,
   }) async {
-    _dio.options.baseUrl = AppConstants.baseUrl;
+    // baseUrl fixed at construction; do not reassign without the trailing slash (see _normalizedBaseUrl)
 
     try {
       final response = await _dio.post(
@@ -227,7 +258,7 @@ class AIAgentService {
   }) async {
     developer.log('Processing message for agent: $agentId');
 
-    _dio.options.baseUrl = AppConstants.baseUrl;
+    // baseUrl fixed at construction; do not reassign without the trailing slash (see _normalizedBaseUrl)
 
     try {
       final response = await _dio.post(
@@ -349,7 +380,7 @@ class AIAgentService {
   }) async {
     try {
       final response = await _dio.post(
-        'api/voice-agent/start-call',
+        '${AppConstants.apiVersion}/voice/start-call',
         data: {
           'lead_id': leadId,
           'phone': phone,
@@ -376,7 +407,7 @@ class AIAgentService {
   }) async {
     try {
       final response = await _dio.post(
-        'api/voice-agent/end-call',
+        '${AppConstants.apiVersion}/voice/end-call',
         data: {
           'session_id': sessionId,
           'outcome': outcome ?? 'completed',
@@ -398,7 +429,7 @@ class AIAgentService {
   /// Get voice call stats
   Future<Map<String, dynamic>> getVoiceStats() async {
     try {
-      final response = await _dio.get('api/voice-agent/stats');
+      final response = await _dio.get('${AppConstants.apiVersion}/voice/stats');
       final data = response.data;
       if (data is Map<String, dynamic>) {
         return data;
@@ -417,7 +448,7 @@ class AIAgentService {
   }) async {
     try {
       final response = await _dio.get(
-        'api/voice-agent/call-history',
+        '${AppConstants.apiVersion}/voice/call-history',
         queryParameters: {'limit': limit, 'offset': offset},
       );
       final data = response.data;
