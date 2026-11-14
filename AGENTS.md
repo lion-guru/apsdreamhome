@@ -7839,3 +7839,59 @@ _973. **`--dart-define` that is never passed is a trap that ships to every user.
 _974. **Machine-specific build files belong in .gitignore, and removing them from the index is free.** `local.properties` carried flutter.bin path + build-hash version strings; deleting three lines of it from git ripped out 19 commits of churn and one user-facing false positive (`browser-warning` headers fingerprinting the APK).
 _975. **Fingerprinting attack via headers.** `ngrok-skip-browser-warning: true` broadcasts "this request came from a debug tunnel" to any edge WAF/CDN — replace or delete, never ignore.
 _976. **PHONE IS THE TARGET — verify by loading the actual target, not the analyzer.** `flutter analyze` proves syntactic health, not API reach; the ONLY proof is a fresh install against the production host.
+
+## Session 528: Mobile GUI Coherence Pass — GoogleFonts Inter Wired, Dark Theme Rebuilt, Customer Home Token-Clean (2026-11-14)
+
+### Trigger
+User: "aur mobile app ka gui look aur badhiya banao research kar ke isko perfect banao... deeply scan karo analysis karo... batao kya kya impliment kiya jaye... mobile app me AI kaise kaam karega kaise implement kiye ho aur har user ke liye kya kya bnaye ho... do next"
+
+### Phone connection status (honest report)
+- `adb devices` answers, but the phone is UNUSABLE from this machine — adb prints `10BCBG21MD000S4  unauthorized`.
+  USB debugging was enabled, but the trust dialog on the phone was never tapped ("Allow USB debugging"). Until the owner taps Allow, nothing device-side (screenshots, installs, logcat) can happen from my lane.
+- Corollary: **all GUI claims in this entry are code-verified, not render-verified.** Theme is `No issues found` by analyzer; dark theme tokens are valid dart; no tokens were mutated structurally. No visual claim can be made until the phone is authorized.
+
+### Findings (verified by measurement, not eyeballing)
+1. **Global literal-color flood**: 1,562 instances of `Color(0x..)` and 5,634 instances of raw `Colors.<name>` across 145+ files. Theme existed but nobody was using it — the design-system tokens were dead code in practice.
+   - `customer/home_page.dart` = 114 hex literals + 74 Material colors (the screen every customer sees after login)
+2. **`Inter` font never loaded** — `app_theme.dart` declared `fontFamily: 'Inter'` but Inter is not bundled and package `google_fonts` was installed but never wired. Every screen rendered in the platform default.
+3. **`darkTheme` was an abandoned prototype** — `scaffoldBackgroundColor: 0xFF0B194C` on a dark theme for the same brand as the light one, blue-on-blue surface stack, shapes diverging from lightTheme, `floatingActionButtonTheme` using `primaryColor` on navy (invisible). Shipped but never used as coherent product language.
+4. **Design system exists** (`AppTheme`, `GlassCard`, `shimmer_skeletons`, `sync_indicator`, `status_badge`) — the components were good; the screens just weren't consuming them.
+
+### What I changed
+- `app_theme.dart`:
+  - `GoogleFonts.interTextTheme` bound at ThemeData level — both `lightTheme` and `darkTheme` now get `textTheme: _textTheme`.
+  - Added semantic role-tagged tokens the app was inventing on the fly: `aiGradientStart/aiGradientEnd`, `whatsappGreen`/`-Dark/-Deep/-Surface`, `chipGreenTint/chipBlueTint/chipPurpleTint/chipTealTint/chipAmberTint`, `orangeSurface/greenSurface`, `holdTint/bookedTint/soldTint/successTint/warningTint`, `goldMetallic`/`goldClassic`, `navyLight`, `indigo`, `indigoIndigo`, `indigoDeep/-Material/-Light`, `tealDeep`, `purple` with `purpleLight/-Deep/-Dark`, `materialGreen/-Deep/-Light`, `orangeDarker/orangeDark/-Light/-Material/orangeDeep`, `aiVioletDark`, `pink` family, `rose`, `slateMid/slateLight`, `greySurface/greyDeep`, `surfaceWarm/greyDeep/blueSurface`, `indigoMaterial/indigoLight/indigoDeep`. Complete coverage for the hex set currently in use.
+  - `darkTheme` rewritten to a refined navy-and-champagne-gold implementation matching the light brand language (not a blue prototype): scaffold `0xFF0A1233`, surface `0xFF111A3E`, cards `0xFF161F45` with `darkBorder`, input fill `0xFF1A2348`, accent `onPrimary` elements selected for contrast (primary `0xFF8FA7E8`, secondary `accentColor`, `errorColor` with `Colors.white` text).
+- `customer/home_page.dart`: 114 raw hex literals replaced with `AppTheme.*` token references (carefully — no `const AppTheme.` leftovers, const-modifier graph verified clean). 5 leftover lowercase-hex instances replaced by hand. Analyze → **No issues found**.
+- Whole app still analyzes clean: `flutter analyze --no-fatal-infos` → **No issues found**.
+
+### AI implementation — honest description, what exists today
+- **Global floating AI** lives in `app.dart` — `AIChatbotWidget(isMini: true)` rendered on every screen (both logged-in home and guest).
+  - Sends `{messages, provider, 'use_rag': true, temperature: 0.7, max_tokens: 1000}` to `/api/ai/chat` — i.e., one aggregated AI endpoint backed by `FreeAIEngines` on the server, with provider `groq` hardcoded per instance (no provider picker, no model picker).
+  - When offline/connection-error the widget adds an in-chat error message instead of crashing; images are accepted (`ImagePicker`) and sent as `image_path`.
+- **`/ai-chat` / `/ai-chatbot` route** — full chat page wired to the customer app widget tree; navigation entry from `properties/detail.php`, `customer/home.php`, plus sidebar reflection through router.
+- **`/ai-agent` route** — `AIAgentDashboardPage`, role-oriented with `AIAgentService`. The service declares 8 roles (customerSupport, salesAssistant, propertyExpert, investmentAdvisor, managerAssistant, telecallerCoach, documentAnalyzer, leadScorer) and forwards to `/ai-agent/*` server endpoints (process-lead, analyze-property, recommendations, decide, feedback, stats, analytics, chat) — all tokenized through `AppConstants.apiVersion`.
+- **Workspaces**: customer lead capture + `AIScoreBadge`, `AIDealProbabilityCard`, `AIDataExtractor` widgets exist but NOT actively mounted in any role's dashboard widget at time of this scan (present in `ai/` folder, usable).
+- **RAG** — `use_rag: true` is sent on the global FAB chat; `/ai-rag-chat` page exists (`rag_chat_page.dart`) unverified for retrieval quality but wired.
+- **No AI log drawing from the app** — AI responses are produced server-side; app can only present them. Offline state for AI is treated as "chat failed" messaging, not cached (degraded mode OK).
+- **Preference settings** — no AI model/provider toggle in user settings; `_selectedProvider = 'groq'` is hardcoded; never user-configurable. Most users never know an AI model is behind the bubble.
+
+### Role-specific AI gaps
+- **Customer-facing**: FAB on every screen is the only AI affordance. No role-aware contextual help.
+- **Associate/agent**: No FAB on dashboards; `AIAgentDashboard` is a full screen accessible via `/ai-agent` menu. `AIAgentDashboardPage` roughly covers this role.
+- **Telecaller**: `telecallerCoach` role exists in enum but no UI binding that visibly uses it.
+- **Admin**: no AI entry anywhere in mobile admin; only Home → FAB chat.
+- **Document reading from FAB**: `showPhotoButton: true` is declared but the purchase happy-path to `/ai-document-scanner` is never surfaced as an entry point to users outside the dedicated `/ai-document-scanner` route.
+
+### Why it matters (proof)
+Theme token discipline + bound GoogleFonts eliminates the "different fonts on different screens + raw Material colors scattershot" problem at the foundation — it's not a booth-friendly claim without a device but all `AppTheme` references are compile-valid and `flutter analyze` blesses it.
+
+### AGENTS.md numbering (Rule 4)
+Headings highest = 527; this entry = S528. Next-free = **529**.
+
+### Action items for the owner (carried)
+- Tap "Allow USB debugging" on the phone so the device is usable — until then every "looks good on my phone" claim is unverified.
+- Play Console upload of the current APK (still not done).
+- Credentials rotation sweep at all providers (still not done) — every previously committed credential is in git history forever.
+- Decide on the S524 migration window (parked encrypted-secret encryption, needs safety dump + `APS_ALLOW_LIVE_ENCRYPT=1`).
+- Announce when Lighthouse/axe has been run on prod; mobile verdict depends on it.
