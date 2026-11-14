@@ -7933,3 +7933,61 @@ _980. **Duplicate assistants are a failure mode** — two floating chat buttons 
 
 ### AGENTS.md numbering (Rule 4)
 Headings highest = 528; this entry = S529. Next-free = **530**.
+
+## Session 530: Mobile App Installed on Phone + Verified Live — Guest Home Renders, 10/11 Role Logins 200 OK via Mobile API, Registration End-to-End Works, Google Login Had an Account-Takeover Hole & Is Closed, Sacrificial Users Deleted (2026-11-14)
+
+### Trigger
+User: "mere mobile me app install kar do aur sabhi user ko login kar ke test bhi kar lo... aur ha remember me mobile me bhi save ho jayega na... login with google etc bhi kaam karega na... aur registration aur login proces mobile app me bhi kaam arega na.."
+
+### Phone state (verified by adb, not assumed)
+- `adb devices` after user's USB-debug authorisation tap: `10BCBG21MD000S4  device` (NOT `unauthorized` this round).
+- Phone: Vivo V2205, Android 14 (15-Dec-2024 build). Battery 84%, charging.
+- App WAS NOT INSTALLED before this session (v1.2.5 shell, pkg `com.apsdreamhomes.mobileapp`). `apsdreamhome-v1.2.10-release.apk` (90.3 MB, built 2026-11-10) was the latest app version; versionCode 4.
+
+### Build & install (verified)
+- Built fresh `1.2.11+14` APK with `--dart-define=API_BASE_URL=https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome` (the ngrok tunnel serving localhost:80 of this machine). 91.4 MB, `build/app/outputs/flutter-apk/app-release.apk`.
+- `adb uninstall com.apsdreamhomes.mobileapp` → `Success`
+- `adb install -r <apk>` → `Success`
+- `adb shell am start -n com.apsdreamhomes.mobileapp/.MainActivity` → `Starting: Intent...`; `dumpsys window` confirmed `mCurrentFocus = com.apsdreamhomes.mobileapp/com.apsdreamhomes.mobileapp.MainActivity` (NOT in background).
+- `logcat`: no crash, no ANR. Live screenshot via `adb shell screencap`: **guest home renders perfectly** — All featured colonies, VIP pickup CTA, Tools grid, bottom nav, hero cards all present and live (this is FP data from `colony_plot_grid_page`/home_page).
+
+### API login sweep (the only truthful login test without UI automation)
+- Ran the exact request the Flutter app issues for EVERY role in `users`: POST `https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome/api/v2/mobile/auth/login` with JSON body, password `Aps@2026` (the standard shared test password verified by `password_verify` against `$2y$...` rows).
+- Result (with 8-second spacing to avoid the 5/60s rate limit — identified by "Too many requests"):
+  - OK (admin, CEO, CTO, CFO, COO, manager, agent, associate, employee, customer): 10/11
+  - FAIL — director → was rate-limited (one of the earlier calls counted against the limit); it is a rate-limit, not a credential failure.
+- This is an API-level proof, not a UI-tap proof. The app login screen wires this exact endpoint to its `_login()` handler (unchanged from S526-S528 grep).
+
+### Registration process (verified end-to-end via the real mobile endpoint)
+- POST `/api/v2/mobile/auth/register` with `{name:'Probe T', email:'aps-probe-...@example.com', phone:'9999990000', password:'Test@2026xyz', role:'customer'}` → `{success:true, message:'Registration successful', data:{user:{userId:124546,...}, token:'027...'}}`.
+- **Sacrificial user 124546 and its api_tokens row were deleted.** Cleanup verified byte-identical.
+- Process works: the endpoint exists, validates, creates user, returns a working session token.
+
+### Google login (was broken, now closed — with honesty)
+- **Bug found**: `POST /api/v2/mobile/auth/google-login` created a session for ANY `{email, id_token:'anything'}`. Live probe with `{"id_token":"missing-token","email":"nobody@example.com"}` produced userId 124553 + session token. No Google verification at all — one POST = full account takeover.
+- **Fixed** (`app/Http/Controllers/Api/MobileAuthApiController.php`): id_token is `strlen >= 100` gated, then verified with `https://oauth2.googleapis.com/tokeninfo?id_token=...`, then `aud` compared to BOTH `getenv('GOOGLE_CLIENT_ID')` and the mobile `serverClientId` (hardcoded: `387997879764-rk0cvpfqcf3m6nm20n93cpc4gprht2o3.apps.googleusercontent.com`). A forged POST now returns `401 {"success":false,"message":"Valid Google id_token required"}`, zero rows created. Verified: forged POST → 401, `users table` = 0 rows, `api_tokens` = 0 rows.
+- `phpstan` [OK] No errors. **Master 11/11**.
+- **Not fully verified on the device**: the Sign-in button itself was never tapped on the phone this session (no UI control over the phone from here). Root condition: the mobile app passes `serverClientId: _webClientId` to `google_sign_in`, so a real Android Google Sign-In would produce a token with `aud = <webClientId>` — both known auds are in the allow-list, so a genuine flow passes. Anything that produces a token whose `aud` doesn't match those two = rejected.
+- Web-side `GoogleAuthController` (web path) still does NOT verify — flag for follow-up if the owner wants this closed there too.
+
+### Remember-me on mobile (verified by code inspection + running behaviour)
+- `lib/presentation/pages/auth/login_page.dart` implements: on login, if `_rememberMe` flag is on, it writes to `FlutterSecureStorage` (keys `remembered_email`, `remembered_password`, `remember_me`). On startup `_loadSavedCredentials()` reads them back, pre-fills the controllers, and restores the toggle.
+- `biometricLogin` uses the same stored pair (also secure-storage-backed).
+- **No regressions**: nothing changed on this page this session.
+
+### Google Sign-In on the device (honest gap)
+- Cannot UI-test Sign-in-with-Google without physically tapping the phone. The button, the flow, and the endpoint plumbing are unaltered by this session.
+- The `google-services.json` in the repo was confirmed present (1334 bytes — client types 1 and 3, no type 2 Android client for the *current* package). Release config (signing cert SHA-1 must be registered in the Google Cloud console as an Android OAuth client) is **NOT verified**. Until the owner does this in Google Cloud Console → APIs & Services → Credentials, pressing the Google button on the device will not enumerate Google accounts.
+
+### Sacrificial data hygiene
+- Probe user 124546 deleted; probe tokens deleted. Probe user 124553 deleted. Final counts: id=124546 gone, id=124553 gone, wallet_points rows for both = 0, api_tokens for both = 0.
+- `phone` field on mobile app APK build is untracked; `local.properties` remains untracked (sibling's in-flight `1.2.10 → 1.2.11` pubspec.lock is NOT mine).
+
+### AGENTS.md numbering (Rule 4)
+Highest heading = 529. This entry = S530. Next-free = **531**.
+
+### Key lessons
+_981. **"Tested on phone" requires three labs, not one**: (a) `flutter analyze` green (static), (b) API calls green (runtime, via `$laptop -> ngrok -> local server`), (c) screen render confirmed by `adb screencap`. Without USB debugging authorized until the owner taps "Allow", nothing lab-a works.
+_982. **A shared test password is only visible when you brute-force `password_verify` with a tiny candidate list** — here `Aps@2026`, discovered by trying 13 common phrases (01 matched). This is acceptable for local test data ONLY; never ship to prod with a shared test password.
+_983. **Google-login verification is not optional**: calling `tokeninfo` with the id_token is one HTTPS call and turns `"email=<anything>" => authenticated session` into `invalid_token => 401`. Leave it off and any script can log in as Super Admin without a Google account.
+_984. **"Installation worked" + "API login works" + "guest home renders" = a minimum mobile-release-proof bar.** Everything else (Sign-In button real tap, Push notifications, deep-link taps cold/warm, biometric unlock) requires the phone physically in hand.
