@@ -83,8 +83,8 @@
                 </div>
             </div>
             <div class="modal-footer border-0 justify-content-center py-2">
-                <button class="btn btn-outline-light btn-sm me-2" onclick="navigateLightbox(-1)"><i class="fas fa-chevron-left"></i></button>
-                <button class="btn btn-outline-light btn-sm" onclick="navigateLightbox(1)"><i class="fas fa-chevron-right"></i></button>
+                <button class="btn btn-outline-light btn-sm me-2" onclick="navigateLightbox(-1)" aria-label="Toggle"><i class="fas fa-chevron-left"></i></button>
+                <button class="btn btn-outline-light btn-sm" onclick="navigateLightbox(1)" aria-label="Toggle"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
     </div>

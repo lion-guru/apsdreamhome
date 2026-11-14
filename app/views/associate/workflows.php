@@ -45,8 +45,8 @@ $statuses = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotia
                     <td><small><?= htmlspecialchars($does) ?></small></td>
                     <td><span class="badge bg-<?= $r['is_active'] ? 'success' : 'secondary' ?>"><?= $r['is_active'] ? 'ON' : 'OFF' ?></span></td>
                     <td class="text-end text-nowrap">
-                        <form method="POST" action="<?= BASE_URL ?>/associate/workflows/<?= (int)$r['id'] ?>/toggle" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button type="submit" class="btn btn-sm btn-outline-secondary"><i class="fas fa-power-off"></i></button></form>
-                        <form method="POST" action="<?= BASE_URL ?>/associate/workflows/<?= (int)$r['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this rule?')"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button></form>
+                        <form method="POST" action="<?= BASE_URL ?>/associate/workflows/<?= (int)$r['id'] ?>/toggle" class="d-inline"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button type="submit" class="btn btn-sm btn-outline-secondary" aria-label="Deactivate"><i class="fas fa-power-off"></i></button></form>
+                        <form method="POST" action="<?= BASE_URL ?>/associate/workflows/<?= (int)$r['id'] ?>/delete" class="d-inline" onsubmit="return confirm('Delete this rule?')"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>"><button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Delete"><i class="fas fa-trash"></i></button></form>
                     </td>
                 </tr>
             <?php endforeach; ?>

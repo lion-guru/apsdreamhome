@@ -426,7 +426,7 @@ $today = date('Y-m-d');
                         </div>
                         <div class="input-group input-group-sm">
                             <input type="text" class="form-control" name="call_notes" maxlength="255" placeholder="<?= __('assoc_call_notes_ph', [], 'Call notes (optional)') ?>">
-                            <button type="submit" class="btn btn-outline-primary"><i class="fas fa-phone"></i></button>
+                            <button type="submit" class="btn btn-outline-primary" aria-label="Call"><i class="fas fa-phone"></i></button>
                         </div>
                     </form>
                     <hr>

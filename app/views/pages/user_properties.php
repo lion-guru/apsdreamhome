@@ -102,9 +102,7 @@ $extraHead = '<style>
                                             <i class="fas fa-crown"></i> Boost
                                         </a>
                                         <div class="btn-group dropstart">
-                                            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="fas fa-share-alt"></i>
-                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share"><i class="fas fa-share-alt"></i></button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li><a class="dropdown-item" href="https://wa.me/?text=<?= urlencode('Check out this property: ' . ($p['name'] ?? '') . ' - ' . BASE_URL . '/listing/' . (int)$p['id']) ?>" target="_blank"><i class="fab fa-whatsapp me-2 text-success"></i> WhatsApp</a></li>
                                                 <li><a class="dropdown-item" href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode(BASE_URL . '/listing/' . (int)$p['id']) ?>" target="_blank"><i class="fab fa-facebook-f me-2 text-primary"></i> Facebook</a></li>

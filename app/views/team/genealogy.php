@@ -12,9 +12,9 @@ include __DIR__ . '/../layouts/base.php';
                     <p class="text-white-50 mb-0">Visualize and manage your growing network</p>
                 </div>
                 <div class="d-flex gap-3">
-                    <button class="btn btn-outline-light btn-sm" onclick="zoomIn()"><i class="bi bi-zoom-in"></i></button>
-                    <button class="btn btn-outline-light btn-sm" onclick="zoomOut()"><i class="bi bi-zoom-out"></i></button>
-                    <button class="btn btn-outline-light btn-sm" onclick="resetZoom()"><i class="bi bi-arrows-fullscreen"></i></button>
+                    <button class="btn btn-outline-light btn-sm" onclick="zoomIn()" aria-label="Zoom in"><i class="bi bi-zoom-in"></i></button>
+                    <button class="btn btn-outline-light btn-sm" onclick="zoomOut()" aria-label="Zoom out"><i class="bi bi-zoom-out"></i></button>
+                    <button class="btn btn-outline-light btn-sm" onclick="resetZoom()" aria-label="Reset zoom"><i class="bi bi-arrows-fullscreen"></i></button>
                 </div>
             </div>
         </div>

@@ -37,9 +37,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <label class="form-label">New Password *</label>
                                     <div class="input-group">
                                         <input type="password" name="password" id="password" class="form-control" required minlength="6">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')" aria-label="View"><i class="fas fa-eye"></i></button>
                                     </div>
                                     <small class="text-muted">Minimum 6 characters</small>
                                 </div>
@@ -48,9 +46,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <label class="form-label">Confirm Password *</label>
                                     <div class="input-group">
                                         <input type="password" name="confirm_password" id="confirm_password" class="form-control" required minlength="6">
-                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password')">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password')" aria-label="View"><i class="fas fa-eye"></i></button>
                                     </div>
                                 </div>
 

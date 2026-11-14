@@ -293,14 +293,14 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                                         <th class="bg-light">Account Number</th>
                                         <td>
                                             <span class="font-monospace fw-bold fs-6">002105001234</span>
-                                            <button class="btn btn-sm btn-outline-secondary ms-2 py-0 px-2" onclick="navigator.clipboard.writeText('002105001234');alert('Account number copied!')"><i class="fas fa-copy"></i></button>
+                                            <button class="btn btn-sm btn-outline-secondary ms-2 py-0 px-2" onclick="navigator.clipboard.writeText('002105001234');alert('Account number copied!')" aria-label="Copy"><i class="fas fa-copy"></i></button>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light">IFSC Code</th>
                                         <td>
                                             <span class="font-monospace fw-bold">ICIC0000021</span>
-                                            <button class="btn btn-sm btn-outline-secondary ms-2 py-0 px-2" onclick="navigator.clipboard.writeText('ICIC0000021');alert('IFSC copied!')"><i class="fas fa-copy"></i></button>
+                                            <button class="btn btn-sm btn-outline-secondary ms-2 py-0 px-2" onclick="navigator.clipboard.writeText('ICIC0000021');alert('IFSC copied!')" aria-label="Copy"><i class="fas fa-copy"></i></button>
                                         </td>
                                     </tr>
                                     <tr>

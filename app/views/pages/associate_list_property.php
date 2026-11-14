@@ -334,7 +334,7 @@ photoInput.addEventListener('change', function(e) {
     reader.onload = function(e) {
         const div = document.createElement('div');
         div.className = 'photo-preview-item';
-        div.innerHTML = '<img src="' + e.target.result + '" alt="Preview"><button type="button" class="remove-btn" onclick="this.parentElement.remove(); photoInput.value=\'\'"><i class="fas fa-times"></i></button>';
+        div.innerHTML = '<img src="' + e.target.result + '" alt="Preview"><button type="button" class="remove-btn" onclick="this.parentElement.remove(); photoInput.value=\'\'" aria-label="Close"><i class="fas fa-times"></i></button>';
         photoGrid.appendChild(div);
     };
     reader.readAsDataURL(file);

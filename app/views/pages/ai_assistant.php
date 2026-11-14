@@ -100,7 +100,7 @@
 
     <div class="ai-input-area">
         <input type="text" class="ai-input" id="chatInput" placeholder="Type your message... (Hindi or English)" autocomplete="off">
-        <button class="ai-send" id="sendBtn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        <button class="ai-send" id="sendBtn" onclick="sendMessage()" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
 

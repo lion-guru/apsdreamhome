@@ -203,7 +203,7 @@ try {
     <main class="main-content">
         <nav class="top-navbar">
             <div class="navbar-left">
-                <button class="toggle-sidebar" id="toggleSidebar"><i class="fas fa-bars"></i></button>
+                <button class="toggle-sidebar" id="toggleSidebar" aria-label="Toggle navigation"><i class="fas fa-bars"></i></button>
                 <div class="page-breadcrumb">Dashboard / <strong><?php echo htmlspecialchars($page_title ?? 'Dashboard'); ?></strong></div>
             </div>
             <div class="navbar-right">

@@ -45,7 +45,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     </select>
                 </div>
                 <div class="col-md-1">
-                    <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-search"></i></button>
+                    <button type="submit" class="btn btn-primary btn-sm w-100" aria-label="Search"><i class="fas fa-search"></i></button>
                 </div>
                 <div class="col-md-1">
                     <a href="<?= $base ?>/associate/browse" class="btn btn-outline-secondary btn-sm w-100"><?= __('assoc_browse_reset', [], 'Reset') ?></a>

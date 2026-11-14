@@ -340,12 +340,8 @@
                     <td>${key.usage_count || 0}</td>
                     <td>${key.last_used_at ? new Date(key.last_used_at).toLocaleString() : "Never"}</td>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary" onclick="viewKey('${key.key_name}', 'mcp')">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning" onclick="editKey('${key.key_name}', 'mcp')">
-                            <i class="bi bi-pencil"></i>
-                        </button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewKey('${key.key_name}', 'mcp')" aria-label="View"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-sm btn-outline-warning" onclick="editKey('${key.key_name}', 'mcp')" aria-label="Edit"><i class="bi bi-pencil"></i></button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -371,12 +367,8 @@
                     </td>
                     <td>${key.last_used_at ? new Date(key.last_used_at).toLocaleString() : "Never"}</td>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary" onclick="viewKey('${key.api_key}', 'user')">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="revokeKey('${key.api_key}')">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewKey('${key.api_key}', 'user')" aria-label="View"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="revokeKey('${key.api_key}')" aria-label="Delete"><i class="bi bi-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(row);

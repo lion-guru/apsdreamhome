@@ -362,10 +362,10 @@ require_once __DIR__ . '/../../Helpers/TranslationHelper.php';
         <!-- Social Links -->
         <div class="social-links">
             <p class="mb-3"><?php echo __('coming_soon_follow_us', [], 'Follow us for updates:'); ?></p>
-            <a href="https://facebook.com/apsdreamhomes" target="_blank"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://twitter.com/apsdreamhomes" target="_blank"><i class="fab fa-twitter"></i></a>
-            <a href="https://instagram.com/apsdreamhomes" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="https://linkedin.com/company/apsdreamhomes" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://facebook.com/apsdreamhomes" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://twitter.com/apsdreamhomes" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://instagram.com/apsdreamhomes" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://linkedin.com/company/apsdreamhomes" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
         </div>
 
         <!-- Back to Home -->

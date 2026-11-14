@@ -22,9 +22,7 @@
                                    placeholder="Search Farmers..."
                                    value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="submit">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                                <button class="btn btn-outline-secondary" type="submit" aria-label="Search"><i class="fas fa-search"></i></button>
                             </div>
                         </div>
                     </form>

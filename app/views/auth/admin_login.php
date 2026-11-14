@@ -359,9 +359,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
                             name="password"
                             placeholder="<?php echo __('auth_enter_password', 'Enter your password'); ?>"
                             required>
-                        <button type="button" class="btn-toggle-pass" onclick="togglePassword()" tabindex="-1">
-                            <i class="fa-regular fa-eye" id="toggleIcon"></i>
-                        </button>
+                        <button type="button" class="btn-toggle-pass" onclick="togglePassword()" tabindex="-1" aria-label="View"><i class="fa-regular fa-eye" id="toggleIcon"></i></button>
                     </div>
                 </div>
 

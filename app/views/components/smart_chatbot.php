@@ -115,9 +115,7 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
                 placeholder="<?= htmlspecialchars(__('component_type_message_hindi_english', 'Type message in Hindi or English...')) ?>"
                 onkeypress="handleKeyPress(event)"
                 autocomplete="off">
-            <button onclick="sendMessage()" class="send-btn">
-                <i class="fas fa-paper-plane"></i>
-            </button>
+            <button onclick="sendMessage()" class="send-btn" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 </div>

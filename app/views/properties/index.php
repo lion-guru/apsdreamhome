@@ -54,7 +54,7 @@ include __DIR__ . '/../layouts/base.php';
                 <div class="p-4">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <h5 class="text-white mb-0"><?php echo e($property['title']); ?></h5>
-                        <button class="btn btn-link p-0 text-white-50"><i class="bi bi-heart"></i></button>
+                        <button class="btn btn-link p-0 text-white-50" aria-label="Save to favorites"><i class="bi bi-heart"></i></button>
                     </div>
                     <p class="text-white-50 small mb-3"><i class="bi bi-geo-alt me-1"></i><?php echo e($property['location']); ?></p>
                     

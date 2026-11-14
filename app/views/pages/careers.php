@@ -446,8 +446,8 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-center gap-2 mt-3">
-                        <button class="btn btn-sm btn-outline-primary" onclick="prevStudentTestimonial()"><i class="fas fa-chevron-left"></i></button>
-                        <button class="btn btn-sm btn-outline-primary" onclick="nextStudentTestimonial()"><i class="fas fa-chevron-right"></i></button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="prevStudentTestimonial()" aria-label="Toggle"><i class="fas fa-chevron-left"></i></button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="nextStudentTestimonial()" aria-label="Toggle"><i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
             </div>

@@ -87,9 +87,7 @@ require_once __DIR__ . '/../layouts/header.php';
                                 </span>
                                 <input type="password" class="form-control border-start-0 border-end-0" id="password" name="password"
                                     placeholder="Enter your password" required>
-                                <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword">
-                                    <i class="fas fa-eye" id="toggleIcon"></i>
-                                </button>
+                                <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword" aria-label="View"><i class="fas fa-eye" id="toggleIcon"></i></button>
                             </div>
                         </div>
 

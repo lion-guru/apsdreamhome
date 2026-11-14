@@ -16,9 +16,7 @@ $userAvatar = $_SESSION['user_avatar'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Mobile Header -->
     <div class="mobile-header d-lg-none">
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-            <i class="bi bi-list fs-4"></i>
-        </button>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="List"><i class="bi bi-list fs-4"></i></button>
 
         <a href="<?php echo BASE_URL; ?>" class="flex items-center space-x-2 mx-auto">
             <img src="<?= BASE_URL ?>/assets/images/logo/apslogonew.jpg" class="img-fluid" alt="APS Dream Home" onerror="this.style.display='none'">

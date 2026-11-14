@@ -92,15 +92,9 @@
                         <i class="fas fa-arrow-left me-2"></i>Back to News
                     </a>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-outline-primary btn-sm" onclick="shareArticle('facebook')">
-                            <i class="fab fa-facebook-f"></i>
-                        </button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="shareArticle('twitter')">
-                            <i class="fab fa-twitter"></i>
-                        </button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="shareArticle('whatsapp')">
-                            <i class="fab fa-whatsapp"></i>
-                        </button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="shareArticle('facebook')" aria-label="Facebook"><i class="fab fa-facebook-f"></i></button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="shareArticle('twitter')" aria-label="Twitter"><i class="fab fa-twitter"></i></button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="shareArticle('whatsapp')" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></button>
                     </div>
                 </div>
             </div>

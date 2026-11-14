@@ -38,7 +38,7 @@ $rows = $rows ?? [];
                         </form>
                         <form method="POST" action="<?= BASE_URL ?>/associate/leads/<?= (int)$r['id'] ?>/destroy" class="d-inline" onsubmit="return confirm('<?= __('assoc_trash_destroy_confirm', [], 'Permanently delete? Notes and history go too.') ?>')">
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-times"></i></button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Close"><i class="fas fa-times"></i></button>
                         </form>
                     </td>
                 </tr>

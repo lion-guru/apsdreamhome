@@ -197,7 +197,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
                 <i class="fas fa-microphone"></i>
             </button>
             <input type="text" class="cw-input" id="cwInput" placeholder="Type your message..." autocomplete="off">
-            <button class="cw-send" id="cwSendBtn"><i class="fas fa-paper-plane"></i></button>
+            <button class="cw-send" id="cwSendBtn" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 

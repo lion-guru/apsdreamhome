@@ -144,9 +144,7 @@ $current_page = $active_page ?? basename(esc_url($_SERVER['REQUEST_URI'] ?? ''))
         <!-- Top Navigation -->
         <nav class="top-nav">
             <div class="nav-left">
-                <button class="toggle-btn" onclick="document.getElementById('sidebarMenu').classList.toggle('show')">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <button class="toggle-btn" onclick="document.getElementById('sidebarMenu').classList.toggle('show')" aria-label="Toggle navigation"><i class="fas fa-bars"></i></button>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="<?php echo e($base); ?>/agent/dashboard">Agent</a></li>

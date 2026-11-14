@@ -116,10 +116,57 @@ $map = [
     'fa-bolt' => 'Action',
     'fa-plug' => 'Test connection',
     'fa-play' => 'Run',
+    'fa-bars' => 'Toggle navigation',
+    'fa-archive' => 'Archive',
+    'fa-thumbs-up' => 'Helpful',
+    'fa-thumbs-down' => 'Not helpful',
+    'fa-tag' => 'Tag',
+    'fa-facebook-f' => 'Facebook',
+    'fa-twitter' => 'Twitter',
+    'fa-instagram' => 'Instagram',
+    'fa-linkedin-in' => 'LinkedIn',
+    'fa-phone' => 'Call',
 ];
 
-$root = __DIR__ . '/../../../htdocs/apsdreamhome/app/views/admin';
-if (!is_dir($root)) { $root = 'C:/xampp/htdocs/apsdreamhome/app/views/admin'; }
+$root = 'C:/xampp/htdocs/apsdreamhome/app/views';
+if (!is_dir($root)) { $root = __DIR__ . '/../../../htdocs/apsdreamhome/app/views'; }
+
+// Bootstrap Icons additions
+$biMap = [
+    "bi-heart" => "Save to favorites",
+    "bi-send" => "Send",
+    "bi-zoom-in" => "Zoom in",
+    "bi-zoom-out" => "Zoom out",
+    "bi-arrows-fullscreen" => "Reset zoom",
+    "bi-x" => "Close",
+    "bi-x-lg" => "Close",
+    "bi-expand" => "Expand",
+    "bi-list" => "List",
+    "bi-check" => "Confirm",
+    "bi-trash" => "Delete",
+    "bi-pencil" => "Edit",
+    "bi-eye" => "View",
+    "bi-plus" => "Add",
+    "bi-search" => "Search",
+    "bi-funnel" => "Filter",
+    "bi-telephone" => "Call",
+    "bi-telephone-outbound" => "Call",
+    "bi-whatsapp" => "WhatsApp",
+    "bi-envelope" => "Email",
+    "bi-mic" => "Voice input",
+    "bi-camera" => "Camera",
+    "bi-image" => "Image",
+    "bi-star" => "Favorite",
+    "bi-share" => "Share",
+    "bi-list-check" => "Steps",
+    "bi-chevron-up" => "Toggle",
+    "bi-chevron-down" => "Toggle",
+    "bi-arrow-repeat" => "Refresh",
+    "bi-arrow-clockwise" => "Refresh",
+    "bi-check-circle" => "Approve",
+    "bi-x-circle" => "Reject",
+];
+foreach ($biMap as $k => $v) { $map[$k] = $v; }
 
 $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS));
 $dry = in_array('--dry', $argv, true);
@@ -137,11 +184,16 @@ foreach ($it as $file) {
         if (preg_match('/\b(title|aria-label|aria-labelledby)\s*=/i', $openTag)) {
             return $m[0]; // already named
         }
-        if (preg_match('/\bfa-([a-z0-9-]+)/i', $iconAttrs, $im)) {
-            $icon = 'fa-' . strtolower($im[1]);
-            $label = $map[$icon] ?? null;
+        if (preg_match_all('/\b((?:fa|bi)-[a-z0-9-]+)/i', $iconAttrs, $all)) {
+            $label = null;
+            $icon = null;
+            foreach ($all[1] as $tok) {
+                $t = strtolower($tok);
+                if (isset($map[$t])) { $label = $map[$t]; $icon = $t; break; }
+                if ($icon === null) { $icon = $t; }
+            }
             if ($label === null) {
-                $unmatchedIcons[$icon] = true;
+                $unmatchedIcons[$icon ?? 'unknown'] = true;
                 return $m[0]; // leave for manual handling
             }
             // insert aria-label before the closing > of the opening tag
@@ -159,3 +211,4 @@ foreach ($it as $file) {
 echo ($dry ? "[DRY] " : ""), "changed files: ", count($changed), PHP_EOL;
 echo "unmatched icons: ", json_encode(array_keys($unmatchedIcons)), PHP_EOL;
 foreach ($changed as $c) echo "  M ", str_replace('C:/xampp/htdocs/apsdreamhome/', '', str_replace('\\', '/', $c)), PHP_EOL;
+

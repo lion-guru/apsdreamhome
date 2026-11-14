@@ -165,9 +165,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                         <label for="current_password" class="form-label small fw-semibold">Current Password <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <input type="password" name="current_password" id="current_password" class="form-control" placeholder="Enter your current password" required>
-                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePass('current_password')">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePass('current_password')" aria-label="View"><i class="fas fa-eye"></i></button>
                                         </div>
                                     </div>
 
@@ -175,9 +173,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                         <label for="new_password" class="form-label small fw-semibold">New Password <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <input type="password" name="new_password" id="new_password" class="form-control" placeholder="Minimum 8 characters" required minlength="8">
-                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePass('new_password')">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePass('new_password')" aria-label="View"><i class="fas fa-eye"></i></button>
                                         </div>
                                     </div>
 
@@ -185,9 +181,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                         <label for="confirm_password" class="form-label small fw-semibold">Confirm New Password <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Repeat new password" required minlength="8">
-                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePass('confirm_password')">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePass('confirm_password')" aria-label="View"><i class="fas fa-eye"></i></button>
                                         </div>
                                     </div>
 

@@ -59,7 +59,7 @@ $stages = ['new' => 'New', 'contacted' => 'Contacted', 'closed' => 'Closed'];
                                     <option value="<?= $k ?>" <?= ($c['stage'] ?? '') === $k ? 'selected' : '' ?>><?= $label ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                                <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-check"></i></button>
+                                <button type="submit" class="btn btn-sm btn-outline-primary" aria-label="Activate"><i class="fas fa-check"></i></button>
                             </form>
                         </td>
                     </tr>

@@ -109,7 +109,7 @@ function addBlockToCanvas(data) {
     el.innerHTML = `
         <span><span class="badge bg-secondary me-1">${idx+1}</span>
         <strong>${data.type.toUpperCase()}</strong> — ${data.label}</span>
-        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeBlock(${idx})"><i class="fas fa-times"></i></button>
+        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeBlock(${idx})" aria-label="Close"><i class="fas fa-times"></i></button>
     `;
     canvas.appendChild(el);
 }
@@ -130,7 +130,7 @@ function renderCanvas() {
         el.innerHTML = `
             <span><span class="badge bg-secondary me-1">${idx+1}</span>
             <strong>${data.type.toUpperCase()}</strong> — ${data.label}</span>
-            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeBlock(${idx})"><i class="fas fa-times"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeBlock(${idx})" aria-label="Close"><i class="fas fa-times"></i></button>
         `;
         canvas.appendChild(el);
     });

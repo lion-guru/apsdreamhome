@@ -83,9 +83,7 @@ $properties = $properties ?? [];
                             <?php if (($p['status'] ?? '') !== 'archived'): ?>
                             <form action="<?= BASE_URL ?>/associate/properties/delete/<?= (int)$p['id'] ?>" method="POST" class="d-inline" onsubmit="return confirm('<?= __('assoc_prop_archive_confirm', [], 'Archive this property?') ?>');">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
-                                <button type="submit" class="btn btn-outline-danger btn-sm">
-                                    <i class="fas fa-archive"></i>
-                                </button>
+                                <button type="submit" class="btn btn-outline-danger btn-sm" aria-label="Archive"><i class="fas fa-archive"></i></button>
                             </form>
                             <?php endif; ?>
                         </div>
