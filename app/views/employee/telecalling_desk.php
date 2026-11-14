@@ -113,8 +113,8 @@ $nextSunday = date('Y-m-d', strtotime('next sunday'));
 </div>
 <script>
 (function () {
-    var base = '<?= $base ?>';
-    var csrf = '<?= $csrf ?>';
+    var base = <?= json_encode((string)($base ?? '')) ?>;
+    var csrf = <?= json_encode((string)($csrf ?? '')) ?>;
     function msg(html, ok) {
         document.getElementById('deskMsg').innerHTML =
             '<div class="alert alert-' + (ok === false ? 'danger' : 'success') + ' py-2">' + html + '</div>';

@@ -105,7 +105,7 @@
 </div>
 
 <script>
-    var BASE_URL = '<?= defined('BASE_URL') ? BASE_URL : '/' ?>';
+    var BASE_URL = <?= json_encode(defined('BASE_URL') ? BASE_URL : '/') ?>;
     var chatMessages = document.getElementById('chatMessages');
     var chatInput = document.getElementById('chatInput');
     var sendBtn = document.getElementById('sendBtn');

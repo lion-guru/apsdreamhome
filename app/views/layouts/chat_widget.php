@@ -231,9 +231,9 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
     var cwMsgCount = 0;
     var cwVoiceMode = false;
     var cwRecognition = null;
-    var cwUserRole = '<?= $userRole ?>';
+    var cwUserRole = <?= json_encode((string)($userRole ?? 'guest')) ?>;
     var cwUserName = <?= json_encode($userName) ?>;
-    var cwWAPhone = '<?= $waPhone ?>';
+    var cwWAPhone = <?= json_encode((string)($waPhone ?? '')) ?>;
 
     // •�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�•�
     // RBAC-AWARE GREETING

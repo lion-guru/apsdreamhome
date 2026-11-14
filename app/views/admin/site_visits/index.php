@@ -272,7 +272,7 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
 </div>
 
 <script>
-var SV_CSRF = '<?= $_SESSION['csrf_token'] ?? '' ?>';
+var SV_CSRF = <?= json_encode($_SESSION['csrf_token'] ?? '') ?>;
 function openAssignModal(id, name) {
     document.getElementById('assignVisitId').value = id;
     document.getElementById('assignVisitorName').textContent = name;

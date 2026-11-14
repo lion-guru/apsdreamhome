@@ -812,7 +812,7 @@ $GLOBALS['_html_doc_started'] = true;
 
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
     (function() {
-        var csrfToken = '<?= $_SESSION['csrf_token'] ?? '' ?>';
+        var csrfToken = <?= json_encode($_SESSION['csrf_token'] ?? '') ?>;
 
         // Check consent status ONCE per session (not every page load)
         if (!sessionStorage.getItem('legalConsentChecked')) {
