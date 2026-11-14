@@ -5,9 +5,9 @@
             <div class="col">
                 <h3 class="page-title"><i class="fas fa-edit me-2"></i>Edit Job</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/dashboard">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/careers">Careers</a></li>
-                    <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/admin/careers/<?= $job['id'] ?? 0 ?>"><?= $job['title'] ?? 'Job' ?></a></li>
+                    <li class="breadcrumb-item"><a href="<?= htmlspecialchars(BASE_URL, ENT_QUOTES, 'UTF-8') ?>/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="<?= htmlspecialchars(BASE_URL, ENT_QUOTES, 'UTF-8') ?>/admin/careers">Careers</a></li>
+                    <li class="breadcrumb-item"><a href="<?= htmlspecialchars(BASE_URL, ENT_QUOTES, 'UTF-8') ?>/admin/careers/<?= htmlspecialchars($job['id'] ?? 0, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($job['title'] ?? 'Job', ENT_QUOTES, 'UTF-8') ?></a></li>
                     <li class="breadcrumb-item active">Edit</li>
                 </ul>
             </div>
@@ -15,19 +15,19 @@
     </div>
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
-            <form method="POST" action="<?= BASE_URL ?>/admin/careers/update/<?= $job['id'] ?? 0 ?>">
+            <form method="POST" action="<?= htmlspecialchars(BASE_URL, ENT_QUOTES, 'UTF-8') ?>/admin/careers/update/<?= htmlspecialchars($job['id'] ?? 0, ENT_QUOTES, 'UTF-8') ?>">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
-                    <div class="col-md-8"><label class="form-label">Job Title <span class="text-danger">*</span></label><input aria-label="Title" type="text" name="title" class="form-control" value="<?= $job['title'] ?? '' ?>" required></div>
-                    <div class="col-md-4"><label class="form-label">Department</label><input aria-label="Department" type="text" name="department" class="form-control" value="<?= $job['department'] ?? '' ?>"></div>
-                    <div class="col-md-4"><label class="form-label">Location</label><input aria-label="Location" type="text" name="location" class="form-control" value="<?= $job['location'] ?? '' ?>"></div>
-                    <div class="col-md-4"><label class="form-label">Employment Type</label><select aria-label="Employment type" name="employment_type" class="form-select"><option value="full_time" <?= ($job['employment_type'] ?? '') === 'full_time' ? 'selected' : '' ?>>Full Time</option><option value="part_time" <?= ($job['employment_type'] ?? '') === 'part_time' ? 'selected' : '' ?>>Part Time</option><option value="contract" <?= ($job['employment_type'] ?? '') === 'contract' ? 'selected' : '' ?>>Contract</option></select></div>
-                    <div class="col-md-4"><label class="form-label">Experience</label><input aria-label="Experience" type="text" name="experience" class="form-control" value="<?= $job['experience'] ?? '' ?>"></div>
-                    <div class="col-md-4"><label class="form-label">Salary Range</label><input aria-label="Salary" type="text" name="salary" class="form-control" value="<?= $job['salary'] ?? '' ?>"></div>
-                    <div class="col-md-4"><label class="form-label">Vacancies</label><input aria-label="Vacancies" type="number" name="vacancies" class="form-control" value="<?= $job['vacancies'] ?? 1 ?>"></div>
-                    <div class="col-md-4"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><option value="active" <?= ($job['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option><option value="closed" <?= ($job['status'] ?? '') === 'closed' ? 'selected' : '' ?>>Closed</option><option value="draft" <?= ($job['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Draft</option></select></div>
-                    <div class="col-12"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="5"><?= $job['description'] ?? '' ?></textarea></div>
-                    <div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update Job</button> <a href="<?= BASE_URL ?>/admin/careers" class="btn btn-secondary">Cancel</a></div>
+                    <div class="col-md-8"><label class="form-label">Job Title <span class="text-danger">*</span></label><input aria-label="Title" type="text" name="title" class="form-control" value="<?= htmlspecialchars($job['title'] ?? '', ENT_QUOTES, 'UTF-8') ?>" required></div>
+                    <div class="col-md-4"><label class="form-label">Department</label><input aria-label="Department" type="text" name="department" class="form-control" value="<?= htmlspecialchars($job['department'] ?? '', ENT_QUOTES, 'UTF-8') ?>"></div>
+                    <div class="col-md-4"><label class="form-label">Location</label><input aria-label="Location" type="text" name="location" class="form-control" value="<?= htmlspecialchars($job['location'] ?? '', ENT_QUOTES, 'UTF-8') ?>"></div>
+                    <div class="col-md-4"><label class="form-label">Employment Type</label><select aria-label="Employment type" name="employment_type" class="form-select"><option value="full_time" <?= htmlspecialchars(($job['employment_type'] ?? '') === 'full_time' ? 'selected' : '', ENT_QUOTES, 'UTF-8') ?>>Full Time</option><option value="part_time" <?= htmlspecialchars(($job['employment_type'] ?? '') === 'part_time' ? 'selected' : '', ENT_QUOTES, 'UTF-8') ?>>Part Time</option><option value="contract" <?= htmlspecialchars(($job['employment_type'] ?? '') === 'contract' ? 'selected' : '', ENT_QUOTES, 'UTF-8') ?>>Contract</option></select></div>
+                    <div class="col-md-4"><label class="form-label">Experience</label><input aria-label="Experience" type="text" name="experience" class="form-control" value="<?= htmlspecialchars($job['experience'] ?? '', ENT_QUOTES, 'UTF-8') ?>"></div>
+                    <div class="col-md-4"><label class="form-label">Salary Range</label><input aria-label="Salary" type="text" name="salary" class="form-control" value="<?= htmlspecialchars($job['salary'] ?? '', ENT_QUOTES, 'UTF-8') ?>"></div>
+                    <div class="col-md-4"><label class="form-label">Vacancies</label><input aria-label="Vacancies" type="number" name="vacancies" class="form-control" value="<?= htmlspecialchars($job['vacancies'] ?? 1, ENT_QUOTES, 'UTF-8') ?>"></div>
+                    <div class="col-md-4"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><option value="active" <?= htmlspecialchars(($job['status'] ?? '') === 'active' ? 'selected' : '', ENT_QUOTES, 'UTF-8') ?>>Active</option><option value="closed" <?= htmlspecialchars(($job['status'] ?? '') === 'closed' ? 'selected' : '', ENT_QUOTES, 'UTF-8') ?>>Closed</option><option value="draft" <?= htmlspecialchars(($job['status'] ?? '') === 'draft' ? 'selected' : '', ENT_QUOTES, 'UTF-8') ?>>Draft</option></select></div>
+                    <div class="col-12"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="5"><?= htmlspecialchars($job['description'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea></div>
+                    <div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update Job</button> <a href="<?= htmlspecialchars(BASE_URL, ENT_QUOTES, 'UTF-8') ?>/admin/careers" class="btn btn-secondary">Cancel</a></div>
                 </div>
             </form>
         </div>
