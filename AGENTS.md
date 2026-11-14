@@ -7764,3 +7764,34 @@ _966. **Encryption without key custody is decoration.** The app encrypts values 
 _967. **Check-ignore the key file as a first-class step.** git ls-files / git check-ignore on storage/keys took 2 seconds and names the exposure instantly. The encryption feature shipped with this check unrun for its entire life.
 _968. **Zero-dep-now is the rotation window.** Because no enc:v1: rows existed yet, the key could be rotated with an empty blast radius. The longer plaintext persisted in service_configs, the more painful and risky any rotation becomes.
 _969. **A friend's whole-tree commit can also carry YOUR fix.** The key removal reached main via the sibling's Session 534 sweep commit (8d155fc22) — same mechanics (git add -A) that swept migration files before. Track staged/unstaged state carefully around parallel-actor rounds; document who actually committed it.
+
+
+## Session 526: The "Encrypted at Rest" Feature Was Fake at EVERY Layer — INSERT Bypassed Encryption, Audit Table Logged Plaintext, Sacrificial Probe Green (2026-11-14)
+
+### Trigger
+Continuing the credential exposure arc (S523–S525). While probing the new-key roundtrip end-to-end through the application code path (not statically), the full fake structure surfaced: the "enc:v1: encryption" had never worked, and the honest count after S523's finding was still zero.
+
+### What I found (all verified, none assumed)
+1. **`ServiceConfigService::set()` INSERT branch never bound `$storeValue`** — computed the encrypted string, then INSERTed `(string) $value` RAW. Every freshly-entered secret was stored PLAINTEXT. Only UPDATEs of an existing row ever encrypted — with the then-public key. Explains zero `enc:v1:` rows in the live DB since S348.
+2. **`set()` audit hook logged plaintext of every secret write** into `service_config_audit.new_value` (and `old_value`). Measured: **15 audit rows, 11 in plaintext, 3 tied to `is_secret=1` parents** (exotel/twilio/aws vintages). The audit table is a parallel plaintext copy of every secret ever written via set().
+3. **Class-level unit tests and the class's static analyzer both pass** — the leak was one line of intent (`$storeValue` computed-and-ignored) hidden inside a function that reads as "obviously encrypted".
+
+### Fixes (S526 code, all sacrificial-probed)
+- **`set()` INSERT now binds `$storeValue`** (one-line fix). Probe through the real service: set → true, stored value has `enc:v1:` prefix, `get()` decrypts to the exact plaintext, cleanup leaves 0 config + 0 audit rows.
+- **`set()` audit redaction**: when `is_secret`, `new_value` (and `old_value` when present) are recorded as `[secret updated]` instead of payloads; who/when/ip/service/key are preserved. `auditManual()` callers pass non-secret payloads (referral tiers, wallet package sliders) — deliberately untouched.
+- PHPStan on the service file: OK. Master suite 11/11 green.
+- `docs/CREDENTIALS_RUNBOOK.md` now carries Addendum 2 with the full three-layer analysis (storage / transport / audit) + rules 6–7.
+
+### Honest state for the owner (unchanged actions, HIGHER urgency)
+- **The audit table `service_config_audit` holds 11 plaintext rows, 3 of them `is_secret` parents** (voice_exotel 5, voice_twilio 4, aws_s3 3, s3 1, voice_knowlarity 1, voice_plivo 1). Rewritten or purged only by owner decision — flag the need but I will not rewrite or delete live audit rows.
+- **Rotation is mandatory for everything entered through the admin panel since S348**, regardless of stored form — storage, audit and the "encrypted" label were all fake.
+- The parked sibling migration `db2da2923:database/migrations/encrypt_service_config_secrets_s524.php` (env-gated `APS_ALLOW_LIVE_ENCRYPT=1`, single-transaction, per-row decrypt assertion, SKIP-already-encrypted) remediation for `service_configs` runs on owner's announced window with safety dump. It does NOT clean the audit table.
+- `storage/keys/service_config.key` (rotated S525) remains gitignored and untracked; verified still absent from HEAD and index.
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor owns S524 migration + S528-S534 sessions (security sweep). This entry = S526 (525 = key rotation). Next-free = **527**.
+
+### Key lessons
+_970. **Read the function, not the feature's name.** "ENCRYPTED" in the settings UI, enc:v1: in the code, a roundtrip proof in a sibling's validation — all three green, while the INSERT slipped plaintext into every new-secret row. Only the end-to-end probe through the real service path named it.
+_971. **The audit trail is a parallel plaintext database.** Whenever secrets cross an auditable write path, the same payload lands in logs/audit tables unencrypted. Audit every copy of a secret, not just its store — delete or redact before shipping.
+_972. **A safety guard that demands a variable and then ignores it is worse than no guard.** `$storeValue` screamed intent; nothing bound it. Active review diffs the bound variables against the prepared statement, not the comments or the comments' confidence.

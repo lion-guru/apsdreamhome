@@ -121,7 +121,7 @@ class ServiceConfigService
             $stmt->execute(array_merge([
                 $service,
                 $key,
-                (string) $value,
+                $storeValue,
                 $meta['config_type'] ?? 'text',
                 $meta['description'] ?? null,
                 $meta['is_secret'] ?? 0,
@@ -131,7 +131,13 @@ class ServiceConfigService
         }
 
         $this->invalidateCache();
-        $this->auditChange($service, $key, $oldValue, (string) $value);
+        $auditOld = $oldValue;
+        $auditNew = (string) $value;
+        if (!empty($meta['is_secret'])) {
+            $auditOld = $oldValue !== null ? '[secret updated]' : null;
+            $auditNew = '[secret updated]';
+        }
+        $this->auditChange($service, $key, $auditOld, $auditNew);
         return true;
     }
 

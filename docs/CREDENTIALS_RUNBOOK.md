@@ -52,7 +52,36 @@ Then also delete equivalent temp copies anywhere else (desktop, Downloads, OneDr
 
 Written 2026-11-14 after finding the two scripts already executed. Values intentionally NOT reproduced here — rotate at the provider, don't copy them again anywhere.
 
-## Addendum (2026-11-14, later same day): the AES-256 key itself was committed to git
+## Addendum 1 (2026-11-14, later same day): the AES-256 key itself was committed to git
+
+- `storage/keys/service_config.key` (the 32-byte key behind `enc:v1:`) was committed in `bee73667e` (Session 348, "OpenCode Zen multi-key switcher …") and sat on `origin/main`, byte-identical to the working-tree copy (SHA256 `21896032…`). Anyone with a clone had the full encryption primitive.
+- **Verification before rotation**: `SELECT COUNT(*) FROM service_configs WHERE config_value LIKE 'enc:v1:%'` → **0**. No ciphertext depended on the compromised key, so the rotation destroys nothing.
+- **What was done**: key was untracked from git (`git rm --cached`), a fresh 32-byte random key was written, `storage/keys/` added to `.gitignore`. Roundtrip through `ServiceConfigService::encryptValue`/`decryptValue` passed on the new key.
+- **Backup of the old key**: `backups/keys/service_config.key.2026-11-14.bak` (gitignored; not in the repo).
+- **What history holds**: the compromised key remains in git history (force-push was declined). Anyone who cloned before this point must be treated as having it. The correct response — rotating every secret ever written with it — is equivalent to rotating every `enc:v1:` secret in the DB, of which there are currently **zero**. The live (plaintext) SMTP/Twilio/AWS/Razorpay values already require provider-side rotation per the original runbook; this exposure does not enlarge that set, it just removes the last theoretical protection of future writes.
+
+Rules added:
+4. **Encryption keys belong in gitignored storage, never in the repo** — and they must be treated as compromised from the moment they land anywhere shared. A key leak is total: no rotation of ciphertexts is possible after the fact.
+5. **A feature whose entire point is "encrypted at rest" is only as safe as its key file.** When adopting `enc:v1:` for a new secret, first check `git ls-files storage/keys` is empty and `git check-ignore storage/keys` matches — in this repo both failed for months.
+
+## Addendum 2 (2026-11-14, later same day): the encryption feature was fake at EVERY layer
+
+While probing the key rotation end-to-end, the app's own code shows the entire "encrypted at rest" story was bypassed:
+
+1. **`set()` INSERT branch stored secrets PLAINTEXT** — `$storeValue` (the encrypted string) was computed but never bound; the INSERT used `(string) $value`. Every freshly-entered secret was stored raw. Only UPDATEs of existing rows ever encrypted — and only with the key that was already compromised.
+   **FIXED** (2026-11-14, Session 526): INSERT now binds `$storeValue`; sacrificial probe through the real service confirms `stored_is_enc=true`, `decrypt_roundtrip=true`, `audit_redacted=true`.
+2. **`set()` audit hook logged every plaintext secret** into `service_config_audit.new_value` in clear. Measured: **15 audit rows, 11 in plaintext, 3 tied to `is_secret=1` parents** (exotel/twilio/aws vintages).
+   **FIXED** (Session 526): `set()` now records `[secret updated]` for `is_secret` writes (old_value likewise), while preserving who/when/ip. `auditManual()` callers pass non-secret payloads only (referral tiers, wallet package %) — untouched.
+3. **`service_config_audit` still contains the legacy plaintext entries (11 rows)** — rewritten or deleted by owner decision only; rotate the underlying Exotel/Twilio/AWS credentials at the provider, as per Addendum 1.
+
+What that means in practice, for the owner:
+- Every secret entered through the admin panel SINCE S348 was stored in **plaintext** in `service_configs` (UPDATE path excepted when EDITING an existing row — rare) AND was ALSO copied to `service_config_audit` in plaintext by design.
+- The "encrypted" section of the runbook above was an honorary label. Any credential entered previously must be rotated regardless of what's stored.
+- The parked migration `db2da2923:database/migrations/encrypt_service_config_secrets_s524.php` (env-gated, single-transaction, per-row decrypt assertion) encrypts the **storage** table once announced; it does NOT clean the audit table — that is a separate owner decision.
+
+Rules added:
+6. **Smoke-test the actual write path with a sacrificial probe, not the unit of the feature.** A service that "uses encryption" at class level can enqueue PLAINTEXT through its INSERT — one line of commented intent (\`$storeValue\` computed-but-unused) slipped past four reviews of the file.
+7. **Secrets have three layers to audit: storage, transport, and audit/logs. Fixing only the storage layer leaves the audit table as a parallel plaintext copy.** All three were fake here.
 
 - `storage/keys/service_config.key` (the 32-byte key behind `enc:v1:`) was committed in `bee73667e` (Session 348, "OpenCode Zen multi-key switcher …") and sat on `origin/main`, byte-identical to the working-tree copy (SHA256 `21896032…`). Anyone with a clone had the full encryption primitive.
 - **Verification before rotation**: `SELECT COUNT(*) FROM service_configs WHERE config_value LIKE 'enc:v1:%'` → **0**. No ciphertext depended on the compromised key, so the rotation destroys nothing.
