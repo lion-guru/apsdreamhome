@@ -112,7 +112,7 @@ try {
                 <?php if (count($property_images) > 1): ?>
                 <div class="gallery-thumbnails mt-3">
                     <?php foreach ($property_images as $index => $image): ?>
-                    <img src="<?= htmlspecialchars($image['image_path'] ?? '')?>" alt="Property view <?php echo $index + 1; ?>" class="gallery-thumbnail <?php echo $index === 0 ? 'active' : ''; ?>" onclick="changeMainImage('<?php echo htmlspecialchars($image['image_path'] ?? ''); ?>')" loading="lazy">
+                    <img src="<?= htmlspecialchars($image['image_path'] ?? '')?>" alt="Property view <?php echo $index + 1; ?>" class="gallery-thumbnail <?php echo $index === 0 ? 'active' : ''; ?>" onclick="changeMainImage('<?php echo htmlspecialchars($image['image_path'] ?? '', ENT_QUOTES, 'UTF-8'); ?>')" loading="lazy">
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
@@ -152,14 +152,13 @@ try {
                     </div>
 
                     <div class="property-actions mb-4">
-                        <button class="btn btn-primary btn-lg w-100 mb-2" onclick="scheduleVisit(<?php echo $property['id']; ?>, '<?php echo htmlspecialchars($property['title'] ?? ''); ?>')">
+                        <button class="btn btn-primary btn-lg w-100 mb-2" onclick="scheduleVisit(<?php echo (int)($property['id'] ?? 0); ?>, '<?php echo htmlspecialchars($property['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?>')">
                             <i class="fas fa-calendar-check me-2"></i>Schedule Visit
                         </button>
                         <button class="btn btn-outline-primary w-100 mb-2" onclick="toggleFavorite(<?php echo e($property['id']); ?>)">
                             <i class="far fa-heart me-2"></i>Add to Favorites
                         </button>
-                        <button class="btn btn-outline-secondary w-100" onclick="shareProperty(<?php echo $property['id']; ?>, '<?php echo htmlspecialchars($property['title'] ?? ''); ?>')">
-                            <i class="fas fa-share-alt me-2"></i>Share Property
+                        <button class="btn btn-outline-secondary w-100" onclick="shareProperty(<?php echo (int)($property['id'] ?? 0); ?>, '<?php echo htmlspecialchars($property['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?>')">                            <i class="fas fa-share-alt me-2"></i>Share Property
                         </button>
                     </div>
 

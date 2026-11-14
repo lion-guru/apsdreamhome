@@ -107,7 +107,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                                 </td>
                                                 <td>
                                                     <?php if (($item['status'] ?? '') === 'pending'): ?>
-                                                        <button class="btn btn-sm btn-primary" onclick="processPayment(<?php echo e($item['id']); ?>, <?php echo $item['due_amount']; ?>)">
+                                                        <button class="btn btn-sm btn-primary" onclick="processPayment(<?php echo (int)($item['id'] ?? 0); ?>, <?php echo (float)($item['due_amount'] ?? 0); ?>)">
                                                             <i class="fas fa-money-bill-wave me-1"></i>Pay
                                                         </button>
                                                     <?php else: ?>

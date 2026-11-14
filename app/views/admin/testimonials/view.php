@@ -140,7 +140,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <i class="fas fa-save me-1"></i>Update Testimonial
                         </button>
 
-                        <button type="button" class="btn btn-outline-danger w-100" onclick="deleteTestimonial(<?php echo $t['id'] ?? 0; ?>)">
+                        <button type="button" class="btn btn-outline-danger w-100" onclick="deleteTestimonial(<?php echo (int)($t['id'] ?? 0); ?>)">
                             <i class="fas fa-trash me-1"></i>Delete
                         </button>
                     </form>

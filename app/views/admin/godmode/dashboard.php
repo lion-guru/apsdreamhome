@@ -409,8 +409,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                                     </span>
                                 </div>
                             </div>
-                            <button class="btn btn-god btn-sm" onclick="impersonateUser(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['name'] ?? 'User'); ?>')">
-                                <i class="fas fa-sign-in-alt me-1"></i>Impersonate
+                            <button class="btn btn-god btn-sm" onclick="impersonateUser(<?php echo (int)($user['id'] ?? 0); ?>, '<?php echo htmlspecialchars($user['name'] ?? 'User', ENT_QUOTES, 'UTF-8'); ?>')">                                <i class="fas fa-sign-in-alt me-1"></i>Impersonate
                             </button>
                         </div>
                         <?php endforeach; ?>

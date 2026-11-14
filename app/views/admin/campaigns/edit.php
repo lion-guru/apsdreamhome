@@ -99,7 +99,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <div class="d-flex justify-content-between">
                                 <a href="<?php echo e($base); ?>/admin/campaigns" class="btn btn-outline-secondary">Cancel</a>
                                 <div>
-                                    <button type="button" onclick="deleteCampaign(<?php echo $campaign['campaign_id'] ?? ''; ?>)" class="btn btn-danger me-2">
+                                    <button type="button" onclick="deleteCampaign(<?php echo (int)($campaign['campaign_id'] ?? 0); ?>)" class="btn btn-danger me-2">
                                         <i class="fas fa-trash me-2"></i>Delete
                                     </button>
                                     <button type="submit" class="btn btn-primary">
