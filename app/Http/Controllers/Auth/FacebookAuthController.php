@@ -16,7 +16,9 @@ class FacebookAuthController extends \App\Http\Controllers\BaseController
     public function redirectToProvider()
     {
         try {
-            $facebookUrl = $this->socialService->getAuthUrl('facebook');
+            $state = bin2hex(random_bytes(16));
+            $_SESSION['facebook_oauth_state'] = $state;
+            $facebookUrl = $this->socialService->getAuthUrl('facebook', $state);
             if ($facebookUrl) {
                 header('Location: ' . $facebookUrl);
             } else {
@@ -32,6 +34,16 @@ class FacebookAuthController extends \App\Http\Controllers\BaseController
     
     public function callback()
     {
+        // OAuth Login-CSRF guard: state must match the one stored at redirect time
+        $expectedState = $_SESSION['facebook_oauth_state'] ?? null;
+        unset($_SESSION['facebook_oauth_state']);
+        $gotState = $_GET['state'] ?? null;
+        if (!$expectedState || !$gotState || !hash_equals((string)$expectedState, (string)$gotState)) {
+            $_SESSION['error'] = 'Facebook sign-in could not be verified (state mismatch). Please try again.';
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
         $code = $_GET['code'] ?? '';
         if (empty($code)) {
             $_SESSION['error'] = 'Facebook login cancelled or failed.';

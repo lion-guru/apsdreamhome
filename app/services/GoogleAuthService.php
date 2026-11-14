@@ -9,14 +9,14 @@ class GoogleAuthService {
     
     use \App\Traits\ServiceTenantTrait;
 
-    public function getAuthUrl($redirectUri) {
+    public function getAuthUrl($redirectUri, $state = null) {
         $clientId = getenv('GOOGLE_CLIENT_ID') ?: ($_ENV['GOOGLE_CLIENT_ID'] ?? '');
         $params = http_build_query([
             'client_id' => $clientId,
             'redirect_uri' => $redirectUri,
             'response_type' => 'code',
             'scope' => 'openid email profile',
-            'state' => bin2hex(random_bytes(16))
+            'state' => $state ?: bin2hex(random_bytes(16))
         ]);
         return 'https://accounts.google.com/o/oauth2/v2/auth?' . $params;
     }
@@ -37,7 +37,8 @@ class GoogleAuthService {
                 'grant_type' => 'authorization_code'
             ]));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
@@ -57,7 +58,8 @@ class GoogleAuthService {
             $ch = curl_init('https://www.googleapis.com/oauth2/v2/userinfo');
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $tokenData['access_token']]);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
             $userResponse = curl_exec($ch);
             curl_close($ch);
 

@@ -24,19 +24,25 @@ class GoogleAuthController extends BaseController
 
     public function googleRedirect()
     {
+        $state = bin2hex(random_bytes(16));
+        $_SESSION['google_oauth_state'] = $state;
         $baseUrl = rtrim(BASE_URL, '/');
         $redirectUri = $baseUrl . '/google_callback.php';
-        header('Location: ' . $this->googleService->getAuthUrl($redirectUri));
+        header('Location: ' . $this->googleService->getAuthUrl($redirectUri, $state));
         exit;
     }
 
     public function callback()
     {
         $code = $_GET['code'] ?? null;
+        $state = $_GET['state'] ?? null;
         $loginUrl = (defined('BASE_URL') ? BASE_URL : '') . '/login';
 
-        if (!$code) {
-            $_SESSION['error'] = 'Authorization failed';
+        // OAuth Login-CSRF guard: state must match the one we stored at redirect time
+        $expectedState = $_SESSION['google_oauth_state'] ?? null;
+        unset($_SESSION['google_oauth_state']);
+        if (!$code || !$state || !$expectedState || !hash_equals((string)$expectedState, (string)$state)) {
+            $_SESSION['error'] = 'Google sign-in could not be verified (state mismatch). Please try again.';
             header('Location: ' . $loginUrl);
             exit;
         }
