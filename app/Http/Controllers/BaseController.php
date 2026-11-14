@@ -303,6 +303,16 @@ class BaseController
      */
     protected function redirect(string $url): void
     {
+        // Prevent open-redirect: if URL is absolute, ensure it points to our own origin
+        if (strpos($url, 'http') === 0 && defined('BASE_URL')) {
+            $baseHost = parse_url(BASE_URL, PHP_URL_HOST);
+            $urlHost = parse_url($url, PHP_URL_HOST);
+            if ($urlHost !== null && $urlHost !== $baseHost) {
+                // External URL — reject, redirect to dashboard instead
+                $url = defined('BASE_URL') ? rtrim(BASE_URL, '/') . '/admin/dashboard' : '/';
+            }
+        }
+
         // Add BASE_URL if not already present
         if (!empty($url) && strpos($url, 'http') !== 0 && defined('BASE_URL')) {
             $url = rtrim(BASE_URL, '/') . '/' . ltrim($url, '/');

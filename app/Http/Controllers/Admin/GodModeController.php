@@ -674,6 +674,14 @@ class GodModeController extends AdminController
         foreach ($flash as $key => $value) {
             $_SESSION['flash_' . $key] = $value;
         }
+        // Prevent open-redirect: if URL is absolute, ensure it points to our own origin
+        if (strpos($url, 'http') === 0 && defined('BASE_URL')) {
+            $baseHost = parse_url(BASE_URL, PHP_URL_HOST);
+            $urlHost = parse_url($url, PHP_URL_HOST);
+            if ($urlHost !== null && $urlHost !== $baseHost) {
+                $url = defined('BASE_URL') ? rtrim(BASE_URL, '/') . '/admin/dashboard' : '/';
+            }
+        }
         if (!empty($url) && strpos($url, 'http') !== 0 && defined('BASE_URL')) {
             $url = rtrim(BASE_URL, '/') . '/' . ltrim($url, '/');
         }
