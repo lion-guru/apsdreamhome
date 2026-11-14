@@ -891,7 +891,7 @@
             }
             
             container.innerHTML = results.map(member => `
-                <div class="search-result-item" onclick="focusOnNode(${member.id})">
+                <div role="button" tabindex="0" class="search-result-item" onclick="focusOnNode(${member.id})">
                     <div class="name">${member.name}</div>
                     <div class="id">${member.customer_id} —¢ Level ${member.level}</div>
                 </div>

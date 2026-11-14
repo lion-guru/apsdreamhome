@@ -53,7 +53,7 @@ $extraHead = '<style>
                             $badgeStyle = $pkg['badge_color'] ? 'background:' . htmlspecialchars($pkg['badge_color'] ?? '') . ';color:#fff;' : '';
                         ?>
                             <div class="col-md-6">
-                                <div class="card pkg-card p-3 position-relative" onclick="selectPackage(<?= e($pkg['id']) ?>, this)">
+                                <div role="button" tabindex="0" class="card pkg-card p-3 position-relative" onclick="selectPackage(<?= e($pkg['id']) ?>, this)">
                                     <?php if (!empty($pkg['badge_label'])): ?>
                                         <span class="pkg-badge-custom"><?= htmlspecialchars($pkg['badge_label'] ?? '') ?></span>
                                     <?php endif; ?>

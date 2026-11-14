@@ -231,6 +231,7 @@ try {
     </main>
 
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
+<script defer src="<?= BASE_URL ?>/assets/js/aps-a11y.js?v=1"></script>
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">
         document.getElementById('toggleSidebar')?.addEventListener('click', function() {
             document.getElementById('sidebar').classList.toggle('show');

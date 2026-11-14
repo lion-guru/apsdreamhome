@@ -37,7 +37,7 @@
         <div class="row g-4" id="galleryGrid">
             <?php foreach ($galleryImages as $idx => $img): ?>
             <div class="col-md-4 col-lg-3 gallery-item" data-category="<?= htmlspecialchars($img['category'] ?? 'all') ?>">
-                <div class="card border-0 shadow-sm overflow-hidden h-100 gallery-card" onclick="openLightbox(<?= $idx ?>)">
+                <div role="button" tabindex="0" class="card border-0 shadow-sm overflow-hidden h-100 gallery-card" onclick="openLightbox(<?= $idx ?>)">
                     <div class="position-relative">
                         <?php $rawGallery = trim((string)($img['image_path'] ?? '')); if (!empty($rawGallery) && $rawGallery !== 'undefined' && $rawGallery !== 'null'): ?>
                         <?php $imgSrc = (str_starts_with($rawGallery, 'http://') || str_starts_with($rawGallery, 'https://')) ? $rawGallery : BASE_URL . '/' . ltrim($rawGallery, '/'); ?>

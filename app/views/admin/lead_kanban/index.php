@@ -208,7 +208,7 @@ $csrfToken       = $_SESSION['csrf_token'] ?? '';
                 else $timeAgo = date('M j', strtotime($createdAt));
               }
             ?>
-              <div class="lead-card" draggable="true" data-id="<?= $lid ?>" data-stage="<?= htmlspecialchars($slug ?? '') ?>" onclick="quickViewLead(<?= $lid ?>)">
+              <div role="button" tabindex="0" class="lead-card" draggable="true" data-id="<?= $lid ?>" data-stage="<?= htmlspecialchars($slug ?? '') ?>" onclick="quickViewLead(<?= $lid ?>)">
                 <?php if ($priority === 'urgent'): ?>
                   <div class="card-priority urgent"></div>
                 <?php elseif ($priority === 'high'): ?>

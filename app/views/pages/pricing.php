@@ -267,7 +267,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
 <div class="billing-toggle">
     <span class="label monthly active" onclick="setBilling(false)">Monthly</span>
-    <div class="toggle-switch" id="billingToggle" onclick="toggleBilling()">
+    <div role="button" tabindex="0" class="toggle-switch" id="billingToggle" onclick="toggleBilling()">
         <div class="knob"></div>
     </div>
     <span class="label yearly" onclick="setBilling(true)">Yearly</span>

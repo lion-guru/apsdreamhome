@@ -29,7 +29,7 @@ $images = $images ?? [];
                 <?php foreach ($images as $i => $img): ?>
                     <?php $rawGp = trim((string)($img['image_path'] ?? $img['image_url'] ?? '')); if (empty($rawGp) || $rawGp === 'undefined' || $rawGp === 'null') { $rawGp = BASE_URL . '/assets/images/placeholder/property.svg'; } elseif (!str_starts_with($rawGp, 'http') && !str_starts_with($rawGp, '/')) { $rawGp = BASE_URL . '/' . ltrim($rawGp, '/'); } elseif (str_starts_with($rawGp, '/') && !str_starts_with($rawGp, 'http')) { $rawGp = BASE_URL . $rawGp; } ?>
                     <div class="col-6 col-md-4 col-lg-3">
-                        <div class="card border-0 shadow-sm rounded-3 overflow-hidden h-100 gallery-item" onclick="openLightbox(<?= $i ?>)">
+                        <div role="button" tabindex="0" class="card border-0 shadow-sm rounded-3 overflow-hidden h-100 gallery-item" onclick="openLightbox(<?= $i ?>)">
                             <img src="<?= htmlspecialchars($rawGp, ENT_QUOTES, 'UTF-8') ?>"
                                  class="card-img-top" alt="<?= htmlspecialchars($img['title'] ?? 'Gallery Image', ENT_QUOTES, 'UTF-8') ?>"
                                  loading="lazy" onerror="this.onerror=null;this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">

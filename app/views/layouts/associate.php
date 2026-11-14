@@ -623,6 +623,7 @@ $GLOBALS['_html_doc_started'] = true;
 
     <!-- Bootstrap JS -->
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
+<script defer src="<?= BASE_URL ?>/assets/js/aps-a11y.js?v=1"></script>
 
     <!-- Sidebar Toggle Script -->
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">

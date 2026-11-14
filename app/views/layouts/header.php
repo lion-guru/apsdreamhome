@@ -828,4 +828,5 @@ function quickSearchSubmit(e) {
 }
 </script>
 
+<script defer src="<?= BASE_URL ?>/assets/js/aps-a11y.js?v=1"></script>
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>" src="<?php echo BASE_URL; ?>/js/visitor-tracking.js" defer></script>

@@ -112,7 +112,7 @@
         </div>
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
+                <div role="button" tabindex="0" class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
                     <i class="fas fa-calculator fa-3x text-primary mb-3"></i>
                     <h5><?= __('id_cost_estimator') ?></h5>
                     <p class="text-muted small mb-2"><?= __('id_cost_estimator_desc') ?></p>
@@ -139,7 +139,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
+                <div role="button" tabindex="0" class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
                     <i class="fas fa-ruler-combined fa-3x text-success mb-3"></i>
                     <h5><?= __('id_room_planner') ?></h5>
                     <p class="text-muted small mb-2"><?= __('id_room_planner_desc') ?></p>
@@ -159,7 +159,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
+                <div role="button" tabindex="0" class="tool-card p-4" onclick="$(this).find('.collapse').collapse('toggle')">
                     <i class="fas fa-home fa-3x text-warning mb-3"></i>
                     <h5><?= __('id_budget_planner') ?></h5>
                     <p class="text-muted small mb-2"><?= __('id_budget_planner_desc') ?></p>
@@ -183,7 +183,7 @@
         </div>
         <div class="row g-4 mt-2">
             <div class="col-md-6">
-                <div class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
+                <div role="button" tabindex="0" class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
                     <i class="fas fa-palette fa-2x mb-2"></i>
                     <h5><?= __('id_color_palette') ?></h5>
                     <p class="text-muted small mb-2"><?= __('id_color_palette_desc') ?></p>
@@ -204,7 +204,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
+                <div role="button" tabindex="0" class="tool-card border-2 p-4" onclick="$(this).find('.collapse').collapse('toggle')">
                     <i class="fas fa-couch fa-2x text-success mb-2"></i>
                     <h5><?= __('id_furniture_planner') ?></h5>
                     <p class="text-muted small mb-2"><?= __('id_furniture_planner_desc') ?></p>
@@ -252,7 +252,7 @@ function generatePalette() {
     };
     const p = (palettes[room] && palettes[room][style]) || { colors: ['#0d9488','#ff6f00','#00c853','#2979ff','#ff1744'], desc: 'Default vibrant palette. Customize for your space.' };
     const cont = document.getElementById('paletteColors');
-    cont.innerHTML = p.colors.map(c => `<div title="${c}" onclick="navigator.clipboard.writeText('${c}')"></div>`).join('');
+    cont.innerHTML = p.colors.map(c => `<div role="button" tabindex="0" title="${c}" onclick="navigator.clipboard.writeText('${c}')"></div>`).join('');
     document.getElementById('paletteDesc').textContent = p.desc;
     document.getElementById('paletteResult').classList.remove('d-none');
 }

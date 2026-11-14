@@ -186,7 +186,7 @@ $related_projects = $normRelated;
         <div class="row">
             <div class="col-lg-8">
                 <?php if (!empty($heroImg) && $heroImg !== '/assets/images/projects/placeholder/property.svg'): ?>
-                <div class="project-hero-media mb-4 position-relative overflow-hidden rounded-4 shadow-sm border" style="max-height: 420px; cursor: pointer;" onclick="openProjectLightbox(0)">
+                <div role="button" tabindex="0" class="project-hero-media mb-4 position-relative overflow-hidden rounded-4 shadow-sm border" style="max-height: 420px; cursor: pointer;" onclick="openProjectLightbox(0)">
                     <img src="<?= (strpos($heroImg, 'http') === 0) ? $heroImg : BASE_URL . $heroImg ?>" class="w-100 h-100" alt="<?= htmlspecialchars($project->site_name) ?>" style="max-height: 420px; width: 100%; object-fit: cover;" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                     <div class="position-absolute bottom-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center" style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                         <span class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill"><i class="fas fa-camera me-1"></i> <?= htmlspecialchars($project->site_name) ?></span>
@@ -360,7 +360,7 @@ $related_projects = $normRelated;
                             $fullImgUrl = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . ltrim($img, '/');
                         ?>
                         <div class="col-6 col-md-4">
-                            <div class="gallery-item position-relative overflow-hidden rounded-3 shadow-sm border" style="cursor: pointer; height: 160px;" onclick="openProjectLightbox(<?= $idx ?>)">
+                            <div role="button" tabindex="0" class="gallery-item position-relative overflow-hidden rounded-3 shadow-sm border" style="cursor: pointer; height: 160px;" onclick="openProjectLightbox(<?= $idx ?>)">
                                 <img src="<?= htmlspecialchars($fullImgUrl) ?>" class="w-100 h-100" style="object-fit: cover; transition: transform 0.3s ease;" alt="Project Photo <?= $idx + 1 ?>" onerror="this.src='<?= BASE_URL ?>/assets/images/placeholder/property.svg'">
                                 <div class="gallery-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-40" style="opacity: 0; transition: opacity 0.25s ease;">
                                     <i class="fas fa-search-plus fa-2x text-white"></i>

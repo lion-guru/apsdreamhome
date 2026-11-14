@@ -449,6 +449,7 @@ $GLOBALS['_html_doc_started'] = true;
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
+<script defer src="<?= BASE_URL ?>/assets/js/aps-a11y.js?v=1"></script>
     <!-- Admin JS -->
     <script src="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/js/admin.js"></script>
     <!-- Admin Form Enhancer (IFSC, pincode auto-fill, form validation, CSRF) -->

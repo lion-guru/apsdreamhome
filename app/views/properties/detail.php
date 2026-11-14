@@ -523,7 +523,7 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
 </div>
 
 <!-- Lightbox -->
-<div class="pd-lightbox" id="propertyLightbox" onclick="closeLightbox(event)">
+<div role="button" tabindex="0" class="pd-lightbox" id="propertyLightbox" onclick="closeLightbox(event)">
     <button class="lb-close" onclick="closeLightbox()">&times;</button>
     <button class="lb-nav lb-prev" onclick="changeLightbox(-1)">&#10094;</button>
     <button class="lb-nav lb-next" onclick="changeLightbox(1)">&#10095;</button>

@@ -364,7 +364,7 @@ $hubbedItems = $sortedHubbed;
 
 
     <!-- Expand All / Collapse All toggle -->
-    <div class="sidebar-sec" onclick="toggleAllSidebarSections()">
+    <div role="button" tabindex="0" class="sidebar-sec" onclick="toggleAllSidebarSections()">
         <span><i class="fas fa-layer-group"></i> All Sections</span>
         <i class="fas fa-chevron-down sidebar-sec-arrow" id="arrow-expand-all"></i>
     </div>
@@ -372,7 +372,7 @@ $hubbedItems = $sortedHubbed;
     <!-- Reset View: clears per-tab fold state + search filter, expands all.
          Fold state is per-tab (sessionStorage); this restores the full menu
          in one click when it ever looks "changed" or incomplete. -->
-    <div class="sidebar-sec" onclick="resetSidebarView()" title="Clear search, expand all sections">
+    <div role="button" tabindex="0" class="sidebar-sec" onclick="resetSidebarView()" title="Clear search, expand all sections">
         <span><i class="fas fa-undo"></i> Reset View</span>
     </div>
 
@@ -402,7 +402,7 @@ $hubbedItems = $sortedHubbed;
                 ?>
                 <!-- Hub: <?php echo $hubDef['label']; ?> -->
                 <div class="sidebar-hub mb-3">
-                    <div class="sidebar-hub-header" onclick="APS.toggleSidebarHub('<?php echo e($hubId); ?>')">
+                    <div role="button" tabindex="0" class="sidebar-hub-header" onclick="APS.toggleSidebarHub('<?php echo e($hubId); ?>')">
                         <span class="d-flex align-items-center gap-2">
                             <i class="<?php echo $hubDef['icon']; ?> text-primary"></i>
                             <strong><?php echo $hubDef['label']; ?></strong>
@@ -416,7 +416,7 @@ $hubbedItems = $sortedHubbed;
                                 $secId = 'sec-' . preg_replace('/[^a-z0-9]/', '', $hub . '-' . $section);
                                 $sectionHasActiveFlag = !empty($sectionHasActive[$hub][$section]);
                                 ?>
-                                <div class="sidebar-sec" onclick="toggleSidebarSection('<?php echo e($secId); ?>')">
+                                <div role="button" tabindex="0" class="sidebar-sec" onclick="toggleSidebarSection('<?php echo e($secId); ?>')">
                                     <span><?php echo $sectionNames[$section] ?? ucfirst($section); ?></span>
                                     <i class="fas fa-chevron-down sidebar-sec-arrow <?php echo $sectionHasActiveFlag ? '' : 'collapsed'; ?>" id="arrow-<?php echo e($secId); ?>"></i>
                                 </div>

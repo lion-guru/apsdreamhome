@@ -67,12 +67,12 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         <?php
         $pipelineCounts = $pipeline_counts ?? [];
         ?>
-        <div class="crm-stage" onclick="filterLeads('')">
+        <div role="button" tabindex="0" class="crm-stage" onclick="filterLeads('')">
             <i class="fas fa-layer-group"></i> <?= __('assoc_leads_all', [], 'All') ?>
             <span class="count"><?= number_format($total_count) ?></span>
         </div>
         <?php foreach ($statuses as $key => $s): ?>
-        <div class="crm-stage <?= $status_filter === $key ? 'active' : '' ?>"
+        <div role="button" tabindex="0" class="crm-stage <?= $status_filter === $key ? 'active' : '' ?>"
              onclick="filterLeads('<?= $key ?>')">
             <i class="fas <?= $s['icon'] ?>"></i> <?= $s['label'] ?>
             <span class="count"><?= $pipelineCounts[$key] ?? 0 ?></span>

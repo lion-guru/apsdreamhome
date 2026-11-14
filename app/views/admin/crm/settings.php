@@ -56,7 +56,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                         <div class="fw-semibold">Enable CRM Module</div>
                         <small class="text-muted">Master toggle — disabling hides CRM from all users</small>
                     </div>
-                    <div class="toggle-switch <?= $val('crm_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_enabled').value = this.classList.contains('active') ? '1' : '0';">
+                    <div role="button" tabindex="0" class="toggle-switch <?= $val('crm_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_enabled').value = this.classList.contains('active') ? '1' : '0';">
                         <input type="hidden" id="crm_enabled" name="crm_enabled" value="<?= $val('crm_enabled') ?>">
                     </div>
                 </div>
@@ -107,7 +107,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                         <div class="fw-semibold">Enable Auto-Assignment</div>
                         <small class="text-muted">Automatically assign new leads to available agents</small>
                     </div>
-                    <div class="toggle-switch <?= $val('crm_auto_assign_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_auto_assign').value = this.classList.contains('active') ? '1' : '0';">
+                    <div role="button" tabindex="0" class="toggle-switch <?= $val('crm_auto_assign_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_auto_assign').value = this.classList.contains('active') ? '1' : '0';">
                         <input type="hidden" id="crm_auto_assign" name="crm_auto_assign_enabled" value="<?= $val('crm_auto_assign_enabled') ?>">
                     </div>
                 </div>
@@ -117,7 +117,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                         <div class="fw-semibold">Require Attendance Clock-in</div>
                         <small class="text-muted">Only assign leads if telecaller is marked present</small>
                     </div>
-                    <div class="toggle-switch <?= $val('crm_require_attendance', '0') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_require_attendance').value = this.classList.contains('active') ? '1' : '0';">
+                    <div role="button" tabindex="0" class="toggle-switch <?= $val('crm_require_attendance', '0') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_require_attendance').value = this.classList.contains('active') ? '1' : '0';">
                         <input type="hidden" id="crm_require_attendance" name="crm_require_attendance" value="<?= $val('crm_require_attendance', '0') ?>">
                     </div>
                 </div>
@@ -150,7 +150,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                         <div class="fw-semibold">Enable Auto-Scoring</div>
                         <small class="text-muted">Automatically score leads based on engagement and profile</small>
                     </div>
-                    <div class="toggle-switch <?= $val('crm_scoring_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_scoring').value = this.classList.contains('active') ? '1' : '0';">
+                    <div role="button" tabindex="0" class="toggle-switch <?= $val('crm_scoring_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_scoring').value = this.classList.contains('active') ? '1' : '0';">
                         <input type="hidden" id="crm_scoring" name="crm_scoring_enabled" value="<?= $val('crm_scoring_enabled') ?>">
                     </div>
                 </div>
@@ -196,7 +196,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                                 <div class="fw-semibold"><?= $feat['label'] ?></div>
                                 <small class="text-muted"><?= $feat['desc'] ?></small>
                             </div>
-                            <div class="toggle-switch <?= $val($feat['key']) === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('<?= $feat['key'] ?>').value = this.classList.contains('active') ? '1' : '0';">
+                            <div role="button" tabindex="0" class="toggle-switch <?= $val($feat['key']) === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('<?= $feat['key'] ?>').value = this.classList.contains('active') ? '1' : '0';">
                                 <input type="hidden" id="<?= $feat['key'] ?>" name="<?= $feat['key'] ?>" value="<?= $val($feat['key']) ?>">
                             </div>
                         </div>
@@ -226,7 +226,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                 <div class="col-md-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <label class="fw-semibold mb-0">Export Enabled</label>
-                        <div class="toggle-switch <?= $val('crm_export_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_export').value = this.classList.contains('active') ? '1' : '0';">
+                        <div role="button" tabindex="0" class="toggle-switch <?= $val('crm_export_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_export').value = this.classList.contains('active') ? '1' : '0';">
                             <input type="hidden" id="crm_export" name="crm_export_enabled" value="<?= $val('crm_export_enabled') ?>">
                         </div>
                     </div>
@@ -234,7 +234,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                 <div class="col-md-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <label class="fw-semibold mb-0">Import Enabled</label>
-                        <div class="toggle-switch <?= $val('crm_import_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_import').value = this.classList.contains('active') ? '1' : '0';">
+                        <div role="button" tabindex="0" class="toggle-switch <?= $val('crm_import_enabled') === '1' ? 'active' : '' ?>" onclick="this.classList.toggle('active');document.getElementById('crm_import').value = this.classList.contains('active') ? '1' : '0';">
                             <input type="hidden" id="crm_import" name="crm_import_enabled" value="<?= $val('crm_import_enabled') ?>">
                         </div>
                     </div>

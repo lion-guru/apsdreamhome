@@ -84,7 +84,7 @@
                             <div class="col-md-6 col-lg-4 col-xl-3 mb-4 property-card"
                                 data-name="<?= strtolower(htmlspecialchars($property['title'] ?? '')) ?>"
                                 data-location="<?= strtolower(htmlspecialchars($property['location'] ?? '')) ?>">
-                                <div class="card h-100 property-select-card" id="property-<?= $property['id'] ?>"
+                                <div role="button" tabindex="0" class="card h-100 property-select-card" id="property-<?= $property['id'] ?>"
                                     onclick="toggleProperty(<?= $property['id'] ?>)" >
 
                                     <!-- Selection Badge -->

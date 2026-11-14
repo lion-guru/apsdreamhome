@@ -203,6 +203,7 @@ use App\Services\PortalMenuService;
 
     <!-- Scripts -->
     <script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
+<script defer src="<?= BASE_URL ?>/assets/js/aps-a11y.js?v=1"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/frontend-enhancements.js"></script>
     <script defer src="<?php echo BASE_URL; ?>/assets/js/customer-pages.js"></script>
     <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">

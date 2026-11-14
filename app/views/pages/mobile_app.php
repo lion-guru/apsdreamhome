@@ -423,35 +423,35 @@ $updated_date = '2026-10-21';
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
+                        <div role="button" tabindex="0" class="faq-question" onclick="toggleFaq(this)">
                             <span>Is the app free?</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>
                         <div class="faq-answer">Yes, the app is completely free to download and use.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
+                        <div role="button" tabindex="0" class="faq-question" onclick="toggleFaq(this)">
                             <span>Do I need to register again?</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>
                         <div class="faq-answer">No, use your existing APS Dream Home website credentials to login.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
+                        <div role="button" tabindex="0" class="faq-question" onclick="toggleFaq(this)">
                             <span>Is my data safe?</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>
                         <div class="faq-answer">Absolutely. All data is encrypted and transmitted securely. We never share your personal information.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
+                        <div role="button" tabindex="0" class="faq-question" onclick="toggleFaq(this)">
                             <span>Which Android versions are supported?</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>
                         <div class="faq-answer">Android 8.0 (Oreo) and above. The app is optimized for all screen sizes.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFaq(this)">
+                        <div role="button" tabindex="0" class="faq-question" onclick="toggleFaq(this)">
                             <span>Will there be an iOS version?</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>

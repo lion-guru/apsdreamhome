@@ -546,7 +546,7 @@ document.addEventListener('DOMContentLoaded', function(){
             </div>
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('emi')">
+                    <div role="button" tabindex="0" class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('emi')">
                         <div class="card-body p-4 text-center">
                             <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-calculator fa-2x text-primary"></i>
@@ -557,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('investment')">
+                    <div role="button" tabindex="0" class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('investment')">
                         <div class="card-body p-4 text-center">
                             <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-arrow-trend-up fa-2x text-success"></i>
@@ -568,7 +568,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('stamp')">
+                    <div role="button" tabindex="0" class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('stamp')">
                         <div class="card-body p-4 text-center">
                             <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-file-contract fa-2x text-warning"></i>
@@ -579,7 +579,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('converter')">
+                    <div role="button" tabindex="0" class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('converter')">
                         <div class="card-body p-4 text-center">
                             <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-vector-square fa-2x text-info"></i>
@@ -590,7 +590,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('eligibility')">
+                    <div role="button" tabindex="0" class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('eligibility')">
                         <div class="card-body p-4 text-center">
                             <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-hand-holding-dollar fa-2x text-danger"></i>
@@ -601,7 +601,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('valuation')">
+                    <div role="button" tabindex="0" class="card border-0 shadow-sm h-100 tool-card" onclick="openToolModal('valuation')">
                         <div class="card-body p-4 text-center">
                             <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3 tool-icon-circle">
                                 <i class="fas fa-house-chimney fa-2x text-secondary"></i>
@@ -991,7 +991,7 @@ document.addEventListener('DOMContentLoaded', function(){
             </div>
             <div class="row g-4 stagger-children">
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('loan')" >
+                    <div role="button" tabindex="0" class="service-card-modern" onclick="openServiceModal('loan')" >
                         <div class="service-icon icon-green">
                             <i class="fas fa-hand-holding-usd fa-2x iu-emerald"></i>
                         </div>
@@ -1001,7 +1001,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('legal')" >
+                    <div role="button" tabindex="0" class="service-card-modern" onclick="openServiceModal('legal')" >
                         <div class="service-icon icon-indigo">
                             <i class="fas fa-gavel fa-2x"></i>
                         </div>
@@ -1011,7 +1011,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('interior')" >
+                    <div role="button" tabindex="0" class="service-card-modern" onclick="openServiceModal('interior')" >
                         <div class="service-icon icon-amber">
                             <i class="fas fa-couch fa-2x iu-amber"></i>
                         </div>
@@ -1021,7 +1021,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('registry')" >
+                    <div role="button" tabindex="0" class="service-card-modern" onclick="openServiceModal('registry')" >
                         <div class="service-icon icon-red">
                             <i class="fas fa-file-signature fa-2x iu-red"></i>
                         </div>
@@ -1031,7 +1031,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('rental')" >
+                    <div role="button" tabindex="0" class="service-card-modern" onclick="openServiceModal('rental')" >
                         <div class="service-icon icon-teal">
                             <i class="fas fa-file-contract fa-2x iu-teal-light"></i>
                         </div>
@@ -1041,7 +1041,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 reveal">
-                    <div class="service-card-modern" onclick="openServiceModal('tax')" >
+                    <div role="button" tabindex="0" class="service-card-modern" onclick="openServiceModal('tax')" >
                         <div class="service-icon icon-cyan">
                             <i class="fas fa-file-invoice-dollar fa-2x"></i>
                         </div>

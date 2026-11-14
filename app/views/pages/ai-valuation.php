@@ -114,7 +114,7 @@ $content = $content ?? '';
                     <div class="row" id="properties-grid">
                         <?php foreach ($properties as $property): ?>
                             <div class="col-md-6 mb-3">
-                                <div class="card property-card"
+                                <div role="button" tabindex="0" class="card property-card"
                                     onclick="selectProperty('<?= htmlspecialchars($property['location'] ?? '') ?>', 
                                          <?= $property['area_sqft'] ?>, '<?= $property['property_type'] ?>', 
                                          <?= $property['bedrooms'] ?? 0 ?>, <?= $property['bathrooms'] ?? 0 ?>, this)">

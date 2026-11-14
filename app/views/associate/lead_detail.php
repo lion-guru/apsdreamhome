@@ -117,7 +117,7 @@ $today = date('Y-m-d');
             if ($idx < $currentIdx) $cls = 'completed';
             elseif ($idx == $currentIdx) $cls = 'current';
         ?>
-        <div class="pipeline-step <?= $cls ?>" onclick="changeStatus('<?= $sKey ?>')">
+        <div role="button" tabindex="0" class="pipeline-step <?= $cls ?>" onclick="changeStatus('<?= $sKey ?>')">
             <i class="fas <?= $s['icon'] ?> me-1"></i><?= $s['label'] ?>
         </div>
         <?php endforeach; ?>
@@ -452,7 +452,7 @@ $today = date('Y-m-d');
                 foreach ($waTemplates as $t):
                     $encoded = urlencode($t['msg']);
                 ?>
-                <div class="whatsapp-template" onclick="window.open('https://wa.me/91<?= $phone ?>?text=<?= $encoded ?>','_blank')">
+                <div role="button" tabindex="0" class="whatsapp-template" onclick="window.open('https://wa.me/91<?= $phone ?>?text=<?= $encoded ?>','_blank')">
                     <div class="d-flex align-items-center gap-2">
                         <span class="wa-icon"><i class="fab fa-whatsapp"></i></span>
                         <span><?= $t['label'] ?></span>

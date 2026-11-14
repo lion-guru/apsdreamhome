@@ -93,7 +93,7 @@ $merge_fields = $merge_fields ?? [];
                 <div class="aps-cp-card-body p-0">
                     <div class="list-group list-group-flush">
                         <?php foreach ($prompts as $p): ?>
-                            <div class="list-group-item list-group-item-action p-2" onclick="selectPrompt(<?= $p['id'] ?>)">
+                            <div role="button" tabindex="0" class="list-group-item list-group-item-action p-2" onclick="selectPrompt(<?= $p['id'] ?>)">
                                 <div class="d-flex justify-content-between">
                                     <strong class="small"><?= htmlspecialchars($p['name'] ?? '') ?></strong>
                                     <span class="badge bg-light text-dark"><?= htmlspecialchars($p['document_category'] ?? '') ?></span>

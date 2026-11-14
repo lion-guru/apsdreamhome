@@ -80,7 +80,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                             ?>
                             <div class="day-tabs" id="dayTabs">
                                 <?php foreach (array_slice($dates, 0, 8) as $i => $date): ?>
-                                    <div class="day-tab <?= $i === 0 ? 'active' : '' ?>" onclick="selectDate('<?= $date ?>', this)">
+                                    <div role="button" tabindex="0" class="day-tab <?= $i === 0 ? 'active' : '' ?>" onclick="selectDate('<?= $date ?>', this)">
                                         <small class="d-block"><?= date('D', strtotime($date)) ?></small>
                                         <strong><?= date('M j', strtotime($date)) ?></strong>
                                     </div>
@@ -103,7 +103,7 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                                     $cls = $isFull ? 'full' : ($isPartial ? 'partial' : '');
                                 ?>
                                     <div class="col-md-3 col-6">
-                                        <div class="slot-pill <?= $cls ?>" data-time="<?= $slot['time_slot'] ?>"
+                                        <div role="button" tabindex="0" class="slot-pill <?= $cls ?>" data-time="<?= $slot['time_slot'] ?>"
                                              <?= $isFull ? '' : 'onclick="selectTime(this)"' ?>>
                                             <i class="far fa-clock"></i>
                                             <strong class="d-block"><?= date('h:i A', strtotime($slot['time_slot'])) ?></strong>
@@ -202,7 +202,7 @@ function selectDate(date, el) {
         const time12 = new Date('2000-01-01 ' + slot.time_slot).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
         const div = document.createElement('div');
         div.className = 'col-md-3 col-6';
-        div.innerHTML = `<div class="slot-pill ${isFull ? 'full' : (isPartial ? 'partial' : '')}" data-time="${slot.time_slot}" ${isFull ? '' : 'onclick="selectTime(this)"'}>
+        div.innerHTML = `<div role="button" tabindex="0" class="slot-pill ${isFull ? 'full' : (isPartial ? 'partial' : '')}" data-time="${slot.time_slot}" ${isFull ? '' : 'onclick="selectTime(this)"'}>
             <i class="far fa-clock"></i>
             <strong class="d-block">${time12}</strong>
             <small>${slot.current_bookings}/${slot.max_bookings} booked</small>

@@ -164,7 +164,7 @@ $steps = [
                 <div class="row mb-4">
                     <?php foreach ($plans as $plan): ?>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <div class="plan-wizard-card <?= ($wizardData['plan_id'] ?? 1) == $plan['id'] ? 'selected' : '' ?>" onclick="selectPlan(this, <?= $plan['id'] ?>)">
+                            <div role="button" tabindex="0" class="plan-wizard-card <?= ($wizardData['plan_id'] ?? 1) == $plan['id'] ? 'selected' : '' ?>" onclick="selectPlan(this, <?= $plan['id'] ?>)">
                                 <h6 class="mb-2"><?= htmlspecialchars($plan['name'] ?? '') ?></h6>
                                 <h4 class="<?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">₹<?= number_format($plan['price_monthly']) ?><small class="text-muted fs-6">/mo</small></h4>
                                 <div class="small text-muted mt-2">

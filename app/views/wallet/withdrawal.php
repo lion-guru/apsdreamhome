@@ -164,7 +164,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <label class="form-label fw-bold">Select Bank Account</label>
                             <?php if (!empty($bankAccounts)): ?>
                                 <?php foreach ($bankAccounts as $account): ?>
-                                    <div class="bank-card <?php echo $account['is_primary'] ? 'selected' : ''; ?>" 
+                                    <div role="button" tabindex="0" class="bank-card <?php echo $account['is_primary'] ? 'selected' : ''; ?>" 
                                          onclick="selectBank(<?php echo (int)$account['id']; ?>, this)">
                                         <div class="d-flex align-items-center">
                                             <div class="bank-icon">

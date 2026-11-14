@@ -187,7 +187,7 @@
 
         <h5 class="mb-3"><?php echo __('auth_join_as', 'I want to join as:'); ?></h5>
 
-        <div class="role-option" onclick="selectRole('customer')" id="role-customer">
+        <div role="button" tabindex="0" class="role-option" onclick="selectRole('customer')" id="role-customer">
             <div class="d-flex align-items-center">
                 <div class="icon">
                     <i class="fas fa-user"></i>
@@ -199,7 +199,7 @@
             </div>
         </div>
 
-        <div class="role-option" onclick="selectRole('associate')" id="role-associate">
+        <div role="button" tabindex="0" class="role-option" onclick="selectRole('associate')" id="role-associate">
             <div class="d-flex align-items-center">
                 <div class="icon">
                     <i class="fas fa-handshake"></i>
@@ -211,7 +211,7 @@
             </div>
         </div>
 
-        <div class="role-option" onclick="selectRole('agent')" id="role-agent">
+        <div role="button" tabindex="0" class="role-option" onclick="selectRole('agent')" id="role-agent">
             <div class="d-flex align-items-center">
                 <div class="icon">
                     <i class="fas fa-briefcase"></i>

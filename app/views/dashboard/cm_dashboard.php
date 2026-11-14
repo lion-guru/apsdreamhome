@@ -185,28 +185,28 @@ if (!function_exists('cm_getProjectStatusClass')) {
                 Quick Actions
             </h5>
             <div class="quick-actions-grid">
-                <div class="quick-action-card" onclick="manageTeam()">
+                <div role="button" tabindex="0" class="quick-action-card" onclick="manageTeam()">
                     <div class="quick-action-icon bg-gradient-blue">
                         <i class="fas fa-users-cog"></i>
                     </div>
                     <h6>Manage Team</h6>
                     <small>Team members & roles</small>
                 </div>
-                <div class="quick-action-card" onclick="viewReports()">
+                <div role="button" tabindex="0" class="quick-action-card" onclick="viewReports()">
                     <div class="quick-action-icon bg-gradient-green">
                         <i class="fas fa-chart-bar"></i>
                     </div>
                     <h6>Reports</h6>
                     <small>Performance analytics</small>
                 </div>
-                <div class="quick-action-card" onclick="assignProjects()">
+                <div role="button" tabindex="0" class="quick-action-card" onclick="assignProjects()">
                     <div class="quick-action-icon bg-gradient-orange">
                         <i class="fas fa-tasks"></i>
                     </div>
                     <h6>Assign Projects</h6>
                     <small>Distribute work</small>
                 </div>
-                <div class="quick-action-card" onclick="scheduleMeeting()">
+                <div role="button" tabindex="0" class="quick-action-card" onclick="scheduleMeeting()">
                     <div class="quick-action-icon bg-gradient-purple">
                         <i class="fas fa-calendar-alt"></i>
                     </div>

@@ -21,7 +21,7 @@ $current_page = 'become_associate';
             
             <!-- Right: 3D ID Card -->
             <div class="hero-card-content">
-                <div class="id-card-container" id="id-card-container" onclick="startAgentJourney()">
+                <div role="button" tabindex="0" class="id-card-container" id="id-card-container" onclick="startAgentJourney()">
                     <div class="id-card" id="agent-id-card">
                         
                         <!-- Front (Normal State) -->

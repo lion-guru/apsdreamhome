@@ -187,7 +187,7 @@ $groupCount = count($groups);
                 <i class="fas fa-list me-1"></i>Endpoint Groups
             </h6>
             <?php foreach ($groups as $groupName => $endpoints): ?>
-                <div class="group-card mb-2 p-2" onclick="scrollToTag('<?= htmlspecialchars($groupName ?? '') ?>')">
+                <div role="button" tabindex="0" class="group-card mb-2 p-2" onclick="scrollToTag('<?= htmlspecialchars($groupName ?? '') ?>')">
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="group-name"><?= htmlspecialchars($groupName ?? '') ?></span>
                         <span class="group-count"><?= count($endpoints) ?></span>
