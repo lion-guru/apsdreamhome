@@ -79,7 +79,7 @@ $categories = $categories ?? [];
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label">Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" placeholder="e.g. AIIMS Gorakhpur" required>
+                        <input aria-label="Name" type="text" name="name" class="form-control" placeholder="e.g. AIIMS Gorakhpur" required>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Category</label>
@@ -99,19 +99,19 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Address</label>
-                        <input type="text" name="address" class="form-control" placeholder="Full address">
+                        <input aria-label="Address" type="text" name="address" class="form-control" placeholder="Full address">
                     </div>
                     <div class="col-md-1">
                         <label class="form-label">Latitude</label>
-                        <input type="number" name="latitude" class="form-control" step="0.000001" placeholder="26.7606">
+                        <input aria-label="Latitude" type="number" name="latitude" class="form-control" step="0.000001" placeholder="26.7606">
                     </div>
                     <div class="col-md-1">
                         <label class="form-label">Longitude</label>
-                        <input type="number" name="longitude" class="form-control" step="0.000001" placeholder="83.3732">
+                        <input aria-label="Longitude" type="number" name="longitude" class="form-control" step="0.000001" placeholder="83.3732">
                     </div>
                     <div class="col-md-1">
                         <label class="form-label">Pincode</label>
-                        <input type="text" name="pincode" class="form-control" maxlength="6" placeholder="273001">
+                        <input aria-label="Pincode" type="text" name="pincode" class="form-control" maxlength="6" placeholder="273001">
                     </div>
                     <div class="col-md-1 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100" aria-label="Save"><i class="fas fa-save"></i></button>

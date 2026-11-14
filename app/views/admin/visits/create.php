@@ -54,15 +54,15 @@ ob_start();
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Customer Name</label>
-                                <input type="text" class="form-control" name="customer_name" id="customerName" required>
+                                <input aria-label="Customer name" type="text" class="form-control" name="customer_name" id="customerName" required>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Customer Phone</label>
-                                <input type="text" class="form-control" name="customer_phone" id="customerPhone">
+                                <input aria-label="Customer phone" type="text" class="form-control" name="customer_phone" id="customerPhone">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Customer Email</label>
-                                <input type="email" class="form-control" name="customer_email" id="customerEmail">
+                                <input aria-label="Customer email" type="email" class="form-control" name="customer_email" id="customerEmail">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Visit Type</label>
@@ -78,11 +78,11 @@ ob_start();
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Visit Date</label>
-                                <input type="date" class="form-control" name="visit_date" required min="<?= date('Y-m-d') ?>">
+                                <input aria-label="Visit date" type="date" class="form-control" name="visit_date" required min="<?= date('Y-m-d') ?>">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Visit Time</label>
-                                <input type="time" class="form-control" name="visit_time" required>
+                                <input aria-label="Visit time" type="time" class="form-control" name="visit_time" required>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Assign Agent</label>

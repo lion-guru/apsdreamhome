@@ -278,7 +278,7 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
                                         <div id="addressSection<?php echo $rewardId; ?>">
                                             <div class="mb-3">
                                                 <label class="form-label fw-bold small">Contact Phone Number</label>
-                                                <input type="text" name="contact_phone" class="form-control"
+                                                <input aria-label="Contact phone" type="text" name="contact_phone" class="form-control"
                                                        value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>" placeholder="10-digit mobile number">
                                             </div>
 

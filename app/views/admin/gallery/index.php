@@ -119,7 +119,7 @@ $totalCategories = count($categories);
                 <!-- Client-Side Search -->
                 <div class="position-relative" style="min-width: 240px;">
                     <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                    <input type="text" id="gallerySearch" class="form-control form-control-sm rounded-pill ps-5" placeholder="Search photos, titles, tags...">
+                    <input aria-label="Gallery search" type="text" id="gallerySearch" class="form-control form-control-sm rounded-pill ps-5" placeholder="Search photos, titles, tags...">
                 </div>
             </div>
         </div>

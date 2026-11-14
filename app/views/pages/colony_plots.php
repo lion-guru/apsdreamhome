@@ -91,7 +91,7 @@
             <!-- Search -->
             <div class="col-md-4">
                 <label class="form-label"><i class="fas fa-search"></i> <?= __('colony_search_plot') ?></label>
-                <input type="text" name="q" class="form-control" placeholder="<?= __('colony_search_plot_placeholder') ?>" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+                <input aria-label="Q" type="text" name="q" class="form-control" placeholder="<?= __('colony_search_plot_placeholder') ?>" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
             </div>
             <!-- Dimension Filter -->
             <div class="col-12">
@@ -138,8 +138,8 @@
             <div class="col-md-3">
                 <label class="form-label"><?= __('colony_price_range') ?></label>
                 <div class="input-group">
-                    <input type="number" name="min_price" class="form-control" placeholder="Min ₹" value="<?= $current_min_price > 0 ? $current_min_price : '' ?>">
-                    <input type="number" name="max_price" class="form-control" placeholder="Max ₹" value="<?= $current_max_price > 0 ? $current_max_price : '' ?>">
+                    <input aria-label="Min price" type="number" name="min_price" class="form-control" placeholder="Min ₹" value="<?= $current_min_price > 0 ? $current_min_price : '' ?>">
+                    <input aria-label="Max price" type="number" name="max_price" class="form-control" placeholder="Max ₹" value="<?= $current_max_price > 0 ? $current_max_price : '' ?>">
                 </div>
             </div>
 

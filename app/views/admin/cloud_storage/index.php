@@ -30,11 +30,11 @@ $driver = $driver ?? 's3';
             <div class="row g-2 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label small">File</label>
-                    <input type="file" name="file" class="form-control" required>
+                    <input aria-label="File" type="file" name="file" class="form-control" required>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Prefix (folder, optional)</label>
-                    <input type="text" name="prefix" class="form-control" placeholder="documents/2026">
+                    <input aria-label="Prefix" type="text" name="prefix" class="form-control" placeholder="documents/2026">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-upload me-2"></i>Upload</button>

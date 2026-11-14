@@ -20,7 +20,7 @@ $roleBadge = ['mason' => 'warning text-dark', 'helper' => 'info text-dark', 'ope
         <p class="text-muted mb-0">Haziri + daily wages — <strong><?= (int)$day_headcount ?> present</strong>, day total <strong class="text-success">₹<?= number_format((float)$day_total) ?></strong></p>
     </div>
     <form method="GET" class="d-flex gap-2 flex-wrap">
-        <input type="date" name="work_date" class="form-control" value="<?= $e($work_date) ?>" onchange="this.form.submit()">
+        <input aria-label="Work date" type="date" name="work_date" class="form-control" value="<?= $e($work_date) ?>" onchange="this.form.submit()">
         <select aria-label="Colony id" name="colony_id" class="form-select" onchange="this.form.submit()">
             <option value="0">All colonies</option>
             <?php foreach ($colonies as $c): ?>
@@ -47,7 +47,7 @@ $roleBadge = ['mason' => 'warning text-dark', 'helper' => 'info text-dark', 'ope
             </div>
             <div class="col-md-3 col-6">
                 <label class="form-label small">Worker name *</label>
-                <input type="text" name="worker_name" class="form-control form-control-lg" required maxlength="150" placeholder="e.g. Ramesh">
+                <input aria-label="Worker name" type="text" name="worker_name" class="form-control form-control-lg" required maxlength="150" placeholder="e.g. Ramesh">
             </div>
             <div class="col-md-2 col-6">
                 <label class="form-label small">Role</label>
@@ -59,16 +59,16 @@ $roleBadge = ['mason' => 'warning text-dark', 'helper' => 'info text-dark', 'ope
             </div>
             <div class="col-md-2 col-6">
                 <label class="form-label small">Daily wage ₹ *</label>
-                <input type="number" step="1" min="0" name="daily_wage" id="musterWage" class="form-control form-control-lg" required placeholder="500">
+                <input aria-label="Daily wage" type="number" step="1" min="0" name="daily_wage" id="musterWage" class="form-control form-control-lg" required placeholder="500">
             </div>
             <div class="col-md-2 col-12">
                 <label class="form-label small">Work done</label>
-                <input type="text" name="work_done" class="form-control form-control-lg" maxlength="255" placeholder="e.g. boundary 40ft">
+                <input aria-label="Work done" type="text" name="work_done" class="form-control form-control-lg" maxlength="255" placeholder="e.g. boundary 40ft">
             </div>
         </div>
         <div class="d-flex gap-2 mt-3 align-items-center flex-wrap">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="is_present" value="1" checked id="musterPresent">
+                <input aria-label="Is present" class="form-check-input" type="checkbox" name="is_present" value="1" checked id="musterPresent">
                 <label class="form-check-label" for="musterPresent">Present</label>
             </div>
             <button type="submit" class="btn btn-primary btn-lg flex-grow-1"><i class="fas fa-save me-1"></i>Save Entry</button>

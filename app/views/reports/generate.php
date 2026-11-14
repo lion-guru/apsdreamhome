@@ -20,7 +20,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Report Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="title" required placeholder="e.g. Q1 2026 Sales Report">
+                            <input aria-label="Title" type="text" class="form-control" name="title" required placeholder="e.g. Q1 2026 Sales Report">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
@@ -29,23 +29,23 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Date From</label>
-                                <input type="date" class="form-control" name="date_from">
+                                <input aria-label="Date from" type="date" class="form-control" name="date_from">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Date To</label>
-                                <input type="date" class="form-control" name="date_to">
+                                <input aria-label="Date to" type="date" class="form-control" name="date_to">
                             </div>
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Format</label>
                             <div class="d-flex gap-3">
-                                <div class="form-check"><input class="form-check-input" type="radio" name="format" id="fmt_pdf" value="pdf" checked><label class="form-check-label" for="fmt_pdf"><i class="fas fa-file-pdf text-danger me-1"></i>PDF</label></div>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="format" id="fmt_excel" value="excel"><label class="form-check-label" for="fmt_excel"><i class="fas fa-file-excel text-success me-1"></i>Excel</label></div>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="format" id="fmt_csv" value="csv"><label class="form-check-label" for="fmt_csv"><i class="fas fa-file-csv text-primary me-1"></i>CSV</label></div>
+                                <div class="form-check"><input aria-label="Format" class="form-check-input" type="radio" name="format" id="fmt_pdf" value="pdf" checked><label class="form-check-label" for="fmt_pdf"><i class="fas fa-file-pdf text-danger me-1"></i>PDF</label></div>
+                                <div class="form-check"><input aria-label="Format" class="form-check-input" type="radio" name="format" id="fmt_excel" value="excel"><label class="form-check-label" for="fmt_excel"><i class="fas fa-file-excel text-success me-1"></i>Excel</label></div>
+                                <div class="form-check"><input aria-label="Format" class="form-check-input" type="radio" name="format" id="fmt_csv" value="csv"><label class="form-check-label" for="fmt_csv"><i class="fas fa-file-csv text-primary me-1"></i>CSV</label></div>
                             </div>
                         </div>
                         <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" name="schedule" id="schedule" value="1">
+                            <input aria-label="Schedule" class="form-check-input" type="checkbox" name="schedule" id="schedule" value="1">
                             <label class="form-check-label" for="schedule">Schedule this report to run daily</label>
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-file-export me-2"></i>Generate Report</button>

@@ -88,15 +88,15 @@ $page_description = 'Manage marketplace applications and integrations';
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">App Name <span class="text-danger">*</span></label>
-                        <input type="text" name="app_name" class="form-control" required placeholder="e.g. Google Analytics">
+                        <input aria-label="App name" type="text" name="app_name" class="form-control" required placeholder="e.g. Google Analytics">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Provider</label>
-                        <input type="text" name="provider" class="form-control" placeholder="e.g. Google">
+                        <input aria-label="Provider" type="text" name="provider" class="form-control" placeholder="e.g. Google">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">App URL</label>
-                        <input type="url" name="app_url" class="form-control" placeholder="https://analytics.google.com">
+                        <input aria-label="App url" type="url" name="app_url" class="form-control" placeholder="https://analytics.google.com">
                     </div>
                 </div>
                 <div class="modal-footer">

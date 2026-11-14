@@ -54,13 +54,13 @@ ob_start();
                             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                             <input type="hidden" name="subject" value="Inquiry about Ram Nagri">
                             <div class="mb-3">
-                                <input type="text" name="name" class="form-control" placeholder="Your Name" required>
+                                <input aria-label="Name" type="text" name="name" class="form-control" placeholder="Your Name" required>
                             </div>
                             <div class="mb-3">
-                                <input type="email" name="email" class="form-control" placeholder="Your Email" required>
+                                <input aria-label="Email" type="email" name="email" class="form-control" placeholder="Your Email" required>
                             </div>
                             <div class="mb-3">
-                                <input type="text" name="phone" class="form-control" placeholder="Phone Number" required>
+                                <input aria-label="Phone" type="text" name="phone" class="form-control" placeholder="Phone Number" required>
                             </div>
                             <div class="mb-3">
                                 <textarea aria-label="Message" name="message" class="form-control" rows="3" placeholder="I am interested in Ram Nagri..."></textarea>

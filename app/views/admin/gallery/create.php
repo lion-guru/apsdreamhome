@@ -13,13 +13,13 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Image File <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control form-control-lg" name="image" accept="image/*" required>
+                        <input aria-label="Image" type="file" class="form-control form-control-lg" name="image" accept="image/*" required>
                         <div class="form-text">JPG, PNG, GIF, WebP. Max 5MB</div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Title</label>
-                        <input type="text" class="form-control" name="title" placeholder="Image title" maxlength="255">
+                        <input aria-label="Title" type="text" class="form-control" name="title" placeholder="Image title" maxlength="255">
                     </div>
 
                     <div class="row mb-3">
@@ -42,7 +42,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Caption</label>
-                        <input type="text" class="form-control" name="caption" placeholder="Short caption" maxlength="255">
+                        <input aria-label="Caption" type="text" class="form-control" name="caption" placeholder="Short caption" maxlength="255">
                     </div>
 
                     <div class="mb-3">
@@ -52,7 +52,7 @@
 
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Sort Order</label>
-                        <input type="number" class="form-control" name="sort_order" value="0" min="0" >
+                        <input aria-label="Sort order" type="number" class="form-control" name="sort_order" value="0" min="0" >
                     </div>
 
                     <div class="d-flex gap-3">

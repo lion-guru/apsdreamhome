@@ -196,7 +196,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             <button class="cw-voice-btn" id="cwVoiceBtn" title="Voice Mode (speak in Hindi/English)">
                 <i class="fas fa-microphone"></i>
             </button>
-            <input type="text" class="cw-input" id="cwInput" placeholder="Type your message..." autocomplete="off">
+            <input aria-label="Cw input" type="text" class="cw-input" id="cwInput" placeholder="Type your message..." autocomplete="off">
             <button class="cw-send" id="cwSendBtn" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
@@ -500,7 +500,7 @@ $userName = $_SESSION['user_name'] ?? $_SESSION['admin_name'] ?? '';
             var c = document.getElementById('cwMessages');
             var f = document.createElement('div');
             f.className = 'cw-lead-form';
-            f.innerHTML = '<input type="text" id="cwLeadName" placeholder="Your Name" value="' + (cwUserName||'') + '"><input type="tel" id="cwLeadPhone" placeholder="Mobile Number"><button id="cwLeadSubmit">Request Callback</button>';
+            f.innerHTML = '<input aria-label="Cw lead name" type="text" id="cwLeadName" placeholder="Your Name" value="' + (cwUserName||'') + '"><input aria-label="Cw lead phone" type="tel" id="cwLeadPhone" placeholder="Mobile Number"><button id="cwLeadSubmit">Request Callback</button>';
             c.appendChild(f);
             var leadBtn = document.getElementById('cwLeadSubmit');
             if (leadBtn) leadBtn.addEventListener('click', function() { window.cwSubmitLead(); });

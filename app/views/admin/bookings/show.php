@@ -796,7 +796,7 @@ $extraHead = '<style>
                         <label for="amount" class="form-label"><?= __('admin_amount_label') ?> (₹)</label>
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
-                            <input type="number" class="form-control" id="amount" name="amount"
+                            <input aria-label="Amount" type="number" class="form-control" id="amount" name="amount"
                                 step="0.01" min="0" required>
                         </div>
                     </div>
@@ -815,7 +815,7 @@ $extraHead = '<style>
 
                     <div class="mb-3">
                         <label for="transaction_id" class="form-label"><?= __('admin_transaction_id') ?></label>
-                        <input type="text" class="form-control" id="transaction_id" name="transaction_id"
+                        <input aria-label="Transaction id" type="text" class="form-control" id="transaction_id" name="transaction_id"
                             placeholder="<?= __('admin_enter_transaction_id') ?>">
                     </div>
                 </div>
@@ -847,7 +847,7 @@ $extraHead = '<style>
                     <div class="row g-3">
                         <div class="col-md-7">
                             <label for="doc_name" class="form-label fw-semibold">विलेख का शीर्षक / दस्तावेज़ का नाम <span class="text-danger">*</span></label>
-                            <input type="text" id="doc_name" name="document_name" class="form-control" placeholder="उदा: Signed Tripartite Master Deed on Rs.500 Stamp Paper" required>
+                            <input aria-label="Doc name" type="text" id="doc_name" name="document_name" class="form-control" placeholder="उदा: Signed Tripartite Master Deed on Rs.500 Stamp Paper" required>
                         </div>
 
                         <div class="col-md-5">
@@ -866,7 +866,7 @@ $extraHead = '<style>
 
                         <div class="col-md-6">
                             <label for="doc_number" class="form-label fw-semibold">स्टाम्प / विलेख संख्या (Stamp / Document No.)</label>
-                            <input type="text" id="doc_number" name="document_number" class="form-control" placeholder="उदा: STAMP-UP-2026-0089">
+                            <input aria-label="Doc number" type="text" id="doc_number" name="document_number" class="form-control" placeholder="उदा: STAMP-UP-2026-0089">
                         </div>
 
                         <div class="col-md-6">
@@ -882,7 +882,7 @@ $extraHead = '<style>
                             <label for="physical_loc" class="form-label fw-semibold">
                                 <i class="fas fa-archive text-primary me-1"></i> कार्यालय में हार्ड कॉपी का भौतिक स्थान (Hard Copy Physical Rack / Locker)
                             </label>
-                            <input type="text" id="physical_loc" name="physical_location" class="form-control" placeholder="उदा: Gorakhpur HQ — Legal Cabinet 2, Shelf B, Folder #<?= htmlspecialchars($booking['booking_number'] ?? '') ?>">
+                            <input aria-label="Physical loc" type="text" id="physical_loc" name="physical_location" class="form-control" placeholder="उदा: Gorakhpur HQ — Legal Cabinet 2, Shelf B, Folder #<?= htmlspecialchars($booking['booking_number'] ?? '') ?>">
                             <small class="text-muted">कार्यालय में मूल हार्ड कॉपी किस अलमारी/शेल्फ/बॉक्स में रखी गई है ताकि त्वरित रूप से मिल सके।</small>
                         </div>
 
@@ -890,26 +890,26 @@ $extraHead = '<style>
                             <label for="rack_no" class="form-label fw-semibold">
                                 <i class="fas fa-cabinet-filing text-secondary me-1"></i> रैक/अलमारी संख्या (Rack / Almirah No.)
                             </label>
-                            <input type="text" id="rack_no" name="physical_rack_no" class="form-control" placeholder="उदा: Cabinet-2">
+                            <input aria-label="Rack no" type="text" id="rack_no" name="physical_rack_no" class="form-control" placeholder="उदा: Cabinet-2">
                         </div>
 
                         <div class="col-md-4">
                             <label for="shelf_id" class="form-label fw-semibold">
                                 <i class="fas fa-layer-group text-info me-1"></i> लॉकर/शेल्फ़ ID (Locker / Shelf ID)
                             </label>
-                            <input type="text" id="shelf_id" name="locker_shelf_id" class="form-control" placeholder="उदा: Shelf-B-3">
+                            <input aria-label="Shelf id" type="text" id="shelf_id" name="locker_shelf_id" class="form-control" placeholder="उदा: Shelf-B-3">
                         </div>
 
                         <div class="col-md-4">
                             <label for="bar_code" class="form-label fw-semibold">
                                 <i class="fas fa-barcode text-success me-1"></i> फोल्डर बारकोड (Folder Bar Code)
                             </label>
-                            <input type="text" id="bar_code" name="folder_bar_code" class="form-control" placeholder="उदा: FLD-2026-BK-0089">
+                            <input aria-label="Bar code" type="text" id="bar_code" name="folder_bar_code" class="form-control" placeholder="उदा: FLD-2026-BK-0089">
                         </div>
 
                         <div class="col-12">
                             <label for="doc_file" class="form-label fw-semibold">स्कैन फ़ाइल चुनें (PDF, JPG, PNG, DOC) <span class="text-danger">*</span></label>
-                            <input type="file" id="doc_file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                            <input aria-label="Doc file" type="file" id="doc_file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
                         </div>
 
                         <div class="col-12">

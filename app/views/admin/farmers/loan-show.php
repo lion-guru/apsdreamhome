@@ -107,7 +107,7 @@ $loan = $loan ?? [];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Disbursement Date</label>
-                    <input type="date" name="disbursement_date" class="form-control" value="<?php echo htmlspecialchars($loan['disbursement_date'] ?? ''); ?>">
+                    <input aria-label="Disbursement date" type="date" name="disbursement_date" class="form-control" value="<?php echo htmlspecialchars($loan['disbursement_date'] ?? ''); ?>">
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Update Status</button>

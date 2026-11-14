@@ -119,7 +119,7 @@ $base = BASE_URL;
                     <form method="GET" class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label">Search</label>
-                            <input type="text" name="search" class="form-control" value="<?= htmlspecialchars($search) ?>" placeholder="Search config keys...">
+                            <input aria-label="Search" type="text" name="search" class="form-control" value="<?= htmlspecialchars($search) ?>" placeholder="Search config keys...">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Group Filter</label>
@@ -255,7 +255,7 @@ $base = BASE_URL;
                             <table class="table table-hover">
                                 <thead class="table-light">
                                     <tr>
-                                        <th scope="col" style="width: 5%"><input type="checkbox" id="selectAllConfigs"></th>
+                                        <th scope="col" style="width: 5%"><input aria-label="Select all configs" type="checkbox" id="selectAllConfigs"></th>
                                         <th scope="col">Key</th>
                                         <th scope="col">Type</th>
                                         <th scope="col">Value</th>
@@ -266,7 +266,7 @@ $base = BASE_URL;
                                         <?php foreach ($groupConfigs as $key => $config): ?>
                                             <?php if ($config['is_editable']): ?>
                                                 <tr>
-                                                    <td><input type="checkbox" name="configs[<?= htmlspecialchars($key) ?>][selected]" value="1" class="config-checkbox"></td>
+                                                    <td><input aria-label="Configs htmlspecialchars key selected" type="checkbox" name="configs[<?= htmlspecialchars($key) ?>][selected]" value="1" class="config-checkbox"></td>
                                                     <td>
                                                         <code><?= htmlspecialchars($key) ?></code>
                                                         <input type="hidden" name="configs[<?= htmlspecialchars($key) ?>][type]" value="<?= htmlspecialchars($config['type']) ?>">
@@ -280,7 +280,7 @@ $base = BASE_URL;
                                                                 <option value="0" <?= !(bool)$config['current_value'] ? 'selected' : '' ?>>false</option>
                                                             </select>
                                                         <?php else: ?>
-                                                            <input type="text" name="configs[<?= htmlspecialchars($key) ?>][value]" class="form-control form-control-sm" value="<?= htmlspecialchars((string)$config['current_value']) ?>">
+                                                            <input aria-label="Configs htmlspecialchars key value" type="text" name="configs[<?= htmlspecialchars($key) ?>][value]" class="form-control form-control-sm" value="<?= htmlspecialchars((string)$config['current_value']) ?>">
                                                         <?php endif; ?>
                                                     </td>
                                                 </tr>

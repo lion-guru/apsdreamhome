@@ -101,7 +101,7 @@ $csrf = $this->getCsrfToken();
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Payment Date</label>
-                                <input type="date" name="payment_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                                <input aria-label="Payment date" type="date" name="payment_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Payment Mode</label>
@@ -118,27 +118,27 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-md-4" id="chqFields" style="display:none">
                                 <label class="form-label">Cheque/DD Number</label>
-                                <input type="text" name="cheque_dd_number" class="form-control">
+                                <input aria-label="Cheque dd number" type="text" name="cheque_dd_number" class="form-control">
                             </div>
                             <div class="col-md-4" id="chqDateField" style="display:none">
                                 <label class="form-label">Cheque/DD Date</label>
-                                <input type="date" name="cheque_dd_date" class="form-control">
+                                <input aria-label="Cheque dd date" type="date" name="cheque_dd_date" class="form-control">
                             </div>
                             <div class="col-md-4" id="bankFields" style="display:none">
                                 <label class="form-label">Bank Name</label>
-                                <input type="text" name="bank_name" class="form-control">
+                                <input aria-label="Bank name" type="text" name="bank_name" class="form-control">
                             </div>
                             <div class="col-md-4" id="branchFields" style="display:none">
                                 <label class="form-label">Branch</label>
-                                <input type="text" name="bank_branch" class="form-control">
+                                <input aria-label="Bank branch" type="text" name="bank_branch" class="form-control">
                             </div>
                             <div class="col-md-4" id="txnFields" style="display:none">
                                 <label class="form-label">Transaction Ref</label>
-                                <input type="text" name="transaction_ref" class="form-control">
+                                <input aria-label="Transaction ref" type="text" name="transaction_ref" class="form-control">
                             </div>
                             <div class="col-md-4" id="upiFields" style="display:none">
                                 <label class="form-label">UPI Reference</label>
-                                <input type="text" name="upi_ref" class="form-control">
+                                <input aria-label="Upi ref" type="text" name="upi_ref" class="form-control">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Plot</label>
@@ -164,11 +164,11 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Base Tax Paid</label>
-                                <input type="number" step="0.01" name="base_tax_paid" class="form-control" value="<?= number_format($master['net_tax_amount'], 2, '.', '') ?>" required>
+                                <input aria-label="Base tax paid" type="number" step="0.01" name="base_tax_paid" class="form-control" value="<?= number_format($master['net_tax_amount'], 2, '.', '') ?>" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Interest Paid</label>
-                                <input type="number" step="0.01" name="interest_paid" class="form-control" value="0">
+                                <input aria-label="Interest paid" type="number" step="0.01" name="interest_paid" class="form-control" value="0">
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">Rebate Conditions (JSON)</label>

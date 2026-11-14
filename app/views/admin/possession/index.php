@@ -80,7 +80,7 @@ $defectLabels = [
             <div class="row">
                 <div class="col-md-4">
                     <label class="form-label">Search</label>
-                    <input type="text" class="form-control" name="search" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Booking #, Customer, Property">
+                    <input aria-label="Search" type="text" class="form-control" name="search" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Booking #, Customer, Property">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Possession Status</label>

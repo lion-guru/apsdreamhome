@@ -157,7 +157,7 @@ $base = BASE_URL ?? '';
                 </div>
                 <div class="mb-3">
                     <label class="form-label small">Transaction Reference (optional)</label>
-                    <input type="text" name="transaction_id" id="txnRefInput" class="form-control form-control-sm" placeholder="UTR / Cheque No / Receipt No">
+                    <input aria-label="Transaction id" type="text" name="transaction_id" id="txnRefInput" class="form-control form-control-sm" placeholder="UTR / Cheque No / Receipt No">
                 </div>
                 <div class="alert alert-info small mb-3">
                     <i class="fas fa-info-circle me-1"></i>

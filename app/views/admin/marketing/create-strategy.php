@@ -25,7 +25,7 @@ $page_description = 'Create a new marketing strategy';
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="mb-3">
                     <label class="form-label">Title <span class="text-danger">*</span></label>
-                    <input type="text" name="title" class="form-control" required placeholder="Enter strategy title">
+                    <input aria-label="Title" type="text" name="title" class="form-control" required placeholder="Enter strategy title">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
@@ -33,12 +33,12 @@ $page_description = 'Create a new marketing strategy';
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Image URL</label>
-                    <input type="url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
+                    <input aria-label="Image url" type="url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
                     <div class="form-text">Optional. URL to an image representing this strategy.</div>
                 </div>
                 <div class="mb-4">
                     <div class="form-check form-switch">
-                        <input type="checkbox" name="active" class="form-check-input" id="activeSwitch" checked>
+                        <input aria-label="Active" type="checkbox" name="active" class="form-check-input" id="activeSwitch" checked>
                         <label class="form-check-label" for="activeSwitch">Active</label>
                     </div>
                 </div>

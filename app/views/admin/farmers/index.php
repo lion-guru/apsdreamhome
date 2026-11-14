@@ -9,7 +9,7 @@ $activeLoans = $activeLoans ?? 0;
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4><i class="fas fa-tractor text-success me-2"></i> Farmers Management</h4>
         <div>
-            <input type="text" id="farmerSearch" class="form-control form-control-sm d-inline-block w-auto me-2" placeholder="Search farmers..." onkeyup="filterFarmers()">
+            <input aria-label="Farmer search" type="text" id="farmerSearch" class="form-control form-control-sm d-inline-block w-auto me-2" placeholder="Search farmers..." onkeyup="filterFarmers()">
         </div>
     </div>
 

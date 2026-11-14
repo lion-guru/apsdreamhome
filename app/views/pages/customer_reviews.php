@@ -71,11 +71,11 @@ $satisfaction = $satisfaction ?? 98;
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><?= __('reviews_your_name') ?></label>
-                                    <input type="text" class="form-control" name="name" required>
+                                    <input aria-label="Name" type="text" class="form-control" name="name" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><?= __('contact_form_email') ?></label>
-                                    <input type="email" class="form-control" name="email" required>
+                                    <input aria-label="Email" type="email" class="form-control" name="email" required>
                                 </div>
                             </div>
                             <div class="mb-3">

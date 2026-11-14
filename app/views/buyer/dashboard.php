@@ -71,19 +71,19 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 </div>
                 <div class="col-6">
                     <label class="form-label fw-bold small">Budget Min (₹)</label>
-                    <input type="number" name="budget_min" class="form-control form-control-sm" placeholder="e.g. 1000000">
+                    <input aria-label="Budget min" type="number" name="budget_min" class="form-control form-control-sm" placeholder="e.g. 1000000">
                 </div>
                 <div class="col-6">
                     <label class="form-label fw-bold small">Budget Max (₹)</label>
-                    <input type="number" name="budget_max" class="form-control form-control-sm" placeholder="e.g. 5000000">
+                    <input aria-label="Budget max" type="number" name="budget_max" class="form-control form-control-sm" placeholder="e.g. 5000000">
                 </div>
                 <div class="col-6">
                     <label class="form-label fw-bold small">Preferred Location</label>
-                    <input type="text" name="preferred_location" class="form-control form-control-sm" placeholder="e.g. Mathura">
+                    <input aria-label="Preferred location" type="text" name="preferred_location" class="form-control form-control-sm" placeholder="e.g. Mathura">
                 </div>
                 <div class="col-6">
                     <label class="form-label fw-bold small">Area (sq.ft.)</label>
-                    <input type="number" name="area_min" class="form-control form-control-sm" placeholder="Min area">
+                    <input aria-label="Area min" type="number" name="area_min" class="form-control form-control-sm" placeholder="Min area">
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-bold small">Requirements</label>

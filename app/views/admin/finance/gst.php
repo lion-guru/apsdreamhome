@@ -59,7 +59,7 @@
     <div class="modal-header"><h5 class="modal-title"><?= __('gst_record_transaction') ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
     <div class="modal-body">
         <div class="row g-3">
-            <div class="col-md-3"><label class="form-label"><?= __('gst_date') ?> <span class="text-danger">*</span></label><input type="date" name="transaction_date" required class="form-control" value="<?= date('Y-m-d') ?>"></div>
+            <div class="col-md-3"><label class="form-label"><?= __('gst_date') ?> <span class="text-danger">*</span></label><input aria-label="Transaction date" type="date" name="transaction_date" required class="form-control" value="<?= date('Y-m-d') ?>"></div>
             <div class="col-md-3"><label class="form-label"><?= __('gst_type') ?> <span class="text-danger">*</span></label>
                 <select aria-label="Transaction type" name="transaction_type" required class="form-select">
                     <option value="output"><?= __('gst_type_output') ?></option>
@@ -78,13 +78,13 @@
                     <option value="18" selected>18%</option><option value="28">28%</option>
                 </select>
             </div>
-            <div class="col-md-6"><label class="form-label"><?= __('gst_party_name') ?></label><input type="text" name="party_name" class="form-control" required></div>
-            <div class="col-md-3"><label class="form-label"><?= __('gst_gstin') ?></label><input type="text" name="gstin" class="form-control text-uppercase" maxlength="15"></div>
-            <div class="col-md-3"><label class="form-label"><?= __('gst_invoice') ?></label><input type="text" name="invoice_number" class="form-control"></div>
-            <div class="col-md-4"><label class="form-label"><?= __('gst_taxable_amount') ?> <span class="text-danger">*</span></label><input type="number" name="taxable_amount" step="0.01" min="0" required class="form-control" id="gstBase" oninput="calcGst()"></div>
-            <div class="col-md-4"><label class="form-label"><?= __('gst_cgst_amount') ?></label><input type="number" name="cgst" step="0.01" class="form-control" id="cgst"></div>
-            <div class="col-md-4"><label class="form-label"><?= __('gst_sgst_amount') ?></label><input type="number" name="sgst" step="0.01" class="form-control" id="sgst"></div>
-            <div class="col-md-4"><label class="form-label"><?= __('gst_igst_amount') ?></label><input type="number" name="igst" step="0.01" class="form-control" id="igst"></div>
+            <div class="col-md-6"><label class="form-label"><?= __('gst_party_name') ?></label><input aria-label="Party name" type="text" name="party_name" class="form-control" required></div>
+            <div class="col-md-3"><label class="form-label"><?= __('gst_gstin') ?></label><input aria-label="Gstin" type="text" name="gstin" class="form-control text-uppercase" maxlength="15"></div>
+            <div class="col-md-3"><label class="form-label"><?= __('gst_invoice') ?></label><input aria-label="Invoice number" type="text" name="invoice_number" class="form-control"></div>
+            <div class="col-md-4"><label class="form-label"><?= __('gst_taxable_amount') ?> <span class="text-danger">*</span></label><input aria-label="Taxable amount" type="number" name="taxable_amount" step="0.01" min="0" required class="form-control" id="gstBase" oninput="calcGst()"></div>
+            <div class="col-md-4"><label class="form-label"><?= __('gst_cgst_amount') ?></label><input aria-label="Cgst" type="number" name="cgst" step="0.01" class="form-control" id="cgst"></div>
+            <div class="col-md-4"><label class="form-label"><?= __('gst_sgst_amount') ?></label><input aria-label="Sgst" type="number" name="sgst" step="0.01" class="form-control" id="sgst"></div>
+            <div class="col-md-4"><label class="form-label"><?= __('gst_igst_amount') ?></label><input aria-label="Igst" type="number" name="igst" step="0.01" class="form-control" id="igst"></div>
         </div>
     </div>
     <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('gst_cancel') ?></button><button type="submit" class="btn btn-primary"><?= __('gst_record_btn') ?></button></div>

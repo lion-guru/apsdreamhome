@@ -41,7 +41,7 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
         <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0">Translation Keys (<?= count($translations) ?> total)</h5>
             <div class="d-flex gap-2">
-                <input type="text" id="search-translations" class="form-control form-control-sm" placeholder="Search keys...">
+                <input aria-label="Search translations" type="text" id="search-translations" class="form-control form-control-sm" placeholder="Search keys...">
                 <button type="button" class="btn btn-success btn-sm" id="save-all-btn"><i class="fas fa-save me-1"></i> Save All Changes</button>
             </div>
         </div>
@@ -74,7 +74,7 @@ $page_title = $page_title ?? 'Translation Editor - APS Dream Home';
                                         </span>
                                     </td>
                                     <td>
-                                        <input type="text" 
+                                        <input aria-label="Translations htmlspecialchars key" type="text" 
                                                class="form-control form-control-sm translation-input" 
                                                name="translations[<?= htmlspecialchars($key ?? '') ?>]" 
                                                value="<?= htmlspecialchars($value[$locale] ?? $value ?? '') ?>"

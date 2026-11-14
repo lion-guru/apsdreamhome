@@ -107,11 +107,11 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-3">
                 <label class="form-label"><i class="fas fa-search me-1"></i>Search</label>
-                <input type="text" class="form-control" name="q" placeholder="Name, address..." value="<?= htmlspecialchars($filters['q'] ?? '') ?>">
+                <input aria-label="Q" type="text" class="form-control" name="q" placeholder="Name, address..." value="<?= htmlspecialchars($filters['q'] ?? '') ?>">
             </div>
             <div class="col-md-2">
                 <label class="form-label">Location</label>
-                <input type="text" class="form-control" name="location" placeholder="City area..." value="<?= htmlspecialchars($filters['location'] ?? '') ?>">
+                <input aria-label="Location" type="text" class="form-control" name="location" placeholder="City area..." value="<?= htmlspecialchars($filters['location'] ?? '') ?>">
             </div>
             <div class="col-md-2">
                 <label class="form-label">Type</label>
@@ -133,11 +133,11 @@ $phoneRaw = preg_replace('/[^0-9]/', '', $sc('contact_whatsapp', '919277121112')
             </div>
             <div class="col-md-1">
                 <label class="form-label">Min &#8377;</label>
-                <input type="number" class="form-control" name="min_price" placeholder="0" value="<?= (int)($filters['min_price'] ?? 0) ?: '' ?>">
+                <input aria-label="Min price" type="number" class="form-control" name="min_price" placeholder="0" value="<?= (int)($filters['min_price'] ?? 0) ?: '' ?>">
             </div>
             <div class="col-md-1">
                 <label class="form-label">Max &#8377;</label>
-                <input type="number" class="form-control" name="max_price" placeholder="50000" value="<?= (int)($filters['max_price'] ?? 0) ?: '' ?>">
+                <input aria-label="Max price" type="number" class="form-control" name="max_price" placeholder="50000" value="<?= (int)($filters['max_price'] ?? 0) ?: '' ?>">
             </div>
             <div class="col-md-1">
                 <button type="submit" class="btn w-100">

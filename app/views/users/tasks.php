@@ -132,7 +132,7 @@ if ($filter && $filter !== 'all') {
                     <div class="card-body py-3">
                         <div class="d-flex align-items-start gap-3">
                             <div class="mt-1">
-                                <input type="checkbox" class="form-check-input task-check" data-task-id="<?= $t['id'] ?>"
+                                <input aria-label="t" type="checkbox" class="form-check-input task-check" data-task-id="<?= $t['id'] ?>"
                                     <?= strtolower($t['status'] ?? '') === 'completed' ? 'checked disabled' : '' ?>
                                     onchange="toggleTask(<?= $t['id'] ?>, this.checked)">
                             </div>

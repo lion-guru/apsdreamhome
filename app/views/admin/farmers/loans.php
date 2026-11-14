@@ -99,55 +99,55 @@ $closedCount = $closed_count ?? 0;
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Farmer ID</label>
-                            <input type="number" name="farmer_id" class="form-control" required>
+                            <input aria-label="Farmer id" type="number" name="farmer_id" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Loan Number</label>
-                            <input type="text" name="loan_number" class="form-control" placeholder="LN-">
+                            <input aria-label="Loan number" type="text" name="loan_number" class="form-control" placeholder="LN-">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Loan Amount</label>
-                            <input type="number" step="0.01" name="loan_amount" class="form-control">
+                            <input aria-label="Loan amount" type="number" step="0.01" name="loan_amount" class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Interest Rate (%)</label>
-                            <input type="number" step="0.01" name="interest_rate" class="form-control">
+                            <input aria-label="Interest rate" type="number" step="0.01" name="interest_rate" class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Tenure (months)</label>
-                            <input type="number" name="loan_tenure" class="form-control">
+                            <input aria-label="Loan tenure" type="number" name="loan_tenure" class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">EMI Amount</label>
-                            <input type="number" step="0.01" name="emi_amount" class="form-control">
+                            <input aria-label="Emi amount" type="number" step="0.01" name="emi_amount" class="form-control">
                         </div>
                         <div class="col-md-8">
                             <label class="form-label">Purpose</label>
-                            <input type="text" name="purpose" class="form-control" placeholder="Loan purpose">
+                            <input aria-label="Purpose" type="text" name="purpose" class="form-control" placeholder="Loan purpose">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Sanction Date</label>
-                            <input type="date" name="sanction_date" class="form-control" value="<?php echo date('Y-m-d'); ?>">
+                            <input aria-label="Sanction date" type="date" name="sanction_date" class="form-control" value="<?php echo date('Y-m-d'); ?>">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Maturity Date</label>
-                            <input type="date" name="maturity_date" class="form-control">
+                            <input aria-label="Maturity date" type="date" name="maturity_date" class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Collateral Type</label>
-                            <input type="text" name="collateral_type" class="form-control" placeholder="e.g., Land, Property">
+                            <input aria-label="Collateral type" type="text" name="collateral_type" class="form-control" placeholder="e.g., Land, Property">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Collateral Value</label>
-                            <input type="number" step="0.01" name="collateral_value" class="form-control">
+                            <input aria-label="Collateral value" type="number" step="0.01" name="collateral_value" class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Guarantor Name</label>
-                            <input type="text" name="guarantor_name" class="form-control">
+                            <input aria-label="Guarantor name" type="text" name="guarantor_name" class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Guarantor Phone</label>
-                            <input type="text" name="guarantor_phone" class="form-control">
+                            <input aria-label="Guarantor phone" type="text" name="guarantor_phone" class="form-control">
                         </div>
                     </div>
                 </div>

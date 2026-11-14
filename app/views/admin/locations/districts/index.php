@@ -28,7 +28,7 @@
                     <form method="GET" action="<?= BASE_URL ?>/admin/locations/districts" class="row g-3">
                         <div class="col-md-3">
                             <label for="search" class="form-label">Search</label>
-                            <input type="text" class="form-control" id="search" name="search" 
+                            <input aria-label="Search" type="text" class="form-control" id="search" name="search" 
                                    value="<?= htmlspecialchars($search ?? '') ?>" placeholder="Search by name or code...">
                         </div>
                         <div class="col-md-3">
@@ -198,7 +198,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="csv_file" class="form-label">CSV File</label>
-                        <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+                        <input aria-label="Csv file" type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
                         <div class="form-text">Format: State Name,District Name,District Code,Status. Example: "Uttar Pradesh,Gorakhpur,GKP,Active"</div>
                     </div>
                 </div>

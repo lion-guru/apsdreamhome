@@ -11,25 +11,25 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="propPrice"><?php echo __('property_price_rs', [], 'Property Price (₹)'); ?></label>
-                                <input type="number" class="form-control form-control-lg" id="propPrice" value="5000000" oninput="calcRB()">
+                                <input aria-label="Prop price" type="number" class="form-control form-control-lg" id="propPrice" value="5000000" oninput="calcRB()">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="monthRent"><?php echo __('monthly_rent_rs', [], 'Monthly Rent (₹)'); ?></label>
-                                <input type="number" class="form-control form-control-lg" id="monthRent" value="15000" oninput="calcRB()">
+                                <input aria-label="Month rent" type="number" class="form-control form-control-lg" id="monthRent" value="15000" oninput="calcRB()">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="tenure"><?php echo __('tenure_years', [], 'Tenure (Years)'); ?></label>
-                                <input type="number" class="form-control" id="tenure" value="10" min="1" max="30" oninput="calcRB()">
+                                <input aria-label="Tenure" type="number" class="form-control" id="tenure" value="10" min="1" max="30" oninput="calcRB()">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="rentGr"><?php echo __('rent_growth', [], 'Rent Growth (%)'); ?></label>
-                                <input type="number" class="form-control" id="rentGr" value="5" oninput="calcRB()">
+                                <input aria-label="Rent gr" type="number" class="form-control" id="rentGr" value="5" oninput="calcRB()">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="appRate"><?php echo __('appreciation', [], 'Appreciation (%)'); ?></label>
-                                <input type="number" class="form-control" id="appRate" value="8" oninput="calcRB()">
+                                <input aria-label="App rate" type="number" class="form-control" id="appRate" value="8" oninput="calcRB()">
                             </div>
                         </div>
 

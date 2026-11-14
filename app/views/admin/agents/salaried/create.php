@@ -36,7 +36,7 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
 
                 <div class="mb-3">
                     <label class="form-label fw-semibold" for="effective_from">Effective From <span class="text-danger">*</span></label>
-                    <input type="date" id="effective_from" name="effective_from" class="form-control"
+                    <input aria-label="Effective from" type="date" id="effective_from" name="effective_from" class="form-control"
                            value="<?= date('Y-m-d') ?>" required>
                     <small class="text-muted">The previous salary structure will be closed on the day before this date.</small>
                 </div>
@@ -47,22 +47,22 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label" for="basic_salary">Basic Salary (₹)</label>
-                        <input type="number" id="basic_salary" name="basic_salary" class="form-control"
+                        <input aria-label="Basic salary" type="number" id="basic_salary" name="basic_salary" class="form-control"
                                min="0" step="0.01" value="0" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="hra">HRA — House Rent Allowance (₹)</label>
-                        <input type="number" id="hra" name="hra" class="form-control"
+                        <input aria-label="Hra" type="number" id="hra" name="hra" class="form-control"
                                min="0" step="0.01" value="0">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="ta_da">TA/DA — Travel & Daily Allowance (₹)</label>
-                        <input type="number" id="ta_da" name="ta_da" class="form-control"
+                        <input aria-label="Ta da" type="number" id="ta_da" name="ta_da" class="form-control"
                                min="0" step="0.01" value="0">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="other_allowance">Other Allowance (₹)</label>
-                        <input type="number" id="other_allowance" name="other_allowance" class="form-control"
+                        <input aria-label="Other allowance" type="number" id="other_allowance" name="other_allowance" class="form-control"
                                min="0" step="0.01" value="0">
                     </div>
                 </div>
@@ -82,7 +82,7 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
                         <label class="form-label fw-semibold" id="incentive_value_label" for="incentive_value">
                             Incentive Amount (₹ per plot)
                         </label>
-                        <input type="number" name="incentive_value" id="incentive_value"
+                        <input aria-label="Incentive value" type="number" name="incentive_value" id="incentive_value"
                                class="form-control" min="0" step="0.01" value="0">
                         <small class="text-muted" id="incentive_hint">
                             E.g. ₹2000 per plot sold this month.
@@ -92,7 +92,7 @@ $preselect      = (int)($_GET['user_id'] ?? 0);
 
                 <div class="mb-3">
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" name="tds_applicable"
+                        <input aria-label="Tds applicable" class="form-check-input" type="checkbox" name="tds_applicable"
                                id="tds_applicable" value="1" checked>
                         <label class="form-check-label" for="tds_applicable">
                             Apply TDS on Salary (Section 192B — Professional Income Tax)

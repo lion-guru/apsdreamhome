@@ -230,15 +230,15 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                         <div class="modal-body">
                                                             <div class="mb-3">
                                                                 <label for="contractor_<?= $row['id'] ?>" class="form-label">Vendor / Technician Name <span class="text-danger">*</span></label>
-                                                                <input type="text" class="form-control" id="contractor_<?= $row['id'] ?>" name="assigned_contractor_name" placeholder="e.g. Ramesh Kumar Plumber" required>
+                                                                <input aria-label="Contractor row" type="text" class="form-control" id="contractor_<?= $row['id'] ?>" name="assigned_contractor_name" placeholder="e.g. Ramesh Kumar Plumber" required>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="contact_<?= $row['id'] ?>" class="form-label">Contractor Contact Phone <span class="text-danger">*</span></label>
-                                                                <input type="text" class="form-control" id="contact_<?= $row['id'] ?>" name="assigned_contact" placeholder="e.g. 9876501234" required>
+                                                                <input aria-label="Contact row" type="text" class="form-control" id="contact_<?= $row['id'] ?>" name="assigned_contact" placeholder="e.g. 9876501234" required>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="cost_<?= $row['id'] ?>" class="form-label">Estimated Repair Cost (₹)</label>
-                                                                <input type="number" step="0.01" class="form-control" id="cost_<?= $row['id'] ?>" name="estimated_cost" value="0.00">
+                                                                <input aria-label="Cost row" type="number" step="0.01" class="form-control" id="cost_<?= $row['id'] ?>" name="estimated_cost" value="0.00">
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">

@@ -24,7 +24,7 @@ $page_description = 'Create a new training course';
                 <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Course Title <span class="text-danger">*</span></label>
-                        <input type="text" name="course_title" class="form-control" required>
+                        <input aria-label="Course title" type="text" name="course_title" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
@@ -55,11 +55,11 @@ $page_description = 'Create a new training course';
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Duration (Hours)</label>
-                            <input type="number" name="course_duration_hours" class="form-control" step="0.5" min="0">
+                            <input aria-label="Course duration hours" type="number" name="course_duration_hours" class="form-control" step="0.5" min="0">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Max Enrollments</label>
-                            <input type="number" name="max_enrollments" class="form-control" min="0" placeholder="0 = unlimited">
+                            <input aria-label="Max enrollments" type="number" name="max_enrollments" class="form-control" min="0" placeholder="0 = unlimited">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -77,19 +77,19 @@ $page_description = 'Create a new training course';
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label class="form-label">Passing Score (%)</label>
-                            <input type="number" name="passing_score_percentage" class="form-control" min="0" max="100" value="70">
+                            <input aria-label="Passing score percentage" type="number" name="passing_score_percentage" class="form-control" min="0" max="100" value="70">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Points Reward</label>
-                            <input type="number" name="points_reward" class="form-control" min="0" value="0">
+                            <input aria-label="Points reward" type="number" name="points_reward" class="form-control" min="0" value="0">
                         </div>
                         <div class="col-md-4 d-flex align-items-end gap-3">
                             <div class="form-check">
-                                <input type="checkbox" name="is_mandatory" class="form-check-input" id="isMandatory" value="1">
+                                <input aria-label="Is mandatory" type="checkbox" name="is_mandatory" class="form-check-input" id="isMandatory" value="1">
                                 <label class="form-check-label" for="isMandatory">Mandatory</label>
                             </div>
                             <div class="form-check">
-                                <input type="checkbox" name="is_active" class="form-check-input" id="isActive" value="1" checked>
+                                <input aria-label="Is active" type="checkbox" name="is_active" class="form-check-input" id="isActive" value="1" checked>
                                 <label class="form-check-label" for="isActive">Active</label>
                             </div>
                         </div>

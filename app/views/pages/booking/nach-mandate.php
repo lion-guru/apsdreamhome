@@ -121,19 +121,19 @@ $statusColors = [
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_bank_name', [], 'Bank Name') ?> <span class="text-danger">*</span></label>
-                                <input type="text" name="bank_name" class="form-control" placeholder="<?= __('nach_placeholder_bank', [], 'e.g. State Bank of India') ?>" required>
+                                <input aria-label="Bank name" type="text" name="bank_name" class="form-control" placeholder="<?= __('nach_placeholder_bank', [], 'e.g. State Bank of India') ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_account_holder', [], 'Account Holder Name') ?> <span class="text-danger">*</span></label>
-                                <input type="text" name="account_holder_name" class="form-control" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
+                                <input aria-label="Account holder name" type="text" name="account_holder_name" class="form-control" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_account_number', [], 'Account Number') ?> <span class="text-danger">*</span></label>
-                                <input type="text" name="account_number" class="form-control" placeholder="<?= __('nach_placeholder_account', [], 'Enter account number') ?>" required pattern="[0-9]{9,18}">
+                                <input aria-label="Account number" type="text" name="account_number" class="form-control" placeholder="<?= __('nach_placeholder_account', [], 'Enter account number') ?>" required pattern="[0-9]{9,18}">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_ifsc', [], 'IFSC Code') ?> <span class="text-danger">*</span></label>
-                                <input type="text" name="ifsc_code" class="form-control" placeholder="<?= __('nach_placeholder_ifsc', [], 'e.g. SBIN0001234') ?>" required pattern="[A-Z]{4}0[A-Z0-9]{6}" maxlength="11" >
+                                <input aria-label="Ifsc code" type="text" name="ifsc_code" class="form-control" placeholder="<?= __('nach_placeholder_ifsc', [], 'e.g. SBIN0001234') ?>" required pattern="[A-Z]{4}0[A-Z0-9]{6}" maxlength="11" >
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_mandate_type', [], 'Mandate Type') ?></label>
@@ -145,21 +145,21 @@ $statusColors = [
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('nach_form_max_amount', [], 'Maximum Monthly Amount (₹)') ?> <span class="text-danger">*</span></label>
-                                <input type="number" name="mandate_amount" class="form-control" min="100" step="0.01"
+                                <input aria-label="Mandate amount" type="number" name="mandate_amount" class="form-control" min="100" step="0.01"
                                        value="<?= number_format(($booking['total_plot_value'] ?? 0) / 24, 0, '.', '') ?>" required>
                                 <small class="text-muted"><?= __('nach_max_amount_help', [], 'Maximum amount that can be auto-debited per month.') ?></small>
                             </div>
                         </div>
 
                         <div class="form-check mt-4 mb-3">
-                            <input class="form-check-input" type="checkbox" id="nachConsent" required>
+                            <input aria-label="Nach consent" class="form-check-input" type="checkbox" id="nachConsent" required>
                             <label class="form-check-label" for="nachConsent">
                                 <?= __('nach_consent_text', [], 'I authorize APS Dream Home and my bank to process NACH auto-debit instructions for my EMI installments as per the terms and conditions.') ?>
                             </label>
                         </div>
 
                         <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="nachTerms" required>
+                            <input aria-label="Nach terms" class="form-check-input" type="checkbox" id="nachTerms" required>
                             <label class="form-check-label" for="nachTerms">
                                 <?= __('nach_terms_text', [], 'I understand that my first EMI will be auto-debited on the next due date after mandate approval, and I will maintain sufficient balance in my account.') ?>
                             </label>

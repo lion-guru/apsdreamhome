@@ -11,7 +11,7 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label">Date <span class="text-danger">*</span></label>
-                        <input type="date" name="transaction_date" required class="form-control" value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Transaction date" type="date" name="transaction_date" required class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Type <span class="text-danger">*</span></label>
@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Amount (₹) <span class="text-danger">*</span></label>
-                        <input type="number" name="amount" step="0.01" min="0.01" required class="form-control">
+                        <input aria-label="Amount" type="number" name="amount" step="0.01" min="0.01" required class="form-control">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Payment Mode</label>
@@ -37,7 +37,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Party Name</label>
-                        <input type="text" name="party_name" class="form-control" placeholder="Customer / Vendor name">
+                        <input aria-label="Party name" type="text" name="party_name" class="form-control" placeholder="Customer / Vendor name">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Bank Account</label>
@@ -62,7 +62,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Reference ID</label>
-                        <input type="number" name="reference_id" class="form-control" placeholder="Auto-link to source record">
+                        <input aria-label="Reference id" type="number" name="reference_id" class="form-control" placeholder="Auto-link to source record">
                     </div>
                     <div class="col-12">
                         <label class="form-label">Narration</label>

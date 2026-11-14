@@ -18,15 +18,15 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?php echo __('finance_cheque_date'); ?> <span class="text-danger">*</span></label>
-                        <input type="date" name="cheque_date" required class="form-control" value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Cheque date" type="date" name="cheque_date" required class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?php echo __('finance_cheque_hash'); ?> <span class="text-danger">*</span></label>
-                        <input type="text" name="cheque_number" required class="form-control">
+                        <input aria-label="Cheque number" type="text" name="cheque_number" required class="form-control">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?php echo __('finance_amount'); ?> (₹) <span class="text-danger">*</span></label>
-                        <input type="number" name="amount" step="0.01" min="1" required class="form-control">
+                        <input aria-label="Amount" type="number" name="amount" step="0.01" min="1" required class="form-control">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><?php echo __('finance_bank_account'); ?> <span class="text-danger">*</span></label>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><?php echo __('finance_payee'); ?> <span class="text-danger">*</span></label>
-                        <input type="text" name="payee_name" required class="form-control">
+                        <input aria-label="Payee name" type="text" name="payee_name" required class="form-control">
                     </div>
                     <div class="col-12">
                         <label class="form-label"><?php echo __('finance_purpose_narration'); ?></label>
@@ -57,7 +57,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><?php echo __('finance_reference_id'); ?></label>
-                        <input type="number" name="reference_id" class="form-control">
+                        <input aria-label="Reference id" type="number" name="reference_id" class="form-control">
                     </div>
                 </div>
                 <div class="mt-4 d-flex gap-2">

@@ -41,23 +41,23 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Document Name <span class="text-danger">*</span></label>
-                        <input type="text" name="document_name" class="form-control" required placeholder="e.g., Aadhaar Card, Passport, Offer Letter">
+                        <input aria-label="Document name" type="text" name="document_name" class="form-control" required placeholder="e.g., Aadhaar Card, Passport, Offer Letter">
                     </div>
                     <div class="col-md-6" id="expiryDateGroup" style="display: none;">
                         <label class="form-label fw-semibold">Expiry Date</label>
-                        <input type="date" name="expiry_date" class="form-control" id="expiryDate">
+                        <input aria-label="Expiry date" type="date" name="expiry_date" class="form-control" id="expiryDate">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Issuing Authority</label>
-                        <input type="text" name="issuing_authority" class="form-control" placeholder="e.g., UIDAI, Passport Office, Company HR">
+                        <input aria-label="Issuing authority" type="text" name="issuing_authority" class="form-control" placeholder="e.g., UIDAI, Passport Office, Company HR">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Document Reference Number</label>
-                        <input type="text" name="document_number_ref" class="form-control" placeholder="e.g., Aadhaar No., Passport No., PAN No.">
+                        <input aria-label="Document number ref" type="text" name="document_number_ref" class="form-control" placeholder="e.g., Aadhaar No., Passport No., PAN No.">
                     </div>
                     <div class="col-md-6">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="is_confidential" value="1" id="is_confidential">
+                            <input aria-label="Is confidential" class="form-check-input" type="checkbox" name="is_confidential" value="1" id="is_confidential">
                             <label class="form-check-label" for="is_confidential">Confidential Document</label>
                         </div>
                     </div>
@@ -81,7 +81,7 @@ $categories = $categories ?? [];
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">File <span class="text-danger">*</span></label>
-                    <input type="file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required id="documentFile">
+                    <input aria-label="Document file" type="file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required id="documentFile">
                     <div class="form-text" id="fileHelp">Allowed: PDF, JPG, PNG, DOC, DOCX. Max size: 10 MB</div>
                 </div>
             </div>

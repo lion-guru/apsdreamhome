@@ -89,7 +89,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Region</label>
-                    <input type="text" name="region" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['region'] ?? '') ?>" placeholder="e.g., IN, US">
+                    <input aria-label="Region" type="text" name="region" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['region'] ?? '') ?>" placeholder="e.g., IN, US">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Year</label>

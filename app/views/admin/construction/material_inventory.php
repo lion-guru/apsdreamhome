@@ -254,27 +254,27 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Plot ID</label>
-                                <input type="number" name="plot_id" class="form-control" min="1" step="1" placeholder="Optional">
+                                <input aria-label="Plot id" type="number" name="plot_id" class="form-control" min="1" step="1" placeholder="Optional">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Quantity <span class="text-danger">*</span></label>
-                                <input type="number" name="quantity" class="form-control" min="0.01" step="0.01" required value="1">
+                                <input aria-label="Quantity" type="number" name="quantity" class="form-control" min="0.01" step="0.01" required value="1">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Unit</label>
-                                <input type="text" name="unit" class="form-control" maxlength="20" value="qty" placeholder="bags, kg, sqft...">
+                                <input aria-label="Unit" type="text" name="unit" class="form-control" maxlength="20" value="qty" placeholder="bags, kg, sqft...">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Purpose</label>
-                                <input type="text" name="purpose" class="form-control" maxlength="255" placeholder="e.g. Road laying, Boundary wall">
+                                <input aria-label="Purpose" type="text" name="purpose" class="form-control" maxlength="255" placeholder="e.g. Road laying, Boundary wall">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Used By</label>
-                                <input type="text" name="used_by" class="form-control" maxlength="255" placeholder="Contractor / employee name">
+                                <input aria-label="Used by" type="text" name="used_by" class="form-control" maxlength="255" placeholder="Contractor / employee name">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Usage Date</label>
-                                <input type="date" name="usage_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                                <input aria-label="Usage date" type="date" name="usage_date" class="form-control" value="<?= date('Y-m-d') ?>">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Notes</label>

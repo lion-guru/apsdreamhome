@@ -135,8 +135,8 @@
             <input type="hidden" name="schedule_id" value="<?= $call['id'] ?>">
             <div class="modal-header"><h5 class="modal-title">Reschedule Call</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <div class="mb-3"><label class="form-label">New Date</label><input type="date" name="new_date" class="form-control" value="<?= $call['scheduled_date'] ?? date('Y-m-d') ?>" required></div>
-                <div class="mb-3"><label class="form-label">New Time</label><input type="time" name="new_time" class="form-control" value="<?= date('H:i', strtotime($call['scheduled_time'] ?? '10:00')) ?>"></div>
+                <div class="mb-3"><label class="form-label">New Date</label><input aria-label="New date" type="date" name="new_date" class="form-control" value="<?= $call['scheduled_date'] ?? date('Y-m-d') ?>" required></div>
+                <div class="mb-3"><label class="form-label">New Time</label><input aria-label="New time" type="time" name="new_time" class="form-control" value="<?= date('H:i', strtotime($call['scheduled_time'] ?? '10:00')) ?>"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

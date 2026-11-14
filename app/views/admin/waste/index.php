@@ -164,7 +164,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Collection Date</label>
-                        <input type="date" name="collection_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Collection date" type="date" name="collection_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Shift</label>
@@ -176,19 +176,19 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Plots Serviced *</label>
-                        <input type="number" name="plots_serviced_count" class="form-control" value="85" required>
+                        <input aria-label="Plots serviced count" type="number" name="plots_serviced_count" class="form-control" value="85" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Wet Waste (kg) *</label>
-                        <input type="number" step="0.5" name="wet_waste_kg" class="form-control" value="120.0" required>
+                        <input aria-label="Wet waste kg" type="number" step="0.5" name="wet_waste_kg" class="form-control" value="120.0" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Dry Waste (kg) *</label>
-                        <input type="number" step="0.5" name="dry_waste_kg" class="form-control" value="65.0" required>
+                        <input aria-label="Dry waste kg" type="number" step="0.5" name="dry_waste_kg" class="form-control" value="65.0" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Compost Pit Diverted (kg)</label>
-                        <input type="number" step="0.5" name="compost_pit_diverted_kg" class="form-control" value="80.0">
+                        <input aria-label="Compost pit diverted kg" type="number" step="0.5" name="compost_pit_diverted_kg" class="form-control" value="80.0">
                     </div>
 
                     <div class="col-md-4">
@@ -201,11 +201,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Tractor Trolley Trips</label>
-                        <input type="number" name="tractor_trips_count" class="form-control" value="1">
+                        <input aria-label="Tractor trips count" type="number" name="tractor_trips_count" class="form-control" value="1">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Sanitary Workforce Headcount</label>
-                        <input type="number" name="sanitation_headcount" class="form-control" value="4">
+                        <input aria-label="Sanitation headcount" type="number" name="sanitation_headcount" class="form-control" value="4">
                     </div>
 
                     <div class="col-md-4">
@@ -219,11 +219,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Sanitation Supervisor *</label>
-                        <input type="text" name="sanitation_supervisor" class="form-control" value="Rajesh Rawat" required>
+                        <input aria-label="Sanitation supervisor" type="text" name="sanitation_supervisor" class="form-control" value="Rajesh Rawat" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Supervisor Contact</label>
-                        <input type="text" name="supervisor_contact" class="form-control" value="+91 9839443322">
+                        <input aria-label="Supervisor contact" type="text" name="supervisor_contact" class="form-control" value="+91 9839443322">
                     </div>
 
                     <div class="col-12">

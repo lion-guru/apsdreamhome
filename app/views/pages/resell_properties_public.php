@@ -32,11 +32,11 @@ $content = $content ?? '';
         </div>
         <div class="col-md-2">
           <label class="small text-muted"><?= __('user_resell_public_min_price', 'Min Price') ?></label>
-          <input type="number" name="min_price" class="form-control" placeholder="<?= __('user_resell_public_min_ph', 'Min') ?>">
+          <input aria-label="Min price" type="number" name="min_price" class="form-control" placeholder="<?= __('user_resell_public_min_ph', 'Min') ?>">
         </div>
         <div class="col-md-2">
           <label class="small text-muted"><?= __('user_resell_public_max_price', 'Max Price') ?></label>
-          <input type="number" name="max_price" class="form-control" placeholder="<?= __('user_resell_public_max_ph', 'Max') ?>">
+          <input aria-label="Max price" type="number" name="max_price" class="form-control" placeholder="<?= __('user_resell_public_max_ph', 'Max') ?>">
         </div>
         <div class="col-md-3">
           <label class="small text-muted"><?= __('user_resell_public_district', 'District') ?></label>

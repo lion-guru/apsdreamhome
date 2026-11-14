@@ -59,7 +59,7 @@ $stats = $stats ?? ['balance' => 0, 'total_earned' => 0, 'total_redeemed' => 0];
             <div class="col-md-8">
                 <p class="mb-2">Add money to your wallet instantly via UPI:</p>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-lg" value="<?= BASE_URL ?>/user/pay-emi/upi-qr" readonly id="upiPayLink">
+                    <input aria-label="Upi pay link" type="text" class="form-control form-control-lg" value="<?= BASE_URL ?>/user/pay-emi/upi-qr" readonly id="upiPayLink">
                     <button class="btn btn-outline-secondary" type="button" onclick="copyUpiLink()">
                         <i class="fas fa-copy"></i> Copy
                     </button>

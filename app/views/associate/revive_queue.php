@@ -27,7 +27,7 @@ $rows = $rows ?? [];
                 <tbody>
                 <?php foreach ($rows as $r): ?>
                     <tr>
-                        <td><input type="checkbox" class="form-check-input" name="lead_ids[]" value="<?= (int)$r['id'] ?>" checked></td>
+                        <td><input aria-label="Lead ids" type="checkbox" class="form-check-input" name="lead_ids[]" value="<?= (int)$r['id'] ?>" checked></td>
                         <td><strong><?= htmlspecialchars($r['name'] ?? '') ?></strong><br><small class="text-muted"><?= htmlspecialchars($r['phone'] ?? '') ?></small></td>
                         <td><span class="badge bg-light text-dark"><?= htmlspecialchars($r['status'] ?? '') ?></span></td>
                         <td><span class="badge bg-warning text-dark"><?= (int)$r['idle_days'] ?>d</span></td>

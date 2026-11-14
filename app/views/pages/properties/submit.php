@@ -41,7 +41,7 @@
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label class="form-label fw-bold"><?php echo __('property_title_label', 'Property Title'); ?></label>
-                                <input type="text" name="title" class="form-control" placeholder="e.g. Luxury 3BHK Apartment in City Center" value="<?= $is_edit ? h($property['title']) : '' ?>" required>
+                                <input aria-label="Title" type="text" name="title" class="form-control" placeholder="e.g. Luxury 3BHK Apartment in City Center" value="<?= $is_edit ? h($property['title']) : '' ?>" required>
                             </div>
 
                             <div class="col-md-12">
@@ -114,12 +114,12 @@
 
                             <div class="col-md-6">
                                 <label class="form-label fw-bold"><?php echo __('property_price', 'Price (₹)'); ?></label>
-                                <input type="number" name="price" class="form-control" placeholder="<?php echo __('property_enter_price', 'Enter Price'); ?>" value="<?= $is_edit ? h($property['price']) : '' ?>" required>
+                                <input aria-label="Price" type="number" name="price" class="form-control" placeholder="<?php echo __('property_enter_price', 'Enter Price'); ?>" value="<?= $is_edit ? h($property['price']) : '' ?>" required>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label fw-bold"><?php echo __('property_city', 'City'); ?></label>
-                                <input type="text" name="city" class="form-control" placeholder="<?php echo __('property_enter_city', 'Enter City'); ?>" value="<?= $is_edit ? h($property['city']) : '' ?>" required>
+                                <input aria-label="City" type="text" name="city" class="form-control" placeholder="<?php echo __('property_enter_city', 'Enter City'); ?>" value="<?= $is_edit ? h($property['city']) : '' ?>" required>
                             </div>
 
                             <div class="col-md-12 mt-4">
@@ -134,16 +134,16 @@
                                 <?php if($is_edit && !empty($property['pimage'])): ?>
                                     <div class="mb-2"><img src="<?= BASE_URL ?>/public/uploads/property/<?= htmlspecialchars($property['pimage'] ?? '') ?>" height="50" class="rounded border" alt="Property image"></div>
                                 <?php endif; ?>
-                                <input type="file" class="form-control" name="aimage" <?= $is_edit ? '' : 'required' ?>>
+                                <input aria-label="Aimage" type="file" class="form-control" name="aimage" <?= $is_edit ? '' : 'required' ?>>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label"><?php echo __('property_gallery_image_1', 'Gallery Image 1'); ?></label>
-                                <input type="file" class="form-control form-control-sm" name="aimage1">
+                                <input aria-label="Aimage1" type="file" class="form-control form-control-sm" name="aimage1">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?php echo __('property_gallery_image_2', 'Gallery Image 2'); ?></label>
-                                <input type="file" class="form-control form-control-sm" name="aimage2">
+                                <input aria-label="Aimage2" type="file" class="form-control form-control-sm" name="aimage2">
                             </div>
 
                             <div class="col-md-12 mt-4">

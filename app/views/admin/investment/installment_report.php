@@ -21,11 +21,11 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
             <form method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label small">Start Date</label>
-                    <input type="date" name="start_date" class="form-control form-control-sm" value="<?= htmlspecialchars($start_date) ?>">
+                    <input aria-label="Start date" type="date" name="start_date" class="form-control form-control-sm" value="<?= htmlspecialchars($start_date) ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">End Date</label>
-                    <input type="date" name="end_date" class="form-control form-control-sm" value="<?= htmlspecialchars($end_date) ?>">
+                    <input aria-label="End date" type="date" name="end_date" class="form-control form-control-sm" value="<?= htmlspecialchars($end_date) ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">&nbsp;</label>

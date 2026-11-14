@@ -460,7 +460,7 @@ $statusBadgeMap = [
     <div class="card-body">
         <h6 class="fw-bold mb-2"><i class="fas fa-piggy-bank me-1"></i>Pre-Pay &amp; Save Tenure</h6>
         <label class="form-label small">Extra lump-sum: <strong id="prepayAmtLabel">₹50,000</strong></label>
-        <input type="range" class="form-range" id="prepaySlider" min="10000" max="200000" step="5000" value="50000">
+        <input aria-label="Prepay slider" type="range" class="form-range" id="prepaySlider" min="10000" max="200000" step="5000" value="50000">
         <div id="prepayResult" class="small text-muted">Slide to simulate months + penalty saved.</div>
         <button type="button" class="btn btn-success btn-sm mt-2" id="prepaySimBtn">Simulate Savings</button>
     </div>

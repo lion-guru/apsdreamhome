@@ -21,9 +21,9 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
                     <?php foreach ($colonies as $c): ?><option value="<?= (int)$c['id'] ?>"><?= $e($c['name']) ?></option><?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-3"><label class="form-label small">Milestone *</label><input type="text" name="milestone_title" class="form-control" required maxlength="150" placeholder="e.g. Damar road done"></div>
-            <div class="col-md-4"><label class="form-label small">Message (blank = auto)</label><input type="text" name="message" class="form-control" maxlength="2000"></div>
-            <div class="col-md-2"><label class="form-label small">Site photo (≤5MB)</label><input type="file" name="site_photo" class="form-control" accept=".jpg,.jpeg,.png,.webp"></div>
+            <div class="col-md-3"><label class="form-label small">Milestone *</label><input aria-label="Milestone title" type="text" name="milestone_title" class="form-control" required maxlength="150" placeholder="e.g. Damar road done"></div>
+            <div class="col-md-4"><label class="form-label small">Message (blank = auto)</label><input aria-label="Message" type="text" name="message" class="form-control" maxlength="2000"></div>
+            <div class="col-md-2"><label class="form-label small">Site photo (≤5MB)</label><input aria-label="Site photo" type="file" name="site_photo" class="form-control" accept=".jpg,.jpeg,.png,.webp"></div>
             <div class="col-md-2 pt-4"><button type="submit" class="btn btn-success w-100"><i class="fas fa-paper-plane me-1"></i>Broadcast</button></div>
         </div>
     </form>

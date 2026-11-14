@@ -164,7 +164,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                     <div class="col-md-12">
                                         <label for="current_password" class="form-label small fw-semibold">Current Password <span class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <input type="password" name="current_password" id="current_password" class="form-control" placeholder="Enter your current password" required>
+                                            <input aria-label="Current password" type="password" name="current_password" id="current_password" class="form-control" placeholder="Enter your current password" required>
                                             <button class="btn btn-outline-secondary" type="button" onclick="togglePass('current_password')" aria-label="View"><i class="fas fa-eye"></i></button>
                                         </div>
                                     </div>
@@ -172,7 +172,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                     <div class="col-md-6">
                                         <label for="new_password" class="form-label small fw-semibold">New Password <span class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <input type="password" name="new_password" id="new_password" class="form-control" placeholder="Minimum 8 characters" required minlength="8">
+                                            <input aria-label="New password" type="password" name="new_password" id="new_password" class="form-control" placeholder="Minimum 8 characters" required minlength="8">
                                             <button class="btn btn-outline-secondary" type="button" onclick="togglePass('new_password')" aria-label="View"><i class="fas fa-eye"></i></button>
                                         </div>
                                     </div>
@@ -180,7 +180,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                     <div class="col-md-6">
                                         <label for="confirm_password" class="form-label small fw-semibold">Confirm New Password <span class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Repeat new password" required minlength="8">
+                                            <input aria-label="Confirm password" type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Repeat new password" required minlength="8">
                                             <button class="btn btn-outline-secondary" type="button" onclick="togglePass('confirm_password')" aria-label="View"><i class="fas fa-eye"></i></button>
                                         </div>
                                     </div>
@@ -226,7 +226,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                             <div class="text-muted small">Receive immediate email alerts when a lead is assigned to you</div>
                                         </label>
                                         <div class="form-check form-switch m-0 fs-5">
-                                            <input class="form-check-input" type="checkbox" name="email_leads" value="1" id="email_leads" <?= $emailLeads ? 'checked' : '' ?>>
+                                            <input aria-label="Email leads" class="form-check-input" type="checkbox" name="email_leads" value="1" id="email_leads" <?= $emailLeads ? 'checked' : '' ?>>
                                         </div>
                                     </div>
 
@@ -236,7 +236,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                             <div class="text-muted small">Notifications whenever commission is credited or payout is processed</div>
                                         </label>
                                         <div class="form-check form-switch m-0 fs-5">
-                                            <input class="form-check-input" type="checkbox" name="email_commissions" value="1" id="email_commissions" <?= $emailCommissions ? 'checked' : '' ?>>
+                                            <input aria-label="Email commissions" class="form-check-input" type="checkbox" name="email_commissions" value="1" id="email_commissions" <?= $emailCommissions ? 'checked' : '' ?>>
                                         </div>
                                     </div>
 
@@ -246,7 +246,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                             <div class="text-muted small">Receive instant site-visit confirmations and reminders via WhatsApp</div>
                                         </label>
                                         <div class="form-check form-switch m-0 fs-5">
-                                            <input class="form-check-input" type="checkbox" name="whatsapp_alerts" value="1" id="whatsapp_alerts" <?= $whatsappAlerts ? 'checked' : '' ?>>
+                                            <input aria-label="Whatsapp alerts" class="form-check-input" type="checkbox" name="whatsapp_alerts" value="1" id="whatsapp_alerts" <?= $whatsappAlerts ? 'checked' : '' ?>>
                                         </div>
                                     </div>
 
@@ -256,7 +256,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                             <div class="text-muted small">Receive urgent OTPs and booking transaction receipts via SMS</div>
                                         </label>
                                         <div class="form-check form-switch m-0 fs-5">
-                                            <input class="form-check-input" type="checkbox" name="sms_important" value="1" id="sms_important" <?= $smsImportant ? 'checked' : '' ?>>
+                                            <input aria-label="Sms important" class="form-check-input" type="checkbox" name="sms_important" value="1" id="sms_important" <?= $smsImportant ? 'checked' : '' ?>>
                                         </div>
                                     </div>
 
@@ -266,7 +266,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                                             <div class="text-muted small">Updates about new project launches, colony expansions, and festivals</div>
                                         </label>
                                         <div class="form-check form-switch m-0 fs-5">
-                                            <input class="form-check-input" type="checkbox" name="marketing_emails" value="1" id="marketing_emails" <?= $marketingEmails ? 'checked' : '' ?>>
+                                            <input aria-label="Marketing emails" class="form-check-input" type="checkbox" name="marketing_emails" value="1" id="marketing_emails" <?= $marketingEmails ? 'checked' : '' ?>>
                                         </div>
                                     </div>
                                 </div>

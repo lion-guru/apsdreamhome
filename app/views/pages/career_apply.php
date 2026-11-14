@@ -71,18 +71,18 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label fw-semibold"><?= __('testi_lbl_name', null, 'Full Name') ?> *</label>
-                                    <input type="text" class="form-control" id="name" name="full_name" required>
+                                    <input aria-label="Name" type="text" class="form-control" id="name" name="full_name" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="email" class="form-label fw-semibold"><?= __('career_apply_email_lbl', null, 'Email Address') ?> *</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <input aria-label="Email" type="email" class="form-control" id="email" name="email" required>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="phone" class="form-label fw-semibold"><?= __('career_apply_phone_lbl', null, 'Phone Number') ?></label>
-                                    <input type="tel" class="form-control" id="phone" name="phone">
+                                    <input aria-label="Phone" type="tel" class="form-control" id="phone" name="phone">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="position" class="form-label fw-semibold"><?= __('career_apply_position_lbl', null, 'Position Applied For') ?> *</label>
@@ -100,11 +100,11 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="experience" class="form-label fw-semibold"><?= __('career_apply_experience_lbl', null, 'Years of Experience') ?></label>
-                                    <input type="number" class="form-control" id="experience" name="experience_years" min="0" max="50">
+                                    <input aria-label="Experience" type="number" class="form-control" id="experience" name="experience_years" min="0" max="50">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="current_company" class="form-label fw-semibold">Current Company</label>
-                                    <input type="text" class="form-control" id="current_company" name="current_company">
+                                    <input aria-label="Current company" type="text" class="form-control" id="current_company" name="current_company">
                                 </div>
                             </div>
 
@@ -115,7 +115,7 @@ $description = "Apply for exciting career opportunities at APS Dream Home. Join 
 
                             <div class="mb-4">
                                 <label for="resume" class="form-label fw-semibold"><?= __('career_apply_resume_lbl', null, 'Resume/CV') ?></label>
-                                <input type="file" class="form-control" id="resume" name="resume" accept=".pdf,.doc,.docx">
+                                <input aria-label="Resume" type="file" class="form-control" id="resume" name="resume" accept=".pdf,.doc,.docx">
                                 <div class="form-text"><?= __('career_apply_resume_hint', null, 'Accepted formats: PDF, DOC, DOCX (Max size: 5MB)') ?></div>
                             </div>
 

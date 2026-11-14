@@ -28,13 +28,13 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Rate <span class="text-danger">*</span></label>
-                                            <input type="number" name="rate" class="form-control" step="0.000001" min="0.000001" value="<?php echo htmlspecialchars($rate['rate']); ?>" required>
+                                            <input aria-label="Rate" type="number" name="rate" class="form-control" step="0.000001" min="0.000001" value="<?php echo htmlspecialchars($rate['rate']); ?>" required>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" id="isActive" name="is_active" value="1" <?php if ((int)$rate['is_active'] === 1) echo 'checked'; ?>>
+                                        <input aria-label="Is active" type="checkbox" class="custom-control-input" id="isActive" name="is_active" value="1" <?php if ((int)$rate['is_active'] === 1) echo 'checked'; ?>>
                                         <label class="custom-control-label" for="isActive">Active</label>
                                     </div>
                                 </div>

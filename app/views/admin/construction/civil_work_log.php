@@ -43,23 +43,23 @@ $typeColors = ['jcb_hours' => 'warning', 'road_soling' => 'secondary', 'morang' 
                             <?php endforeach; ?>
                         </select></div>
                     <div class="col-6"><label class="form-label small">Date</label>
-                        <input type="date" name="work_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required></div>
+                        <input aria-label="Work date" type="date" name="work_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required></div>
                     <div class="col-6"><label class="form-label small">Work Type</label>
                         <select aria-label="Work type" name="work_type" class="form-select form-select-sm">
                             <?php foreach ($work_types as $k => $l): ?><option value="<?= $k ?>"><?= $l ?></option><?php endforeach; ?>
                         </select></div>
                     <div class="col-12"><label class="form-label small">Description</label>
-                        <input type="text" name="description" class="form-control form-control-sm" placeholder="e.g. JCB levelling Block B"></div>
+                        <input aria-label="Description" type="text" name="description" class="form-control form-control-sm" placeholder="e.g. JCB levelling Block B"></div>
                     <div class="col-4"><label class="form-label small">Qty</label>
-                        <input type="number" step="0.01" min="0" name="quantity" class="form-control form-control-sm" required></div>
+                        <input aria-label="Quantity" type="number" step="0.01" min="0" name="quantity" class="form-control form-control-sm" required></div>
                     <div class="col-4"><label class="form-label small">Unit</label>
                         <select aria-label="Unit" name="unit" class="form-select form-select-sm">
                             <?php foreach ($units as $k => $l): ?><option value="<?= $k ?>"><?= $l ?></option><?php endforeach; ?>
                         </select></div>
                     <div class="col-4"><label class="form-label small">Rate (₹)</label>
-                        <input type="number" step="0.01" min="0" name="rate" class="form-control form-control-sm" required></div>
+                        <input aria-label="Rate" type="number" step="0.01" min="0" name="rate" class="form-control form-control-sm" required></div>
                     <div class="col-12"><label class="form-label small">Vendor / Contractor</label>
-                        <input type="text" name="vendor_name" class="form-control form-control-sm"></div>
+                        <input aria-label="Vendor name" type="text" name="vendor_name" class="form-control form-control-sm"></div>
                     <div class="col-12"><label class="form-label small">Notes</label>
                         <textarea aria-label="Notes" name="notes" class="form-control form-control-sm" rows="2"></textarea></div>
                     <div class="col-12"><button class="btn btn-primary btn-sm w-100">Log Work (auto-totals amount)</button></div>

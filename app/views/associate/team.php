@@ -206,7 +206,7 @@ body {
             <div class="d-flex gap-3">
                 <div class="input-group input-group-sm rounded-pill overflow-hidden shadow-sm border">
                     <span class="input-group-text bg-white border-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" id="teamSearch" class="form-control border-0 shadow-none" placeholder="<?= __('assoc_team_search', [], 'Search by name...') ?>" autocomplete="off" >
+                    <input aria-label="Team search" type="text" id="teamSearch" class="form-control border-0 shadow-none" placeholder="<?= __('assoc_team_search', [], 'Search by name...') ?>" autocomplete="off" >
                 </div>
                 <a href="<?= BASE_URL ?>/become-associate" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm" target="_blank">
                     <i class="fas fa-user-plus me-1"></i><?= __('assoc_team_invite', [], 'Invite') ?>

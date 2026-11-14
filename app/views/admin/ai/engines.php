@@ -106,7 +106,7 @@ $engine_status = $engine_status ?? [];
         <div class="card-body p-4">
             <h5 class="fw-bold mb-3"><i class="fas fa-bolt me-2 text-warning"></i>Quick Generate Test</h5>
             <div class="input-group">
-                <input type="text" id="testPrompt" class="form-control" placeholder="Type a prompt to test all free engines...">
+                <input aria-label="Test prompt" type="text" id="testPrompt" class="form-control" placeholder="Type a prompt to test all free engines...">
                 <button class="btn btn-primary" onclick="testGenerate()"><i class="fas fa-play me-1"></i>Generate</button>
             </div>
             <div id="generateResult" class="mt-3"></div>

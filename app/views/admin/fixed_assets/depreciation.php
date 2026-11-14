@@ -9,7 +9,7 @@ $year = $year ?? null;
     </div>
     <div class="card mb-4"><div class="card-body">
         <form method="GET" class="row">
-            <div class="col-md-3"><label>Year</label><input type="number" name="year" class="form-control" value="<?= $year ?? '' ?>" placeholder="e.g., 2026"></div>
+            <div class="col-md-3"><label>Year</label><input aria-label="Year" type="number" name="year" class="form-control" value="<?= $year ?? '' ?>" placeholder="e.g., 2026"></div>
             <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Filter</button></div>
             <div class="col-md-2 d-flex align-items-end"><a href="<?= BASE_URL ?>/admin/fixed-assets/depreciation-report" class="btn btn-outline-secondary w-100">Clear</a></div>
         </form>

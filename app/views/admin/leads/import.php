@@ -34,7 +34,7 @@
             
             <div class="mb-3">
               <label class="form-label">CSV File *</label>
-              <input type="file" name="csv_file" class="form-control" accept=".csv" required>
+              <input aria-label="Csv file" type="file" name="csv_file" class="form-control" accept=".csv" required>
             </div>
 
             <button type="submit" class="btn btn-primary w-100">

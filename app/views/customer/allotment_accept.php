@@ -131,7 +131,7 @@ $base = BASE_URL ?? '';
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
                             <label class="form-label">Enter 6-digit OTP</label>
-                            <input type="text" name="otp_code" class="form-control otp-input" maxlength="6" required autofocus pattern="\d{6}" placeholder="000000">
+                            <input aria-label="Otp code" type="text" name="otp_code" class="form-control otp-input" maxlength="6" required autofocus pattern="\d{6}" placeholder="000000">
                             <div class="form-text">Enter the 6-digit code sent to your mobile/email</div>
                         </div>
                         <button type="submit" class="btn btn-success w-100">

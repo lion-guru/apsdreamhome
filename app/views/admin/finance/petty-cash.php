@@ -41,9 +41,9 @@
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
     <div class="modal-header"><h5 class="modal-title"><?php echo __('finance_petty_cash_topup'); ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
     <div class="modal-body">
-        <div class="mb-3"><label class="form-label"><?php echo __('finance_date'); ?></label><input type="date" name="topup_date" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
-        <div class="mb-3"><label class="form-label"><?php echo __('finance_amount'); ?> (₹)</label><input type="number" name="amount" step="0.01" min="1" class="form-control" required></div>
-        <div class="mb-3"><label class="form-label"><?php echo __('finance_source'); ?></label><input type="text" name="source" class="form-control" placeholder="<?php echo __('finance_account_placeholder'); ?>"></div>
+        <div class="mb-3"><label class="form-label"><?php echo __('finance_date'); ?></label><input aria-label="Topup date" type="date" name="topup_date" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
+        <div class="mb-3"><label class="form-label"><?php echo __('finance_amount'); ?> (₹)</label><input aria-label="Amount" type="number" name="amount" step="0.01" min="1" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label"><?php echo __('finance_source'); ?></label><input aria-label="Source" type="text" name="source" class="form-control" placeholder="<?php echo __('finance_account_placeholder'); ?>"></div>
         <div class="mb-3"><label class="form-label"><?php echo __('finance_remarks'); ?></label><textarea aria-label="Remarks" name="remarks" class="form-control" rows="2"></textarea></div>
     </div>
     <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo __('finance_cancel'); ?></button><button type="submit" class="btn btn-success"><?php echo __('finance_topup'); ?></button></div>
@@ -54,11 +54,11 @@
     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
     <div class="modal-header"><h5 class="modal-title"><?php echo __('finance_petty_cash_expense'); ?></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
     <div class="modal-body">
-        <div class="mb-3"><label class="form-label"><?php echo __('finance_date'); ?></label><input type="date" name="expense_date" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
-        <div class="mb-3"><label class="form-label"><?php echo __('finance_amount'); ?> (₹)</label><input type="number" name="amount" step="0.01" min="1" class="form-control" required></div>
-        <div class="mb-3"><label class="form-label"><?php echo __('finance_category'); ?></label><input type="text" name="category" class="form-control" placeholder="<?php echo __('finance_select_category'); ?>"></div>
+        <div class="mb-3"><label class="form-label"><?php echo __('finance_date'); ?></label><input aria-label="Expense date" type="date" name="expense_date" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
+        <div class="mb-3"><label class="form-label"><?php echo __('finance_amount'); ?> (₹)</label><input aria-label="Amount" type="number" name="amount" step="0.01" min="1" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label"><?php echo __('finance_category'); ?></label><input aria-label="Category" type="text" name="category" class="form-control" placeholder="<?php echo __('finance_select_category'); ?>"></div>
         <div class="mb-3"><label class="form-label"><?php echo __('finance_description'); ?></label><textarea aria-label="Description" name="description" class="form-control" rows="2" required></textarea></div>
-        <div class="mb-3"><label class="form-label"><?php echo __('finance_paid_to'); ?></label><input type="text" name="paid_to" class="form-control"></div>
+        <div class="mb-3"><label class="form-label"><?php echo __('finance_paid_to'); ?></label><input aria-label="Paid to" type="text" name="paid_to" class="form-control"></div>
     </div>
     <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo __('finance_cancel'); ?></button><button type="submit" class="btn btn-danger"><?php echo __('finance_record'); ?></button></div>
 </form></div></div>

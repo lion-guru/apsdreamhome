@@ -50,35 +50,35 @@ $costs  = $costs ?? [];
               </div>
               <div class="col-md-6">
                 <label class="form-label text-white">Amount (₹) *</label>
-                <input type="number" name="amount" class="form-control bg-dark text-white border-secondary" min="1" required>
+                <input aria-label="Amount" type="number" name="amount" class="form-control bg-dark text-white border-secondary" min="1" required>
               </div>
               <div class="col-md-4">
                 <label class="form-label text-white">GST Rate %</label>
-                <input type="number" name="gst_rate" class="form-control bg-dark text-white border-secondary" value="18" step="0.5">
+                <input aria-label="Gst rate" type="number" name="gst_rate" class="form-control bg-dark text-white border-secondary" value="18" step="0.5">
               </div>
               <div class="col-md-4">
                 <label class="form-label text-white">TDS Section</label>
-                <input type="text" name="tds_section" class="form-control bg-dark text-white border-secondary" placeholder="e.g. 194C">
+                <input aria-label="Tds section" type="text" name="tds_section" class="form-control bg-dark text-white border-secondary" placeholder="e.g. 194C">
               </div>
               <div class="col-md-4">
                 <label class="form-label text-white">TDS Rate %</label>
-                <input type="number" name="tds_rate" class="form-control bg-dark text-white border-secondary" value="0" step="0.5">
+                <input aria-label="Tds rate" type="number" name="tds_rate" class="form-control bg-dark text-white border-secondary" value="0" step="0.5">
               </div>
               <div class="col-md-6">
                 <label class="form-label text-white">Vendor Name</label>
-                <input type="text" name="vendor_name" class="form-control bg-dark text-white border-secondary">
+                <input aria-label="Vendor name" type="text" name="vendor_name" class="form-control bg-dark text-white border-secondary">
               </div>
               <div class="col-md-6">
                 <label class="form-label text-white">Invoice Number</label>
-                <input type="text" name="invoice_number" class="form-control bg-dark text-white border-secondary">
+                <input aria-label="Invoice number" type="text" name="invoice_number" class="form-control bg-dark text-white border-secondary">
               </div>
               <div class="col-md-6">
                 <label class="form-label text-white">Invoice Date</label>
-                <input type="date" name="invoice_date" class="form-control bg-dark text-white border-secondary" value="<?= date('Y-m-d') ?>">
+                <input aria-label="Invoice date" type="date" name="invoice_date" class="form-control bg-dark text-white border-secondary" value="<?= date('Y-m-d') ?>">
               </div>
               <div class="col-md-6">
                 <label class="form-label text-white">Paid Amount (₹)</label>
-                <input type="number" name="paid_amount" class="form-control bg-dark text-white border-secondary" value="0" min="0">
+                <input aria-label="Paid amount" type="number" name="paid_amount" class="form-control bg-dark text-white border-secondary" value="0" min="0">
               </div>
               <div class="col-md-12">
                 <label class="form-label text-white">Work Description</label>

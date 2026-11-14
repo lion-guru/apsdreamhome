@@ -54,7 +54,7 @@ $statuses = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotia
                     <div class="row g-2 align-items-end">
                         <div class="col-md-4">
                             <label class="form-label small">Rule name *</label>
-                            <input type="text" id="rule_name" class="form-control" required placeholder="e.g. Welcome new leads">
+                            <input aria-label="Rule name" type="text" id="rule_name" class="form-control" required placeholder="e.g. Welcome new leads">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label small">Condition value (if Status is)</label>
@@ -62,7 +62,7 @@ $statuses = ['new', 'contacted', 'qualified', 'site_visit', 'proposal', 'negotia
                         </div>
                         <div class="col-md-3">
                             <label class="form-label small">Action param (note text / status / days)</label>
-                            <input type="text" id="param_text" class="form-control" placeholder="Note text / status / days">
+                            <input aria-label="Param text" type="text" id="param_text" class="form-control" placeholder="Note text / status / days">
                         </div>
                         <div class="col-md-2">
                             <button type="button" class="btn btn-primary w-100" onclick="saveWorkflow()"><i class="fas fa-save me-1"></i>Save Rule</button>

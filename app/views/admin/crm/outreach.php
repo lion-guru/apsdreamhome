@@ -51,7 +51,7 @@ $lead_stats = $lead_stats ?? ['total' => 0, 'with_phone' => 0, 'new' => 0, 'cont
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Campaign Name</label>
-                            <input type="text" class="form-control" name="name" required placeholder="e.g., June Promo - Plots in Mathura">
+                            <input aria-label="Name" type="text" class="form-control" name="name" required placeholder="e.g., June Promo - Plots in Mathura">
                         </div>
 
                         <div class="mb-3">

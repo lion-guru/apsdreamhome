@@ -8,23 +8,23 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <div class="mb-3">
             <label class="form-label">Law Name</label>
-            <input type="text" name="law_name" class="form-control" required>
+            <input aria-label="Law name" type="text" name="law_name" class="form-control" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Compliance Type</label>
-            <input type="text" name="compliance_type" class="form-control" required>
+            <input aria-label="Compliance type" type="text" name="compliance_type" class="form-control" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Registration Number</label>
-            <input type="text" name="registration_no" class="form-control">
+            <input aria-label="Registration no" type="text" name="registration_no" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">Authority</label>
-            <input type="text" name="authority" class="form-control">
+            <input aria-label="Authority" type="text" name="authority" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">Applicable Unit</label>
-            <input type="text" name="applicable_unit" class="form-control">
+            <input aria-label="Applicable unit" type="text" name="applicable_unit" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">Frequency</label>
@@ -38,7 +38,7 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Due Date</label>
-            <input type="date" name="due_date" class="form-control">
+            <input aria-label="Due date" type="date" name="due_date" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">Status</label>

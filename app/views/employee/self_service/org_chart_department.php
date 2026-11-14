@@ -65,7 +65,7 @@ $department = $department ?? 'Department';
         <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
             <h5 class="mb-0 fw-semibold"><i class="fas fa-sitemap me-2 text-primary"></i><?= htmlspecialchars($department) ?> Structure</h5>
             <div class="form-check form-switch mb-0">
-                <input class="form-check-input" type="checkbox" id="showVacantDept" checked onchange="toggleVacantDept()">
+                <input aria-label="Show vacant dept" class="form-check-input" type="checkbox" id="showVacantDept" checked onchange="toggleVacantDept()">
                 <label class="form-check-label small" for="showVacantDept">Show Vacant</label>
             </div>
         </div>

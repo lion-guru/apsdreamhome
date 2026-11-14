@@ -21,11 +21,11 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" required>
+                            <input aria-label="Name" type="text" name="name" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Slug</label>
-                            <input type="text" name="slug" class="form-control" placeholder="Auto-generated if empty">
+                            <input aria-label="Slug" type="text" name="slug" class="form-control" placeholder="Auto-generated if empty">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Parent Category</label>
@@ -76,8 +76,8 @@
                                             <td colspan="5" class="bg-light">
                                                 <form method="POST" action="<?= BASE_URL ?>/admin/documents/categories/update/<?= (int)$cat['id'] ?>" class="row g-2">
                                                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <div class="col-md-3"><input type="text" name="name" class="form-control form-control-sm" value="<?= htmlspecialchars($cat['name'] ?? '') ?>" required></div>
-                                                    <div class="col-md-2"><input type="text" name="slug" class="form-control form-control-sm" value="<?= htmlspecialchars($cat['slug'] ?? '') ?>"></div>
+                                                    <div class="col-md-3"><input aria-label="Name" type="text" name="name" class="form-control form-control-sm" value="<?= htmlspecialchars($cat['name'] ?? '') ?>" required></div>
+                                                    <div class="col-md-2"><input aria-label="Slug" type="text" name="slug" class="form-control form-control-sm" value="<?= htmlspecialchars($cat['slug'] ?? '') ?>"></div>
                                                     <div class="col-md-3">
                                                         <select aria-label="Parent id" name="parent_id" class="form-select form-select-sm">
                                                             <option value="">None</option>
@@ -88,7 +88,7 @@
                                                     </div>
                                                     <div class="col-md-2">
                                                         <div class="form-check mt-2">
-                                                            <input type="checkbox" name="is_active" class="form-check-input" value="1" id="activeCat<?= (int)$cat['id'] ?>" <?= ($cat['is_active'] ?? 0) ? 'checked' : '' ?>>
+                                                            <input aria-label="Is active" type="checkbox" name="is_active" class="form-check-input" value="1" id="activeCat<?= (int)$cat['id'] ?>" <?= ($cat['is_active'] ?? 0) ? 'checked' : '' ?>>
                                                             <label class="form-check-label" for="activeCat<?= (int)$cat['id'] ?>">Active</label>
                                                         </div>
                                                     </div>

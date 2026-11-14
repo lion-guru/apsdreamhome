@@ -15,13 +15,13 @@ $current_page = 'inquiry';
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label"><?= __('contact_form_name') ?></label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <input aria-label="Name" type="text" class="form-control" id="name" name="name" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="email" class="form-label"><?= __('contact_form_email') ?></label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <input aria-label="Email" type="email" class="form-control" id="email" name="email" required>
                                 </div>
                             </div>
                         </div>
@@ -29,13 +29,13 @@ $current_page = 'inquiry';
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="phone" class="form-label"><?= __('contact_form_phone') ?></label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" required>
+                                    <input aria-label="Phone" type="tel" class="form-control" id="phone" name="phone" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="subject" class="form-label"><?= __('contact_form_subject') ?></label>
-                                    <input type="text" class="form-control" id="subject" name="subject" required>
+                                    <input aria-label="Subject" type="text" class="form-control" id="subject" name="subject" required>
                                 </div>
                             </div>
                         </div>
@@ -50,7 +50,7 @@ $current_page = 'inquiry';
                     </form>
 
                     <div class="form-check mb-3 mt-3">
-                        <input class="form-check-input" type="checkbox" name="terms_consent" id="terms_consent" required>
+                        <input aria-label="Terms consent" class="form-check-input" type="checkbox" name="terms_consent" id="terms_consent" required>
                         <label class="form-check-label small text-muted" for="terms_consent">
                             I have read, understood, and unconditionally agree to the
                             <a href="/cancellation-policy" target="_blank" class="text-primary text-decoration-underline">Cancellation Policy</a>,

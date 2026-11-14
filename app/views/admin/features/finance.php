@@ -18,8 +18,8 @@ ob_start();
                       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
     <h5>GST Calculator</h5>
     <div class="row g-2">
-      <div class="col-md-3"><label>Amount</label><input name="amount" type="number" step="0.01" class="form-control" required></div>
-      <div class="col-md-3"><label>State</label><input name="state_code" class="form-control" placeholder="UP/MH"></div>
+      <div class="col-md-3"><label>Amount</label><input aria-label="Amount" name="amount" type="number" step="0.01" class="form-control" required></div>
+      <div class="col-md-3"><label>State</label><input aria-label="State code" name="state_code" class="form-control" placeholder="UP/MH"></div>
       <div class="col-md-3"><label>Interstate?</label>
         <select aria-label="Interstate" name="interstate" class="form-select"><option value="0">No (Intra-state)</option><option value="1">Yes (Inter-state)</option></select>
       </div>

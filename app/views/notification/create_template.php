@@ -16,7 +16,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Template Name</label>
-                                <input type="text" name="template_name" class="form-control" required placeholder="e.g. Welcome Email">
+                                <input aria-label="Template name" type="text" name="template_name" class="form-control" required placeholder="e.g. Welcome Email">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Channel</label>
@@ -31,7 +31,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Template Code</label>
-                                <input type="text" name="template_code" class="form-control" required placeholder="e.g. welcome_email">
+                                <input aria-label="Template code" type="text" name="template_code" class="form-control" required placeholder="e.g. welcome_email">
                                 <small class="text-muted">Unique identifier for this template</small>
                             </div>
                             <div class="col-md-6">
@@ -45,7 +45,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Subject</label>
-                            <input type="text" name="subject" class="form-control" placeholder="Email subject line">
+                            <input aria-label="Subject" type="text" name="subject" class="form-control" placeholder="Email subject line">
                         </div>
 
                         <div class="mb-3">
@@ -56,7 +56,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Variables (comma-separated)</label>
-                            <input type="text" name="variables" class="form-control" placeholder="e.g. name, email, otp">
+                            <input aria-label="Variables" type="text" name="variables" class="form-control" placeholder="e.g. name, email, otp">
                         </div>
 
                         <div class="d-flex gap-2">

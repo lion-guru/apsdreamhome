@@ -112,7 +112,7 @@ ob_start();
                         </div>
                         <div class="col-6">
                             <label class="form-label small">Year</label>
-                            <input type="number" name="year" class="form-control form-control-sm" value="<?= date('Y') ?>">
+                            <input aria-label="Year" type="number" name="year" class="form-control form-control-sm" value="<?= date('Y') ?>">
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm w-100">
@@ -149,7 +149,7 @@ ob_start();
                         </div>
                         <div class="col-6">
                             <label class="form-label small">Year</label>
-                            <input type="number" name="year" class="form-control form-control-sm" value="<?= date('Y') ?>">
+                            <input aria-label="Year" type="number" name="year" class="form-control form-control-sm" value="<?= date('Y') ?>">
                         </div>
                     </div>
                     <button type="submit" class="btn btn-success btn-sm w-100">

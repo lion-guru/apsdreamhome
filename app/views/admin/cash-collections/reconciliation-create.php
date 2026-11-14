@@ -32,7 +32,7 @@ ob_start();
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Session Date *</label>
-                                <input type="date" class="form-control" name="session_date" required value="<?= date('Y-m-d') ?>">
+                                <input aria-label="Session date" type="date" class="form-control" name="session_date" required value="<?= date('Y-m-d') ?>">
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">Notes</label>

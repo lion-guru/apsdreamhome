@@ -299,7 +299,7 @@ $language = $language ?? 'hi';
         </div>
 
         <div class="text-input-row">
-            <input type="text" id="textInput" placeholder="Type karein ya bolein..." onkeypress="if(event.key==='Enter')sendFromInput()">
+            <input aria-label="Text input" type="text" id="textInput" placeholder="Type karein ya bolein..." onkeypress="if(event.key==='Enter')sendFromInput()">
             <button onclick="sendFromInput()" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
         </div>
 

@@ -34,7 +34,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             </div>
             <div class="col-auto">
                 <label class="form-label small">Search</label>
-                <input type="text" name="search" class="form-control" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Name / email / phone">
+                <input aria-label="Search" type="text" name="search" class="form-control" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Name / email / phone">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search me-1"></i>Filter</button>

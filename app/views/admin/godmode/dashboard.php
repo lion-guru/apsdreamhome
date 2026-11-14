@@ -380,7 +380,7 @@ $tempRole = $_SESSION['god_mode_temp_role'] ?? null;
                     <p class="text-muted mb-3">Temporarily login as any user to see what they see.</p>
                     
                     <div class="input-group mb-3">
-                        <input type="text" class="search-box" id="userSearch" placeholder="Search users by name, email, or phone...">
+                        <input aria-label="User search" type="text" class="search-box" id="userSearch" placeholder="Search users by name, email, or phone...">
                         <button class="btn btn-god" onclick="searchUsers()" aria-label="Search"><i class="fas fa-search"></i></button>
                     </div>
                     

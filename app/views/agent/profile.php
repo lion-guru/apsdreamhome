@@ -73,15 +73,15 @@ $active_page = 'profile';
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Full Name</label>
-                                <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? ''); ?>" required>
+                                <input aria-label="Name" type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($user['name'] ?? $_SESSION['user_name'] ?? ''); ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Email Address</label>
-                                <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($user['email'] ?? $_SESSION['user_email'] ?? ''); ?>" required>
+                                <input aria-label="Email" type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($user['email'] ?? $_SESSION['user_email'] ?? ''); ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Phone Number</label>
-                                <input type="text" name="phone" class="form-control" value="<?php echo htmlspecialchars($user['phone'] ?? $_SESSION['user_phone'] ?? ''); ?>">
+                                <input aria-label="Phone" type="text" name="phone" class="form-control" value="<?php echo htmlspecialchars($user['phone'] ?? $_SESSION['user_phone'] ?? ''); ?>">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Address</label>

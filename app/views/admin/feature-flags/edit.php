@@ -14,7 +14,7 @@
                         <div class="row g-3">
                             <div class="col-12">
                                 <label class="form-label">Display Name</label>
-                                <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($flag['name'] ?? '') ?>">
+                                <input aria-label="Name" type="text" name="name" class="form-control" required value="<?= htmlspecialchars($flag['name'] ?? '') ?>">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Description</label>
@@ -30,19 +30,19 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Rollout %</label>
-                                <input type="number" name="rollout_percentage" class="form-control" min="0" max="100" value="<?= (int)($flag['rollout_percentage'] ?? 100) ?>">
+                                <input aria-label="Rollout percentage" type="number" name="rollout_percentage" class="form-control" min="0" max="100" value="<?= (int)($flag['rollout_percentage'] ?? 100) ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Start Date <small class="text-muted">(optional)</small></label>
-                                <input type="datetime-local" name="start_date" class="form-control" value="<?= $flag['start_date'] ? htmlspecialchars(date('Y-m-d\TH:i', strtotime($flag['start_date']))) : '' ?>">
+                                <input aria-label="Start date" type="datetime-local" name="start_date" class="form-control" value="<?= $flag['start_date'] ? htmlspecialchars(date('Y-m-d\TH:i', strtotime($flag['start_date']))) : '' ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">End Date <small class="text-muted">(optional)</small></label>
-                                <input type="datetime-local" name="end_date" class="form-control" value="<?= $flag['end_date'] ? htmlspecialchars(date('Y-m-d\TH:i', strtotime($flag['end_date']))) : '' ?>">
+                                <input aria-label="End date" type="datetime-local" name="end_date" class="form-control" value="<?= $flag['end_date'] ? htmlspecialchars(date('Y-m-d\TH:i', strtotime($flag['end_date']))) : '' ?>">
                             </div>
                             <div class="col-12">
                                 <div class="form-check form-switch">
-                                    <input type="checkbox" name="enabled" value="1" class="form-check-input" id="ffEnabled" <?= !empty($flag['enabled']) ? 'checked' : '' ?>>
+                                    <input aria-label="Enabled" type="checkbox" name="enabled" value="1" class="form-check-input" id="ffEnabled" <?= !empty($flag['enabled']) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="ffEnabled">Enabled</label>
                                 </div>
                             </div>

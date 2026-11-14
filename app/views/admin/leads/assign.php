@@ -50,7 +50,7 @@ $recent_assignments = $recent_assignments ?? [];
                             <!-- Reason -->
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Reason (optional):</label>
-                                <input type="text" class="form-control" name="reason" placeholder="e.g. Round-robin, by specialization, etc.">
+                                <input aria-label="Reason" type="text" class="form-control" name="reason" placeholder="e.g. Round-robin, by specialization, etc.">
                             </div>
 
                             <!-- Lead Checkboxes -->
@@ -61,11 +61,11 @@ $recent_assignments = $recent_assignments ?? [];
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table table-hover table-sm">
-                                        <thead class="sticky-top bg-light"><tr><th scope="col" width="40"><input type="checkbox" id="checkAll" onchange="toggleAll()"></th><th scope="col">Lead</th><th scope="col">Contact</th><th scope="col">Score</th><th scope="col">Created</th></tr></thead>
+                                        <thead class="sticky-top bg-light"><tr><th scope="col" width="40"><input aria-label="Check all" type="checkbox" id="checkAll" onchange="toggleAll()"></th><th scope="col">Lead</th><th scope="col">Contact</th><th scope="col">Score</th><th scope="col">Created</th></tr></thead>
                                         <tbody>
                                         <?php foreach ($unassigned as $l): ?>
                                             <tr>
-                                                <td><input type="checkbox" name="lead_ids[]" value="<?= $l['id'] ?>" class="lead-check"></td>
+                                                <td><input aria-label="Lead ids" type="checkbox" name="lead_ids[]" value="<?= $l['id'] ?>" class="lead-check"></td>
                                                 <td>
                                                     <strong><?= htmlspecialchars($l['name'] ?? '') ?></strong>
                                                     <br><small class="text-muted"><?= htmlspecialchars($l['source'] ?? '') ?></small>

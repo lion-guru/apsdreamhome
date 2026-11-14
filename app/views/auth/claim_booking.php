@@ -45,7 +45,7 @@ $base = BASE_URL;
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
                     <div class="mb-3">
                         <label class="form-label" for="claimPhone">Phone Number *</label>
-                        <input type="tel" class="form-control" name="phone" id="claimPhone" placeholder="10-digit number" pattern="[0-9]{10}" maxlength="10" required>
+                        <input aria-label="Phone" type="tel" class="form-control" name="phone" id="claimPhone" placeholder="10-digit number" pattern="[0-9]{10}" maxlength="10" required>
                     </div>
                     <button type="submit" class="btn btn-success w-100 py-2">
                         <i class="fas fa-paper-plane me-2"></i>Send OTP

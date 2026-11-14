@@ -152,7 +152,7 @@ foreach ($nodes as $n) {
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
             <div class="d-flex gap-2 flex-wrap">
-                <input type="text" id="treeSearch" class="form-control form-control-sm" placeholder="<?php echo __('assoc_net_search', [], 'Search by name, rank...'); ?>" autocomplete="off">
+                <input aria-label="Tree search" type="text" id="treeSearch" class="form-control form-control-sm" placeholder="<?php echo __('assoc_net_search', [], 'Search by name, rank...'); ?>" autocomplete="off">
                 <select aria-label="Rank filter" id="rankFilter" class="form-select form-select-sm">
                     <option value=""><?php echo __('assoc_net_all_ranks', [], 'All Ranks'); ?></option>
                     <?php foreach ($rankLabels as $k => $v): ?>

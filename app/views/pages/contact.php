@@ -74,18 +74,18 @@ if (!isset($sc)) { $sc = function($k, $d='') { return $GLOBALS['_site_settings_c
 
                             <div class="aps-form-field mb-3">
                                 <label for="name" class="form-label fw-bold mb-1"><?php echo __('your_name'); ?> *</label>
-                                <input type="text" name="name" id="name" class="form-control form-control-lg animate-focus" placeholder="<?php echo __('your_name_placeholder'); ?>" required>
+                                <input aria-label="Name" type="text" name="name" id="name" class="form-control form-control-lg animate-focus" placeholder="<?php echo __('your_name_placeholder'); ?>" required>
                                 <div class="aps-field-error" role="alert"></div>
                             </div>
                             <div class="row g-2">
                                 <div class="col-md-6 mb-3 aps-form-field">
                                     <label for="email" class="form-label fw-bold mb-1"><?php echo __('email'); ?> *</label>
-                                    <input type="email" name="email" id="email" class="form-control form-control-lg animate-focus" placeholder="your@email.com" required >
+                                    <input aria-label="Email" type="email" name="email" id="email" class="form-control form-control-lg animate-focus" placeholder="your@email.com" required >
                                     <div class="aps-field-error" role="alert"></div>
                                 </div>
                                 <div class="col-md-6 mb-3 aps-form-field">
                                     <label for="phone" class="form-label fw-bold mb-1"><?php echo __('phone'); ?> *</label>
-                                    <input type="tel" name="phone" id="phone" class="form-control form-control-lg animate-focus" placeholder="+91 XXXXXXXXXX" required >
+                                    <input aria-label="Phone" type="tel" name="phone" id="phone" class="form-control form-control-lg animate-focus" placeholder="+91 XXXXXXXXXX" required >
                                     <div class="aps-field-error" role="alert"></div>
                                 </div>
                             </div>

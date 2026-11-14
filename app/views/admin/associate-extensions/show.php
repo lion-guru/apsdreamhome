@@ -40,15 +40,15 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Points</label>
-                            <input type="number" name="points" class="form-control" value="<?= (int)($associate['points'] ?? 0) ?>">
+                            <input aria-label="Points" type="number" name="points" class="form-control" value="<?= (int)($associate['points'] ?? 0) ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Badges (comma-separated)</label>
-                            <input type="text" name="badges" class="form-control" value="<?= htmlspecialchars($associate['badges'] ?? '') ?>">
+                            <input aria-label="Badges" type="text" name="badges" class="form-control" value="<?= htmlspecialchars($associate['badges'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Training Progress (%)</label>
-                            <input type="number" name="training_progress" class="form-control" min="0" max="100" value="<?= (int)($associate['training_progress'] ?? 0) ?>">
+                            <input aria-label="Training progress" type="number" name="training_progress" class="form-control" min="0" max="100" value="<?= (int)($associate['training_progress'] ?? 0) ?>">
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update</button>
                     </form>

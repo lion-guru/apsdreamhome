@@ -85,7 +85,7 @@ $stats = $stats ?? ['total'=>0,'open'=>0,'registered'=>0,'lost'=>0,'pipeline_val
 <div class="card border-0 shadow-sm" style="border-radius:12px;">
     <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
         <h2  class="fs-6 fw-semibold mb-0 fw-bold"><i class="fas fa-list me-2"></i>Acquisition Pipeline</h2>
-        <input type="text" id="acqSearch" class="form-control form-control-sm" placeholder="Search acquisitions..." style="width:200px;">
+        <input aria-label="Acq search" type="text" id="acqSearch" class="form-control form-control-sm" placeholder="Search acquisitions..." style="width:200px;">
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">

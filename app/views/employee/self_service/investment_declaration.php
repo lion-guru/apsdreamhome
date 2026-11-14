@@ -102,7 +102,7 @@ $section_limits = $section_limits ?? [];
                                         <label class="form-label fw-medium"><?= htmlspecialchars($item['name']) ?></label>
                                         <div class="input-group">
                                             <span class="input-group-text">₹</span>
-                                            <input type="number" step="0.01" min="0" 
+                                            <input aria-label="Declarations section key item" type="number" step="0.01" min="0" 
                                                 name="declarations[<?= $sectionKey ?>][<?= $item['code'] ?>][amount]" 
                                                 class="form-control amount-input" 
                                                 value="<?= number_format($existingAmount, 2, '.', '') ?>"
@@ -111,7 +111,7 @@ $section_limits = $section_limits ?? [];
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Description / Details (Optional)</label>
-                                        <input type="text" 
+                                        <input aria-label="Declarations section key item" type="text" 
                                             name="declarations[<?= $sectionKey ?>][<?= $item['code'] ?>][description]" 
                                             class="form-control" 
                                             value="<?= htmlspecialchars($existingDesc) ?>"
@@ -181,7 +181,7 @@ $section_limits = $section_limits ?? [];
                         </div>
                         <div class="col-md-5">
                             <label class="form-label">Proof File</label>
-                            <input type="file" name="proof_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.webp" required>
+                            <input aria-label="Proof file" type="file" name="proof_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.webp" required>
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary w-100"><i class="fas fa-upload me-1"></i>Upload Proof</button>

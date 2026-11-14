@@ -26,12 +26,12 @@ $id   = (int)($rank['id'] ?? 0);
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold" for="rank_name">Rank Name</label>
-                        <input type="text" id="rank_name" name="rank_name" class="form-control"
+                        <input aria-label="Rank name" type="text" id="rank_name" name="rank_name" class="form-control"
                                value="<?= htmlspecialchars($rank['rank_name'] ?? '') ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold" for="sort_order">Sort Order</label>
-                        <input type="number" id="sort_order" name="sort_order" class="form-control"
+                        <input aria-label="Sort order" type="number" id="sort_order" name="sort_order" class="form-control"
                                value="<?= (int)($rank['sort_order'] ?? 0) ?>" min="0">
                     </div>
                     <div class="col-md-3">
@@ -49,13 +49,13 @@ $id   = (int)($rank['id'] ?? 0);
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label class="form-label" for="min_gbv">Minimum GBV to Qualify (₹)</label>
-                        <input type="number" id="min_gbv" name="min_gbv" class="form-control"
+                        <input aria-label="Min gbv" type="number" id="min_gbv" name="min_gbv" class="form-control"
                                value="<?= (float)($rank['min_gbv'] ?? 0) ?>" min="0" step="1" required>
                         <small class="text-muted">1 Lakh = 100000, 1 Crore = 10000000</small>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="max_gbv">Maximum GBV (₹) — 0 means No Limit</label>
-                        <input type="number" id="max_gbv" name="max_gbv" class="form-control"
+                        <input aria-label="Max gbv" type="number" id="max_gbv" name="max_gbv" class="form-control"
                                value="<?= (float)($rank['max_gbv'] ?? 0) ?>" min="0" step="1">
                         <small class="text-muted">Set 0 for the highest rank (no upper limit)</small>
                     </div>
@@ -67,13 +67,13 @@ $id   = (int)($rank['id'] ?? 0);
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
                         <label class="form-label fw-semibold" for="commission_rate">Commission Rate (%) — Track A</label>
-                        <input type="number" id="commission_rate" name="commission_rate" class="form-control"
+                        <input aria-label="Commission rate" type="number" id="commission_rate" name="commission_rate" class="form-control"
                                value="<?= (float)($rank['commission_rate'] ?? 0) ?>" min="0" max="20" step="0.01" required>
                         <small class="text-muted">Max 20% (hard cap). This is the SLAB rate.</small>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" for="leadership_bonus_pct">Leadership Bonus (%)</label>
-                        <input type="number" id="leadership_bonus_pct" name="leadership_bonus_pct" class="form-control"
+                        <input aria-label="Leadership bonus pct" type="number" id="leadership_bonus_pct" name="leadership_bonus_pct" class="form-control"
                                value="<?= (float)($rank['leadership_bonus_pct'] ?? 0) ?>" min="0" max="5" step="0.01">
                         <small class="text-muted">Additional override bonus % for leadership ranks</small>
                     </div>
@@ -92,7 +92,7 @@ $id   = (int)($rank['id'] ?? 0);
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" for="royalty_pool_share_pct">Pool Share % (of monthly pool)</label>
-                        <input type="number" id="royalty_pool_share_pct" name="royalty_pool_share_pct" class="form-control"
+                        <input aria-label="Royalty pool share pct" type="number" id="royalty_pool_share_pct" name="royalty_pool_share_pct" class="form-control"
                                value="<?= (float)($rank['royalty_pool_share_pct'] ?? 0) ?>" min="0" max="100" step="0.0001">
                         <small class="text-muted">e.g. 2.00 = this rank class gets 2% of total royalty pool</small>
                     </div>
@@ -111,18 +111,18 @@ $id   = (int)($rank['id'] ?? 0);
                 <div class="row g-3 mb-4">
                     <div class="col-md-5">
                         <label class="form-label" for="reward_name">Reward Name</label>
-                        <input type="text" id="reward_name" name="reward_name" class="form-control"
+                        <input aria-label="Reward name" type="text" id="reward_name" name="reward_name" class="form-control"
                                value="<?= htmlspecialchars($rank['reward_name'] ?? '') ?>"
                                placeholder="e.g. Motorcycle Bonus">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label" for="reward_value">Reward Value (₹)</label>
-                        <input type="number" id="reward_value" name="reward_value" class="form-control"
+                        <input aria-label="Reward value" type="number" id="reward_value" name="reward_value" class="form-control"
                                value="<?= (float)($rank['reward_value'] ?? 0) ?>" min="0" step="0.01">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" for="reward_description">Reward Description</label>
-                        <input type="text" id="reward_description" name="reward_description" class="form-control"
+                        <input aria-label="Reward description" type="text" id="reward_description" name="reward_description" class="form-control"
                                value="<?= htmlspecialchars($rank['reward_description'] ?? '') ?>"
                                placeholder="e.g. Motorcycle or equivalent cash">
                     </div>

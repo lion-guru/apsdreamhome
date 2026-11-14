@@ -88,7 +88,7 @@ $base = BASE_URL;
                         <i class="fas fa-ticket-alt"></i> Sponsor/Referral Code <span style="color:#f59e0b;">*</span>
                     </label>
                     <div style="display:flex; gap:8px;">
-                        <input type="text" name="referral_code" id="referralCodeInput" class="form-control" 
+                        <input aria-label="Referral code" type="text" name="referral_code" id="referralCodeInput" class="form-control" 
                                placeholder="Enter your sponsor's code" 
                                style="flex:1; background:#0f172a; border:2px solid #1e293b; border-radius:10px; color:#e2e8f0; padding:10px 12px;"
                                value="<?= htmlspecialchars($_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? '') ?>">

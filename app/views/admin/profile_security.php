@@ -50,7 +50,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <div class="mb-3">
                         <label class="form-label">Current Password</label>
                         <div class="input-group">
-                            <input type="password" name="current_password" class="form-control" required>
+                            <input aria-label="Current password" type="password" name="current_password" class="form-control" required>
                             <button type="button" class="btn btn-outline-secondary" onclick="togglePassword(this)" aria-label="View"><i class="fas fa-eye"></i></button>
                         </div>
                     </div>
@@ -58,7 +58,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <div class="mb-3">
                         <label class="form-label">New Password</label>
                         <div class="input-group">
-                            <input type="password" name="new_password" class="form-control" required minlength="8">
+                            <input aria-label="New password" type="password" name="new_password" class="form-control" required minlength="8">
                             <button type="button" class="btn btn-outline-secondary" onclick="togglePassword(this)" aria-label="Add"><i class="fas fa-eye"></i></button>
                         </div>
                         <small class="text-muted">Must be at least 8 characters</small>
@@ -67,7 +67,7 @@ unset($_SESSION['success'], $_SESSION['error']);
                     <div class="mb-4">
                         <label class="form-label">Confirm New Password</label>
                         <div class="input-group">
-                            <input type="password" name="confirm_password" class="form-control" required>
+                            <input aria-label="Confirm password" type="password" name="confirm_password" class="form-control" required>
                             <button type="button" class="btn btn-outline-secondary" onclick="togglePassword(this)" aria-label="View"><i class="fas fa-eye"></i></button>
                         </div>
                     </div>

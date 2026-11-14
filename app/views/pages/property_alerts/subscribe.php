@@ -48,17 +48,17 @@ $logged_in = $logged_in ?? false;
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('alert_sub_full_name', [], 'Full Name') ?> *</label>
-                                <input type="text" class="form-control" name="name" required
+                                <input aria-label="Name" type="text" class="form-control" name="name" required
                                        value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('alert_sub_email', [], 'Email Address') ?> *</label>
-                                <input type="email" class="form-control" name="email" required
+                                <input aria-label="Email" type="email" class="form-control" name="email" required
                                        value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('alert_sub_phone', [], 'Phone (optional)') ?></label>
-                                <input type="tel" class="form-control" name="phone" placeholder="+91 98765 43210"
+                                <input aria-label="Phone" type="tel" class="form-control" name="phone" placeholder="+91 98765 43210"
                                        value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
@@ -96,32 +96,32 @@ $logged_in = $logged_in ?? false;
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('alert_sub_city', [], 'City') ?></label>
-                                <input type="text" class="form-control" name="city" placeholder="e.g. Gorakhpur"
+                                <input aria-label="City" type="text" class="form-control" name="city" placeholder="e.g. Gorakhpur"
                                        value="<?= htmlspecialchars($_POST['city'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('alert_sub_state', [], 'State') ?></label>
-                                <input type="text" class="form-control" name="state" placeholder="e.g. Uttar Pradesh"
+                                <input aria-label="State" type="text" class="form-control" name="state" placeholder="e.g. Uttar Pradesh"
                                        value="<?= htmlspecialchars($_POST['state'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('alert_sub_min_price', [], 'Min Price (₹)') ?></label>
-                                <input type="number" class="form-control" name="min_price" min="0" placeholder="<?= __('alert_sub_no_min', [], 'No min') ?>"
+                                <input aria-label="Min price" type="number" class="form-control" name="min_price" min="0" placeholder="<?= __('alert_sub_no_min', [], 'No min') ?>"
                                        value="<?= htmlspecialchars($_POST['min_price'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('alert_sub_max_price', [], 'Max Price (₹)') ?></label>
-                                <input type="number" class="form-control" name="max_price" min="0" placeholder="<?= __('alert_sub_no_max', [], 'No max') ?>"
+                                <input aria-label="Max price" type="number" class="form-control" name="max_price" min="0" placeholder="<?= __('alert_sub_no_max', [], 'No max') ?>"
                                        value="<?= htmlspecialchars($_POST['max_price'] ?? '') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label"><?= __('alert_sub_min_area', [], 'Min Area (sqft)') ?></label>
-                                <input type="number" class="form-control" name="min_area_sqft" min="0"
+                                <input aria-label="Min area sqft" type="number" class="form-control" name="min_area_sqft" min="0"
                                        value="<?= htmlspecialchars($_POST['min_area_sqft'] ?? '') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label"><?= __('alert_sub_max_area', [], 'Max Area (sqft)') ?></label>
-                                <input type="number" class="form-control" name="max_area_sqft" min="0"
+                                <input aria-label="Max area sqft" type="number" class="form-control" name="max_area_sqft" min="0"
                                        value="<?= htmlspecialchars($_POST['max_area_sqft'] ?? '') ?>">
                             </div>
                             <div class="col-md-4">
@@ -139,7 +139,7 @@ $logged_in = $logged_in ?? false;
                         <div class="row g-2 mb-4">
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="notify_email" id="ne" checked
+                                    <input aria-label="Notify email" class="form-check-input" type="checkbox" name="notify_email" id="ne" checked
                                            <?= !empty($_POST['notify_email']) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="ne">
                                          <i class="fas fa-envelope text-primary me-1"></i> <?= __('alert_sub_email_ch', [], 'Email') ?>
@@ -148,7 +148,7 @@ $logged_in = $logged_in ?? false;
                             </div>
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="notify_sms" id="ns"
+                                    <input aria-label="Notify sms" class="form-check-input" type="checkbox" name="notify_sms" id="ns"
                                            <?= !empty($_POST['notify_sms']) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="ns">
                                          <i class="fas fa-sms text-info me-1"></i> <?= __('alert_sub_sms_ch', [], 'SMS') ?>
@@ -157,7 +157,7 @@ $logged_in = $logged_in ?? false;
                             </div>
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="notify_whatsapp" id="nw"
+                                    <input aria-label="Notify whatsapp" class="form-check-input" type="checkbox" name="notify_whatsapp" id="nw"
                                            <?= !empty($_POST['notify_whatsapp']) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="nw">
                                          <i class="fab fa-whatsapp text-success me-1"></i> <?= __('alert_sub_whatsapp_ch', [], 'WhatsApp') ?>

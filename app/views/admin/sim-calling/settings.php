@@ -38,14 +38,14 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
                                     <div class="col-md-8">
                                         <div class="form-group">
                                             <label>AMI Host</label>
-                                            <input type="text" name="host" class="form-control" value="<?= htmlspecialchars($config['host'] ?? '127.0.0.1') ?>" placeholder="127.0.0.1">
+                                            <input aria-label="Host" type="text" name="host" class="form-control" value="<?= htmlspecialchars($config['host'] ?? '127.0.0.1') ?>" placeholder="127.0.0.1">
                                             <small class="text-muted">IP address of your Asterisk server</small>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>AMI Port</label>
-                                            <input type="number" name="port" class="form-control" value="<?= htmlspecialchars($config['port'] ?? '5038') ?>" placeholder="5038">
+                                            <input aria-label="Port" type="number" name="port" class="form-control" value="<?= htmlspecialchars($config['port'] ?? '5038') ?>" placeholder="5038">
                                             <small class="text-muted">Default: 5038</small>
                                         </div>
                                     </div>
@@ -55,13 +55,13 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Username</label>
-                                            <input type="text" name="username" class="form-control" value="<?= htmlspecialchars($config['username'] ?? 'admin') ?>" placeholder="admin">
+                                            <input aria-label="Username" type="text" name="username" class="form-control" value="<?= htmlspecialchars($config['username'] ?? 'admin') ?>" placeholder="admin">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Secret / Password</label>
-                                            <input type="password" name="secret" class="form-control" value="<?= htmlspecialchars($config['secret'] ?? '') ?>" placeholder="AMI password">
+                                            <input aria-label="Secret" type="password" name="secret" class="form-control" value="<?= htmlspecialchars($config['secret'] ?? '') ?>" placeholder="AMI password">
                                         </div>
                                     </div>
                                 </div>
@@ -72,14 +72,14 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Dialplan Context</label>
-                                            <input type="text" name="context" class="form-control" value="<?= htmlspecialchars($config['context'] ?? 'outbound-calls') ?>" placeholder="outbound-calls">
+                                            <input aria-label="Context" type="text" name="context" class="form-control" value="<?= htmlspecialchars($config['context'] ?? 'outbound-calls') ?>" placeholder="outbound-calls">
                                             <small class="text-muted">Context in extensions.conf</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>SIP Trunk Name</label>
-                                            <input type="text" name="trunk" class="form-control" value="<?= htmlspecialchars($config['trunk'] ?? 'gsm-gateway') ?>" placeholder="gsm-gateway">
+                                            <input aria-label="Trunk" type="text" name="trunk" class="form-control" value="<?= htmlspecialchars($config['trunk'] ?? 'gsm-gateway') ?>" placeholder="gsm-gateway">
                                             <small class="text-muted">PJSIP endpoint name for GSM gateway</small>
                                         </div>
                                     </div>
@@ -87,7 +87,7 @@ $_pageTitle = $page_title ?? 'SIM Calling Settings';
 
                                 <div class="form-group">
                                     <label>Caller ID (SIM Number)</label>
-                                    <input type="text" name="caller_id" class="form-control" value="<?= htmlspecialchars($config['caller_id'] ?? '') ?>" placeholder="919277121112">
+                                    <input aria-label="Caller id" type="text" name="caller_id" class="form-control" value="<?= htmlspecialchars($config['caller_id'] ?? '') ?>" placeholder="919277121112">
                                     <small class="text-muted">This number will appear on customer's phone as caller</small>
                                 </div>
                             </div>

@@ -18,7 +18,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Report Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="title" required placeholder="e.g. Weekly Sales Summary">
+                            <input aria-label="Title" type="text" class="form-control" name="title" required placeholder="e.g. Weekly Sales Summary">
                         </div>
                         <div class="row g-3 mb-3">
                             <div class="col-md-4">
@@ -53,7 +53,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Email Recipients (comma-separated)</label>
-                            <input type="text" class="form-control" name="recipients" placeholder="admin@example.com, manager@example.com">
+                            <input aria-label="Recipients" type="text" class="form-control" name="recipients" placeholder="admin@example.com, manager@example.com">
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Additional Notes</label>

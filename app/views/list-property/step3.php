@@ -41,15 +41,15 @@ $d = $state['form_data'] ?? [];
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Total Area (sqft) *</label>
-                                <input type="number" name="area" class="form-control" required min="1" value="<?= htmlspecialchars($d['area'] ?? '') ?>">
+                                <input aria-label="Area" type="number" name="area" class="form-control" required min="1" value="<?= htmlspecialchars($d['area'] ?? '') ?>">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Width (ft)</label>
-                                <input type="number" step="0.1" name="width" class="form-control" value="<?= htmlspecialchars($d['width'] ?? '') ?>">
+                                <input aria-label="Width" type="number" step="0.1" name="width" class="form-control" value="<?= htmlspecialchars($d['width'] ?? '') ?>">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label">Length (ft)</label>
-                                <input type="number" step="0.1" name="length" class="form-control" value="<?= htmlspecialchars($d['length'] ?? '') ?>">
+                                <input aria-label="Length" type="number" step="0.1" name="length" class="form-control" value="<?= htmlspecialchars($d['length'] ?? '') ?>">
                             </div>
                         </div>
                         <div class="row">
@@ -65,7 +65,7 @@ $d = $state['form_data'] ?? [];
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Road Width (ft)</label>
-                                <input type="number" step="0.1" name="road_width" class="form-control" value="<?= htmlspecialchars($d['roadWidth'] ?? '') ?>">
+                                <input aria-label="Road width" type="number" step="0.1" name="road_width" class="form-control" value="<?= htmlspecialchars($d['roadWidth'] ?? '') ?>">
                             </div>
                         </div>
                         <div class="d-flex justify-content-between mt-4">

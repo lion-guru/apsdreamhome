@@ -98,13 +98,13 @@ $filters = $filters ?? ['type' => '', 'status' => '', 'search' => '', 'date_from
         </select>
     </div>
     <div class="col-md-2">
-        <input type="text" class="form-control" name="search" placeholder="Search agreements..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+        <input aria-label="Search" type="text" class="form-control" name="search" placeholder="Search agreements..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
     </div>
     <div class="col-md-2">
-        <input type="date" class="form-control" name="date_from" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>" placeholder="From">
+        <input aria-label="Date from" type="date" class="form-control" name="date_from" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>" placeholder="From">
     </div>
     <div class="col-md-2">
-        <input type="date" class="form-control" name="date_to" value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>" placeholder="To">
+        <input aria-label="Date to" type="date" class="form-control" name="date_to" value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>" placeholder="To">
     </div>
     <div class="col-md-2 d-flex gap-1">
         <button type="submit" class="btn btn-primary flex-fill"><i class="fas fa-search"></i> Filter</button>

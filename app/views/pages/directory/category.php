@@ -24,11 +24,11 @@
                 <div class="col-md-5">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" name="search" class="form-control" placeholder="Search by name or keyword..." value="<?= htmlspecialchars($search ?? '') ?>">
+                        <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search by name or keyword..." value="<?= htmlspecialchars($search ?? '') ?>">
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="city" class="form-control" placeholder="City..." value="<?= htmlspecialchars($city ?? '') ?>">
+                    <input aria-label="City" type="text" name="city" class="form-control" placeholder="City..." value="<?= htmlspecialchars($city ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <select aria-label="Sort" name="sort" class="form-control">

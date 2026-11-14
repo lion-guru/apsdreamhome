@@ -102,15 +102,15 @@ $totalPages = ceil(($stats['total'] ?? 0) / 20);
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">From Date</label>
-                    <input type="date" name="from_date" class="form-control form-control-sm" value="<?= htmlspecialchars($currentFromDate) ?>">
+                    <input aria-label="From date" type="date" name="from_date" class="form-control form-control-sm" value="<?= htmlspecialchars($currentFromDate) ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">To Date</label>
-                    <input type="date" name="to_date" class="form-control form-control-sm" value="<?= htmlspecialchars($currentToDate) ?>">
+                    <input aria-label="To date" type="date" name="to_date" class="form-control form-control-sm" value="<?= htmlspecialchars($currentToDate) ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Search</label>
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Name/Email/Phone/ID" value="<?= htmlspecialchars($search) ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="Name/Email/Phone/ID" value="<?= htmlspecialchars($search) ?>">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100 btn-sm"><i class="fas fa-filter me-1"></i>Filter</button>

@@ -7,9 +7,9 @@
                     <form method="GET" class="d-inline-flex align-items-center gap-2">
     <?php echo CSRFProtection::csrfField(); ?>
                         <label class="form-label mb-0 me-1">From:</label>
-                        <input type="date" name="week_start" class="form-control form-control-sm" value="<?php echo htmlspecialchars($report_data['week_start'] ?? date('Y-m-d')); ?>">
+                        <input aria-label="Week start" type="date" name="week_start" class="form-control form-control-sm" value="<?php echo htmlspecialchars($report_data['week_start'] ?? date('Y-m-d')); ?>">
                         <label class="form-label mb-0 me-1">To:</label>
-                        <input type="date" name="week_end" class="form-control form-control-sm" value="<?php echo htmlspecialchars($report_data['week_end'] ?? date('Y-m-d')); ?>">
+                        <input aria-label="Week end" type="date" name="week_end" class="form-control form-control-sm" value="<?php echo htmlspecialchars($report_data['week_end'] ?? date('Y-m-d')); ?>">
                         <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> View</button>
                     </form>
                 </div>

@@ -11,21 +11,21 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="income"><?php echo __('monthly_income_rs', [], 'Monthly Income (₹)'); ?></label>
-                                <input type="number" class="form-control form-control-lg" id="income" value="80000" oninput="calcLoan()">
+                                <input aria-label="Income" type="number" class="form-control form-control-lg" id="income" value="80000" oninput="calcLoan()">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="existEmi"><?php echo __('monthly_emi_rs', [], 'Monthly Existing EMIs (₹)'); ?></label>
-                                <input type="number" class="form-control form-control-lg" id="existEmi" value="0" oninput="calcLoan()">
+                                <input aria-label="Exist emi" type="number" class="form-control form-control-lg" id="existEmi" value="0" oninput="calcLoan()">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="intRate"><?php echo __('interest_rate', [], 'Interest Rate (%)'); ?></label>
-                                <input type="number" class="form-control" id="intRate" value="8.5" step="0.1" oninput="calcLoan()">
+                                <input aria-label="Int rate" type="number" class="form-control" id="intRate" value="8.5" step="0.1" oninput="calcLoan()">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="tenure"><?php echo __('tenure_years', [], 'Tenure (Years)'); ?></label>
-                                <input type="number" class="form-control" id="tenure" value="20" min="1" max="30" oninput="calcLoan()">
+                                <input aria-label="Tenure" type="number" class="form-control" id="tenure" value="20" min="1" max="30" oninput="calcLoan()">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="foir"><?php echo __('foir_limit', [], 'FOIR Limit (%)'); ?></label>

@@ -10,19 +10,19 @@
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control" required>
+                    <input aria-label="Name" type="text" name="name" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Email <span class="text-danger">*</span></label>
-                    <input type="email" name="email" class="form-control" required>
+                    <input aria-label="Email" type="email" name="email" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Phone</label>
-                    <input type="text" name="phone" class="form-control">
+                    <input aria-label="Phone" type="text" name="phone" class="form-control">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Password <span class="text-danger">*</span></label>
-                    <input type="password" name="password" class="form-control" required>
+                    <input aria-label="Password" type="password" name="password" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Role</label>

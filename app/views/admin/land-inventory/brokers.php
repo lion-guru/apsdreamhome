@@ -25,7 +25,7 @@ $brokers = $brokers ?? [];
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-2">
                             <label class="form-label small">Broker Name <span class="text-danger">*</span></label>
-                            <input type="text" name="broker_name" class="form-control form-control-sm" required placeholder="e.g. Ramprasad Yadav">
+                            <input aria-label="Broker name" type="text" name="broker_name" class="form-control form-control-sm" required placeholder="e.g. Ramprasad Yadav">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Broker Type</label>
@@ -39,26 +39,26 @@ $brokers = $brokers ?? [];
                         <div class="row g-2">
                             <div class="col-6">
                                 <label class="form-label small">Phone <span class="text-danger">*</span></label>
-                                <input type="tel" name="phone" class="form-control form-control-sm" required placeholder="10-digit mobile">
+                                <input aria-label="Phone" type="tel" name="phone" class="form-control form-control-sm" required placeholder="10-digit mobile">
                             </div>
                             <div class="col-6">
                                 <label class="form-label small">WhatsApp</label>
-                                <input type="tel" name="whatsapp" class="form-control form-control-sm" placeholder="WhatsApp No">
+                                <input aria-label="Whatsapp" type="tel" name="whatsapp" class="form-control form-control-sm" placeholder="WhatsApp No">
                             </div>
                         </div>
                         <div class="row g-2 mt-1">
                             <div class="col-6">
                                 <label class="form-label small">PAN</label>
-                                <input type="text" name="pan" class="form-control form-control-sm" placeholder="PAN Number" maxlength="10">
+                                <input aria-label="Pan" type="text" name="pan" class="form-control form-control-sm" placeholder="PAN Number" maxlength="10">
                             </div>
                             <div class="col-6">
                                 <label class="form-label small">Aadhaar</label>
-                                <input type="text" name="aadhaar" class="form-control form-control-sm" placeholder="12-digit Aadhaar" maxlength="16">
+                                <input aria-label="Aadhaar" type="text" name="aadhaar" class="form-control form-control-sm" placeholder="12-digit Aadhaar" maxlength="16">
                             </div>
                         </div>
                         <div class="mb-2 mt-2">
                             <label class="form-label small">Email</label>
-                            <input type="email" name="email" class="form-control form-control-sm" placeholder="broker@gmail.com">
+                            <input aria-label="Email" type="email" name="email" class="form-control form-control-sm" placeholder="broker@gmail.com">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Address</label>
@@ -66,7 +66,7 @@ $brokers = $brokers ?? [];
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Specialization / Region</label>
-                            <input type="text" name="specialization" class="form-control form-control-sm" placeholder="e.g. Gorakhpur - AIIMS Road Belt">
+                            <input aria-label="Specialization" type="text" name="specialization" class="form-control form-control-sm" placeholder="e.g. Gorakhpur - AIIMS Road Belt">
                         </div>
                         <div class="row g-2 mb-2">
                             <div class="col-6">
@@ -82,7 +82,7 @@ $brokers = $brokers ?? [];
                             </div>
                             <div class="col-6">
                                 <label class="form-label small" id="brokerageRateLabel">Rate (% / ₹)</label>
-                                <input type="number" name="brokerage_rate" id="brokerageRateInput" step="0.01" class="form-control form-control-sm" min="0" value="2.00">
+                                <input aria-label="Brokerage rate" type="number" name="brokerage_rate" id="brokerageRateInput" step="0.01" class="form-control form-control-sm" min="0" value="2.00">
                                 <input type="hidden" name="commission_rate" id="commissionRateHidden" value="2.00">
                             </div>
                         </div>
@@ -96,7 +96,7 @@ $brokers = $brokers ?? [];
                             </div>
                             <div class="col-6 pt-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="is_active" value="1" id="act" checked>
+                                    <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" value="1" id="act" checked>
                                     <label class="form-check-label small" for="act">Active Broker</label>
                                 </div>
                             </div>
@@ -252,7 +252,7 @@ $brokers = $brokers ?? [];
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label small">Broker Name <span class="text-danger">*</span></label>
-                            <input type="text" name="broker_name" id="edit_broker_name" class="form-control form-control-sm" required>
+                            <input aria-label="Broker name" type="text" name="broker_name" id="edit_broker_name" class="form-control form-control-sm" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Broker Type</label>
@@ -266,24 +266,24 @@ $brokers = $brokers ?? [];
 
                         <div class="col-md-4">
                             <label class="form-label small">Phone <span class="text-danger">*</span></label>
-                            <input type="tel" name="phone" id="edit_phone" class="form-control form-control-sm" required>
+                            <input aria-label="Phone" type="tel" name="phone" id="edit_phone" class="form-control form-control-sm" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small">WhatsApp</label>
-                            <input type="tel" name="whatsapp" id="edit_whatsapp" class="form-control form-control-sm">
+                            <input aria-label="Whatsapp" type="tel" name="whatsapp" id="edit_whatsapp" class="form-control form-control-sm">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small">Email</label>
-                            <input type="email" name="email" id="edit_email" class="form-control form-control-sm">
+                            <input aria-label="Email" type="email" name="email" id="edit_email" class="form-control form-control-sm">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label small">PAN Number</label>
-                            <input type="text" name="pan" id="edit_pan" class="form-control form-control-sm" maxlength="10">
+                            <input aria-label="Pan" type="text" name="pan" id="edit_pan" class="form-control form-control-sm" maxlength="10">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Aadhaar Number</label>
-                            <input type="text" name="aadhaar" id="edit_aadhaar" class="form-control form-control-sm" maxlength="16">
+                            <input aria-label="Aadhaar" type="text" name="aadhaar" id="edit_aadhaar" class="form-control form-control-sm" maxlength="16">
                         </div>
 
                         <div class="col-12">
@@ -293,7 +293,7 @@ $brokers = $brokers ?? [];
 
                         <div class="col-md-6">
                             <label class="form-label small">Specialization Belt</label>
-                            <input type="text" name="specialization" id="edit_specialization" class="form-control form-control-sm">
+                            <input aria-label="Specialization" type="text" name="specialization" id="edit_specialization" class="form-control form-control-sm">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">KYC Verification</label>
@@ -321,7 +321,7 @@ $brokers = $brokers ?? [];
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label small" id="editBrokerageRateLabel">Rate (% / ₹)</label>
-                                        <input type="number" name="brokerage_rate" id="edit_brokerage_rate" step="0.01" class="form-control form-control-sm" min="0" required>
+                                        <input aria-label="Brokerage rate" type="number" name="brokerage_rate" id="edit_brokerage_rate" step="0.01" class="form-control form-control-sm" min="0" required>
                                         <input type="hidden" name="commission_rate" id="editCommissionRateHidden">
                                     </div>
                                 </div>
@@ -330,13 +330,13 @@ $brokers = $brokers ?? [];
 
                         <div class="col-md-6">
                             <div class="form-check pt-2">
-                                <input class="form-check-input" type="checkbox" name="is_active" value="1" id="edit_is_active">
+                                <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" value="1" id="edit_is_active">
                                 <label class="form-check-label small" for="edit_is_active">Active Broker in Network</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Agreement Reference No</label>
-                            <input type="text" name="agreement_ref_number" id="edit_agreement_ref_number" class="form-control form-control-sm" readonly>
+                            <input aria-label="Agreement ref number" type="text" name="agreement_ref_number" id="edit_agreement_ref_number" class="form-control form-control-sm" readonly>
                         </div>
 
                         <div class="col-12">

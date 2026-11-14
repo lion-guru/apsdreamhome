@@ -17,19 +17,19 @@ $offers = $offers ?? [];
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Loan Amount (₹)</label>
-                            <input type="number" name="amount" class="form-control" value="<?= htmlspecialchars($_GET['amount'] ?? '1000000') ?>" min="10000" step="10000">
+                            <input aria-label="Amount" type="number" name="amount" class="form-control" value="<?= htmlspecialchars($_GET['amount'] ?? '1000000') ?>" min="10000" step="10000">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Interest Rate (% p.a.)</label>
-                            <input type="number" name="rate" class="form-control" value="<?= htmlspecialchars($_GET['rate'] ?? '10') ?>" min="0" max="36" step="0.5">
+                            <input aria-label="Rate" type="number" name="rate" class="form-control" value="<?= htmlspecialchars($_GET['rate'] ?? '10') ?>" min="0" max="36" step="0.5">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Tenure (Months)</label>
-                            <input type="number" name="tenure" class="form-control" value="<?= htmlspecialchars($_GET['tenure'] ?? '60') ?>" min="1" max="240">
+                            <input aria-label="Tenure" type="number" name="tenure" class="form-control" value="<?= htmlspecialchars($_GET['tenure'] ?? '60') ?>" min="1" max="240">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Interest-Free Months (Offer)</label>
-                            <input type="number" name="interest_free_months" class="form-control" value="<?= htmlspecialchars($_GET['interest_free_months'] ?? '0') ?>" min="0" max="60">
+                            <input aria-label="Interest free months" type="number" name="interest_free_months" class="form-control" value="<?= htmlspecialchars($_GET['interest_free_months'] ?? '0') ?>" min="0" max="60">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Select Offer (prefill)</label>

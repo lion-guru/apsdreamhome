@@ -256,13 +256,13 @@ $base = BASE_URL;
 
                     <div class="input-icon-wrapper">
                         <label class="visually-hidden" for="email"><?php echo __('auth_enter_email_phone', 'Email or Phone'); ?></label>
-                        <input type="text" class="form-control" id="email" name="email" placeholder="<?php echo __('auth_enter_email_phone', 'Email or Phone'); ?>" required autofocus>
+                        <input aria-label="Email" type="text" class="form-control" id="email" name="email" placeholder="<?php echo __('auth_enter_email_phone', 'Email or Phone'); ?>" required autofocus>
                         <i class="fas fa-user input-icon"></i>
                     </div>
 
                     <div class="input-icon-wrapper password-wrapper">
                         <label class="visually-hidden" for="password"><?php echo __('auth_enter_password', 'Password'); ?></label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="<?php echo __('auth_enter_password', 'Password'); ?>" required>
+                        <input aria-label="Password" type="password" class="form-control" id="password" name="password" placeholder="<?php echo __('auth_enter_password', 'Password'); ?>" required>
                         <i class="fas fa-lock input-icon"></i>
                         <button type="button" class="toggle-password" onclick="togglePassword()" aria-label="Toggle password visibility">
                             <i class="fas fa-eye" id="toggleIcon"></i>
@@ -271,7 +271,7 @@ $base = BASE_URL;
 
                     <div class="form-options">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                            <input aria-label="Remember" class="form-check-input" type="checkbox" name="remember" id="remember">
                             <label class="form-check-label" for="remember" ><?php echo __('auth_remember_me', 'Remember me'); ?></label>
                         </div>
                         <a href="<?php echo $base; ?>/associate/forgot-password" class="forgot-link"><?php echo __('auth_forgot_password', 'Forgot Password?'); ?></a>

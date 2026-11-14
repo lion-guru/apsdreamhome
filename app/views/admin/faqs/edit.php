@@ -10,7 +10,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Question</label>
-                            <input type="text" name="question" class="form-control" value="<?php echo htmlspecialchars($faq['question'] ?? ''); ?>" required>
+                            <input aria-label="Question" type="text" name="question" class="form-control" value="<?php echo htmlspecialchars($faq['question'] ?? ''); ?>" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Answer</label>
@@ -33,7 +33,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Sort Order</label>
-                                    <input type="number" name="display_order" class="form-control" value="<?php echo e($faq['display_order']); ?>">
+                                    <input aria-label="Display order" type="number" name="display_order" class="form-control" value="<?php echo e($faq['display_order']); ?>">
                                 </div>
                             </div>
                             <div class="col-md-4">

@@ -11,11 +11,11 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($member['name'] ?? ''); ?>" required>
+                    <input aria-label="Name" type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($member['name'] ?? ''); ?>" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Position / Title <span class="text-danger">*</span></label>
-                    <input type="text" name="position" class="form-control" value="<?php echo htmlspecialchars($member['position'] ?? ''); ?>" required>
+                    <input aria-label="Position" type="text" name="position" class="form-control" value="<?php echo htmlspecialchars($member['position'] ?? ''); ?>" required>
                 </div>
                 <div class="col-12">
                     <label class="form-label">Bio / Description</label>
@@ -45,23 +45,23 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Experience</label>
-                    <input type="text" name="experience" class="form-control" value="<?php echo htmlspecialchars($member['experience'] ?? ''); ?>" placeholder="e.g. 10+ years">
+                    <input aria-label="Experience" type="text" name="experience" class="form-control" value="<?php echo htmlspecialchars($member['experience'] ?? ''); ?>" placeholder="e.g. 10+ years">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($member['email'] ?? ''); ?>">
+                    <input aria-label="Email" type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($member['email'] ?? ''); ?>">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Phone</label>
-                    <input type="text" name="phone" class="form-control" value="<?php echo htmlspecialchars($member['phone'] ?? ''); ?>">
+                    <input aria-label="Phone" type="text" name="phone" class="form-control" value="<?php echo htmlspecialchars($member['phone'] ?? ''); ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Expertise / Skills</label>
-                    <input type="text" name="expertise" class="form-control" value="<?php echo htmlspecialchars($member['expertise'] ?? ''); ?>" placeholder="e.g. Sales, Legal, Marketing">
+                    <input aria-label="Expertise" type="text" name="expertise" class="form-control" value="<?php echo htmlspecialchars($member['expertise'] ?? ''); ?>" placeholder="e.g. Sales, Legal, Marketing">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Sort Order</label>
-                    <input type="number" name="sort_order" class="form-control" value="<?php echo (int)($member['sort_order'] ?? 0); ?>" min="0">
+                    <input aria-label="Sort order" type="number" name="sort_order" class="form-control" value="<?php echo (int)($member['sort_order'] ?? 0); ?>" min="0">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Status</label>
@@ -72,15 +72,15 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">LinkedIn URL</label>
-                    <input type="url" name="linkedin" class="form-control" value="<?php echo htmlspecialchars($member['linkedin'] ?? ''); ?>" placeholder="https://linkedin.com/in/...">
+                    <input aria-label="Linkedin" type="url" name="linkedin" class="form-control" value="<?php echo htmlspecialchars($member['linkedin'] ?? ''); ?>" placeholder="https://linkedin.com/in/...">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Facebook URL</label>
-                    <input type="url" name="facebook_url" class="form-control" value="<?php echo htmlspecialchars($member['facebook_url'] ?? ''); ?>" placeholder="https://facebook.com/...">
+                    <input aria-label="Facebook url" type="url" name="facebook_url" class="form-control" value="<?php echo htmlspecialchars($member['facebook_url'] ?? ''); ?>" placeholder="https://facebook.com/...">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Instagram URL</label>
-                    <input type="url" name="instagram_url" class="form-control" value="<?php echo htmlspecialchars($member['instagram_url'] ?? ''); ?>" placeholder="https://instagram.com/...">
+                    <input aria-label="Instagram url" type="url" name="instagram_url" class="form-control" value="<?php echo htmlspecialchars($member['instagram_url'] ?? ''); ?>" placeholder="https://instagram.com/...">
                 </div>
                 <div class="col-12">
                     <label class="form-label">Photo</label>
@@ -89,7 +89,7 @@
                         <img src="<?= BASE_URL ?>/assets/images/<?php echo htmlspecialchars($member['photo'] ?? ''); ?>" alt="" >
                     </div>
                     <?php endif; ?>
-                    <input type="file" name="photo" class="form-control" accept="image/jpeg,image/png,image/webp">
+                    <input aria-label="Photo" type="file" name="photo" class="form-control" accept="image/jpeg,image/png,image/webp">
                     <small class="text-muted">Allowed: JPG, PNG, WEBP. Max 2MB.</small>
                 </div>
             </div>

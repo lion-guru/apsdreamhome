@@ -46,19 +46,19 @@ $base = BASE_URL;
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token ?? ''); ?>">
                     <div class="mb-3">
                         <label class="form-label" for="claimOtp">OTP *</label>
-                        <input type="text" class="form-control" name="otp" id="claimOtp" placeholder="6-digit code" maxlength="6" pattern="[0-9]{6}" required inputmode="numeric">
+                        <input aria-label="Otp" type="text" class="form-control" name="otp" id="claimOtp" placeholder="6-digit code" maxlength="6" pattern="[0-9]{6}" required inputmode="numeric">
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="claimName">Your Name</label>
-                        <input type="text" class="form-control" name="name" id="claimName" placeholder="Full name (for new accounts)">
+                        <input aria-label="Name" type="text" class="form-control" name="name" id="claimName" placeholder="Full name (for new accounts)">
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="claimPassword">Set Password *</label>
-                        <input type="password" class="form-control" name="password" id="claimPassword" placeholder="Min 6 characters" required minlength="6">
+                        <input aria-label="Password" type="password" class="form-control" name="password" id="claimPassword" placeholder="Min 6 characters" required minlength="6">
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="claimConfirm">Confirm Password *</label>
-                        <input type="password" class="form-control" name="confirm_password" id="claimConfirm" placeholder="Re-enter password" required>
+                        <input aria-label="Confirm password" type="password" class="form-control" name="confirm_password" id="claimConfirm" placeholder="Re-enter password" required>
                     </div>
                     <button type="submit" class="btn btn-success w-100 py-2">
                         <i class="fas fa-check-circle me-2"></i>Verify & Claim Bookings

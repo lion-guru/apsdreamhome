@@ -286,7 +286,7 @@ $filters = $filters ?? [];
                         </div>
                         <div class="col-12">
                             <label for="create_subject" class="form-label fw-semibold">Subject <span class="text-danger">*</span></label>
-                            <input type="text" name="subject" id="create_subject" class="form-control" required placeholder="Brief summary of the grievance">
+                            <input aria-label="Subject" type="text" name="subject" id="create_subject" class="form-control" required placeholder="Brief summary of the grievance">
                         </div>
                         <div class="col-12">
                             <label for="create_description" class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
@@ -294,11 +294,11 @@ $filters = $filters ?? [];
                         </div>
                         <div class="col-md-6">
                             <label for="create_sub_category" class="form-label fw-semibold">Sub-category</label>
-                            <input type="text" name="sub_category" id="create_sub_category" class="form-control" placeholder="e.g., Workstation ergonomics, Salary delay">
+                            <input aria-label="Sub category" type="text" name="sub_category" id="create_sub_category" class="form-control" placeholder="e.g., Workstation ergonomics, Salary delay">
                         </div>
                         <div class="col-md-6">
                             <div class="form-check form-switch pt-4">
-                                <input class="form-check-input" type="checkbox" name="is_anonymous" id="is_anonymous" value="1">
+                                <input aria-label="Is anonymous" class="form-check-input" type="checkbox" name="is_anonymous" id="is_anonymous" value="1">
                                 <label class="form-check-label" for="is_anonymous">Submit anonymously</label>
                             </div>
                         </div>

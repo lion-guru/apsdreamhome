@@ -173,12 +173,12 @@
                     <input type="hidden" name="source" value="property_detail">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Phone Number *</label>
-                        <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required
+                        <input aria-label="Phone" type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required
                                value="<?php echo htmlspecialchars($_SESSION['user_phone'] ?? ''); ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Your Name</label>
-                        <input type="text" name="name" class="form-control" placeholder="Enter your name"
+                        <input aria-label="Name" type="text" name="name" class="form-control" placeholder="Enter your name"
                                value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>">
                     </div>
                     <div class="mb-3">

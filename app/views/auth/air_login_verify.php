@@ -103,7 +103,7 @@ $base = BASE_URL;
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
 
                     <div class="otp-form">
-                        <input type="tel" name="otp" id="otp" maxlength="6" pattern="[0-9]{6}" placeholder="•" required autocomplete="one-time-password" autofocus>
+                        <input aria-label="Otp" type="tel" name="otp" id="otp" maxlength="6" pattern="[0-9]{6}" placeholder="•" required autocomplete="one-time-password" autofocus>
                     </div>
 
                     

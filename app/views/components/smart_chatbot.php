@@ -110,7 +110,7 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
 
         <!-- Input Area -->
         <div class="chatbot-input-area">
-            <input type="text"
+            <input aria-label="Chatbot input" type="text"
                 id="chatbot-input"
                 placeholder="<?= htmlspecialchars(__('component_type_message_hindi_english', 'Type message in Hindi or English...')) ?>"
                 onkeypress="handleKeyPress(event)"

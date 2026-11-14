@@ -53,22 +53,22 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
-                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="email" id="email_<?php echo e($type); ?>" <?php echo ($p['email'] ?? true) ? 'checked' : ''; ?>>
+                                        <input aria-label="Channels php echo e type" class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="email" id="email_<?php echo e($type); ?>" <?php echo ($p['email'] ?? true) ? 'checked' : ''; ?>>
                                     </div>
                                 </td>
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
-                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="sms" id="sms_<?php echo e($type); ?>" <?php echo ($p['sms'] ?? false) ? 'checked' : ''; ?>>
+                                        <input aria-label="Channels php echo e type" class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="sms" id="sms_<?php echo e($type); ?>" <?php echo ($p['sms'] ?? false) ? 'checked' : ''; ?>>
                                     </div>
                                 </td>
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
-                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="whatsapp" id="whatsapp_<?php echo e($type); ?>" <?php echo ($p['whatsapp'] ?? false) ? 'checked' : ''; ?>>
+                                        <input aria-label="Channels php echo e type" class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="whatsapp" id="whatsapp_<?php echo e($type); ?>" <?php echo ($p['whatsapp'] ?? false) ? 'checked' : ''; ?>>
                                     </div>
                                 </td>
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
-                                        <input class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="push" id="push_<?php echo e($type); ?>" <?php echo ($p['push'] ?? true) ? 'checked' : ''; ?>>
+                                        <input aria-label="Channels php echo e type" class="form-check-input" type="checkbox" name="channels[<?php echo e($type); ?>][]" value="push" id="push_<?php echo e($type); ?>" <?php echo ($p['push'] ?? true) ? 'checked' : ''; ?>>
                                     </div>
                                 </td>
                                 <td class="text-center">
@@ -89,11 +89,11 @@
                         <div class="row g-3">
                             <div class="col-6">
                                 <label class="form-label"><?php echo __('notif_pref_start_time', [], 'Start Time'); ?></label>
-                                <input type="time" name="quiet_hours_start" class="form-control" value="<?php echo htmlspecialchars($prefs['booking']['quiet_hours_start'] ?? ''); ?>">
+                                <input aria-label="Quiet hours start" type="time" name="quiet_hours_start" class="form-control" value="<?php echo htmlspecialchars($prefs['booking']['quiet_hours_start'] ?? ''); ?>">
                             </div>
                             <div class="col-6">
                                 <label class="form-label"><?php echo __('notif_pref_end_time', [], 'End Time'); ?></label>
-                                <input type="time" name="quiet_hours_end" class="form-control" value="<?php echo htmlspecialchars($prefs['booking']['quiet_hours_end'] ?? ''); ?>">
+                                <input aria-label="Quiet hours end" type="time" name="quiet_hours_end" class="form-control" value="<?php echo htmlspecialchars($prefs['booking']['quiet_hours_end'] ?? ''); ?>">
                             </div>
                         </div>
                         <small class="text-muted d-block mt-1"><?php echo __('notif_pref_quiet_desc', [], 'No notifications will be sent during this time.'); ?></small>

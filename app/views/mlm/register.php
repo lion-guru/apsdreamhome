@@ -22,23 +22,23 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
+                                <input aria-label="Name" type="text" name="name" class="form-control" required value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Email <span class="text-danger">*</span></label>
-                                <input type="email" name="email" class="form-control" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                                <input aria-label="Email" type="email" name="email" class="form-control" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Phone <span class="text-danger">*</span></label>
-                                <input type="tel" name="phone" class="form-control" required value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>">
+                                <input aria-label="Phone" type="tel" name="phone" class="form-control" required value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Password <span class="text-danger">*</span></label>
-                                <input type="password" name="password" class="form-control" required>
+                                <input aria-label="Password" type="password" name="password" class="form-control" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Sponsor ID (optional)</label>
-                                <input type="text" name="sponsor_id" class="form-control" value="<?= htmlspecialchars($_POST['sponsor_id'] ?? $sponsorId ?? '') ?>">
+                                <input aria-label="Sponsor id" type="text" name="sponsor_id" class="form-control" value="<?= htmlspecialchars($_POST['sponsor_id'] ?? $sponsorId ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Placement (optional)</label>

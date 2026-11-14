@@ -23,7 +23,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="rule_name" class="form-label">Rule Name *</label>
-                                    <input type="text" class="form-control" id="rule_name" name="rule_name" required>
+                                    <input aria-label="Rule name" type="text" class="form-control" id="rule_name" name="rule_name" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -43,13 +43,13 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="min_price" class="form-label">Min Price (₹)</label>
-                                    <input type="number" class="form-control" id="min_price" name="min_price">
+                                    <input aria-label="Min price" type="number" class="form-control" id="min_price" name="min_price">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="max_price" class="form-label">Max Price (₹)</label>
-                                    <input type="number" class="form-control" id="max_price" name="max_price">
+                                    <input aria-label="Max price" type="number" class="form-control" id="max_price" name="max_price">
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -70,13 +70,13 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="commission_rate" class="form-label">Commission Rate (%)</label>
-                                    <input type="number" class="form-control" id="commission_rate" name="commission_rate" step="0.01">
+                                    <input aria-label="Commission rate" type="number" class="form-control" id="commission_rate" name="commission_rate" step="0.01">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="fixed_amount" class="form-label">Fixed Amount (₹)</label>
-                                    <input type="number" class="form-control" id="fixed_amount" name="fixed_amount">
+                                    <input aria-label="Fixed amount" type="number" class="form-control" id="fixed_amount" name="fixed_amount">
                                 </div>
                             </div>
                         </div>
@@ -84,13 +84,13 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="tax_deduction" class="form-label">Tax Deduction (%)</label>
-                                    <input type="number" class="form-control" id="tax_deduction" name="tax_deduction" step="0.01" value="18.00">
+                                    <input aria-label="Tax deduction" type="number" class="form-control" id="tax_deduction" name="tax_deduction" step="0.01" value="18.00">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="priority" class="form-label">Priority</label>
-                                    <input type="number" class="form-control" id="priority" name="priority" value="1">
+                                    <input aria-label="Priority" type="number" class="form-control" id="priority" name="priority" value="1">
                                 </div>
                             </div>
                         </div>
@@ -104,7 +104,7 @@
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                                <input aria-label="Is active" class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
                                 <label class="form-check-label" for="is_active">
                                     Active Rule
                                 </label>

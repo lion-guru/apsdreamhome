@@ -23,14 +23,14 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <form id="uploadForm" action="<?php echo e($base); ?>/admin/media-library/upload" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="media_file" class="form-label fw-bold">Select File</label>
-                            <input type="file" class="form-control" id="media_file" name="media_file" required
+                            <input aria-label="Media file" type="file" class="form-control" id="media_file" name="media_file" required
                                    accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.xls,.xlsx">
                             <div class="form-text">Max size: 10MB. Allowed: jpg, png, gif, webp, pdf, doc, xlsx</div>
                         </div>
 
                         <div class="mb-3">
                             <label for="title" class="form-label fw-bold">Title</label>
-                            <input type="text" class="form-control" id="title" name="title" placeholder="File title">
+                            <input aria-label="Title" type="text" class="form-control" id="title" name="title" placeholder="File title">
                         </div>
 
                         <div class="mb-3">
@@ -53,7 +53,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="tags" class="form-label fw-bold">Tags</label>
-                                <input type="text" class="form-control" id="tags" name="tags" placeholder="Comma-separated tags">
+                                <input aria-label="Tags" type="text" class="form-control" id="tags" name="tags" placeholder="Comma-separated tags">
                             </div>
                         </div>
 

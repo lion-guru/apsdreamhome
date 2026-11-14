@@ -211,34 +211,34 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         </div>
                         <div class="col-md-6">
                             <label for="acq_gata" class="form-label fw-semibold">Gata / Khasra Number <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="acq_gata" name="gata_number" placeholder="e.g. Gata 244/1 &amp; 245" required>
+                            <input aria-label="Acq gata" type="text" class="form-control" id="acq_gata" name="gata_number" placeholder="e.g. Gata 244/1 &amp; 245" required>
                         </div>
                     </div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-4">
                             <label for="acq_mauza" class="form-label fw-semibold">Mauza / Village <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="acq_mauza" name="mauza_village" placeholder="e.g. जंगल कौड़िया" required>
+                            <input aria-label="Acq mauza" type="text" class="form-control" id="acq_mauza" name="mauza_village" placeholder="e.g. जंगल कौड़िया" required>
                         </div>
                         <div class="col-md-4">
                             <label for="acq_tehsil" class="form-label fw-semibold">Tehsil</label>
-                            <input type="text" class="form-control" id="acq_tehsil" name="tehsil" value="Sadar">
+                            <input aria-label="Acq tehsil" type="text" class="form-control" id="acq_tehsil" name="tehsil" value="Sadar">
                         </div>
                         <div class="col-md-4">
                             <label for="acq_fasli" class="form-label">Fasli Record Year</label>
-                            <input type="text" class="form-control" id="acq_fasli" name="fasli_year" value="1431-1436 Fasli">
+                            <input aria-label="Acq fasli" type="text" class="form-control" id="acq_fasli" name="fasli_year" value="1431-1436 Fasli">
                         </div>
                     </div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="acq_bigha" class="form-label fw-semibold">Land Area in Bigha <span class="text-danger">*</span></label>
-                            <input type="number" step="0.0001" class="form-control" id="acq_bigha" name="area_bigha" placeholder="e.g. 2.5000" required>
+                            <input aria-label="Acq bigha" type="number" step="0.0001" class="form-control" id="acq_bigha" name="area_bigha" placeholder="e.g. 2.5000" required>
                             <div class="form-text small">1 Pucca Bigha = 27,225 sq.ft</div>
                         </div>
                         <div class="col-md-6">
                             <label for="acq_rate" class="form-label fw-semibold">Agreed Rate per Bigha (₹) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" class="form-control" id="acq_rate" name="rate_per_bigha" placeholder="e.g. 4500000" required>
+                            <input aria-label="Acq rate" type="number" step="0.01" class="form-control" id="acq_rate" name="rate_per_bigha" placeholder="e.g. 4500000" required>
                         </div>
                     </div>
 
@@ -247,35 +247,35 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row g-3 mb-3">
                         <div class="col-md-4">
                             <label for="acq_farmer_name" class="form-label fw-semibold">Farmer Full Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="acq_farmer_name" name="farmer_name" placeholder="e.g. राम प्रसाद मौर्य" required>
+                            <input aria-label="Acq farmer name" type="text" class="form-control" id="acq_farmer_name" name="farmer_name" placeholder="e.g. राम प्रसाद मौर्य" required>
                         </div>
                         <div class="col-md-4">
                             <label for="acq_farmer_phone" class="form-label fw-semibold">Contact Phone <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="acq_farmer_phone" name="farmer_phone" placeholder="e.g. 9839123456" required>
+                            <input aria-label="Acq farmer phone" type="text" class="form-control" id="acq_farmer_phone" name="farmer_phone" placeholder="e.g. 9839123456" required>
                         </div>
                         <div class="col-md-4">
                             <label for="acq_farmer_aadhaar" class="form-label">Aadhaar Number</label>
-                            <input type="text" class="form-control" id="acq_farmer_aadhaar" name="farmer_aadhaar" placeholder="e.g. 1234 5678 9012">
+                            <input aria-label="Acq farmer aadhaar" type="text" class="form-control" id="acq_farmer_aadhaar" name="farmer_aadhaar" placeholder="e.g. 1234 5678 9012">
                         </div>
                     </div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-4">
                             <label for="acq_bank_acc" class="form-label">Bank Account No (RTGS)</label>
-                            <input type="text" class="form-control" id="acq_bank_acc" name="bank_account_no" placeholder="e.g. 302910123456">
+                            <input aria-label="Acq bank acc" type="text" class="form-control" id="acq_bank_acc" name="bank_account_no" placeholder="e.g. 302910123456">
                         </div>
                         <div class="col-md-4">
                             <label for="acq_bank_ifsc" class="form-label">IFSC Code</label>
-                            <input type="text" class="form-control" id="acq_bank_ifsc" name="bank_ifsc" placeholder="e.g. SBIN0001234">
+                            <input aria-label="Acq bank ifsc" type="text" class="form-control" id="acq_bank_ifsc" name="bank_ifsc" placeholder="e.g. SBIN0001234">
                         </div>
                         <div class="col-md-4">
                             <label for="acq_bank_name" class="form-label">Bank Name</label>
-                            <input type="text" class="form-control" id="acq_bank_name" name="bank_name" placeholder="e.g. SBI Gorakhpur">
+                            <input aria-label="Acq bank name" type="text" class="form-control" id="acq_bank_name" name="bank_name" placeholder="e.g. SBI Gorakhpur">
                         </div>
                     </div>
 
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="acq_khatauni" name="khatauni_verified" value="1" checked>
+                        <input aria-label="Acq khatauni" class="form-check-input" type="checkbox" id="acq_khatauni" name="khatauni_verified" value="1" checked>
                         <label class="form-check-label fw-semibold" for="acq_khatauni">
                             Bhulekh UP Online Khatauni verified &amp; clear of bank encumbrance
                         </label>
@@ -284,11 +284,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="acq_agree_date" class="form-label">Agreement (Bayana) Date</label>
-                            <input type="date" class="form-control" id="acq_agree_date" name="agreement_date" value="<?= date('Y-m-d') ?>">
+                            <input aria-label="Acq agree date" type="date" class="form-control" id="acq_agree_date" name="agreement_date" value="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-md-6">
                             <label for="acq_target_date" class="form-label">Target Bainama Registry Date</label>
-                            <input type="date" class="form-control" id="acq_target_date" name="target_registry_date" value="<?= date('Y-m-d', strtotime('+6 months')) ?>">
+                            <input aria-label="Acq target date" type="date" class="form-control" id="acq_target_date" name="target_registry_date" value="<?= date('Y-m-d', strtotime('+6 months')) ?>">
                         </div>
                     </div>
                 </div>

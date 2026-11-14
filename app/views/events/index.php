@@ -87,7 +87,7 @@
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="mb-3">
                         <label class="form-label" for="evName">Event Name *</label>
-                        <input type="text" class="form-control" id="evName" name="event_name" required maxlength="255" placeholder="e.g. booking.completed">
+                        <input aria-label="Ev name" type="text" class="form-control" id="evName" name="event_name" required maxlength="255" placeholder="e.g. booking.completed">
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -102,7 +102,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="evPriority">Priority (1-10)</label>
-                            <input type="number" class="form-control" id="evPriority" name="priority" min="1" max="10" value="1">
+                            <input aria-label="Ev priority" type="number" class="form-control" id="evPriority" name="priority" min="1" max="10" value="1">
                         </div>
                     </div>
                     <div class="mb-3 mt-3">

@@ -26,7 +26,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">File (CSV, XLSX, JSON)</label>
-                            <input type="file" name="file" class="form-control" accept=".csv,.xlsx,.json" required>
+                            <input aria-label="File" type="file" name="file" class="form-control" accept=".csv,.xlsx,.json" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Import Strategy</label>
@@ -37,7 +37,7 @@
                             </select>
                         </div>
                         <div class="mb-3 form-check">
-                            <input type="checkbox" name="skip_errors" class="form-check-input" id="skipErrors" checked>
+                            <input aria-label="Skip errors" type="checkbox" name="skip_errors" class="form-check-input" id="skipErrors" checked>
                             <label class="form-check-label" for="skipErrors">Skip rows with errors</label>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-upload me-1"></i>Start Import</button>

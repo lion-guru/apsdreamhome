@@ -23,11 +23,11 @@ $id = (int)($lead['id'] ?? 0);
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-2">
                             <label class="form-label small">Advocate Name <span class="text-danger">*</span></label>
-                            <input type="text" name="advocate_name" class="form-control form-control-sm" required>
+                            <input aria-label="Advocate name" type="text" name="advocate_name" class="form-control form-control-sm" required>
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Opinion Date <span class="text-danger">*</span></label>
-                            <input type="date" name="opinion_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Opinion date" type="date" name="opinion_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Overall Status</label>
@@ -39,11 +39,11 @@ $id = (int)($lead['id'] ?? 0);
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Checks Performed</label>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="title_verified_chain" value="1" id="c1"><label class="form-check-label small" for="c1">Title chain verified</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="encumbrance_review" value="1" id="c2"><label class="form-check-label small" for="c2">Encumbrance reviewed (EC)</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="boundary_match" value="1" id="c3"><label class="form-check-label small" for="c3">Boundary matches records</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="co_owners_identified" value="1" id="c4"><label class="form-check-label small" for="c4">Co-owners identified</label></div>
-                            <div class="form-check"><input class="form-check-input" type="checkbox" name="government_acquisition_check" value="1" id="c5"><label class="form-check-label small" for="c5">Not under govt. acquisition</label></div>
+                            <div class="form-check"><input aria-label="Title verified chain" class="form-check-input" type="checkbox" name="title_verified_chain" value="1" id="c1"><label class="form-check-label small" for="c1">Title chain verified</label></div>
+                            <div class="form-check"><input aria-label="Encumbrance review" class="form-check-input" type="checkbox" name="encumbrance_review" value="1" id="c2"><label class="form-check-label small" for="c2">Encumbrance reviewed (EC)</label></div>
+                            <div class="form-check"><input aria-label="Boundary match" class="form-check-input" type="checkbox" name="boundary_match" value="1" id="c3"><label class="form-check-label small" for="c3">Boundary matches records</label></div>
+                            <div class="form-check"><input aria-label="Co owners identified" class="form-check-input" type="checkbox" name="co_owners_identified" value="1" id="c4"><label class="form-check-label small" for="c4">Co-owners identified</label></div>
+                            <div class="form-check"><input aria-label="Government acquisition check" class="form-check-input" type="checkbox" name="government_acquisition_check" value="1" id="c5"><label class="form-check-label small" for="c5">Not under govt. acquisition</label></div>
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Encroachment Risk</label>

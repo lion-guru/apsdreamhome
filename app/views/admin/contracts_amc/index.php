@@ -85,7 +85,7 @@
       <form method="GET" class="row g-3">
         <div class="col-md-3">
           <label class="form-label">Search</label>
-          <input type="text" name="search" class="form-control" placeholder="Contract #, Party, Description..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+          <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Contract #, Party, Description..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
         </div>
         <div class="col-md-2">
           <label class="form-label">Status</label>

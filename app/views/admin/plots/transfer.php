@@ -101,19 +101,19 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">Transfer Date</label>
-                                        <input type="date" name="transfer_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                                        <input aria-label="Transfer date" type="date" name="transfer_date" class="form-control" value="<?= date('Y-m-d') ?>">
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">Transfer Amount (₹)</label>
-                                        <input type="number" name="transfer_amount" class="form-control" min="0" step="0.01" value="<?= floatval($plot['total_price'] ?? 0) ?>">
+                                        <input aria-label="Transfer amount" type="number" name="transfer_amount" class="form-control" min="0" step="0.01" value="<?= floatval($plot['total_price'] ?? 0) ?>">
                                         <div class="form-text">Amount to be paid by new owner</div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">Transfer Fee (₹) <span class="text-danger">*</span></label>
-                                        <input type="number" name="transfer_fee" class="form-control" min="0" step="0.01" value="<?= $transferFee ?>" required>
+                                        <input aria-label="Transfer fee" type="number" name="transfer_fee" class="form-control" min="0" step="0.01" value="<?= $transferFee ?>" required>
                                     </div>
                                 </div>
 
@@ -128,7 +128,7 @@ $transferReasons = $transferReasons ?? ['Sale by Owner', 'Gift / Family Transfer
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">Document Reference</label>
-                                        <input type="text" name="document_ref" class="form-control" placeholder="Agreement / Registry #">
+                                        <input aria-label="Document ref" type="text" name="document_ref" class="form-control" placeholder="Agreement / Registry #">
                                     </div>
                                 </div>
 

@@ -990,7 +990,7 @@ function timeAgo($dt) {
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold">Subject *</label>
-                            <input type="text" class="form-control" name="subject" placeholder="Brief summary of interaction..." required>
+                            <input aria-label="Subject" type="text" class="form-control" name="subject" placeholder="Brief summary of interaction..." required>
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold">Details</label>
@@ -1012,16 +1012,16 @@ function timeAgo($dt) {
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Duration (seconds)</label>
-                            <input type="number" class="form-control" name="duration_seconds" placeholder="e.g. 120">
+                            <input aria-label="Duration seconds" type="number" class="form-control" name="duration_seconds" placeholder="e.g. 120">
                         </div>
                         <div class="col-12"><hr></div>
                         <div class="col-md-8">
                             <label class="form-label fw-bold">Follow-up Action</label>
-                            <input type="text" class="form-control" name="next_action" placeholder="e.g. Call back to confirm site visit">
+                            <input aria-label="Next action" type="text" class="form-control" name="next_action" placeholder="e.g. Call back to confirm site visit">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Follow-up Date</label>
-                            <input type="date" class="form-control" name="next_action_date">
+                            <input aria-label="Next action date" type="date" class="form-control" name="next_action_date">
                         </div>
                     </div>
                 </div>
@@ -1048,7 +1048,7 @@ function timeAgo($dt) {
                     <div class="row g-3">
                         <div class="col-12">
                             <label class="form-label fw-bold">Task Title *</label>
-                            <input type="text" class="form-control" name="title" placeholder="e.g. Follow up on pricing query" required>
+                            <input aria-label="Title" type="text" class="form-control" name="title" placeholder="e.g. Follow up on pricing query" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Type</label>
@@ -1072,11 +1072,11 @@ function timeAgo($dt) {
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Due Date *</label>
-                            <input type="date" class="form-control" name="due_date" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Due date" type="date" class="form-control" name="due_date" value="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Due Time</label>
-                            <input type="time" class="form-control" name="due_time">
+                            <input aria-label="Due time" type="time" class="form-control" name="due_time">
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold">Description</label>
@@ -1104,8 +1104,8 @@ function timeAgo($dt) {
             <button type="button" class="btn btn-outline-light quick-type" data-type="meeting" onclick="setQuickType(this)"><i class="fas fa-handshake me-1"></i>Meeting</button>
             <button type="button" class="btn btn-outline-light quick-type" data-type="note" onclick="setQuickType(this)"><i class="fas fa-sticky-note me-1"></i>Note</button>
         </div>
-        <input type="text" id="quickSubject" class="form-control form-control-sm" placeholder="Quick subject..." >
-        <input type="text" id="quickBody" class="form-control form-control-sm" placeholder="Details (optional)..." >
+        <input aria-label="Quick subject" type="text" id="quickSubject" class="form-control form-control-sm" placeholder="Quick subject..." >
+        <input aria-label="Quick body" type="text" id="quickBody" class="form-control form-control-sm" placeholder="Details (optional)..." >
         <button type="button" class="btn btn-sm btn-primary" id="quickLogBtn" onclick="submitQuickLog()" >
             <i class="fas fa-paper-plane me-1"></i> Log
         </button>

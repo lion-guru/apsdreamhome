@@ -140,15 +140,15 @@ $user_data['uphone'] = $user_data['phone'];
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label small text-muted"><?= __('user_edit_full_name', null, 'Full Name') ?></label>
-                            <input type="text" name="name" class="form-control border-0 bg-light rounded-3 p-3" value="<?= h($user_data['uname']) ?>" required>
+                            <input aria-label="Name" type="text" name="name" class="form-control border-0 bg-light rounded-3 p-3" value="<?= h($user_data['uname']) ?>" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small text-muted"><?= __('user_edit_email', null, 'Email Address') ?></label>
-                            <input type="email" name="email" class="form-control border-0 bg-light rounded-3 p-3" value="<?= h($user_data['uemail']) ?>" required>
+                            <input aria-label="Email" type="email" name="email" class="form-control border-0 bg-light rounded-3 p-3" value="<?= h($user_data['uemail']) ?>" required>
                         </div>
                         <div class="mb-4">
                             <label class="form-label small text-muted"><?= __('user_edit_phone', null, 'Phone Number') ?></label>
-                            <input type="text" name="phone" class="form-control border-0 bg-light rounded-3 p-3" value="<?= h($user_data['uphone'] ?? '') ?>">
+                            <input aria-label="Phone" type="text" name="phone" class="form-control border-0 bg-light rounded-3 p-3" value="<?= h($user_data['uphone'] ?? '') ?>">
                         </div>
                         <button type="submit" name="update_basic" class="btn btn-primary rounded-pill px-5 shadow-sm">
                             <?= __('user_edit_save_changes', null, 'Save Changes') ?>
@@ -169,15 +169,15 @@ $user_data['uphone'] = $user_data['phone'];
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label small text-muted"><?= __('user_edit_current_password', null, 'Current Password') ?></label>
-                            <input type="password" name="old_password" class="form-control border-0 bg-light rounded-3 p-3" required>
+                            <input aria-label="Old password" type="password" name="old_password" class="form-control border-0 bg-light rounded-3 p-3" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small text-muted"><?= __('user_edit_new_password', null, 'New Password') ?></label>
-                            <input type="password" name="new_password" class="form-control border-0 bg-light rounded-3 p-3" required>
+                            <input aria-label="New password" type="password" name="new_password" class="form-control border-0 bg-light rounded-3 p-3" required>
                         </div>
                         <div class="mb-4">
                             <label class="form-label small text-muted"><?= __('user_edit_confirm_password', null, 'Confirm New Password') ?></label>
-                            <input type="password" name="confirm_password" class="form-control border-0 bg-light rounded-3 p-3" required>
+                            <input aria-label="Confirm password" type="password" name="confirm_password" class="form-control border-0 bg-light rounded-3 p-3" required>
                         </div>
                         <button type="submit" name="update_password" class="btn btn-dark rounded-pill px-5 shadow-sm w-100">
                             <?= __('user_edit_update_password', null, 'Update Password') ?>

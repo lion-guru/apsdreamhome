@@ -47,16 +47,16 @@ $badge = ['pending' => 'warning', 'verified' => 'success', 'rejected' => 'danger
                             </select>
                         </div>
                         <div class="row g-2">
-                            <div class="col-md-6"><label class="form-label small">Country of residence *</label><input type="text" name="country_of_residence" class="form-control" required maxlength="100" placeholder="e.g. UAE"></div>
-                            <div class="col-md-6"><label class="form-label small">Passport number *</label><input type="text" name="passport_number" class="form-control" required maxlength="50"></div>
-                            <div class="col-md-6"><label class="form-label small">Visa type</label><input type="text" name="visa_type" class="form-control" maxlength="50" placeholder="e.g. Employment"></div>
+                            <div class="col-md-6"><label class="form-label small">Country of residence *</label><input aria-label="Country of residence" type="text" name="country_of_residence" class="form-control" required maxlength="100" placeholder="e.g. UAE"></div>
+                            <div class="col-md-6"><label class="form-label small">Passport number *</label><input aria-label="Passport number" type="text" name="passport_number" class="form-control" required maxlength="50"></div>
+                            <div class="col-md-6"><label class="form-label small">Visa type</label><input aria-label="Visa type" type="text" name="visa_type" class="form-control" maxlength="50" placeholder="e.g. Employment"></div>
                             <div class="col-md-6"><label class="form-label small">Bank account</label>
                                 <select aria-label="Bank account type" name="bank_account_type" class="form-select"><option>NRE</option><option>NRO</option><option>FCNR</option></select>
                             </div>
-                            <div class="col-12"><label class="form-label small">FIRC number (from your bank)</label><input type="text" name="firc_number" class="form-control" maxlength="100"></div>
-                            <div class="col-md-6"><label class="form-label small">FIRC document (pdf/doc/txt ≤5MB)</label><input type="file" name="firc_doc" class="form-control" accept=".pdf,.doc,.docx,.csv,.txt"></div>
-                            <div class="col-md-6"><label class="form-label small">Passport scan (pdf/doc/txt ≤5MB)</label><input type="file" name="passport_doc" class="form-control" accept=".pdf,.doc,.docx,.csv,.txt"></div>
-                            <div class="col-12 form-check mt-2"><input type="checkbox" name="fema_declaration_signed" value="1" class="form-check-input" id="femaBox" checked><label class="form-check-label small" for="femaBox">I declare the funds comply with FEMA for property purchase in India.</label></div>
+                            <div class="col-12"><label class="form-label small">FIRC number (from your bank)</label><input aria-label="Firc number" type="text" name="firc_number" class="form-control" maxlength="100"></div>
+                            <div class="col-md-6"><label class="form-label small">FIRC document (pdf/doc/txt ≤5MB)</label><input aria-label="Firc doc" type="file" name="firc_doc" class="form-control" accept=".pdf,.doc,.docx,.csv,.txt"></div>
+                            <div class="col-md-6"><label class="form-label small">Passport scan (pdf/doc/txt ≤5MB)</label><input aria-label="Passport doc" type="file" name="passport_doc" class="form-control" accept=".pdf,.doc,.docx,.csv,.txt"></div>
+                            <div class="col-12 form-check mt-2"><input aria-label="Fema declaration signed" type="checkbox" name="fema_declaration_signed" value="1" class="form-check-input" id="femaBox" checked><label class="form-check-label small" for="femaBox">I declare the funds comply with FEMA for property purchase in India.</label></div>
                         </div>
                         <button type="submit" class="btn btn-primary mt-3"><i class="fas fa-paper-plane me-1"></i>Submit for Verification</button>
                     </form>

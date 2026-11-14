@@ -89,22 +89,22 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
                 
                 <div class="col-md-3">
                     <label class="form-label">Description</label>
-                    <input type="text" name="description" class="form-control" placeholder="e.g., Road construction" required>
+                    <input aria-label="Description" type="text" name="description" class="form-control" placeholder="e.g., Road construction" required>
                 </div>
                 
                 <div class="col-md-2">
                     <label class="form-label">Amount (₹)</label>
-                    <input type="number" name="amount" class="form-control" placeholder="0" min="0" step="0.01" required>
+                    <input aria-label="Amount" type="number" name="amount" class="form-control" placeholder="0" min="0" step="0.01" required>
                 </div>
                 
                 <div class="col-md-2">
                     <label class="form-label">Rate/sqft (₹)</label>
-                    <input type="number" name="per_sqft_rate" class="form-control" placeholder="0" min="0" step="0.01">
+                    <input aria-label="Per sqft rate" type="number" name="per_sqft_rate" class="form-control" placeholder="0" min="0" step="0.01">
                 </div>
                 
                 <div class="col-md-2">
                     <label class="form-label">Total Area</label>
-                    <input type="number" name="total_area" class="form-control" placeholder="0" min="0" step="0.01">
+                    <input aria-label="Total area" type="number" name="total_area" class="form-control" placeholder="0" min="0" step="0.01">
                 </div>
                 
                 <div class="col-12">
@@ -171,7 +171,7 @@ $page_title = 'Colony Cost Detail - APS Dream Home';
                 
                 <div class="col-md-4">
                     <label class="form-label">Profit Margin (%)</label>
-                    <input type="number" name="margin_percent" class="form-control" value="25" min="0" max="100" required>
+                    <input aria-label="Margin percent" type="number" name="margin_percent" class="form-control" value="25" min="0" max="100" required>
                     <small class="text-muted">Added to cost price</small>
                 </div>
                 

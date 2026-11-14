@@ -22,17 +22,17 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 
                         <div class="mb-3">
                             <label class="form-label">Customer Name <span class="text-danger">*</span></label>
-                            <input type="text" name="customer_name" class="form-control" required placeholder="e.g. Rajesh Kumar">
+                            <input aria-label="Customer name" type="text" name="customer_name" class="form-control" required placeholder="e.g. Rajesh Kumar">
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Amount (₹) <span class="text-danger">*</span></label>
-                                <input type="number" name="amount" class="form-control" required step="0.01" min="1" placeholder="e.g. 50000">
+                                <input aria-label="Amount" type="number" name="amount" class="form-control" required step="0.01" min="1" placeholder="e.g. 50000">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Collection Date</label>
-                                <input type="date" name="collection_date" class="form-control" value="<?php echo htmlspecialchars($today ?? ''); ?>">
+                                <input aria-label="Collection date" type="date" name="collection_date" class="form-control" value="<?php echo htmlspecialchars($today ?? ''); ?>">
                             </div>
                         </div>
 
@@ -48,12 +48,12 @@ $base = defined('BASE_URL') ? BASE_URL : '';
 
                         <div class="mb-3">
                             <label class="form-label">Reference Number (Cheque/UTR No.)</label>
-                            <input type="text" name="reference_number" class="form-control" placeholder="Optional — cheque number or UTR">
+                            <input aria-label="Reference number" type="text" name="reference_number" class="form-control" placeholder="Optional — cheque number or UTR">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Receipt Photo</label>
-                            <input type="file" name="receipt_photo" class="form-control" accept="image/jpeg,image/png,image/webp">
+                            <input aria-label="Receipt photo" type="file" name="receipt_photo" class="form-control" accept="image/jpeg,image/png,image/webp">
                             <div class="form-text">Upload a photo of the payment receipt or customer signature (max 5MB)</div>
                         </div>
 

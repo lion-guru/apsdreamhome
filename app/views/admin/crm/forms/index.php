@@ -79,23 +79,23 @@
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label class="form-label fw-bold">Form Name *</label>
-                            <input type="text" class="form-control" name="name" id="modalFormName" required placeholder="e.g. Property Inquiry Form">
+                            <input aria-label="Name" type="text" class="form-control" name="name" id="modalFormName" required placeholder="e.g. Property Inquiry Form">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Submit Button Text</label>
-                            <input type="text" class="form-control" name="submit_text" id="modalSubmitText" value="Submit" placeholder="Submit">
+                            <input aria-label="Submit text" type="text" class="form-control" name="submit_text" id="modalSubmitText" value="Submit" placeholder="Submit">
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold">Description</label>
-                            <input type="text" class="form-control" name="description" id="modalDescription" placeholder="Internal description">
+                            <input aria-label="Description" type="text" class="form-control" name="description" id="modalDescription" placeholder="Internal description">
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold">Success Message</label>
-                            <input type="text" class="form-control" name="success_message" id="modalSuccessMsg" value="Thank you for your interest! We'll contact you soon.">
+                            <input aria-label="Success message" type="text" class="form-control" name="success_message" id="modalSuccessMsg" value="Thank you for your interest! We'll contact you soon.">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Redirect URL (optional)</label>
-                            <input type="url" class="form-control" name="redirect_url" id="modalRedirectUrl" placeholder="https://example.com/thank-you">
+                            <input aria-label="Redirect url" type="url" class="form-control" name="redirect_url" id="modalRedirectUrl" placeholder="https://example.com/thank-you">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Auto-assign to Agent</label>
@@ -129,7 +129,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Tags (comma-separated)</label>
-                            <input type="text" class="form-control" name="tags" id="modalTags" placeholder="e.g. website, landing-page, facebook">
+                            <input aria-label="Tags" type="text" class="form-control" name="tags" id="modalTags" placeholder="e.g. website, landing-page, facebook">
                         </div>
                     </div>
                     <input type="hidden" name="fields" id="modalFieldsJson" value="[]">

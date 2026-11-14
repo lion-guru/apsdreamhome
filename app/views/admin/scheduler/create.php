@@ -16,7 +16,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Task Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" placeholder="e.g., Send Daily Reports" required>
+                            <input aria-label="Name" type="text" name="name" class="form-control" placeholder="e.g., Send Daily Reports" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
@@ -36,15 +36,15 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Schedule Expression <span class="text-danger">*</span></label>
-                            <input type="text" name="schedule" class="form-control" placeholder="e.g., 0 8 * * * (cron format)" required>
+                            <input aria-label="Schedule" type="text" name="schedule" class="form-control" placeholder="e.g., 0 8 * * * (cron format)" required>
                             <small class="text-muted">Use cron format: minute hour day month weekday</small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Command / Action</label>
-                            <input type="text" name="command" class="form-control" placeholder="PHP class::method or shell command">
+                            <input aria-label="Command" type="text" name="command" class="form-control" placeholder="PHP class::method or shell command">
                         </div>
                         <div class="mb-3 form-check form-switch">
-                            <input type="checkbox" name="enabled" class="form-check-input" id="enabledToggle" value="1" checked>
+                            <input aria-label="Enabled" type="checkbox" name="enabled" class="form-check-input" id="enabledToggle" value="1" checked>
                             <label class="form-check-label" for="enabledToggle">Enable task immediately</label>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Create Task</button>

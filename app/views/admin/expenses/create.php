@@ -25,7 +25,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Amount (₹) *</label>
-                                <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
+                                <input aria-label="Amount" type="number" name="amount" class="form-control" step="0.01" min="0" required>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -41,7 +41,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Date *</label>
-                                <input type="date" name="expense_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                                <input aria-label="Expense date" type="date" name="expense_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                             </div>
                         </div>
                         <div class="mb-3">

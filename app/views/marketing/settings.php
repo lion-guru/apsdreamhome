@@ -12,11 +12,11 @@
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Default Campaign Budget (INR)</label>
-                            <input type="number" name="default_budget" class="form-control" value="<?= (int)($settings['default_budget'] ?? 50000) ?>">
+                            <input aria-label="Default budget" type="number" name="default_budget" class="form-control" value="<?= (int)($settings['default_budget'] ?? 50000) ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Lead Generation Target (Monthly)</label>
-                            <input type="number" name="monthly_lead_target" class="form-control" value="<?= (int)($settings['monthly_lead_target'] ?? 100) ?>">
+                            <input aria-label="Monthly lead target" type="number" name="monthly_lead_target" class="form-control" value="<?= (int)($settings['monthly_lead_target'] ?? 100) ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Attribution Window (Days)</label>
@@ -33,15 +33,15 @@
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Sender Name</label>
-                            <input type="text" name="email_sender_name" class="form-control" value="<?= htmlspecialchars($settings['email_sender_name'] ?? 'APS Dream Home') ?>">
+                            <input aria-label="Email sender name" type="text" name="email_sender_name" class="form-control" value="<?= htmlspecialchars($settings['email_sender_name'] ?? 'APS Dream Home') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Sender Email</label>
-                            <input type="email" name="email_sender_email" class="form-control" value="<?= htmlspecialchars($settings['email_sender_email'] ?? 'noreply@apsdreamhome.com') ?>">
+                            <input aria-label="Email sender email" type="email" name="email_sender_email" class="form-control" value="<?= htmlspecialchars($settings['email_sender_email'] ?? 'noreply@apsdreamhome.com') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Max Emails Per Day</label>
-                            <input type="number" name="max_emails_per_day" class="form-control" value="<?= (int)($settings['max_emails_per_day'] ?? 500) ?>">
+                            <input aria-label="Max emails per day" type="number" name="max_emails_per_day" class="form-control" value="<?= (int)($settings['max_emails_per_day'] ?? 500) ?>">
                         </div>
                     </div>
                 </div>
@@ -49,11 +49,11 @@
                     <div class="card-header bg-white border-bottom"><h5 class="mb-0">Social Media</h5></div>
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3 form-check form-switch">
-                            <input type="checkbox" name="auto_post_facebook" class="form-check-input" id="fbAuto" value="1" <?= !empty($settings['auto_post_facebook']) ? 'checked' : '' ?>>
+                            <input aria-label="Auto post facebook" type="checkbox" name="auto_post_facebook" class="form-check-input" id="fbAuto" value="1" <?= !empty($settings['auto_post_facebook']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="fbAuto">Auto-post new properties to Facebook</label>
                         </div>
                         <div class="mb-3 form-check form-switch">
-                            <input type="checkbox" name="auto_post_instagram" class="form-check-input" id="igAuto" value="1" <?= !empty($settings['auto_post_instagram']) ? 'checked' : '' ?>>
+                            <input aria-label="Auto post instagram" type="checkbox" name="auto_post_instagram" class="form-check-input" id="igAuto" value="1" <?= !empty($settings['auto_post_instagram']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="igAuto">Auto-post new properties to Instagram</label>
                         </div>
                     </div>

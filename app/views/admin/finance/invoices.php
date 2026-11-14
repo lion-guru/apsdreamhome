@@ -15,7 +15,7 @@
             <form method="GET" action="<?= BASE_URL ?>/admin/finance/invoices" class="row g-3">
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
-                    <input type="text" name="search" class="form-control" placeholder="Search by number or client..." value="<?= htmlspecialchars($search ?? '') ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search by number or client..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <select aria-label="Status" name="status" class="form-select">

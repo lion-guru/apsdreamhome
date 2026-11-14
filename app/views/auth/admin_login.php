@@ -333,7 +333,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
                     </label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-regular fa-envelope"></i></span>
-                        <input
+                        <input aria-label="Username"
                             type="text"
                             class="form-control"
                             id="username"
@@ -352,7 +352,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
                     </label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
-                        <input
+                        <input aria-label="Password"
                             type="password"
                             class="form-control"
                             id="password"
@@ -370,7 +370,7 @@ if (session_status() === PHP_SESSION_NONE) @session_start();
                     </label>
                     <div class="captcha-box">
                         <span class="captcha-question"><?php echo htmlspecialchars($captcha_question ?? ''); ?></span>
-                        <input
+                        <input aria-label="Captcha answer"
                             type="text"
                             class="form-control"
                             name="captcha_answer"

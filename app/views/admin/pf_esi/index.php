@@ -11,7 +11,7 @@ $month_year = $month_year ?? date('Y-m');
 
     <div class="card mb-4"><div class="card-body">
         <form method="GET" class="row">
-            <div class="col-md-3"><label>Month</label><input type="month" name="month_year" class="form-control" value="<?= $month_year ?>"></div>
+            <div class="col-md-3"><label>Month</label><input aria-label="Month year" type="month" name="month_year" class="form-control" value="<?= $month_year ?>"></div>
             <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Filter</button></div>
             <div class="col-md-2 d-flex align-items-end"><a href="<?= BASE_URL ?>/admin/pf-esi" class="btn btn-outline-secondary w-100">Clear</a></div>
         </form>
@@ -44,7 +44,7 @@ $month_year = $month_year ?? date('Y-m');
     <div class="card"><div class="card-header"><strong>Process Month</strong></div><div class="card-body">
         <form method="POST" action="<?= BASE_URL ?>/admin/pf-esi/process" class="row" onsubmit="return confirm('Process PF/ESI for ' + document.getElementById('processMonth').value + '?');">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-            <div class="col-md-3"><label>Month to Process</label><input type="month" id="processMonth" name="month_year" class="form-control" value="<?= $month_year ?>" required></div>
+            <div class="col-md-3"><label>Month to Process</label><input aria-label="Process month" type="month" id="processMonth" name="month_year" class="form-control" value="<?= $month_year ?>" required></div>
             <div class="col-md-2 d-flex align-items-end"><button type="submit" class="btn btn-primary w-100"><i class="fas fa-cogs me-2"></i>Process</button></div>
         </form>
     </div></div>

@@ -70,8 +70,8 @@
                                             <div class="modal-body">
                                                 <p><strong><?= htmlspecialchars($t['employee_name'] ?? '') ?></strong> - <?= date('F', mktime(0,0,0,$t['month']??1,1)) ?> <?= $t['year'] ?? '' ?></p>
                                                 <div class="mb-3"><label class="form-label">Net Pay</label><input type="text" class="form-control" value="₹<?= number_format($t['net_pay'] ?? 0, 2) ?>" disabled></div>
-                                                <div class="mb-3"><label class="form-label">Paid Amount (₹)</label><input type="number" step="0.01" name="paid_amount" class="form-control" value="<?= $t['paid_amount'] ?? 0 ?>"></div>
-                                                <div class="mb-3"><label class="form-label">Payment Date</label><input type="date" name="payment_date" class="form-control" value="<?= $t['payment_date'] ?? date('Y-m-d') ?>"></div>
+                                                <div class="mb-3"><label class="form-label">Paid Amount (₹)</label><input aria-label="Paid amount" type="number" step="0.01" name="paid_amount" class="form-control" value="<?= $t['paid_amount'] ?? 0 ?>"></div>
+                                                <div class="mb-3"><label class="form-label">Payment Date</label><input aria-label="Payment date" type="date" name="payment_date" class="form-control" value="<?= $t['payment_date'] ?? date('Y-m-d') ?>"></div>
                                                 <div class="mb-3"><label class="form-label">Status</label>
                                                     <select aria-label="Payment status" name="payment_status" class="form-select">
                                                         <option value="pending" <?= ($t['payment_status']??'')==='pending'?'selected':'' ?>>Pending</option>

@@ -106,12 +106,12 @@
                     
                     <div class="mb-3">
                         <label class="form-label">Tags (comma-separated)</label>
-                        <input type="text" name="tags" class="form-control" placeholder="e.g. followup, complaint, vip, callback" data-role="tagsinput">
+                        <input aria-label="Tags" type="text" name="tags" class="form-control" placeholder="e.g. followup, complaint, vip, callback" data-role="tagsinput">
                         <div class="form-text">Press Enter after each tag</div>
                     </div>
                     
                     <div class="mb-3 form-check">
-                        <input type="checkbox" name="is_important" class="form-check-input" id="isImportant">
+                        <input aria-label="Is important" type="checkbox" name="is_important" class="form-check-input" id="isImportant">
                         <label class="form-check-label" for="isImportant"><i class="fas fa-star text-warning me-1"></i>Mark as Important</label>
                     </div>
                 </div>
@@ -144,11 +144,11 @@
                     
                     <div class="mb-3">
                         <label class="form-label">Tags (comma-separated)</label>
-                        <input type="text" name="tags" class="form-control" placeholder="e.g. followup, complaint, vip, callback" data-role="tagsinput">
+                        <input aria-label="Tags" type="text" name="tags" class="form-control" placeholder="e.g. followup, complaint, vip, callback" data-role="tagsinput">
                     </div>
                     
                     <div class="mb-3 form-check">
-                        <input type="checkbox" name="is_important" class="form-check-input" id="editIsImportant">
+                        <input aria-label="Is important" type="checkbox" name="is_important" class="form-check-input" id="editIsImportant">
                         <label class="form-check-label" for="editIsImportant"><i class="fas fa-star text-warning me-1"></i>Mark as Important</label>
                     </div>
                 </div>

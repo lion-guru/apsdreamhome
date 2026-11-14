@@ -75,11 +75,11 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Progress %</label>
-                            <input type="number" name="progress_pct" class="form-control" min="0" max="100" value="<?= (int)($project['progress_pct'] ?? 0) ?>">
+                            <input aria-label="Progress pct" type="number" name="progress_pct" class="form-control" min="0" max="100" value="<?= (int)($project['progress_pct'] ?? 0) ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Milestone Title</label>
-                            <input type="text" name="milestone_title" class="form-control" placeholder="e.g. Foundation Complete">
+                            <input aria-label="Milestone title" type="text" name="milestone_title" class="form-control" placeholder="e.g. Foundation Complete">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Milestone Status</label>
@@ -100,23 +100,23 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Project Budget (₹)</label>
-                            <input type="number" name="project_budget" class="form-control" step="0.01" value="<?= (float)($project['project_budget'] ?? 0) ?>">
+                            <input aria-label="Project budget" type="number" name="project_budget" class="form-control" step="0.01" value="<?= (float)($project['project_budget'] ?? 0) ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Amount Spent (₹)</label>
-                            <input type="number" name="amount_spent" class="form-control" step="0.01" value="<?= (float)($project['amount_spent'] ?? 0) ?>">
+                            <input aria-label="Amount spent" type="number" name="amount_spent" class="form-control" step="0.01" value="<?= (float)($project['amount_spent'] ?? 0) ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Project Manager</label>
-                            <input type="text" name="project_manager" class="form-control" value="<?= htmlspecialchars($project['project_manager'] ?? '') ?>">
+                            <input aria-label="Project manager" type="text" name="project_manager" class="form-control" value="<?= htmlspecialchars($project['project_manager'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Site Supervisor</label>
-                            <input type="text" name="site_supervisor" class="form-control" value="<?= htmlspecialchars($project['site_supervisor'] ?? '') ?>">
+                            <input aria-label="Site supervisor" type="text" name="site_supervisor" class="form-control" value="<?= htmlspecialchars($project['site_supervisor'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Contractor</label>
-                            <input type="text" name="contractor_name" class="form-control" value="<?= htmlspecialchars($project['contractor_name'] ?? '') ?>">
+                            <input aria-label="Contractor name" type="text" name="contractor_name" class="form-control" value="<?= htmlspecialchars($project['contractor_name'] ?? '') ?>">
                         </div>
                         <button type="submit" class="btn btn-warning w-100"><i class="fas fa-save me-1"></i>Update Budget & Team</button>
                     </form>

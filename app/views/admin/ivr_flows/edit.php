@@ -34,7 +34,7 @@ $steps = $steps ?? [];
                     
                     <div class="mb-3">
                         <label class="form-label">Flow Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="name" required value="<?= htmlspecialchars($flow['name'] ?? '') ?>">
+                        <input aria-label="Name" type="text" class="form-control" name="name" required value="<?= htmlspecialchars($flow['name'] ?? '') ?>">
                     </div>
 
                     <div class="mb-3">
@@ -48,7 +48,7 @@ $steps = $steps ?? [];
                     </div>
 
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" name="is_active" id="is_active" value="1" <?= ($flow['is_active'] ?? 0) ? 'checked' : '' ?>>
+                        <input aria-label="Is active" type="checkbox" class="form-check-input" name="is_active" id="is_active" value="1" <?= ($flow['is_active'] ?? 0) ? 'checked' : '' ?>>
                         <label class="form-check-label" for="is_active">Active (can receive calls)</label>
                     </div>
 

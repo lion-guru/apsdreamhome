@@ -44,7 +44,7 @@ $merge_fields = $merge_fields ?? [];
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label">Temperature</label>
-                                <input type="range" name="temperature" class="form-range" min="0" max="1" step="0.05" value="0.30" oninput="this.nextElementSibling.textContent=this.value">
+                                <input aria-label="Temperature" type="range" name="temperature" class="form-range" min="0" max="1" step="0.05" value="0.30" oninput="this.nextElementSibling.textContent=this.value">
                                 <span class="small text-muted">0.30</span>
                             </div>
                             <div class="col-md-4">

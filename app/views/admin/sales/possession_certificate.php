@@ -19,12 +19,12 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
     <form method="POST" action="<?= $base ?>/admin/sales/bookings/<?= (int)($booking['id'] ?? 0) ?>/possession-certificate/issue" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
         <div class="row g-2">
-            <div class="col-md-2"><label class="form-label small">Handover date *</label><input type="date" name="handover_date" class="form-control" required value="<?= date('Y-m-d') ?>"></div>
+            <div class="col-md-2"><label class="form-label small">Handover date *</label><input aria-label="Handover date" type="date" name="handover_date" class="form-control" required value="<?= date('Y-m-d') ?>"></div>
             <div class="col-md-2"><label class="form-label small">Status</label><select aria-label="Handover status" name="handover_status" class="form-select"><option value="final">Final</option><option value="provisional">Provisional</option></select></div>
-            <div class="col-md-3"><label class="form-label small">Site engineer</label><input type="text" name="site_engineer_name" class="form-control" maxlength="100"></div>
-            <div class="col-md-2"><label class="form-label small">Engineer phone</label><input type="tel" name="site_engineer_phone" class="form-control" maxlength="20"></div>
-            <div class="col-md-3"><label class="form-label small">Pillar photo (≤5MB)</label><input type="file" name="pillar_photo" class="form-control" accept=".jpg,.jpeg,.png,.webp"></div>
-            <div class="col-12 form-check ms-1"><input type="checkbox" name="demarcation_done" value="1" class="form-check-input" id="demBox" checked><label class="form-check-label small" for="demBox">Boundary pillars demarcated (4 pillars installed)</label></div>
+            <div class="col-md-3"><label class="form-label small">Site engineer</label><input aria-label="Site engineer name" type="text" name="site_engineer_name" class="form-control" maxlength="100"></div>
+            <div class="col-md-2"><label class="form-label small">Engineer phone</label><input aria-label="Site engineer phone" type="tel" name="site_engineer_phone" class="form-control" maxlength="20"></div>
+            <div class="col-md-3"><label class="form-label small">Pillar photo (≤5MB)</label><input aria-label="Pillar photo" type="file" name="pillar_photo" class="form-control" accept=".jpg,.jpeg,.png,.webp"></div>
+            <div class="col-12 form-check ms-1"><input aria-label="Demarcation done" type="checkbox" name="demarcation_done" value="1" class="form-check-input" id="demBox" checked><label class="form-check-label small" for="demBox">Boundary pillars demarcated (4 pillars installed)</label></div>
             <div class="col-12"><label class="form-label small">Remarks (पूर्व/पश्चिम/उत्तर/दक्षिण measurements)</label><textarea aria-label="Remarks" name="remarks" class="form-control" rows="2" maxlength="1000"></textarea></div>
         </div>
         <button type="submit" class="btn btn-success mt-3"><i class="fas fa-certificate me-1"></i>Issue Certificate</button>

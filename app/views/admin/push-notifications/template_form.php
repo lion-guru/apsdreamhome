@@ -30,7 +30,7 @@
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Template Name <span >*</span></label>
-                            <input type="text" name="name" class="form-control" required
+                            <input aria-label="Name" type="text" name="name" class="form-control" required
                                    value="<?= htmlspecialchars($template['name'] ?? '') ?>"
                                    placeholder="e.g. Property Alert, Payment Reminder"
                                    >
@@ -51,7 +51,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Subject (Email/SMS)</label>
-                                <input type="text" name="subject" class="form-control"
+                                <input aria-label="Subject" type="text" name="subject" class="form-control"
                                        value="<?= htmlspecialchars($template['subject'] ?? '') ?>"
                                        placeholder="Email subject line"
                                        >
@@ -60,7 +60,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Title</label>
-                            <input type="text" name="title" class="form-control"
+                            <input aria-label="Title" type="text" name="title" class="form-control"
                                    value="<?= htmlspecialchars($template['title'] ?? '') ?>"
                                    placeholder="Notification title (shown in header)"
                                    >
@@ -75,7 +75,7 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Variables (comma-separated)</label>
-                            <input type="text" name="variables" class="form-control"
+                            <input aria-label="Variables" type="text" name="variables" class="form-control"
                                    value="<?= htmlspecialchars($template['variables'] ?? '') ?>"
                                    placeholder="e.g. user_name, property_name, amount"
                                    >

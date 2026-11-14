@@ -45,7 +45,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <?php foreach ($settings as $s): ?>
                     <div class="setting-row">
                         <label><?= htmlspecialchars($s['description'] ?? $s['setting_key']) ?></label>
-                        <input type="text" name="settings[<?= htmlspecialchars($s['setting_key'] ?? '') ?>]" value="<?= htmlspecialchars($s['setting_value'] ?? '') ?>">
+                        <input aria-label="Settings htmlspecialchars s" type="text" name="settings[<?= htmlspecialchars($s['setting_key'] ?? '') ?>]" value="<?= htmlspecialchars($s['setting_value'] ?? '') ?>">
                     </div>
                     <?php endforeach; ?>
                     <?php if (empty($settings)): ?>
@@ -74,15 +74,15 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     <div class="row g-2">
                         <div class="col-6">
                             <small >Price (₹)</small>
-                            <input type="number" name="price" value="<?= $pkg['price'] ?>" class="form-control form-control-sm">
+                            <input aria-label="Price" type="number" name="price" value="<?= $pkg['price'] ?>" class="form-control form-control-sm">
                         </div>
                         <div class="col-6">
                             <small >Duration (days)</small>
-                            <input type="number" name="duration_days" value="<?= $pkg['duration_days'] ?>" class="form-control form-control-sm">
+                            <input aria-label="Duration days" type="number" name="duration_days" value="<?= $pkg['duration_days'] ?>" class="form-control form-control-sm">
                         </div>
                         <div class="col-4">
                             <small >Boost Score</small>
-                            <input type="number" name="boost_score" value="<?= $pkg['boost_score'] ?>" class="form-control form-control-sm">
+                            <input aria-label="Boost score" type="number" name="boost_score" value="<?= $pkg['boost_score'] ?>" class="form-control form-control-sm">
                         </div>
                         <div class="col-8 d-flex align-items-end">
                             <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>

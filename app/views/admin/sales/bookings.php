@@ -30,7 +30,7 @@ $statusBadge = function ($s) {
         <form method="get" class="row g-2 mb-3">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
             <div class="col-md-3">
-                <input type="text" name="search" value="<?= htmlspecialchars((string)($filters['search'] ?? '')) ?>" placeholder="<?= __('sale_search_placeholder') ?>" class="form-control form-control-sm">
+                <input aria-label="Search" type="text" name="search" value="<?= htmlspecialchars((string)($filters['search'] ?? '')) ?>" placeholder="<?= __('sale_search_placeholder') ?>" class="form-control form-control-sm">
             </div>
             <div class="col-md-2">
                 <select aria-label="Status" name="status" class="form-select form-select-sm">
@@ -41,10 +41,10 @@ $statusBadge = function ($s) {
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="date" name="date_from" value="<?= htmlspecialchars((string)($filters['date_from'] ?? '')) ?>" class="form-control form-control-sm">
+                <input aria-label="Date from" type="date" name="date_from" value="<?= htmlspecialchars((string)($filters['date_from'] ?? '')) ?>" class="form-control form-control-sm">
             </div>
             <div class="col-md-2">
-                <input type="date" name="date_to" value="<?= htmlspecialchars((string)($filters['date_to'] ?? '')) ?>" class="form-control form-control-sm">
+                <input aria-label="Date to" type="date" name="date_to" value="<?= htmlspecialchars((string)($filters['date_to'] ?? '')) ?>" class="form-control form-control-sm">
             </div>
             <div class="col-md-3">
                 <button class="btn btn-sm btn-primary" type="submit"><i class="fas fa-search me-1"></i><?= __('sale_filter') ?></button>

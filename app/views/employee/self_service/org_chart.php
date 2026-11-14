@@ -97,7 +97,7 @@ $departments = $departments ?? [];
                 <button class="btn btn-sm btn-outline-secondary" onclick="expandAll()">Expand All</button>
                 <button class="btn btn-sm btn-outline-secondary" onclick="collapseAll()">Collapse All</button>
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="showVacant" checked onchange="toggleVacant()">
+                    <input aria-label="Show vacant" class="form-check-input" type="checkbox" id="showVacant" checked onchange="toggleVacant()">
                     <label class="form-check-label small" for="showVacant">Show Vacant</label>
                 </div>
             </div>

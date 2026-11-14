@@ -267,16 +267,16 @@ $current_status = $current_status ?? 'all';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Demarcation Date <span class="text-danger">*</span></label>
-                            <input type="date" name="demarcation_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Demarcation date" type="date" name="demarcation_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Surveyor Name <span class="text-danger">*</span></label>
-                            <input type="text" name="surveyor_name" class="form-control" placeholder="e.g. Er. Rajesh Srivastava" required>
+                            <input aria-label="Surveyor name" type="text" name="surveyor_name" class="form-control" placeholder="e.g. Er. Rajesh Srivastava" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Surveyor Phone <span class="text-danger">*</span></label>
-                            <input type="text" name="surveyor_phone" class="form-control" placeholder="10-digit mobile number" required>
+                            <input aria-label="Surveyor phone" type="text" name="surveyor_phone" class="form-control" placeholder="10-digit mobile number" required>
                         </div>
 
                         <div class="col-md-6">
@@ -290,7 +290,7 @@ $current_status = $current_status ?? 'all';
                         </div>
                         <div class="col-md-6 d-flex align-items-center mt-4">
                             <div class="form-check">
-                                <input type="checkbox" name="possession_peg_handed_over" value="1" class="form-check-input" id="chkPegHandover">
+                                <input aria-label="Possession peg handed over" type="checkbox" name="possession_peg_handed_over" value="1" class="form-check-input" id="chkPegHandover">
                                 <label class="form-check-label fw-semibold" for="chkPegHandover">
                                     Possession Pegs Handed Over to Allottee On-Site
                                 </label>
@@ -309,30 +309,30 @@ $current_status = $current_status ?? 'all';
                         <div class="col-md-6">
                             <label class="form-label small text-muted">Corner 1: North-West (NW)</label>
                             <div class="input-group input-group-sm">
-                                <input type="number" step="0.00000001" name="corner_nw_lat" class="form-control" placeholder="NW Latitude">
-                                <input type="number" step="0.00000001" name="corner_nw_lng" class="form-control" placeholder="NW Longitude">
+                                <input aria-label="Corner nw lat" type="number" step="0.00000001" name="corner_nw_lat" class="form-control" placeholder="NW Latitude">
+                                <input aria-label="Corner nw lng" type="number" step="0.00000001" name="corner_nw_lng" class="form-control" placeholder="NW Longitude">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small text-muted">Corner 2: North-East (NE)</label>
                             <div class="input-group input-group-sm">
-                                <input type="number" step="0.00000001" name="corner_ne_lat" class="form-control" placeholder="NE Latitude">
-                                <input type="number" step="0.00000001" name="corner_ne_lng" class="form-control" placeholder="NE Longitude">
+                                <input aria-label="Corner ne lat" type="number" step="0.00000001" name="corner_ne_lat" class="form-control" placeholder="NE Latitude">
+                                <input aria-label="Corner ne lng" type="number" step="0.00000001" name="corner_ne_lng" class="form-control" placeholder="NE Longitude">
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label small text-muted">Corner 3: South-West (SW)</label>
                             <div class="input-group input-group-sm">
-                                <input type="number" step="0.00000001" name="corner_sw_lat" class="form-control" placeholder="SW Latitude">
-                                <input type="number" step="0.00000001" name="corner_sw_lng" class="form-control" placeholder="SW Longitude">
+                                <input aria-label="Corner sw lat" type="number" step="0.00000001" name="corner_sw_lat" class="form-control" placeholder="SW Latitude">
+                                <input aria-label="Corner sw lng" type="number" step="0.00000001" name="corner_sw_lng" class="form-control" placeholder="SW Longitude">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small text-muted">Corner 4: South-East (SE)</label>
                             <div class="input-group input-group-sm">
-                                <input type="number" step="0.00000001" name="corner_se_lat" class="form-control" placeholder="SE Latitude">
-                                <input type="number" step="0.00000001" name="corner_se_lng" class="form-control" placeholder="SE Longitude">
+                                <input aria-label="Corner se lat" type="number" step="0.00000001" name="corner_se_lat" class="form-control" placeholder="SE Latitude">
+                                <input aria-label="Corner se lng" type="number" step="0.00000001" name="corner_se_lng" class="form-control" placeholder="SE Longitude">
                             </div>
                         </div>
 

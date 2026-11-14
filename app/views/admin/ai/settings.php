@@ -63,7 +63,7 @@ $engine_status = $engine_status ?? [];
                             <span class="engine-status <?= !empty($engine_status['groq']['available']) ? 'active' : 'inactive' ?>"></span>
                             <label class="api-label mb-0">Groq API Key <span class="free-badge">FREE</span></label>
                         </div>
-                        <input type="password" name="groq_api_key" class="api-input" value="<?= htmlspecialchars($settings['groq_api_key'] ?? '') ?>" placeholder="gsk_...">
+                        <input aria-label="Groq api key" type="password" name="groq_api_key" class="api-input" value="<?= htmlspecialchars($settings['groq_api_key'] ?? '') ?>" placeholder="gsk_...">
                         <div class="api-hint">Free: 30 RPM. <a href="https://console.groq.com/keys" target="_blank" >Get key →'</a> Fastest inference (~500 tok/s)</div>
                     </div>
 
@@ -73,7 +73,7 @@ $engine_status = $engine_status ?? [];
                             <span class="engine-status <?= !empty($engine_status['openrouter']['available']) ? 'active' : 'inactive' ?>"></span>
                             <label class="api-label mb-0">OpenRouter API Key <span class="free-badge">FREE</span></label>
                         </div>
-                        <input type="password" name="openrouter_api_key" class="api-input" value="<?= htmlspecialchars($settings['openrouter_api_key'] ?? '') ?>" placeholder="sk-or-...">
+                        <input aria-label="Openrouter api key" type="password" name="openrouter_api_key" class="api-input" value="<?= htmlspecialchars($settings['openrouter_api_key'] ?? '') ?>" placeholder="sk-or-...">
                         <div class="api-hint">Free models: Llama 3, Mistral, Gemma. <a href="https://openrouter.ai/keys" target="_blank" >Get key →'</a></div>
                     </div>
 
@@ -83,7 +83,7 @@ $engine_status = $engine_status ?? [];
                             <span class="engine-status <?= !empty($engine_status['gemini']['available']) ? 'active' : 'inactive' ?>"></span>
                             <label class="api-label mb-0">Google Gemini API Key <span class="free-badge">FREE</span></label>
                         </div>
-                        <input type="password" name="gemini_api_key" class="api-input" value="<?= htmlspecialchars($settings['api_key'] ?? '') ?>" placeholder="AIza...">
+                        <input aria-label="Gemini api key" type="password" name="gemini_api_key" class="api-input" value="<?= htmlspecialchars($settings['api_key'] ?? '') ?>" placeholder="AIza...">
                         <div class="api-hint">Free: 15 RPM, 1M tokens/day. <a href="https://aistudio.google.com/apikey" target="_blank" >Get key →'</a></div>
                     </div>
 
@@ -93,7 +93,7 @@ $engine_status = $engine_status ?? [];
                             <span class="engine-status <?= !empty($engine_status['hf']['available'] ?? true) ? 'active' : 'inactive' ?>"></span>
                             <label class="api-label mb-0">Hugging Face API Key (RAG Embeddings) <span class="free-badge">FREE</span></label>
                         </div>
-                        <input type="password" name="hf_api_key" class="api-input" value="<?= htmlspecialchars($settings['hf_api_key'] ?? '') ?>" placeholder="hf_...">
+                        <input aria-label="Hf api key" type="password" name="hf_api_key" class="api-input" value="<?= htmlspecialchars($settings['hf_api_key'] ?? '') ?>" placeholder="hf_...">
                         <div class="api-hint">Real 384-dim embeddings for RAG (sentence-transformers/all-MiniLM-L6-v2). <a href="https://hugging.co/settings/tokens" target="_blank">Get key →</a></div>
                     </div>
 
@@ -103,9 +103,9 @@ $engine_status = $engine_status ?? [];
                             <span class="engine-status <?= !empty($engine_status['ollama']['available']) ? 'active' : 'inactive' ?>"></span>
                             <label class="api-label mb-0">Ollama (Local) <span class="free-badge">UNLIMITED</span></label>
                         </div>
-                        <input type="text" name="ollama_url" class="api-input" value="<?= htmlspecialchars($settings['ollama_url'] ?? 'http://localhost:11434') ?>" placeholder="http://localhost:11434">
+                        <input aria-label="Ollama url" type="text" name="ollama_url" class="api-input" value="<?= htmlspecialchars($settings['ollama_url'] ?? 'http://localhost:11434') ?>" placeholder="http://localhost:11434">
                         <div class="api-hint">Unlimited, free, private. <a href="https://ollama.com" target="_blank" >Install →'</a> Run: <code>ollama pull llama3.1:8b</code></div>
-                        <input type="text" name="ollama_model" class="api-input mt-2" value="<?= htmlspecialchars($settings['ollama_model'] ?? 'llama3.1:8b') ?>" placeholder="llama3.1:8b">
+                        <input aria-label="Ollama model" type="text" name="ollama_model" class="api-input mt-2" value="<?= htmlspecialchars($settings['ollama_model'] ?? 'llama3.1:8b') ?>" placeholder="llama3.1:8b">
                     </div>
                 </div>
 

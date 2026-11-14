@@ -11,14 +11,14 @@
                 <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/commission/mlm/levels/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <div class="mb-2"><label class="form-label">Plan ID</label><input type="number" name="plan_id" class="form-control" value="1" required></div>
-                        <div class="mb-2"><label class="form-label">Level</label><input type="number" name="level" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Commission Rate %</label><input type="number" step="0.01" name="commission_rate" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Min users</label><input type="number" name="min_associates" class="form-control" value="0"></div>
-                        <div class="mb-2"><label class="form-label">Direct %</label><input type="number" step="0.01" name="direct_percentage" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Min Business (&#8377;)</label><input type="number" step="0.01" name="min_business" class="form-control" value="0"></div>
-                        <div class="mb-2"><label class="form-label">Max Business (&#8377;)</label><input type="number" step="0.01" name="max_business" class="form-control"></div>
+                        <div class="mb-2"><label class="form-label">Plan ID</label><input aria-label="Plan id" type="number" name="plan_id" class="form-control" value="1" required></div>
+                        <div class="mb-2"><label class="form-label">Level</label><input aria-label="Level" type="number" name="level" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Name</label><input aria-label="Name" type="text" name="name" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Commission Rate %</label><input aria-label="Commission rate" type="number" step="0.01" name="commission_rate" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Min users</label><input aria-label="Min associates" type="number" name="min_associates" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Direct %</label><input aria-label="Direct percentage" type="number" step="0.01" name="direct_percentage" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Min Business (&#8377;)</label><input aria-label="Min business" type="number" step="0.01" name="min_business" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Max Business (&#8377;)</label><input aria-label="Max business" type="number" step="0.01" name="max_business" class="form-control"></div>
                         <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save</button>
                     </form>
                 </div>

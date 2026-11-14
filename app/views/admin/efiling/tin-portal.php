@@ -186,7 +186,7 @@ ob_start();
         <form id="form16aDownload" class="row g-2 align-items-end">
             <div class="col-md-6">
                 <label class="form-label small">Token Number</label>
-                <input type="text" name="token" class="form-control form-control-sm" placeholder="Enter TDS token number">
+                <input aria-label="Token" type="text" name="token" class="form-control form-control-sm" placeholder="Enter TDS token number">
             </div>
             <div class="col-md-3">
                 <button type="submit" class="btn btn-outline-danger btn-sm w-100">

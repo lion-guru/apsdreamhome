@@ -57,7 +57,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     <?php endforeach; ?>
                                 </select>
                                 <?php else: ?>
-                                <input type="<?= $field['type'] ?? 'text' ?>" class="form-control form-control-sm" 
+                                <input aria-label="field" type="<?= $field['type'] ?? 'text' ?>" class="form-control form-control-sm" 
                                     name="<?= $field['name'] ?>" 
                                     placeholder="<?= htmlspecialchars($field['placeholder'] ?? '') ?>"
                                     step="<?= $field['step'] ?? '1' ?>"

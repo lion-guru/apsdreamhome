@@ -36,25 +36,25 @@ $assignees = $assignees ?? [];
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Full Name *</label>
-                        <input type="text" class="form-control" name="name" 
+                        <input aria-label="Name" type="text" class="form-control" name="name" 
                                value="<?= htmlspecialchars($lead['name'] ?? '') ?>" required>
                     </div>
                     
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Email *</label>
-                        <input type="email" class="form-control" name="email" 
+                        <input aria-label="Email" type="email" class="form-control" name="email" 
                                value="<?= htmlspecialchars($lead['email'] ?? '') ?>" required>
                     </div>
                     
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Phone *</label>
-                        <input type="tel" class="form-control" name="phone" 
+                        <input aria-label="Phone" type="tel" class="form-control" name="phone" 
                                value="<?= htmlspecialchars($lead['phone'] ?? '') ?>" required>
                     </div>
                     
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Company</label>
-                        <input type="text" class="form-control" name="company" 
+                        <input aria-label="Company" type="text" class="form-control" name="company" 
                                value="<?= htmlspecialchars($lead['company'] ?? '') ?>">
                     </div>
                     

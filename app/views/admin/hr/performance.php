@@ -82,12 +82,12 @@ $page_title = $page_title ?? 'Performance Reviews';
                         </select>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-6"><label class="form-label">Period Start</label><input type="date" name="period_start" class="form-control" value="<?= date('Y-m-01') ?>"></div>
-                        <div class="col-6"><label class="form-label">Period End</label><input type="date" name="period_end" class="form-control" value="<?= date('Y-m-t') ?>"></div>
+                        <div class="col-6"><label class="form-label">Period Start</label><input aria-label="Period start" type="date" name="period_start" class="form-control" value="<?= date('Y-m-01') ?>"></div>
+                        <div class="col-6"><label class="form-label">Period End</label><input aria-label="Period end" type="date" name="period_end" class="form-control" value="<?= date('Y-m-t') ?>"></div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-6"><label class="form-label">Target Value</label><input type="number" name="target_value" class="form-control" step="0.01"></div>
-                        <div class="col-6"><label class="form-label">Actual Value</label><input type="number" name="actual_value" class="form-control" step="0.01"></div>
+                        <div class="col-6"><label class="form-label">Target Value</label><input aria-label="Target value" type="number" name="target_value" class="form-control" step="0.01"></div>
+                        <div class="col-6"><label class="form-label">Actual Value</label><input aria-label="Actual value" type="number" name="actual_value" class="form-control" step="0.01"></div>
                     </div>
                 </div>
                 <div class="modal-footer">

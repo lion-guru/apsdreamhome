@@ -79,11 +79,11 @@ $stats = $stats ?? [];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">From Date</label>
-                    <input type="date" name="from_date" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['from_date'] ?? '') ?>">
+                    <input aria-label="From date" type="date" name="from_date" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['from_date'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">To Date</label>
-                    <input type="date" name="to_date" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['to_date'] ?? '') ?>">
+                    <input aria-label="To date" type="date" name="to_date" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['to_date'] ?? '') ?>">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-search me-1"></i> Filter</button>

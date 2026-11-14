@@ -60,7 +60,7 @@ $employees = $employees ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Claim Date <span class="text-danger">*</span></label>
-                        <input type="date" name="claim_date" class="form-control" required value="<?= htmlspecialchars($claim['claim_date'] ?? date('Y-m-d')) ?>">
+                        <input aria-label="Claim date" type="date" name="claim_date" class="form-control" required value="<?= htmlspecialchars($claim['claim_date'] ?? date('Y-m-d')) ?>">
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-semibold">Description</label>
@@ -96,41 +96,41 @@ $employees = $employees ?? [];
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold small">Date <span class="text-danger">*</span></label>
-                                <input type="date" name="items[<?= $index ?>][expense_date]" class="form-control" required value="<?= htmlspecialchars($item['expense_date'] ?? date('Y-m-d')) ?>">
+                                <input aria-label="Items index expense date" type="date" name="items[<?= $index ?>][expense_date]" class="form-control" required value="<?= htmlspecialchars($item['expense_date'] ?? date('Y-m-d')) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold small">Description <span class="text-danger">*</span></label>
-                                <input type="text" name="items[<?= $index ?>][description]" class="form-control" required value="<?= htmlspecialchars($item['description'] ?? '') ?>" placeholder="e.g., Client lunch, taxi fare">
+                                <input aria-label="Items index description" type="text" name="items[<?= $index ?>][description]" class="form-control" required value="<?= htmlspecialchars($item['description'] ?? '') ?>" placeholder="e.g., Client lunch, taxi fare">
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label small">Amount (₹) <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" min="0" name="items[<?= $index ?>][amount]" class="form-control form-control-sm" required value="<?= htmlspecialchars($item['amount'] ?? '') ?>">
+                                <input aria-label="Items index amount" type="number" step="0.01" min="0" name="items[<?= $index ?>][amount]" class="form-control form-control-sm" required value="<?= htmlspecialchars($item['amount'] ?? '') ?>">
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label small">GST Amount (₹)</label>
-                                <input type="number" step="0.01" min="0" name="items[<?= $index ?>][gst_amount]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['gst_amount'] ?? '') ?>">
+                                <input aria-label="Items index gst amount" type="number" step="0.01" min="0" name="items[<?= $index ?>][gst_amount]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['gst_amount'] ?? '') ?>">
                             </div>
                             <div class="col-md-1">
                                 <label class="form-label small">GST %</label>
-                                <input type="number" step="0.01" min="0" max="28" name="items[<?= $index ?>][gst_rate]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['gst_rate'] ?? '') ?>">
+                                <input aria-label="Items index gst rate" type="number" step="0.01" min="0" max="28" name="items[<?= $index ?>][gst_rate]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['gst_rate'] ?? '') ?>">
                             </div>
                             <div class="col-md-1">
                                 <label class="form-label small">HSN/SAC</label>
-                                <input type="text" name="items[<?= $index ?>][hsn_sac_code]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['hsn_sac_code'] ?? '') ?>" placeholder="e.g., 9983">
+                                <input aria-label="Items index hsn sac code" type="text" name="items[<?= $index ?>][hsn_sac_code]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['hsn_sac_code'] ?? '') ?>" placeholder="e.g., 9983">
                             </div>
                             <div class="col-12">
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label small">Receipt</label>
-                                        <input type="file" name="items[<?= $index ?>][receipt_file]" class="form-control form-control-sm" accept=".pdf,.jpg,.jpeg,.png">
+                                        <input aria-label="Items index receipt file" type="file" name="items[<?= $index ?>][receipt_file]" class="form-control form-control-sm" accept=".pdf,.jpg,.jpeg,.png">
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label small">HSN/SAC</label>
-                                        <input type="text" name="items[<?= $index ?>][hsn_sac_code]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['hsn_sac_code'] ?? '') ?>">
+                                        <input aria-label="Items index hsn sac code" type="text" name="items[<?= $index ?>][hsn_sac_code]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['hsn_sac_code'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-check form-switch mt-3">
-                                            <input class="form-check-input" type="checkbox" name="items[<?= $index ?>][is_billable]" value="1" id="billable_<?= $index ?>" <?= !empty($item['is_billable']) ? 'checked' : '' ?>>
+                                            <input aria-label="Items index is billable" class="form-check-input" type="checkbox" name="items[<?= $index ?>][is_billable]" value="1" id="billable_<?= $index ?>" <?= !empty($item['is_billable']) ? 'checked' : '' ?>>
                                             <label class="form-check-label small" for="billable_<?= $index ?>">Billable</label>
                                         </div>
                                     </div>
@@ -175,41 +175,41 @@ function addItem() {
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-semibold small">Date <span class="text-danger">*</span></label>
-                    <input type="date" name="items[${index}][expense_date]" class="form-control" required value="<?= date('Y-m-d') ?>">
+                    <input aria-label="Items index expense date" type="date" name="items[${index}][expense_date]" class="form-control" required value="<?= date('Y-m-d') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-semibold small">Description <span class="text-danger">*</span></label>
-                    <input type="text" name="items[${index}][description]" class="form-control" required placeholder="e.g., Client lunch, taxi fare">
+                    <input aria-label="Items index description" type="text" name="items[${index}][description]" class="form-control" required placeholder="e.g., Client lunch, taxi fare">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Amount (₹) <span class="text-danger">*</span></label>
-                    <input type="number" step="0.01" min="0" name="items[${index}][amount]" class="form-control form-control-sm" required>
+                    <input aria-label="Items index amount" type="number" step="0.01" min="0" name="items[${index}][amount]" class="form-control form-control-sm" required>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">GST Amount (₹)</label>
-                    <input type="number" step="0.01" min="0" name="items[${index}][gst_amount]" class="form-control form-control-sm">
+                    <input aria-label="Items index gst amount" type="number" step="0.01" min="0" name="items[${index}][gst_amount]" class="form-control form-control-sm">
                 </div>
                 <div class="col-md-1">
                     <label class="form-label small">GST %</label>
-                    <input type="number" step="0.01" min="0" max="28" name="items[${index}][gst_rate]" class="form-control form-control-sm">
+                    <input aria-label="Items index gst rate" type="number" step="0.01" min="0" max="28" name="items[${index}][gst_rate]" class="form-control form-control-sm">
                 </div>
                 <div class="col-md-1">
                     <label class="form-label small">HSN/SAC</label>
-                    <input type="text" name="items[${index}][hsn_sac_code]" class="form-control form-control-sm" placeholder="e.g., 9983">
+                    <input aria-label="Items index hsn sac code" type="text" name="items[${index}][hsn_sac_code]" class="form-control form-control-sm" placeholder="e.g., 9983">
                 </div>
                 <div class="col-12">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label small">Receipt</label>
-                            <input type="file" name="items[${index}][receipt_file]" class="form-control form-control-sm" accept=".pdf,.jpg,.jpeg,.png">
+                            <input aria-label="Items index receipt file" type="file" name="items[${index}][receipt_file]" class="form-control form-control-sm" accept=".pdf,.jpg,.jpeg,.png">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label small">HSN/SAC</label>
-                            <input type="text" name="items[${index}][hsn_sac_code]" class="form-control form-control-sm">
+                            <input aria-label="Items index hsn sac code" type="text" name="items[${index}][hsn_sac_code]" class="form-control form-control-sm">
                         </div>
                         <div class="col-md-3">
                             <div class="form-check form-switch mt-3">
-                                <input class="form-check-input" type="checkbox" name="items[${index}][is_billable]" value="1" id="billable_${index}">
+                                <input aria-label="Items index is billable" class="form-check-input" type="checkbox" name="items[${index}][is_billable]" value="1" id="billable_${index}">
                                 <label class="form-check-label small" for="billable_${index}">Billable</label>
                             </div>
                         </div>

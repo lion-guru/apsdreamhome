@@ -13,7 +13,7 @@
         <?php foreach ($params as $key => $label): ?>
           <div class="col-md-3">
             <label class="form-label"><?= htmlspecialchars($label ?? '') ?></label>
-            <input type="text" name="<?= htmlspecialchars($key ?? '') ?>" class="form-control" required>
+            <input aria-label="htmlspecialchars key" type="text" name="<?= htmlspecialchars($key ?? '') ?>" class="form-control" required>
           </div>
         <?php endforeach; ?>
         <div class="col-auto"><button class="btn btn-primary"><i class="fas fa-play me-1"></i><?= __('bko_execute') ?></button></div>

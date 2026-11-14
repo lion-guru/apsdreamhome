@@ -83,27 +83,27 @@ $statuses = $statuses ?? [];
                     <div class="row">
                         <div class="col-md-6">
                             <label>Quantity</label>
-                            <input type="number" name="quantity" id="stockQty" class="form-control" step="0.01" min="0.01" required>
+                            <input aria-label="Quantity" type="number" name="quantity" id="stockQty" class="form-control" step="0.01" min="0.01" required>
                         </div>
                         <div class="col-md-6" id="stockCostWrap">
                             <label>Unit Cost (₹)</label>
-                            <input type="number" name="unit_cost" id="stockCost" class="form-control" step="0.01" min="0">
+                            <input aria-label="Unit cost" type="number" name="unit_cost" id="stockCost" class="form-control" step="0.01" min="0">
                         </div>
                         <div class="col-md-6 mt-2">
                             <label>Date</label>
-                            <input type="date" name="usage_date" id="stockDate" class="form-control" value="<?= date('Y-m-d') ?>">
+                            <input aria-label="Usage date" type="date" name="usage_date" id="stockDate" class="form-control" value="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-md-6 mt-2" id="stockColonyWrap" style="display:none">
                             <label>Colony</label>
-                            <input type="number" name="colony_id" id="stockColony" class="form-control" placeholder="Colony ID">
+                            <input aria-label="Colony id" type="number" name="colony_id" id="stockColony" class="form-control" placeholder="Colony ID">
                         </div>
                         <div class="col-md-6 mt-2" id="stockUsedByWrap" style="display:none">
                             <label>Used By</label>
-                            <input type="text" name="used_by" id="stockUsedBy" class="form-control" placeholder="Person name">
+                            <input aria-label="Used by" type="text" name="used_by" id="stockUsedBy" class="form-control" placeholder="Person name">
                         </div>
                         <div class="col-md-6 mt-2" id="stockPurposeWrap" style="display:none">
                             <label>Purpose</label>
-                            <input type="text" name="purpose" id="stockPurpose" class="form-control">
+                            <input aria-label="Purpose" type="text" name="purpose" id="stockPurpose" class="form-control">
                         </div>
                         <div class="col-md-12 mt-2">
                             <label>Notes</label>

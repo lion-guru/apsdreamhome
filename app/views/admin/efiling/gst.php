@@ -69,7 +69,7 @@ ob_start();
                         </div>
                         <div class="col-6">
                             <label class="form-label small">Year</label>
-                            <input type="number" name="year" value="<?= $year ?>" class="form-control form-control-sm">
+                            <input aria-label="Year" type="number" name="year" value="<?= $year ?>" class="form-control form-control-sm">
                         </div>
                         <div class="col-12">
                             <label class="form-label small">FY</label>
@@ -103,7 +103,7 @@ ob_start();
                         </div>
                         <div class="col-6">
                             <label class="form-label small">Year</label>
-                            <input type="number" name="year" value="<?= $year ?>" class="form-control form-control-sm">
+                            <input aria-label="Year" type="number" name="year" value="<?= $year ?>" class="form-control form-control-sm">
                         </div>
                         <div class="col-12">
                             <label class="form-label small">FY</label>

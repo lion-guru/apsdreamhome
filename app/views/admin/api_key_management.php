@@ -182,11 +182,11 @@
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label for="mcpKeyName" class="form-label">Key Name</label>
-                            <input type="text" class="form-control" id="mcpKeyName" required>
+                            <input aria-label="Mcp key name" type="text" class="form-control" id="mcpKeyName" required>
                         </div>
                         <div class="mb-3">
                             <label for="mcpKeyValue" class="form-label">Key Value</label>
-                            <input type="password" class="form-control" id="mcpKeyValue" required>
+                            <input aria-label="Mcp key value" type="password" class="form-control" id="mcpKeyValue" required>
                         </div>
                         <div class="mb-3">
                             <label for="mcpKeyType" class="form-label">Key Type</label>
@@ -199,7 +199,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="mcpServiceName" class="form-label">Service Name</label>
-                            <input type="text" class="form-control" id="mcpServiceName" required>
+                            <input aria-label="Mcp service name" type="text" class="form-control" id="mcpServiceName" required>
                         </div>
                         <div class="mb-3">
                             <label for="mcpDescription" class="form-label">Description</label>
@@ -228,28 +228,28 @@
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label for="userName" class="form-label">Key Name</label>
-                            <input type="text" class="form-control" id="userName" required>
+                            <input aria-label="User name" type="text" class="form-control" id="userName" required>
                         </div>
                         <div class="mb-3">
                             <label for="userId" class="form-label">User ID</label>
-                            <input type="number" class="form-control" id="userId" required>
+                            <input aria-label="User id" type="number" class="form-control" id="userId" required>
                         </div>
                         <div class="mb-3">
                             <label for="userRateLimit" class="form-label">Rate Limit (per hour)</label>
-                            <input type="number" class="form-control" id="userRateLimit" value="1000">
+                            <input aria-label="User rate limit" type="number" class="form-control" id="userRateLimit" value="1000">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Permissions</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="properties" id="perm_properties">
+                                <input aria-label="Perm properties" class="form-check-input" type="checkbox" value="properties" id="perm_properties">
                                 <label class="form-check-label" for="perm_properties">Properties</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="leads" id="perm_leads">
+                                <input aria-label="Perm leads" class="form-check-input" type="checkbox" value="leads" id="perm_leads">
                                 <label class="form-check-label" for="perm_leads">Leads</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="analytics" id="perm_analytics">
+                                <input aria-label="Perm analytics" class="form-check-input" type="checkbox" value="analytics" id="perm_analytics">
                                 <label class="form-check-label" for="perm_analytics">Analytics</label>
                             </div>
                         </div>

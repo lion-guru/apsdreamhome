@@ -96,9 +96,9 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
             <!-- Billing Cycle Toggle -->
             <div class="text-center mb-4">
                 <div class="btn-group cycle-toggle" role="group">
-                    <input type="radio" class="btn-check" name="billing_cycle" id="cycleMonthly" value="monthly" <?= $cycle === 'monthly' ? 'checked' : '' ?>>
+                    <input aria-label="Billing cycle" type="radio" class="btn-check" name="billing_cycle" id="cycleMonthly" value="monthly" <?= $cycle === 'monthly' ? 'checked' : '' ?>>
                     <label class="btn btn-outline-primary" for="cycleMonthly">Monthly</label>
-                    <input type="radio" class="btn-check" name="billing_cycle" id="cycleYearly" value="yearly" <?= $cycle === 'yearly' ? 'checked' : '' ?>>
+                    <input aria-label="Billing cycle" type="radio" class="btn-check" name="billing_cycle" id="cycleYearly" value="yearly" <?= $cycle === 'yearly' ? 'checked' : '' ?>>
                     <label class="btn btn-outline-primary" for="cycleYearly">Yearly <span class="badge bg-success ms-1">Save 17%</span></label>
                 </div>
             </div>
@@ -108,7 +108,7 @@ $cycle   = $current['billing_cycle'] ?? 'monthly';
                 <?php foreach ($plans as $plan): ?>
                     <div class="col-lg-3 col-md-6 mb-3">
                         <label class="plan-option <?= ($current['plan_id'] ?? 0) == $plan['id'] ? 'selected' : '' ?>" onclick="selectPlan(this, <?= $plan['id'] ?>)">
-                            <input type="radio" name="plan_id" value="<?= $plan['id'] ?>" <?= ($current['plan_id'] ?? 0) == $plan['id'] ? 'checked' : '' ?>>
+                            <input aria-label="Plan id" type="radio" name="plan_id" value="<?= $plan['id'] ?>" <?= ($current['plan_id'] ?? 0) == $plan['id'] ? 'checked' : '' ?>>
                             <div class="text-center">
                                 <h6 class="mb-2"><?= htmlspecialchars($plan['name'] ?? '') ?></h6>
                                 <div class="plan-price <?= ($plan['slug'] ?? '') === 'free' ? 'text-secondary' : 'text-primary' ?>">

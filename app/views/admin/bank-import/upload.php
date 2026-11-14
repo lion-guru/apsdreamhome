@@ -42,7 +42,7 @@
                                     <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
                                     <p class="mb-1 fw-semibold">Drag & drop your CSV file here</p>
                                     <p class="text-muted small mb-3">or click to browse</p>
-                                    <input type="file" name="csv_file" id="csvFile" accept=".csv,.txt" class="d-none" required>
+                                    <input aria-label="Csv file" type="file" name="csv_file" id="csvFile" accept=".csv,.txt" class="d-none" required>
                                     <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('csvFile').click()">
                                         <i class="fas fa-folder-open me-1"></i>Select File
                                     </button>

@@ -298,7 +298,7 @@ $department = $department ?? '';
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                            <input type="text" name="title" class="form-control" required placeholder="Task title">
+                            <input aria-label="Title" type="text" name="title" class="form-control" required placeholder="Task title">
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Description</label>
@@ -306,11 +306,11 @@ $department = $department ?? '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Deadline <span class="text-danger">*</span></label>
-                            <input type="date" name="deadline" class="form-control" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d', strtotime('+7 days')) ?>">
+                            <input aria-label="Deadline" type="date" name="deadline" class="form-control" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d', strtotime('+7 days')) ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Required Skills (comma separated)</label>
-                            <input type="text" name="required_skills" class="form-control" placeholder="e.g., CRM & Lead Management, Negotiation, Property Sales">
+                            <input aria-label="Required skills" type="text" name="required_skills" class="form-control" placeholder="e.g., CRM & Lead Management, Negotiation, Property Sales">
                             <div class="form-text">Skills will be used for smart assignment scoring</div>
                         </div>
                         <div class="col-md-6">
@@ -336,7 +336,7 @@ $department = $department ?? '';
                             </select>
                         </div>
                         <div class="col-12 form-check">
-                            <input class="form-check-input" type="checkbox" name="force_assign" id="forceAssign" value="1">
+                            <input aria-label="Force assign" class="form-check-input" type="checkbox" name="force_assign" id="forceAssign" value="1">
                             <label class="form-check-label" for="forceAssign">Force assign even if employee is overloaded</label>
                         </div>
                     </div>

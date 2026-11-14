@@ -47,12 +47,12 @@ $today = $today ?? date('Y-m-d');
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Start Date <span class="text-danger">*</span></label>
-                                <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($today) ?>" required min="<?= date('Y-m-d') ?>">
+                                <input aria-label="Start date" type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($today) ?>" required min="<?= date('Y-m-d') ?>">
                                 <small class="text-muted">Starting week (Monday of the week)</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Number of Weeks <span class="text-danger">*</span></label>
-                                <input type="number" name="weeks" class="form-control" value="4" min="1" max="12" required>
+                                <input aria-label="Weeks" type="number" name="weeks" class="form-control" value="4" min="1" max="12" required>
                                 <small class="text-muted">Number of consecutive weeks (1-12)</small>
                             </div>
                         </div>

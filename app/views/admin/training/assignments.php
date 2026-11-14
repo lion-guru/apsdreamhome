@@ -210,7 +210,7 @@ $filters = $filters ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Due Date</label>
-                        <input type="date" name="due_date" class="form-control" value="<?= date('Y-m-d', strtotime('+30 days')) ?>">
+                        <input aria-label="Due date" type="date" name="due_date" class="form-control" value="<?= date('Y-m-d', strtotime('+30 days')) ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Assigned By</label>
@@ -243,7 +243,7 @@ $filters = $filters ?? [];
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Certificate Number (auto-generated if empty)</label>
-                            <input type="text" name="certificate_number" class="form-control" placeholder="Leave blank for auto">
+                            <input aria-label="Certificate number" type="text" name="certificate_number" class="form-control" placeholder="Leave blank for auto">
                         </div>
                     </div>
                     <div class="modal-footer">

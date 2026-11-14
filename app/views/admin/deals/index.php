@@ -104,7 +104,7 @@ $page_title = 'Deal Tracking - APS Dream Home';
                 </div>
                 <div class="col-md-5">
                     <label class="form-label">Search</label>
-                    <input type="text" class="form-control" name="search" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Lead name, email, property...">
+                    <input aria-label="Search" type="text" class="form-control" name="search" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Lead name, email, property...">
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary me-2">

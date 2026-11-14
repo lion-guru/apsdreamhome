@@ -186,10 +186,10 @@ include __DIR__ . '/../layouts/base.php';
     <?php echo CSRFProtection::csrfField(); ?>
                             <h6 class="text-white-50 small mb-2">Or request a callback:</h6>
                             <div class="mb-2">
-                                <input type="text" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Your Name" value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>">
+                                <input aria-label="Your name" type="text" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Your Name" value="<?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?>">
                             </div>
                             <div class="mb-2">
-                                <input type="email" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Email Address" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>">
+                                <input aria-label="Email address" type="email" class="form-control bg-transparent text-white border-white border-opacity-10" placeholder="Email Address" value="<?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?>">
                             </div>
                             <button type="button" class="btn btn-outline-primary w-100" onclick="alert('Call back request sent! Our team will contact you shortly.')">Request Callback</button>
                         </form>
@@ -354,11 +354,11 @@ min-width: auto;
                     <input type="hidden" name="source" value="property_detail">
                     <div class="mb-3">
                         <label class="form-label" for="inquiryName">Your Name *</label>
-                        <input type="text" class="form-control" id="inquiryName" name="name" required maxlength="255" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                        <input aria-label="Inquiry name" type="text" class="form-control" id="inquiryName" name="name" required maxlength="255" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="inquiryPhone">Phone Number *</label>
-                        <input type="tel" class="form-control" id="inquiryPhone" name="phone" required maxlength="20" pattern="[0-9+\-\s]{10,20}" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
+                        <input aria-label="Inquiry phone" type="tel" class="form-control" id="inquiryPhone" name="phone" required maxlength="20" pattern="[0-9+\-\s]{10,20}" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="inquiryMessage">Message</label>

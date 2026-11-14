@@ -9,11 +9,11 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Colony Name *</label>
-                        <input name="name" class="form-control" required onkeyup="document.getElementsByName('slug')[0].value = this.value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')">
+                        <input aria-label="Name" name="name" class="form-control" required onkeyup="document.getElementsByName('slug')[0].value = this.value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Slug (URL)</label>
-                        <input name="slug" class="form-control" placeholder="Auto-generated">
+                        <input aria-label="Slug" name="slug" class="form-control" placeholder="Auto-generated">
                     </div>
                 </div>
                 <div class="row">
@@ -48,21 +48,21 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Land Cost (₹)</label>
-                        <input name="land_cost" type="number" step="0.01" class="form-control" placeholder="0.00">
+                        <input aria-label="Land cost" name="land_cost" type="number" step="0.01" class="form-control" placeholder="0.00">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Min Price per Sqft (₹)</label>
-                        <input name="min_price_per_sqft" type="number" step="0.01" class="form-control" placeholder="0.00">
+                        <input aria-label="Min price per sqft" name="min_price_per_sqft" type="number" step="0.01" class="form-control" placeholder="0.00">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Block Count</label>
-                        <input name="block_count" type="number" class="form-control" value="1" min="1">
+                        <input aria-label="Block count" name="block_count" type="number" class="form-control" value="1" min="1">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Phase</label>
-                        <input name="phase" class="form-control" placeholder="Phase 1" value="Phase 1">
+                        <input aria-label="Phase" name="phase" class="form-control" placeholder="Phase 1" value="Phase 1">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Pipeline Stage</label>
@@ -90,32 +90,32 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Image Path</label>
-                        <input name="image_path" class="form-control" placeholder="/assets/images/colonies/xyz.jpg">
+                        <input aria-label="Image path" name="image_path" class="form-control" placeholder="/assets/images/colonies/xyz.jpg">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Banner Image</label>
-                        <input name="banner_image" class="form-control" placeholder="/assets/images/colonies/banner.jpg">
+                        <input aria-label="Banner image" name="banner_image" class="form-control" placeholder="/assets/images/colonies/banner.jpg">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Layout Image</label>
-                        <input name="layout_image" class="form-control" placeholder="/assets/images/colonies/layout.jpg">
+                        <input aria-label="Layout image" name="layout_image" class="form-control" placeholder="/assets/images/colonies/layout.jpg">
                         <small class="text-muted">Colony layout/plan image</small>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Brochure Path (PDF)</label>
-                        <input name="brochure_path" class="form-control" placeholder="/assets/brochures/xyz.pdf">
+                        <input aria-label="Brochure path" name="brochure_path" class="form-control" placeholder="/assets/brochures/xyz.pdf">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">YouTube Video URL</label>
-                        <input name="youtube_video_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                        <input aria-label="Youtube video url" name="youtube_video_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Virtual Tour URL</label>
-                        <input name="virtual_tour_url" class="form-control" placeholder="https://my.matterport.com/show/?m=...">
+                        <input aria-label="Virtual tour url" name="virtual_tour_url" class="form-control" placeholder="https://my.matterport.com/show/?m=...">
                     </div>
                 </div>
                 <div class="mb-3">
@@ -130,29 +130,29 @@
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Total Plots</label>
-                    <input name="total_plots" type="number" class="form-control" value="0">
+                    <input aria-label="Total plots" name="total_plots" type="number" class="form-control" value="0">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Available Plots</label>
-                    <input name="available_plots" type="number" class="form-control" value="0">
+                    <input aria-label="Available plots" name="available_plots" type="number" class="form-control" value="0">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Starting Price (₹)</label>
-                    <input name="starting_price" type="number" step="0.01" class="form-control" value="0">
+                    <input aria-label="Starting price" name="starting_price" type="number" step="0.01" class="form-control" value="0">
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Latitude</label>
-                        <input name="latitude" type="number" step="0.00000001" class="form-control" placeholder="26.7606">
+                        <input aria-label="Latitude" name="latitude" type="number" step="0.00000001" class="form-control" placeholder="26.7606">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Longitude</label>
-                        <input name="longitude" type="number" step="0.00000001" class="form-control" placeholder="83.3732">
+                        <input aria-label="Longitude" name="longitude" type="number" step="0.00000001" class="form-control" placeholder="83.3732">
                     </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Google Maps Link</label>
-                    <input name="map_link" class="form-control" id="map_link" placeholder="https://maps.google.com/?q=...">
+                    <input aria-label="Map link" name="map_link" class="form-control" id="map_link" placeholder="https://maps.google.com/?q=...">
                     <small class="text-muted">Auto-generated from lat/lng if empty on save</small>
                 </div>
             </div></div>
@@ -161,15 +161,15 @@
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label">Contact Phone</label>
-                    <input name="contact_phone" class="form-control" placeholder="+91 92771 21112">
+                    <input aria-label="Contact phone" name="contact_phone" class="form-control" placeholder="+91 92771 21112">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Contact Email</label>
-                    <input name="contact_email" type="email" class="form-control" placeholder="info@apsdreamhome.com">
+                    <input aria-label="Contact email" name="contact_email" type="email" class="form-control" placeholder="info@apsdreamhome.com">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Meta Title (SEO)</label>
-                    <input name="meta_title" class="form-control">
+                    <input aria-label="Meta title" name="meta_title" class="form-control">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Meta Description</label>
@@ -180,15 +180,15 @@
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Settings</h2></div>
             <div class="card-body aps-cp-card-body">
                 <div class="form-check mb-2">
-                    <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked value="1">
+                    <input aria-label="Is active" type="checkbox" name="is_active" class="form-check-input" id="is_active" checked value="1">
                     <label class="form-check-label" for="is_active">Active (visible on website)</label>
                 </div>
                 <div class="form-check mb-2">
-                    <input type="checkbox" name="is_featured" class="form-check-input" id="is_featured" value="1">
+                    <input aria-label="Is featured" type="checkbox" name="is_featured" class="form-check-input" id="is_featured" value="1">
                     <label class="form-check-label" for="is_featured">Featured (show on homepage)</label>
                 </div>
                 <div class="form-check mb-2">
-                    <input type="checkbox" name="show_plots_publicly" class="form-check-input" id="show_plots_publicly" value="1">
+                    <input aria-label="Show plots publicly" type="checkbox" name="show_plots_publicly" class="form-check-input" id="show_plots_publicly" value="1">
                     <label class="form-check-label" for="show_plots_publicly">Show plot availability publicly</label>
                 </div>
             </div></div>

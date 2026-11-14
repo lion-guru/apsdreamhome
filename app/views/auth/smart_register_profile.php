@@ -160,13 +160,13 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                     <div class="input-group-custom">
                         <i class="fa-solid fa-user-pen"></i>
                         <label class="form-label-custom">Your Name</label>
-                        <input type="text" class="form-control" name="name" placeholder="Enter your name" value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>">
+                        <input aria-label="Name" type="text" class="form-control" name="name" placeholder="Enter your name" value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>">
                     </div>
 
                     <div class="input-group-custom">
                         <i class="fa-solid fa-envelope"></i>
                         <label class="form-label-custom">Email Address</label>
-                        <input type="email" class="form-control" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>">
+                        <input aria-label="Email" type="email" class="form-control" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>">
                     </div>
 
                     <div class="form-section-title"><i class="fa-solid fa-map-marker-alt"></i> Location</div>
@@ -217,7 +217,7 @@ $completionPct = $session['profile_completion_pct'] ?? 0;
                     <div class="input-group-custom">
                         <i class="fa-solid fa-ticket-alt"></i>
                         <label class="form-label-custom">Referral Code <span class="opt">(optional)</span></label>
-                        <input type="text" class="form-control" name="referral_code" id="referralCode" placeholder="Got a referral code? Enter it here" value="<?php echo htmlspecialchars($_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''); ?>" autocomplete="off">
+                        <input aria-label="Referral code" type="text" class="form-control" name="referral_code" id="referralCode" placeholder="Got a referral code? Enter it here" value="<?php echo htmlspecialchars($_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''); ?>" autocomplete="off">
                         <div id="referral_name_display" class="mt-2"></div>
                         <small class="text-success">
                             <i class="fas fa-gift me-1"></i>

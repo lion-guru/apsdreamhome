@@ -250,7 +250,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Date</label>
-                        <input type="date" name="roster_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Roster date" type="date" name="roster_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Shift</label>
@@ -263,29 +263,29 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Gate Location</label>
-                        <input type="text" name="gate_name" class="form-control" value="Main Entrance Gate #1">
+                        <input aria-label="Gate name" type="text" name="gate_name" class="form-control" value="Main Entrance Gate #1">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Security Agency</label>
-                        <input type="text" name="agency_name" class="form-control" value="Purvanchal Security Services">
+                        <input aria-label="Agency name" type="text" name="agency_name" class="form-control" value="Purvanchal Security Services">
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Guard Full Name *</label>
-                        <input type="text" name="guard_name" class="form-control" placeholder="e.g. Ramesh Chandra" required>
+                        <input aria-label="Guard name" type="text" name="guard_name" class="form-control" placeholder="e.g. Ramesh Chandra" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Guard Phone *</label>
-                        <input type="text" name="guard_phone" class="form-control" placeholder="+91 9839XXXXXX" required>
+                        <input aria-label="Guard phone" type="text" name="guard_phone" class="form-control" placeholder="+91 9839XXXXXX" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Aadhaar (Last 4 Digits) *</label>
-                        <input type="text" name="guard_aadhaar_last4" maxlength="4" class="form-control" placeholder="1234" required>
+                        <input aria-label="Guard aadhaar last4" type="text" name="guard_aadhaar_last4" maxlength="4" class="form-control" placeholder="1234" required>
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Agency Supervisor</label>
-                        <input type="text" name="supervisor_name" class="form-control" value="Dharmendra Singh">
+                        <input aria-label="Supervisor name" type="text" name="supervisor_name" class="form-control" value="Dharmendra Singh">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Boom Barrier Status</label>
@@ -297,7 +297,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Visitors Logged</label>
-                        <input type="number" name="visitor_vehicles_logged" class="form-control" value="0">
+                        <input aria-label="Visitor vehicles logged" type="number" name="visitor_vehicles_logged" class="form-control" value="0">
                     </div>
                 </div>
             </div>
@@ -331,11 +331,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Date</label>
-                        <input type="date" name="incident_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Incident date" type="date" name="incident_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Time</label>
-                        <input type="time" name="incident_time" class="form-control" value="<?= date('H:i') ?>" required>
+                        <input aria-label="Incident time" type="time" name="incident_time" class="form-control" value="<?= date('H:i') ?>" required>
                     </div>
 
                     <div class="col-md-4">
@@ -361,7 +361,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Location Detail *</label>
-                        <input type="text" name="location_detail" class="form-control" placeholder="e.g. Sector B Boundary Wall" required>
+                        <input aria-label="Location detail" type="text" name="location_detail" class="form-control" placeholder="e.g. Sector B Boundary Wall" required>
                     </div>
 
                     <div class="col-12">
@@ -370,11 +370,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-8">
                         <label class="form-label small fw-semibold">Immediate Action Taken</label>
-                        <input type="text" name="action_taken" class="form-control" placeholder="e.g. Guard dispatched, warning issued, trespasser escorted out.">
+                        <input aria-label="Action taken" type="text" name="action_taken" class="form-control" placeholder="e.g. Guard dispatched, warning issued, trespasser escorted out.">
                     </div>
                     <div class="col-md-4 d-flex align-items-center mt-4">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="police_informed" value="1" id="policeInformed">
+                            <input aria-label="Police informed" class="form-check-input" type="checkbox" name="police_informed" value="1" id="policeInformed">
                             <label class="form-check-label small fw-semibold text-danger" for="policeInformed">
                                 UP Police / Dial 112 Informed
                             </label>

@@ -30,7 +30,7 @@ $stBadge = ['pending' => 'warning text-dark', 'paid' => 'success', 'waived' => '
             <?php foreach (['pending', 'paid', 'waived'] as $s): ?><option value="<?= $s ?>" <?= $status_filter === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option><?php endforeach; ?>
         </select>
         <input type="month" name="bill_month" class="form-control form-control-sm" value="<?= $e($bill_month) ?>" onchange="this.form.submit()" title="Billing month">
-        <input type="search" name="search" class="form-control form-control-sm" value="<?= $e($search) ?>" placeholder="Plot / name / phone">
+        <input aria-label="Search" type="search" name="search" class="form-control form-control-sm" value="<?= $e($search) ?>" placeholder="Plot / name / phone">
         <button type="submit" class="btn btn-sm btn-primary" aria-label="Filter"><i class="fas fa-filter"></i></button>
         <a href="<?= $base ?>/admin/maintenance-dues" class="btn btn-sm btn-outline-secondary" title="Reset filters"><i class="fas fa-undo"></i></a>
     </form>
@@ -51,9 +51,9 @@ $stBadge = ['pending' => 'warning text-dark', 'paid' => 'success', 'waived' => '
                     <?php foreach ($colonies as $c): ?><option value="<?= (int)$c['id'] ?>" <?= $colony_id === (int)$c['id'] ? 'selected' : '' ?>><?= $e($c['name']) ?></option><?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-2"><label class="form-label small">Month *</label><input type="number" min="1" max="12" name="bill_month" class="form-control" value="<?= date('n') ?>" required></div>
-            <div class="col-md-2"><label class="form-label small">Year *</label><input type="number" min="2000" max="2100" name="bill_year" class="form-control" value="<?= date('Y') ?>" required></div>
-            <div class="col-md-2"><label class="form-label small">₹/sqft *</label><input type="number" step="0.01" min="0" name="rate_per_sqft" class="form-control" value="1" required></div>
+            <div class="col-md-2"><label class="form-label small">Month *</label><input aria-label="Bill month" type="number" min="1" max="12" name="bill_month" class="form-control" value="<?= date('n') ?>" required></div>
+            <div class="col-md-2"><label class="form-label small">Year *</label><input aria-label="Bill year" type="number" min="2000" max="2100" name="bill_year" class="form-control" value="<?= date('Y') ?>" required></div>
+            <div class="col-md-2"><label class="form-label small">₹/sqft *</label><input aria-label="Rate per sqft" type="number" step="0.01" min="0" name="rate_per_sqft" class="form-control" value="1" required></div>
             <div class="col-md-2 pt-4"><button type="submit" class="btn btn-primary w-100">Generate Bills</button></div>
         </div>
     </form>

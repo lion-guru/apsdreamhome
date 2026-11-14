@@ -20,11 +20,11 @@
                             <?php endforeach; ?>
                         </select></div>
                     <div class="row">
-                        <div class="col-md-6 mb-3"><label class="form-label">Amount (₹) <span class="text-danger">*</span></label><input type="number" step="0.01" min="1" name="advance_amount" class="form-control" required></div>
-                        <div class="col-md-6 mb-3"><label class="form-label">Repay EMI (₹)</label><input type="number" step="0.01" min="0" name="advance_repay_emi" class="form-control" value="0"></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Amount (₹) <span class="text-danger">*</span></label><input aria-label="Advance amount" type="number" step="0.01" min="1" name="advance_amount" class="form-control" required></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Repay EMI (₹)</label><input aria-label="Advance repay emi" type="number" step="0.01" min="0" name="advance_repay_emi" class="form-control" value="0"></div>
                     </div>
-                    <div class="mb-3"><label class="form-label">Reason</label><input type="text" name="advance_reason" class="form-control"></div>
-                    <div class="mb-3"><label class="form-label">Approved By (Admin ID, blank = you)</label><input type="number" name="advance_approved_by" class="form-control" placeholder="defaults to current admin"></div>
+                    <div class="mb-3"><label class="form-label">Reason</label><input aria-label="Advance reason" type="text" name="advance_reason" class="form-control"></div>
+                    <div class="mb-3"><label class="form-label">Approved By (Admin ID, blank = you)</label><input aria-label="Advance approved by" type="number" name="advance_approved_by" class="form-control" placeholder="defaults to current admin"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

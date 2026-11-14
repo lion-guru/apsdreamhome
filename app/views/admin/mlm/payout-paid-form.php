@@ -22,23 +22,23 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Bank Account</label>
-                    <input type="text" name="bank_account" class="form-control" placeholder="XXXX1234">
+                    <input aria-label="Bank account" type="text" name="bank_account" class="form-control" placeholder="XXXX1234">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">IFSC</label>
-                    <input type="text" name="ifsc" class="form-control" placeholder="SBIN0001234">
+                    <input aria-label="Ifsc" type="text" name="ifsc" class="form-control" placeholder="SBIN0001234">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">UPI ID</label>
-                    <input type="text" name="upi_id" class="form-control" placeholder="name@bank">
+                    <input aria-label="Upi id" type="text" name="upi_id" class="form-control" placeholder="name@bank">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Cheque Number</label>
-                    <input type="text" name="cheque_number" class="form-control" placeholder="000123">
+                    <input aria-label="Cheque number" type="text" name="cheque_number" class="form-control" placeholder="000123">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Transaction Reference</label>
-                    <input type="text" name="transaction_ref" class="form-control" placeholder="UTR / ref no.">
+                    <input aria-label="Transaction ref" type="text" name="transaction_ref" class="form-control" placeholder="UTR / ref no.">
                 </div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-success">

@@ -50,7 +50,7 @@ $badge = ['pending' => 'warning', 'verified' => 'success', 'rejected' => 'danger
                     <?php if (($r['verification_status'] ?? '') === 'pending'): ?>
                     <form method="POST" action="<?= $base ?>/admin/sales/nri-desk/verify/<?= (int)$r['id'] ?>" class="d-flex gap-1">
                         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-                        <input type="text" name="notes" class="form-control form-control-sm" placeholder="Note (optional)" style="max-width:130px">
+                        <input aria-label="Notes" type="text" name="notes" class="form-control form-control-sm" placeholder="Note (optional)" style="max-width:130px">
                         <button type="submit" name="decision" value="verified" class="btn btn-sm btn-success">Verify</button>
                         <button type="submit" name="decision" value="rejected" class="btn btn-sm btn-outline-danger" data-aps-confirm="Reject this NRI record?">Reject</button>
                     </form>

@@ -26,7 +26,7 @@ ob_start();
                 <div class="row g-3">
                     <div class="col-md-8">
                         <label class="form-label">Campaign Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" required placeholder="e.g., Welcome Series, Property Inquiry Follow-up">
+                        <input aria-label="Name" type="text" name="name" class="form-control" required placeholder="e.g., Welcome Series, Property Inquiry Follow-up">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Status</label>
@@ -48,7 +48,7 @@ ob_start();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Description</label>
-                        <input type="text" name="description" class="form-control" placeholder="Internal notes about this campaign">
+                        <input aria-label="Description" type="text" name="description" class="form-control" placeholder="Internal notes about this campaign">
                     </div>
                 </div>
             </div>
@@ -91,15 +91,15 @@ function addEmailRow() {
         <div class="row g-2">
             <div class="col-md-6">
                 <label class="form-label small">Subject</label>
-                <input type="text" name="emails[${n}][subject]" class="form-control form-control-sm" required placeholder="Welcome to our property network">
+                <input aria-label="Emails n subject" type="text" name="emails[${n}][subject]" class="form-control form-control-sm" required placeholder="Welcome to our property network">
             </div>
             <div class="col-md-2">
                 <label class="form-label small">Delay Days</label>
-                <input type="number" name="emails[${n}][delay_days]" class="form-control form-control-sm" value="0" min="0">
+                <input aria-label="Emails n delay days" type="number" name="emails[${n}][delay_days]" class="form-control form-control-sm" value="0" min="0">
             </div>
             <div class="col-md-2">
                 <label class="form-label small">Delay Hours</label>
-                <input type="number" name="emails[${n}][delay_hours]" class="form-control form-control-sm" value="0" min="0">
+                <input aria-label="Emails n delay hours" type="number" name="emails[${n}][delay_hours]" class="form-control form-control-sm" value="0" min="0">
             </div>
             <div class="col-md-2">
                 <label class="form-label small">Channel</label>

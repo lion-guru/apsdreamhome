@@ -10,19 +10,19 @@
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control" required>
+                    <input aria-label="Name" type="text" name="name" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Email <span class="text-danger">*</span></label>
-                    <input type="email" name="email" class="form-control" required>
+                    <input aria-label="Email" type="email" name="email" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Phone <span class="text-danger">*</span></label>
-                    <input type="text" name="phone" class="form-control" required>
+                    <input aria-label="Phone" type="text" name="phone" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Password <span class="text-danger">*</span></label>
-                    <input type="password" name="password" class="form-control" required>
+                    <input aria-label="Password" type="password" name="password" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Sponsor</label>
@@ -32,7 +32,7 @@
                             <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['name'] . ' (' . $s['email'] . ')') ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <input type="text" class="form-control mt-2" placeholder="Search sponsor..." id="sponsorSearch" onkeyup="filterSponsors()">
+                    <input aria-label="Search sponsor" type="text" class="form-control mt-2" placeholder="Search sponsor..." id="sponsorSearch" onkeyup="filterSponsors()">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Level</label>
@@ -74,7 +74,7 @@
                 <div class="col-md-4 brokerage-field">
                     <label class="form-label">Brokerage Rate</label>
                     <div class="input-group">
-                        <input type="number" name="brokerage_rate" id="brokerageRate" class="form-control" step="0.01" min="0" max="100" value="8.00">
+                        <input aria-label="Brokerage rate" type="number" name="brokerage_rate" id="brokerageRate" class="form-control" step="0.01" min="0" max="100" value="8.00">
                         <span class="input-group-text" id="brokerageUnit">%</span>
                     </div>
                     <small class="text-muted" id="brokerageHint">Percentage of payment amount (e.g. 8 = 8%)</small>
@@ -92,15 +92,15 @@
                 </div>
                 <div class="col-md-4 telecaller-field">
                     <label class="form-label">Monthly Fixed Salary Target (₹)</label>
-                    <input type="number" name="telecaller_salary" class="form-control" step="0.01" placeholder="e.g. 6000.00" value="0.00">
+                    <input aria-label="Telecaller salary" type="number" name="telecaller_salary" class="form-control" step="0.01" placeholder="e.g. 6000.00" value="0.00">
                 </div>
                 <div class="col-md-4 telecaller-field">
                     <label class="form-label">Flat Lead Conversion Incentive (₹)</label>
-                    <input type="number" name="telecaller_incentive_rate" class="form-control" step="0.01" placeholder="e.g. 1000.00" value="0.00">
+                    <input aria-label="Telecaller incentive rate" type="number" name="telecaller_incentive_rate" class="form-control" step="0.01" placeholder="e.g. 1000.00" value="0.00">
                 </div>
                 <div class="col-md-4 telecaller-field">
                     <label class="form-label">Rate per SqFt (₹)</label>
-                    <input type="number" name="telecaller_sqft_rate" class="form-control" step="0.01" placeholder="e.g. 10.00" value="0.00">
+                    <input aria-label="Telecaller sqft rate" type="number" name="telecaller_sqft_rate" class="form-control" step="0.01" placeholder="e.g. 10.00" value="0.00">
                 </div>
             </div>
             <div class="mt-4">

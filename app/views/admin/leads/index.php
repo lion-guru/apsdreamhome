@@ -85,7 +85,7 @@ $base = BASE_URL ?? '';
             <form method="GET" action="<?= $base ?>/admin/leads" class="row g-2 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Search</label>
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Name, phone, email..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="Name, phone, email..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>

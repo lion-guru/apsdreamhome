@@ -19,7 +19,7 @@
             <form method="GET" action="<?php echo defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/'); ?>/admin/applicants" class="row g-3">
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
-                    <input type="text" name="search" class="form-control" placeholder="Search by name, email, phone..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search by name, email, phone..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
                 </div>
                 <div class="col-md-3">
                     <select aria-label="Status" name="status" class="form-select">

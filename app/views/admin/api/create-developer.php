@@ -23,13 +23,13 @@ $page_title = $page_title ?? 'Create API Developer';
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label for="dev_name" class="form-label">Developer Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="dev_name" name="dev_name" required
+                            <input aria-label="Dev name" type="text" class="form-control" id="dev_name" name="dev_name" required
                                    placeholder="Enter developer name">
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="email" name="email" required
+                            <input aria-label="Email" type="email" class="form-control" id="email" name="email" required
                                    placeholder="Enter email address">
                         </div>
 

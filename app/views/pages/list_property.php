@@ -165,31 +165,31 @@ LPHEAD;
                         <h4 class="mb-3"><i class="fas fa-building me-2 text-primary"></i><?= __('list_property_label_property_type') ?> *</h4>
                         <div class="aps-cp-type-picker" role="radiogroup" aria-label="<?= __('list_property_label_property_type') ?>">
                             <label class="aps-cp-type-option">
-                                <input type="radio" name="property_type" value="plot" required>
+                                <input aria-label="Property type" type="radio" name="property_type" value="plot" required>
                                 <i class="fas fa-map-marked-alt aps-cp-type-option-icon"></i>
                                 <div class="aps-cp-type-option-label"><?= __('list_property_type_plot') ?></div>
                                 <div class="aps-cp-type-option-desc"><?= __('list_property_type_plot_desc', null, 'Open land / plot') ?></div>
                             </label>
                             <label class="aps-cp-type-option">
-                                <input type="radio" name="property_type" value="house">
+                                <input aria-label="Property type" type="radio" name="property_type" value="house">
                                 <i class="fas fa-home aps-cp-type-option-icon"></i>
                                 <div class="aps-cp-type-option-label"><?= __('list_property_type_house') ?></div>
                                 <div class="aps-cp-type-option-desc"><?= __('list_property_type_house_desc', null, 'Independent house') ?></div>
                             </label>
                             <label class="aps-cp-type-option">
-                                <input type="radio" name="property_type" value="flat">
+                                <input aria-label="Property type" type="radio" name="property_type" value="flat">
                                 <i class="fas fa-building aps-cp-type-option-icon"></i>
                                 <div class="aps-cp-type-option-label"><?= __('list_property_type_flat') ?></div>
                                 <div class="aps-cp-type-option-desc"><?= __('list_property_type_flat_desc', null, 'Apartment / flat') ?></div>
                             </label>
                             <label class="aps-cp-type-option">
-                                <input type="radio" name="property_type" value="shop">
+                                <input aria-label="Property type" type="radio" name="property_type" value="shop">
                                 <i class="fas fa-store aps-cp-type-option-icon"></i>
                                 <div class="aps-cp-type-option-label"><?= __('list_property_type_shop') ?></div>
                                 <div class="aps-cp-type-option-desc"><?= __('list_property_type_shop_desc', null, 'Commercial shop') ?></div>
                             </label>
                             <label class="aps-cp-type-option">
-                                <input type="radio" name="property_type" value="farmhouse">
+                                <input aria-label="Property type" type="radio" name="property_type" value="farmhouse">
                                 <i class="fas fa-tractor aps-cp-type-option-icon"></i>
                                 <div class="aps-cp-type-option-label"><?= __('list_property_type_farmhouse') ?></div>
                                 <div class="aps-cp-type-option-desc"><?= __('list_property_type_farmhouse_desc', null, 'Farm / farmhouse') ?></div>

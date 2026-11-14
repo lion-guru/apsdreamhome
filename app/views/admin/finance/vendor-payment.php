@@ -14,7 +14,7 @@
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label"><?= __('vpay_payment_date') ?> <span class="text-danger">*</span></label>
-                        <input type="date" name="payment_date" required class="form-control" value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Payment date" type="date" name="payment_date" required class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?= __('vpay_vendor_type') ?> <span class="text-danger">*</span></label>
@@ -27,10 +27,10 @@
                             <option value="land_owner"><?= __('vpay_land_owner') ?></option>
                         </select>
                     </div>
-                    <div class="col-md-3"><label class="form-label"><?= __('vpay_vendor_id') ?></label><input type="number" name="vendor_id" class="form-control" required></div>
-                    <div class="col-md-3"><label class="form-label"><?= __('vpay_vendor_name') ?> <span class="text-danger">*</span></label><input type="text" name="vendor_name" required class="form-control"></div>
-                    <div class="col-md-3"><label class="form-label"><?= __('vpay_vendor_pan') ?></label><input type="text" name="vendor_pan" class="form-control text-uppercase" maxlength="10"></div>
-                    <div class="col-md-3"><label class="form-label"><?= __('vpay_bill_invoice') ?></label><input type="text" name="bill_number" class="form-control"></div>
+                    <div class="col-md-3"><label class="form-label"><?= __('vpay_vendor_id') ?></label><input aria-label="Vendor id" type="number" name="vendor_id" class="form-control" required></div>
+                    <div class="col-md-3"><label class="form-label"><?= __('vpay_vendor_name') ?> <span class="text-danger">*</span></label><input aria-label="Vendor name" type="text" name="vendor_name" required class="form-control"></div>
+                    <div class="col-md-3"><label class="form-label"><?= __('vpay_vendor_pan') ?></label><input aria-label="Vendor pan" type="text" name="vendor_pan" class="form-control text-uppercase" maxlength="10"></div>
+                    <div class="col-md-3"><label class="form-label"><?= __('vpay_bill_invoice') ?></label><input aria-label="Bill number" type="text" name="bill_number" class="form-control"></div>
 
                     <!-- Currency selector -->
                     <div class="col-md-3">
@@ -48,7 +48,7 @@
                     <div class="col-md-3">
                         <label class="form-label"><?= __('vpay_exchange_rate') ?></label>
                         <div class="input-group">
-                            <input type="number" name="exchange_rate" id="vFxRate" class="form-control" step="0.0001" min="0" value="1.0000" oninput="vCalc()">
+                            <input aria-label="Exchange rate" type="number" name="exchange_rate" id="vFxRate" class="form-control" step="0.0001" min="0" value="1.0000" oninput="vCalc()">
                             <button type="button" class="btn btn-outline-primary" id="vFetchFx" title="<?= __('vpay_live_rate_tooltip') ?>" onclick="vFetchLiveRate()">
                                 <i class="fas fa-sync-alt" id="vFxIcon"></i>
                             </button>
@@ -58,25 +58,25 @@
 
                     <div class="col-md-3">
                         <label class="form-label" id="vAmtLabel"><?= __('vpay_amount') ?> <span class="text-danger">*</span></label>
-                        <input type="number" name="gross_amount" step="0.01" min="1" required class="form-control" id="vAmt" oninput="vCalc()">
+                        <input aria-label="Gross amount" type="number" name="gross_amount" step="0.01" min="1" required class="form-control" id="vAmt" oninput="vCalc()">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?= __('vpay_tds_deducted') ?></label>
-                        <input type="number" name="tds_amount" step="0.01" class="form-control" id="vTds" oninput="vCalc()">
+                        <input aria-label="Tds amount" type="number" name="tds_amount" step="0.01" class="form-control" id="vTds" oninput="vCalc()">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?= __('vpay_gst_amount') ?></label>
-                        <input type="number" name="gst_amount" step="0.01" class="form-control" id="vGst" oninput="vCalc()">
+                        <input aria-label="Gst amount" type="number" name="gst_amount" step="0.01" class="form-control" id="vGst" oninput="vCalc()">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?= __('vpay_net_payable') ?></label>
-                        <input type="number" step="0.01" class="form-control" id="vNet" readonly>
+                        <input aria-label="V net" type="number" step="0.01" class="form-control" id="vNet" readonly>
                     </div>
 
                     <!-- Amount in INR (auto-calculated, hidden if INR) -->
                     <div class="col-md-3" id="vInrWrap">
                         <label class="form-label"><?= __('vpay_amount_inr') ?></label>
-                        <input type="number" name="amount_inr" step="0.01" class="form-control bg-light" id="vInr" readonly>
+                        <input aria-label="Amount inr" type="number" name="amount_inr" step="0.01" class="form-control bg-light" id="vInr" readonly>
                         <small class="text-muted"><?= __('vpay_auto_calculated') ?></small>
                     </div>
 

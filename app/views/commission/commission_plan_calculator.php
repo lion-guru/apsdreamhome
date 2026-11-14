@@ -404,7 +404,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                 <i class="fas fa-rupee-sign me-1"></i>Property Value per Sale (₹)
                                             </label>
                                             <div class="input-group">
-                                                <input type="number" class="form-control" name="property_value"
+                                                <input aria-label="Property value" type="number" class="form-control" name="property_value"
                                                     value="5000000" min="100000" step="100000" required>
                                                 <span class="input-group-text">₹</span>
                                             </div>
@@ -416,7 +416,7 @@ if (isset($_GET['calculated']) && $calculation_result) {
                                                 <i class="fas fa-chart-line me-1"></i>Total Monthly Sales Volume (₹)
                                             </label>
                                             <div class="input-group">
-                                                <input type="number" class="form-control" name="total_sales"
+                                                <input aria-label="Total sales" type="number" class="form-control" name="total_sales"
                                                     value="100000000" min="1000000" step="1000000" required>
                                                 <span class="input-group-text">₹</span>
                                             </div>
@@ -656,21 +656,21 @@ if (isset($_GET['calculated']) && $calculation_result) {
                     <div class="row">
                         <div class="col-md-6">
                             <label class="form-label">Entry Level users</label>
-                            <input type="number" class="form-control" name="associates_associate" value="50" min="0">
+                            <input aria-label="Associates associate" type="number" class="form-control" name="associates_associate" value="50" min="0">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Mid Level users</label>
-                            <input type="number" class="form-control" name="associates_sr_associate" value="30" min="0">
+                            <input aria-label="Associates sr associate" type="number" class="form-control" name="associates_sr_associate" value="30" min="0">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
                             <label class="form-label">Senior users</label>
-                            <input type="number" class="form-control" name="associates_bdm" value="15" min="0">
+                            <input aria-label="Associates bdm" type="number" class="form-control" name="associates_bdm" value="15" min="0">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Top Level users</label>
-                            <input type="number" class="form-control" name="associates_sr_bdm" value="5" min="0">
+                            <input aria-label="Associates sr bdm" type="number" class="form-control" name="associates_sr_bdm" value="5" min="0">
                         </div>
                     </div>
                 </div>

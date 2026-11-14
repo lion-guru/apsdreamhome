@@ -44,9 +44,9 @@
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="modal-header"><h5 class="modal-title">Register Networker</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
-            <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required></div>
-            <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control" required></div>
-            <div class="mb-3"><label class="form-label">Phone</label><input type="text" name="phone" class="form-control"></div>
+            <div class="mb-3"><label class="form-label">Name</label><input aria-label="Name" type="text" name="name" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">Email</label><input aria-label="Email" type="email" name="email" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">Phone</label><input aria-label="Phone" type="text" name="phone" class="form-control"></div>
             <div class="mb-3"><label class="form-label">Package</label>
                 <select aria-label="Package id" name="package_id" class="form-select">
                     <?php foreach ($packages ?? [] as $p): ?>
@@ -54,7 +54,7 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="mb-3"><label class="form-label">Sponsor ID (optional)</label><input type="number" name="sponsor_id" class="form-control" placeholder="User ID of sponsor"></div>
+            <div class="mb-3"><label class="form-label">Sponsor ID (optional)</label><input aria-label="Sponsor id" type="number" name="sponsor_id" class="form-control" placeholder="User ID of sponsor"></div>
         </div>
         <div class="modal-footer"><button type="submit" class="btn btn-primary">Register</button></div>
     </form>

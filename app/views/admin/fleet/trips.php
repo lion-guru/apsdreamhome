@@ -24,7 +24,7 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                 <form method="POST" action="<?= $base ?>/admin/site-visits/fleet/trips/store" class="row g-3">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <div class="col-6"><label class="form-label small">Trip Date</label>
-                        <input type="date" name="trip_date" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime('next sunday')) ?>" required></div>
+                        <input aria-label="Trip date" type="date" name="trip_date" class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime('next sunday')) ?>" required></div>
                     <div class="col-6"><label class="form-label small">Vehicle</label>
                         <select aria-label="Vehicle id" name="vehicle_id" class="form-select form-select-sm">
                             <option value="0">— No vehicle —</option>
@@ -33,11 +33,11 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                             <?php endforeach; ?>
                         </select></div>
                     <div class="col-6"><label class="form-label small">Driver (override)</label>
-                        <input type="text" name="driver_name" class="form-control form-control-sm" placeholder="auto from vehicle"></div>
+                        <input aria-label="Driver name" type="text" name="driver_name" class="form-control form-control-sm" placeholder="auto from vehicle"></div>
                     <div class="col-6"><label class="form-label small">Driver Phone</label>
-                        <input type="text" name="driver_phone" class="form-control form-control-sm" placeholder="auto from vehicle"></div>
+                        <input aria-label="Driver phone" type="text" name="driver_phone" class="form-control form-control-sm" placeholder="auto from vehicle"></div>
                     <div class="col-12"><label class="form-label small">Pickup Point</label>
-                        <input type="text" name="pickup_point" class="form-control form-control-sm" list="pickupList" placeholder="e.g. Railway Station" required>
+                        <input aria-label="Pickup point" type="text" name="pickup_point" class="form-control form-control-sm" list="pickupList" placeholder="e.g. Railway Station" required>
                         <datalist id="pickupList">
                             <?php foreach ($pickups as $p): ?><option value="<?= htmlspecialchars($p) ?>"><?php endforeach; ?>
                         </datalist></div>
@@ -56,7 +56,7 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                             <?php endforeach; ?>
                         </select></div>
                     <div class="col-6"><label class="form-label small">Customers Planned</label>
-                        <input type="number" min="0" name="customers_planned" class="form-control form-control-sm" value="0"></div>
+                        <input aria-label="Customers planned" type="number" min="0" name="customers_planned" class="form-control form-control-sm" value="0"></div>
                     <div class="col-12"><label class="form-label small">Notes</label>
                         <textarea aria-label="Notes" name="notes" class="form-control form-control-sm" rows="2"></textarea></div>
                     <div class="col-12"><button class="btn btn-primary btn-sm w-100"><i class="fas fa-check me-1"></i>Schedule</button></div>

@@ -33,11 +33,11 @@ $holiday_types = $holiday_types ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Holiday Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" required placeholder="e.g., New Year's Day">
+                        <input aria-label="Name" type="text" name="name" class="form-control" required placeholder="e.g., New Year's Day">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
-                        <input type="date" name="date" class="form-control" required value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Date" type="date" name="date" class="form-control" required value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Type <span class="text-danger">*</span></label>
@@ -63,14 +63,14 @@ $holiday_types = $holiday_types ?? [];
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Half Day</label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="is_half_day" id="is_half_day" value="1">
+                            <input aria-label="Is half day" class="form-check-input" type="checkbox" name="is_half_day" id="is_half_day" value="1">
                             <label class="form-check-label" for="is_half_day">Half day holiday</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Working Day</label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="is_working_day" id="is_working_day" value="1">
+                            <input aria-label="Is working day" class="form-check-input" type="checkbox" name="is_working_day" id="is_working_day" value="1">
                             <label class="form-check-label" for="is_working_day">Count as working day</label>
                         </div>
                     </div>
@@ -91,13 +91,13 @@ $holiday_types = $holiday_types ?? [];
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Recurring Holiday</label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="is_recurring" id="is_recurring" value="1">
+                            <input aria-label="Is recurring" class="form-check-input" type="checkbox" name="is_recurring" id="is_recurring" value="1">
                             <label class="form-check-label" for="is_recurring">Recurs annually</label>
                         </div>
                     </div>
                     <div class="col-md-6" id="recurrenceGroup" style="display: none;">
                         <label class="form-label fw-semibold">Recurrence Rule</label>
-                        <input type="text" name="recurrence_rule" class="form-control" placeholder="e.g., FREQ=YEARLY;BYMONTH=1;BYMONTHDAY=1">
+                        <input aria-label="Recurrence rule" type="text" name="recurrence_rule" class="form-control" placeholder="e.g., FREQ=YEARLY;BYMONTH=1;BYMONTHDAY=1">
                         <div class="form-text">iCal RRULE format (optional)</div>
                     </div>
                 </div>

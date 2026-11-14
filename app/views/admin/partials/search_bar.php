@@ -16,7 +16,7 @@ $searchValue = $_GET['search'] ?? '';
             <span class="input-group-text">
                 <i class="fas fa-search"></i>
             </span>
-            <input type="text"
+            <input aria-label="Search" type="text"
                 class="form-control"
                 name="search"
                 placeholder="Search..."

@@ -157,7 +157,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Template Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" id="templateName" class="form-control" placeholder="e.g. booking_confirmation" required>
+                            <input aria-label="Name" type="text" name="name" id="templateName" class="form-control" placeholder="e.g. booking_confirmation" required>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Category</label>
@@ -182,7 +182,7 @@ $stats = $stats ?? ['total' => 0, 'active' => 0, 'inactive' => 0, 'message_logs'
                         </div>
                         <div class="col-12">
                             <div class="form-check form-switch">
-                                <input type="checkbox" name="is_active" id="templateActive" class="form-check-input" value="1" checked>
+                                <input aria-label="Is active" type="checkbox" name="is_active" id="templateActive" class="form-check-input" value="1" checked>
                                 <label class="form-check-label" for="templateActive">Active</label>
                             </div>
                         </div>

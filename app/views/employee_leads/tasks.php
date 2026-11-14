@@ -86,7 +86,7 @@ function taskStatusBadge($status) {
             </select>
         </div>
         <div class="col-md-4 text-md-end">
-            <input type="text" id="searchTasks" class="form-control form-control-sm" placeholder="Search tasks..." onkeyup="filterTasks()">
+            <input aria-label="Search tasks" type="text" id="searchTasks" class="form-control form-control-sm" placeholder="Search tasks..." onkeyup="filterTasks()">
         </div>
     </div>
 

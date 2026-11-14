@@ -38,7 +38,7 @@ $errors = $errors ?? [];
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Task Name <span class="text-danger">*</span></label>
-                        <input type="text" name="task_name" class="form-control" value="<?= htmlspecialchars($old_input['task_name'] ?? '') ?>" required>
+                        <input aria-label="Task name" type="text" name="task_name" class="form-control" value="<?= htmlspecialchars($old_input['task_name'] ?? '') ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Task Type <span class="text-danger">*</span></label>
@@ -62,7 +62,7 @@ $errors = $errors ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Max Retries</label>
-                        <input type="number" name="max_retries" class="form-control" value="<?= (int)($old_input['max_retries'] ?? 3) ?>" min="0" max="10">
+                        <input aria-label="Max retries" type="number" name="max_retries" class="form-control" value="<?= (int)($old_input['max_retries'] ?? 3) ?>" min="0" max="10">
                     </div>
                 </div>
 
@@ -80,11 +80,11 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">To Email <span class="text-danger">*</span></label>
-                            <input type="email" name="email_to" class="form-control" value="<?= htmlspecialchars($old_input['email_to'] ?? '') ?>">
+                            <input aria-label="Email to" type="email" name="email_to" class="form-control" value="<?= htmlspecialchars($old_input['email_to'] ?? '') ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Subject <span class="text-danger">*</span></label>
-                            <input type="text" name="email_subject" class="form-control" value="<?= htmlspecialchars($old_input['email_subject'] ?? '') ?>">
+                            <input aria-label="Email subject" type="text" name="email_subject" class="form-control" value="<?= htmlspecialchars($old_input['email_subject'] ?? '') ?>">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -96,7 +96,7 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Template</label>
-                            <input type="text" name="email_template" class="form-control" value="<?= htmlspecialchars($old_input['email_template'] ?? 'default') ?>">
+                            <input aria-label="Email template" type="text" name="email_template" class="form-control" value="<?= htmlspecialchars($old_input['email_template'] ?? 'default') ?>">
                         </div>
                     </div>
                 </div>
@@ -106,7 +106,7 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Image Path <span class="text-danger">*</span></label>
-                            <input type="text" name="image_path" class="form-control" value="<?= htmlspecialchars($old_input['image_path'] ?? '') ?>" placeholder="/path/to/image.jpg">
+                            <input aria-label="Image path" type="text" name="image_path" class="form-control" value="<?= htmlspecialchars($old_input['image_path'] ?? '') ?>" placeholder="/path/to/image.jpg">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Output Format</label>
@@ -120,7 +120,7 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-12">
                             <label class="form-label">Operations (comma separated)</label>
-                            <input type="text" name="image_operations" class="form-control" value="<?= htmlspecialchars($old_input['image_operations'] ?? 'resize,optimize') ?>" placeholder="resize,optimize,watermark,thumbnail">
+                            <input aria-label="Image operations" type="text" name="image_operations" class="form-control" value="<?= htmlspecialchars($old_input['image_operations'] ?? 'resize,optimize') ?>" placeholder="resize,optimize,watermark,thumbnail">
                             <div class="form-text">Available: resize, optimize, watermark, thumbnail, crop, rotate</div>
                         </div>
                     </div>
@@ -152,11 +152,11 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Date Start</label>
-                            <input type="date" name="date_start" class="form-control" value="<?= htmlspecialchars($old_input['date_start'] ?? date('Y-m-01')) ?>">
+                            <input aria-label="Date start" type="date" name="date_start" class="form-control" value="<?= htmlspecialchars($old_input['date_start'] ?? date('Y-m-01')) ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Date End</label>
-                            <input type="date" name="date_end" class="form-control" value="<?= htmlspecialchars($old_input['date_end'] ?? date('Y-m-d')) ?>">
+                            <input aria-label="Date end" type="date" name="date_end" class="form-control" value="<?= htmlspecialchars($old_input['date_end'] ?? date('Y-m-d')) ?>">
                         </div>
                     </div>
                 </div>
@@ -174,7 +174,7 @@ $errors = $errors ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Table <span class="text-danger">*</span></label>
-                            <input type="text" name="export_table" class="form-control" value="<?= htmlspecialchars($old_input['export_table'] ?? '') ?>" placeholder="e.g., users, leads, properties">
+                            <input aria-label="Export table" type="text" name="export_table" class="form-control" value="<?= htmlspecialchars($old_input['export_table'] ?? '') ?>" placeholder="e.g., users, leads, properties">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -209,7 +209,7 @@ $errors = $errors ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-check mt-4">
-                                <input type="checkbox" name="backup_compress" class="form-check-input" <?= ($old_input['backup_compress'] ?? true) ? 'checked' : '' ?>>
+                                <input aria-label="Backup compress" type="checkbox" name="backup_compress" class="form-check-input" <?= ($old_input['backup_compress'] ?? true) ? 'checked' : '' ?>>
                                 <label class="form-check-label">Compress Backup</label>
                             </div>
                         </div>

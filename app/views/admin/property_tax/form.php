@@ -40,11 +40,11 @@ $data = $data ?? [];
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Tax Authority <span class="text-danger">*</span></label>
-                                <input type="text" name="tax_authority" class="form-control" required value="<?= htmlspecialchars($data['tax_authority'] ?? '') ?>" placeholder="e.g., Gorakhpur Municipal Corporation">
+                                <input aria-label="Tax authority" type="text" name="tax_authority" class="form-control" required value="<?= htmlspecialchars($data['tax_authority'] ?? '') ?>" placeholder="e.g., Gorakhpur Municipal Corporation">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Ward / Zone</label>
-                                <input type="text" name="ward_zone" class="form-control" value="<?= htmlspecialchars($data['ward_zone'] ?? '') ?>" placeholder="e.g., Ward 12, Zone 3">
+                                <input aria-label="Ward zone" type="text" name="ward_zone" class="form-control" value="<?= htmlspecialchars($data['ward_zone'] ?? '') ?>" placeholder="e.g., Ward 12, Zone 3">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Tax Type <span class="text-danger">*</span></label>
@@ -103,43 +103,43 @@ $data = $data ?? [];
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Tax Rate</label>
-                                <input type="number" step="0.0001" name="tax_rate" class="form-control" id="taxRate" value="<?= htmlspecialchars($data['tax_rate'] ?? 0) ?>">
+                                <input aria-label="Tax rate" type="number" step="0.0001" name="tax_rate" class="form-control" id="taxRate" value="<?= htmlspecialchars($data['tax_rate'] ?? 0) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Built-up Area (sq ft)</label>
-                                <input type="number" step="0.01" name="built_up_area" class="form-control" id="builtUpArea" value="<?= htmlspecialchars($data['built_up_area'] ?? 0) ?>">
+                                <input aria-label="Built up area" type="number" step="0.01" name="built_up_area" class="form-control" id="builtUpArea" value="<?= htmlspecialchars($data['built_up_area'] ?? 0) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Land Area (sq ft)</label>
-                                <input type="number" step="0.01" name="land_area" class="form-control" id="landArea" value="<?= htmlspecialchars($data['land_area'] ?? 0) ?>">
+                                <input aria-label="Land area" type="number" step="0.01" name="land_area" class="form-control" id="landArea" value="<?= htmlspecialchars($data['land_area'] ?? 0) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Annual Rental Value</label>
-                                <input type="number" step="0.01" name="annual_rental_value" class="form-control" id="annualRentalValue" value="<?= htmlspecialchars($data['annual_rental_value'] ?? 0) ?>">
+                                <input aria-label="Annual rental value" type="number" step="0.01" name="annual_rental_value" class="form-control" id="annualRentalValue" value="<?= htmlspecialchars($data['annual_rental_value'] ?? 0) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Capital Value</label>
-                                <input type="number" step="0.01" name="capital_value" class="form-control" id="capitalValue" value="<?= htmlspecialchars($data['capital_value'] ?? 0) ?>">
+                                <input aria-label="Capital value" type="number" step="0.01" name="capital_value" class="form-control" id="capitalValue" value="<?= htmlspecialchars($data['capital_value'] ?? 0) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Rebate %</label>
-                                <input type="number" step="0.01" min="0" max="100" name="rebate_percent" class="form-control" id="rebatePercent" value="<?= htmlspecialchars($data['rebate_percent'] ?? 0) ?>">
+                                <input aria-label="Rebate percent" type="number" step="0.01" min="0" max="100" name="rebate_percent" class="form-control" id="rebatePercent" value="<?= htmlspecialchars($data['rebate_percent'] ?? 0) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Surcharge %</label>
-                                <input type="number" step="0.01" min="0" name="surcharge_percent" class="form-control" id="surchargePercent" value="<?= htmlspecialchars($data['surcharge_percent'] ?? 0) ?>">
+                                <input aria-label="Surcharge percent" type="number" step="0.01" min="0" name="surcharge_percent" class="form-control" id="surchargePercent" value="<?= htmlspecialchars($data['surcharge_percent'] ?? 0) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Penalty Rate %/month</label>
-                                <input type="number" step="0.01" min="0" name="penalty_rate_per_month" class="form-control" value="<?= htmlspecialchars($data['penalty_rate_per_month'] ?? 1.0) ?>">
+                                <input aria-label="Penalty rate per month" type="number" step="0.01" min="0" name="penalty_rate_per_month" class="form-control" value="<?= htmlspecialchars($data['penalty_rate_per_month'] ?? 1.0) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Max Penalty %</label>
-                                <input type="number" step="0.01" min="0" name="max_penalty_percent" class="form-control" value="<?= htmlspecialchars($data['max_penalty_percent'] ?? 25.0) ?>">
+                                <input aria-label="Max penalty percent" type="number" step="0.01" min="0" name="max_penalty_percent" class="form-control" value="<?= htmlspecialchars($data['max_penalty_percent'] ?? 25.0) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Due Date</label>
-                                <input type="date" name="due_date" class="form-control" value="<?= htmlspecialchars($data['due_date'] ?? date('Y-m-d', strtotime('+30 days'))) ?>">
+                                <input aria-label="Due date" type="date" name="due_date" class="form-control" value="<?= htmlspecialchars($data['due_date'] ?? date('Y-m-d', strtotime('+30 days'))) ?>">
                             </div>
                         </div>
 

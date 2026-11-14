@@ -66,42 +66,42 @@ ob_start();
 
             <div class="aps-cp-form-section">
                 <label class="aps-cp-label" for="legal_name"><?= __('user_kyc_legal_name_label', null, 'Legal Name (as on PAN)') ?></label>
-                <input type="text" id="legal_name" name="legal_name" class="aps-cp-input" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
+                <input aria-label="Legal name" type="text" id="legal_name" name="legal_name" class="aps-cp-input" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
             </div>
 
             <div class="aps-cp-form-section">
                 <label class="aps-cp-label" for="pan_number"><?= __('user_kyc_pan_number', null, 'PAN Number') ?></label>
-                <input type="text" id="pan_number" name="pan_number" class="aps-cp-input" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" placeholder="ABCDE1234F" maxlength="10" required>
+                <input aria-label="Pan number" type="text" id="pan_number" name="pan_number" class="aps-cp-input" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" placeholder="ABCDE1234F" maxlength="10" required>
                 <small class="aps-cp-help"><?= __('user_kyc_pan_help', null, '10-character PAN. Example: ABCDE1234F') ?></small>
             </div>
 
             <div class="aps-cp-form-section">
                 <label class="aps-cp-label" for="pan_document"><?= __('user_kyc_pan_document', null, 'PAN Card Document') ?> <span class="text-danger">*</span></label>
-                <input type="file" id="pan_document" name="pan_document" class="aps-cp-input" accept="image/*,application/pdf" required>
+                <input aria-label="Pan document" type="file" id="pan_document" name="pan_document" class="aps-cp-input" accept="image/*,application/pdf" required>
                 <small class="aps-cp-help"><?= __('user_kyc_pan_upload_help', null, 'Upload PAN card image (JPG, PNG, PDF). Max 5MB.') ?></small>
             </div>
 
             <div class="aps-cp-form-section">
                 <label class="aps-cp-label" for="aadhaar_number"><?= __('user_kyc_aadhaar_number', null, 'Aadhaar Number') ?></label>
-                <input type="text" id="aadhaar_number" name="aadhaar_number" class="aps-cp-input" pattern="[0-9]{12}" placeholder="123412341234" maxlength="12" required>
+                <input aria-label="Aadhaar number" type="text" id="aadhaar_number" name="aadhaar_number" class="aps-cp-input" pattern="[0-9]{12}" placeholder="123412341234" maxlength="12" required>
                 <small class="aps-cp-help"><?= __('user_kyc_aadhaar_help', null, '12-digit Aadhaar. Will be verified via UIDAI.') ?></small>
             </div>
 
             <div class="aps-cp-form-section">
                 <label class="aps-cp-label" for="aadhaar_front_document"><?= __('user_kyc_aadhaar_front', null, 'Aadhaar Front') ?> <span class="text-danger">*</span></label>
-                <input type="file" id="aadhaar_front_document" name="aadhaar_front_document" class="aps-cp-input" accept="image/*,application/pdf" required>
+                <input aria-label="Aadhaar front document" type="file" id="aadhaar_front_document" name="aadhaar_front_document" class="aps-cp-input" accept="image/*,application/pdf" required>
                 <small class="aps-cp-help"><?= __('user_kyc_aadhaar_front_help', null, 'Upload Aadhaar front side (JPG, PNG, PDF). Max 5MB.') ?></small>
             </div>
 
             <div class="aps-cp-form-section">
                 <label class="aps-cp-label" for="aadhaar_back_document"><?= __('user_kyc_aadhaar_back', null, 'Aadhaar Back') ?> <span class="text-danger">*</span></label>
-                <input type="file" id="aadhaar_back_document" name="aadhaar_back_document" class="aps-cp-input" accept="image/*,application/pdf" required>
+                <input aria-label="Aadhaar back document" type="file" id="aadhaar_back_document" name="aadhaar_back_document" class="aps-cp-input" accept="image/*,application/pdf" required>
                 <small class="aps-cp-help"><?= __('user_kyc_aadhaar_back_help', null, 'Upload Aadhaar back side (JPG, PNG, PDF). Max 5MB.') ?></small>
             </div>
 
             <div class="aps-cp-form-section">
                 <label class="aps-cp-label" for="dob"><?= __('user_kyc_dob', null, 'Date of Birth') ?></label>
-                <input type="date" id="dob" name="dob" class="aps-cp-input" required>
+                <input aria-label="Dob" type="date" id="dob" name="dob" class="aps-cp-input" required>
             </div>
 
             <div class="aps-cp-form-actions">

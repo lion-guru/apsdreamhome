@@ -21,7 +21,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Project Name *</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <input aria-label="Name" type="text" class="form-control" id="name" name="name" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -47,19 +47,19 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="developer_name" class="form-label">Developer Name</label>
-                                    <input type="text" class="form-control" id="developer_name" name="developer_name">
+                                    <input aria-label="Developer name" type="text" class="form-control" id="developer_name" name="developer_name">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="developer_contact" class="form-label">Developer Contact</label>
-                                    <input type="text" class="form-control" id="developer_contact" name="developer_contact">
+                                    <input aria-label="Developer contact" type="text" class="form-control" id="developer_contact" name="developer_contact">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="developer_phone" class="form-label">Developer Phone</label>
-                                    <input type="text" class="form-control" id="developer_phone" name="developer_phone">
+                                    <input aria-label="Developer phone" type="text" class="form-control" id="developer_phone" name="developer_phone">
                                 </div>
                             </div>
                         </div>
@@ -110,25 +110,25 @@
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="total_area" class="form-label">Total Area (sq ft)</label>
-                                    <input type="number" class="form-control" id="total_area" name="total_area" step="0.01">
+                                    <input aria-label="Total area" type="number" class="form-control" id="total_area" name="total_area" step="0.01">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="total_plots" class="form-label">Total Plots</label>
-                                    <input type="number" class="form-control" id="total_plots" name="total_plots">
+                                    <input aria-label="Total plots" type="number" class="form-control" id="total_plots" name="total_plots">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="available_plots" class="form-label">Available Plots</label>
-                                    <input type="number" class="form-control" id="available_plots" name="available_plots">
+                                    <input aria-label="Available plots" type="number" class="form-control" id="available_plots" name="available_plots">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="booked_plots" class="form-label">Booked Plots</label>
-                                    <input type="number" class="form-control" id="booked_plots" name="booked_plots">
+                                    <input aria-label="Booked plots" type="number" class="form-control" id="booked_plots" name="booked_plots">
                                 </div>
                             </div>
                         </div>
@@ -136,19 +136,19 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="sold_plots" class="form-label">Sold Plots</label>
-                                    <input type="number" class="form-control" id="sold_plots" name="sold_plots">
+                                    <input aria-label="Sold plots" type="number" class="form-control" id="sold_plots" name="sold_plots">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="price_range_min" class="form-label">Min Price (₹)</label>
-                                    <input type="number" class="form-control" id="price_range_min" name="price_range_min">
+                                    <input aria-label="Price range min" type="number" class="form-control" id="price_range_min" name="price_range_min">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="price_range_max" class="form-label">Max Price (₹)</label>
-                                    <input type="number" class="form-control" id="price_range_max" name="price_range_max">
+                                    <input aria-label="Price range max" type="number" class="form-control" id="price_range_max" name="price_range_max">
                                 </div>
                             </div>
                         </div>
@@ -156,7 +156,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="avg_price_per_sqft" class="form-label">Avg Price per Sqft (₹)</label>
-                                    <input type="number" class="form-control" id="avg_price_per_sqft" name="avg_price_per_sqft" step="0.01">
+                                    <input aria-label="Avg price per sqft" type="number" class="form-control" id="avg_price_per_sqft" name="avg_price_per_sqft" step="0.01">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -178,19 +178,19 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="launch_date" class="form-label">Launch Date</label>
-                                    <input type="date" class="form-control" id="launch_date" name="launch_date">
+                                    <input aria-label="Launch date" type="date" class="form-control" id="launch_date" name="launch_date">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="completion_date" class="form-label">Completion Date</label>
-                                    <input type="date" class="form-control" id="completion_date" name="completion_date">
+                                    <input aria-label="Completion date" type="date" class="form-control" id="completion_date" name="completion_date">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="possession_date" class="form-label">Possession Date</label>
-                                    <input type="date" class="form-control" id="possession_date" name="possession_date">
+                                    <input aria-label="Possession date" type="date" class="form-control" id="possession_date" name="possession_date">
                                 </div>
                             </div>
                         </div>
@@ -202,18 +202,18 @@
                         </div>
                         <div class="mb-3">
                             <label for="tags" class="form-label">Tags</label>
-                            <input type="text" class="form-control" id="tags" name="tags" placeholder="Comma separated tags">
+                            <input aria-label="Tags" type="text" class="form-control" id="tags" name="tags" placeholder="Comma separated tags">
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured">
+                                    <input aria-label="Is featured" class="form-check-input" type="checkbox" id="is_featured" name="is_featured">
                                     <label class="form-check-label" for="is_featured">Featured Project</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="is_hot_deal" name="is_hot_deal">
+                                    <input aria-label="Is hot deal" class="form-check-input" type="checkbox" id="is_hot_deal" name="is_hot_deal">
                                     <label class="form-check-label" for="is_hot_deal">Hot Deal</label>
                                 </div>
                             </div>
@@ -224,14 +224,14 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="virtual_tour_url" class="form-label">360° Virtual Tour URL</label>
-                                    <input type="url" class="form-control" id="virtual_tour_url" name="virtual_tour_url" placeholder="https://kuula.co/post/... or Matterport link">
+                                    <input aria-label="Virtual tour url" type="url" class="form-control" id="virtual_tour_url" name="virtual_tour_url" placeholder="https://kuula.co/post/... or Matterport link">
                                     <div class="form-text">Embeddable 360 virtual tour or YouTube VR walkthrough URL.</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="brochure_path" class="form-label">Brochure File Path / URL</label>
-                                    <input type="text" class="form-control" id="brochure_path" name="brochure_path" placeholder="/assets/docs/brochures/project_brochure.pdf">
+                                    <input aria-label="Brochure path" type="text" class="form-control" id="brochure_path" name="brochure_path" placeholder="/assets/docs/brochures/project_brochure.pdf">
                                     <div class="form-text">Official project brochure PDF link for customer downloads.</div>
                                 </div>
                             </div>
@@ -242,19 +242,19 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="rera_number" class="form-label">RERA Number</label>
-                                    <input type="text" class="form-control" id="rera_number" name="rera_number" placeholder="e.g. UP-RERA-2024-001235">
+                                    <input aria-label="Rera number" type="text" class="form-control" id="rera_number" name="rera_number" placeholder="e.g. UP-RERA-2024-001235">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="progress_pct" class="form-label">Construction Progress (%)</label>
-                                    <input type="number" class="form-control" id="progress_pct" name="progress_pct" min="0" max="100" step="1" value="0">
+                                    <input aria-label="Progress pct" type="number" class="form-control" id="progress_pct" name="progress_pct" min="0" max="100" step="1" value="0">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="project_budget" class="form-label">Project Budget (₹)</label>
-                                    <input type="number" class="form-control" id="project_budget" name="project_budget" step="0.01">
+                                    <input aria-label="Project budget" type="number" class="form-control" id="project_budget" name="project_budget" step="0.01">
                                 </div>
                             </div>
                         </div>
@@ -262,25 +262,25 @@
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="amount_spent" class="form-label">Amount Spent (₹)</label>
-                                    <input type="number" class="form-control" id="amount_spent" name="amount_spent" step="0.01">
+                                    <input aria-label="Amount spent" type="number" class="form-control" id="amount_spent" name="amount_spent" step="0.01">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="project_manager" class="form-label">Project Manager</label>
-                                    <input type="text" class="form-control" id="project_manager" name="project_manager">
+                                    <input aria-label="Project manager" type="text" class="form-control" id="project_manager" name="project_manager">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="site_supervisor" class="form-label">Site Supervisor</label>
-                                    <input type="text" class="form-control" id="site_supervisor" name="site_supervisor">
+                                    <input aria-label="Site supervisor" type="text" class="form-control" id="site_supervisor" name="site_supervisor">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label for="contractor_name" class="form-label">Contractor Name</label>
-                                    <input type="text" class="form-control" id="contractor_name" name="contractor_name">
+                                    <input aria-label="Contractor name" type="text" class="form-control" id="contractor_name" name="contractor_name">
                                 </div>
                             </div>
                         </div>

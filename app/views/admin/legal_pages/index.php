@@ -109,7 +109,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
     <form method="POST" action="<?= BASE_URL ?>/admin/legal-pages/update-terms">
         <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
         <div class="modal-body">
-            <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<?= htmlspecialchars($terms_content['title'] ?? 'Terms and Conditions') ?>"></div>
+            <div class="mb-3"><label class="form-label">Title</label><input aria-label="Title" type="text" name="title" class="form-control" value="<?= htmlspecialchars($terms_content['title'] ?? 'Terms and Conditions') ?>"></div>
             <div class="mb-3"><label class="form-label">Content (HTML supported)</label><textarea aria-label="Content" name="content" class="form-control" rows="15" ><?= htmlspecialchars($terms_content['content'] ?? '') ?></textarea></div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Terms</button></div>
@@ -122,7 +122,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
     <form method="POST" action="<?= BASE_URL ?>/admin/legal-pages/update-privacy">
         <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
         <div class="modal-body">
-            <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<?= htmlspecialchars($privacy_content['title'] ?? 'Privacy Policy') ?>"></div>
+            <div class="mb-3"><label class="form-label">Title</label><input aria-label="Title" type="text" name="title" class="form-control" value="<?= htmlspecialchars($privacy_content['title'] ?? 'Privacy Policy') ?>"></div>
             <div class="mb-3"><label class="form-label">Content (HTML supported)</label><textarea aria-label="Content" name="content" class="form-control" rows="15" ><?= htmlspecialchars($privacy_content['content'] ?? '') ?></textarea></div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Privacy Policy</button></div>
@@ -135,7 +135,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
     <form method="POST" action="<?= BASE_URL ?>/admin/legal-pages/update-page/7">
         <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
         <div class="modal-body">
-            <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<?= htmlspecialchars($pages['disclaimer']['title'] ?? 'Disclaimer') ?>"></div>
+            <div class="mb-3"><label class="form-label">Title</label><input aria-label="Title" type="text" name="title" class="form-control" value="<?= htmlspecialchars($pages['disclaimer']['title'] ?? 'Disclaimer') ?>"></div>
             <div class="mb-3"><label class="form-label">Content (HTML supported)</label><textarea aria-label="Content" name="content" class="form-control" rows="15" ><?= htmlspecialchars($pages['disclaimer']['content'] ?? '') ?></textarea></div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Disclaimer</button></div>
@@ -148,7 +148,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
     <form method="POST" action="<?= BASE_URL ?>/admin/legal-pages/update-page/8">
         <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
         <div class="modal-body">
-            <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<?= htmlspecialchars($pages['cancellation-policy']['title'] ?? 'Cancellation Policy') ?>"></div>
+            <div class="mb-3"><label class="form-label">Title</label><input aria-label="Title" type="text" name="title" class="form-control" value="<?= htmlspecialchars($pages['cancellation-policy']['title'] ?? 'Cancellation Policy') ?>"></div>
             <div class="mb-3"><label class="form-label">Content (HTML supported)</label><textarea aria-label="Content" name="content" class="form-control" rows="15" ><?= htmlspecialchars($pages['cancellation-policy']['content'] ?? '') ?></textarea></div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Cancellation Policy</button></div>
@@ -161,7 +161,7 @@ $privacy_content = $privacy_content ?? ['content' => '', 'title' => 'Privacy Pol
     <form method="POST" action="<?= BASE_URL ?>/admin/legal-pages/update-page/9">
         <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
         <div class="modal-body">
-            <div class="mb-3"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<?= htmlspecialchars($pages['associate-rules']['title'] ?? 'Associate Rules') ?>"></div>
+            <div class="mb-3"><label class="form-label">Title</label><input aria-label="Title" type="text" name="title" class="form-control" value="<?= htmlspecialchars($pages['associate-rules']['title'] ?? 'Associate Rules') ?>"></div>
             <div class="mb-3"><label class="form-label">Content (HTML supported)</label><textarea aria-label="Content" name="content" class="form-control" rows="15" ><?= htmlspecialchars($pages['associate-rules']['content'] ?? '') ?></textarea></div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Associate Rules</button></div>

@@ -60,27 +60,27 @@ $employees = $employees ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Document Name <span class="text-danger">*</span></label>
-                        <input type="text" name="document_name" class="form-control" required placeholder="e.g., Aadhaar Card, Passport, Offer Letter">
+                        <input aria-label="Document name" type="text" name="document_name" class="form-control" required placeholder="e.g., Aadhaar Card, Passport, Offer Letter">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Issue Date</label>
-                        <input type="date" name="issue_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Issue date" type="date" name="issue_date" class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Expiry Date</label>
-                        <input type="date" name="expiry_date" class="form-control" id="expiry_date">
+                        <input aria-label="Expiry date" type="date" name="expiry_date" class="form-control" id="expiry_date">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Issuing Authority</label>
-                        <input type="text" name="issuing_authority" class="form-control" placeholder="e.g., UIDAI, Passport Office, Company HR">
+                        <input aria-label="Issuing authority" type="text" name="issuing_authority" class="form-control" placeholder="e.g., UIDAI, Passport Office, Company HR">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Document Reference Number</label>
-                        <input type="text" name="document_number_ref" class="form-control" placeholder="e.g., Aadhaar No., Passport No., PAN No.">
+                        <input aria-label="Document number ref" type="text" name="document_number_ref" class="form-control" placeholder="e.g., Aadhaar No., Passport No., PAN No.">
                     </div>
                     <div class="col-md-6">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="is_confidential" value="1" id="is_confidential">
+                            <input aria-label="Is confidential" class="form-check-input" type="checkbox" name="is_confidential" value="1" id="is_confidential">
                             <label class="form-check-label" for="is_confidential">Confidential Document</label>
                         </div>
                     </div>
@@ -104,7 +104,7 @@ $employees = $employees ?? [];
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">File <span class="text-danger">*</span></label>
-                    <input type="file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                    <input aria-label="Document file" type="file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
                     <div class="form-text">Allowed: PDF, JPG, PNG, DOC, DOCX. Max size determined by category.</div>
                 </div>
             </div>

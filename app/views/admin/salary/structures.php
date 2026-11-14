@@ -21,42 +21,42 @@
                         <label class="form-label font-weight-bold">Basic Salary <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
-                            <input type="number" step="0.01" name="basic_salary" class="form-control calc-earning" value="<?= $edit_structure['basic_salary'] ?? 0 ?>" required>
+                            <input aria-label="Basic salary" type="number" step="0.01" name="basic_salary" class="form-control calc-earning" value="<?= $edit_structure['basic_salary'] ?? 0 ?>" required>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">HRA</label>
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
-                            <input type="number" step="0.01" name="hra" class="form-control calc-earning" value="<?= $edit_structure['hra'] ?? 0 ?>">
+                            <input aria-label="Hra" type="number" step="0.01" name="hra" class="form-control calc-earning" value="<?= $edit_structure['hra'] ?? 0 ?>">
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">Conveyance</label>
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
-                            <input type="number" step="0.01" name="conveyance" class="form-control calc-earning" value="<?= $edit_structure['conveyance'] ?? 0 ?>">
+                            <input aria-label="Conveyance" type="number" step="0.01" name="conveyance" class="form-control calc-earning" value="<?= $edit_structure['conveyance'] ?? 0 ?>">
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">Medical Allowance</label>
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
-                            <input type="number" step="0.01" name="medical_allowance" class="form-control calc-earning" value="<?= $edit_structure['medical_allowance'] ?? 0 ?>">
+                            <input aria-label="Medical allowance" type="number" step="0.01" name="medical_allowance" class="form-control calc-earning" value="<?= $edit_structure['medical_allowance'] ?? 0 ?>">
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">Special Allowance</label>
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
-                            <input type="number" step="0.01" name="special_allowance" class="form-control calc-earning" value="<?= $edit_structure['special_allowance'] ?? 0 ?>">
+                            <input aria-label="Special allowance" type="number" step="0.01" name="special_allowance" class="form-control calc-earning" value="<?= $edit_structure['special_allowance'] ?? 0 ?>">
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label font-weight-bold">Other Allowances</label>
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
-                            <input type="number" step="0.01" name="other_allowances" class="form-control calc-earning" value="<?= $edit_structure['other_allowances'] ?? 0 ?>">
+                            <input aria-label="Other allowances" type="number" step="0.01" name="other_allowances" class="form-control calc-earning" value="<?= $edit_structure['other_allowances'] ?? 0 ?>">
                         </div>
                     </div>
                 </div>
@@ -67,14 +67,14 @@
                         <label class="form-label font-weight-bold">Employee PF</label>
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
-                            <input type="number" step="0.01" name="pf_employee" class="form-control calc-deduction" value="<?= $edit_structure['pf_employee'] ?? 0 ?>">
+                            <input aria-label="Pf employee" type="number" step="0.01" name="pf_employee" class="form-control calc-deduction" value="<?= $edit_structure['pf_employee'] ?? 0 ?>">
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label font-weight-bold">TDS (Tax)</label>
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
-                            <input type="number" step="0.01" name="tds" class="form-control calc-deduction" value="<?= $edit_structure['tds'] ?? 0 ?>">
+                            <input aria-label="Tds" type="number" step="0.01" name="tds" class="form-control calc-deduction" value="<?= $edit_structure['tds'] ?? 0 ?>">
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label font-weight-bold">Effective Date</label>
-                        <input type="date" name="effective_date" class="form-control" value="<?= $edit_structure['effective_date'] ?? date('Y-m-d') ?>">
+                        <input aria-label="Effective date" type="date" name="effective_date" class="form-control" value="<?= $edit_structure['effective_date'] ?? date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label font-weight-bold">Status</label>
@@ -226,7 +226,7 @@
                                         <label class="form-label text-muted small text-uppercase fw-bold">Basic Salary <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light">₹</span>
-                                            <input type="number" step="0.01" name="basic_salary" class="form-control form-control-lg calc-earning" value="0" required>
+                                            <input aria-label="Basic salary" type="number" step="0.01" name="basic_salary" class="form-control form-control-lg calc-earning" value="0" required>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -234,14 +234,14 @@
                                             <label class="form-label text-muted small text-uppercase fw-bold">HRA</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-light">₹</span>
-                                                <input type="number" step="0.01" name="hra" class="form-control calc-earning" value="0">
+                                                <input aria-label="Hra" type="number" step="0.01" name="hra" class="form-control calc-earning" value="0">
                                             </div>
                                         </div>
                                         <div class="col-6 mb-3">
                                             <label class="form-label text-muted small text-uppercase fw-bold">Conveyance</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-light">₹</span>
-                                                <input type="number" step="0.01" name="conveyance" class="form-control calc-earning" value="0">
+                                                <input aria-label="Conveyance" type="number" step="0.01" name="conveyance" class="form-control calc-earning" value="0">
                                             </div>
                                         </div>
                                     </div>
@@ -250,21 +250,21 @@
                                             <label class="form-label text-muted small text-uppercase fw-bold">Medical</label>
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-text bg-light">₹</span>
-                                                <input type="number" step="0.01" name="medical_allowance" class="form-control calc-earning" value="0">
+                                                <input aria-label="Medical allowance" type="number" step="0.01" name="medical_allowance" class="form-control calc-earning" value="0">
                                             </div>
                                         </div>
                                         <div class="col-4 mb-3">
                                             <label class="form-label text-muted small text-uppercase fw-bold">Special</label>
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-text bg-light">₹</span>
-                                                <input type="number" step="0.01" name="special_allowance" class="form-control calc-earning" value="0">
+                                                <input aria-label="Special allowance" type="number" step="0.01" name="special_allowance" class="form-control calc-earning" value="0">
                                             </div>
                                         </div>
                                         <div class="col-4 mb-3">
                                             <label class="form-label text-muted small text-uppercase fw-bold">Other</label>
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-text bg-light">₹</span>
-                                                <input type="number" step="0.01" name="other_allowances" class="form-control calc-earning" value="0">
+                                                <input aria-label="Other allowances" type="number" step="0.01" name="other_allowances" class="form-control calc-earning" value="0">
                                             </div>
                                         </div>
                                     </div>
@@ -282,14 +282,14 @@
                                         <label class="form-label text-muted small text-uppercase fw-bold">Employee PF</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light">₹</span>
-                                            <input type="number" step="0.01" name="pf_employee" class="form-control calc-deduction" value="0">
+                                            <input aria-label="Pf employee" type="number" step="0.01" name="pf_employee" class="form-control calc-deduction" value="0">
                                         </div>
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label text-muted small text-uppercase fw-bold">TDS (Tax)</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light">₹</span>
-                                            <input type="number" step="0.01" name="tds" class="form-control calc-deduction" value="0">
+                                            <input aria-label="Tds" type="number" step="0.01" name="tds" class="form-control calc-deduction" value="0">
                                         </div>
                                     </div>
                                     
@@ -316,7 +316,7 @@
                         <div class="card-body row">
                             <div class="col-md-6">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Effective Date <span class="text-danger">*</span></label>
-                                <input type="date" name="effective_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                                <input aria-label="Effective date" type="date" name="effective_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                             </div>
                         </div>
                     </div>

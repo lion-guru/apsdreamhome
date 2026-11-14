@@ -115,7 +115,7 @@
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <input type="text" name="search" class="form-control" placeholder="Search files..." 
+                    <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search files..." 
                            value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">

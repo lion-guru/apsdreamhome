@@ -180,20 +180,20 @@ $summary = $summary ?? ['total_requests' => 0, 'total_hours' => 0, 'total_amount
                     <div class="row mb-3">
                         <label for="date" class="col-sm-3 col-form-label fw-bold">Date <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <input type="date" class="form-control" id="date" name="date" value="<?= date('Y-m-d') ?>" required max="<?= date('Y-m-d') ?>">
+                            <input aria-label="Date" type="date" class="form-control" id="date" name="date" value="<?= date('Y-m-d') ?>" required max="<?= date('Y-m-d') ?>">
                             <div class="form-text">Cannot request overtime for future dates.</div>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="start_time" class="col-sm-3 col-form-label fw-bold">Start Time <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <input type="time" class="form-control" id="start_time" name="start_time" required>
+                            <input aria-label="Start time" type="time" class="form-control" id="start_time" name="start_time" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="end_time" class="col-sm-3 col-form-label fw-bold">End Time <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <input type="time" class="form-control" id="end_time" name="end_time" required>
+                            <input aria-label="End time" type="time" class="form-control" id="end_time" name="end_time" required>
                         </div>
                     </div>
                     <div class="row mb-3">

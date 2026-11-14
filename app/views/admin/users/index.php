@@ -208,7 +208,7 @@ $perPage = $per_page ?? 20;
         <form method="GET" class="row g-2 align-items-end" id="userFilterForm">
             <div class="col-md-3">
                 <label class="form-label small text-muted mb-1">Search</label>
-                <input type="text" name="search" class="form-control form-control-sm" placeholder="Search name, email, phone..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="Search name, email, phone..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
             </div>
             <div class="col-md-2">
                 <label class="form-label small text-muted mb-1">Role</label>
@@ -230,11 +230,11 @@ $perPage = $per_page ?? 20;
             </div>
             <div class="col-md-2">
                 <label class="form-label small text-muted mb-1">Date From</label>
-                <input type="date" name="date_from" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
+                <input aria-label="Date from" type="date" name="date_from" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
             </div>
             <div class="col-md-2">
                 <label class="form-label small text-muted mb-1">Date To</label>
-                <input type="date" name="date_to" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>">
+                <input aria-label="Date to" type="date" name="date_to" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>">
             </div>
             <div class="col-md-1">
                 <label class="form-label small text-muted mb-1">Per Page</label>

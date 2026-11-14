@@ -58,7 +58,7 @@ unset($_SESSION['import_errors']);
 
                         <div class="mb-3">
                             <label for="import_file" class="form-label">CSV File</label>
-                            <input type="file" name="import_file" id="import_file" class="form-control" accept=".csv" required>
+                            <input aria-label="Import file" type="file" name="import_file" id="import_file" class="form-control" accept=".csv" required>
                             <div class="form-text">Upload a CSV file with plot data. Maximum file size: 10MB.</div>
                         </div>
 

@@ -20,7 +20,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <form method="GET" action="<?= $base ?>/associate/browse" class="row g-2 align-items-end">
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-3">
-                    <input type="text" class="form-control form-control-sm" name="q" placeholder="<?= __('assoc_browse_search', [], 'Search properties...') ?>" value="<?= htmlspecialchars($current_filters['q'] ?? '') ?>">
+                    <input aria-label="Q" type="text" class="form-control form-control-sm" name="q" placeholder="<?= __('assoc_browse_search', [], 'Search properties...') ?>" value="<?= htmlspecialchars($current_filters['q'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <select aria-label="Type" class="form-select form-select-sm" name="type">
@@ -168,12 +168,12 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <input type="hidden" name="source" value="associate_browse">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold"><?= __('assoc_browse_phone', [], 'Phone Number') ?> *</label>
-                        <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required
+                        <input aria-label="Phone" type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required
                                value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold"><?= __('assoc_browse_name', [], 'Your Name') ?></label>
-                        <input type="text" name="name" class="form-control" placeholder="<?= __('assoc_browse_name_placeholder', [], 'Enter your name') ?>"
+                        <input aria-label="Name" type="text" name="name" class="form-control" placeholder="<?= __('assoc_browse_name_placeholder', [], 'Enter your name') ?>"
                                value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                     </div>
                     <div class="mb-3">

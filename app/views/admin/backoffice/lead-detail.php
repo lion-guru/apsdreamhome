@@ -56,10 +56,10 @@
               <option value="call"><?= __('bko_call') ?></option><option value="sms"><?= __('bko_sms') ?></option><option value="whatsapp"><?= __('bko_whatsapp') ?></option>
               <option value="email"><?= __('bko_email') ?></option><option value="visit"><?= __('bko_visit') ?></option><option value="meeting"><?= __('bko_meeting') ?></option><option value="note"><?= __('bko_note') ?></option>
             </select></div>
-            <div class="mb-2"><input type="text" name="subject" class="form-control form-control-sm" placeholder="<?= __('bko_subject') ?>"></div>
+            <div class="mb-2"><input aria-label="Subject" type="text" name="subject" class="form-control form-control-sm" placeholder="<?= __('bko_subject') ?>"></div>
             <div class="mb-2"><textarea aria-label="Description" name="description" class="form-control form-control-sm" rows="2" placeholder="<?= __('bko_details') ?>"></textarea></div>
-            <div class="mb-2"><input type="date" name="next_follow_up" class="form-control form-control-sm"></div>
-            <div class="mb-2"><input type="text" name="outcome" class="form-control form-control-sm" placeholder="<?= __('bko_outcome') ?>"></div>
+            <div class="mb-2"><input aria-label="Next follow up" type="date" name="next_follow_up" class="form-control form-control-sm"></div>
+            <div class="mb-2"><input aria-label="Outcome" type="text" name="outcome" class="form-control form-control-sm" placeholder="<?= __('bko_outcome') ?>"></div>
             <button class="btn btn-primary btn-sm w-100"><i class="fas fa-plus me-1"></i><?= __('bko_add_activity') ?></button>
           </form>
         </div>

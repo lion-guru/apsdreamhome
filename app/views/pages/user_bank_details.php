@@ -88,7 +88,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                             <?= __('bank_label_account_holder', null, 'Account Holder Name') ?>
                                             <span class="required">*</span>
                                         </label>
-                                        <input type="text" name="account_holder" id="account_holder" class="form-control" required
+                                        <input aria-label="Account holder" type="text" name="account_holder" id="account_holder" class="form-control" required
                                                value="<?= htmlspecialchars($bankAccount['account_holder'] ?? $_SESSION['user_name'] ?? '') ?>"
                                                placeholder="<?= __('bank_ph_account_holder', null, 'As per bank records') ?>"
                                                autocomplete="name" maxlength="100">
@@ -103,7 +103,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                             <?= __('bank_label_account_number', null, 'Account Number') ?>
                                             <span class="required">*</span>
                                         </label>
-                                        <input type="text" name="account_number" id="account_number" class="form-control" required
+                                        <input aria-label="Account number" type="text" name="account_number" id="account_number" class="form-control" required
                                                value="<?= htmlspecialchars($bankAccount['account_number'] ?? '') ?>"
                                                placeholder="<?= __('bank_ph_account_number', null, 'Enter account number') ?>"
                                                autocomplete="off" inputmode="numeric" pattern="[0-9]{9,18}">
@@ -119,7 +119,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                             <span class="required">*</span>
                                         </label>
                                         <div class="input-group">
-                                            <input type="text" name="ifsc_code" id="ifsc_code" class="form-control"
+                                            <input aria-label="Ifsc code" type="text" name="ifsc_code" id="ifsc_code" class="form-control"
                                                    value="<?= htmlspecialchars($bankAccount['ifsc_code'] ?? '') ?>"
                                                    placeholder="<?= __('bank_ph_ifsc', null, 'e.g., SBIN0001234') ?>"
                                                    maxlength="11" required
@@ -142,7 +142,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                                 <i class="fas fa-university text-muted"></i>
                                                 <?= __('bank_label_bank_name', null, 'Bank Name') ?>
                                             </label>
-                                            <input type="text" name="bank_name" id="bank_name" class="form-control"
+                                            <input aria-label="Bank name" type="text" name="bank_name" id="bank_name" class="form-control"
                                                    value="<?= htmlspecialchars($bankAccount['bank_name'] ?? '') ?>"
                                                    placeholder="<?= __('bank_ph_bank_name_autofill', null, 'Auto-filled from IFSC') ?>" readonly>
                                         </div>
@@ -151,7 +151,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                                 <i class="fas fa-map-marker-alt text-muted"></i>
                                                 <?= __('bank_label_branch_name', null, 'Branch Name') ?>
                                             </label>
-                                            <input type="text" name="branch_name" id="branch_name" class="form-control"
+                                            <input aria-label="Branch name" type="text" name="branch_name" id="branch_name" class="form-control"
                                                    value="<?= htmlspecialchars($bankAccount['branch_name'] ?? '') ?>"
                                                    placeholder="<?= __('bank_ph_branch_name_autofill', null, 'Auto-filled from IFSC') ?>" readonly>
                                         </div>
@@ -177,7 +177,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                             <i class="fas fa-mobile-alt text-muted"></i>
                                             <?= __('bank_label_upi', null, 'UPI ID (Optional)') ?>
                                         </label>
-                                        <input type="text" name="upi_id" id="upi_id" class="form-control"
+                                        <input aria-label="Upi id" type="text" name="upi_id" id="upi_id" class="form-control"
                                                value="<?= htmlspecialchars($bankAccount['upi_id'] ?? '') ?>"
                                                placeholder="<?= __('bank_ph_upi', null, 'e.g., yourname@okicici') ?>"
                                                pattern="[a-zA-Z0-9._-]+@[a-zA-Z]{2,}" maxlength="100">
@@ -189,7 +189,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 
                                     <?php if (!$bankAccount): ?>
                                     <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" name="set_primary" id="set_primary" value="1" checked>
+                                        <input aria-label="Set primary" class="form-check-input" type="checkbox" name="set_primary" id="set_primary" value="1" checked>
                                         <label class="form-check-label" for="set_primary">
                                             <?= __('bank_set_primary', null, 'Set as primary account for transactions') ?>
                                         </label>

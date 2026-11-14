@@ -127,16 +127,16 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_plot_value_label') ?></label>
-                    <input type="number" step="0.01" name="total_plot_value" value="<?= htmlspecialchars((string)($booking['total_plot_value'] ?? '')) ?>" class="form-control" required>
+                    <input aria-label="Total plot value" type="number" step="0.01" name="total_plot_value" value="<?= htmlspecialchars((string)($booking['total_plot_value'] ?? '')) ?>" class="form-control" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_token_amount_label') ?></label>
-                    <input type="number" step="0.01" name="booking_amount" value="<?= htmlspecialchars((string)($booking['booking_amount'] ?? '51000')) ?>" class="form-control" placeholder="51000" required>
+                    <input aria-label="Booking amount" type="number" step="0.01" name="booking_amount" value="<?= htmlspecialchars((string)($booking['booking_amount'] ?? '51000')) ?>" class="form-control" placeholder="51000" required>
                     <small class="text-danger fw-semibold d-block mt-1"><i class="fas fa-shield-alt me-1"></i>मास्टर डीड (धारा 2.1 व 2.9): टोकन राशि ₹51,000 पूर्णतः गैर-वापसी योग्य (Non-Refundable) है।</small>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_agreement_value_label') ?></label>
-                    <input type="number" step="0.01" name="agreement_value" value="<?= htmlspecialchars((string)($booking['agreement_value'] ?? $booking['total_plot_value'] ?? '')) ?>" class="form-control" required>
+                    <input aria-label="Agreement value" type="number" step="0.01" name="agreement_value" value="<?= htmlspecialchars((string)($booking['agreement_value'] ?? $booking['total_plot_value'] ?? '')) ?>" class="form-control" required>
                 </div>
                 <div class="col-12">
                     <div class="card border-info bg-light p-3 rounded-3 shadow-sm">
@@ -146,7 +146,7 @@ if ($selectedPlotId) {
                                     <i class="fas fa-gift text-danger me-1"></i>Festival / Promo Code (त्योहारी ऑफर / डिस्काउंट कूपन)
                                 </label>
                                 <div class="input-group">
-                                    <input type="text" name="promo_code_applied" id="booking_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5" value="<?= htmlspecialchars((string)($booking['promo_code_applied'] ?? '')) ?>" <?= $mode === 'edit' ? 'readonly' : '' ?>>
+                                    <input aria-label="Promo code applied" type="text" name="promo_code_applied" id="booking_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5" value="<?= htmlspecialchars((string)($booking['promo_code_applied'] ?? '')) ?>" <?= $mode === 'edit' ? 'readonly' : '' ?>>
                                     <?php if ($mode !== 'edit'): ?>
                                     <button type="button" class="btn btn-primary" id="btn_apply_promo_code">
                                         <i class="fas fa-check me-1"></i>Apply
@@ -240,7 +240,7 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-3">
                     <label class="form-label"><?= __('sale_override_commission') ?></label>
-                    <input type="number" step="0.01" name="commission_pct" value="<?= htmlspecialchars((string)($booking['commission_pct'] ?? '')) ?>" class="form-control" placeholder="<?= __('sale_default') ?>">
+                    <input aria-label="Commission pct" type="number" step="0.01" name="commission_pct" value="<?= htmlspecialchars((string)($booking['commission_pct'] ?? '')) ?>" class="form-control" placeholder="<?= __('sale_default') ?>">
                 </div>
                 <div class="col-12">
                     <label class="form-label"><?= __('sale_notes') ?></label>
@@ -296,7 +296,7 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-12">
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" name="require_digital_signature" id="require_digital_signature" value="1" checked>
+                        <input aria-label="Require digital signature" class="form-check-input" type="checkbox" name="require_digital_signature" id="require_digital_signature" value="1" checked>
                         <label class="form-check-label fw-semibold" for="require_digital_signature">
                             Require Digital Signature (Video Consent + E-Signature)
                         </label>
@@ -320,11 +320,11 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Tenure (Months)</label>
-                    <input type="number" name="emi_tenure_months" class="form-control" value="<?= htmlspecialchars((string)($booking['emi_tenure_months'] ?? '')) ?>" min="1" max="360" placeholder="e.g., 60">
+                    <input aria-label="Emi tenure months" type="number" name="emi_tenure_months" class="form-control" value="<?= htmlspecialchars((string)($booking['emi_tenure_months'] ?? '')) ?>" min="1" max="360" placeholder="e.g., 60">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Interest Rate (% p.a.)</label>
-                    <input type="number" step="0.01" name="emi_rate_per_annum" class="form-control" value="<?= htmlspecialchars((string)($booking['emi_rate_per_annum'] ?? '')) ?>" min="0" max="30" placeholder="e.g., 12.00">
+                    <input aria-label="Emi rate per annum" type="number" step="0.01" name="emi_rate_per_annum" class="form-control" value="<?= htmlspecialchars((string)($booking['emi_rate_per_annum'] ?? '')) ?>" min="0" max="30" placeholder="e.g., 12.00">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">EMI Type</label>
@@ -335,11 +335,11 @@ if ($selectedPlotId) {
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Moratorium (Months)</label>
-                    <input type="number" name="emi_moratorium_months" class="form-control" value="<?= htmlspecialchars((string)($booking['emi_moratorium_months'] ?? 0)) ?>" min="0" max="12" placeholder="0">
+                    <input aria-label="Emi moratorium months" type="number" name="emi_moratorium_months" class="form-control" value="<?= htmlspecialchars((string)($booking['emi_moratorium_months'] ?? 0)) ?>" min="0" max="12" placeholder="0">
                 </div>
                 <div class="col-12">
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" name="auto_generate_schedule" id="auto_generate_schedule" value="1" checked>
+                        <input aria-label="Auto generate schedule" class="form-check-input" type="checkbox" name="auto_generate_schedule" id="auto_generate_schedule" value="1" checked>
                         <label class="form-check-label" for="auto_generate_schedule">Auto-generate EMI payment schedule on booking creation</label>
                     </div>
                 </div>

@@ -16,7 +16,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Goal Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" placeholder="e.g., Increase Property Views" required>
+                            <input aria-label="Name" type="text" name="name" class="form-control" placeholder="e.g., Increase Property Views" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
@@ -25,7 +25,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Target Value <span class="text-danger">*</span></label>
-                                <input type="number" name="target_value" class="form-control" placeholder="e.g., 1000" required>
+                                <input aria-label="Target value" type="number" name="target_value" class="form-control" placeholder="e.g., 1000" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Unit</label>
@@ -39,7 +39,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Deadline <span class="text-danger">*</span></label>
-                                <input type="date" name="deadline" class="form-control" required>
+                                <input aria-label="Deadline" type="date" name="deadline" class="form-control" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Assigned Team</label>

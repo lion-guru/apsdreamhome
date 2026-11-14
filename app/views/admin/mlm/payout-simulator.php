@@ -29,7 +29,7 @@ $csrf_token = $csrf_token ?? '';
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
             <div class="col-md-5">
                 <label class="form-label fw-semibold">Sale Amount (&#8377;)</label>
-                <input type="number" id="saleAmount" name="sale_amount" class="form-control form-control-lg"
+                <input aria-label="Sale amount" type="number" id="saleAmount" name="sale_amount" class="form-control form-control-lg"
                        placeholder="e.g. 500000" min="1" required>
             </div>
             <div class="col-md-4">

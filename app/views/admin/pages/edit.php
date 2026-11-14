@@ -51,7 +51,7 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Page Title</label>
-                                        <input type="text" name="title" class="form-control" value="<?= htmlspecialchars($page['title'] ?? '') ?>" required>
+                                        <input aria-label="Title" type="text" name="title" class="form-control" value="<?= htmlspecialchars($page['title'] ?? '') ?>" required>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label fw-semibold">Slug</label>
@@ -89,7 +89,7 @@
                                     <label class="form-label fw-semibold">
                                         <i class="fas fa-tag me-1 text-primary"></i>What changed? <span class="text-muted fw-normal">(saved with version history)</span>
                                     </label>
-                                    <input type="text" name="change_summary" class="form-control" placeholder="e.g. Updated refund deduction tiers, fixed typo in clause 3...">
+                                    <input aria-label="Change summary" type="text" name="change_summary" class="form-control" placeholder="e.g. Updated refund deduction tiers, fixed typo in clause 3...">
                                     <div class="form-text">This note is saved with the version snapshot so you can track what changed and when.</div>
                                 </div>
 

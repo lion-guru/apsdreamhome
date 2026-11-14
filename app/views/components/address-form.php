@@ -47,7 +47,7 @@ $p = preg_replace('/[^a-zA-Z0-9_]/', '', $addressPrefix);
         <div class="col-md-6">
             <div class="mb-3">
                 <label class="form-label" for="<?= $p ?>_city">City / Town<?= $addrStar ?></label>
-                <input type="text" class="form-control" id="<?= $p ?>_city" name="<?= $p ?>_city"
+                <input aria-label="p city" type="text" class="form-control" id="<?= $p ?>_city" name="<?= $p ?>_city"
                        value="<?= $addrVal('city') ?>" list="<?= $p ?>_city_list" <?= $addrReq ?> autocomplete="off">
                 <datalist id="<?= $p ?>_city_list"></datalist>
             </div>
@@ -55,7 +55,7 @@ $p = preg_replace('/[^a-zA-Z0-9_]/', '', $addressPrefix);
         <div class="col-md-6">
             <div class="mb-3">
                 <label class="form-label" for="<?= $p ?>_pincode">Pincode<?= $addrStar ?></label>
-                <input type="text" class="form-control" id="<?= $p ?>_pincode" name="<?= $p ?>_pincode"
+                <input aria-label="p pincode" type="text" class="form-control" id="<?= $p ?>_pincode" name="<?= $p ?>_pincode"
                        value="<?= $addrVal('pincode') ?>" maxlength="6" inputmode="numeric" <?= $addrReq ?>>
                 <small class="form-text text-muted" id="<?= $p ?>_pin_hint">6 digits — city/state auto-fill honge</small>
             </div>
@@ -75,14 +75,14 @@ $p = preg_replace('/[^a-zA-Z0-9_]/', '', $addressPrefix);
         <div class="col-md-6">
             <div class="mb-3">
                 <label class="form-label" for="<?= $p ?>_latitude">Latitude</label>
-                <input type="text" class="form-control" id="<?= $p ?>_latitude" name="<?= $p ?>_latitude"
+                <input aria-label="p latitude" type="text" class="form-control" id="<?= $p ?>_latitude" name="<?= $p ?>_latitude"
                        value="<?= $addrVal('latitude') ?>" placeholder="26.7606" readonly>
             </div>
         </div>
         <div class="col-md-6">
             <div class="mb-3">
                 <label class="form-label" for="<?= $p ?>_longitude">Longitude</label>
-                <input type="text" class="form-control" id="<?= $p ?>_longitude" name="<?= $p ?>_longitude"
+                <input aria-label="p longitude" type="text" class="form-control" id="<?= $p ?>_longitude" name="<?= $p ?>_longitude"
                        value="<?= $addrVal('longitude') ?>" placeholder="83.3732" readonly>
             </div>
         </div>

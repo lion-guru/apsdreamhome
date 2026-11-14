@@ -167,7 +167,7 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
     <?php echo CSRFProtection::csrfField(); ?>
                     <div class="col-md-4">
                         <label for="q" class="form-label"><i class="fas fa-search me-1"></i><?= __('keyword') ?></label>
-                        <input type="text" class="form-control" id="q" name="q" placeholder="Search by name, address..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+                        <input aria-label="Q" type="text" class="form-control" id="q" name="q" placeholder="Search by name, address..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
                     </div>
                     <div class="col-md-2">
                         <label for="type" class="form-label"><?= __('filter_type') ?></label>
@@ -252,11 +252,11 @@ $meta_keywords = 'real estate, properties, plots, flats, villas, farmhouses, ' .
                     </div>
                     <div class="col-md-2">
                         <label for="area_min" class="form-label"><?= __('min_area') ?> (sqft)</label>
-                        <input type="number" class="form-control" id="area_min" name="area_min" placeholder="Min" min="0" value="<?= htmlspecialchars($_GET['area_min'] ?? '') ?>">
+                        <input aria-label="Area min" type="number" class="form-control" id="area_min" name="area_min" placeholder="Min" min="0" value="<?= htmlspecialchars($_GET['area_min'] ?? '') ?>">
                     </div>
                     <div class="col-md-2">
                         <label for="area_max" class="form-label"><?= __('max_area') ?> (sqft)</label>
-                        <input type="number" class="form-control" id="area_max" name="area_max" placeholder="Max" min="0" value="<?= htmlspecialchars($_GET['area_max'] ?? '') ?>">
+                        <input aria-label="Area max" type="number" class="form-control" id="area_max" name="area_max" placeholder="Max" min="0" value="<?= htmlspecialchars($_GET['area_max'] ?? '') ?>">
                     </div>
                     <div class="col-12 d-flex gap-2 align-items-center pt-2 flex-wrap">
                         <button type="submit" class="btn px-4">
@@ -604,11 +604,11 @@ function submitPropertyInterest(e) {
                     <input type="hidden" name="source" value="property_listing">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Phone Number *</label>
-                        <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
+                        <input aria-label="Phone" type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Your Name</label>
-                        <input type="text" name="name" class="form-control" placeholder="Enter your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                        <input aria-label="Name" type="text" name="name" class="form-control" placeholder="Enter your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Budget Range</label>

@@ -25,11 +25,11 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Lead Name</label>
-                            <input type="text" name="lead_name" id="leadName" class="form-control" placeholder="Auto-filled from lead" readonly>
+                            <input aria-label="Lead name" type="text" name="lead_name" id="leadName" class="form-control" placeholder="Auto-filled from lead" readonly>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Phone <span class="text-danger">*</span></label>
-                            <input type="text" name="phone" id="leadPhone" class="form-control" required placeholder="Enter phone number">
+                            <input aria-label="Phone" type="text" name="phone" id="leadPhone" class="form-control" required placeholder="Enter phone number">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -48,11 +48,11 @@
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Date <span class="text-danger">*</span></label>
-                            <input type="date" name="scheduled_date" class="form-control" required value="<?= date('Y-m-d', strtotime('+1 day')) ?>">
+                            <input aria-label="Scheduled date" type="date" name="scheduled_date" class="form-control" required value="<?= date('Y-m-d', strtotime('+1 day')) ?>">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Time</label>
-                            <input type="time" name="scheduled_time" class="form-control" value="10:00">
+                            <input aria-label="Scheduled time" type="time" name="scheduled_time" class="form-control" value="10:00">
                         </div>
                     </div>
                     <div class="row mb-3">

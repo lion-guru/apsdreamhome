@@ -70,7 +70,7 @@ $departments = $departments ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Position Title <span class="text-danger">*</span></label>
-                        <input type="text" name="position_title" class="form-control" required value="<?= htmlspecialchars($node['position_title'] ?? '') ?>" placeholder="e.g., Senior Manager">
+                        <input aria-label="Position title" type="text" name="position_title" class="form-control" required value="<?= htmlspecialchars($node['position_title'] ?? '') ?>" placeholder="e.g., Senior Manager">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Department</label>
@@ -85,17 +85,17 @@ $departments = $departments ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Sort Order</label>
-                        <input type="number" name="sort_order" class="form-control" value="<?= $node['sort_order'] ?? 0 ?>" min="0">
+                        <input aria-label="Sort order" type="number" name="sort_order" class="form-control" value="<?= $node['sort_order'] ?? 0 ?>" min="0">
                     </div>
                     <div class="col-md-4">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="is_vacant" value="1" id="is_vacant" <?= !empty($node['is_vacant']) ? 'checked' : '' ?>>
+                            <input aria-label="Is vacant" class="form-check-input" type="checkbox" name="is_vacant" value="1" id="is_vacant" <?= !empty($node['is_vacant']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="is_vacant">Vacant Position</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active" <?= empty($node['is_active']) ? '' : 'checked' ?>>
+                            <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active" <?= empty($node['is_active']) ? '' : 'checked' ?>>
                             <label class="form-check-label" for="is_active">Active</label>
                         </div>
                     </div>
@@ -111,7 +111,7 @@ $departments = $departments ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Vacant Since</label>
-                        <input type="date" name="vacant_since" class="form-control" value="<?= htmlspecialchars($node['vacant_since'] ?? '') ?>">
+                        <input aria-label="Vacant since" type="date" name="vacant_since" class="form-control" value="<?= htmlspecialchars($node['vacant_since'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Custom Data (JSON)</label>

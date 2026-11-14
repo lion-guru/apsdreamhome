@@ -51,21 +51,21 @@
                                         <label class="form-label text-muted small fw-bold">Basic Amount</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-white">₹</span>
-                                            <input type="number" step="0.01" name="basic_amount" id="basicAmount" class="form-control" value="0" required>
+                                            <input aria-label="Basic amount" type="number" step="0.01" name="basic_amount" id="basicAmount" class="form-control" value="0" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label text-success small fw-bold">Gross Amount</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-white">₹</span>
-                                            <input type="number" step="0.01" name="gross_amount" id="grossAmount" class="form-control text-success fw-bold" value="0" required>
+                                            <input aria-label="Gross amount" type="number" step="0.01" name="gross_amount" id="grossAmount" class="form-control text-success fw-bold" value="0" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label text-danger small fw-bold">Total Deductions</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-white">₹</span>
-                                            <input type="number" step="0.01" name="deduction_amount" id="totalDeductions" class="form-control text-danger fw-bold" value="0">
+                                            <input aria-label="Deduction amount" type="number" step="0.01" name="deduction_amount" id="totalDeductions" class="form-control text-danger fw-bold" value="0">
                                         </div>
                                     </div>
                                 </div>
@@ -79,7 +79,7 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Payment Date <span class="text-danger">*</span></label>
-                                <input type="date" name="payment_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                                <input aria-label="Payment date" type="date" name="payment_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Payment Method</label>
@@ -92,7 +92,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Transaction ID</label>
-                                <input type="text" name="transaction_id" class="form-control" placeholder="Optional reference">
+                                <input aria-label="Transaction id" type="text" name="transaction_id" class="form-control" placeholder="Optional reference">
                             </div>
                         </div>
 
@@ -107,7 +107,7 @@
                             </div>
                             <div class="col-md-8 mb-3">
                                 <label class="form-label text-muted small text-uppercase fw-bold">Remarks / Notes</label>
-                                <input type="text" name="remarks" class="form-control" placeholder="Any additional notes...">
+                                <input aria-label="Remarks" type="text" name="remarks" class="form-control" placeholder="Any additional notes...">
                             </div>
                         </div>
                         

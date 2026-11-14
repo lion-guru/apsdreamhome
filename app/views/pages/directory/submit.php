@@ -18,11 +18,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Business/Service Name *</label>
-                                <input type="text" name="business_name" class="form-control" required placeholder="e.g. Sharma Plumbing Works">
+                                <input aria-label="Business name" type="text" name="business_name" class="form-control" required placeholder="e.g. Sharma Plumbing Works">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Owner Name</label>
-                                <input type="text" name="owner_name" class="form-control" placeholder="Your name">
+                                <input aria-label="Owner name" type="text" name="owner_name" class="form-control" placeholder="Your name">
                             </div>
                         </div>
 
@@ -44,26 +44,26 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Phone *</label>
-                                <input type="text" name="phone" class="form-control" required placeholder="9876543210">
+                                <input aria-label="Phone" type="text" name="phone" class="form-control" required placeholder="9876543210">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">WhatsApp</label>
-                                <input type="text" name="whatsapp" class="form-control" placeholder="9876543210">
+                                <input aria-label="Whatsapp" type="text" name="whatsapp" class="form-control" placeholder="9876543210">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" placeholder="your@email.com">
+                                <input aria-label="Email" type="email" name="email" class="form-control" placeholder="your@email.com">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">City</label>
-                                <input type="text" name="city" class="form-control" placeholder="e.g. Patna">
+                                <input aria-label="City" type="text" name="city" class="form-control" placeholder="e.g. Patna">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Experience (years)</label>
-                                <input type="number" name="experience_years" class="form-control" placeholder="5">
+                                <input aria-label="Experience years" type="number" name="experience_years" class="form-control" placeholder="5">
                             </div>
                         </div>
 

@@ -10,8 +10,8 @@
             <form method="get" class="row g-2 align-items-end">
     <?php echo CSRFProtection::csrfField(); ?>
                 <input type="hidden" name="url" value="/admin/finance/cash-book">
-                <div class="col-md-3"><label class="form-label small"><?php echo __('finance_from'); ?></label><input type="date" name="from" value="<?= htmlspecialchars($from ?? '') ?>" class="form-control form-control-sm"></div>
-                <div class="col-md-3"><label class="form-label small"><?php echo __('finance_to'); ?></label><input type="date" name="to" value="<?= htmlspecialchars($to ?? '') ?>" class="form-control form-control-sm"></div>
+                <div class="col-md-3"><label class="form-label small"><?php echo __('finance_from'); ?></label><input aria-label="From" type="date" name="from" value="<?= htmlspecialchars($from ?? '') ?>" class="form-control form-control-sm"></div>
+                <div class="col-md-3"><label class="form-label small"><?php echo __('finance_to'); ?></label><input aria-label="To" type="date" name="to" value="<?= htmlspecialchars($to ?? '') ?>" class="form-control form-control-sm"></div>
                 <div class="col-md-3">
                     <label class="form-label small"><?php echo __('finance_bank_account'); ?></label>
                     <select aria-label="Bank account id" name="bank_account_id" class="form-select form-select-sm">

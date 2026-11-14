@@ -23,7 +23,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"><?php echo __('book_site_visit_date', [], 'Preferred Date'); ?> <span class="text-danger">*</span></label>
-                                <input type="date" name="visit_date" class="form-control" required min="<?= date('Y-m-d') ?>">
+                                <input aria-label="Visit date" type="date" name="visit_date" class="form-control" required min="<?= date('Y-m-d') ?>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"><?php echo __('book_site_visit_time', [], 'Preferred Time'); ?></label>
@@ -38,7 +38,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label"><?php echo __('book_site_visit_phone', [], 'Your Phone'); ?> <span class="text-danger">*</span></label>
-                            <input type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>" required>
+                            <input aria-label="Phone" type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label"><?php echo __('book_site_visit_notes', [], 'Notes'); ?></label>

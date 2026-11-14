@@ -15,19 +15,19 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             <?php if ($isEdit): ?><input type="hidden" name="id" value="<?= $cert['id'] ?>"><?php endif; ?>
             <div class="mb-3">
                 <label class="form-label">Name</label>
-                <input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['name'] ?? '') : '' ?>" required>
+                <input aria-label="Name" type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['name'] ?? '') : '' ?>" required>
             </div>
             <div class="row">
-                <div class="col-md-4 mb-3"><label class="form-label">Code</label><input type="text" name="code" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['code'] ?? '') : '' ?>"></div>
-                <div class="col-md-4 mb-3"><label class="form-label">Authority</label><input type="text" name="authority" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['authority'] ?? '') : '' ?>"></div>
-                <div class="col-md-4 mb-3"><label class="form-label">Level</label><input type="text" name="level" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['level'] ?? '') : '' ?>" placeholder="Platinum / 5-Star"></div>
+                <div class="col-md-4 mb-3"><label class="form-label">Code</label><input aria-label="Code" type="text" name="code" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['code'] ?? '') : '' ?>"></div>
+                <div class="col-md-4 mb-3"><label class="form-label">Authority</label><input aria-label="Authority" type="text" name="authority" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['authority'] ?? '') : '' ?>"></div>
+                <div class="col-md-4 mb-3"><label class="form-label">Level</label><input aria-label="Level" type="text" name="level" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['level'] ?? '') : '' ?>" placeholder="Platinum / 5-Star"></div>
             </div>
             <div class="row">
-                <div class="col-md-4 mb-3"><label class="form-label">Icon Class</label><input type="text" name="icon" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['icon'] ?? 'fa-leaf') : 'fa-leaf' ?>" placeholder="fa-leaf"></div>
-                <div class="col-md-4 mb-3"><label class="form-label">Badge Color</label><input type="color" name="color" class="form-control form-control-color" value="<?= $isEdit ? htmlspecialchars($cert['color'] ?? '#2e7d32') : '#2e7d32' ?>"></div>
+                <div class="col-md-4 mb-3"><label class="form-label">Icon Class</label><input aria-label="Icon" type="text" name="icon" class="form-control" value="<?= $isEdit ? htmlspecialchars($cert['icon'] ?? 'fa-leaf') : 'fa-leaf' ?>" placeholder="fa-leaf"></div>
+                <div class="col-md-4 mb-3"><label class="form-label">Badge Color</label><input aria-label="Color" type="color" name="color" class="form-control form-control-color" value="<?= $isEdit ? htmlspecialchars($cert['color'] ?? '#2e7d32') : '#2e7d32' ?>"></div>
                 <div class="col-md-4 mb-3 d-flex align-items-end">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="is_active" <?= (!$isEdit || ($cert['is_active'] ?? 1)) ? 'checked' : '' ?> id="active">
+                        <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" <?= (!$isEdit || ($cert['is_active'] ?? 1)) ? 'checked' : '' ?> id="active">
                         <label class="form-check-label" for="active">Active</label>
                     </div>
                 </div>

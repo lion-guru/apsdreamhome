@@ -200,7 +200,7 @@ $completed_count = $completed_count ?? 0;
                     <div class="row mb-3">
                         <label for="swap_date" class="col-sm-3 col-form-label fw-bold">Date <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <input type="date" class="form-control" id="swap_date" name="swap_date" value="<?= date('Y-m-d', strtotime('+2 days')) ?>" required min="<?= date('Y-m-d', strtotime('+2 days')) ?>">
+                            <input aria-label="Swap date" type="date" class="form-control" id="swap_date" name="swap_date" value="<?= date('Y-m-d', strtotime('+2 days')) ?>" required min="<?= date('Y-m-d', strtotime('+2 days')) ?>">
                             <div class="form-text">Minimum 48 hours notice required.</div>
                         </div>
                     </div>
@@ -230,10 +230,10 @@ $completed_count = $completed_count ?? 0;
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="time" class="form-control" name="my_start_time" value="09:00" required>
+                                    <input aria-label="My start time" type="time" class="form-control" name="my_start_time" value="09:00" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="time" class="form-control" name="my_end_time" value="18:00" required>
+                                    <input aria-label="My end time" type="time" class="form-control" name="my_end_time" value="18:00" required>
                                 </div>
                             </div>
                         </div>
@@ -250,10 +250,10 @@ $completed_count = $completed_count ?? 0;
                                     </select>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="time" class="form-control" name="colleague_start_time" value="09:00" required>
+                                    <input aria-label="Colleague start time" type="time" class="form-control" name="colleague_start_time" value="09:00" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="time" class="form-control" name="colleague_end_time" value="18:00" required>
+                                    <input aria-label="Colleague end time" type="time" class="form-control" name="colleague_end_time" value="18:00" required>
                                 </div>
                             </div>
                         </div>

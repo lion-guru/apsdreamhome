@@ -185,23 +185,23 @@ $employee_id = $employee_id ?? 0;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Asset Name <span class="text-danger">*</span></label>
-                            <input type="text" name="asset_name" class="form-control" required placeholder="e.g., MacBook Pro 16\" M2">
+                            <input aria-label="Asset name" type="text" name="asset_name" class="form-control" required placeholder="e.g., MacBook Pro 16\" M2">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Serial Number</label>
-                            <input type="text" name="serial_number" class="form-control" placeholder="ABC123456">
+                            <input aria-label="Serial number" type="text" name="serial_number" class="form-control" placeholder="ABC123456">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Purchase Value (₹) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0" name="purchase_value" class="form-control" required>
+                            <input aria-label="Purchase value" type="number" step="0.01" min="0" name="purchase_value" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Current Value (₹) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0" name="current_value" class="form-control" required>
+                            <input aria-label="Current value" type="number" step="0.01" min="0" name="current_value" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Assigned Date <span class="text-danger">*</span></label>
-                            <input type="date" name="assigned_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Assigned date" type="date" name="assigned_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="col-12">
                             <label class="form-label">Remarks</label>

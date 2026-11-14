@@ -9,7 +9,7 @@ $base = $base ?? BASE_URL;
       <div class="row g-3 align-items-end">
         <div class="col-md-6">
           <label class="form-label">Property ID</label>
-          <input type="number" id="propertyId" class="form-control" placeholder="Enter property ID..." min="1">
+          <input aria-label="Property id" type="number" id="propertyId" class="form-control" placeholder="Enter property ID..." min="1">
         </div>
         <div class="col-md-3">
           <button class="btn btn-primary w-100" onclick="loadNeighborhood()">

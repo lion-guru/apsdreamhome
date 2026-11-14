@@ -123,7 +123,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                                 <label class="form-label small fw-semibold text-muted mb-1"><?= __('book_referral_code', 'Enter Associate Referral Code') ?></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="fas fa-qrcode"></i></span>
-                                    <input type="text" class="form-control text-uppercase fw-bold" name="referral_code" id="referralCodeInput"
+                                    <input aria-label="Referral code" type="text" class="form-control text-uppercase fw-bold" name="referral_code" id="referralCodeInput"
                                            placeholder="e.g. APS-1024"
                                            value="<?= htmlspecialchars((string)($_SESSION['referral_code'] ?? $_COOKIE['aps_referral'] ?? '')) ?>">
                                     <button class="btn btn-outline-primary" type="button" id="btnVerifyReferral"><?= __('book_verify', 'Verify') ?></button>
@@ -155,7 +155,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                                 <label class="form-label small fw-semibold text-muted mb-1"><?= __('book_promo_code_label', 'Enter Festive Promo Code') ?></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light"><i class="fas fa-tags text-primary"></i></span>
-                                    <input type="text" class="form-control text-uppercase fw-bold" name="promo_code" id="promoCodeInput"
+                                    <input aria-label="Promo code" type="text" class="form-control text-uppercase fw-bold" name="promo_code" id="promoCodeInput"
                                            placeholder="e.g. FESTIVE21, SUBHLABH5"
                                            value="<?= htmlspecialchars((string)($_GET['promo'] ?? '')) ?>">
                                     <button class="btn btn-outline-primary" type="button" id="btnVerifyPromo"><?= __('book_apply', 'Apply') ?></button>
@@ -194,7 +194,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="form-check border rounded-3 p-3 h-100 bg-light">
-                                    <input class="form-check-input" type="radio" name="payment_plan" id="planFull" value="full">
+                                    <input aria-label="Payment plan" class="form-check-input" type="radio" name="payment_plan" id="planFull" value="full">
                                     <label class="form-check-label w-100" for="planFull">
                                         <strong class="d-block text-dark"><?= __('book_full_payment', 'Lump Sum Full Payment') ?></strong>
                                         <small class="text-muted"><?= __('book_full_payment_desc', '100% upfront settlement with priority registry & immediate demarcation.') ?></small>
@@ -203,7 +203,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                             </div>
                             <div class="col-md-6">
                                 <div class="form-check border border-primary rounded-3 p-3 h-100 bg-primary bg-opacity-10">
-                                    <input class="form-check-input" type="radio" name="payment_plan" id="planEmi" value="emi" checked>
+                                    <input aria-label="Payment plan" class="form-check-input" type="radio" name="payment_plan" id="planEmi" value="emi" checked>
                                     <label class="form-check-label w-100" for="planEmi">
                                         <strong class="d-block text-primary"><?= __('book_emi_plan', '36-Month Easy EMI Plan') ?></strong>
                                         <small class="text-muted"><?= __('book_emi_plan_desc', 'Master Deed Section 4 Schedule: 25% Down Payment + 36 Monthly Installments.') ?></small>
@@ -268,7 +268,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
 
                         <!-- Checkbox 1: Terms -->
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="termsCheck" required checked>
+                            <input aria-label="Terms check" class="form-check-input" type="checkbox" id="termsCheck" required checked>
                             <label class="form-check-label small" for="termsCheck">
                                 I accept the <a href="<?= $baseUrl ?>/legal/terms-conditions" target="_blank" class="fw-bold">General Terms &amp; Conditions</a> governing plot allotments.
                             </label>
@@ -276,7 +276,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
 
                         <!-- Checkbox 2: 15-Day 25% Condition -->
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="cancellationCheck" required checked>
+                            <input aria-label="Cancellation check" class="form-check-input" type="checkbox" id="cancellationCheck" required checked>
                             <label class="form-check-label small" for="cancellationCheck">
                                 I understand that <strong>25% of the total plot consideration must be deposited within 15 calendar days</strong> from today, failing which the booking stands cancelled.
                             </label>
@@ -284,7 +284,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
 
                         <!-- Checkbox 3: Default Interest -->
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="emiTermsCheck" required checked>
+                            <input aria-label="Emi terms check" class="form-check-input" type="checkbox" id="emiTermsCheck" required checked>
                             <label class="form-check-label small" for="emiTermsCheck">
                                 I accept that delayed installments beyond 3 consecutive months attract <strong>18% per annum penal interest</strong> and ₹1,000 bounce fee per NACH/cheque default.
                             </label>
@@ -293,7 +293,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                         <!-- Checkbox 4: Tripartite Master Deed Clickwrap Box -->
                         <div class="p-3 rounded-3 border border-danger mb-3 mt-3" id="tripartiteConsentBox" style="background: #fff8f8;">
                             <div class="form-check mb-0">
-                                <input class="form-check-input border-danger" type="checkbox" id="tripartiteConsent" name="tripartite_consent" required checked
+                                <input aria-label="Tripartite consent" class="form-check-input border-danger" type="checkbox" id="tripartiteConsent" name="tripartite_consent" required checked
                                        style="width: 1.25em; height: 1.25em; margin-top: 0.15em;">
                                 <label class="form-check-label fw-bold text-danger ms-1" for="tripartiteConsent" style="font-size: 0.9rem; line-height: 1.5;">
                                     <i class="fas fa-gavel text-danger me-1"></i>
@@ -309,7 +309,7 @@ $simulatedEmi36 = $remainingSeventyFive / 36;
                         </div>
 
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="esignConsent" required checked>
+                            <input aria-label="Esign consent" class="form-check-input" type="checkbox" id="esignConsent" required checked>
                             <label class="form-check-label small" for="esignConsent">
                                 I consent to electronic record execution and legal dispatch via registered Email and SMS/WhatsApp.
                             </label>

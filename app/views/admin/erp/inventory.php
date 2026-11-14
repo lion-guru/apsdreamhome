@@ -56,7 +56,7 @@
                 <option value="booked" <?php echo ($_GET['status']??'')==='booked'?'selected':''; ?>>Booked</option>
                 <option value="sold" <?php echo ($_GET['status']??'')==='sold'?'selected':''; ?>>Sold</option>
             </select>
-            <input type="text" name="search" class="form-control form-control-sm" placeholder="Search plot #, colony..." value="<?php echo htmlspecialchars($_GET['search']??''); ?>">
+            <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="Search plot #, colony..." value="<?php echo htmlspecialchars($_GET['search']??''); ?>">
             <button class="btn btn-sm btn-outline-primary" aria-label="Search"><i class="fas fa-search"></i></button>
         </form>
     </div>

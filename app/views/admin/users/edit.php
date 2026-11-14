@@ -27,19 +27,19 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" required>
+                                    <input aria-label="Name" type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" required>
                                 </div>
                                 
                                 <div class="col-md-6 mb-3">
                                     <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
+                                    <input aria-label="Email" type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
                                 </div>
                             </div>
                             
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="phone" class="form-label">Phone</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>">
+                                    <input aria-label="Phone" type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>">
                                 </div>
                                 
                                 <div class="col-md-6 mb-3">
@@ -94,7 +94,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 
                                 <div class="col-md-6 mb-3">
                                     <label for="password" class="form-label">New Password</label>
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current">
+                                    <input aria-label="Password" type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current">
                                     <small class="text-muted">Only fill if you want to change password</small>
                                 </div>
                             </div>
@@ -113,7 +113,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="form-check form-switch p-0 d-flex align-items-center gap-3">
-                                            <input class="form-check-input ms-0" type="checkbox" role="switch" id="can_offline_book" name="can_offline_book" value="1" <?= !empty($assocData['can_offline_book']) ? 'checked' : '' ?> style="width: 2.5em; height: 1.3em;">
+                                            <input aria-label="Can offline book" class="form-check-input ms-0" type="checkbox" role="switch" id="can_offline_book" name="can_offline_book" value="1" <?= !empty($assocData['can_offline_book']) ? 'checked' : '' ?> style="width: 2.5em; height: 1.3em;">
                                             <label class="form-check-label fw-bold" for="can_offline_book">
                                                 Allow Direct Offline Plot Booking<br>
                                                 <small class="text-muted fw-normal">एसोसिएट को सीधे पोर्टल से ऑफलाइन प्लॉट बुक करने की अनुमति दें</small>
@@ -122,7 +122,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-check form-switch p-0 d-flex align-items-center gap-3">
-                                            <input class="form-check-input ms-0" type="checkbox" role="switch" id="can_collect_cash" name="can_collect_cash" value="1" <?= !empty($assocData['can_collect_cash']) ? 'checked' : '' ?> style="width: 2.5em; height: 1.3em;">
+                                            <input aria-label="Can collect cash" class="form-check-input ms-0" type="checkbox" role="switch" id="can_collect_cash" name="can_collect_cash" value="1" <?= !empty($assocData['can_collect_cash']) ? 'checked' : '' ?> style="width: 2.5em; height: 1.3em;">
                                             <label class="form-check-label fw-bold" for="can_collect_cash">
                                                 Authorize Physical Cash Collection<br>
                                                 <small class="text-muted fw-normal">ग्राहक से सीधे नकद राशि (Cash) प्राप्त करने का विशेष अधिकार</small>
@@ -133,7 +133,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                         <label for="daily_cash_limit" class="form-label fw-bold">Max Daily Cash Collection Limit (₹)</label>
                                         <div class="input-group">
                                             <span class="input-group-text">₹</span>
-                                            <input type="number" step="1000" min="0" class="form-control" id="daily_cash_limit" name="daily_cash_limit" value="<?= htmlspecialchars((string)($assocData['daily_cash_limit'] ?? '0')) ?>" placeholder="0.00">
+                                            <input aria-label="Daily cash limit" type="number" step="1000" min="0" class="form-control" id="daily_cash_limit" name="daily_cash_limit" value="<?= htmlspecialchars((string)($assocData['daily_cash_limit'] ?? '0')) ?>" placeholder="0.00">
                                         </div>
                                         <div class="form-text small">अधिकतम दैनिक नकद सीमा। '0' का अर्थ है कोई नकद अनुमति नहीं (ऑनलाइन पेमेंट अनिवार्य)।</div>
                                     </div>

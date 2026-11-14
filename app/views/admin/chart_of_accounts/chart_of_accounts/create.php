@@ -27,12 +27,12 @@ $accounts = $accounts ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Account Code <span class="text-danger">*</span></label>
-                        <input type="text" name="account_code" class="form-control" required maxlength="20" placeholder="e.g., PLT-REV-002">
+                        <input aria-label="Account code" type="text" name="account_code" class="form-control" required maxlength="20" placeholder="e.g., PLT-REV-002">
                         <div class="form-text">Unique code for this account (max 20 chars)</div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Account Name <span class="text-danger">*</span></label>
-                        <input type="text" name="account_name" class="form-control" required maxlength="255" placeholder="e.g., Service Revenue">
+                        <input aria-label="Account name" type="text" name="account_name" class="form-control" required maxlength="255" placeholder="e.g., Service Revenue">
                     </div>
 
                     <div class="col-md-6">
@@ -65,7 +65,7 @@ $accounts = $accounts ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Opening Balance</label>
-                        <input type="number" name="opening_balance" class="form-control" step="0.01" value="0.00" placeholder="0.00">
+                        <input aria-label="Opening balance" type="number" name="opening_balance" class="form-control" step="0.01" value="0.00" placeholder="0.00">
                         <div class="form-text">Initial balance for this account</div>
                     </div>
 
@@ -76,7 +76,7 @@ $accounts = $accounts ?? [];
 
                     <div class="col-12">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="is_active" id="isActive" checked>
+                            <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="isActive" checked>
                             <label class="form-check-label" for="isActive">Active</label>
                         </div>
                     </div>

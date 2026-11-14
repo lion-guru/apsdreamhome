@@ -62,13 +62,13 @@
                             <?= csrf_field() ?>
                             <input type="hidden" name="subject" value="Inquiry for Suryoday Colony">
                             <div class="mb-3">
-                                <input type="text" name="name" class="form-control" placeholder="Your Name" required>
+                                <input aria-label="Name" type="text" name="name" class="form-control" placeholder="Your Name" required>
                             </div>
                             <div class="mb-3">
-                                <input type="email" name="email" class="form-control" placeholder="Your Email" required>
+                                <input aria-label="Email" type="email" name="email" class="form-control" placeholder="Your Email" required>
                             </div>
                             <div class="mb-3">
-                                <input type="tel" name="phone" class="form-control" placeholder="Phone Number" required>
+                                <input aria-label="Phone" type="tel" name="phone" class="form-control" placeholder="Phone Number" required>
                             </div>
                             <button type="submit" class="btn btn-premium w-100 py-3 rounded-pill shadow-none">Enquire Now</button>
                         </form>

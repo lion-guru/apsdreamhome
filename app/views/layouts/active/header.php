@@ -417,7 +417,7 @@ window.apsAnnounce = announce;
     <div class="command-palette" role="dialog" aria-label="Search and navigate">
         <div class="command-palette-input-wrap">
             <i class="fas fa-search"></i>
-            <input type="text"
+            <input aria-label="Cmd palette input" type="text"
                    class="command-palette-input"
                    id="cmdPaletteInput"
                    placeholder="Search properties, pages, actions..."

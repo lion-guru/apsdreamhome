@@ -52,7 +52,7 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
                                 <i class="fas fa-lock me-2"></i><?php echo __('auth_new_password', 'New Password'); ?>
                             </label>
                             <div class="input-group">
-                                <input type="password" class="form-control form-control-lg" id="password" name="password" required
+                                <input aria-label="Password" type="password" class="form-control form-control-lg" id="password" name="password" required
                                     placeholder="<?php echo __('auth_enter_new_password_ph', 'Enter your new password'); ?>" minlength="6">
                                 <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')" aria-label="View"><i class="fas fa-eye" id="password-toggle"></i></button>
                             </div>
@@ -67,7 +67,7 @@ $page_title = $page_title ?? 'Reset Password - APS Dream Home';
                                 <i class="fas fa-lock me-2"></i><?php echo __('auth_confirm_password', 'Confirm Password'); ?>
                             </label>
                             <div class="input-group">
-                                <input type="password" class="form-control form-control-lg" id="confirm_password" name="confirm_password" required
+                                <input aria-label="Confirm password" type="password" class="form-control form-control-lg" id="confirm_password" name="confirm_password" required
                                     placeholder="<?php echo __('auth_confirm_password_ph', 'Confirm your new password'); ?>">
                                 <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirm_password')" aria-label="View"><i class="fas fa-eye" id="confirm_password-toggle"></i></button>
                             </div>

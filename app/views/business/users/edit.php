@@ -13,27 +13,27 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
+                        <input aria-label="Name" type="text" name="name" class="form-control" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Email <span class="text-danger">*</span></label>
-                        <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
+                        <input aria-label="Email" type="email" name="email" class="form-control" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Phone <span class="text-danger">*</span></label>
-                        <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" required>
+                        <input aria-label="Phone" type="text" name="phone" class="form-control" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Sponsor</label>
-                        <input type="text" name="sponsor" class="form-control" value="<?= htmlspecialchars($user['sponsor_name'] ?? '') ?>">
+                        <input aria-label="Sponsor" type="text" name="sponsor" class="form-control" value="<?= htmlspecialchars($user['sponsor_name'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">New Password (leave blank to keep current)</label>
-                        <input type="password" name="password" class="form-control">
+                        <input aria-label="Password" type="password" name="password" class="form-control">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Confirm New Password</label>
-                        <input type="password" name="confirm_password" class="form-control">
+                        <input aria-label="Confirm password" type="password" name="confirm_password" class="form-control">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Level</label>
@@ -54,11 +54,11 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Commission Rate (%)</label>
-                        <input type="number" name="commission_rate" class="form-control" step="0.01" min="0" max="100" value="<?= htmlspecialchars($user['commission_rate'] ?? '') ?>">
+                        <input aria-label="Commission rate" type="number" name="commission_rate" class="form-control" step="0.01" min="0" max="100" value="<?= htmlspecialchars($user['commission_rate'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Target Amount (₹)</label>
-                        <input type="number" name="target_amount" class="form-control" step="0.01" min="0" value="<?= htmlspecialchars($user['target_amount'] ?? '') ?>">
+                        <input aria-label="Target amount" type="number" name="target_amount" class="form-control" step="0.01" min="0" value="<?= htmlspecialchars($user['target_amount'] ?? '') ?>">
                     </div>
                 </div>
                 <div class="mt-4">

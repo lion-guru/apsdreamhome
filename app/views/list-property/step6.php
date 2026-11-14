@@ -51,7 +51,7 @@ $uploaded = $d['images'] ?? [];
                                 <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-2"></i>
                                 <p class="mb-1"><strong>Drag &amp; drop images here</strong></p>
                                 <p class="text-muted small mb-2">or click to browse (JPG/PNG/WebP, max 5MB each, up to 10 images)</p>
-                                <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple class="d-none">
+                                <input aria-label="File input" type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple class="d-none">
                                 <button type="button" class="btn btn-primary" id="browse-btn"><i class="fas fa-folder-open me-1"></i> Browse</button>
                             </div>
                             <div id="upload-progress" class="mt-3">

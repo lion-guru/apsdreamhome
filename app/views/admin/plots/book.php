@@ -224,7 +224,7 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
                                 <label class="form-label fw-bold">Negotiated / Final Deal Price (₹) <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light fw-bold">₹</span>
-                                    <input type="number" name="negotiated_price" id="negotiated_price" class="form-control fw-bold fs-6" 
+                                    <input aria-label="Negotiated price" type="number" name="negotiated_price" id="negotiated_price" class="form-control fw-bold fs-6" 
                                            min="1000" step="1" value="<?= (float)$negotiatedPrice ?>" required oninput="recalculateFinancials()">
                                 </div>
                                 <small class="text-muted">Base list price: ₹<?= number_format((float)$totalPrice) ?></small>
@@ -233,7 +233,7 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
                                 <label class="form-label fw-bold">Token Booking Consideration (₹) <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-danger text-white fw-bold">₹</span>
-                                    <input type="number" name="token_amount" id="token_amount" class="form-control fw-bold fs-6 text-danger" 
+                                    <input aria-label="Token amount" type="number" name="token_amount" id="token_amount" class="form-control fw-bold fs-6 text-danger" 
                                            min="51000" step="1" value="51000" required oninput="recalculateFinancials()">
                                 </div>
                                 <small class="text-danger fw-bold"><i class="fas fa-lock me-1"></i>Non-Refundable Statutory Standard (₹51,000)</small>
@@ -263,11 +263,11 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Date of Booking</label>
-                                <input type="date" name="booking_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                                <input aria-label="Booking date" type="date" name="booking_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Expected Registry / Possession</label>
-                                <input type="date" name="possession_date" class="form-control" value="<?= date('Y-m-d', strtotime('+36 months')) ?>">
+                                <input aria-label="Possession date" type="date" name="possession_date" class="form-control" value="<?= date('Y-m-d', strtotime('+36 months')) ?>">
                             </div>
                         </div>
 
@@ -277,19 +277,19 @@ $remainingSeventyFive = max(0, $negotiatedPrice - $twentyFivePercent);
                         </h6>
                         <div class="p-3 rounded-3 border border-danger mb-3" style="background-color: #fff9f9;">
                             <div class="form-check mb-2">
-                                <input class="form-check-input border-danger" type="checkbox" id="consentNonRefundable" required checked>
+                                <input aria-label="Consent non refundable" class="form-check-input border-danger" type="checkbox" id="consentNonRefundable" required checked>
                                 <label class="form-check-label fw-bold text-danger" for="consentNonRefundable">
                                     मास्टर डीड (धारा 2.1 व 2.9) वैधानिक स्वीकृति: टोकन राशि ₹51,000 पूर्णतः गैर-वापसी योग्य (100% Non-Refundable) है।
                                 </label>
                             </div>
                             <div class="form-check mb-2">
-                                <input class="form-check-input border-danger" type="checkbox" id="consent15Days" required checked>
+                                <input aria-label="Consent15days" class="form-check-input border-danger" type="checkbox" id="consent15Days" required checked>
                                 <label class="form-check-label small text-dark" for="consent15Days">
                                     बुकिंग तिथि से <strong>15 कैलेंडर दिवसों के भीतर कुल मूल्य का 25%</strong> जमा करना अनिवार्य है, अन्यथा टोकन राशि बिना किसी पूर्व सूचना के जब्त (Forfeited) कर ली जाएगी।
                                 </label>
                             </div>
                             <div class="form-check mb-0">
-                                <input class="form-check-input border-danger" type="checkbox" id="consentNoCash" required checked>
+                                <input aria-label="Consent no cash" class="form-check-input border-danger" type="checkbox" id="consentNoCash" required checked>
                                 <label class="form-check-label small text-dark" for="consentNoCash">
                                     कंपनी की अधिकृत कॉर्पोरेट बैंकिंग प्रणाली के अतिरिक्त किसी एसोसिएट/एजेंट के निजी खाते, नकद अथवा व्यक्तिगत UPI पर भुगतान पूर्णतः प्रतिबंधित है।
                                 </label>

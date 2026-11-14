@@ -15,7 +15,7 @@ $has_pending = $has_pending ?? false;
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
             <div class="mb-3">
               <label for="code" class="form-label">Backup Code</label>
-              <input type="text" id="code" name="code" class="form-control form-control-lg text-center" placeholder="XXXX-XXXX-XXXX" required autofocus>
+              <input aria-label="Code" type="text" id="code" name="code" class="form-control form-control-lg text-center" placeholder="XXXX-XXXX-XXXX" required autofocus>
             </div>
             <button type="submit" class="btn btn-warning w-100 btn-lg">
               <i class="fas fa-unlock me-2"></i>Verify Backup Code

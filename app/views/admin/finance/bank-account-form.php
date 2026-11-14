@@ -12,26 +12,26 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label"><?php echo __('finance_account_name'); ?> <span class="text-danger">*</span></label>
-                        <input type="text" name="account_name" required class="form-control" value="<?= htmlspecialchars($bank['account_name'] ?? '') ?>">
+                        <input aria-label="Account name" type="text" name="account_name" required class="form-control" value="<?= htmlspecialchars($bank['account_name'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><?php echo __('finance_bank_name'); ?> <span class="text-danger">*</span></label>
-                        <input type="text" name="bank_name" required class="form-control" value="<?= htmlspecialchars($bank['bank_name'] ?? '') ?>">
+                        <input aria-label="Bank name" type="text" name="bank_name" required class="form-control" value="<?= htmlspecialchars($bank['bank_name'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><?php echo __('finance_account_number'); ?> <span class="text-danger">*</span></label>
-                        <input type="text" name="account_number" required class="form-control" value="<?= htmlspecialchars($bank['account_number'] ?? '') ?>">
+                        <input aria-label="Account number" type="text" name="account_number" required class="form-control" value="<?= htmlspecialchars($bank['account_number'] ?? '') ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?php echo __('finance_ifsc'); ?> <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <input type="text" name="ifsc_code" required class="form-control text-uppercase" maxlength="11" value="<?= htmlspecialchars($bank['ifsc_code'] ?? '') ?>" data-autofill="ifsc">
+                            <input aria-label="Ifsc code" type="text" name="ifsc_code" required class="form-control text-uppercase" maxlength="11" value="<?= htmlspecialchars($bank['ifsc_code'] ?? '') ?>" data-autofill="ifsc">
                             <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Auto-fill from IFSC" aria-label="Auto"><i class="fas fa-magic"></i></button>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label"><?php echo __('finance_branch'); ?></label>
-                        <input type="text" name="branch" class="form-control" value="<?= htmlspecialchars($bank['branch'] ?? '') ?>">
+                        <input aria-label="Branch" type="text" name="branch" class="form-control" value="<?= htmlspecialchars($bank['branch'] ?? '') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label"><?php echo __('finance_account_type'); ?></label>
@@ -44,21 +44,21 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label"><?php echo __('finance_opening_balance'); ?></label>
-                        <input type="number" step="0.01" name="opening_balance" class="form-control" value="<?= htmlspecialchars($bank['opening_balance'] ?? '0.00') ?>" <?= $id > 0 ? 'readonly' : '' ?>>
+                        <input aria-label="Opening balance" type="number" step="0.01" name="opening_balance" class="form-control" value="<?= htmlspecialchars($bank['opening_balance'] ?? '0.00') ?>" <?= $id > 0 ? 'readonly' : '' ?>>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label"><?php echo __('finance_flags'); ?></label>
-                        <div class="form-check"><input class="form-check-input" type="checkbox" name="is_escrow" value="1" id="escrow" <?= !empty($bank['is_escrow']) ? 'checked' : '' ?>><label class="form-check-label" for="escrow"><?php echo __('finance_rera_escrow_account'); ?></label></div>
-                        <div class="form-check"><input class="form-check-input" type="checkbox" name="gst_registered" value="1" id="gst" <?= !empty($bank['gst_registered']) ? 'checked' : '' ?>><label class="form-check-label" for="gst"><?php echo __('finance_gst_registered'); ?></label></div>
-                        <div class="form-check"><input class="form-check-input" type="checkbox" name="active" value="1" id="active" <?= !empty($bank['active']) || $id === 0 ? 'checked' : '' ?>><label class="form-check-label" for="active"><?php echo __('finance_active'); ?></label></div>
+                        <div class="form-check"><input aria-label="Is escrow" class="form-check-input" type="checkbox" name="is_escrow" value="1" id="escrow" <?= !empty($bank['is_escrow']) ? 'checked' : '' ?>><label class="form-check-label" for="escrow"><?php echo __('finance_rera_escrow_account'); ?></label></div>
+                        <div class="form-check"><input aria-label="Gst registered" class="form-check-input" type="checkbox" name="gst_registered" value="1" id="gst" <?= !empty($bank['gst_registered']) ? 'checked' : '' ?>><label class="form-check-label" for="gst"><?php echo __('finance_gst_registered'); ?></label></div>
+                        <div class="form-check"><input aria-label="Active" class="form-check-input" type="checkbox" name="active" value="1" id="active" <?= !empty($bank['active']) || $id === 0 ? 'checked' : '' ?>><label class="form-check-label" for="active"><?php echo __('finance_active'); ?></label></div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><?php echo __('finance_signatory_name'); ?></label>
-                        <input type="text" name="signatory_name" class="form-control" value="<?= htmlspecialchars($bank['signatory_name'] ?? '') ?>">
+                        <input aria-label="Signatory name" type="text" name="signatory_name" class="form-control" value="<?= htmlspecialchars($bank['signatory_name'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><?php echo __('finance_signatory_pan'); ?></label>
-                        <input type="text" name="signatory_pan" class="form-control text-uppercase" maxlength="10" value="<?= htmlspecialchars($bank['signatory_pan'] ?? '') ?>">
+                        <input aria-label="Signatory pan" type="text" name="signatory_pan" class="form-control text-uppercase" maxlength="10" value="<?= htmlspecialchars($bank['signatory_pan'] ?? '') ?>">
                     </div>
                 </div>
                 <div class="mt-4 d-flex gap-2">

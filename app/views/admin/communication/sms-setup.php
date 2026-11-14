@@ -41,7 +41,7 @@ $settings = $settings ?? [];
                         <div class="mb-3">
                             <label class="form-label">MSG91 Auth Key</label>
                             <div class="input-group">
-                                <input type="password" name="sms_api_key" class="form-control" 
+                                <input aria-label="Sms api key" type="password" name="sms_api_key" class="form-control" 
                                        value="<?= htmlspecialchars($settings['sms_api_key'] ?? '') ?>" 
                                        id="smsApiKey" placeholder="Enter your MSG91 Auth Key">
                                 <button class="btn btn-outline-secondary" type="button" 
@@ -52,7 +52,7 @@ $settings = $settings ?? [];
 
                         <div class="mb-3">
                             <label class="form-label">Sender ID</label>
-                            <input type="text" name="sms_sender_id" class="form-control" 
+                            <input aria-label="Sms sender id" type="text" name="sms_sender_id" class="form-control" 
                                    value="<?= htmlspecialchars($settings['sms_sender_id'] ?? '') ?>" 
                                    placeholder="APSDRM" maxlength="6">
                             <div class="form-text">6-character sender ID (approved by MSG91). Example: APSDRM, DREAMHM</div>
@@ -94,11 +94,11 @@ $settings = $settings ?? [];
                     <form id="smsTestForm" class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Test Phone Number</label>
-                            <input type="text" name="to" class="form-control" placeholder="+91XXXXXXXXXX" required>
+                            <input aria-label="To" type="text" name="to" class="form-control" placeholder="+91XXXXXXXXXX" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Test Message</label>
-                            <input type="text" name="message" class="form-control" placeholder="Test SMS from APS Dream Home" required>
+                            <input aria-label="Message" type="text" name="message" class="form-control" placeholder="Test SMS from APS Dream Home" required>
                         </div>
                         <div class="col-12">
                             <button type="submit" class="btn btn-outline-warning text-dark" id="smsTestBtn">

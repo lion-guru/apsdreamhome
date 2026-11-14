@@ -71,7 +71,7 @@ $userBookings = $userBookings ?? [];
                             <i class="fas fa-gift text-danger me-1"></i> <?= __('festive_promo_label', [], 'Festive Promo Code / Concession (त्योहारी छूट कोड)') ?>
                         </label>
                         <div class="input-group">
-                            <input type="text" name="promo_code" id="booking_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5" value="<?= htmlspecialchars($_GET['promo'] ?? '') ?>">
+                            <input aria-label="Promo code" type="text" name="promo_code" id="booking_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5" value="<?= htmlspecialchars($_GET['promo'] ?? '') ?>">
                             <button type="button" class="btn btn-outline-primary" id="btn_apply_customer_promo">
                                 <i class="fas fa-check me-1"></i> Apply
                             </button>

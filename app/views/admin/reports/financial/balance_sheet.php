@@ -17,7 +17,7 @@ $as_of_date = $as_of_date ?? date('Y-m-d');
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">As of Date</label>
-                    <input type="date" name="as_of_date" class="form-control" value="<?= htmlspecialchars($as_of_date) ?>">
+                    <input aria-label="As of date" type="date" name="as_of_date" class="form-control" value="<?= htmlspecialchars($as_of_date) ?>">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary">Generate</button>

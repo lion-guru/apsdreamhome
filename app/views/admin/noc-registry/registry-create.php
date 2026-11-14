@@ -61,7 +61,7 @@ $stamp_duty = $stamp_duty ?? [];
 
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold"><?= __('admin_appointment_date') ?></label>
-                                <input type="date" name="appointment_date" class="form-control" min="<?= date('Y-m-d') ?>">
+                                <input aria-label="Appointment date" type="date" name="appointment_date" class="form-control" min="<?= date('Y-m-d') ?>">
                             </div>
 
                             <div class="col-12">
@@ -89,7 +89,7 @@ $stamp_duty = $stamp_duty ?? [];
             <div class="card-body aps-cp-card-body">
                 <div class="mb-3">
                     <label class="form-label small fw-semibold"><?= __('admin_property_value') ?> (₹)</label>
-                    <input type="number" class="form-control" id="calcValue" placeholder="e.g. 2500000" value="2500000">
+                    <input aria-label="Calc value" type="number" class="form-control" id="calcValue" placeholder="e.g. 2500000" value="2500000">
                 </div>
                 <div class="mb-3">
                     <label class="form-label small fw-semibold"><?= __('admin_state_label') ?></label>

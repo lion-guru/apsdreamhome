@@ -75,7 +75,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                 <div class="d-flex flex-wrap gap-2">
                     <?php foreach ($roles as $role): ?>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="crm_lead_create_roles[]" value="<?= $role ?>" id="create_<?= $role ?>" <?= in_array($role, explode(',', $settings['crm_lead_create_roles'] ?? 'admin,manager,associate,agent')) ? 'checked' : '' ?>>
+                        <input aria-label="Crm lead create roles" class="form-check-input" type="checkbox" name="crm_lead_create_roles[]" value="<?= $role ?>" id="create_<?= $role ?>" <?= in_array($role, explode(',', $settings['crm_lead_create_roles'] ?? 'admin,manager,associate,agent')) ? 'checked' : '' ?>>
                         <label class="form-check-label" for="create_<?= $role ?>"><?= ucfirst($role) ?></label>
                     </div>
                     <?php endforeach; ?>
@@ -86,7 +86,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                 <div class="d-flex flex-wrap gap-2">
                     <?php foreach ($roles as $role): ?>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="crm_lead_delete_roles[]" value="<?= $role ?>" id="delete_<?= $role ?>" <?= in_array($role, explode(',', $settings['crm_lead_delete_roles'] ?? 'admin,manager')) ? 'checked' : '' ?>>
+                        <input aria-label="Crm lead delete roles" class="form-check-input" type="checkbox" name="crm_lead_delete_roles[]" value="<?= $role ?>" id="delete_<?= $role ?>" <?= in_array($role, explode(',', $settings['crm_lead_delete_roles'] ?? 'admin,manager')) ? 'checked' : '' ?>>
                         <label class="form-check-label" for="delete_<?= $role ?>"><?= ucfirst($role) ?></label>
                     </div>
                     <?php endforeach; ?>
@@ -132,7 +132,7 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                 
                 <div>
                     <label class="fw-semibold mb-2">Daily Lead Cap</label>
-                    <input type="number" name="crm_daily_lead_cap" class="form-control" value="<?= $val('crm_daily_lead_cap', '50') ?>" min="1" max="1000">
+                    <input aria-label="Crm daily lead cap" type="number" name="crm_daily_lead_cap" class="form-control" value="<?= $val('crm_daily_lead_cap', '50') ?>" min="1" max="1000">
                 </div>
             </div>
         </div>
@@ -158,14 +158,14 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
                     <div class="col-md-4">
                         <label class="fw-semibold">Hot Lead Threshold</label>
                         <div class="input-group">
-                            <input type="number" name="crm_scoring_hot_threshold" class="form-control" value="<?= $val('crm_scoring_hot_threshold', '70') ?>" min="0" max="100">
+                            <input aria-label="Crm scoring hot threshold" type="number" name="crm_scoring_hot_threshold" class="form-control" value="<?= $val('crm_scoring_hot_threshold', '70') ?>" min="0" max="100">
                             <span class="input-group-text">%</span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <label class="fw-semibold">Warm Lead Threshold</label>
                         <div class="input-group">
-                            <input type="number" name="crm_scoring_warm_threshold" class="form-control" value="<?= $val('crm_scoring_warm_threshold', '40') ?>" min="0" max="100">
+                            <input aria-label="Crm scoring warm threshold" type="number" name="crm_scoring_warm_threshold" class="form-control" value="<?= $val('crm_scoring_warm_threshold', '40') ?>" min="0" max="100">
                             <span class="input-group-text">%</span>
                         </div>
                     </div>
@@ -216,11 +216,11 @@ $val = fn($key, $default = '1') => htmlspecialchars($settings[$key] ?? $default)
             <div class="row g-3">
                 <div class="col-md-3">
                     <label class="fw-semibold">SLA Response Time (hours)</label>
-                    <input type="number" name="crm_sla_response_hours" class="form-control" value="<?= $val('crm_sla_response_hours', '24') ?>" min="1">
+                    <input aria-label="Crm sla response hours" type="number" name="crm_sla_response_hours" class="form-control" value="<?= $val('crm_sla_response_hours', '24') ?>" min="1">
                 </div>
                 <div class="col-md-3">
                     <label class="fw-semibold">Trash Retention (days)</label>
-                    <input type="number" name="crm_trash_retention_days" class="form-control" value="<?= $val('crm_trash_retention_days', '30') ?>" min="1">
+                    <input aria-label="Crm trash retention days" type="number" name="crm_trash_retention_days" class="form-control" value="<?= $val('crm_trash_retention_days', '30') ?>" min="1">
                     <small class="text-muted">Auto-permanent delete after N days</small>
                 </div>
                 <div class="col-md-3">

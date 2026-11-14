@@ -24,7 +24,7 @@ ob_start();
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Customer Name</label>
-                        <input type="text" name="customer_name" class="form-control" value="<?= htmlspecialchars($visit['customer_name'] ?? '') ?>">
+                        <input aria-label="Customer name" type="text" name="customer_name" class="form-control" value="<?= htmlspecialchars($visit['customer_name'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Assigned To</label>
@@ -37,11 +37,11 @@ ob_start();
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Visit Date</label>
-                        <input type="date" name="visit_date" class="form-control" value="<?= isset($visit['visit_date']) ? date('Y-m-d', strtotime($visit['visit_date'])) : '' ?>">
+                        <input aria-label="Visit date" type="date" name="visit_date" class="form-control" value="<?= isset($visit['visit_date']) ? date('Y-m-d', strtotime($visit['visit_date'])) : '' ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Visit Time</label>
-                        <input type="time" name="visit_time" class="form-control" value="<?= $visit['visit_time'] ?? '' ?>">
+                        <input aria-label="Visit time" type="time" name="visit_time" class="form-control" value="<?= $visit['visit_time'] ?? '' ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Status</label>

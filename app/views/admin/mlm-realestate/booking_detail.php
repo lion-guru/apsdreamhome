@@ -107,7 +107,7 @@
                         <form method="POST" action="<?= BASE_URL ?>/admin/mlm-realestate/bookings/payment">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="booking_id" value="<?= $b['id'] ?>">
-                            <div class="mb-2"><input type="number" step="0.01" name="amount" class="form-control" placeholder="Amount (₹)" required></div>
+                            <div class="mb-2"><input aria-label="Amount" type="number" step="0.01" name="amount" class="form-control" placeholder="Amount (₹)" required></div>
                             <div class="mb-2">
                                 <select aria-label="Mode" name="mode" class="form-select">
                                     <option value="cash">Cash</option>

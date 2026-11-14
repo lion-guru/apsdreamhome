@@ -108,7 +108,7 @@ $steps = $steps ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Step Order</label>
-                        <input type="number" class="form-control" name="step_order" min="1" value="<?= count($steps) + 1 ?>" required>
+                        <input aria-label="Step order" type="number" class="form-control" name="step_order" min="1" value="<?= count($steps) + 1 ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Step Type <span class="text-danger">*</span></label>
@@ -146,7 +146,7 @@ $steps = $steps ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Step Order</label>
-                        <input type="number" class="form-control" name="step_order" id="edit_step_order" min="1" required>
+                        <input aria-label="Step order" type="number" class="form-control" name="step_order" id="edit_step_order" min="1" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Step Type <span class="text-danger">*</span></label>
@@ -219,7 +219,7 @@ function getConfigFields(type, prefix = '') {
             </div>
             <div class="mb-3">
                 <label class="form-label">Email for Transcription</label>
-                <input type="email" class="form-control" name="${prefix}config[email]">
+                <input aria-label="prefix config email" type="email" class="form-control" name="${prefix}config[email]">
             </div>
         `,
         hangup: `

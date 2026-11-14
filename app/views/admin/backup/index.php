@@ -140,7 +140,7 @@ $hText    = $hStatus === 'ok' ? 'Healthy' : 'Stale / No recent backup';
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($this->getCsrfToken()) ?>">
                             <div class="mb-2">
                                 <label class="form-label small mb-1">Backup file (.sql or .sql.gz, max 500 MB)</label>
-                                <input type="file" name="backup_file" class="form-control form-control-sm" accept=".sql,.gz" required>
+                                <input aria-label="Backup file" type="file" name="backup_file" class="form-control form-control-sm" accept=".sql,.gz" required>
                             </div>
                             <button type="submit" class="btn btn-success btn-sm w-100">
                                 <i class="fas fa-cloud-upload-alt me-1"></i> Upload

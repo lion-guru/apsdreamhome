@@ -161,7 +161,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                         <div class="modal-body">
                                                             <div class="mb-3">
                                                                 <label for="pay_amount_<?= $inv['id'] ?>" class="form-label">Payment Amount (₹)</label>
-                                                                <input type="number" step="0.01" class="form-control" id="pay_amount_<?= $inv['id'] ?>" name="paid_amount" value="<?= (float)($inv['total_due'] - $inv['paid_amount']) ?>" required>
+                                                                <input aria-label="Pay amount inv" type="number" step="0.01" class="form-control" id="pay_amount_<?= $inv['id'] ?>" name="paid_amount" value="<?= (float)($inv['total_due'] - $inv['paid_amount']) ?>" required>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="pay_mode_<?= $inv['id'] ?>" class="form-label">Payment Mode</label>
@@ -174,7 +174,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="pay_ref_<?= $inv['id'] ?>" class="form-label">Transaction UTR / Cheque Ref</label>
-                                                                <input type="text" class="form-control" id="pay_ref_<?= $inv['id'] ?>" name="payment_ref" placeholder="e.g. UTR-20261012-987654">
+                                                                <input aria-label="Pay ref inv" type="text" class="form-control" id="pay_ref_<?= $inv['id'] ?>" name="payment_ref" placeholder="e.g. UTR-20261012-987654">
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -210,7 +210,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="inv_month" class="form-label fw-semibold">Billing Month <span class="text-danger">*</span></label>
-                        <input type="month" class="form-control" id="inv_month" name="billing_month" value="<?= date('Y-m') ?>" required>
+                        <input aria-label="Inv month" type="month" class="form-control" id="inv_month" name="billing_month" value="<?= date('Y-m') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label text-muted small">Contracted Monthly Base Rent</label>
@@ -219,16 +219,16 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
                             <label for="inv_elec_units" class="form-label">Electricity Submeter (Units)</label>
-                            <input type="number" step="0.1" class="form-control" id="inv_elec_units" name="electricity_units" value="0.0">
+                            <input aria-label="Inv elec units" type="number" step="0.1" class="form-control" id="inv_elec_units" name="electricity_units" value="0.0">
                         </div>
                         <div class="col-md-6">
                             <label for="inv_elec_rate" class="form-label">Rate / Unit (₹)</label>
-                            <input type="number" step="0.1" class="form-control" id="inv_elec_rate" name="electricity_rate" value="9.50">
+                            <input aria-label="Inv elec rate" type="number" step="0.1" class="form-control" id="inv_elec_rate" name="electricity_rate" value="9.50">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="inv_maint_fee" class="form-label">Common Maintenance Fee (₹)</label>
-                        <input type="number" step="0.01" class="form-control" id="inv_maint_fee" name="maintenance_fee" value="0.00">
+                        <input aria-label="Inv maint fee" type="number" step="0.01" class="form-control" id="inv_maint_fee" name="maintenance_fee" value="0.00">
                     </div>
                 </div>
                 <div class="modal-footer">

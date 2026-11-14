@@ -38,11 +38,11 @@
     <div class="modal-header"><h5 class="modal-title fw-bold"><i class="fas fa-calendar-plus me-2"></i>Schedule Meeting</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
     <form method="POST" action="<?= BASE_URL ?>/admin/meetings/store"><input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
     <div class="modal-body">
-        <div class="mb-3"><label class="form-label fw-bold">Title</label><input type="text" name="title" class="form-control" required></div>
-        <div class="row mb-3"><div class="col-6"><label class="form-label fw-bold">Lead ID</label><input type="number" name="lead_id" class="form-control" required></div><div class="col-6"><label class="form-label fw-bold">Agent ID</label><input type="number" name="user_id" class="form-control" required></div></div>
+        <div class="mb-3"><label class="form-label fw-bold">Title</label><input aria-label="Title" type="text" name="title" class="form-control" required></div>
+        <div class="row mb-3"><div class="col-6"><label class="form-label fw-bold">Lead ID</label><input aria-label="Lead id" type="number" name="lead_id" class="form-control" required></div><div class="col-6"><label class="form-label fw-bold">Agent ID</label><input aria-label="User id" type="number" name="user_id" class="form-control" required></div></div>
         <div class="mb-3"><label class="form-label fw-bold">Type</label><select aria-label="Meeting type" name="meeting_type" class="form-select"><option value="site_visit">Site Visit</option><option value="office_call">Office Call</option><option value="phone">Phone</option><option value="video">Video</option></select></div>
-        <div class="row mb-3"><div class="col-6"><label class="form-label fw-bold">Start</label><input type="datetime-local" name="start_time" class="form-control" required></div><div class="col-6"><label class="form-label fw-bold">End</label><input type="datetime-local" name="end_time" class="form-control"></div></div>
-        <div class="mb-3"><label class="form-label fw-bold">Location</label><input type="text" name="location" class="form-control"></div>
+        <div class="row mb-3"><div class="col-6"><label class="form-label fw-bold">Start</label><input aria-label="Start time" type="datetime-local" name="start_time" class="form-control" required></div><div class="col-6"><label class="form-label fw-bold">End</label><input aria-label="End time" type="datetime-local" name="end_time" class="form-control"></div></div>
+        <div class="mb-3"><label class="form-label fw-bold">Location</label><input aria-label="Location" type="text" name="location" class="form-control"></div>
         <div class="mb-3"><label class="form-label fw-bold">Notes</label><textarea aria-label="Description" name="description" class="form-control" rows="2"></textarea></div>
     </div>
     <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Schedule</button></div>

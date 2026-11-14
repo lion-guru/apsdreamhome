@@ -42,7 +42,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             <label class="form-label">Subject *</label>
-                            <input type="text" name="subject" class="form-control" placeholder="Brief description of the issue" required>
+                            <input aria-label="Subject" type="text" name="subject" class="form-control" placeholder="Brief description of the issue" required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Category</label>
@@ -65,19 +65,19 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <label class="form-label">Priority *</label>
                         <div class="d-flex gap-3">
                             <div class="form-check">
-                                <input type="radio" name="priority" value="low" class="form-check-input" id="priorityLow">
+                                <input aria-label="Priority" type="radio" name="priority" value="low" class="form-check-input" id="priorityLow">
                                 <label class="form-check-label" for="priorityLow"><span class="badge bg-secondary">Low</span></label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="priority" value="medium" class="form-check-input" id="priorityMedium" checked>
+                                <input aria-label="Priority" type="radio" name="priority" value="medium" class="form-check-input" id="priorityMedium" checked>
                                 <label class="form-check-label" for="priorityMedium"><span class="badge bg-info">Medium</span></label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="priority" value="high" class="form-check-input" id="priorityHigh">
+                                <input aria-label="Priority" type="radio" name="priority" value="high" class="form-check-input" id="priorityHigh">
                                 <label class="form-check-label" for="priorityHigh"><span class="badge bg-warning">High</span></label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="priority" value="urgent" class="form-check-input" id="priorityUrgent">
+                                <input aria-label="Priority" type="radio" name="priority" value="urgent" class="form-check-input" id="priorityUrgent">
                                 <label class="form-check-label" for="priorityUrgent"><span class="badge bg-danger">Urgent</span></label>
                             </div>
                         </div>

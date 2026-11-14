@@ -63,11 +63,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                     <div class="mb-2">
                         <label class="form-label small">Campaign ID</label>
-                        <input type="text" name="platform_campaign_id" class="form-control" placeholder="Platform campaign ID">
+                        <input aria-label="Platform campaign id" type="text" name="platform_campaign_id" class="form-control" placeholder="Platform campaign ID">
                     </div>
                     <div class="mb-2">
                         <label class="form-label small">Name</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input aria-label="Name" type="text" name="name" class="form-control" required>
                     </div>
                     <div class="mb-2">
                         <label class="form-label small">Platform</label>
@@ -97,11 +97,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row">
                         <div class="col-6 mb-2">
                             <label class="form-label small">Daily Budget</label>
-                            <input type="number" step="0.01" name="daily_budget" class="form-control">
+                            <input aria-label="Daily budget" type="number" step="0.01" name="daily_budget" class="form-control">
                         </div>
                         <div class="col-6 mb-2">
                             <label class="form-label small">Lifetime Budget</label>
-                            <input type="number" step="0.01" name="lifetime_budget" class="form-control">
+                            <input aria-label="Lifetime budget" type="number" step="0.01" name="lifetime_budget" class="form-control">
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i> Save Campaign</button>

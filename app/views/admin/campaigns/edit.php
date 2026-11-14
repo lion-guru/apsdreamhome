@@ -28,7 +28,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             
                             <div class="mb-3">
                                 <label for="name" class="form-label">Campaign Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($campaign['name'] ?? ''); ?>" required>
+                                <input aria-label="Name" type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($campaign['name'] ?? ''); ?>" required>
                             </div>
                             
                             <div class="mb-3">
@@ -63,24 +63,24 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="start_date" class="form-label">Start Date</label>
-                                    <input type="date" class="form-control" id="start_date" name="start_date" value="<?php echo $campaign['start_date'] ?? ''; ?>">
+                                    <input aria-label="Start date" type="date" class="form-control" id="start_date" name="start_date" value="<?php echo $campaign['start_date'] ?? ''; ?>">
                                 </div>
                                 
                                 <div class="col-md-6 mb-3">
                                     <label for="end_date" class="form-label">End Date</label>
-                                    <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo $campaign['end_date'] ?? ''; ?>">
+                                    <input aria-label="End date" type="date" class="form-control" id="end_date" name="end_date" value="<?php echo $campaign['end_date'] ?? ''; ?>">
                                 </div>
                             </div>
                             
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="budget" class="form-label">Budget (₹)</label>
-                                    <input type="number" class="form-control" id="budget" name="budget" value="<?php echo $campaign['budget'] ?? ''; ?>">
+                                    <input aria-label="Budget" type="number" class="form-control" id="budget" name="budget" value="<?php echo $campaign['budget'] ?? ''; ?>">
                                 </div>
                                 
                                 <div class="col-md-6 mb-3">
                                     <label for="expected_revenue" class="form-label">Expected Revenue (₹)</label>
-                                    <input type="number" class="form-control" id="expected_revenue" name="expected_revenue" value="<?php echo $campaign['expected_revenue'] ?? ''; ?>">
+                                    <input aria-label="Expected revenue" type="number" class="form-control" id="expected_revenue" name="expected_revenue" value="<?php echo $campaign['expected_revenue'] ?? ''; ?>">
                                 </div>
                             </div>
                             

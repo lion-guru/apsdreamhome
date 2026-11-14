@@ -11,7 +11,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="propVal"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
-                                <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" min="0" placeholder="<?php echo __('enter_property_value', [], 'Enter property value'); ?>">
+                                <input aria-label="Prop val" type="number" class="form-control form-control-lg" id="propVal" value="5000000" min="0" placeholder="<?php echo __('enter_property_value', [], 'Enter property value'); ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>

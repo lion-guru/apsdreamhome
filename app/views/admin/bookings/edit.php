@@ -99,7 +99,7 @@ $active_page = 'bookings';
                 <!-- Booking Date -->
                 <div class="col-md-6 mb-3">
                     <label for="booking_date" class="form-label">Booking Date *</label>
-                    <input type="date" class="form-control" id="booking_date" name="booking_date"
+                    <input aria-label="Booking date" type="date" class="form-control" id="booking_date" name="booking_date"
                         value="<?= $booking['booking_date'] ?>" required>
                 </div>
             </div>
@@ -110,7 +110,7 @@ $active_page = 'bookings';
                     <label for="total_amount" class="form-label">Total Amount (₹) *</label>
                     <div class="input-group">
                         <span class="input-group-text">₹</span>
-                        <input type="number" class="form-control" id="total_amount" name="total_amount"
+                        <input aria-label="Total amount" type="number" class="form-control" id="total_amount" name="total_amount"
                             step="0.01" min="0" value="<?= $booking['total_amount'] ?>" required>
                     </div>
                     <div class="form-text">

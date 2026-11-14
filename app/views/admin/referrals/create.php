@@ -18,7 +18,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Referred Email *</label>
-                            <input type="email" name="referred_email" class="form-control" required placeholder="friend@email.com">
+                            <input aria-label="Referred email" type="email" name="referred_email" class="form-control" required placeholder="friend@email.com">
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Create</button>
                         <a href="<?= BASE_URL ?>/admin/referrals" class="btn btn-secondary ms-2">Cancel</a>

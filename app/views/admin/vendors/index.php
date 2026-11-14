@@ -50,7 +50,7 @@
         <div class="card-body aps-cp-card-body">
             <form method="GET" class="row g-3 mb-4">
                 <div class="col-md-5">
-                    <input type="text" class="form-control" name="search" placeholder="Search by name, contact, email, phone..." value="<?= htmlspecialchars($search ?? '') ?>">
+                    <input aria-label="Search" type="text" class="form-control" name="search" placeholder="Search by name, contact, email, phone..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <select aria-label="Type" class="form-select" name="type">

@@ -42,19 +42,19 @@ $settlement = $settlement ?? null;
                 <input type="hidden" name="employee_id" value="<?= (int)$selected_employee ?>">
                 <div class="col-md-3">
                     <label class="form-label">Last Working Day <span class="text-danger">*</span></label>
-                    <input type="date" name="last_working_day" class="form-control" value="<?= htmlspecialchars($_POST['last_working_day'] ?? date('Y-m-d')) ?>" max="<?= date('Y-m-d') ?>" required>
+                    <input aria-label="Last working day" type="date" name="last_working_day" class="form-control" value="<?= htmlspecialchars($_POST['last_working_day'] ?? date('Y-m-d')) ?>" max="<?= date('Y-m-d') ?>" required>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Resignation Date</label>
-                    <input type="date" name="resignation_date" class="form-control" value="<?= htmlspecialchars($_POST['resignation_date'] ?? date('Y-m-d')) ?>" max="<?= date('Y-m-d') ?>">
+                    <input aria-label="Resignation date" type="date" name="resignation_date" class="form-control" value="<?= htmlspecialchars($_POST['resignation_date'] ?? date('Y-m-d')) ?>" max="<?= date('Y-m-d') ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Notice Period (days)</label>
-                    <input type="number" name="notice_period_days" class="form-control" value="<?= htmlspecialchars($_POST['notice_period_days'] ?? '30') ?>" min="0" max="90">
+                    <input aria-label="Notice period days" type="number" name="notice_period_days" class="form-control" value="<?= htmlspecialchars($_POST['notice_period_days'] ?? '30') ?>" min="0" max="90">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Notice Served (days)</label>
-                    <input type="number" name="notice_served_days" class="form-control" value="<?= htmlspecialchars($_POST['notice_served_days'] ?? '0') ?>" min="0" max="90">
+                    <input aria-label="Notice served days" type="number" name="notice_served_days" class="form-control" value="<?= htmlspecialchars($_POST['notice_served_days'] ?? '0') ?>" min="0" max="90">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Exit Type</label>

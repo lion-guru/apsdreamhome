@@ -17,15 +17,15 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
         <input type="hidden" name="plot_id" value="<?= (int)($plot['id'] ?? 0) ?>">
         <div class="row g-3">
-            <div class="col-md-4"><label class="form-label small">Buyer name *</label><input type="text" name="customer_name" class="form-control" required maxlength="150"></div>
-            <div class="col-md-4"><label class="form-label small">Buyer phone *</label><input type="tel" name="customer_phone" class="form-control" required maxlength="15" placeholder="10-digit mobile"></div>
-            <div class="col-md-4"><label class="form-label small">Buyer Aadhaar (optional)</label><input type="text" name="customer_aadhaar" class="form-control" maxlength="20"></div>
-            <div class="col-md-3"><label class="form-label small">Token amount ₹ *</label><input type="number" step="1" min="1" name="token_amount" class="form-control" required value="11000"></div>
+            <div class="col-md-4"><label class="form-label small">Buyer name *</label><input aria-label="Customer name" type="text" name="customer_name" class="form-control" required maxlength="150"></div>
+            <div class="col-md-4"><label class="form-label small">Buyer phone *</label><input aria-label="Customer phone" type="tel" name="customer_phone" class="form-control" required maxlength="15" placeholder="10-digit mobile"></div>
+            <div class="col-md-4"><label class="form-label small">Buyer Aadhaar (optional)</label><input aria-label="Customer aadhaar" type="text" name="customer_aadhaar" class="form-control" maxlength="20"></div>
+            <div class="col-md-3"><label class="form-label small">Token amount ₹ *</label><input aria-label="Token amount" type="number" step="1" min="1" name="token_amount" class="form-control" required value="11000"></div>
             <div class="col-md-3"><label class="form-label small">Payment mode</label>
                 <select aria-label="Payment mode" name="payment_mode" class="form-select"><option value="upi">UPI</option><option value="cash">Cash</option><option value="bank_transfer">Bank Transfer</option><option value="cheque">Cheque</option></select>
             </div>
-            <div class="col-md-3"><label class="form-label small">Payment ref (UTR/cheque no.)</label><input type="text" name="payment_ref" class="form-control" maxlength="100"></div>
-            <div class="col-md-3"><label class="form-label small">Associate ID (optional)</label><input type="number" name="associate_id" class="form-control" min="0"></div>
+            <div class="col-md-3"><label class="form-label small">Payment ref (UTR/cheque no.)</label><input aria-label="Payment ref" type="text" name="payment_ref" class="form-control" maxlength="100"></div>
+            <div class="col-md-3"><label class="form-label small">Associate ID (optional)</label><input aria-label="Associate id" type="number" name="associate_id" class="form-control" min="0"></div>
             <div class="col-12"><label class="form-label small">Notes</label><textarea aria-label="Notes" name="notes" class="form-control" rows="2" maxlength="1000"></textarea></div>
         </div>
         <button type="submit" class="btn btn-success mt-3"><i class="fas fa-lock me-1"></i>Collect Token &amp; Lock Plot 7 Days</button>

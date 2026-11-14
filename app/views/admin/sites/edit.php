@@ -18,13 +18,13 @@
             <form method="POST" action="<?= BASE_URL ?>/admin/sites/<?= $site['id'] ?? 0 ?>/update" enctype="multipart/form-data">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
-                    <div class="col-md-8"><label class="form-label">Site Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control" value="<?= $site['site_name'] ?? '' ?>" required></div>
+                    <div class="col-md-8"><label class="form-label">Site Name <span class="text-danger">*</span></label><input aria-label="Name" type="text" name="name" class="form-control" value="<?= $site['site_name'] ?? '' ?>" required></div>
                     <div class="col-md-4"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><option value="active" <?= ($site['status'] ?? '') === 'active' ? 'selected' : '' ?>>Active</option><option value="inactive" <?= ($site['status'] ?? '') === 'inactive' ? 'selected' : '' ?>>Inactive</option></select></div>
-                    <div class="col-md-6"><label class="form-label">Location</label><input type="text" name="location" class="form-control" value="<?= $site['location'] ?? '' ?>"></div>
-                    <div class="col-md-3"><label class="form-label">Total Area (sqft)</label><input type="number" name="total_area" class="form-control" value="<?= $site['total_area'] ?? '' ?>"></div>
-                    <div class="col-md-3"><label class="form-label">Developed Area</label><input type="number" name="developed_area" class="form-control" value="<?= $site['developed_area'] ?? '' ?>"></div>
-                    <div class="col-md-4"><label class="form-label">Total Plots</label><input type="number" name="total_plots" class="form-control" value="<?= $site['total_plots'] ?? '' ?>"></div>
-                    <div class="col-md-4"><label class="form-label">Available Plots</label><input type="number" name="available_plots" class="form-control" value="<?= $site['available_plots'] ?? '' ?>"></div>
+                    <div class="col-md-6"><label class="form-label">Location</label><input aria-label="Location" type="text" name="location" class="form-control" value="<?= $site['location'] ?? '' ?>"></div>
+                    <div class="col-md-3"><label class="form-label">Total Area (sqft)</label><input aria-label="Total area" type="number" name="total_area" class="form-control" value="<?= $site['total_area'] ?? '' ?>"></div>
+                    <div class="col-md-3"><label class="form-label">Developed Area</label><input aria-label="Developed area" type="number" name="developed_area" class="form-control" value="<?= $site['developed_area'] ?? '' ?>"></div>
+                    <div class="col-md-4"><label class="form-label">Total Plots</label><input aria-label="Total plots" type="number" name="total_plots" class="form-control" value="<?= $site['total_plots'] ?? '' ?>"></div>
+                    <div class="col-md-4"><label class="form-label">Available Plots</label><input aria-label="Available plots" type="number" name="available_plots" class="form-control" value="<?= $site['available_plots'] ?? '' ?>"></div>
                     <div class="col-md-4"><label class="form-label">Amenities (JSON)</label><textarea aria-label="Amenities" name="amenities" class="form-control" rows="2" placeholder='["Wide Roads", "CCTV"]'><?= htmlspecialchars($site['amenities'] ?? '') ?></textarea></div>
                     <div class="col-md-4"><label class="form-label">Key Highlights (JSON)</label><textarea aria-label="Key highlights" name="key_highlights" class="form-control" rows="2" placeholder='["Wide Roads", "Gated Community"]'><?= htmlspecialchars($site['key_highlights'] ?? '') ?></textarea></div>
                     <div class="col-md-4"><label class="form-label">Nearby Places (JSON)</label><textarea aria-label="Nearby places" name="nearby_places" class="form-control" rows="2" placeholder='[{"name":"Railway","distance":"3km","type":"railway"}]'><?= htmlspecialchars($site['nearby_places'] ?? '') ?></textarea></div>
@@ -32,7 +32,7 @@
                         <?php if(!empty($site['image'])): ?>
                             <div class="mb-2"><img src="<?= htmlspecialchars($site['image'] ?? '')?>" alt="Current Image" ></div>
                         <?php endif; ?>
-                        <input type="file" name="image" class="form-control" accept="image/*">
+                        <input aria-label="Image" type="file" name="image" class="form-control" accept="image/*">
                     </div>
                     <div class="col-12"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="3"><?= $site['description'] ?? '' ?></textarea></div>
                     <div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update Site</button> <a href="<?= BASE_URL ?>/admin/sites" class="btn btn-secondary">Cancel</a></div>

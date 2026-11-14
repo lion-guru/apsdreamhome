@@ -19,7 +19,7 @@ $active_page = 'sites';
     <div class="card-body aps-cp-card-body">
         <form method="GET" class="row g-3">
             <div class="col-md-4">
-                <input type="text" name="search" class="form-control" placeholder="Search sites..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search sites..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
             </div>
             <div class="col-md-2">
                 <select aria-label="Status" name="status" class="form-select">

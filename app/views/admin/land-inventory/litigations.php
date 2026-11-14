@@ -16,7 +16,7 @@ $stBadge = ['pending' => 'warning text-dark', 'decided_in_favor' => 'success', '
         <p class="text-muted mb-0"><?= count($rows) ?> case(s)<?= $stay_count > 0 ? ' · <span class="badge bg-danger">' . $stay_count . ' ACTIVE STAY(S)</span>' : '' ?></p>
     </div>
     <form method="GET" class="d-flex gap-2">
-        <input type="text" name="q" class="form-control form-control-sm" placeholder="Khasra / village / case no." value="<?= $e($q) ?>">
+        <input aria-label="Q" type="text" name="q" class="form-control form-control-sm" placeholder="Khasra / village / case no." value="<?= $e($q) ?>">
         <select aria-label="Status" name="status" class="form-select form-select-sm" onchange="this.form.submit()">
             <option value="">All statuses</option>
             <?php foreach (['pending', 'decided_in_favor', 'decided_against', 'settled'] as $s): ?>
@@ -31,16 +31,16 @@ $stBadge = ['pending' => 'warning text-dark', 'decided_in_favor' => 'success', '
     <form method="POST" action="<?= $base ?>/admin/land-inventory/litigations/store">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
         <div class="row g-2">
-            <div class="col-md-2"><label class="form-label small">Khasra no. *</label><input type="text" name="khasra_no" class="form-control form-control-sm" required maxlength="100"></div>
-            <div class="col-md-2"><label class="form-label small">Village *</label><input type="text" name="village" class="form-control form-control-sm" required maxlength="100"></div>
-            <div class="col-md-2"><label class="form-label small">Court *</label><input type="text" name="court_name" class="form-control form-control-sm" required maxlength="150" placeholder="SDM Sadar"></div>
-            <div class="col-md-2"><label class="form-label small">Case no. *</label><input type="text" name="case_number" class="form-control form-control-sm" required maxlength="100"></div>
-            <div class="col-md-2"><label class="form-label small">Petitioner *</label><input type="text" name="petitioner_name" class="form-control form-control-sm" required maxlength="150"></div>
-            <div class="col-md-2"><label class="form-label small">Respondent *</label><input type="text" name="respondent_name" class="form-control form-control-sm" required maxlength="150"></div>
-            <div class="col-md-2"><label class="form-label small">Type</label><input type="text" name="case_type" class="form-control form-control-sm" maxlength="100" placeholder="Title / Partition"></div>
-            <div class="col-md-2"><label class="form-label small">Next hearing</label><input type="date" name="next_hearing_date" class="form-control form-control-sm"></div>
-            <div class="col-md-2"><label class="form-label small">Advocate</label><input type="text" name="advocate_name" class="form-control form-control-sm" maxlength="100"></div>
-            <div class="col-md-2 pt-4"><div class="form-check"><input type="checkbox" name="stay_order_active" value="1" class="form-check-input" id="stayBox"><label class="form-check-label small text-danger fw-bold" for="stayBox">STAY active</label></div></div>
+            <div class="col-md-2"><label class="form-label small">Khasra no. *</label><input aria-label="Khasra no" type="text" name="khasra_no" class="form-control form-control-sm" required maxlength="100"></div>
+            <div class="col-md-2"><label class="form-label small">Village *</label><input aria-label="Village" type="text" name="village" class="form-control form-control-sm" required maxlength="100"></div>
+            <div class="col-md-2"><label class="form-label small">Court *</label><input aria-label="Court name" type="text" name="court_name" class="form-control form-control-sm" required maxlength="150" placeholder="SDM Sadar"></div>
+            <div class="col-md-2"><label class="form-label small">Case no. *</label><input aria-label="Case number" type="text" name="case_number" class="form-control form-control-sm" required maxlength="100"></div>
+            <div class="col-md-2"><label class="form-label small">Petitioner *</label><input aria-label="Petitioner name" type="text" name="petitioner_name" class="form-control form-control-sm" required maxlength="150"></div>
+            <div class="col-md-2"><label class="form-label small">Respondent *</label><input aria-label="Respondent name" type="text" name="respondent_name" class="form-control form-control-sm" required maxlength="150"></div>
+            <div class="col-md-2"><label class="form-label small">Type</label><input aria-label="Case type" type="text" name="case_type" class="form-control form-control-sm" maxlength="100" placeholder="Title / Partition"></div>
+            <div class="col-md-2"><label class="form-label small">Next hearing</label><input aria-label="Next hearing date" type="date" name="next_hearing_date" class="form-control form-control-sm"></div>
+            <div class="col-md-2"><label class="form-label small">Advocate</label><input aria-label="Advocate name" type="text" name="advocate_name" class="form-control form-control-sm" maxlength="100"></div>
+            <div class="col-md-2 pt-4"><div class="form-check"><input aria-label="Stay order active" type="checkbox" name="stay_order_active" value="1" class="form-check-input" id="stayBox"><label class="form-check-label small text-danger fw-bold" for="stayBox">STAY active</label></div></div>
             <div class="col-md-2 pt-4"><button type="submit" class="btn btn-sm btn-primary w-100">Track Case</button></div>
         </div>
     </form>

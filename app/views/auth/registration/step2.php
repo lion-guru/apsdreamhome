@@ -42,7 +42,7 @@ $old = $old ?? [];
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                 <div class="mb-3">
                     <label class="form-label">City *</label>
-                    <input type="text" name="city" class="form-control" required
+                    <input aria-label="City" type="text" name="city" class="form-control" required
                            value="<?= htmlspecialchars($old['city'] ?? ($state['form_data']['city'] ?? '')) ?>" placeholder="e.g. Gorakhpur">
                 </div>
                 <div class="mb-3">

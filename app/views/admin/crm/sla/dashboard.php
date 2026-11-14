@@ -44,7 +44,7 @@
                         <div class="mb-2"><input type="text" name="name" class="form-control form-control-sm" placeholder="Rule name" aria-label="Rule name" required></div>
                         <div class="mb-2"><select name="rule_type" class="form-select form-select-sm" aria-label="Rule type"><option value="first_response">First Response</option><option value="resolution">Resolution</option><option value="follow_up">Follow-up</option></select></div>
                         <div class="mb-2"><input type="number" name="target_minutes" class="form-control form-control-sm" placeholder="Target minutes" aria-label="Target minutes" value="60" required></div>
-                        <div class="mb-2"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="is_active" id="is_active" value="1" checked><label class="form-check-label" for="is_active">Active</label></div></div>
+                        <div class="mb-2"><div class="form-check form-switch"><input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="is_active" value="1" checked><label class="form-check-label" for="is_active">Active</label></div></div>
                         <button class="btn btn-primary btn-sm w-100"><i class="fas fa-save me-1"></i>Create Rule</button>
                     </form>
                 </div>

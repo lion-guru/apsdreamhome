@@ -68,7 +68,7 @@ $difficultyLabels = [
         <form method="GET" action="<?= BASE_URL ?>/admin/coding-challenges">
             <div class="row g-2">
                 <div class="col-md-4">
-                    <input type="text" class="form-control" name="search" placeholder="Search title or slug..." value="<?= htmlspecialchars($search ?? '') ?>">
+                    <input aria-label="Search" type="text" class="form-control" name="search" placeholder="Search title or slug..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <select aria-label="Difficulty" class="form-select" name="difficulty">

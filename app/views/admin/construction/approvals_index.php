@@ -188,11 +188,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                         <div class="modal-body">
                                                             <div class="mb-3">
                                                                 <label for="engineer_<?= $row['id'] ?>" class="form-label">Inspecting Site Engineer</label>
-                                                                <input type="text" class="form-control" id="engineer_<?= $row['id'] ?>" name="site_engineer_name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? 'APS Town Planning Engineer') ?>" required>
+                                                                <input aria-label="Engineer row" type="text" class="form-control" id="engineer_<?= $row['id'] ?>" name="site_engineer_name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? 'APS Town Planning Engineer') ?>" required>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="insp_date_<?= $row['id'] ?>" class="form-label">Inspection Date</label>
-                                                                <input type="date" class="form-control" id="insp_date_<?= $row['id'] ?>" name="inspection_date" value="<?= date('Y-m-d') ?>" required>
+                                                                <input aria-label="Insp date row" type="date" class="form-control" id="insp_date_<?= $row['id'] ?>" name="inspection_date" value="<?= date('Y-m-d') ?>" required>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="notes_<?= $row['id'] ?>" class="form-label">Physical Inspection Notes & Boundary Peg Status</label>
@@ -222,7 +222,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                             <p class="text-muted small">Sanctioning foundation excavation and building construction for 1 year under APS Dream Home Township bylaws.</p>
                                                             <div class="mb-3">
                                                                 <label for="app_eng_<?= $row['id'] ?>" class="form-label">Sanctioning Officer / Chief Planner</label>
-                                                                <input type="text" class="form-control" id="app_eng_<?= $row['id'] ?>" name="site_engineer_name" value="<?= htmlspecialchars($row['site_engineer_name'] ?? 'APS Chief Town Planner') ?>" required>
+                                                                <input aria-label="App eng row" type="text" class="form-control" id="app_eng_<?= $row['id'] ?>" name="site_engineer_name" value="<?= htmlspecialchars($row['site_engineer_name'] ?? 'APS Chief Town Planner') ?>" required>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="app_notes_<?= $row['id'] ?>" class="form-label">Sanction Conditions / Notes</label>

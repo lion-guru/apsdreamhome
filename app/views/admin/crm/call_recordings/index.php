@@ -13,8 +13,8 @@ $page_title = 'Call Recordings';
     </div>
     <form method="get" action="/admin/crm/call-recordings" class="mb-3">
         <div class="row g-2">
-            <div class="col-md-3"><input type="number" name="lead_id" class="form-control" placeholder="Lead ID" value="<?= htmlspecialchars($_GET['lead_id'] ?? '') ?>"></div>
-            <div class="col-md-3"><input type="text" name="search" class="form-control" placeholder="Search" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"></div>
+            <div class="col-md-3"><input aria-label="Lead id" type="number" name="lead_id" class="form-control" placeholder="Lead ID" value="<?= htmlspecialchars($_GET['lead_id'] ?? '') ?>"></div>
+            <div class="col-md-3"><input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"></div>
             <div class="col-md-3"><button type="submit" class="btn btn-primary">Filter</button></div>
         </div>
     </form>

@@ -246,11 +246,11 @@ $pct = $order['completion_pct'] ?? 0;
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label small fw-bold">Disbursement Amount (₹)</label>
-                                                <input type="number" step="0.01" name="paid_amount" class="form-control" value="<?= (float)$b['net_payable_amount'] ?>" required>
+                                                <input aria-label="Paid amount" type="number" step="0.01" name="paid_amount" class="form-control" value="<?= (float)$b['net_payable_amount'] ?>" required>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label small fw-bold">Bank UTR / Cheque Reference <span class="text-danger">*</span></label>
-                                                <input type="text" name="payment_ref" class="form-control" placeholder="e.g. UTR-HDFC-2026-987654" required>
+                                                <input aria-label="Payment ref" type="text" name="payment_ref" class="form-control" placeholder="e.g. UTR-HDFC-2026-987654" required>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -280,20 +280,20 @@ $pct = $order['completion_pct'] ?? 0;
             <div class="modal-body row g-3">
                 <div class="col-md-6">
                     <label class="form-label small fw-bold">Bill Number</label>
-                    <input type="text" name="bill_number" class="form-control" placeholder="e.g. RA-01" required>
+                    <input aria-label="Bill number" type="text" name="bill_number" class="form-control" placeholder="e.g. RA-01" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label small fw-bold">Bill Date</label>
-                    <input type="date" name="bill_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                    <input aria-label="Bill date" type="date" name="bill_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                 </div>
                 <div class="col-12">
                     <label class="form-label small fw-bold">Gross Milestone Value (₹) <span class="text-danger">*</span></label>
-                    <input type="number" step="0.01" name="gross_amount" id="billGross" class="form-control form-control-lg fw-bold" placeholder="500000" required>
+                    <input aria-label="Gross amount" type="number" step="0.01" name="gross_amount" id="billGross" class="form-control form-control-lg fw-bold" placeholder="500000" required>
                     <small class="text-muted">Retention (<?= $order['retention_pct'] ?>%) and TDS (<?= $order['tds_pct'] ?>%) will be calculated automatically.</small>
                 </div>
                 <div class="col-12">
                     <label class="form-label small fw-bold">Measurement Sheet / Book (MB) Ref</label>
-                    <input type="text" name="measurement_ref" class="form-control" placeholder="e.g. MB-04 / Page 12-14 (Rft 500 boundary wall completed)">
+                    <input aria-label="Measurement ref" type="text" name="measurement_ref" class="form-control" placeholder="e.g. MB-04 / Page 12-14 (Rft 500 boundary wall completed)">
                 </div>
                 <div class="col-12">
                     <label class="form-label small fw-bold">Site Engineer Verification Notes</label>

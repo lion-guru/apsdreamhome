@@ -17,18 +17,18 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="name" class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                            <input aria-label="Name" type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="email" class="form-label fw-semibold">Email</label>
-                            <input type="email" class="form-control" id="email" name="email">
+                            <input aria-label="Email" type="email" class="form-control" id="email" name="email">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="phone" class="form-label fw-semibold">Phone</label>
-                            <input type="text" class="form-control" id="phone" name="phone">
+                            <input aria-label="Phone" type="text" class="form-control" id="phone" name="phone">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="source_id" class="form-label fw-semibold">Source</label>

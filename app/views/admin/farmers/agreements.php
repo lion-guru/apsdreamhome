@@ -103,11 +103,11 @@ $terminatedCount = $terminated_count ?? 0;
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Farmer ID</label>
-                            <input type="number" name="farmer_id" class="form-control" required>
+                            <input aria-label="Farmer id" type="number" name="farmer_id" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Agreement Number</label>
-                            <input type="text" name="agreement_number" class="form-control" placeholder="AGR-">
+                            <input aria-label="Agreement number" type="text" name="agreement_number" class="form-control" placeholder="AGR-">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Type</label>
@@ -121,23 +121,23 @@ $terminatedCount = $terminated_count ?? 0;
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Start Date</label>
-                            <input type="date" name="start_date" class="form-control" value="<?php echo date('Y-m-d'); ?>">
+                            <input aria-label="Start date" type="date" name="start_date" class="form-control" value="<?php echo date('Y-m-d'); ?>">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">End Date</label>
-                            <input type="date" name="end_date" class="form-control">
+                            <input aria-label="End date" type="date" name="end_date" class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Total Amount</label>
-                            <input type="number" step="0.01" name="total_amount" class="form-control">
+                            <input aria-label="Total amount" type="number" step="0.01" name="total_amount" class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Advance Amount</label>
-                            <input type="number" step="0.01" name="advance_amount" class="form-control">
+                            <input aria-label="Advance amount" type="number" step="0.01" name="advance_amount" class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Commission Rate (%)</label>
-                            <input type="number" step="0.01" name="commission_rate" class="form-control">
+                            <input aria-label="Commission rate" type="number" step="0.01" name="commission_rate" class="form-control">
                         </div>
                         <div class="col-12">
                             <label class="form-label">Terms & Conditions</label>

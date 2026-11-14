@@ -643,7 +643,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     <div class="mb-4">
                                         <label class="form-label fw-bold" for="interestRate"><?= __('home_interest_rate') ?> <span
                                                 id="rateDisplay" class="text-warning-on-dark">8.5%</span></label>
-                                        <input type="range" class="form-range" id="interestRate" min="5" max="20"
+                                        <input aria-label="Interest rate" type="range" class="form-range" id="interestRate" min="5" max="20"
                                             step="0.1" value="8.5" oninput="calcEMI()">
                                         <div class="d-flex justify-content-between small text-white-50">
                                             <span>5%</span>
@@ -654,7 +654,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                         <label class="form-label fw-bold" for="loanTenure"><?= __('home_loan_tenure') ?> <span
                                                 id="tenureDisplay" class="text-warning-on-dark">20
                                                 <?= __('home_years') ?></span></label>
-                                        <input type="range" class="form-range" id="loanTenure" min="1" max="30" step="1"
+                                        <input aria-label="Loan tenure" type="range" class="form-range" id="loanTenure" min="1" max="30" step="1"
                                             value="20" oninput="calcEMI()">
                                         <div class="d-flex justify-content-between small text-white-50">
                                             <span><?= __('home_emi_min_tenure') ?></span>
@@ -1342,9 +1342,9 @@ document.addEventListener('DOMContentLoaded', function(){
         featuresHtml += '<h3 class="fs-5 fw-bold mb-3"><i class="fas fa-paper-plane text-' + svc.ctaColor + ' me-2"></i><?= __("enquire_services", null, "Quick Inquiry") ?></h3>';
         featuresHtml += '<form id="modalServiceInquiryForm" class="small">';
         featuresHtml += '<input type="hidden" name="service_type" value="' + service + '">';
-        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("your_name", null, "Name") ?> *</label><input type="text" class="form-control form-control-sm" name="name" required></div>';
-        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("phone", null, "Phone") ?> *</label><input type="tel" class="form-control form-control-sm" name="phone" required></div>';
-        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("email", null, "Email") ?> *</label><input type="email" class="form-control form-control-sm" name="email" required></div>';
+        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("your_name", null, "Name") ?> *</label><input aria-label="Name" type="text" class="form-control form-control-sm" name="name" required></div>';
+        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("phone", null, "Phone") ?> *</label><input aria-label="Phone" type="tel" class="form-control form-control-sm" name="phone" required></div>';
+        featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("email", null, "Email") ?> *</label><input aria-label="Email" type="email" class="form-control form-control-sm" name="email" required></div>';
         featuresHtml += '<div class="mb-3"><label class="form-label fw-semibold mb-1"><?= __("additional_details", null, "Details") ?></label><textarea aria-label="Message" class="form-control form-control-sm" name="message" rows="2" placeholder="<?= __('home_placeholder_tell_us') ?>"></textarea></div>';
         featuresHtml += '<button type="submit" class="btn btn-sm btn-' + svc.ctaColor + ' w-100 mt-1" id="modalSubmitBtn"><i class="fas fa-paper-plane me-1"></i><?= __("submit_inquiry", null, "Submit Inquiry") ?></button>';
         featuresHtml += '<div id="modalFormResponse" class="alert p-2 mt-2 small d-none"></div>';
@@ -1867,7 +1867,7 @@ document.addEventListener('DOMContentLoaded', function(){
         return '<div class="row g-4">' +
             '<div class="col-md-7">' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.propPrice + '</label>' +
-            '<input type="number" class="form-control form-control-lg" id="mStampPrice" value="5000000" oninput="mCalcStamp()"></div>' +
+            '<input aria-label="M stamp price" type="number" class="form-control form-control-lg" id="mStampPrice" value="5000000" oninput="mCalcStamp()"></div>' +
             '<div class="mb-3"><label class="form-label fw-bold" for="mStampState">' + T.state + '</label>' +
             '<select aria-label="M stamp state" class="form-select" id="mStampState" onchange="mCalcStamp()">' +
             '<option value="up">' + T.up + '</option><option value="bihar">' + T.bihar + '</option>' +
@@ -1897,7 +1897,7 @@ document.addEventListener('DOMContentLoaded', function(){
         return '<div class="row g-4">' +
             '<div class="col-md-7">' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.value + '</label>' +
-            '<input type="number" class="form-control form-control-lg" id="mConvVal" value="1000" oninput="mCalcConv()"></div>' +
+            '<input aria-label="M conv val" type="number" class="form-control form-control-lg" id="mConvVal" value="1000" oninput="mCalcConv()"></div>' +
             '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small" for="mConvFrom">' + T.from + '</label>' +
             '<select aria-label="M conv from" class="form-select" id="mConvFrom" onchange="mCalcConv()">' + unitOptions + '</select></div>' +
             '<div class="col-6"><label class="form-label small" for="mConvTo">' + T.to + '</label>' +
@@ -1914,9 +1914,9 @@ document.addEventListener('DOMContentLoaded', function(){
         return '<div class="row g-4">' +
             '<div class="col-md-7">' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.monthlyInc + '</label>' +
-            '<input type="number" class="form-control form-control-lg" id="mEligIncome" value="60000" oninput="mCalcElig()" step="1000"></div>' +
+            '<input aria-label="M elig income" type="number" class="form-control form-control-lg" id="mEligIncome" value="60000" oninput="mCalcElig()" step="1000"></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.existEmi + '</label>' +
-            '<input type="number" class="form-control" id="mEligEmi" value="0" oninput="mCalcElig()"></div>' +
+            '<input aria-label="M elig emi" type="number" class="form-control" id="mEligEmi" value="0" oninput="mCalcElig()"></div>' +
             '<div class="row g-2 mb-3"><div class="col-6"><label class="form-label small" for="mEligRate">' + T.intRate + '</label>' +
             '<select aria-label="M elig rate" class="form-select" id="mEligRate" onchange="mCalcElig()">' +
             '<option value="8.5">8.5%</option><option value="9.0" selected>9.0%</option><option value="9.5">9.5%</option><option value="10.0">10%</option></select></div>' +
@@ -1948,7 +1948,7 @@ document.addEventListener('DOMContentLoaded', function(){
             '<option value="gorakhpur"><?= __("loc_gorakhpur") ?></option><option value="lucknow"><?= __("loc_lucknow") ?></option>' +
             '<option value="kushinagar"><?= __("loc_kushinagar") ?></option><option value="varanasi"><?= __("loc_varanasi") ?></option></select></div>' +
             '<div class="mb-3"><label class="form-label fw-bold">' + T.areaSqft + '</label>' +
-            '<input type="number" class="form-control form-control-lg" id="mValArea" value="1500" oninput="mCalcVal()" step="10"></div>' +
+            '<input aria-label="M val area" type="number" class="form-control form-control-lg" id="mValArea" value="1500" oninput="mCalcVal()" step="10"></div>' +
             '<div class="d-flex gap-2"><div class="flex-fill"><label class="form-label small" for="mValBhk">' + T.bedrooms +
             '</label>' +
             '<select aria-label="M val bhk" class="form-select" id="mValBhk" onchange="mCalcVal()"><option value="1">' + T.bhk1 + '</option><option value="2" selected>' + T.bhk2 + '</option><option value="3">' + T.bhk3 + '</option><option value="4">' + T.bhk4 + '</option></select></div>' +

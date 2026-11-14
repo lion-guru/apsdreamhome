@@ -39,7 +39,7 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="valArea"><?php echo __('area_sqft', [], 'Area (sq ft)'); ?></label>
-                                <input type="number" class="form-control" id="valArea" value="1200" min="0" placeholder="<?php echo __('eg_1200', [], 'e.g. 1200'); ?>">
+                                <input aria-label="Val area" type="number" class="form-control" id="valArea" value="1200" min="0" placeholder="<?php echo __('eg_1200', [], 'e.g. 1200'); ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="valBedrooms"><?php echo __('bedrooms', [], 'Bedrooms'); ?></label>

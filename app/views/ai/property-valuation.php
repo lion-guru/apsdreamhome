@@ -19,7 +19,7 @@ include __DIR__ . '/../layouts/base.php';
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <label for="property_id" class="form-label">Property ID</label>
-                            <input type="number" class="form-control" id="property_id" placeholder="Enter Property ID">
+                            <input aria-label="Property id" type="number" class="form-control" id="property_id" placeholder="Enter Property ID">
                             <small class="form-text text-muted">Enter the property ID to generate AI valuation</small>
                         </div>
                         <div class="col-md-6">

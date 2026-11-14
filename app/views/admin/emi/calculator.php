@@ -14,16 +14,16 @@
                 <div class="aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Loan Amount (₹)</label>
-                        <input type="number" id="loanAmount" class="form-control" value="2500000" min="100000" step="50000">
+                        <input aria-label="Loan amount" type="number" id="loanAmount" class="form-control" value="2500000" min="100000" step="50000">
                         <div class="form-text">Min ₹1,00,000</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Interest Rate (% per annum)</label>
-                        <input type="number" id="interestRate" class="form-control" value="8.5" min="1" max="30" step="0.1">
+                        <input aria-label="Interest rate" type="number" id="interestRate" class="form-control" value="8.5" min="1" max="30" step="0.1">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Loan Tenure (Months)</label>
-                        <input type="number" id="tenureMonths" class="form-control" value="240" min="12" max="360" step="12">
+                        <input aria-label="Tenure months" type="number" id="tenureMonths" class="form-control" value="240" min="12" max="360" step="12">
                         <div class="form-text">12 to 360 months (1 to 30 years)</div>
                     </div>
                     <button onclick="calculateEMI()" class="btn btn-primary w-100"><i class="fas fa-calculator me-1"></i>Calculate EMI</button>

@@ -28,7 +28,7 @@ $messageVal = $_POST['message'] ?? '';
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
                         <div class="mb-3">
                             <label for="subject" class="form-label"><?php echo __('subject'); ?> <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control form-control-lg" id="subject" name="subject" required
+                            <input aria-label="Subject" type="text" class="form-control form-control-lg" id="subject" name="subject" required
                                 value="<?php echo isset($subjectVal) ? htmlspecialchars($subjectVal ?? '') : ''; ?>">
                         </div>
 

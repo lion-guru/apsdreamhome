@@ -19,19 +19,19 @@
                             </select>
                         </div>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" name="config[log_debug]" value="1" <?= ($config['log_debug'] ?? 0) ? 'checked' : '' ?>>
+                            <input aria-label="Config log debug" class="form-check-input" type="checkbox" name="config[log_debug]" value="1" <?= ($config['log_debug'] ?? 0) ? 'checked' : '' ?>>
                             <label class="form-check-label">Log debug messages</label>
                         </div>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" name="config[log_info]" value="1" <?= ($config['log_info'] ?? 1) ? 'checked' : '' ?>>
+                            <input aria-label="Config log info" class="form-check-input" type="checkbox" name="config[log_info]" value="1" <?= ($config['log_info'] ?? 1) ? 'checked' : '' ?>>
                             <label class="form-check-label">Log info messages</label>
                         </div>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" name="config[log_warning]" value="1" <?= ($config['log_warning'] ?? 1) ? 'checked' : '' ?>>
+                            <input aria-label="Config log warning" class="form-check-input" type="checkbox" name="config[log_warning]" value="1" <?= ($config['log_warning'] ?? 1) ? 'checked' : '' ?>>
                             <label class="form-check-label">Log warnings</label>
                         </div>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="config[log_error]" value="1" <?= ($config['log_error'] ?? 1) ? 'checked' : '' ?>>
+                            <input aria-label="Config log error" class="form-check-input" type="checkbox" name="config[log_error]" value="1" <?= ($config['log_error'] ?? 1) ? 'checked' : '' ?>>
                             <label class="form-check-label">Log errors</label>
                         </div>
                     </div>
@@ -43,14 +43,14 @@
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Retention Period (days)</label>
-                            <input type="number" name="config[retention_days]" class="form-control" value="<?= (int)($config['retention_days'] ?? 30) ?>" min="1" max="365">
+                            <input aria-label="Config retention days" type="number" name="config[retention_days]" class="form-control" value="<?= (int)($config['retention_days'] ?? 30) ?>" min="1" max="365">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Max Log File Size (MB)</label>
-                            <input type="number" name="config[max_file_size]" class="form-control" value="<?= (int)($config['max_file_size'] ?? 100) ?>" min="1">
+                            <input aria-label="Config max file size" type="number" name="config[max_file_size]" class="form-control" value="<?= (int)($config['max_file_size'] ?? 100) ?>" min="1">
                         </div>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="config[auto_archive]" value="1" <?= ($config['auto_archive'] ?? 1) ? 'checked' : '' ?>>
+                            <input aria-label="Config auto archive" class="form-check-input" type="checkbox" name="config[auto_archive]" value="1" <?= ($config['auto_archive'] ?? 1) ? 'checked' : '' ?>>
                             <label class="form-check-label">Auto-archive logs after retention period</label>
                         </div>
                     </div>

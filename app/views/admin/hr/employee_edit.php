@@ -17,31 +17,31 @@ $e = $employee ?? [];
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($e['name'] ?? '') ?>" required>
+                    <input aria-label="Name" type="text" name="name" class="form-control" value="<?= htmlspecialchars($e['name'] ?? '') ?>" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($e['email'] ?? '') ?>">
+                    <input aria-label="Email" type="email" name="email" class="form-control" value="<?= htmlspecialchars($e['email'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Phone</label>
-                    <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($e['phone'] ?? '') ?>">
+                    <input aria-label="Phone" type="text" name="phone" class="form-control" value="<?= htmlspecialchars($e['phone'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Department</label>
-                    <input type="text" name="department" class="form-control" value="<?= htmlspecialchars($e['department'] ?? '') ?>">
+                    <input aria-label="Department" type="text" name="department" class="form-control" value="<?= htmlspecialchars($e['department'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Designation</label>
-                    <input type="text" name="designation" class="form-control" value="<?= htmlspecialchars($e['designation'] ?? '') ?>">
+                    <input aria-label="Designation" type="text" name="designation" class="form-control" value="<?= htmlspecialchars($e['designation'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Salary (₹)</label>
-                    <input type="number" name="salary" class="form-control" step="0.01" value="<?= htmlspecialchars($e['salary'] ?? '') ?>">
+                    <input aria-label="Salary" type="number" name="salary" class="form-control" step="0.01" value="<?= htmlspecialchars($e['salary'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Joining Date</label>
-                    <input type="date" name="join_date" class="form-control" value="<?= htmlspecialchars($e['joining_date'] ?? $e['join_date'] ?? date('Y-m-d')) ?>">
+                    <input aria-label="Join date" type="date" name="join_date" class="form-control" value="<?= htmlspecialchars($e['joining_date'] ?? $e['join_date'] ?? date('Y-m-d')) ?>">
                 </div>
                 
                 <hr class="my-4">
@@ -57,7 +57,7 @@ $e = $employee ?? [];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Commission Rate</label>
-                    <input type="number" name="commission_rate" class="form-control" step="0.01" value="<?= htmlspecialchars($e['commission_rate'] ?? '0.00') ?>">
+                    <input aria-label="Commission rate" type="number" name="commission_rate" class="form-control" step="0.01" value="<?= htmlspecialchars($e['commission_rate'] ?? '0.00') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Commission Type</label>

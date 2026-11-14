@@ -35,7 +35,7 @@ $page_title = $page_title ?? __('user_create_ticket_page_title', 'Create Support
 
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('user_create_ticket_label_subject', 'Subject') ?> <span class="text-danger">*</span></label>
-                        <input type="text" name="subject" class="form-control" required minlength="5" maxlength="255"
+                        <input aria-label="Subject" type="text" name="subject" class="form-control" required minlength="5" maxlength="255"
                                placeholder="<?= __('user_create_ticket_placeholder_subject', 'Brief description of your issue') ?>" value="<?= htmlspecialchars($_POST['subject'] ?? '') ?>">
                         <small class="text-muted"><?= __('user_create_ticket_hint_min_5', 'Minimum 5 characters') ?></small>
                     </div>

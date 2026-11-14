@@ -23,7 +23,7 @@ $statusColors = ['pending'=>'warning','verified'=>'info','approved'=>'success','
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label small fw-semibold">Property Title *</label>
-                            <input type="text" class="form-control" name="property_title" value="<?= htmlspecialchars($p['name'] ?? '') ?>" required>
+                            <input aria-label="Property title" type="text" class="form-control" name="property_title" value="<?= htmlspecialchars($p['name'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label small fw-semibold">Property Type</label>
@@ -37,25 +37,25 @@ $statusColors = ['pending'=>'warning','verified'=>'info','approved'=>'success','
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label small fw-semibold">Location</label>
-                            <input type="text" class="form-control" name="location" value="<?= htmlspecialchars($p['location'] ?? '') ?>">
+                            <input aria-label="Location" type="text" class="form-control" name="location" value="<?= htmlspecialchars($p['location'] ?? '') ?>">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label small fw-semibold">Area (sq ft)</label>
-                            <input type="number" class="form-control" name="area_sqft" value="<?= (int)($p['area_sqft'] ?? 0) ?>">
+                            <input aria-label="Area sqft" type="number" class="form-control" name="area_sqft" value="<?= (int)($p['area_sqft'] ?? 0) ?>">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label small fw-semibold">Price (₹)</label>
-                            <input type="number" class="form-control" name="price" value="<?= (float)($p['price'] ?? 0) ?>" step="0.01">
+                            <input aria-label="Price" type="number" class="form-control" name="price" value="<?= (float)($p['price'] ?? 0) ?>" step="0.01">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-semibold">Bedrooms</label>
-                            <input type="number" class="form-control" name="bedrooms" value="<?= (int)($p['bedrooms'] ?? 0) ?>">
+                            <input aria-label="Bedrooms" type="number" class="form-control" name="bedrooms" value="<?= (int)($p['bedrooms'] ?? 0) ?>">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-semibold">Bathrooms</label>
-                            <input type="number" class="form-control" name="bathrooms" value="<?= (int)($p['bathrooms'] ?? 0) ?>">
+                            <input aria-label="Bathrooms" type="number" class="form-control" name="bathrooms" value="<?= (int)($p['bathrooms'] ?? 0) ?>">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-semibold">Furnished</label>
@@ -68,7 +68,7 @@ $statusColors = ['pending'=>'warning','verified'=>'info','approved'=>'success','
                         <div class="col-md-3 mb-3">
                             <label class="form-label small fw-semibold">Featured</label>
                             <div class="form-check form-switch mt-2">
-                                <input class="form-check-input" type="checkbox" name="is_featured" value="1" <?= !empty($p['is_featured']) ? 'checked' : '' ?>>
+                                <input aria-label="Is featured" class="form-check-input" type="checkbox" name="is_featured" value="1" <?= !empty($p['is_featured']) ? 'checked' : '' ?>>
                                 <label class="form-check-label">Featured Property</label>
                             </div>
                         </div>

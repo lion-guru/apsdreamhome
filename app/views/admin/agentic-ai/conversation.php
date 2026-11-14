@@ -49,7 +49,7 @@ $_ag = $agents ?? [];
                         <?php if (($_conv['status'] ?? '') === 'active'): ?>
                         <div class="card-footer">
                             <div class="input-group">
-                                <input type="text" class="form-control" id="msgInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMsg()">
+                                <input aria-label="Msg input" type="text" class="form-control" id="msgInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMsg()">
                                 <button class="btn btn-primary" onclick="sendMsg()" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
                             </div>
                         </div>

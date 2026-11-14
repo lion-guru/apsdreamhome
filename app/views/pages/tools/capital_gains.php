@@ -11,11 +11,11 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="purchasePrice"><?php echo __('purchase_price_rs', [], 'Purchase Price (₹)'); ?></label>
-                                <input type="number" class="form-control" id="purchasePrice" value="3000000">
+                                <input aria-label="Purchase price" type="number" class="form-control" id="purchasePrice" value="3000000">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="salePrice"><?php echo __('sale_price_rs', [], 'Sale Price (₹)'); ?></label>
-                                <input type="number" class="form-control" id="salePrice" value="5000000">
+                                <input aria-label="Sale price" type="number" class="form-control" id="salePrice" value="5000000">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
@@ -28,7 +28,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="improveCost"><?php echo __('improvement_cost_rs', [], 'Improvement Cost (₹)'); ?></label>
-                                <input type="number" class="form-control" id="improveCost" value="200000">
+                                <input aria-label="Improve cost" type="number" class="form-control" id="improveCost" value="200000">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="indexation"><?php echo __('indexation', [], 'Indexation Benefit?'); ?></label>

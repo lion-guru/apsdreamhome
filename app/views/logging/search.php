@@ -9,7 +9,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-4">
                     <label class="form-label">Keyword</label>
-                    <input type="text" name="q" class="form-control" placeholder="Search message, file, IP..." value="<?= htmlspecialchars($query ?? '') ?>">
+                    <input aria-label="Q" type="text" name="q" class="form-control" placeholder="Search message, file, IP..." value="<?= htmlspecialchars($query ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Level</label>
@@ -23,11 +23,11 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">From</label>
-                    <input type="date" name="from" class="form-control" value="<?= htmlspecialchars($from ?? '') ?>">
+                    <input aria-label="From" type="date" name="from" class="form-control" value="<?= htmlspecialchars($from ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">To</label>
-                    <input type="date" name="to" class="form-control" value="<?= htmlspecialchars($to ?? '') ?>">
+                    <input aria-label="To" type="date" name="to" class="form-control" value="<?= htmlspecialchars($to ?? '') ?>">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search me-1"></i>Search</button>

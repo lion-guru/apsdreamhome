@@ -111,7 +111,7 @@ $active_page = 'bookings';
             <div class="row">
                 <div class="col-md-3">
                     <label for="search" class="form-label"><?= __('admin_search') ?></label>
-                    <input type="text" class="form-control" id="search" name="search"
+                    <input aria-label="Search" type="text" class="form-control" id="search" name="search"
                         value="<?= htmlspecialchars($filters['search'] ?? '') ?>"
                         placeholder="Booking #, Customer, Property">
                 </div>
@@ -190,7 +190,7 @@ $active_page = 'bookings';
                     <option value="transferred">Transferred</option>
                     <option value="cancelled">Cancelled</option>
                 </select>
-                <input type="text" id="bulkNotes" class="form-control form-control-sm" style="width: 200px; display: inline-block;" placeholder="Notes (optional)">
+                <input aria-label="Bulk notes" type="text" id="bulkNotes" class="form-control form-control-sm" style="width: 200px; display: inline-block;" placeholder="Notes (optional)">
                 <button type="button" class="btn btn-sm btn-warning" id="bulkApply">Apply Status</button>
                 <button type="button" class="btn btn-sm btn-outline-danger" id="bulkCancel">Cancel</button>
             </div>

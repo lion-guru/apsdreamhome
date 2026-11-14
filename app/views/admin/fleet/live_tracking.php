@@ -19,7 +19,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         </div>
         <div class="d-flex gap-2">
             <form method="GET" action="/admin/site-visits/fleet/live-tracking" class="d-flex gap-2 align-items-center">
-                <input type="date" name="date" class="form-control form-control-sm" value="<?= htmlspecialchars($date) ?>" onchange="this.form.submit()">
+                <input aria-label="Date" type="date" name="date" class="form-control form-control-sm" value="<?= htmlspecialchars($date) ?>" onchange="this.form.submit()">
             </form>
             <a href="/admin/site-visits/manifest?date=<?= urlencode($date) ?>" target="_blank" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-print me-1"></i>Print Manifest

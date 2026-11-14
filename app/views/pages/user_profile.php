@@ -43,7 +43,7 @@ $extraHead = '<style>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('user_profile_label_name') ?> *</label>
-                                <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" required>
+                                <input aria-label="Name" type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('user_profile_label_email') ?></label>
@@ -55,7 +55,7 @@ $extraHead = '<style>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('user_profile_label_phone') ?> *</label>
-                                <input type="tel" name="phone" class="form-control" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>" required>
+                                <input aria-label="Phone" type="tel" name="phone" class="form-control" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('user_profile_label_member_since') ?></label>
@@ -71,11 +71,11 @@ $extraHead = '<style>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('user_profile_label_new_password') ?></label>
-                                <input type="password" name="new_password" class="form-control" placeholder="<?= __('user_profile_ph_new_password') ?>" minlength="6">
+                                <input aria-label="New password" type="password" name="new_password" class="form-control" placeholder="<?= __('user_profile_ph_new_password') ?>" minlength="6">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('user_profile_label_confirm_password') ?></label>
-                                <input type="password" name="confirm_password" class="form-control" placeholder="<?= __('user_profile_ph_confirm_password') ?>">
+                                <input aria-label="Confirm password" type="password" name="confirm_password" class="form-control" placeholder="<?= __('user_profile_ph_confirm_password') ?>">
                             </div>
                         </div>
 

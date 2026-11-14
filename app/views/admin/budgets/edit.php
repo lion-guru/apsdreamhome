@@ -19,7 +19,7 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Budget Name <span class="text-danger">*</span></label>
-                        <input type="text" name="budget_name" class="form-control" required value="<?= htmlspecialchars($budget['budget_name'] ?? '') ?>">
+                        <input aria-label="Budget name" type="text" name="budget_name" class="form-control" required value="<?= htmlspecialchars($budget['budget_name'] ?? '') ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Fiscal Year <span class="text-danger">*</span></label>
@@ -51,15 +51,15 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Period Start <span class="text-danger">*</span></label>
-                        <input type="date" name="period_start" class="form-control" required value="<?= $budget['period_start'] ?? '' ?>">
+                        <input aria-label="Period start" type="date" name="period_start" class="form-control" required value="<?= $budget['period_start'] ?? '' ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Period End <span class="text-danger">*</span></label>
-                        <input type="date" name="period_end" class="form-control" required value="<?= $budget['period_end'] ?? '' ?>">
+                        <input aria-label="Period end" type="date" name="period_end" class="form-control" required value="<?= $budget['period_end'] ?? '' ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Allocated Amount (₹)</label>
-                        <input type="number" name="allocated_amount" class="form-control" step="0.01" min="0" value="<?= htmlspecialchars($budget['allocated_amount'] ?? '') ?>">
+                        <input aria-label="Allocated amount" type="number" name="allocated_amount" class="form-control" step="0.01" min="0" value="<?= htmlspecialchars($budget['allocated_amount'] ?? '') ?>">
                     </div>
                 </div>
 

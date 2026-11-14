@@ -85,8 +85,8 @@ $extraHead = '<link rel="stylesheet" href="<?= BASE_URL ?>/assets/fonts/fontawes
         <div class="whatsapp-footer">
             <form id="whatsappForm">
     <?php echo CSRFProtection::csrfField(); ?>
-                <input type="text" class="whatsapp-input" id="customerName" placeholder="<?= __('wapp_placeholder_name', [], 'Your name') ?>" required>
-                <input type="tel" class="whatsapp-input" id="customerPhone" placeholder="<?= __('wapp_placeholder_phone', [], 'Your phone number') ?>" required>
+                <input aria-label="Customer name" type="text" class="whatsapp-input" id="customerName" placeholder="<?= __('wapp_placeholder_name', [], 'Your name') ?>" required>
+                <input aria-label="Customer phone" type="tel" class="whatsapp-input" id="customerPhone" placeholder="<?= __('wapp_placeholder_phone', [], 'Your phone number') ?>" required>
                 <textarea aria-label="Customer message" class="whatsapp-input" id="customerMessage" placeholder="<?= __('wapp_placeholder_message', [], 'Type your message...') ?>" rows="2" required></textarea>
                 <button type="submit" class="whatsapp-send">
                     <i class="fab fa-whatsapp me-2"></i><?= __('wapp_send', [], 'Send Message') ?>

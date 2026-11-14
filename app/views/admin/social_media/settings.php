@@ -20,33 +20,33 @@ $get = fn($k) => htmlspecialchars($configs[$k] ?? '');
                     <h6 class="text-primary"><i class="fab fa-facebook me-1"></i> Facebook / Instagram</h6>
                     <div class="mb-3">
                         <label class="form-label">App ID</label>
-                        <input type="text" name="fb_app_id" class="form-control" value="<?= $get('fb_app_id') ?>">
+                        <input aria-label="Fb app id" type="text" name="fb_app_id" class="form-control" value="<?= $get('fb_app_id') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">App Secret</label>
-                        <input type="password" name="fb_app_secret" class="form-control" value="<?= $get('fb_app_secret') ?>" placeholder="Leave blank to keep existing">
+                        <input aria-label="Fb app secret" type="password" name="fb_app_secret" class="form-control" value="<?= $get('fb_app_secret') ?>" placeholder="Leave blank to keep existing">
                     </div>
 
                     <hr>
                     <h6 class="text-info"><i class="fab fa-linkedin me-1"></i> LinkedIn</h6>
                     <div class="mb-3">
                         <label class="form-label">Client ID</label>
-                        <input type="text" name="li_client_id" class="form-control" value="<?= $get('li_client_id') ?>">
+                        <input aria-label="Li client id" type="text" name="li_client_id" class="form-control" value="<?= $get('li_client_id') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Client Secret</label>
-                        <input type="password" name="li_client_secret" class="form-control" value="<?= $get('li_client_secret') ?>" placeholder="Leave blank to keep existing">
+                        <input aria-label="Li client secret" type="password" name="li_client_secret" class="form-control" value="<?= $get('li_client_secret') ?>" placeholder="Leave blank to keep existing">
                     </div>
 
                     <hr>
                     <h6 class="text-success"><i class="fab fa-whatsapp me-1"></i> WhatsApp Business</h6>
                     <div class="mb-3">
                         <label class="form-label">Phone Number ID</label>
-                        <input type="text" name="wa_phone_id" class="form-control" value="<?= $get('wa_phone_id') ?>">
+                        <input aria-label="Wa phone id" type="text" name="wa_phone_id" class="form-control" value="<?= $get('wa_phone_id') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Access Token</label>
-                        <input type="password" name="wa_token" class="form-control" value="<?= $get('wa_token') ?>" placeholder="Leave blank to keep existing">
+                        <input aria-label="Wa token" type="password" name="wa_token" class="form-control" value="<?= $get('wa_token') ?>" placeholder="Leave blank to keep existing">
                     </div>
 
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Save Settings</button>

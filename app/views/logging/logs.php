@@ -19,7 +19,7 @@
                     </select>
                 </div>
                 <div class="col-auto flex-grow-1">
-                    <input type="text" class="form-control form-control-sm" id="searchText" placeholder="Search logs..." value="<?= htmlspecialchars($filter['search'] ?? '') ?>" onkeyup="applyFilter()">
+                    <input aria-label="Search text" type="text" class="form-control form-control-sm" id="searchText" placeholder="Search logs..." value="<?= htmlspecialchars($filter['search'] ?? '') ?>" onkeyup="applyFilter()">
                 </div>
                 <div class="col text-end">
                     <span class="text-muted small"><?= (int)($total ?? 0) ?> entries (showing <?= count($logs ?? []) ?>)</span>

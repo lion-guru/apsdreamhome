@@ -23,15 +23,15 @@
                 <div class="col-12"><h6 class="text-muted mb-3">Leader <?= $i ?></h6></div>
                 <div class="col-md-3 mb-2">
                     <label class="form-label small fw-semibold">Name</label>
-                    <input type="text" class="form-control" name="leader_<?= $i ?>_name" value="<?= htmlspecialchars($sc["leader_{$i}"]["leader_{$i}_name"] ?? '') ?>">
+                    <input aria-label="Leader i name" type="text" class="form-control" name="leader_<?= $i ?>_name" value="<?= htmlspecialchars($sc["leader_{$i}"]["leader_{$i}_name"] ?? '') ?>">
                 </div>
                 <div class="col-md-3 mb-2">
                     <label class="form-label small fw-semibold">Role</label>
-                    <input type="text" class="form-control" name="leader_<?= $i ?>_role" value="<?= htmlspecialchars($sc["leader_{$i}"]["leader_{$i}_role"] ?? '') ?>">
+                    <input aria-label="Leader i role" type="text" class="form-control" name="leader_<?= $i ?>_role" value="<?= htmlspecialchars($sc["leader_{$i}"]["leader_{$i}_role"] ?? '') ?>">
                 </div>
                 <div class="col-md-3 mb-2">
                     <label class="form-label small fw-semibold">Experience</label>
-                    <input type="text" class="form-control" name="leader_<?= $i ?>_exp" value="<?= htmlspecialchars($sc["leader_{$i}"]["leader_{$i}_exp"] ?? '') ?>">
+                    <input aria-label="Leader i exp" type="text" class="form-control" name="leader_<?= $i ?>_exp" value="<?= htmlspecialchars($sc["leader_{$i}"]["leader_{$i}_exp"] ?? '') ?>">
                 </div>
                 <div class="col-md-3 mb-2">
                     <label class="form-label small fw-semibold">Photo</label>
@@ -40,7 +40,7 @@
                         <?php if (!empty($photoVal)): ?>
                         <img alt="" src="<?= BASE_URL ?>/<?= htmlspecialchars($photoVal ?? '') ?>" class="rounded">
                         <?php endif; ?>
-                        <input type="text" class="form-control form-control-sm" name="leader_<?= $i ?>_photo" value="<?= htmlspecialchars($photoVal ?? '') ?>" placeholder="assets/images/team/...">
+                        <input aria-label="Leader i photo" type="text" class="form-control form-control-sm" name="leader_<?= $i ?>_photo" value="<?= htmlspecialchars($photoVal ?? '') ?>" placeholder="assets/images/team/...">
                     </div>
                 </div>
                 <div class="col-12 mb-2">
@@ -62,7 +62,7 @@
                 foreach ($stats as $key => $label): ?>
                 <div class="col-md-3 mb-3">
                     <label class="form-label small fw-semibold"><?= $label ?></label>
-                    <input type="text" class="form-control" name="<?= $key ?>" value="<?= htmlspecialchars($sc['stats'][$key] ?? '') ?>">
+                    <input aria-label="key" type="text" class="form-control" name="<?= $key ?>" value="<?= htmlspecialchars($sc['stats'][$key] ?? '') ?>">
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -91,7 +91,7 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label small fw-semibold">Registration Number</label>
-                    <input type="text" class="form-control" name="reg_number" value="<?= htmlspecialchars($sc['registration']['reg_number'] ?? '') ?>">
+                    <input aria-label="Reg number" type="text" class="form-control" name="reg_number" value="<?= htmlspecialchars($sc['registration']['reg_number'] ?? '') ?>">
                 </div>
             </div>
         </div>

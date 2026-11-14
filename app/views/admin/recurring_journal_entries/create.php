@@ -17,7 +17,7 @@ $entryTypes = $entryTypes ?? [];
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Template Name <span class="text-danger">*</span></label>
-                    <input type="text" name="template_name" class="form-control" required placeholder="e.g. Monthly Rent Accrual">
+                    <input aria-label="Template name" type="text" name="template_name" class="form-control" required placeholder="e.g. Monthly Rent Accrual">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Entry Type</label>
@@ -33,14 +33,14 @@ $entryTypes = $entryTypes ?? [];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Start Date</label>
-                    <input type="date" name="start_date" class="form-control" value="<?= $today ?>" required>
+                    <input aria-label="Start date" type="date" name="start_date" class="form-control" value="<?= $today ?>" required>
                 </div>
             </div>
 
             <div class="row g-3 mb-3">
-                <div class="col-md-3"><label class="form-label">End Date (optional)</label><input type="date" name="end_date" class="form-control"></div>
-                <div class="col-md-3"><label class="form-label">Max Executions (optional)</label><input type="number" name="max_executions" class="form-control" min="1"></div>
-                <div class="col-md-2 d-flex align-items-end"><label class="form-check-label mb-0"><input type="checkbox" name="is_active" value="1" checked class="form-check-input me-2"> Active</label></div>
+                <div class="col-md-3"><label class="form-label">End Date (optional)</label><input aria-label="End date" type="date" name="end_date" class="form-control"></div>
+                <div class="col-md-3"><label class="form-label">Max Executions (optional)</label><input aria-label="Max executions" type="number" name="max_executions" class="form-control" min="1"></div>
+                <div class="col-md-2 d-flex align-items-end"><label class="form-check-label mb-0"><input aria-label="Is active" type="checkbox" name="is_active" value="1" checked class="form-check-input me-2"> Active</label></div>
             </div>
 
             <div class="mb-3">
@@ -85,10 +85,10 @@ function addLine() {
     const accOptions = accounts.map(a => '<option value="' + a.id + '">' + a.code + ' - ' + a.name + ' (' + a.type + ')</option>').join('');
     row.innerHTML = `
         <td><select aria-label="Lines" name="lines[${idx}][account_id]" class="form-select form-select-sm" required>${accOptions}</select></td>
-        <td><input type="number" name="lines[${idx}][debit_amount]" class="form-control form-control-sm" step="0.01" min="0" value="0" oninput="calcTotal()"></td>
-        <td><input type="number" name="lines[${idx}][credit_amount]" class="form-control form-control-sm" step="0.01" min="0" value="0" oninput="calcTotal()"></td>
-        <td><input type="text" name="lines[${idx}][description]" class="form-control form-control-sm"></td>
-        <td><input type="number" name="lines[${idx}][line_order]" class="form-control form-control-sm" value="${idx+1}" min="1"></td>
+        <td><input aria-label="Lines idx debit amount" type="number" name="lines[${idx}][debit_amount]" class="form-control form-control-sm" step="0.01" min="0" value="0" oninput="calcTotal()"></td>
+        <td><input aria-label="Lines idx credit amount" type="number" name="lines[${idx}][credit_amount]" class="form-control form-control-sm" step="0.01" min="0" value="0" oninput="calcTotal()"></td>
+        <td><input aria-label="Lines idx description" type="text" name="lines[${idx}][description]" class="form-control form-control-sm"></td>
+        <td><input aria-label="Lines idx line order" type="number" name="lines[${idx}][line_order]" class="form-control form-control-sm" value="${idx+1}" min="1"></td>
         <td><button type="button" class="btn btn-danger btn-sm" onclick="removeLine(${idx})" aria-label="Delete"><i class="fas fa-trash"></i></button></td>
     `;
     tbody.appendChild(row);

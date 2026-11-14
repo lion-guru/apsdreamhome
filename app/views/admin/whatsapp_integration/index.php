@@ -41,17 +41,17 @@ $page_title = $page_title ?? 'WhatsApp Integration';
                         
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Phone Number ID</label>
-                            <input type="text" class="form-control" name="phone_number_id" placeholder="Your WhatsApp Business Phone Number ID">
+                            <input aria-label="Phone number id" type="text" class="form-control" name="phone_number_id" placeholder="Your WhatsApp Business Phone Number ID">
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Access Token</label>
-                            <input type="password" class="form-control" name="access_token" placeholder="WhatsApp Business API Access Token">
+                            <input aria-label="Access token" type="password" class="form-control" name="access_token" placeholder="WhatsApp Business API Access Token">
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Webhook Verify Token</label>
-                            <input type="text" class="form-control" name="webhook_verify_token" placeholder="Webhook verification token">
+                            <input aria-label="Webhook verify token" type="text" class="form-control" name="webhook_verify_token" placeholder="Webhook verification token">
                         </div>
                         
                         <div class="mb-3">

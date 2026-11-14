@@ -30,7 +30,7 @@ ob_start();
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label class="form-label">Campaign Name *</label>
-                                <input type="text" class="form-control" name="name" required placeholder="e.g. Diwali Property Sale 2026">
+                                <input aria-label="Name" type="text" class="form-control" name="name" required placeholder="e.g. Diwali Property Sale 2026">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Channel Type *</label>
@@ -64,7 +64,7 @@ ob_start();
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Scheduled Send Time</label>
-                                <input type="datetime-local" class="form-control" name="scheduled_at">
+                                <input aria-label="Scheduled at" type="datetime-local" class="form-control" name="scheduled_at">
                                 <small class="text-muted">Leave blank to send immediately or save as draft</small>
                             </div>
                         </div>
@@ -78,7 +78,7 @@ ob_start();
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3" id="subjectGroup">
                             <label class="form-label">Subject Line</label>
-                            <input type="text" class="form-control" name="subject" id="subjectField" placeholder="Email subject line">
+                            <input aria-label="Subject" type="text" class="form-control" name="subject" id="subjectField" placeholder="Email subject line">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Message Body *</label>
@@ -113,7 +113,7 @@ ob_start();
                         </div>
                         <div class="mb-3">
                             <label class="form-label">City Filter</label>
-                            <input type="text" class="form-control" name="audience_city" placeholder="e.g. Gorakhpur">
+                            <input aria-label="Audience city" type="text" class="form-control" name="audience_city" placeholder="e.g. Gorakhpur">
                         </div>
                     </div>
                 </div>

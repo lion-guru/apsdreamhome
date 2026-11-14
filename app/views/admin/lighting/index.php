@@ -253,11 +253,11 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Audit Date <span class="text-danger">*</span></label>
-                            <input type="date" name="audit_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Audit date" type="date" name="audit_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Feeder Pillar Identifier <span class="text-danger">*</span></label>
-                            <input type="text" name="feeder_pillar_code" class="form-control form-control-sm" placeholder="e.g. Main Boulevard Pillar FP-1" required>
+                            <input aria-label="Feeder pillar code" type="text" name="feeder_pillar_code" class="form-control form-control-sm" placeholder="e.g. Main Boulevard Pillar FP-1" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Timer Switching Mode</label>
@@ -270,23 +270,23 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Total Poles Connected <span class="text-danger">*</span></label>
-                            <input type="number" name="total_poles_connected" id="totalPolesInput" class="form-control form-control-sm" min="1" placeholder="e.g. 45" required>
+                            <input aria-label="Total poles connected" type="number" name="total_poles_connected" id="totalPolesInput" class="form-control form-control-sm" min="1" placeholder="e.g. 45" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Functional Poles</label>
-                            <input type="number" name="poles_functional" id="functionalPolesInput" class="form-control form-control-sm" min="0" placeholder="e.g. 42">
+                            <input aria-label="Poles functional" type="number" name="poles_functional" id="functionalPolesInput" class="form-control form-control-sm" min="0" placeholder="e.g. 42">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Faulty / Blackout Poles</label>
-                            <input type="number" name="poles_faulty" id="faultyPolesInput" class="form-control form-control-sm" min="0" placeholder="e.g. 3">
+                            <input aria-label="Poles faulty" type="number" name="poles_faulty" id="faultyPolesInput" class="form-control form-control-sm" min="0" placeholder="e.g. 3">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Switch ON Time</label>
-                            <input type="time" name="on_time" class="form-control form-control-sm" value="18:15">
+                            <input aria-label="On time" type="time" name="on_time" class="form-control form-control-sm" value="18:15">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Switch OFF Time</label>
-                            <input type="time" name="off_time" class="form-control form-control-sm" value="05:45">
+                            <input aria-label="Off time" type="time" name="off_time" class="form-control form-control-sm" value="05:45">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Phase Balance Status (R-Y-B)</label>
@@ -308,15 +308,15 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Faulty Pole Identification & Blackout Notes</label>
-                            <input type="text" name="faulty_pole_numbers" class="form-control form-control-sm" placeholder="e.g. Pole #12 (LED module burnt), Pole #27 (loose fuse)">
+                            <input aria-label="Faulty pole numbers" type="text" name="faulty_pole_numbers" class="form-control form-control-sm" placeholder="e.g. Pole #12 (LED module burnt), Pole #27 (loose fuse)">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Duty Electrician Name</label>
-                            <input type="text" name="electrician_name" class="form-control form-control-sm" placeholder="e.g. Ramesh Kumar">
+                            <input aria-label="Electrician name" type="text" name="electrician_name" class="form-control form-control-sm" placeholder="e.g. Ramesh Kumar">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Electrician Contact Phone</label>
-                            <input type="text" name="electrician_phone" class="form-control form-control-sm" placeholder="e.g. +91 98765 43210">
+                            <input aria-label="Electrician phone" type="text" name="electrician_phone" class="form-control form-control-sm" placeholder="e.g. +91 98765 43210">
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Engineering Remarks</label>

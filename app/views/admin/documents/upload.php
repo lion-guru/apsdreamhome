@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Document Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required>
+                        <input aria-label="Title" type="text" name="title" class="form-control" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Document Type</label>
@@ -63,7 +63,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Select File <span class="text-danger">*</span></label>
-                    <input type="file" name="document_file" class="form-control" required>
+                    <input aria-label="Document file" type="file" name="document_file" class="form-control" required>
                     <small class="text-muted">Allowed: PDF, DOC, DOCX, JPG, PNG (Max 10MB)</small>
                 </div>
                 <div class="mb-3">
@@ -78,7 +78,7 @@
                 </div>
                 <div class="mb-3" id="relatedIdField" >
                     <label class="form-label">Related ID</label>
-                    <input type="number" name="related_id" class="form-control" placeholder="Enter ID number">
+                    <input aria-label="Related id" type="number" name="related_id" class="form-control" placeholder="Enter ID number">
                 </div>
                 <button type="submit" class="btn btn-primary"><i class="fas fa-upload me-1"></i>Upload Document</button>
                 <a href="<?= BASE_URL ?>/admin/documents" class="btn btn-outline-secondary ms-2">Cancel</a>

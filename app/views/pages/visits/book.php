@@ -132,22 +132,22 @@ unset($_SESSION['visit_form'], $_SESSION['visit_errors']);
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label"><?= __('visit_name_label', [], 'Name *') ?></label>
-                                <input type="text" class="form-control" name="name" required
+                                <input aria-label="Name" type="text" class="form-control" name="name" required
                                        value="<?= htmlspecialchars($form_data['name'] ?? ($_SESSION['user_name'] ?? '')) ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label"><?= __('visit_phone_label', [], 'Phone *') ?></label>
-                                <input type="tel" class="form-control" name="phone" required
+                                <input aria-label="Phone" type="tel" class="form-control" name="phone" required
                                        value="<?= htmlspecialchars($form_data['phone'] ?? ($_SESSION['user_phone'] ?? '')) ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('visit_email_label', [], 'Email *') ?></label>
-                                <input type="email" class="form-control" name="email" required
+                                <input aria-label="Email" type="email" class="form-control" name="email" required
                                        value="<?= htmlspecialchars($form_data['email'] ?? ($_SESSION['user_email'] ?? '')) ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('visit_notes_label', [], 'Additional Notes') ?></label>
-                                <input type="text" class="form-control" name="notes"
+                                <input aria-label="Notes" type="text" class="form-control" name="notes"
                                        value="<?= htmlspecialchars($form_data['notes'] ?? '') ?>"
                                        placeholder="<?= __('visit_notes_placeholder', [], 'Any specific requirements?') ?>">
                             </div>

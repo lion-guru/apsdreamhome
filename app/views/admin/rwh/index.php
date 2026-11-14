@@ -248,11 +248,11 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Audit Date <span class="text-danger">*</span></label>
-                            <input type="date" name="audit_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Audit date" type="date" name="audit_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Pit / Shaft Identifier <span class="text-danger">*</span></label>
-                            <input type="text" name="pit_identifier" class="form-control form-control-sm" placeholder="e.g. Central Park Dual Recharge Shaft #1" required>
+                            <input aria-label="Pit identifier" type="text" name="pit_identifier" class="form-control form-control-sm" placeholder="e.g. Central Park Dual Recharge Shaft #1" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Recharge Structure Type</label>
@@ -265,15 +265,15 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Catchment Area (sq.ft)</label>
-                            <input type="number" name="catchment_area_sqft" class="form-control form-control-sm" step="0.01" placeholder="e.g. 25000">
+                            <input aria-label="Catchment area sqft" type="number" name="catchment_area_sqft" class="form-control form-control-sm" step="0.01" placeholder="e.g. 25000">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Recharge Capacity (kL / day)</label>
-                            <input type="number" name="recharge_capacity_kl" class="form-control form-control-sm" step="0.1" placeholder="e.g. 150.0">
+                            <input aria-label="Recharge capacity kl" type="number" name="recharge_capacity_kl" class="form-control form-control-sm" step="0.1" placeholder="e.g. 150.0">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">Water Table Depth (ft)</label>
-                            <input type="number" name="water_table_depth_ft" class="form-control form-control-sm" step="0.1" placeholder="e.g. 42.5">
+                            <input aria-label="Water table depth ft" type="number" name="water_table_depth_ft" class="form-control form-control-sm" step="0.1" placeholder="e.g. 42.5">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Filtration Media Status</label>
@@ -304,21 +304,21 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-6 d-flex align-items-center mt-4">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="desilting_chambers_cleared" value="1" id="desiltCheck" checked>
+                                <input aria-label="Desilting chambers cleared" class="form-check-input" type="checkbox" name="desilting_chambers_cleared" value="1" id="desiltCheck" checked>
                                 <label class="form-check-label small fw-semibold" for="desiltCheck">Desilting Silt Traps Cleared</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Environmental / Civil Officer Name</label>
-                            <input type="text" name="environmental_officer_name" class="form-control form-control-sm" placeholder="e.g. Er. Anoop Singh">
+                            <input aria-label="Environmental officer name" type="text" name="environmental_officer_name" class="form-control form-control-sm" placeholder="e.g. Er. Anoop Singh">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Officer Phone</label>
-                            <input type="text" name="officer_contact" class="form-control form-control-sm" placeholder="e.g. +91 98765 12345">
+                            <input aria-label="Officer contact" type="text" name="officer_contact" class="form-control form-control-sm" placeholder="e.g. +91 98765 12345">
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Maintenance Actions Done</label>
-                            <input type="text" name="maintenance_actions_done" class="form-control form-control-sm" placeholder="e.g. Desilted silt chamber, washed gravel filter, tested percolation rate">
+                            <input aria-label="Maintenance actions done" type="text" name="maintenance_actions_done" class="form-control form-control-sm" placeholder="e.g. Desilted silt chamber, washed gravel filter, tested percolation rate">
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Engineering Remarks</label>

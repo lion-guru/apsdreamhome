@@ -30,12 +30,12 @@ $isEdit = !empty($account);
 
                     <div class="mb-3">
                         <label class="form-label">Account Name</label>
-                        <input type="text" name="account_name" class="form-control" value="<?= $isEdit ? htmlspecialchars($account['account_name'] ?? '') : '' ?>" placeholder="e.g. APS Dream Home Official" required>
+                        <input aria-label="Account name" type="text" name="account_name" class="form-control" value="<?= $isEdit ? htmlspecialchars($account['account_name'] ?? '') : '' ?>" placeholder="e.g. APS Dream Home Official" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Platform Account / Page ID</label>
-                        <input type="text" name="account_id" class="form-control" value="<?= $isEdit ? htmlspecialchars($account['account_id'] ?? '') : '' ?>" placeholder="Facebook Page ID or Business Manager ID" <?= $isEdit ? 'disabled' : 'required' ?>>
+                        <input aria-label="Account id" type="text" name="account_id" class="form-control" value="<?= $isEdit ? htmlspecialchars($account['account_id'] ?? '') : '' ?>" placeholder="Facebook Page ID or Business Manager ID" <?= $isEdit ? 'disabled' : 'required' ?>>
                         <?php if ($isEdit): ?><input type="hidden" name="account_id" value="<?= htmlspecialchars($account['account_id'] ?? '') ?>"><?php endif; ?>
                     </div>
 
@@ -57,11 +57,11 @@ $isEdit = !empty($account);
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Refresh Token</label>
-                            <input type="text" name="refresh_token" class="form-control" value="<?= $isEdit ? htmlspecialchars($account['refresh_token'] ?? '') : '' ?>">
+                            <input aria-label="Refresh token" type="text" name="refresh_token" class="form-control" value="<?= $isEdit ? htmlspecialchars($account['refresh_token'] ?? '') : '' ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Token Expires At</label>
-                            <input type="datetime-local" name="token_expires_at" class="form-control" value="<?= $isEdit && !empty($account['token_expires_at']) ? date('Y-m-d\TH:i', strtotime($account['token_expires_at'])) : '' ?>">
+                            <input aria-label="Token expires at" type="datetime-local" name="token_expires_at" class="form-control" value="<?= $isEdit && !empty($account['token_expires_at']) ? date('Y-m-d\TH:i', strtotime($account['token_expires_at'])) : '' ?>">
                         </div>
                     </div>
 

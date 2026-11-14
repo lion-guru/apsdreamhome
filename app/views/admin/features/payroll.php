@@ -69,8 +69,8 @@ ob_start();
       <form method="POST" action="<?= BASE_URL ?>/api/v2/payroll/generate" class="card card-body mb-3">
                           <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="row g-2">
-          <div class="col-md-3"><input name="month" type="number" class="form-control" value="<?= $currentMonth ?>" min="1" max="12" required></div>
-          <div class="col-md-3"><input name="year" type="number" class="form-control" value="<?= $currentYear ?>" required></div>
+          <div class="col-md-3"><input aria-label="Month" name="month" type="number" class="form-control" value="<?= $currentMonth ?>" min="1" max="12" required></div>
+          <div class="col-md-3"><input aria-label="Year" name="year" type="number" class="form-control" value="<?= $currentYear ?>" required></div>
           <div class="col-md-3"><button class="btn btn-primary">Generate</button></div>
         </div>
       </form>

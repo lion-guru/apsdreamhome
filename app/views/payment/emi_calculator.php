@@ -29,13 +29,13 @@ $content = $content ?? '';
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label for="principal" class="form-label">Principal Amount (₹)</label>
-                                                    <input type="number" class="form-control" id="principal" name="principal" value="1000000" required>
+                                                    <input aria-label="Principal" type="number" class="form-control" id="principal" name="principal" value="1000000" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label for="rate" class="form-label">Interest Rate (%)</label>
-                                                    <input type="number" class="form-control" id="rate" name="rate" value="8.5" step="0.1" required>
+                                                    <input aria-label="Rate" type="number" class="form-control" id="rate" name="rate" value="8.5" step="0.1" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -43,13 +43,13 @@ $content = $content ?? '';
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label for="tenure" class="form-label">Tenure (Months)</label>
-                                                    <input type="number" class="form-control" id="tenure" name="tenure" value="12" required>
+                                                    <input aria-label="Tenure" type="number" class="form-control" id="tenure" name="tenure" value="12" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label for="down_payment" class="form-label">Down Payment (%)</label>
-                                                    <input type="number" class="form-control" id="down_payment" name="down_payment" value="20" step="0.1">
+                                                    <input aria-label="Down payment" type="number" class="form-control" id="down_payment" name="down_payment" value="20" step="0.1">
                                                 </div>
                                             </div>
                                         </div>

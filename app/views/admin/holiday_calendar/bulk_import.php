@@ -75,17 +75,17 @@ Holi,2026-03-14,religious,IN,Festival of Colors,0,0,1,
                 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">File <span class="text-danger">*</span></label>
-                    <input type="file" name="holiday_file" class="form-control" accept=".csv,.json" required>
+                    <input aria-label="Holiday file" type="file" name="holiday_file" class="form-control" accept=".csv,.json" required>
                     <div class="form-text">CSV or JSON file (max 2MB)</div>
                 </div>
                 
                 <div class="mb-3 form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="skip_duplicates" id="skip_duplicates" value="1" checked>
+                    <input aria-label="Skip duplicates" class="form-check-input" type="checkbox" name="skip_duplicates" id="skip_duplicates" value="1" checked>
                     <label class="form-check-label" for="skip_duplicates">Skip duplicates (based on name + date)</label>
                 </div>
                 
                 <div class="mb-3 form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="dry_run" id="dry_run" value="1">
+                    <input aria-label="Dry run" class="form-check-input" type="checkbox" name="dry_run" id="dry_run" value="1">
                     <label class="form-check-label" for="dry_run">Dry run only (validate without saving)</label>
                 </div>
                 

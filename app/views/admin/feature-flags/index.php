@@ -19,7 +19,7 @@
             <form method="GET" action="<?= BASE_URL ?>/admin/feature-flags" class="row g-2 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label small text-muted">Search</label>
-                    <input type="text" name="search" class="form-control" placeholder="key or name..." value="<?= htmlspecialchars($search ?? '') ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control" placeholder="key or name..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small text-muted">Group</label>

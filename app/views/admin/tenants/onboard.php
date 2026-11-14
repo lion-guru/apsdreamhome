@@ -77,35 +77,35 @@ $steps = [
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Company Name *</label>
-                        <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($wizardData['name'] ?? '') ?>" placeholder="e.g. Sunshine Realty">
+                        <input aria-label="Name" type="text" name="name" class="form-control" required value="<?= htmlspecialchars($wizardData['name'] ?? '') ?>" placeholder="e.g. Sunshine Realty">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">URL Slug *</label>
-                        <input type="text" name="slug" class="form-control" required value="<?= htmlspecialchars($wizardData['slug'] ?? '') ?>" placeholder="sunshine-realty">
+                        <input aria-label="Slug" type="text" name="slug" class="form-control" required value="<?= htmlspecialchars($wizardData['slug'] ?? '') ?>" placeholder="sunshine-realty">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Custom Domain</label>
-                        <input type="text" name="domain" class="form-control" value="<?= htmlspecialchars($wizardData['domain'] ?? '') ?>" placeholder="crm.sunshinerealty.com">
+                        <input aria-label="Domain" type="text" name="domain" class="form-control" value="<?= htmlspecialchars($wizardData['domain'] ?? '') ?>" placeholder="crm.sunshinerealty.com">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Contact Name</label>
-                        <input type="text" name="contact_name" class="form-control" value="<?= htmlspecialchars($wizardData['contact_name'] ?? '') ?>" placeholder="Admin Name">
+                        <input aria-label="Contact name" type="text" name="contact_name" class="form-control" value="<?= htmlspecialchars($wizardData['contact_name'] ?? '') ?>" placeholder="Admin Name">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Contact Email</label>
-                        <input type="email" name="contact_email" class="form-control" value="<?= htmlspecialchars($wizardData['contact_email'] ?? '') ?>" placeholder="admin@company.com">
+                        <input aria-label="Contact email" type="email" name="contact_email" class="form-control" value="<?= htmlspecialchars($wizardData['contact_email'] ?? '') ?>" placeholder="admin@company.com">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Contact Phone</label>
-                        <input type="text" name="contact_phone" class="form-control" value="<?= htmlspecialchars($wizardData['contact_phone'] ?? '') ?>" placeholder="+91 98765 43210">
+                        <input aria-label="Contact phone" type="text" name="contact_phone" class="form-control" value="<?= htmlspecialchars($wizardData['contact_phone'] ?? '') ?>" placeholder="+91 98765 43210">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">City</label>
-                        <input type="text" name="city" class="form-control" value="<?= htmlspecialchars($wizardData['city'] ?? '') ?>" placeholder="New Delhi">
+                        <input aria-label="City" type="text" name="city" class="form-control" value="<?= htmlspecialchars($wizardData['city'] ?? '') ?>" placeholder="New Delhi">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">State</label>
-                        <input type="text" name="state" class="form-control" value="<?= htmlspecialchars($wizardData['state'] ?? '') ?>" placeholder="Delhi">
+                        <input aria-label="State" type="text" name="state" class="form-control" value="<?= htmlspecialchars($wizardData['state'] ?? '') ?>" placeholder="Delhi">
                     </div>
                     <div class="col-12 mb-3">
                         <label class="form-label fw-semibold">Address</label>
@@ -126,19 +126,19 @@ $steps = [
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-semibold">Logo URL</label>
-                        <input type="url" name="logo_url" class="form-control" value="<?= htmlspecialchars($wizardData['logo_url'] ?? '') ?>" placeholder="https://example.com/logo.png">
+                        <input aria-label="Logo url" type="url" name="logo_url" class="form-control" value="<?= htmlspecialchars($wizardData['logo_url'] ?? '') ?>" placeholder="https://example.com/logo.png">
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label fw-semibold">Primary Color</label>
                         <div class="d-flex align-items-center gap-2">
-                            <input type="color" name="primary_color" value="<?= htmlspecialchars($wizardData['primary_color'] ?? '#667eea') ?>" class="form-control form-control-color">
+                            <input aria-label="Primary color" type="color" name="primary_color" value="<?= htmlspecialchars($wizardData['primary_color'] ?? '#667eea') ?>" class="form-control form-control-color">
                             <span class="text-muted small"><?= htmlspecialchars($wizardData['primary_color'] ?? '#667eea') ?></span>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label fw-semibold">Secondary Color</label>
                         <div class="d-flex align-items-center gap-2">
-                            <input type="color" name="secondary_color" value="<?= htmlspecialchars($wizardData['secondary_color'] ?? '#764ba2') ?>" class="form-control form-control-color">
+                            <input aria-label="Secondary color" type="color" name="secondary_color" value="<?= htmlspecialchars($wizardData['secondary_color'] ?? '#764ba2') ?>" class="form-control form-control-color">
                             <span class="text-muted small"><?= htmlspecialchars($wizardData['secondary_color'] ?? '#764ba2') ?></span>
                         </div>
                     </div>

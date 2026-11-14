@@ -13,11 +13,11 @@ $districts = $districts ?? [];
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Colony Name *</label>
-                        <input name="name" class="form-control" value="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" required>
+                        <input aria-label="Name" name="name" class="form-control" value="<?php echo htmlspecialchars($colony['name'] ?? ''); ?>" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Slug (URL)</label>
-                        <input name="slug" class="form-control" value="<?php echo htmlspecialchars($colony['slug'] ?? ''); ?>">
+                        <input aria-label="Slug" name="slug" class="form-control" value="<?php echo htmlspecialchars($colony['slug'] ?? ''); ?>">
                     </div>
                 </div>
                 <div class="row">
@@ -54,21 +54,21 @@ $districts = $districts ?? [];
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Land Cost (₹)</label>
-                        <input name="land_cost" type="number" step="0.01" class="form-control" value="<?php echo $colony['land_cost'] ?? 0; ?>">
+                        <input aria-label="Land cost" name="land_cost" type="number" step="0.01" class="form-control" value="<?php echo $colony['land_cost'] ?? 0; ?>">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Min Price per Sqft (₹)</label>
-                        <input name="min_price_per_sqft" type="number" step="0.01" class="form-control" value="<?php echo $colony['min_price_per_sqft'] ?? 0; ?>">
+                        <input aria-label="Min price per sqft" name="min_price_per_sqft" type="number" step="0.01" class="form-control" value="<?php echo $colony['min_price_per_sqft'] ?? 0; ?>">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Block Count</label>
-                        <input name="block_count" type="number" class="form-control" value="<?php echo $colony['block_count'] ?? 1; ?>" min="1">
+                        <input aria-label="Block count" name="block_count" type="number" class="form-control" value="<?php echo $colony['block_count'] ?? 1; ?>" min="1">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Phase</label>
-                        <input name="phase" class="form-control" value="<?php echo htmlspecialchars($colony['phase'] ?? 'Phase 1'); ?>" placeholder="Phase 1">
+                        <input aria-label="Phase" name="phase" class="form-control" value="<?php echo htmlspecialchars($colony['phase'] ?? 'Phase 1'); ?>" placeholder="Phase 1">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Pipeline Stage</label>
@@ -96,32 +96,32 @@ $districts = $districts ?? [];
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Image Path</label>
-                        <input name="image_path" class="form-control" value="<?php echo htmlspecialchars($colony['image_path'] ?? ''); ?>">
+                        <input aria-label="Image path" name="image_path" class="form-control" value="<?php echo htmlspecialchars($colony['image_path'] ?? ''); ?>">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Banner Image</label>
-                        <input name="banner_image" class="form-control" value="<?php echo htmlspecialchars($colony['banner_image'] ?? ''); ?>">
+                        <input aria-label="Banner image" name="banner_image" class="form-control" value="<?php echo htmlspecialchars($colony['banner_image'] ?? ''); ?>">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Layout Image</label>
-                        <input name="layout_image" class="form-control" value="<?php echo htmlspecialchars($colony['layout_image'] ?? ''); ?>">
+                        <input aria-label="Layout image" name="layout_image" class="form-control" value="<?php echo htmlspecialchars($colony['layout_image'] ?? ''); ?>">
                         <small class="text-muted">Colony layout/plan image</small>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Brochure Path</label>
-                        <input name="brochure_path" class="form-control" value="<?php echo htmlspecialchars($colony['brochure_path'] ?? ''); ?>">
+                        <input aria-label="Brochure path" name="brochure_path" class="form-control" value="<?php echo htmlspecialchars($colony['brochure_path'] ?? ''); ?>">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">YouTube Video URL</label>
-                        <input name="youtube_video_url" class="form-control" value="<?php echo htmlspecialchars($colony['youtube_video_url'] ?? ''); ?>">
+                        <input aria-label="Youtube video url" name="youtube_video_url" class="form-control" value="<?php echo htmlspecialchars($colony['youtube_video_url'] ?? ''); ?>">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Virtual Tour URL</label>
-                        <input name="virtual_tour_url" class="form-control" value="<?php echo htmlspecialchars($colony['virtual_tour_url'] ?? ''); ?>">
+                        <input aria-label="Virtual tour url" name="virtual_tour_url" class="form-control" value="<?php echo htmlspecialchars($colony['virtual_tour_url'] ?? ''); ?>">
                     </div>
                 </div>
                 <div class="mb-3">
@@ -134,46 +134,46 @@ $districts = $districts ?? [];
         <div class="col-md-4">
             <div class="card border-0 shadow-sm"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Pricing & Plots</h2></div>
             <div class="card-body aps-cp-card-body">
-                <div class="mb-3"><label class="form-label">Total Plots</label><input name="total_plots" type="number" class="form-control" value="<?php echo $colony['total_plots'] ?? 0; ?>"></div>
-                <div class="mb-3"><label class="form-label">Available Plots</label><input name="available_plots" type="number" class="form-control" value="<?php echo $colony['available_plots'] ?? 0; ?>"></div>
-                <div class="mb-3"><label class="form-label">Starting Price (₹)</label><input name="starting_price" type="number" step="0.01" class="form-control" value="<?php echo $colony['starting_price'] ?? 0; ?>"></div>
+                <div class="mb-3"><label class="form-label">Total Plots</label><input aria-label="Total plots" name="total_plots" type="number" class="form-control" value="<?php echo $colony['total_plots'] ?? 0; ?>"></div>
+                <div class="mb-3"><label class="form-label">Available Plots</label><input aria-label="Available plots" name="available_plots" type="number" class="form-control" value="<?php echo $colony['available_plots'] ?? 0; ?>"></div>
+                <div class="mb-3"><label class="form-label">Starting Price (₹)</label><input aria-label="Starting price" name="starting_price" type="number" step="0.01" class="form-control" value="<?php echo $colony['starting_price'] ?? 0; ?>"></div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Latitude</label>
-                        <input name="latitude" type="number" step="0.00000001" class="form-control" value="<?php echo htmlspecialchars($colony['latitude'] ?? ''); ?>" placeholder="26.7606">
+                        <input aria-label="Latitude" name="latitude" type="number" step="0.00000001" class="form-control" value="<?php echo htmlspecialchars($colony['latitude'] ?? ''); ?>" placeholder="26.7606">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Longitude</label>
-                        <input name="longitude" type="number" step="0.00000001" class="form-control" value="<?php echo htmlspecialchars($colony['longitude'] ?? ''); ?>" placeholder="83.3732">
+                        <input aria-label="Longitude" name="longitude" type="number" step="0.00000001" class="form-control" value="<?php echo htmlspecialchars($colony['longitude'] ?? ''); ?>" placeholder="83.3732">
                     </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Google Maps Link</label>
-                    <input name="map_link" class="form-control" value="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" id="map_link">
+                    <input aria-label="Map link" name="map_link" class="form-control" value="<?php echo htmlspecialchars($colony['map_link'] ?? ''); ?>" id="map_link">
                     <small class="text-muted">Auto-generated from lat/lng if empty on save</small>
                 </div>
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Contact & SEO</h2></div>
             <div class="card-body aps-cp-card-body">
-                <div class="mb-3"><label class="form-label">Phone</label><input name="contact_phone" class="form-control" value="<?php echo htmlspecialchars($colony['contact_phone'] ?? ''); ?>"></div>
-                <div class="mb-3"><label class="form-label">Email</label><input name="contact_email" class="form-control" value="<?php echo htmlspecialchars($colony['contact_email'] ?? ''); ?>"></div>
-                <div class="mb-3"><label class="form-label">Meta Title</label><input name="meta_title" class="form-control" value="<?php echo htmlspecialchars($colony['meta_title'] ?? ''); ?>"></div>
+                <div class="mb-3"><label class="form-label">Phone</label><input aria-label="Contact phone" name="contact_phone" class="form-control" value="<?php echo htmlspecialchars($colony['contact_phone'] ?? ''); ?>"></div>
+                <div class="mb-3"><label class="form-label">Email</label><input aria-label="Contact email" name="contact_email" class="form-control" value="<?php echo htmlspecialchars($colony['contact_email'] ?? ''); ?>"></div>
+                <div class="mb-3"><label class="form-label">Meta Title</label><input aria-label="Meta title" name="meta_title" class="form-control" value="<?php echo htmlspecialchars($colony['meta_title'] ?? ''); ?>"></div>
                 <div class="mb-3"><label class="form-label">Meta Description</label><textarea aria-label="Meta description" name="meta_description" class="form-control" rows="2"><?php echo htmlspecialchars($colony['meta_description'] ?? ''); ?></textarea></div>
             </div></div>
 
             <div class="card border-0 shadow-sm mt-4"><div class="card-header bg-white"><h2  class="fs-6 fw-semibold mb-0">Settings</h2></div>
             <div class="card-body aps-cp-card-body">
                 <div class="form-check mb-2">
-                    <input type="checkbox" name="is_active" class="form-check-input" id="is_active" value="1" <?php echo ($colony['is_active'] ?? 0) ? 'checked' : ''; ?>>
+                    <input aria-label="Is active" type="checkbox" name="is_active" class="form-check-input" id="is_active" value="1" <?php echo ($colony['is_active'] ?? 0) ? 'checked' : ''; ?>>
                     <label class="form-check-label" for="is_active">Active</label>
                 </div>
                 <div class="form-check mb-2">
-                    <input type="checkbox" name="is_featured" class="form-check-input" id="is_featured" value="1" <?php echo ($colony['is_featured'] ?? 0) ? 'checked' : ''; ?>>
+                    <input aria-label="Is featured" type="checkbox" name="is_featured" class="form-check-input" id="is_featured" value="1" <?php echo ($colony['is_featured'] ?? 0) ? 'checked' : ''; ?>>
                     <label class="form-check-label" for="is_featured">Featured</label>
                 </div>
                 <div class="form-check mb-2">
-                    <input type="checkbox" name="show_plots_publicly" class="form-check-input" id="show_plots_publicly" value="1" <?php echo ($colony['show_plots_publicly'] ?? 0) ? 'checked' : ''; ?>>
+                    <input aria-label="Show plots publicly" type="checkbox" name="show_plots_publicly" class="form-check-input" id="show_plots_publicly" value="1" <?php echo ($colony['show_plots_publicly'] ?? 0) ? 'checked' : ''; ?>>
                     <label class="form-check-label" for="show_plots_publicly">Show plots publicly</label>
                 </div>
             </div></div>

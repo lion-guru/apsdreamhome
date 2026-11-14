@@ -158,7 +158,7 @@
                     <input type="hidden" id="editAssociateId" name="associate_id">
                     <div class="form-group">
                         <label for="editSalaryAmount">Salary Amount (&#8377;)</label>
-                        <input type="number" class="form-control" id="editSalaryAmount" name="salary_amount" step="0.01">
+                        <input aria-label="Edit salary amount" type="number" class="form-control" id="editSalaryAmount" name="salary_amount" step="0.01">
                     </div>
                     <div class="form-group">
                         <label for="editSalaryEligible">Salary Eligible</label>
@@ -169,7 +169,7 @@
                     </div>
                     <div class="form-group">
                         <label for="editTargetBonus">Target Bonus Amount (&#8377;)</label>
-                        <input type="number" class="form-control" id="editTargetBonus" name="target_bonus_amount" step="0.01">
+                        <input aria-label="Edit target bonus" type="number" class="form-control" id="editTargetBonus" name="target_bonus_amount" step="0.01">
                     </div>
                     <div class="form-group">
                         <label for="editTargetEligible">Target Bonus Eligible</label>
@@ -221,7 +221,7 @@
                     </div>
                     <div class="form-group">
                         <label for="paymentYear">Payment Year</label>
-                        <input type="number" class="form-control" id="paymentYear" name="payment_year" value="<?= date('Y') ?>">
+                        <input aria-label="Payment year" type="number" class="form-control" id="paymentYear" name="payment_year" value="<?= date('Y') ?>">
                     </div>
                 </form>
             </div>

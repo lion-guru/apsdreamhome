@@ -126,15 +126,15 @@ $completedCount = count($completedMeetings);
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Date From</label>
-                    <input type="date" name="date_from" class="form-control" value="<?= htmlspecialchars($_GET['date_from'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                    <input aria-label="Date from" type="date" name="date_from" class="form-control" value="<?= htmlspecialchars($_GET['date_from'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Date To</label>
-                    <input type="date" name="date_to" class="form-control" value="<?= htmlspecialchars($_GET['date_to'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                    <input aria-label="Date to" type="date" name="date_to" class="form-control" value="<?= htmlspecialchars($_GET['date_to'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Agent ID</label>
-                    <input type="number" name="user_id" class="form-control" value="<?= htmlspecialchars($_GET['user_id'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                    <input aria-label="User id" type="number" name="user_id" class="form-control" value="<?= htmlspecialchars($_GET['user_id'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 </div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary me-2">

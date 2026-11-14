@@ -116,15 +116,15 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         </div>
         <div class="col-md-2">
           <label class="form-label small">Min Price</label>
-          <input type="number" name="min_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>" placeholder="Min ₹">
+          <input aria-label="Min price" type="number" name="min_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>" placeholder="Min ₹">
         </div>
         <div class="col-md-2">
           <label class="form-label small">Max Price</label>
-          <input type="number" name="max_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>" placeholder="Max ₹">
+          <input aria-label="Max price" type="number" name="max_price" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>" placeholder="Max ₹">
         </div>
         <div class="col-md-2">
           <label class="form-label small">Location</label>
-          <input type="text" name="location" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['location'] ?? '') ?>" placeholder="City/Location">
+          <input aria-label="Location" type="text" name="location" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['location'] ?? '') ?>" placeholder="City/Location">
         </div>
         <div class="col-md-2 d-flex gap-1">
           <button type="submit" class="btn btn-primary btn-sm flex-fill"><i class="fas fa-search me-1"></i>Search</button>

@@ -12,11 +12,11 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Business Name *</label>
-                        <input type="text" name="business_name" class="form-control" value="<?= htmlspecialchars($listing['business_name'] ?? '') ?>" required>
+                        <input aria-label="Business name" type="text" name="business_name" class="form-control" value="<?= htmlspecialchars($listing['business_name'] ?? '') ?>" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Owner Name</label>
-                        <input type="text" name="owner_name" class="form-control" value="<?= htmlspecialchars($listing['owner_name'] ?? '') ?>">
+                        <input aria-label="Owner name" type="text" name="owner_name" class="form-control" value="<?= htmlspecialchars($listing['owner_name'] ?? '') ?>">
                     </div>
                 </div>
 
@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Experience (years)</label>
-                        <input type="number" name="experience_years" class="form-control" value="<?= (int)($listing['experience_years'] ?? 0) ?>">
+                        <input aria-label="Experience years" type="number" name="experience_years" class="form-control" value="<?= (int)($listing['experience_years'] ?? 0) ?>">
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Price Range</label>
@@ -53,37 +53,37 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Phone</label>
-                        <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($listing['phone'] ?? '') ?>">
+                        <input aria-label="Phone" type="text" name="phone" class="form-control" value="<?= htmlspecialchars($listing['phone'] ?? '') ?>">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">WhatsApp</label>
-                        <input type="text" name="whatsapp" class="form-control" value="<?= htmlspecialchars($listing['whatsapp'] ?? '') ?>">
+                        <input aria-label="Whatsapp" type="text" name="whatsapp" class="form-control" value="<?= htmlspecialchars($listing['whatsapp'] ?? '') ?>">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($listing['email'] ?? '') ?>">
+                        <input aria-label="Email" type="email" name="email" class="form-control" value="<?= htmlspecialchars($listing['email'] ?? '') ?>">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Website</label>
-                        <input type="url" name="website" class="form-control" value="<?= htmlspecialchars($listing['website'] ?? '') ?>">
+                        <input aria-label="Website" type="url" name="website" class="form-control" value="<?= htmlspecialchars($listing['website'] ?? '') ?>">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Photo URL</label>
-                        <input type="text" name="photo" class="form-control" value="<?= htmlspecialchars($listing['photo'] ?? '') ?>" placeholder="https://example.com/photo.jpg">
+                        <input aria-label="Photo" type="text" name="photo" class="form-control" value="<?= htmlspecialchars($listing['photo'] ?? '') ?>" placeholder="https://example.com/photo.jpg">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">City</label>
-                        <input type="text" name="city" class="form-control" value="<?= htmlspecialchars($listing['city'] ?? '') ?>">
+                        <input aria-label="City" type="text" name="city" class="form-control" value="<?= htmlspecialchars($listing['city'] ?? '') ?>">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Pincode</label>
-                        <input type="text" name="pincode" class="form-control" value="<?= htmlspecialchars($listing['pincode'] ?? '') ?>">
+                        <input aria-label="Pincode" type="text" name="pincode" class="form-control" value="<?= htmlspecialchars($listing['pincode'] ?? '') ?>">
                     </div>
                 </div>
 
@@ -103,11 +103,11 @@
                     </div>
                     <div class="col-md-3 mb-3 d-flex align-items-end">
                         <div class="form-check me-3">
-                            <input type="checkbox" name="is_verified" value="1" class="form-check-input" id="iv" <?= ($listing['is_verified'] ?? 0) ? 'checked' : '' ?>>
+                            <input aria-label="Is verified" type="checkbox" name="is_verified" value="1" class="form-check-input" id="iv" <?= ($listing['is_verified'] ?? 0) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="iv">Verified</label>
                         </div>
                         <div class="form-check">
-                            <input type="checkbox" name="is_featured" value="1" class="form-check-input" id="ifeat" <?= ($listing['is_featured'] ?? 0) ? 'checked' : '' ?>>
+                            <input aria-label="Is featured" type="checkbox" name="is_featured" value="1" class="form-check-input" id="ifeat" <?= ($listing['is_featured'] ?? 0) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="ifeat">Featured</label>
                         </div>
                     </div>

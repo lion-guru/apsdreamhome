@@ -68,13 +68,13 @@ $priorities = $priorities ?? [];
                             <!-- Sub Category -->
                             <div class="col-12">
                                 <label for="sub_category" class="form-label fw-semibold small text-dark">Sub-Category (Optional)</label>
-                                <input type="text" name="sub_category" id="sub_category" class="form-control rounded-2" placeholder="e.g. Workstation ergonomics, Salary delay, Team communication">
+                                <input aria-label="Sub category" type="text" name="sub_category" id="sub_category" class="form-control rounded-2" placeholder="e.g. Workstation ergonomics, Salary delay, Team communication">
                             </div>
 
                             <!-- Subject -->
                             <div class="col-12">
                                 <label for="subject" class="form-label fw-semibold small text-dark">Subject <span class="text-danger">*</span></label>
-                                <input type="text" name="subject" id="subject" class="form-control rounded-2" required placeholder="Concise summary of your grievance">
+                                <input aria-label="Subject" type="text" name="subject" id="subject" class="form-control rounded-2" required placeholder="Concise summary of your grievance">
                             </div>
 
                             <!-- Description -->
@@ -87,7 +87,7 @@ $priorities = $priorities ?? [];
                             <!-- Anonymous Submission Option -->
                             <div class="col-12">
                                 <div class="form-check p-3 bg-light rounded-2 border">
-                                    <input class="form-check-input ms-0 me-2" type="checkbox" name="is_anonymous" value="1" id="is_anonymous">
+                                    <input aria-label="Is anonymous" class="form-check-input ms-0 me-2" type="checkbox" name="is_anonymous" value="1" id="is_anonymous">
                                     <label class="form-check-label fw-semibold text-dark small" for="is_anonymous">
                                         <i class="fas fa-user-secret me-1 text-secondary"></i> Submit Anonymously
                                     </label>

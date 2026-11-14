@@ -71,36 +71,36 @@ $colonyId = (int)($colony['id'] ?? 0);
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Category</label>
-                            <input type="text" name="category" class="form-control form-control-sm" placeholder="e.g. Road work, Drainage">
+                            <input aria-label="Category" type="text" name="category" class="form-control form-control-sm" placeholder="e.g. Road work, Drainage">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Description <span class="text-danger">*</span></label>
-                            <input type="text" name="description" class="form-control form-control-sm" required>
+                            <input aria-label="Description" type="text" name="description" class="form-control form-control-sm" required>
                         </div>
                         <div class="row g-2">
                             <div class="col-6">
                                 <label class="form-label small">Amount (₹) <span class="text-danger">*</span></label>
-                                <input type="number" name="amount" step="0.01" class="form-control form-control-sm" required>
+                                <input aria-label="Amount" type="number" name="amount" step="0.01" class="form-control form-control-sm" required>
                             </div>
                             <div class="col-6">
                                 <label class="form-label small">Date <span class="text-danger">*</span></label>
-                                <input type="date" name="expense_date" class="form-control form-control-sm" required value="<?= date('Y-m-d') ?>">
+                                <input aria-label="Expense date" type="date" name="expense_date" class="form-control form-control-sm" required value="<?= date('Y-m-d') ?>">
                             </div>
                         </div>
                         <div class="mb-2 mt-2">
                             <label class="form-label small">Vendor / Payee</label>
-                            <input type="text" name="vendor_name" class="form-control form-control-sm">
+                            <input aria-label="Vendor name" type="text" name="vendor_name" class="form-control form-control-sm">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Invoice #</label>
-                            <input type="text" name="invoice_number" class="form-control form-control-sm">
+                            <input aria-label="Invoice number" type="text" name="invoice_number" class="form-control form-control-sm">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Per Sqft Cost (auto-calc if blank)</label>
-                            <input type="number" name="cost_per_sqft" step="0.01" class="form-control form-control-sm">
+                            <input aria-label="Cost per sqft" type="number" name="cost_per_sqft" step="0.01" class="form-control form-control-sm">
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" name="is_capitalized" value="1" id="cap" checked>
+                            <input aria-label="Is capitalized" class="form-check-input" type="checkbox" name="is_capitalized" value="1" id="cap" checked>
                             <label class="form-check-label" for="cap">Capitalize to plot cost</label>
                         </div>
                         <div class="mb-2">

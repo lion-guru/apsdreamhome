@@ -51,11 +51,11 @@ $filterTo = $_GET['to'] ?? '';
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">From</label>
-                    <input type="date" name="from" value="<?= htmlspecialchars($filterFrom ?? '') ?>" class="form-control form-control-sm">
+                    <input aria-label="From" type="date" name="from" value="<?= htmlspecialchars($filterFrom ?? '') ?>" class="form-control form-control-sm">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">To</label>
-                    <input type="date" name="to" value="<?= htmlspecialchars($filterTo ?? '') ?>" class="form-control form-control-sm">
+                    <input aria-label="To" type="date" name="to" value="<?= htmlspecialchars($filterTo ?? '') ?>" class="form-control form-control-sm">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-search me-1"></i>Filter</button>

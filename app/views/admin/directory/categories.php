@@ -13,11 +13,11 @@
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-3">
                             <label class="form-label">Name *</label>
-                            <input type="text" name="name" class="form-control" required>
+                            <input aria-label="Name" type="text" name="name" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Slug *</label>
-                            <input type="text" name="slug" class="form-control" required placeholder="e.g. plumbing">
+                            <input aria-label="Slug" type="text" name="slug" class="form-control" required placeholder="e.g. plumbing">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
@@ -25,14 +25,14 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Icon (FontAwesome class)</label>
-                            <input type="text" name="icon" class="form-control" value="fas fa-building" placeholder="fas fa-wrench">
+                            <input aria-label="Icon" type="text" name="icon" class="form-control" value="fas fa-building" placeholder="fas fa-wrench">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Sort Order</label>
-                            <input type="number" name="sort_order" class="form-control" value="0">
+                            <input aria-label="Sort order" type="number" name="sort_order" class="form-control" value="0">
                         </div>
                         <div class="mb-3">
-                            <label class="form-check-label"><input type="checkbox" name="is_active" value="1" checked> Active</label>
+                            <label class="form-check-label"><input aria-label="Is active" type="checkbox" name="is_active" value="1" checked> Active</label>
                         </div>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Save Category</button>
                     </form>

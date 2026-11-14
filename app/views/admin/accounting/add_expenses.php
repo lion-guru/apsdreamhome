@@ -22,13 +22,13 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Date')) ?> <span class="text-danger">*</span></label>
-                                <input type="date" name="expense_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                                <input aria-label="Expense date" type="date" name="expense_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Amount')) ?> <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><?= h($currency_symbol ?? '₹') ?></span>
-                                    <input type="number" step="0.01" name="amount" class="form-control" required min="0">
+                                    <input aria-label="Amount" type="number" step="0.01" name="amount" class="form-control" required min="0">
                                 </div>
                             </div>
                         </div>
@@ -36,7 +36,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Paid To (Source/Payee)')) ?> <span class="text-danger">*</span></label>
-                                <input type="text" name="source" class="form-control" placeholder="<?= h($mlSupport->translate('e.g. Office Rent, Vendor Name')) ?>" required>
+                                <input aria-label="Source" type="text" name="source" class="form-control" placeholder="<?= h($mlSupport->translate('e.g. Office Rent, Vendor Name')) ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Category')) ?></label>

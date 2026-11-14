@@ -47,19 +47,19 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">New Buyer Full Name <span class="text-danger">*</span></label>
-                            <input type="text" name="new_buyer_name" class="form-control" placeholder="e.g. Rahul Sharma" required>
+                            <input aria-label="New buyer name" type="text" name="new_buyer_name" class="form-control" placeholder="e.g. Rahul Sharma" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">New Buyer Mobile Phone <span class="text-danger">*</span></label>
-                            <input type="tel" name="new_buyer_phone" class="form-control" placeholder="e.g. 9876543210" pattern="[0-9]{10}" required>
+                            <input aria-label="New buyer phone" type="tel" name="new_buyer_phone" class="form-control" placeholder="e.g. 9876543210" pattern="[0-9]{10}" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">New Buyer Aadhaar Number</label>
-                            <input type="text" name="new_buyer_aadhaar" class="form-control" placeholder="12-digit Aadhaar">
+                            <input aria-label="New buyer aadhaar" type="text" name="new_buyer_aadhaar" class="form-control" placeholder="12-digit Aadhaar">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">New Buyer PAN Number</label>
-                            <input type="text" name="new_buyer_pan" class="form-control text-uppercase" placeholder="e.g. ABCDE1234F">
+                            <input aria-label="New buyer pan" type="text" name="new_buyer_pan" class="form-control text-uppercase" placeholder="e.g. ABCDE1234F">
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Permanent Residential Address</label>
@@ -83,7 +83,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Agreed Resale / Transfer Price (₹)</label>
-                            <input type="number" step="1000" name="transfer_amount" class="form-control" value="<?= (float)($booking['total_amount'] ?? 0) ?>">
+                            <input aria-label="Transfer amount" type="number" step="1000" name="transfer_amount" class="form-control" value="<?= (float)($booking['total_amount'] ?? 0) ?>">
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-semibold">Remarks / Reason for Transfer</label>

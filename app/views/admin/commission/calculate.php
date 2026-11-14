@@ -16,15 +16,15 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Agent Name</label>
-                            <input type="text" name="agent_name" class="form-control" placeholder="Enter agent name" required>
+                            <input aria-label="Agent name" type="text" name="agent_name" class="form-control" placeholder="Enter agent name" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Property Price (₹)</label>
-                            <input type="number" name="property_price" class="form-control" placeholder="Enter property price" step="0.01" required>
+                            <input aria-label="Property price" type="number" name="property_price" class="form-control" placeholder="Enter property price" step="0.01" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Commission Rate (%)</label>
-                            <input type="number" name="commission_rate" class="form-control" placeholder="Enter commission rate" step="0.1" min="0" max="100" required>
+                            <input aria-label="Commission rate" type="number" name="commission_rate" class="form-control" placeholder="Enter commission rate" step="0.1" min="0" max="100" required>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-calculator me-1"></i>Calculate</button>
                     </form>

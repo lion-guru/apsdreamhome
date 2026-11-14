@@ -9,7 +9,7 @@
             <form method="post" action="<?= BASE_URL ?>/admin/finance/tds-store">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <div class="row g-3">
-                    <div class="col-md-3"><label class="form-label">TDS Date <span class="text-danger">*</span></label><input type="date" name="tds_date" required class="form-control" value="<?= date('Y-m-d') ?>"></div>
+                    <div class="col-md-3"><label class="form-label">TDS Date <span class="text-danger">*</span></label><input aria-label="Tds date" type="date" name="tds_date" required class="form-control" value="<?= date('Y-m-d') ?>"></div>
                     <div class="col-md-3"><label class="form-label">Section <span class="text-danger">*</span></label>
                         <select aria-label="Section code" name="section_code" required class="form-select">
                             <option value="">— Select —</option>
@@ -31,12 +31,12 @@
                             <option value="firm">Firm</option>
                         </select>
                     </div>
-                    <div class="col-md-3"><label class="form-label">Deductee User ID</label><input type="number" name="deductee_user_id" class="form-control" required></div>
-                    <div class="col-md-6"><label class="form-label">Deductee Name</label><input type="text" name="deductee_name" class="form-control" required></div>
-                    <div class="col-md-3"><label class="form-label">PAN</label><input type="text" name="deductee_pan" class="form-control text-uppercase" maxlength="10"></div>
-                    <div class="col-md-3"><label class="form-label">Gross Amount (₹) <span class="text-danger">*</span></label><input type="number" name="gross_amount" step="0.01" min="1" required class="form-control" id="gross" oninput="calcTds()"></div>
-                    <div class="col-md-3"><label class="form-label">TDS Rate (%)</label><input type="number" name="tds_rate" step="0.01" class="form-control" id="rate" oninput="calcTds()"></div>
-                    <div class="col-md-3"><label class="form-label">TDS Amount (₹) <span class="text-danger">*</span></label><input type="number" name="tds_amount" step="0.01" required class="form-control" id="tds"></div>
+                    <div class="col-md-3"><label class="form-label">Deductee User ID</label><input aria-label="Deductee user id" type="number" name="deductee_user_id" class="form-control" required></div>
+                    <div class="col-md-6"><label class="form-label">Deductee Name</label><input aria-label="Deductee name" type="text" name="deductee_name" class="form-control" required></div>
+                    <div class="col-md-3"><label class="form-label">PAN</label><input aria-label="Deductee pan" type="text" name="deductee_pan" class="form-control text-uppercase" maxlength="10"></div>
+                    <div class="col-md-3"><label class="form-label">Gross Amount (₹) <span class="text-danger">*</span></label><input aria-label="Gross amount" type="number" name="gross_amount" step="0.01" min="1" required class="form-control" id="gross" oninput="calcTds()"></div>
+                    <div class="col-md-3"><label class="form-label">TDS Rate (%)</label><input aria-label="Tds rate" type="number" name="tds_rate" step="0.01" class="form-control" id="rate" oninput="calcTds()"></div>
+                    <div class="col-md-3"><label class="form-label">TDS Amount (₹) <span class="text-danger">*</span></label><input aria-label="Tds amount" type="number" name="tds_amount" step="0.01" required class="form-control" id="tds"></div>
                     <div class="col-md-3"><label class="form-label">Financial Year</label>
                         <select aria-label="Financial year" name="financial_year" class="form-select">
                             <?php $cur = (int)date('n') < 4 ? (int)date('Y') - 1 : (int)date('Y'); ?>
@@ -58,7 +58,7 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="col-md-6"><label class="form-label">Challan / BSR</label><input type="text" name="challan_number" class="form-control"></div>
+                    <div class="col-md-6"><label class="form-label">Challan / BSR</label><input aria-label="Challan number" type="text" name="challan_number" class="form-control"></div>
                     <div class="col-12"><label class="form-label">Remarks</label><textarea aria-label="Remarks" name="remarks" class="form-control" rows="2"></textarea></div>
                 </div>
                 <div class="mt-4 d-flex gap-2">

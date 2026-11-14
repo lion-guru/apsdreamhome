@@ -43,16 +43,16 @@ ob_start();
       <form method="post" action="<?= BASE_URL ?>/admin/webhooks/create">
                           <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="row g-2">
-          <div class="col-md-3"><input type="text" name="name" class="form-control" placeholder="Name (e.g. Slack Alerts)" required></div>
-          <div class="col-md-4"><input type="url" name="url" class="form-control" placeholder="https://example.com/webhook" required></div>
+          <div class="col-md-3"><input aria-label="Name" type="text" name="name" class="form-control" placeholder="Name (e.g. Slack Alerts)" required></div>
+          <div class="col-md-4"><input aria-label="Url" type="url" name="url" class="form-control" placeholder="https://example.com/webhook" required></div>
           <div class="col-md-3">
-            <input type="text" name="events" class="form-control" placeholder="Events: lead.created,booking.*,* (comma-separated)">
+            <input aria-label="Events" type="text" name="events" class="form-control" placeholder="Events: lead.created,booking.*,* (comma-separated)">
           </div>
           <div class="col-md-2"><button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus"></i> Add</button></div>
         </div>
         <div class="row mt-2">
           <div class="col-md-6">
-            <input type="text" name="secret" class="form-control" placeholder="HMAC secret (auto-generated if empty)">
+            <input aria-label="Secret" type="text" name="secret" class="form-control" placeholder="HMAC secret (auto-generated if empty)">
           </div>
           <div class="col-md-6">
             <small class="text-muted">Events: <code>lead.created</code>, <code>lead.updated</code>, <code>booking.*</code>, <code>*</code> (all). HMAC-SHA256 signature in <code>X-Webhook-Signature</code> header.</small>

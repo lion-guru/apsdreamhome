@@ -32,7 +32,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label"><?= __('register_label_name') ?></label>
-                            <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
+                            <input aria-label="Name" type="text" class="form-control" name="name" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label"><?= __('email_address') ?></label>
@@ -41,22 +41,22 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label"><?= __('phone_number') ?></label>
-                            <input type="tel" class="form-control" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" required>
+                            <input aria-label="Phone" type="tel" class="form-control" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" required>
                         </div>
                         <hr>
                         <h6><?= __('auth_change_password_page_title') ?></h6>
                         <div class="row g-3 mb-3">
                             <div class="col-md-4">
                                 <label class="form-label"><?= __('auth_current_password') ?></label>
-                                <input type="password" class="form-control" name="current_password" placeholder="<?= __('auth_leave_blank_keep') ?>">
+                                <input aria-label="Current password" type="password" class="form-control" name="current_password" placeholder="<?= __('auth_leave_blank_keep') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label"><?= __('auth_new_password') ?></label>
-                                <input type="password" class="form-control" name="new_password" placeholder="<?= __('auth_min_6_chars') ?>">
+                                <input aria-label="New password" type="password" class="form-control" name="new_password" placeholder="<?= __('auth_min_6_chars') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label"><?= __('auth_confirm_new_password') ?></label>
-                                <input type="password" class="form-control" name="confirm_password" placeholder="<?= __('auth_repeat_new_password') ?>">
+                                <input aria-label="Confirm password" type="password" class="form-control" name="confirm_password" placeholder="<?= __('auth_repeat_new_password') ?>">
                             </div>
                         </div>
                         

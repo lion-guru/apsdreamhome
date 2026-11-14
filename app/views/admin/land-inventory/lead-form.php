@@ -25,17 +25,17 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label small">Owner Name <span class="text-danger">*</span></label>
-                    <input type="text" name="land_owner_name" class="form-control form-control-sm"
+                    <input aria-label="Land owner name" type="text" name="land_owner_name" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['land_owner_name'] ?? '') ?>" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small">Owner Phone</label>
-                    <input type="text" name="owner_phone" class="form-control form-control-sm"
+                    <input aria-label="Owner phone" type="text" name="owner_phone" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['owner_phone'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small">Owner Email</label>
-                    <input type="email" name="owner_email" class="form-control form-control-sm"
+                    <input aria-label="Owner email" type="email" name="owner_email" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['owner_email'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
@@ -71,7 +71,7 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Survey #</label>
-                    <input type="text" name="survey_number" class="form-control form-control-sm"
+                    <input aria-label="Survey number" type="text" name="survey_number" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['survey_number'] ?? '') ?>">
                 </div>
             </div>
@@ -84,37 +84,37 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label small">Village</label>
-                    <input type="text" name="village" class="form-control form-control-sm"
+                    <input aria-label="Village" type="text" name="village" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['village'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small">Tehsil</label>
-                    <input type="text" name="tehsil" class="form-control form-control-sm"
+                    <input aria-label="Tehsil" type="text" name="tehsil" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['tehsil'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small">District</label>
-                    <input type="text" name="district" class="form-control form-control-sm"
+                    <input aria-label="District" type="text" name="district" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['district'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">State</label>
-                    <input type="text" name="state" class="form-control form-control-sm"
+                    <input aria-label="State" type="text" name="state" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['state'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Pincode</label>
-                    <input type="text" name="pincode" class="form-control form-control-sm"
+                    <input aria-label="Pincode" type="text" name="pincode" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['pincode'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">GPS Lat</label>
-                    <input type="number" step="0.0000001" name="gps_lat" class="form-control form-control-sm"
+                    <input aria-label="Gps lat" type="number" step="0.0000001" name="gps_lat" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['gps_lat'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">GPS Lng</label>
-                    <input type="number" step="0.0000001" name="gps_lng" class="form-control form-control-sm"
+                    <input aria-label="Gps lng" type="number" step="0.0000001" name="gps_lng" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['gps_lng'] ?? '') ?>">
                 </div>
             </div>
@@ -127,17 +127,17 @@ $statuses = ['new','screening','visit_done','dd','negotiation','legal','sale_agr
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label small">Area (Acres)</label>
-                    <input type="number" step="0.01" name="area_acres" class="form-control form-control-sm"
+                    <input aria-label="Area acres" type="number" step="0.01" name="area_acres" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['area_acres'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small">Area (sqft)</label>
-                    <input type="number" step="0.01" name="area_sqft" class="form-control form-control-sm"
+                    <input aria-label="Area sqft" type="number" step="0.01" name="area_sqft" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['area_sqft'] ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small">Expected Price (₹)</label>
-                    <input type="number" step="0.01" name="expected_price" class="form-control form-control-sm"
+                    <input aria-label="Expected price" type="number" step="0.01" name="expected_price" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($lead['expected_price'] ?? '') ?>">
                 </div>
                 <div class="col-12">

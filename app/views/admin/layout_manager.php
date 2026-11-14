@@ -57,7 +57,7 @@ $settings = $settings ?? [
                             <div class="layout-section p-4">
                                 <h4><i class="fas fa-toggle-on me-2"></i>Layout Type</h4>
                                 <div class="form-check form-switch mb-3">
-                                    <input class="form-check-input" type="checkbox" name="premium_layout" <?php echo $settings['premium_layout'] ? 'checked' : ''; ?>>
+                                    <input aria-label="Premium layout" class="form-check-input" type="checkbox" name="premium_layout" <?php echo $settings['premium_layout'] ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="premium_layout">
                                         Use Premium Layout (Active/Premium)
                                     </label>
@@ -82,14 +82,14 @@ $settings = $settings ?? [
                                                     <i class="fas fa-grip-vertical text-muted"></i>
                                                 </div>
                                                 <div class="col-8">
-                                                    <input type="text" class="form-control" name="nav_label_<?php echo e($index); ?>"
+                                                    <input aria-label="Nav label php echo e index" type="text" class="form-control" name="nav_label_<?php echo e($index); ?>"
                                                         value="<?php echo htmlspecialchars($item['label'] ?? ''); ?>" placeholder="Label">
-                                                    <input type="text" class="form-control mt-1" name="nav_url_<?php echo e($index); ?>"
+                                                    <input aria-label="Nav url php echo e index" type="text" class="form-control mt-1" name="nav_url_<?php echo e($index); ?>"
                                                         value="<?php echo htmlspecialchars($item['url'] ?? ''); ?>" placeholder="URL">
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="nav_active_<?php echo e($index); ?>"
+                                                        <input aria-label="Nav active php echo e index" class="form-check-input" type="checkbox" name="nav_active_<?php echo e($index); ?>"
                                                             <?php echo ($item['active'] ?? false) ? 'checked' : ''; ?>>
                                                         <label class="form-check-label">Active</label>
                                                     </div>
@@ -183,12 +183,12 @@ $settings = $settings ?? [
                 <div class="row align-items-center">
                     <div class="col-1"><i class="fas fa-grip-vertical text-muted"></i></div>
                     <div class="col-8">
-                        <input type="text" class="form-control" name="nav_label_${navCounter}" placeholder="Label">
-                        <input type="text" class="form-control mt-1" name="nav_url_${navCounter}" placeholder="URL">
+                        <input aria-label="Nav label nav counter" type="text" class="form-control" name="nav_label_${navCounter}" placeholder="Label">
+                        <input aria-label="Nav url nav counter" type="text" class="form-control mt-1" name="nav_url_${navCounter}" placeholder="URL">
                     </div>
                     <div class="col-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="nav_active_${navCounter}" checked>
+                            <input aria-label="Nav active nav counter" class="form-check-input" type="checkbox" name="nav_active_${navCounter}" checked>
                             <label class="form-check-label">Active</label>
                         </div>
                     </div>

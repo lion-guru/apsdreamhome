@@ -50,7 +50,7 @@
 
               <div class="col-md-6">
                 <label class="form-label">Party Name *</label>
-                <input type="text" name="party_name" class="form-control" value="<?= htmlspecialchars($contract['party_name'] ?? '') ?>" required>
+                <input aria-label="Party name" type="text" name="party_name" class="form-control" value="<?= htmlspecialchars($contract['party_name'] ?? '') ?>" required>
               </div>
 
               <div class="col-md-6">
@@ -76,19 +76,19 @@
 
               <div class="col-md-6">
                 <label class="form-label">Start Date *</label>
-                <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($contract['start_date'] ?? date('Y-m-d')) ?>" required>
+                <input aria-label="Start date" type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($contract['start_date'] ?? date('Y-m-d')) ?>" required>
               </div>
 
               <div class="col-md-6">
                 <label class="form-label">End Date *</label>
-                <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($contract['end_date'] ?? date('Y-m-d', strtotime('+1 year'))) ?>" required>
+                <input aria-label="End date" type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($contract['end_date'] ?? date('Y-m-d', strtotime('+1 year'))) ?>" required>
               </div>
 
               <div class="col-md-4">
                 <label class="form-label">Amount</label>
                 <div class="input-group">
                   <span class="input-group-text">₹</span>
-                  <input type="number" name="amount" step="0.01" class="form-control" value="<?= htmlspecialchars($contract['amount'] ?? 0) ?>">
+                  <input aria-label="Amount" type="number" name="amount" step="0.01" class="form-control" value="<?= htmlspecialchars($contract['amount'] ?? 0) ?>">
                 </div>
               </div>
 
@@ -111,7 +111,7 @@
 
               <div class="col-md-4">
                 <label class="form-label">Renewal Notice (days before)</label>
-                <input type="number" name="renewal_notice_days" class="form-control" value="<?= htmlspecialchars($contract['renewal_notice_days'] ?? 30) ?>" min="1" max="365">
+                <input aria-label="Renewal notice days" type="number" name="renewal_notice_days" class="form-control" value="<?= htmlspecialchars($contract['renewal_notice_days'] ?? 30) ?>" min="1" max="365">
               </div>
 
               <div class="col-md-4">
@@ -125,7 +125,7 @@
 
               <div class="col-md-4">
                 <div class="form-check mt-4">
-                  <input type="checkbox" name="auto_renew" class="form-check-input" id="auto_renew" value="1" <?= ($contract['auto_renew'] ?? 0) ? 'checked' : '' ?>>
+                  <input aria-label="Auto renew" type="checkbox" name="auto_renew" class="form-check-input" id="auto_renew" value="1" <?= ($contract['auto_renew'] ?? 0) ? 'checked' : '' ?>>
                   <label class="form-check-label" for="auto_renew">Auto-renew on expiry</label>
                 </div>
               </div>

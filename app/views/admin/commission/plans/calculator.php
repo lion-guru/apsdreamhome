@@ -28,7 +28,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             </div>
             <div class="col-md-4">
                 <label class="form-label">Sale Amount (₹)</label>
-                <input type="number" id="saleAmount" class="form-control" value="1500000" step="10000" min="0" oninput="calculateCommissions()">
+                <input aria-label="Sale amount" type="number" id="saleAmount" class="form-control" value="1500000" step="10000" min="0" oninput="calculateCommissions()">
             </div>
             <div class="col-md-4">
                 <label class="form-label">Agent Level</label>

@@ -9,11 +9,11 @@
                         <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token'] ?? '') ?>">
                         <div class="mb-3">
                             <label class="form-label">New Password</label>
-                            <input type="password" name="password" class="form-control" required minlength="8">
+                            <input aria-label="Password" type="password" name="password" class="form-control" required minlength="8">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Confirm Password</label>
-                            <input type="password" name="password_confirmation" class="form-control" required>
+                            <input aria-label="Password confirmation" type="password" name="password_confirmation" class="form-control" required>
                         </div>
                         
 <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>

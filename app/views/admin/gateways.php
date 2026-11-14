@@ -175,7 +175,7 @@ $page_heading = $page_heading ?? 'Gateway Manager';
                                 <form method="post" action="<?= $baseUrl ?>/admin/gateways/<?= htmlspecialchars($card['test_action'] ?? '') ?>" class="mt-2">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>"/>
                                     <div class="input-group input-group-sm">
-                                        <input type="tel" name="phone" class="form-control" placeholder="+91xxxxxxxxxx"
+                                        <input aria-label="Phone" type="tel" name="phone" class="form-control" placeholder="+91xxxxxxxxxx"
                                                value="<?= htmlspecialchars($admin_phone ?? '') ?>" required>
                                         <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
 <button class="btn btn-primary" type="submit">
@@ -265,7 +265,7 @@ TWILIO_TEST_MODE=true  # skip real API during local dev</pre>
 
                         <label class="small text-muted mb-1">Webhook URL</label>
                         <div class="input-group input-group-sm mb-3">
-                            <input type="text" id="razorpay-webhook-url" class="form-control font-monospace" readonly
+                            <input aria-label="Razorpay webhook url" type="text" id="razorpay-webhook-url" class="form-control font-monospace" readonly
                                    value="<?= htmlspecialchars($webhookUrl ?? '') ?>">
                             <button class="btn btn-outline-secondary" type="button"
                                     onclick="var el=document.getElementById('razorpay-webhook-url'); el.select(); document.execCommand('copy'); this.innerHTML='<i class=\'fas fa-check me-1\'></i>Copied!'; setTimeout(()=>this.innerHTML='<i class=\'fas fa-copy me-1\'></i>Copy',1500);">
@@ -275,7 +275,7 @@ TWILIO_TEST_MODE=true  # skip real API during local dev</pre>
 
                         <label class="small text-muted mb-1">Webhook Secret (paste into Razorpay dashboard &rarr; "Secret" field)</label>
                         <div class="input-group input-group-sm">
-                            <input type="<?= $webhookSecretSet ? 'password' : 'text' ?>" id="razorpay-webhook-secret" class="form-control font-monospace" readonly
+                            <input aria-label="Razorpay webhook secret" type="<?= $webhookSecretSet ? 'password' : 'text' ?>" id="razorpay-webhook-secret" class="form-control font-monospace" readonly
                                    value="<?= htmlspecialchars($webhookSecret ?: '(not set - put one in .env as RAZORPAY_WEBHOOK_SECRET)') ?>">
                             <?php if ($webhookSecretSet): ?>
                                 <button class="btn btn-outline-secondary" type="button" onclick="var i=document.getElementById('razorpay-webhook-secret'); i.type = (i.type==='password'?'text':'password'); this.innerHTML=(i.type==='password'?'<i class=\'fas fa-eye me-1\'></i>Show':'<i class=\'fas fa-eye-slash me-1\'></i>Hide');">

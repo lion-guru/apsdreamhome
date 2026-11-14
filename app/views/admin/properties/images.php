@@ -81,7 +81,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                 <button class="btn btn-primary btn-lg">
                     <i class="fas fa-folder-open me-2"></i>Select Files
                 </button>
-                <input type="file" id="fileInput" multiple accept="image/*" >
+                <input aria-label="File input" type="file" id="fileInput" multiple accept="image/*" >
             </div>
         </div>
     </div>
@@ -100,14 +100,14 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label">Select Images</label>
-                            <input type="file" name="images[]" multiple accept="image/*" class="form-control" required>
+                            <input aria-label="Images" type="file" name="images[]" multiple accept="image/*" class="form-control" required>
                             <div class="form-text">You can select multiple images</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label">Caption (Optional)</label>
-                            <input type="text" name="caption" class="form-control" placeholder="e.g., Living Room, Master Bedroom">
+                            <input aria-label="Caption" type="text" name="caption" class="form-control" placeholder="e.g., Living Room, Master Bedroom">
                         </div>
                     </div>
                 </div>
@@ -150,7 +150,7 @@ $page_title = "Manage Images - " . ($property['title'] ?? 'Property');
                                     onerror="this.onerror=null;this.src='<?php echo $base; ?>/assets/images/placeholder/property.svg'"
                                     onclick="openLightbox('<?php echo htmlspecialchars($fullSrc, ENT_QUOTES, 'UTF-8'); ?>')">
                                 <div class="card-body p-2">
-                                    <input type="text"
+                                    <input aria-label="Add caption" type="text"
                                         class="form-control form-control-sm mb-2"
                                         value="<?php echo htmlspecialchars($image['caption'] ?? ''); ?>"
                                         placeholder="Add caption..."

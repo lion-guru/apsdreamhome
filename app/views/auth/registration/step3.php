@@ -39,7 +39,7 @@ $old = $old ?? [];
                     <?php $ptype = $state['form_data']['property_type'] ?? ''; ?>
                     <div class="d-flex flex-wrap gap-2">
                         <?php foreach (['plot','flat','house','villa','shop','farmhouse','land'] as $t): ?>
-                            <input type="radio" class="btn-check" name="property_type" id="ptype-<?= e($t) ?>" value="<?= e($t) ?>" <?= $ptype === $t ? 'checked' : '' ?>>
+                            <input aria-label="Property type" type="radio" class="btn-check" name="property_type" id="ptype-<?= e($t) ?>" value="<?= e($t) ?>" <?= $ptype === $t ? 'checked' : '' ?>>
                             <label class="btn btn-outline-primary" for="ptype-<?= e($t) ?>"><?= e(ucfirst($t)) ?></label>
                         <?php endforeach; ?>
                     </div>
@@ -56,7 +56,7 @@ $old = $old ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Location Preference</label>
-                    <input type="text" name="location_preference" class="form-control"
+                    <input aria-label="Location preference" type="text" name="location_preference" class="form-control"
                            value="<?= htmlspecialchars($state['form_data']['location_preference'] ?? '') ?>" placeholder="e.g. Gorakhpur, Lucknow">
                 </div>
                 <div class="d-flex justify-content-between mt-4">

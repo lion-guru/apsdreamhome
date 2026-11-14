@@ -36,9 +36,9 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <h5 class="mb-1"><i class="fas fa-id-card me-2 text-warning"></i>Apni Branding (ek baar save karo)</h5>
             <p class="text-muted small mb-3">Naam + number yahan save karo — collage, festival post, visiting card, slideshow me <strong>auto</strong> lag jayega. Lead direct tumko aayega.</p>
             <form id="brandingForm" class="row g-2">
-                <div class="col-md-3"><input type="text" class="form-control" name="display_name" id="brandName" placeholder="Apna naam"></div>
-                <div class="col-md-3"><input type="text" class="form-control" name="phone" id="brandPhone" placeholder="Mobile number"></div>
-                <div class="col-md-4"><input type="text" class="form-control" name="tagline" id="brandTagline" placeholder="Tagline (e.g. Associate | Gorakhpur)"></div>
+                <div class="col-md-3"><input aria-label="Display name" type="text" class="form-control" name="display_name" id="brandName" placeholder="Apna naam"></div>
+                <div class="col-md-3"><input aria-label="Phone" type="text" class="form-control" name="phone" id="brandPhone" placeholder="Mobile number"></div>
+                <div class="col-md-4"><input aria-label="Tagline" type="text" class="form-control" name="tagline" id="brandTagline" placeholder="Tagline (e.g. Associate | Gorakhpur)"></div>
                 <div class="col-md-2"><button type="submit" class="btn btn-warning w-100"><i class="fas fa-save me-1"></i>Save</button></div>
             </form>
             <div id="brandingResult" class="mt-2"></div>
@@ -68,12 +68,12 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">API Key (Optional - Ollama ke liye nahi chahiye)</label>
-                    <input type="password" class="form-control" name="ai_api_key" id="aiApiKey" placeholder="API Key (Groq, Gemini, Grok, etc.)">
+                    <input aria-label="Ai api key" type="password" class="form-control" name="ai_api_key" id="aiApiKey" placeholder="API Key (Groq, Gemini, Grok, etc.)">
                     <small class="text-muted">Ollama local chal raha ho to khali chhodo</small>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Model (Optional)</label>
-                    <input type="text" class="form-control" name="ai_model" id="aiModel" placeholder="Model name (khali chhodo = default)">
+                    <input aria-label="Ai model" type="text" class="form-control" name="ai_model" id="aiModel" placeholder="Model name (khali chhodo = default)">
                     <small class="text-muted">Khali chhodo to default model use hoga</small>
                 </div>
                 <div class="col-md-12">
@@ -96,7 +96,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <form id="watermarkForm" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label class="form-label">Photo <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" name="photo" accept="image/*" required>
+                            <input aria-label="Photo" type="file" class="form-control" name="photo" accept="image/*" required>
                             <small class="text-muted">JPG/PNG/GIF/WebP, max 10MB</small>
                         </div>
                         <div class="row g-2 mb-3">
@@ -139,19 +139,19 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <form id="bannerForm" enctype="multipart/form-data">
                         <div class="mb-2">
                             <label class="form-label">Photo <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" name="photo" accept="image/*" required>
+                            <input aria-label="Photo" type="file" class="form-control" name="photo" accept="image/*" required>
                         </div>
                         <div class="mb-2">
-                            <input type="text" class="form-control" name="price" placeholder="Price (e.g. ₹999/sq.ft.)">
+                            <input aria-label="Price" type="text" class="form-control" name="price" placeholder="Price (e.g. ₹999/sq.ft.)">
                         </div>
                         <div class="mb-2">
-                            <input type="text" class="form-control" name="location" placeholder="Location (e.g. Suryoday, Kalesar)">
+                            <input aria-label="Location" type="text" class="form-control" name="location" placeholder="Location (e.g. Suryoday, Kalesar)">
                         </div>
                         <div class="mb-2">
-                            <input type="text" class="form-control" name="offer" placeholder="Offer (e.g. 40% Cashback)">
+                            <input aria-label="Offer" type="text" class="form-control" name="offer" placeholder="Offer (e.g. 40% Cashback)">
                         </div>
                         <div class="mb-3">
-                            <input type="text" class="form-control" name="property_type" placeholder="Type (e.g. Residential Plot)">
+                            <input aria-label="Property type" type="text" class="form-control" name="property_type" placeholder="Type (e.g. Residential Plot)">
                         </div>
                         <button type="submit" class="btn btn-success w-100">
                             <i class="fas fa-wand-magic-sparkles me-2"></i>Generate Banner
@@ -173,20 +173,20 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                     <form id="aiForm">
                         <div class="row g-2 mb-2">
                             <div class="col-6">
-                                <input type="text" class="form-control" name="property_type" placeholder="Type (प्लॉट)" value="प्लॉट">
+                                <input aria-label="Property type" type="text" class="form-control" name="property_type" placeholder="Type (प्लॉट)" value="प्लॉट">
                             </div>
                             <div class="col-6">
-                                <input type="text" class="form-control" name="size_sqft" placeholder="Size (1000)">
+                                <input aria-label="Size sqft" type="text" class="form-control" name="size_sqft" placeholder="Size (1000)">
                             </div>
                         </div>
                         <div class="mb-2">
-                            <input type="text" class="form-control" name="price" placeholder="Price (₹999/sq.ft.)">
+                            <input aria-label="Price" type="text" class="form-control" name="price" placeholder="Price (₹999/sq.ft.)">
                         </div>
                         <div class="mb-2">
-                            <input type="text" class="form-control" name="location" placeholder="Location (गोरखपुर)" value="गोरखपुर">
+                            <input aria-label="Location" type="text" class="form-control" name="location" placeholder="Location (गोरखपुर)" value="गोरखपुर">
                         </div>
                         <div class="mb-3">
-                            <input type="text" class="form-control" name="offer" placeholder="Offer (40% Cashback)">
+                            <input aria-label="Offer" type="text" class="form-control" name="offer" placeholder="Offer (40% Cashback)">
                         </div>
                         <button type="submit" class="btn btn-warning w-100">
                             <i class="fas fa-pen-nib me-2"></i>Write Post
@@ -207,7 +207,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <p class="text-muted small">NEW LAUNCH, PRICE DROP, SOLD, OFFER ribbon lagao.</p>
                     <form id="stickerForm" enctype="multipart/form-data">
-                        <div class="mb-2"><input type="file" class="form-control" name="photo" accept="image/*" required></div>
+                        <div class="mb-2"><input aria-label="Photo" type="file" class="form-control" name="photo" accept="image/*" required></div>
                         <div class="mb-2">
                             <select aria-label="Sticker type" class="form-select" name="sticker_type">
                                 <option value="new_launch">NEW LAUNCH</option>
@@ -218,7 +218,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                                 <option value="verified">VERIFIED</option>
                             </select>
                         </div>
-                        <div class="mb-3"><input type="text" class="form-control" name="custom_text" placeholder="Custom text (offer ke liye)"></div>
+                        <div class="mb-3"><input aria-label="Custom text" type="text" class="form-control" name="custom_text" placeholder="Custom text (offer ke liye)"></div>
                         <button type="submit" class="btn btn-danger w-100"><i class="fas fa-tag me-2"></i>Add Sticker</button>
                     </form>
                     <div id="stickerResult" class="mt-3"></div>
@@ -232,7 +232,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <p class="text-muted small">2-4 photos ek image me + apna naam/number auto.</p>
                     <form id="collageForm" enctype="multipart/form-data">
-                        <div class="mb-2"><input type="file" class="form-control" name="photos[]" accept="image/*" multiple required></div>
+                        <div class="mb-2"><input aria-label="Photos" type="file" class="form-control" name="photos[]" accept="image/*" multiple required></div>
                         <div class="mb-3">
                             <select aria-label="Layout" class="form-select" name="layout">
                                 <option value="grid2x2">2x2 Grid (4 photos)</option>
@@ -279,14 +279,14 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <p class="text-muted small">Apne referral link ka QR banao. Khali chhodo to auto (tumhara link).</p>
                     <form id="qrForm">
-                        <div class="mb-3"><input type="text" class="form-control" name="text" placeholder="Link (khali = mera referral link)"></div>
+                        <div class="mb-3"><input aria-label="Text" type="text" class="form-control" name="text" placeholder="Link (khali = mera referral link)"></div>
                         <button type="submit" class="btn btn-dark w-100"><i class="fas fa-qrcode me-2"></i>Generate QR</button>
                     </form>
                     <div id="qrResult" class="mt-3"></div>
                     <hr>
                     <p class="text-muted small mb-2"><strong>Photo par QR lagao</strong> (scan → tumhara link)</p>
                     <form id="qrPhotoForm" enctype="multipart/form-data">
-                        <div class="mb-2"><input type="file" class="form-control" name="photo" accept="image/*" required></div>
+                        <div class="mb-2"><input aria-label="Photo" type="file" class="form-control" name="photo" accept="image/*" required></div>
                         <button type="submit" class="btn btn-outline-dark w-100 btn-sm"><i class="fas fa-camera me-1"></i>Photo + QR</button>
                     </form>
                     <div id="qrPhotoResult" class="mt-2"></div>
@@ -300,7 +300,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <p class="text-muted small">2-5 photos → animated GIF (WhatsApp par video jaise chalega).</p>
                     <form id="slideshowForm" enctype="multipart/form-data">
-                        <div class="mb-3"><input type="file" class="form-control" name="photos[]" accept="image/*" multiple required></div>
+                        <div class="mb-3"><input aria-label="Photos" type="file" class="form-control" name="photos[]" accept="image/*" multiple required></div>
                         <button type="submit" class="btn btn-primary w-100"><i class="fas fa-play me-2"></i>Make GIF</button>
                     </form>
                     <div id="slideshowResult" class="mt-3"></div>
@@ -314,9 +314,9 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <p class="text-muted small">Digital card + referral QR. Branding se auto-bharega.</p>
                     <form id="vcardForm">
-                        <div class="mb-2"><input type="text" class="form-control" name="display_name" placeholder="Naam (khali = saved)"></div>
-                        <div class="mb-2"><input type="text" class="form-control" name="phone" placeholder="Number (khali = saved)"></div>
-                        <div class="mb-3"><input type="text" class="form-control" name="tagline" placeholder="Tagline"></div>
+                        <div class="mb-2"><input aria-label="Display name" type="text" class="form-control" name="display_name" placeholder="Naam (khali = saved)"></div>
+                        <div class="mb-2"><input aria-label="Phone" type="text" class="form-control" name="phone" placeholder="Number (khali = saved)"></div>
+                        <div class="mb-3"><input aria-label="Tagline" type="text" class="form-control" name="tagline" placeholder="Tagline"></div>
                         <button type="submit" class="btn btn-warning w-100"><i class="fas fa-id-badge me-2"></i>Generate Card</button>
                     </form>
                     <div id="vcardResult" class="mt-3"></div>
@@ -334,11 +334,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <p class="text-muted small">Apna video upload karo (Gemini/mobile se bana hua) → branded cover + caption milega → download karke post karo.</p>
                     <form id="videoForm" enctype="multipart/form-data">
-                        <div class="mb-2"><input type="file" class="form-control" name="video" accept="video/*" required><small class="text-muted">mp4/mov, max 100MB</small></div>
-                        <div class="mb-2"><input type="text" class="form-control" name="title" placeholder="Video title"></div>
+                        <div class="mb-2"><input aria-label="Video" type="file" class="form-control" name="video" accept="video/*" required><small class="text-muted">mp4/mov, max 100MB</small></div>
+                        <div class="mb-2"><input aria-label="Title" type="text" class="form-control" name="title" placeholder="Video title"></div>
                         <div class="row g-2 mb-3">
-                            <div class="col-6"><input type="text" class="form-control" name="price" placeholder="Price"></div>
-                            <div class="col-6"><input type="text" class="form-control" name="location" placeholder="Location"></div>
+                            <div class="col-6"><input aria-label="Price" type="text" class="form-control" name="price" placeholder="Price"></div>
+                            <div class="col-6"><input aria-label="Location" type="text" class="form-control" name="location" placeholder="Location"></div>
                         </div>
                         <button type="submit" class="btn btn-danger w-100"><i class="fas fa-clapperboard me-2"></i>Make Pack</button>
                     </form>
@@ -364,7 +364,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <option value="referral">Refer & Earn</option>
                         </select>
                     </div>
-                    <div class="mb-3"><input type="text" class="form-control" id="textTplPrice" placeholder="Price (optional)"></div>
+                    <div class="mb-3"><input aria-label="Text tpl price" type="text" class="form-control" id="textTplPrice" placeholder="Price (optional)"></div>
                     <button class="btn btn-info w-100 text-white" onclick="fillTextTpl()"><i class="fas fa-fill-drip me-2"></i>Fill + Copy</button>
                     <div id="textTplResult" class="mt-3"></div>
                 </div>

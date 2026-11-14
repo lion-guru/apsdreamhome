@@ -23,7 +23,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <form method="GET" class="row g-3">
     <?php echo CSRFProtection::csrfField(); ?>
                     <div class="col-md-3">
-                        <input type="text" name="search" class="form-control" placeholder="Search..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
+                        <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search..." value="<?php echo htmlspecialchars($filters['search'] ?? ''); ?>">
                     </div>
                     <div class="col-md-2">
                         <select aria-label="Status" name="status" class="form-select">

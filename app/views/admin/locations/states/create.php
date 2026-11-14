@@ -18,13 +18,13 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">State Name *</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <input aria-label="Name" type="text" class="form-control" id="name" name="name" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="code" class="form-label">State Code *</label>
-                                    <input type="text" class="form-control" id="code" name="code" maxlength="10" required >
+                                    <input aria-label="Code" type="text" class="form-control" id="code" name="code" maxlength="10" required >
                                     <small class="form-text text-muted">e.g., UP, MP, RJ</small>
                                 </div>
                             </div>
@@ -32,7 +32,7 @@
                         
                         <div class="mb-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                                <input aria-label="Is active" class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
                                 <label class="form-check-label" for="is_active">
                                     Active
                                 </label>

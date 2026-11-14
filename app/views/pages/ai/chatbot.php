@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         <div class="input-group">
-                            <input type="text" id="userInput" class="form-control rounded-start-pill border-end-0 py-2" placeholder="Type your message..." />
+                            <input aria-label="User input" type="text" id="userInput" class="form-control rounded-start-pill border-end-0 py-2" placeholder="Type your message..." />
                             <button class="btn btn-primary rounded-end-pill px-4" onclick="sendMessage()" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
                         </div>
                     </div>

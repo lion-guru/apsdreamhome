@@ -85,27 +85,27 @@ $colonies = $colonies ?? [];
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_customer_name', [], 'Customer Name') ?> *</label>
-                    <input type="text" name="customer_name" class="form-control" required placeholder="<?= __('assoc_bp_customer_name_placeholder', [], 'Full name as per ID') ?>" value="<?= htmlspecialchars($prefill['name'] ?? '') ?>">
+                    <input aria-label="Customer name" type="text" name="customer_name" class="form-control" required placeholder="<?= __('assoc_bp_customer_name_placeholder', [], 'Full name as per ID') ?>" value="<?= htmlspecialchars($prefill['name'] ?? '') ?>">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_phone', [], 'Phone Number') ?> *</label>
-                    <input type="tel" name="customer_phone" class="form-control" required placeholder="+91 XXXXXXXXXX" pattern="[0-9]{10}" value="<?= htmlspecialchars($prefill['phone'] ?? '') ?>">
+                    <input aria-label="Customer phone" type="tel" name="customer_phone" class="form-control" required placeholder="+91 XXXXXXXXXX" pattern="[0-9]{10}" value="<?= htmlspecialchars($prefill['phone'] ?? '') ?>">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_email', [], 'Email') ?></label>
-                    <input type="email" name="customer_email" class="form-control" placeholder="customer@email.com" value="<?= htmlspecialchars($prefill['email'] ?? '') ?>">
+                    <input aria-label="Customer email" type="email" name="customer_email" class="form-control" placeholder="customer@email.com" value="<?= htmlspecialchars($prefill['email'] ?? '') ?>">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_address', [], 'Address') ?></label>
-                    <input type="text" name="customer_address" class="form-control" placeholder="<?= __('assoc_bp_address_placeholder', [], 'Full address') ?>">
+                    <input aria-label="Customer address" type="text" name="customer_address" class="form-control" placeholder="<?= __('assoc_bp_address_placeholder', [], 'Full address') ?>">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_aadhar', [], 'Aadhar Number') ?></label>
-                    <input type="text" name="aadhar_number" class="form-control" placeholder="<?= __('assoc_bp_aadhar_placeholder', [], '12-digit Aadhar') ?>" pattern="[0-9]{12}" maxlength="12">
+                    <input aria-label="Aadhar number" type="text" name="aadhar_number" class="form-control" placeholder="<?= __('assoc_bp_aadhar_placeholder', [], '12-digit Aadhar') ?>" pattern="[0-9]{12}" maxlength="12">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_pan', [], 'PAN Number') ?></label>
-                    <input type="text" name="pan_number" class="form-control" placeholder="ABCDE1234F" pattern="[A-Z]{5}[0-9]{4}[A-Z]" maxlength="10">
+                    <input aria-label="Pan number" type="text" name="pan_number" class="form-control" placeholder="ABCDE1234F" pattern="[A-Z]{5}[0-9]{4}[A-Z]" maxlength="10">
                 </div>
             </div>
 
@@ -113,7 +113,7 @@ $colonies = $colonies ?? [];
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label class="form-label fw-bold"><?= __('assoc_bp_booking_amount', [], 'Booking Amount') ?> *</label>
-                    <input type="number" name="booking_amount" id="bookingAmount" class="form-control" required min="1" step="0.01" value="51000" placeholder="51000">
+                    <input aria-label="Booking amount" type="number" name="booking_amount" id="bookingAmount" class="form-control" required min="1" step="0.01" value="51000" placeholder="51000">
                     <div class="form-text text-danger fw-bold small mt-1">
                         <i class="fas fa-exclamation-triangle me-1"></i> वैधानिक सूचना: टोकन बुकिंग राशि ₹51,000 पूर्णतः गैर-वापसी योग्य (Non-Refundable / वापस नहीं होगी) है (मास्टर डीड धारा 2.1 व 2.9)।
                     </div>
@@ -148,7 +148,7 @@ $colonies = $colonies ?? [];
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Customer Promo Code (कूपन कोड)</label>
                     <div class="input-group">
-                        <input type="text" name="promo_code_applied" id="assoc_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5" value="<?= htmlspecialchars($_GET['promo'] ?? '') ?>">
+                        <input aria-label="Promo code applied" type="text" name="promo_code_applied" id="assoc_promo_code" class="form-control text-uppercase fw-bold" placeholder="e.g. FESTIVE21, SUBHLABH5" value="<?= htmlspecialchars($_GET['promo'] ?? '') ?>">
                         <button type="button" class="btn btn-primary" id="btn_assoc_apply_promo">
                             <i class="fas fa-check me-1"></i>Apply
                         </button>
@@ -181,17 +181,17 @@ $colonies = $colonies ?? [];
             <div class="row g-3 mb-4">
                 <div class="col-md-4">
                     <label class="form-label fw-bold"><?= __('assoc_bp_doc_aadhar', [], 'Aadhar Card Copy') ?></label>
-                    <input type="file" name="aadhar_doc" class="form-control" accept="image/*,.pdf">
+                    <input aria-label="Aadhar doc" type="file" name="aadhar_doc" class="form-control" accept="image/*,.pdf">
                     <div class="form-text"><?= __('assoc_bp_doc_format', [], 'JPG, PNG or PDF (max 5MB)') ?></div>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-bold"><?= __('assoc_bp_doc_pan', [], 'PAN Card Copy') ?></label>
-                    <input type="file" name="pan_doc" class="form-control" accept="image/*,.pdf">
+                    <input aria-label="Pan doc" type="file" name="pan_doc" class="form-control" accept="image/*,.pdf">
                     <div class="form-text"><?= __('assoc_bp_doc_format', [], 'JPG, PNG or PDF (max 5MB)') ?></div>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-bold"><?= __('assoc_bp_doc_form', [], 'Hard Copy Form Scan') ?></label>
-                    <input type="file" name="form_copy" class="form-control" accept="image/*,.pdf">
+                    <input aria-label="Form copy" type="file" name="form_copy" class="form-control" accept="image/*,.pdf">
                     <div class="form-text"><?= __('assoc_bp_doc_form_desc', [], 'Scanned copy of signed form') ?></div>
                 </div>
             </div>
@@ -212,7 +212,7 @@ $colonies = $colonies ?? [];
                             </a>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="masterDeedAccepted" name="master_deed_accepted" required>
+                            <input aria-label="Master deed accepted" class="form-check-input" type="checkbox" id="masterDeedAccepted" name="master_deed_accepted" required>
                             <label class="form-check-label" for="masterDeedAccepted">
                                 I confirm that I and the customer have read, understood, and unconditionally agree to the <strong>Master Deed & Agreement</strong>, and agree that the <strong>₹51,000 Token Booking Amount is strictly NON-REFUNDABLE (टोकन बुकिंग राशि वापस नहीं होगी)</strong>. *
                             </label>
@@ -220,7 +220,7 @@ $colonies = $colonies ?? [];
                         </div>
                         <div class="mb-2">
                             <label class="form-label fw-bold small">Upload Signed Master Deed Copy</label>
-                            <input type="file" name="master_deed_upload" class="form-control" accept="image/*,.pdf">
+                            <input aria-label="Master deed upload" type="file" name="master_deed_upload" class="form-control" accept="image/*,.pdf">
                             <div class="form-text">Scanned or photographed copy of the signed Master Deed (JPG, PNG, or PDF — max 5MB)</div>
                         </div>
                     </div>
@@ -234,7 +234,7 @@ $colonies = $colonies ?? [];
 
             <div class="mb-4">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="agreeTerms" name="terms_consent" required>
+                    <input aria-label="Agree terms" class="form-check-input" type="checkbox" id="agreeTerms" name="terms_consent" required>
                     <label class="form-check-label" for="agreeTerms">
                         <?= __('assoc_bp_terms', [], 'I confirm that all details are correct and I have verified the customer\'s identity.') ?> *<br>
                         <small class="text-muted">I have read, understood, and unconditionally agree to the

@@ -56,15 +56,15 @@ $t = $old['title'] ?? $state_data['title'] ?? '';
                         <div class="mb-3">
                             <label class="form-label">Listing Type *</label>
                             <div class="btn-group w-100" role="group">
-                                <input type="radio" class="btn-check" name="listing_type" id="lt-sell" value="sell" <?= $lt === 'sell' ? 'checked' : '' ?>>
+                                <input aria-label="Listing type" type="radio" class="btn-check" name="listing_type" id="lt-sell" value="sell" <?= $lt === 'sell' ? 'checked' : '' ?>>
                                 <label class="btn btn-outline-primary" for="lt-sell"><i class="fas fa-tag me-1"></i> Sell</label>
-                                <input type="radio" class="btn-check" name="listing_type" id="lt-rent" value="rent" <?= $lt === 'rent' ? 'checked' : '' ?>>
+                                <input aria-label="Listing type" type="radio" class="btn-check" name="listing_type" id="lt-rent" value="rent" <?= $lt === 'rent' ? 'checked' : '' ?>>
                                 <label class="btn btn-outline-primary" for="lt-rent"><i class="fas fa-key me-1"></i> Rent</label>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Title *</label>
-                            <input type="text" name="title" class="form-control" required minlength="5" maxlength="200"
+                            <input aria-label="Title" type="text" name="title" class="form-control" required minlength="5" maxlength="200"
                                    value="<?= htmlspecialchars($t ?? '') ?>" placeholder="e.g. 2 BHK Flat in Gorakhpur">
                         </div>
                         <div class="d-flex justify-content-end mt-4">

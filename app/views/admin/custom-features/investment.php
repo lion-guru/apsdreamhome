@@ -27,48 +27,48 @@ $base = BASE_URL;
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Property Price (₹)</label>
-                                <input type="number" name="property_price" class="form-control" step="100000" 
+                                <input aria-label="Property price" type="number" name="property_price" class="form-control" step="100000" 
                                        value="<?= htmlspecialchars($inputs['property_price'] ?? '') ?>" 
                                        placeholder="e.g., 5000000" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Down Payment %</label>
-                                <input type="number" name="down_payment_pct" class="form-control" min="0" max="100" step="1"
+                                <input aria-label="Down payment pct" type="number" name="down_payment_pct" class="form-control" min="0" max="100" step="1"
                                        value="<?= htmlspecialchars($inputs['down_payment_pct'] ?? 20) ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Loan Interest Rate %</label>
-                                <input type="number" name="interest_rate" class="form-control" min="0" max="30" step="0.1"
+                                <input aria-label="Interest rate" type="number" name="interest_rate" class="form-control" min="0" max="30" step="0.1"
                                        value="<?= htmlspecialchars($inputs['interest_rate'] ?? 8.5) ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Loan Tenure (Years)</label>
-                                <input type="number" name="loan_tenure" class="form-control" min="1" max="30"
+                                <input aria-label="Loan tenure" type="number" name="loan_tenure" class="form-control" min="1" max="30"
                                        value="<?= htmlspecialchars($inputs['loan_tenure'] ?? 20) ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Expected Annual Appreciation %</label>
-                                <input type="number" name="appreciation_rate" class="form-control" min="0" max="20" step="0.1"
+                                <input aria-label="Appreciation rate" type="number" name="appreciation_rate" class="form-control" min="0" max="20" step="0.1"
                                        value="<?= htmlspecialchars($inputs['appreciation_rate'] ?? 5) ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Monthly Rental Income (₹)</label>
-                                <input type="number" name="monthly_rent" class="form-control" min="0" step="1000"
+                                <input aria-label="Monthly rent" type="number" name="monthly_rent" class="form-control" min="0" step="1000"
                                        value="<?= htmlspecialchars($inputs['monthly_rent'] ?? 15000) ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Annual Maintenance %</label>
-                                <input type="number" name="maintenance_pct" class="form-control" min="0" max="5" step="0.1"
+                                <input aria-label="Maintenance pct" type="number" name="maintenance_pct" class="form-control" min="0" max="5" step="0.1"
                                        value="<?= htmlspecialchars($inputs['maintenance_pct'] ?? 1) ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Investment Horizon (Years)</label>
-                                <input type="number" name="investment_horizon" class="form-control" min="1" max="30"
+                                <input aria-label="Investment horizon" type="number" name="investment_horizon" class="form-control" min="1" max="30"
                                        value="<?= htmlspecialchars($inputs['investment_horizon'] ?? 10) ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Tax Bracket %</label>
-                                <input type="number" name="tax_bracket" class="form-control" min="0" max="50" step="1"
+                                <input aria-label="Tax bracket" type="number" name="tax_bracket" class="form-control" min="0" max="50" step="1"
                                        value="<?= htmlspecialchars($inputs['tax_bracket'] ?? 30) ?>" required>
                             </div>
                         </div>

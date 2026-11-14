@@ -19,7 +19,7 @@ $colony = $colony ?? null;
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label text-white">Layout Name *</label>
-            <input type="text" name="layout_name" class="form-control bg-dark text-white border-secondary" required value="Master Plan v1">
+            <input aria-label="Layout name" type="text" name="layout_name" class="form-control bg-dark text-white border-secondary" required value="Master Plan v1">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Layout Type</label>
@@ -32,25 +32,25 @@ $colony = $colony ?? null;
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Total Area (Acres)</label>
-            <input type="number" name="total_area_acres" class="form-control bg-dark text-white border-secondary" step="0.01" value="<?= $colony['total_area_acres'] ?? 0 ?>">
+            <input aria-label="Total area acres" type="number" name="total_area_acres" class="form-control bg-dark text-white border-secondary" step="0.01" value="<?= $colony['total_area_acres'] ?? 0 ?>">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Min Road Width (ft) *</label>
-            <input type="number" name="min_road_width_ft" class="form-control bg-dark text-white border-secondary" value="30" min="20">
+            <input aria-label="Min road width ft" type="number" name="min_road_width_ft" class="form-control bg-dark text-white border-secondary" value="30" min="20">
             <small class="text-warning">Legal minimum: 20 ft</small>
           </div>
           <div class="col-md-4">
             <label class="form-label text-white">Road Area % *</label>
-            <input type="number" name="road_area_pct" class="form-control bg-dark text-white border-secondary" value="15" min="15" step="0.5">
+            <input aria-label="Road area pct" type="number" name="road_area_pct" class="form-control bg-dark text-white border-secondary" value="15" min="15" step="0.5">
             <small class="text-warning">Min 15% for RERA compliance</small>
           </div>
           <div class="col-md-4">
             <label class="form-label text-white">Park Area % *</label>
-            <input type="number" name="park_area_pct" class="form-control bg-dark text-white border-secondary" value="10" min="0" step="0.5">
+            <input aria-label="Park area pct" type="number" name="park_area_pct" class="form-control bg-dark text-white border-secondary" value="10" min="0" step="0.5">
           </div>
           <div class="col-md-4">
             <label class="form-label text-white">Amenity Area % *</label>
-            <input type="number" name="amenity_area_pct" class="form-control bg-dark text-white border-secondary" value="5" min="0" step="0.5">
+            <input aria-label="Amenity area pct" type="number" name="amenity_area_pct" class="form-control bg-dark text-white border-secondary" value="5" min="0" step="0.5">
             <small class="text-info">Total open space must be ≥ 30%</small>
           </div>
           <div class="col-md-12">

@@ -51,7 +51,7 @@ $executives = $executives ?? [];
             <form class="d-flex gap-2" method="GET">
                 <div class="input-group">
                     <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" class="form-control" name="q" placeholder="Search name, phone, lead..." value="<?= htmlspecialchars($search ?? '') ?>">
+                    <input aria-label="Q" type="text" class="form-control" name="q" placeholder="Search name, phone, lead..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <input type="hidden" name="tab" value="<?= htmlspecialchars($active_tab ?? '') ?>">
                 <button type="submit" class="btn btn-primary btn-sm">Search</button>
@@ -199,11 +199,11 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Cab Assigned</label>
-                        <input type="text" id="assignCab" class="form-control" placeholder="e.g. UP53-AB-1234 (Driver Ramesh)">
+                        <input aria-label="Assign cab" type="text" id="assignCab" class="form-control" placeholder="e.g. UP53-AB-1234 (Driver Ramesh)">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Pickup Time</label>
-                        <input type="text" id="assignPickupTime" class="form-control" placeholder="e.g. 10:30 AM from home">
+                        <input aria-label="Assign pickup time" type="text" id="assignPickupTime" class="form-control" placeholder="e.g. 10:30 AM from home">
                     </div>
                     <div id="assignResult" class="d-none">
                         <div class="alert alert-success py-2 small mb-2" id="assignMsg"></div>
@@ -247,15 +247,15 @@ document.querySelectorAll('.status-select').forEach(function(sel) {
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Plot Preference</label>
-                        <input type="text" id="outcomePlotPref" class="form-control" placeholder="e.g. East-facing 1200 sqft near park">
+                        <input aria-label="Outcome plot pref" type="text" id="outcomePlotPref" class="form-control" placeholder="e.g. East-facing 1200 sqft near park">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Budget Feedback</label>
-                        <input type="text" id="outcomeBudget" class="form-control" placeholder="e.g. 25 lakh">
+                        <input aria-label="Outcome budget" type="text" id="outcomeBudget" class="form-control" placeholder="e.g. 25 lakh">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Follow-up Date (for reschedule)</label>
-                        <input type="date" id="outcomeFollowup" class="form-control">
+                        <input aria-label="Outcome followup" type="date" id="outcomeFollowup" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Notes</label>

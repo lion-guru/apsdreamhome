@@ -45,7 +45,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
     <?php echo CSRFProtection::csrfField(); ?>
                     <div class="col-md-4">
                         <label class="form-label">Associate ID</label>
-                        <input type="number" name="associate_id" class="form-control" value="<?php echo e($selected_associate); ?>" placeholder="Enter associate ID">
+                        <input aria-label="Associate id" type="number" name="associate_id" class="form-control" value="<?php echo e($selected_associate); ?>" placeholder="Enter associate ID">
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">

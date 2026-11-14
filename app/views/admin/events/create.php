@@ -8,7 +8,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Title</label>
-                            <input type="text" name="title" class="form-control" required>
+                            <input aria-label="Title" type="text" name="title" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
@@ -16,11 +16,11 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Event Date</label>
-                            <input type="date" name="event_date" class="form-control" required>
+                            <input aria-label="Event date" type="date" name="event_date" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Location</label>
-                            <input type="text" name="location" class="form-control">
+                            <input aria-label="Location" type="text" name="location" class="form-control">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>

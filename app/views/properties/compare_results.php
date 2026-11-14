@@ -317,7 +317,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="session-name">Comparison Name</label>
-                    <input type="text" class="form-control" id="session-name" 
+                    <input aria-label="Session name" type="text" class="form-control" id="session-name" 
                            value="Comparison <?= date('Y-m-d H:i') ?>" placeholder="Enter a name for this comparison">
                 </div>
             </div>

@@ -48,11 +48,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             </div>
                             <div class="col-md-4">
                                 <label for="ground_coverage_sqft" class="form-label fw-semibold">Ground Footprint (sq.ft) <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" class="form-control" id="ground_coverage_sqft" name="ground_coverage_sqft" placeholder="e.g. 800" required>
+                                <input aria-label="Ground coverage sqft" type="number" step="0.01" class="form-control" id="ground_coverage_sqft" name="ground_coverage_sqft" placeholder="e.g. 800" required>
                             </div>
                             <div class="col-md-4">
                                 <label for="total_builtup_sqft" class="form-label fw-semibold">Total Built-up (sq.ft) <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" class="form-control" id="total_builtup_sqft" name="total_builtup_sqft" placeholder="e.g. 1500" required>
+                                <input aria-label="Total builtup sqft" type="number" step="0.01" class="form-control" id="total_builtup_sqft" name="total_builtup_sqft" placeholder="e.g. 1500" required>
                             </div>
                         </div>
 
@@ -60,28 +60,28 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         <div class="row g-3 mb-4">
                             <div class="col-md-3">
                                 <label for="front_setback_ft" class="form-label fw-semibold">Front Setback (ft) <span class="text-danger">*</span></label>
-                                <input type="number" step="0.1" class="form-control" id="front_setback_ft" name="front_setback_ft" value="10.0" required>
+                                <input aria-label="Front setback ft" type="number" step="0.1" class="form-control" id="front_setback_ft" name="front_setback_ft" value="10.0" required>
                                 <div class="form-text small">Min 10.0 ft from road border.</div>
                             </div>
                             <div class="col-md-3">
                                 <label for="rear_setback_ft" class="form-label fw-semibold">Rear Setback (ft) <span class="text-danger">*</span></label>
-                                <input type="number" step="0.1" class="form-control" id="rear_setback_ft" name="rear_setback_ft" value="5.0" required>
+                                <input aria-label="Rear setback ft" type="number" step="0.1" class="form-control" id="rear_setback_ft" name="rear_setback_ft" value="5.0" required>
                                 <div class="form-text small">Min 5.0 ft for rear ventilation.</div>
                             </div>
                             <div class="col-md-3">
                                 <label for="side_setback_left_ft" class="form-label fw-semibold">Left Side Setback (ft)</label>
-                                <input type="number" step="0.1" class="form-control" id="side_setback_left_ft" name="side_setback_left_ft" value="3.0">
+                                <input aria-label="Side setback left ft" type="number" step="0.1" class="form-control" id="side_setback_left_ft" name="side_setback_left_ft" value="3.0">
                                 <div class="form-text small">Min 3.0 ft recommended.</div>
                             </div>
                             <div class="col-md-3">
                                 <label for="side_setback_right_ft" class="form-label fw-semibold">Right Side Setback (ft)</label>
-                                <input type="number" step="0.1" class="form-control" id="side_setback_right_ft" name="side_setback_right_ft" value="3.0">
+                                <input aria-label="Side setback right ft" type="number" step="0.1" class="form-control" id="side_setback_right_ft" name="side_setback_right_ft" value="3.0">
                                 <div class="form-text small">Min 3.0 ft recommended.</div>
                             </div>
                         </div>
 
                         <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="rainwater_harvesting_pit" name="rainwater_harvesting_pit" value="1" checked>
+                            <input aria-label="Rainwater harvesting pit" class="form-check-input" type="checkbox" id="rainwater_harvesting_pit" name="rainwater_harvesting_pit" value="1" checked>
                             <label class="form-check-label fw-semibold" for="rainwater_harvesting_pit">
                                 Mandatory Rainwater Harvesting (RWH) Recharge Pit included in drawing
                             </label>
@@ -92,11 +92,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label for="architect_name" class="form-label">Architect / Engineer Name</label>
-                                <input type="text" class="form-control" id="architect_name" name="architect_name" placeholder="e.g. Ar. Sunil Verma">
+                                <input aria-label="Architect name" type="text" class="form-control" id="architect_name" name="architect_name" placeholder="e.g. Ar. Sunil Verma">
                             </div>
                             <div class="col-md-6">
                                 <label for="architect_council_reg" class="form-label">Council of Architecture Reg. / COA No.</label>
-                                <input type="text" class="form-control" id="architect_council_reg" name="architect_council_reg" placeholder="e.g. CA/2021/11823">
+                                <input aria-label="Architect council reg" type="text" class="form-control" id="architect_council_reg" name="architect_council_reg" placeholder="e.g. CA/2021/11823">
                             </div>
                         </div>
 

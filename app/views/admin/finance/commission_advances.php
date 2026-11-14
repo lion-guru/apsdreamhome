@@ -172,11 +172,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                             <div class="modal-body row g-2">
                                                 <div class="col-md-6">
                                                     <label class="form-label small fw-semibold">Approved Amount (₹)</label>
-                                                    <input type="number" name="approved_amount" class="form-control" value="<?= (float)$a['requested_amount'] ?>" required>
+                                                    <input aria-label="Approved amount" type="number" name="approved_amount" class="form-control" value="<?= (float)$a['requested_amount'] ?>" required>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label small fw-semibold">Payout Recovery Rate (%)</label>
-                                                    <input type="number" name="deduction_pct" class="form-control" value="25" min="5" max="100" required>
+                                                    <input aria-label="Deduction pct" type="number" name="deduction_pct" class="form-control" value="25" min="5" max="100" required>
                                                 </div>
                                                 <div class="col-12">
                                                     <label class="form-label small fw-semibold">Admin Remarks</label>
@@ -204,7 +204,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                             <div class="modal-body">
                                                 <div class="mb-2">
                                                     <label class="form-label small fw-semibold">Bank UTR / Transaction Reference</label>
-                                                    <input type="text" name="disbursement_ref" class="form-control" placeholder="e.g. UTR123456789 / CHEQUE-981" required>
+                                                    <input aria-label="Disbursement ref" type="text" name="disbursement_ref" class="form-control" placeholder="e.g. UTR123456789 / CHEQUE-981" required>
                                                 </div>
                                                 <small class="text-muted">This activates auto-recovery from the associate's future commission disbursements.</small>
                                             </div>

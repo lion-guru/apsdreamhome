@@ -38,7 +38,7 @@ foreach ($all_plots as $p) { $byColony[$p['colony_id']][] = $p; }
             <p class="text-muted mb-0">Click any plot for details & 1-click 24-hour hold — prevents double-booking on site visits</p>
         </div>
         <div class="d-flex gap-2 align-items-center flex-wrap">
-            <input type="text" id="plotSearch" class="form-control form-control-sm" style="width:200px" placeholder="Search plot no...">
+            <input aria-label="Plot search" type="text" id="plotSearch" class="form-control form-control-sm" style="width:200px" placeholder="Search plot no...">
             <select aria-label="Colony filter" id="colonyFilter" class="form-select form-select-sm w-auto" onchange="filterByColony(this.value)">
                 <option value="0">All Colonies</option>
                 <?php foreach ($colonies as $c): ?>

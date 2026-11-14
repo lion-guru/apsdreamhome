@@ -81,32 +81,32 @@ if ($employeeId) {
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Basic Salary <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" min="0" name="basic" class="form-control" 
+                                <input aria-label="Basic" type="number" step="0.01" min="0" name="basic" class="form-control" 
                                     value="<?= $currentSalary['basic'] ?? '' ?>" required>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">HRA Received</label>
-                                <input type="number" step="0.01" min="0" name="hra" class="form-control" 
+                                <input aria-label="Hra" type="number" step="0.01" min="0" name="hra" class="form-control" 
                                     value="<?= $currentSalary['hra'] ?? '' ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Conveyance Allowance</label>
-                                <input type="number" step="0.01" min="0" name="conveyance" class="form-control" 
+                                <input aria-label="Conveyance" type="number" step="0.01" min="0" name="conveyance" class="form-control" 
                                     value="<?= $currentSalary['conveyance'] ?? '' ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Medical Allowance</label>
-                                <input type="number" step="0.01" min="0" name="medical" class="form-control" 
+                                <input aria-label="Medical" type="number" step="0.01" min="0" name="medical" class="form-control" 
                                     value="<?= $currentSalary['medical'] ?? '' ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Special Allowance</label>
-                                <input type="number" step="0.01" min="0" name="special" class="form-control" 
+                                <input aria-label="Special" type="number" step="0.01" min="0" name="special" class="form-control" 
                                     value="<?= $currentSalary['special'] ?? '' ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Other Allowances</label>
-                                <input type="number" step="0.01" min="0" name="other" class="form-control" 
+                                <input aria-label="Other" type="number" step="0.01" min="0" name="other" class="form-control" 
                                     value="<?= $currentSalary['other'] ?? '' ?>">
                             </div>
                         </div>
@@ -116,42 +116,42 @@ if ($employeeId) {
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">80C Investments</label>
-                                <input type="number" step="0.01" min="0" max="150000" name="ded_80c" class="form-control" value="0">
+                                <input aria-label="Ded 80c" type="number" step="0.01" min="0" max="150000" name="ded_80c" class="form-control" value="0">
                                 <div class="form-text">Max ₹1,50,000</div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">80CCD(1B) - NPS</label>
-                                <input type="number" step="0.01" min="0" max="50000" name="ded_80ccd1b" class="form-control" value="0">
+                                <input aria-label="Ded 80ccd1b" type="number" step="0.01" min="0" max="50000" name="ded_80ccd1b" class="form-control" value="0">
                                 <div class="form-text">Max ₹50,000</div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">80D Health Insurance</label>
-                                <input type="number" step="0.01" min="0" max="100000" name="ded_80d" class="form-control" value="0">
+                                <input aria-label="Ded 80d" type="number" step="0.01" min="0" max="100000" name="ded_80d" class="form-control" value="0">
                                 <div class="form-text">Max ₹1,00,000</div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">HRA Exemption</label>
-                                <input type="number" step="0.01" min="0" name="ded_hra" class="form-control" value="0">
+                                <input aria-label="Ded hra" type="number" step="0.01" min="0" name="ded_hra" class="form-control" value="0">
                                 <div class="form-text">Based on rent paid</div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Home Loan Interest (24b)</label>
-                                <input type="number" step="0.01" min="0" max="200000" name="ded_24b" class="form-control" value="0">
+                                <input aria-label="Ded 24b" type="number" step="0.01" min="0" max="200000" name="ded_24b" class="form-control" value="0">
                                 <div class="form-text">Max ₹2,00,000</div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">80E Education Loan</label>
-                                <input type="number" step="0.01" min="0" name="ded_80e" class="form-control" value="0">
+                                <input aria-label="Ded 80e" type="number" step="0.01" min="0" name="ded_80e" class="form-control" value="0">
                                 <div class="form-text">No limit</div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Standard Deduction</label>
-                                <input type="number" step="0.01" min="0" max="50000" name="ded_std" class="form-control" value="50000" readonly>
+                                <input aria-label="Ded std" type="number" step="0.01" min="0" max="50000" name="ded_std" class="form-control" value="50000" readonly>
                                 <div class="form-text">Fixed ₹50,000</div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold">Professional Tax</label>
-                                <input type="number" step="0.01" min="0" max="2500" name="ded_pt" class="form-control" value="2400">
+                                <input aria-label="Ded pt" type="number" step="0.01" min="0" max="2500" name="ded_pt" class="form-control" value="2400">
                                 <div class="form-text">Max ₹2,500</div>
                             </div>
                         </div>
@@ -161,7 +161,7 @@ if ($employeeId) {
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">Rent Paid (Monthly)</label>
-                                <input type="number" step="0.01" min="0" name="rent_paid" class="form-control" value="0">
+                                <input aria-label="Rent paid" type="number" step="0.01" min="0" name="rent_paid" class="form-control" value="0">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">City Type</label>

@@ -144,7 +144,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Rule Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control form-control-sm" required 
+                            <input aria-label="Name" type="text" name="name" class="form-control form-control-sm" required 
                                    placeholder="e.g., Corner Plot Premium">
                         </div>
                         <div class="col-md-6">
@@ -171,7 +171,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-6">
                             <label class="form-label small">Condition Value <span class="text-danger">*</span></label>
-                            <input type="text" name="condition_value" class="form-control form-control-sm" required 
+                            <input aria-label="Condition value" type="text" name="condition_value" class="form-control form-control-sm" required 
                                    placeholder="e.g., 1, 40, park, east">
                         </div>
                         <div class="col-md-4">
@@ -184,12 +184,12 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small">Charge Value <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0" name="charge_value" class="form-control form-control-sm" required 
+                            <input aria-label="Charge value" type="number" step="0.01" min="0" name="charge_value" class="form-control form-control-sm" required 
                                    placeholder="e.g., 10 for 10% or 150 for ₹150/sqft">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small">Priority</label>
-                            <input type="number" name="priority" class="form-control form-control-sm" value="0" min="0">
+                            <input aria-label="Priority" type="number" name="priority" class="form-control form-control-sm" value="0" min="0">
                         </div>
                     </div>
                 </div>
@@ -228,7 +228,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Rule Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control form-control-sm" required id="editName">
+                            <input aria-label="Name" type="text" name="name" class="form-control form-control-sm" required id="editName">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small">Attribute Key <span class="text-danger">*</span></label>
@@ -254,7 +254,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-6">
                             <label class="form-label small">Condition Value</label>
-                            <input type="text" name="condition_value" class="form-control form-control-sm" id="editConditionValue">
+                            <input aria-label="Condition value" type="text" name="condition_value" class="form-control form-control-sm" id="editConditionValue">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small">Charge Type</label>
@@ -266,15 +266,15 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small">Charge Value</label>
-                            <input type="number" step="0.01" name="charge_value" class="form-control form-control-sm" required id="editChargeValue">
+                            <input aria-label="Charge value" type="number" step="0.01" name="charge_value" class="form-control form-control-sm" required id="editChargeValue">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small">Priority</label>
-                            <input type="number" name="priority" class="form-control form-control-sm" value="0" min="0" id="editPriority">
+                            <input aria-label="Priority" type="number" name="priority" class="form-control form-control-sm" value="0" min="0" id="editPriority">
                         </div>
                         <div class="col-md-12">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="is_active" id="editIsActive">
+                                <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="editIsActive">
                                 <label class="form-check-label" for="editIsActive">Active</label>
                             </div>
                         </div>

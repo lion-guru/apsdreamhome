@@ -13,11 +13,11 @@ $base = $base ?? BASE_URL;
         <div class="card-body">
           <div class="mb-3">
             <label class="form-label">Property Price (₹)</label>
-            <input type="number" id="propertyPrice" class="form-control" value="5000000" min="100000" step="100000">
+            <input aria-label="Property price" type="number" id="propertyPrice" class="form-control" value="5000000" min="100000" step="100000">
           </div>
           <div class="mb-3">
             <label class="form-label">Down Payment (%)</label>
-            <input type="range" id="downPayment" class="form-range" min="10" max="50" value="20" oninput="document.getElementById('downPaymentVal').textContent=this.value+'%'">
+            <input aria-label="Down payment" type="range" id="downPayment" class="form-range" min="10" max="50" value="20" oninput="document.getElementById('downPaymentVal').textContent=this.value+'%'">
             <div class="d-flex justify-content-between">
               <small class="text-muted">10%</small>
               <span id="downPaymentVal" class="fw-bold">20%</span>
@@ -26,7 +26,7 @@ $base = $base ?? BASE_URL;
           </div>
           <div class="mb-3">
             <label class="form-label">Loan Term (years)</label>
-            <input type="range" id="loanTerm" class="form-range" min="5" max="30" value="20" oninput="document.getElementById('loanTermVal').textContent=this.value+' yr'">
+            <input aria-label="Loan term" type="range" id="loanTerm" class="form-range" min="5" max="30" value="20" oninput="document.getElementById('loanTermVal').textContent=this.value+' yr'">
             <div class="d-flex justify-content-between">
               <small class="text-muted">5 yr</small>
               <span id="loanTermVal" class="fw-bold">20 yr</span>
@@ -35,7 +35,7 @@ $base = $base ?? BASE_URL;
           </div>
           <div class="mb-3">
             <label class="form-label">Interest Rate (% p.a.)</label>
-            <input type="range" id="interestRate" class="form-range" min="5" max="15" value="8.5" step="0.1" oninput="document.getElementById('interestRateVal').textContent=this.value+'%'">
+            <input aria-label="Interest rate" type="range" id="interestRate" class="form-range" min="5" max="15" value="8.5" step="0.1" oninput="document.getElementById('interestRateVal').textContent=this.value+'%'">
             <div class="d-flex justify-content-between">
               <small class="text-muted">5%</small>
               <span id="interestRateVal" class="fw-bold">8.5%</span>
@@ -44,11 +44,11 @@ $base = $base ?? BASE_URL;
           </div>
           <div class="mb-3">
             <label class="form-label">Expected Monthly Rent (₹)</label>
-            <input type="number" id="monthlyRent" class="form-control" value="15000" min="0" step="1000">
+            <input aria-label="Monthly rent" type="number" id="monthlyRent" class="form-control" value="15000" min="0" step="1000">
           </div>
           <div class="mb-3">
             <label class="form-label">Expected Appreciation (% p.a.)</label>
-            <input type="range" id="appreciationRate" class="form-range" min="0" max="20" value="5" step="0.5" oninput="document.getElementById('appreciationVal').textContent=this.value+'%'">
+            <input aria-label="Appreciation rate" type="range" id="appreciationRate" class="form-range" min="0" max="20" value="5" step="0.5" oninput="document.getElementById('appreciationVal').textContent=this.value+'%'">
             <div class="d-flex justify-content-between">
               <small class="text-muted">0%</small>
               <span id="appreciationVal" class="fw-bold">5%</span>

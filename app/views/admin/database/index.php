@@ -22,7 +22,7 @@
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h2  class="fs-6 fw-semibold mb-0"><i class="fas fa-table me-2"></i>Largest Tables</h2>
             <form method="GET" action="<?= BASE_URL ?>/admin/database" class="d-flex gap-2">
-                <input type="text" name="search" class="form-control form-control-sm" placeholder="table name..." value="<?= htmlspecialchars($search ?? '') ?>">
+                <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="table name..." value="<?= htmlspecialchars($search ?? '') ?>">
                 <button type="submit" class="btn btn-sm btn-outline-primary">Go</button>
             </form>
         </div>

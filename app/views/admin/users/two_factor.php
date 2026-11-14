@@ -73,13 +73,13 @@
                 <div class="mb-3">
                     <label class="form-label">Secret Key (manual entry)</label>
                     <div class="input-group">
-                        <input type="text" class="form-control font-monospace" id="secretKey" readonly>
+                        <input aria-label="Secret key" type="text" class="form-control font-monospace" id="secretKey" readonly>
                         <button class="btn btn-outline-secondary" onclick="copySecret()">Copy</button>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Enter 6-digit code from app</label>
-                    <input type="text" class="form-control" id="verifyCode" maxlength="6" placeholder="000000" style="letter-spacing: 0.5em; text-align: center;">
+                    <input aria-label="Verify code" type="text" class="form-control" id="verifyCode" maxlength="6" placeholder="000000" style="letter-spacing: 0.5em; text-align: center;">
                 </div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary" onclick="verifyAndEnable()"><i class="fas fa-check me-1"></i>Verify & Enable</button>

@@ -43,21 +43,21 @@ if ($amount > 0 && $mon > 0 && $int > 0) {
                         <label class="form-label fw-medium text-secondary" for="amount"><?php echo __('emi_loan_amount', 'Loan Amount (₹)'); ?></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-primary">₹</span>
-                            <input type="number" id="amount" name="amount" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 500000" value="<?= $amount > 0 ? $amount : '' ?>" required>
+                            <input aria-label="Amount" type="number" id="amount" name="amount" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 500000" value="<?= $amount > 0 ? $amount : '' ?>" required>
                         </div>
                     </div>
                     <div class="mb-4">
                         <label class="form-label fw-medium text-secondary" for="month"><?php echo __('emi_duration_months', 'Duration (Months)'); ?></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-primary"><i class="far fa-calendar-alt"></i></span>
-                            <input type="number" id="month" name="month" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 12" value="<?= $mon > 0 ? $mon : '' ?>" required>
+                            <input aria-label="Month" type="number" id="month" name="month" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 12" value="<?= $mon > 0 ? $mon : '' ?>" required>
                         </div>
                     </div>
                     <div class="mb-4">
                         <label class="form-label fw-medium text-secondary" for="interest"><?php echo __('emi_interest_rate', 'Interest Rate (%)'); ?></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-primary"><i class="fas fa-percent"></i></span>
-                            <input type="number" step="0.01" id="interest" name="interest" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 8.5" value="<?= $int > 0 ? $int : '' ?>" required>
+                            <input aria-label="Interest" type="number" step="0.01" id="interest" name="interest" class="form-control bg-light border-start-0 ps-0" placeholder="e.g. 8.5" value="<?= $int > 0 ? $int : '' ?>" required>
                         </div>
                     </div>
                     <button type="submit" name="calc" class="btn btn-primary btn-lg w-100 rounded-pill py-3 fw-bold mt-2 shadow-sm">

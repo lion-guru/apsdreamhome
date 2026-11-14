@@ -111,7 +111,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <div class="input-group">
-                            <input type="email" class="form-control" name="email" placeholder="<?= __('newsletter_email_placeholder') ?>" required>
+                            <input aria-label="Email" type="email" class="form-control" name="email" placeholder="<?= __('newsletter_email_placeholder') ?>" required>
                             <button class="btn btn-primary" type="submit"><?= __('newsletter_subscribe_btn') ?></button>
                         </div>
                         <div id="newsletterMsg" class="mt-2 small"></div>

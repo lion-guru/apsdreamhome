@@ -133,7 +133,7 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label>Amount</label>
-                                <input type="number" class="form-control" id="convAmount" value="1" step="0.01" min="0.01">
+                                <input aria-label="Conv amount" type="number" class="form-control" id="convAmount" value="1" step="0.01" min="0.01">
                             </div>
                             <div class="form-group">
                                 <label>From</label>

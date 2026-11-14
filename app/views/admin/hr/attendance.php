@@ -85,7 +85,7 @@
             <form method="GET" class="d-flex align-items-center">
                 <div class="input-group input-group-sm me-2">
                     <span class="input-group-text bg-light"><i class="fas fa-calendar"></i></span>
-                    <input type="date" name="date" class="form-control" value="<?= htmlspecialchars($date ?? date('Y-m-d')) ?>" onchange="this.form.submit()">
+                    <input aria-label="Date" type="date" name="date" class="form-control" value="<?= htmlspecialchars($date ?? date('Y-m-d')) ?>" onchange="this.form.submit()">
                 </div>
                 <select aria-label="Status" name="status" class="form-select form-select-sm me-2" onchange="this.form.submit()">
                     <option value="">All Status</option>
@@ -206,7 +206,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small fw-bold text-uppercase">Date <span class="text-danger">*</span></label>
-                            <input type="date" name="date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Date" type="date" name="date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                         </div>
                     </div>
                     
@@ -214,19 +214,19 @@
                         <div class="card-body">
                             <label class="form-label text-muted small fw-bold text-uppercase d-block mb-3">Attendance Status</label>
                             <div class="d-flex flex-wrap gap-2 status-buttons">
-                                <input type="radio" class="btn-check" name="status" id="stat_present" value="present" checked>
+                                <input aria-label="Status" type="radio" class="btn-check" name="status" id="stat_present" value="present" checked>
                                 <label class="btn btn-outline-success px-4 rounded-pill" for="stat_present"><i class="fas fa-check-circle me-1"></i> Present</label>
 
-                                <input type="radio" class="btn-check" name="status" id="stat_absent" value="absent">
+                                <input aria-label="Status" type="radio" class="btn-check" name="status" id="stat_absent" value="absent">
                                 <label class="btn btn-outline-danger px-4 rounded-pill" for="stat_absent"><i class="fas fa-times-circle me-1"></i> Absent</label>
 
-                                <input type="radio" class="btn-check" name="status" id="stat_halfday" value="half_day">
+                                <input aria-label="Status" type="radio" class="btn-check" name="status" id="stat_halfday" value="half_day">
                                 <label class="btn btn-outline-warning px-4 rounded-pill" for="stat_halfday"><i class="fas fa-adjust me-1"></i> Half Day</label>
                                 
-                                <input type="radio" class="btn-check" name="status" id="stat_late" value="late">
+                                <input aria-label="Status" type="radio" class="btn-check" name="status" id="stat_late" value="late">
                                 <label class="btn btn-outline-warning px-4 rounded-pill" for="stat_late"><i class="fas fa-clock me-1"></i> Late</label>
 
-                                <input type="radio" class="btn-check" name="status" id="stat_leave" value="leave">
+                                <input aria-label="Status" type="radio" class="btn-check" name="status" id="stat_leave" value="leave">
                                 <label class="btn btn-outline-info px-4 rounded-pill" for="stat_leave"><i class="fas fa-plane-departure me-1"></i> Leave</label>
                             </div>
                         </div>
@@ -235,11 +235,11 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small fw-bold text-uppercase">Check In Time</label>
-                            <input type="time" name="check_in" class="form-control" value="<?= date('H:i') ?>">
+                            <input aria-label="Check in" type="time" name="check_in" class="form-control" value="<?= date('H:i') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label text-muted small fw-bold text-uppercase">Check Out Time</label>
-                            <input type="time" name="check_out" class="form-control">
+                            <input aria-label="Check out" type="time" name="check_out" class="form-control">
                             <small class="text-muted">Leave blank if not checked out yet</small>
                         </div>
                     </div>

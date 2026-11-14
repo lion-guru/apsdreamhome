@@ -15,7 +15,7 @@ $protos = ['wifi'=>'WiFi','zigbee'=>'Zigbee','zwave'=>'Z-Wave','ble'=>'Bluetooth
         <form method="POST" action="<?= BASE_URL ?>/admin/iot/catalog/save">
             <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
             <?php if ($isEdit): ?><input type="hidden" name="id" value="<?= $item['id'] ?>"><?php endif; ?>
-            <div class="mb-3"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($item['name'] ?? '') : '' ?>" required></div>
+            <div class="mb-3"><label class="form-label">Name</label><input aria-label="Name" type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($item['name'] ?? '') : '' ?>" required></div>
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Category</label>
@@ -31,11 +31,11 @@ $protos = ['wifi'=>'WiFi','zigbee'=>'Zigbee','zwave'=>'Z-Wave','ble'=>'Bluetooth
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6 mb-3"><label class="form-label">Manufacturer</label><input type="text" name="manufacturer" class="form-control" value="<?= $isEdit ? htmlspecialchars($item['manufacturer'] ?? '') : '' ?>"></div>
-                <div class="col-md-6 mb-3"><label class="form-label">Model</label><input type="text" name="model" class="form-control" value="<?= $isEdit ? htmlspecialchars($item['model'] ?? '') : '' ?>"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Manufacturer</label><input aria-label="Manufacturer" type="text" name="manufacturer" class="form-control" value="<?= $isEdit ? htmlspecialchars($item['manufacturer'] ?? '') : '' ?>"></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Model</label><input aria-label="Model" type="text" name="model" class="form-control" value="<?= $isEdit ? htmlspecialchars($item['model'] ?? '') : '' ?>"></div>
             </div>
             <div class="mb-3"><label class="form-label">Description</label><textarea aria-label="Description" name="description" class="form-control" rows="3"><?= $isEdit ? htmlspecialchars($item['description'] ?? '') : '' ?></textarea></div>
-            <div class="form-check mb-3"><input class="form-check-input" type="checkbox" name="is_active" <?= (!$isEdit || ($item['is_active'] ?? 1)) ? 'checked' : '' ?> id="a"><label class="form-check-label" for="a">Active</label></div>
+            <div class="form-check mb-3"><input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" <?= (!$isEdit || ($item['is_active'] ?? 1)) ? 'checked' : '' ?> id="a"><label class="form-check-label" for="a">Active</label></div>
             <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Save</button>
         </form>
     </div>

@@ -47,7 +47,7 @@ $csrf = $csrf ?? '';
                             <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-2"></i>
                             <p class="mb-1"><strong>Drag &amp; drop CSV here</strong></p>
                             <p class="text-muted small mb-3">or click to browse (max 10MB)</p>
-                            <input type="file" name="csv" id="csv-input" accept=".csv,text/csv" class="d-none" required>
+                            <input aria-label="Csv" type="file" name="csv" id="csv-input" accept=".csv,text/csv" class="d-none" required>
                             <button type="button" class="btn btn-primary" id="browse-btn"><i class="fas fa-folder-open me-1"></i> Browse</button>
                         </div>
                         <div id="file-info" class="alert alert-info mt-3"></div>
@@ -140,7 +140,7 @@ $csrf = $csrf ?? '';
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="skip_duplicates" id="skip_dup" value="1" checked>
+                                <input aria-label="Skip duplicates" class="form-check-input" type="checkbox" name="skip_duplicates" id="skip_dup" value="1" checked>
                                 <label class="form-check-label" for="skip_dup">Skip duplicates (title + location match)</label>
                             </div>
                         </div>

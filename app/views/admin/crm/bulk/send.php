@@ -54,7 +54,7 @@
                         <div id="emailFields">
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Subject</label>
-                                <input type="text" class="form-control" name="subject" id="bulkSubject" placeholder="e.g. New properties matching your interest, {{name}}!">
+                                <input aria-label="Subject" type="text" class="form-control" name="subject" id="bulkSubject" placeholder="e.g. New properties matching your interest, {{name}}!">
                             </div>
                         </div>
 

@@ -10,7 +10,7 @@
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="convVal"><?php echo __('enter_value', [], 'Enter Value'); ?></label>
-                            <input type="number" class="form-control form-control-lg" id="convVal" value="1000" oninput="convertAll()">
+                            <input aria-label="Conv val" type="number" class="form-control form-control-lg" id="convVal" value="1000" oninput="convertAll()">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="convFrom"><?php echo __('select_unit', [], 'Select Unit'); ?></label>

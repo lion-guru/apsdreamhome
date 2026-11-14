@@ -40,7 +40,7 @@ $settings = $settings ?? [];
 
                         <div class="mb-3">
                             <label class="form-label">WhatsApp Business Phone Number</label>
-                            <input type="text" name="whatsapp_business_phone" class="form-control" 
+                            <input aria-label="Whatsapp business phone" type="text" name="whatsapp_business_phone" class="form-control" 
                                    value="<?= htmlspecialchars($settings['whatsapp_business_phone'] ?? '') ?>" 
                                    placeholder="+91XXXXXXXXXX">
                             <div class="form-text">Enter the phone number registered with WhatsApp Business API in E.164 format</div>
@@ -49,7 +49,7 @@ $settings = $settings ?? [];
                         <div class="mb-3">
                             <label class="form-label">API Access Token</label>
                             <div class="input-group">
-                                <input type="password" name="whatsapp_api_token" class="form-control" 
+                                <input aria-label="Whatsapp api token" type="password" name="whatsapp_api_token" class="form-control" 
                                        value="<?= htmlspecialchars($settings['whatsapp_api_token'] ?? '') ?>" 
                                        id="whatsappToken" placeholder="Enter your WhatsApp API token">
                                 <button class="btn btn-outline-secondary" type="button" 
@@ -89,11 +89,11 @@ $settings = $settings ?? [];
                     <form id="whatsappTestForm" class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Test Phone Number</label>
-                            <input type="text" name="to" class="form-control" placeholder="+91XXXXXXXXXX" required>
+                            <input aria-label="To" type="text" name="to" class="form-control" placeholder="+91XXXXXXXXXX" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Test Message</label>
-                            <input type="text" name="message" class="form-control" placeholder="Hello from APS Dream Home!" required>
+                            <input aria-label="Message" type="text" name="message" class="form-control" placeholder="Hello from APS Dream Home!" required>
                         </div>
                         <div class="col-12">
                             <button type="submit" class="btn btn-outline-success" id="whatsappTestBtn">

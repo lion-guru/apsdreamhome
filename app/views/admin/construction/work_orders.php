@@ -235,27 +235,27 @@ $current_status = $current_status ?? 'all';
                 </div>
                 <div class="col-12">
                     <label class="form-label small fw-bold">Work Title / Specification <span class="text-danger">*</span></label>
-                    <input type="text" name="work_title" class="form-control" placeholder="e.g. 1500 Rft RCC Boundary Wall with 6ft Height" required>
+                    <input aria-label="Work title" type="text" name="work_title" class="form-control" placeholder="e.g. 1500 Rft RCC Boundary Wall with 6ft Height" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label small fw-bold">Contractor / Firm Name <span class="text-danger">*</span></label>
-                    <input type="text" name="contractor_name" class="form-control" placeholder="e.g. Shri Ram Construction Co." required>
+                    <input aria-label="Contractor name" type="text" name="contractor_name" class="form-control" placeholder="e.g. Shri Ram Construction Co." required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label small fw-bold">Contractor Phone <span class="text-danger">*</span></label>
-                    <input type="text" name="contractor_phone" class="form-control" placeholder="e.g. 9876543210" required>
+                    <input aria-label="Contractor phone" type="text" name="contractor_phone" class="form-control" placeholder="e.g. 9876543210" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label small fw-bold">Contractor PAN (for TDS)</label>
-                    <input type="text" name="contractor_pan" class="form-control" placeholder="ABCDE1234F">
+                    <input aria-label="Contractor pan" type="text" name="contractor_pan" class="form-control" placeholder="ABCDE1234F">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label small fw-bold">Contractor GSTIN</label>
-                    <input type="text" name="contractor_gstin" class="form-control" placeholder="09AAAAA0000A1Z5">
+                    <input aria-label="Contractor gstin" type="text" name="contractor_gstin" class="form-control" placeholder="09AAAAA0000A1Z5">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small fw-bold">Total Contract Sum (₹) <span class="text-danger">*</span></label>
-                    <input type="number" step="0.01" name="contract_amount" class="form-control" placeholder="1500000" required>
+                    <input aria-label="Contract amount" type="number" step="0.01" name="contract_amount" class="form-control" placeholder="1500000" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small fw-bold">Retention Holdback (%)</label>
@@ -267,11 +267,11 @@ $current_status = $current_status ?? 'all';
                 </div>
                 <div class="col-md-6">
                     <label class="form-label small fw-bold">Commencement Date</label>
-                    <input type="date" name="start_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                    <input aria-label="Start date" type="date" name="start_date" class="form-control" value="<?= date('Y-m-d') ?>">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label small fw-bold">Target Completion Deadline</label>
-                    <input type="date" name="completion_deadline" class="form-control" value="<?= date('Y-m-d', strtotime('+3 months')) ?>">
+                    <input aria-label="Completion deadline" type="date" name="completion_deadline" class="form-control" value="<?= date('Y-m-d', strtotime('+3 months')) ?>">
                 </div>
                 <div class="col-12">
                     <label class="form-label small fw-bold">Scope of Work & Milestone Terms</label>

@@ -22,40 +22,40 @@ $colony = $colony ?? null;
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label text-white">Total Land Area (sqft) *</label>
-                <input type="number" name="total_land_sqft" class="form-control bg-dark text-white border-secondary" required value="<?= number_format(floatval($colony['total_area_sqft'] ?? 0), 0, '.', '') ?>">
+                <input aria-label="Total land sqft" type="number" name="total_land_sqft" class="form-control bg-dark text-white border-secondary" required value="<?= number_format(floatval($colony['total_area_sqft'] ?? 0), 0, '.', '') ?>">
               </div>
               <div class="col-md-6">
                 <label class="form-label text-white">Road Width (ft) *</label>
-                <input type="number" name="road_width_ft" class="form-control bg-dark text-white border-secondary" value="30" min="20">
+                <input aria-label="Road width ft" type="number" name="road_width_ft" class="form-control bg-dark text-white border-secondary" value="30" min="20">
                 <small class="text-warning">Legal minimum: 20 ft</small>
               </div>
               <div class="col-md-4">
                 <label class="form-label text-white">Plot Width (ft)</label>
-                <input type="number" name="plot_width_ft" class="form-control bg-dark text-white border-secondary" value="30">
+                <input aria-label="Plot width ft" type="number" name="plot_width_ft" class="form-control bg-dark text-white border-secondary" value="30">
               </div>
               <div class="col-md-4">
                 <label class="form-label text-white">Plot Length (ft)</label>
-                <input type="number" name="plot_length_ft" class="form-control bg-dark text-white border-secondary" value="40">
+                <input aria-label="Plot length ft" type="number" name="plot_length_ft" class="form-control bg-dark text-white border-secondary" value="40">
               </div>
               <div class="col-md-4">
                 <label class="form-label text-white">Plots Per Block</label>
-                <input type="number" name="plots_per_block" class="form-control bg-dark text-white border-secondary" value="20">
+                <input aria-label="Plots per block" type="number" name="plots_per_block" class="form-control bg-dark text-white border-secondary" value="20">
               </div>
               <div class="col-md-4">
                 <label class="form-label text-white">Road Area %</label>
-                <input type="number" name="road_area_pct" class="form-control bg-dark text-white border-secondary" value="15" min="15">
+                <input aria-label="Road area pct" type="number" name="road_area_pct" class="form-control bg-dark text-white border-secondary" value="15" min="15">
               </div>
               <div class="col-md-4">
                 <label class="form-label text-white">Park Area %</label>
-                <input type="number" name="park_area_pct" class="form-control bg-dark text-white border-secondary" value="10">
+                <input aria-label="Park area pct" type="number" name="park_area_pct" class="form-control bg-dark text-white border-secondary" value="10">
               </div>
               <div class="col-md-4">
                 <label class="form-label text-white">Amenity Area %</label>
-                <input type="number" name="amenity_area_pct" class="form-control bg-dark text-white border-secondary" value="5">
+                <input aria-label="Amenity area pct" type="number" name="amenity_area_pct" class="form-control bg-dark text-white border-secondary" value="5">
               </div>
               <div class="col-md-12">
                 <label class="form-label text-white">Block Names (comma-separated)</label>
-                <input type="text" name="blocks" class="form-control bg-dark text-white border-secondary" value="A, B, C" placeholder="A, B, C">
+                <input aria-label="Blocks" type="text" name="blocks" class="form-control bg-dark text-white border-secondary" value="A, B, C" placeholder="A, B, C">
               </div>
             </div>
 

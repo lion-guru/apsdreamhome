@@ -29,9 +29,9 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                     <input type="hidden" name="device_id" value="<?= $device['id'] ?>">
                     <div class="row">
-                        <div class="col-5 mb-2"><input type="text" name="metric" class="form-control" placeholder="metric" value="temperature" required></div>
-                        <div class="col-4 mb-2"><input type="number" step="0.01" name="value" class="form-control" placeholder="value" required></div>
-                        <div class="col-3 mb-2"><input type="text" name="unit" class="form-control" placeholder="unit" value="°C"></div>
+                        <div class="col-5 mb-2"><input aria-label="Metric" type="text" name="metric" class="form-control" placeholder="metric" value="temperature" required></div>
+                        <div class="col-4 mb-2"><input aria-label="Value" type="number" step="0.01" name="value" class="form-control" placeholder="value" required></div>
+                        <div class="col-3 mb-2"><input aria-label="Unit" type="text" name="unit" class="form-control" placeholder="unit" value="°C"></div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-save me-1"></i> Record</button>
                 </form>

@@ -74,7 +74,7 @@ $day_names = $day_names ?? ['Sunday','Monday','Tuesday','Wednesday','Thursday','
                         <div class="d-flex flex-wrap gap-2">
                             <?php foreach ($day_names as $di => $dn): ?>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="wsDay<?= $di ?>" name="work_days[]" value="<?= $di ?>" <?= $di >= 1 && $di <= 6 ? 'checked' : '' ?>>
+                                    <input aria-label="Ws day di" type="checkbox" class="form-check-input" id="wsDay<?= $di ?>" name="work_days[]" value="<?= $di ?>" <?= $di >= 1 && $di <= 6 ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="wsDay<?= $di ?>"><?= htmlspecialchars(substr($dn, 0, 3)) ?></label>
                                 </div>
                             <?php endforeach; ?>
@@ -83,15 +83,15 @@ $day_names = $day_names ?? ['Sunday','Monday','Tuesday','Wednesday','Thursday','
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label" for="wsStart">Shift Start *</label>
-                            <input type="time" class="form-control" id="wsStart" name="shift_start" required value="09:00">
+                            <input aria-label="Ws start" type="time" class="form-control" id="wsStart" name="shift_start" required value="09:00">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="wsEnd">Shift End *</label>
-                            <input type="time" class="form-control" id="wsEnd" name="shift_end" required value="18:00">
+                            <input aria-label="Ws end" type="time" class="form-control" id="wsEnd" name="shift_end" required value="18:00">
                         </div>
                     </div>
                     <div class="form-check mt-3">
-                        <input type="checkbox" class="form-check-input" id="wsActive" name="is_active" value="1" checked>
+                        <input aria-label="Ws active" type="checkbox" class="form-check-input" id="wsActive" name="is_active" value="1" checked>
                         <label class="form-check-label" for="wsActive">Active</label>
                     </div>
                 </div>

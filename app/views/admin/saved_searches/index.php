@@ -200,7 +200,7 @@
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                 <div class="mb-3">
                                     <label class="form-label small">Name *</label>
-                                    <input type="text" name="name" class="form-control" required placeholder="e.g. Hot leads from Facebook">
+                                    <input aria-label="Name" type="text" name="name" class="form-control" required placeholder="e.g. Hot leads from Facebook">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small">Entity Type *</label>
@@ -221,11 +221,11 @@
                                     <small class="text-muted">JSON object of filter key=value pairs</small>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" name="is_favorite" id="isFav">
+                                    <input aria-label="Is favorite" class="form-check-input" type="checkbox" name="is_favorite" id="isFav">
                                     <label class="form-check-label" for="isFav">Mark as favorite</label>
                                 </div>
                                 <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" name="is_public" id="isPub">
+                                    <input aria-label="Is public" class="form-check-input" type="checkbox" name="is_public" id="isPub">
                                     <label class="form-check-label" for="isPub">Share with team (public)</label>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">

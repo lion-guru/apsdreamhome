@@ -126,11 +126,11 @@ $isCancelled = $currentStatus === 'cancelled';
                         <div class="row g-2 mb-2">
                             <div class="col-6">
                                 <label class="form-label">Stamp Duty (&#8377;)</label>
-                                <input type="number" step="0.01" class="form-control" name="stamp_duty_amount" value="<?= htmlspecialchars($booking['stamp_duty_amount'] ?? '') ?>" required>
+                                <input aria-label="Stamp duty amount" type="number" step="0.01" class="form-control" name="stamp_duty_amount" value="<?= htmlspecialchars($booking['stamp_duty_amount'] ?? '') ?>" required>
                             </div>
                             <div class="col-6">
                                 <label class="form-label">Reg. Fees (&#8377;)</label>
-                                <input type="number" step="0.01" class="form-control" name="registration_fees" value="<?= htmlspecialchars($booking['registration_fees'] ?? '') ?>" required>
+                                <input aria-label="Registration fees" type="number" step="0.01" class="form-control" name="registration_fees" value="<?= htmlspecialchars($booking['registration_fees'] ?? '') ?>" required>
                             </div>
                         </div>
                         <div class="mb-2">
@@ -159,11 +159,11 @@ $isCancelled = $currentStatus === 'cancelled';
                         <div class="row g-2 mb-2">
                             <div class="col-6">
                                 <label class="form-label">Appointment Date & Time</label>
-                                <input type="datetime-local" class="form-control" name="appointment_date" required>
+                                <input aria-label="Appointment date" type="datetime-local" class="form-control" name="appointment_date" required>
                             </div>
                             <div class="col-6">
                                 <label class="form-label">Sub-Registrar Office</label>
-                                <input type="text" class="form-control" name="sub_registrar_office" placeholder="e.g. Sub-Registrar Office, Gorakhpur" required>
+                                <input aria-label="Sub registrar office" type="text" class="form-control" name="sub_registrar_office" placeholder="e.g. Sub-Registrar Office, Gorakhpur" required>
                             </div>
                         </div>
                         <div class="mb-2">
@@ -190,11 +190,11 @@ $isCancelled = $currentStatus === 'cancelled';
                         <div class="row g-2 mb-2">
                             <div class="col-6">
                                 <label class="form-label">Registry Number</label>
-                                <input type="text" class="form-control" name="registry_number" placeholder="e.g. REG-2026-001234" required>
+                                <input aria-label="Registry number" type="text" class="form-control" name="registry_number" placeholder="e.g. REG-2026-001234" required>
                             </div>
                             <div class="col-6">
                                 <label class="form-label">Registry Date</label>
-                                <input type="date" class="form-control" name="registry_date" value="<?= date('Y-m-d') ?>">
+                                <input aria-label="Registry date" type="date" class="form-control" name="registry_date" value="<?= date('Y-m-d') ?>">
                             </div>
                         </div>
                         <div class="mb-2">
@@ -236,11 +236,11 @@ $isCancelled = $currentStatus === 'cancelled';
                             </div>
                             <div class="col-4">
                                 <label class="form-label">Mutation Number</label>
-                                <input type="text" class="form-control" name="mutation_number" value="<?= htmlspecialchars($booking['mutation_number'] ?? '') ?>" placeholder="e.g. MUT-2026-001">
+                                <input aria-label="Mutation number" type="text" class="form-control" name="mutation_number" value="<?= htmlspecialchars($booking['mutation_number'] ?? '') ?>" placeholder="e.g. MUT-2026-001">
                             </div>
                             <div class="col-4">
                                 <label class="form-label">Mutation Date</label>
-                                <input type="date" class="form-control" name="mutation_date" value="<?= $booking['mutation_date'] ?? '' ?>">
+                                <input aria-label="Mutation date" type="date" class="form-control" name="mutation_date" value="<?= $booking['mutation_date'] ?? '' ?>">
                             </div>
                         </div>
                         <div class="mb-2">

@@ -103,19 +103,19 @@ $base = BASE_URL;
                                         
                                         <?php if ($type === 'boolean'): ?>
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" name="value" id="value" <?= (bool)$value ? 'checked' : '' ?> value="1">
+                                                <input aria-label="Value" class="form-check-input" type="checkbox" name="value" id="value" <?= (bool)$value ? 'checked' : '' ?> value="1">
                                                 <label class="form-check-label" for="value">Enabled</label>
                                             </div>
                                             
                                         <?php elseif ($type === 'integer' || $type === 'float'): ?>
-                                            <input type="number" name="value" class="form-control" value="<?= htmlspecialchars((string)$value) ?>" step="<?= $type === 'float' ? '0.01' : '1' ?>">
+                                            <input aria-label="Value" type="number" name="value" class="form-control" value="<?= htmlspecialchars((string)$value) ?>" step="<?= $type === 'float' ? '0.01' : '1' ?>">
                                             
                                         <?php elseif ($type === 'json' || $type === 'array'): ?>
                                             <textarea aria-label="Value" name="value" class="form-control json-editor" rows="10" style="font-size: 0.85rem;"><?= htmlspecialchars(is_array($value) ? json_encode($value, JSON_PRETTY_PRINT) : $value) ?></textarea>
                                             <div class="form-text">Valid JSON format required</div>
                                             
                                         <?php else: ?>
-                                            <input type="text" name="value" class="form-control" value="<?= htmlspecialchars((string)$value) ?>">
+                                            <input aria-label="Value" type="text" name="value" class="form-control" value="<?= htmlspecialchars((string)$value) ?>">
                                         <?php endif; ?>
                                     </div>
 
@@ -123,11 +123,11 @@ $base = BASE_URL;
                                         <label class="col-sm-2 col-form-label">Flags</label>
                                         <div class="col-sm-10">
                                             <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" id="is_public" name="is_public" <?= ($config['is_public'] ?? false) ? 'checked' : '' ?>>
+                                                <input aria-label="Is public" class="form-check-input" type="checkbox" id="is_public" name="is_public" <?= ($config['is_public'] ?? false) ? 'checked' : '' ?>>
                                                 <label class="form-check-label" for="is_public">Public (accessible via API)</label>
                                             </div>
                                             <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" id="is_editable" name="is_editable" <?= ($config['is_editable'] ?? true) ? 'checked' : '' ?>>
+                                                <input aria-label="Is editable" class="form-check-input" type="checkbox" id="is_editable" name="is_editable" <?= ($config['is_editable'] ?? true) ? 'checked' : '' ?>>
                                                 <label class="form-check-label" for="is_editable">Editable via UI</label>
                                             </div>
                                         </div>

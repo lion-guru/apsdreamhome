@@ -43,14 +43,14 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Rate <span class="text-danger">*</span></label>
-                                            <input type="number" name="rate" class="form-control" step="0.000001" min="0.000001" required placeholder="e.g. 83.50">
+                                            <input aria-label="Rate" type="number" name="rate" class="form-control" step="0.000001" min="0.000001" required placeholder="e.g. 83.50">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
                                         <input type="hidden" name="is_active" value="1">
-                                        <input type="checkbox" class="custom-control-input" id="isActive" checked>
+                                        <input aria-label="Is active" type="checkbox" class="custom-control-input" id="isActive" checked>
                                         <label class="custom-control-label" for="isActive">Active</label>
                                     </div>
                                 </div>

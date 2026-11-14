@@ -53,22 +53,22 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <div class="row">
                 <div class="col-md-8">
                     <label>Title *</label>
-                    <input type="text" name="title" value="Agent Listing Agreement" required>
+                    <input aria-label="Title" type="text" name="title" value="Agent Listing Agreement" required>
                 </div>
                 <div class="col-md-4">
                     <label>Commission % *</label>
-                    <input type="number" name="commission_pct" step="0.01" min="0" max="100" value="5.00" required>
+                    <input aria-label="Commission pct" type="number" name="commission_pct" step="0.01" min="0" max="100" value="5.00" required>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6">
                     <label>Start Date *</label>
-                    <input type="date" name="start_date" value="<?= date('Y-m-d') ?>" required>
+                    <input aria-label="Start date" type="date" name="start_date" value="<?= date('Y-m-d') ?>" required>
                 </div>
                 <div class="col-md-6">
                     <label>End Date *</label>
-                    <input type="date" name="end_date" value="<?= date('Y-m-d', strtotime('+1 year')) ?>" required>
+                    <input aria-label="End date" type="date" name="end_date" value="<?= date('Y-m-d', strtotime('+1 year')) ?>" required>
                 </div>
             </div>
 

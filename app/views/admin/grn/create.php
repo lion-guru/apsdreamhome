@@ -24,29 +24,29 @@ $today = $today ?? date('Y-m-d');
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">GRN Number</label>
-                    <input type="text" name="grn_number" id="grn_number" class="form-control" placeholder="GRN-20261016...">
+                    <input aria-label="Grn number" type="text" name="grn_number" id="grn_number" class="form-control" placeholder="GRN-20261016...">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Invoice Number</label>
-                    <input type="text" name="invoice_number" class="form-control" placeholder="Invoice #">
+                    <input aria-label="Invoice number" type="text" name="invoice_number" class="form-control" placeholder="Invoice #">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Invoice Date</label>
-                    <input type="date" name="invoice_date" class="form-control">
+                    <input aria-label="Invoice date" type="date" name="invoice_date" class="form-control">
                 </div>
             </div>
 
             <div class="row g-3 mt-3">
-                <div class="col-md-3"><label class="form-label">Transporter</label><input type="text" name="transport_name" class="form-control"></div>
-                <div class="col-md-3"><label class="form-label">Vehicle No.</label><input type="text" name="vehicle_number" class="form-control"></div>
-                <div class="col-md-3"><label class="form-label">Driver Name</label><input type="text" name="driver_name" class="form-control"></div>
-                <div class="col-md-3"><label class="form-label">Driver Phone</label><input type="text" name="driver_phone" class="form-control"></div>
+                <div class="col-md-3"><label class="form-label">Transporter</label><input aria-label="Transport name" type="text" name="transport_name" class="form-control"></div>
+                <div class="col-md-3"><label class="form-label">Vehicle No.</label><input aria-label="Vehicle number" type="text" name="vehicle_number" class="form-control"></div>
+                <div class="col-md-3"><label class="form-label">Driver Name</label><input aria-label="Driver name" type="text" name="driver_name" class="form-control"></div>
+                <div class="col-md-3"><label class="form-label">Driver Phone</label><input aria-label="Driver phone" type="text" name="driver_phone" class="form-control"></div>
             </div>
 
             <div class="row g-3 mt-3">
-                <div class="col-md-3"><label class="form-label">Challan Number</label><input type="text" name="challan_number" class="form-control"></div>
-                <div class="col-md-3"><label class="form-label">Challan Date</label><input type="date" name="challan_date" class="form-control"></div>
-                <div class="col-md-6"><label class="form-label">Remarks</label><input type="text" name="remarks" class="form-control"></div>
+                <div class="col-md-3"><label class="form-label">Challan Number</label><input aria-label="Challan number" type="text" name="challan_number" class="form-control"></div>
+                <div class="col-md-3"><label class="form-label">Challan Date</label><input aria-label="Challan date" type="date" name="challan_date" class="form-control"></div>
+                <div class="col-md-6"><label class="form-label">Remarks</label><input aria-label="Remarks" type="text" name="remarks" class="form-control"></div>
             </div>
 
             <div class="mt-4">

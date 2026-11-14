@@ -10,7 +10,7 @@
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="propVal"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
-                            <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcStamp()">
+                            <input aria-label="Prop val" type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcStamp()">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="stateSel"><?php echo __('state', [], 'State'); ?></label>

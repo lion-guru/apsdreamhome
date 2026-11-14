@@ -13,7 +13,7 @@ $slipNo = 'CHS-' . str_replace('-', '', $date) . '-' . substr(md5($date . count(
     <div class="d-flex justify-content-between align-items-center mb-3 no-print">
         <a href="<?= BASE_URL ?>/admin/cash-collections" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Collections</a>
         <form method="GET" action="<?= BASE_URL ?>/admin/cash-collections/handover-slip" class="d-flex gap-2">
-            <input type="date" name="date" class="form-control form-control-sm" value="<?= htmlspecialchars($date) ?>">
+            <input aria-label="Date" type="date" name="date" class="form-control form-control-sm" value="<?= htmlspecialchars($date) ?>">
             <button type="submit" class="btn btn-sm btn-primary">View</button>
         </form>
         <button class="btn btn-success btn-sm" onclick="window.print()"><i class="fas fa-print me-1"></i>Print Slip</button>

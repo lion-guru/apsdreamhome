@@ -24,7 +24,7 @@ $csrf = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Experiment Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="name" required pattern="[a-zA-Z0-9_\-]+" maxlength="100"
+                            <input aria-label="Name" type="text" class="form-control" name="name" required pattern="[a-zA-Z0-9_\-]+" maxlength="100"
                                    placeholder="homepage_cta" autocomplete="off">
                             <div class="form-text">Slug-style — alphanumeric, underscore, dash. Used in code and URLs.</div>
                         </div>
@@ -35,7 +35,7 @@ $csrf = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                         </div>
                         <div class="mb-0">
                             <label class="form-label fw-semibold">Traffic Allocation: <span id="traffic-display">100</span>%</label>
-                            <input type="range" class="form-range" name="traffic_allocation" min="1" max="100" value="100"
+                            <input aria-label="Traffic allocation" type="range" class="form-range" name="traffic_allocation" min="1" max="100" value="100"
                                    oninput="document.getElementById('traffic-display').textContent = this.value">
                             <div class="form-text">% of users to include in the experiment (rest see the default).</div>
                         </div>
@@ -86,11 +86,11 @@ $csrf = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
 <template id="variant-template">
     <div class="row g-2 mb-2 align-items-center variant-row">
         <div class="col-md-6">
-            <input type="text" class="form-control" name="variants[__INDEX__][name]" placeholder="variant name (e.g. control)" pattern="[a-zA-Z0-9_\-]+" maxlength="50" required>
+            <input aria-label="Variants index name" type="text" class="form-control" name="variants[__INDEX__][name]" placeholder="variant name (e.g. control)" pattern="[a-zA-Z0-9_\-]+" maxlength="50" required>
         </div>
         <div class="col-md-4">
             <div class="input-group">
-                <input type="number" class="form-control" name="variants[__INDEX__][weight]" placeholder="weight" min="1" max="1000" value="50" required>
+                <input aria-label="Variants index weight" type="number" class="form-control" name="variants[__INDEX__][weight]" placeholder="weight" min="1" max="1000" value="50" required>
                 <span class="input-group-text">w</span>
             </div>
         </div>

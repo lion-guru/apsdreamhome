@@ -249,7 +249,7 @@ $unmatched_txns = $unmatched_txns ?? [];
                         <label class="form-label fw-semibold">Search Internal Transactions</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control" id="internalSearch" placeholder="Search by description or type..." autocomplete="off">
+                            <input aria-label="Internal search" type="text" class="form-control" id="internalSearch" placeholder="Search by description or type..." autocomplete="off">
                             <button type="button" class="btn btn-outline-primary" id="searchBtn">Search</button>
                         </div>
                         <div class="form-text">Searches payment_transactions and daily_cash_book for matching amounts.</div>
@@ -349,7 +349,7 @@ $unmatched_txns = $unmatched_txns ?? [];
                 results.forEach(function(row) {
                     var tr = document.createElement('tr');
                     tr.style.cursor = 'pointer';
-                    tr.innerHTML = '<td><input type="radio" name="internal_txn_id" value="' + row.id + '" class="form-check-input"></td>' +
+                    tr.innerHTML = '<td><input aria-label="Internal txn id" type="radio" name="internal_txn_id" value="' + row.id + '" class="form-check-input"></td>' +
                         '<td>' + (row.transaction_date || '') + '</td>' +
                         '<td>' + (row.type || '') + '</td>' +
                         '<td>' + (row.description || '').substring(0, 50) + '</td>' +

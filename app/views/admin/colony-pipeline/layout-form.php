@@ -21,8 +21,8 @@ $cid = (int)($colony['id'] ?? 0);
                 <?php endif; ?>
                 <form method="POST" action="<?= BASE_URL ?>/admin/colony-pipeline/<?= $cid ?>/layout/generate">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                    <div class="mb-3"><label class="form-label">Total Area (sqft)</label><input type="number" step="0.01" name="total_area_sqft" class="form-control" value="<?= htmlspecialchars($total_area_sqft) ?>" required></div>
-                    <div class="mb-3"><label class="form-label">Layout Name</label><input type="text" name="layout_name" class="form-control" placeholder="Phase 1"></div>
+                    <div class="mb-3"><label class="form-label">Total Area (sqft)</label><input aria-label="Total area sqft" type="number" step="0.01" name="total_area_sqft" class="form-control" value="<?= htmlspecialchars($total_area_sqft) ?>" required></div>
+                    <div class="mb-3"><label class="form-label">Layout Name</label><input aria-label="Layout name" type="text" name="layout_name" class="form-control" placeholder="Phase 1"></div>
                     <button type="submit" class="btn btn-primary"><i class="fas fa-cogs me-1"></i>Generate Plots</button>
                 </form>
                 <?php if (!empty($existing_plots)): ?>

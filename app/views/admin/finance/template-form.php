@@ -10,7 +10,7 @@
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <input type="hidden" name="id" value="<?= $id ?>">
                 <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label"><?php echo __('finance_template_name'); ?> <span class="text-danger">*</span></label><input type="text" name="template_name" required class="form-control" value="<?= htmlspecialchars($template['template_name'] ?? '') ?>"></div>
+                    <div class="col-md-6"><label class="form-label"><?php echo __('finance_template_name'); ?> <span class="text-danger">*</span></label><input aria-label="Template name" type="text" name="template_name" required class="form-control" value="<?= htmlspecialchars($template['template_name'] ?? '') ?>"></div>
                     <div class="col-md-4"><label class="form-label"><?php echo __('finance_type'); ?> <span class="text-danger">*</span></label>
                         <select aria-label="Template type" name="template_type" required class="form-select">
                             <option value="overdue_installment" <?= ($template['template_type'] ?? '') === 'overdue_installment' ? 'selected' : '' ?>><?php echo __('finance_overdue_installment'); ?></option>
@@ -22,9 +22,9 @@
                         </select>
                     </div>
                     <div class="col-md-2"><label class="form-label"><?php echo __('finance_active'); ?></label>
-                        <div class="form-check mt-2"><input class="form-check-input" type="checkbox" name="active" value="1" id="active" <?= !empty($template['active']) || $id === 0 ? 'checked' : '' ?>><label class="form-check-label" for="active"><?php echo __('finance_active'); ?></label></div>
+                        <div class="form-check mt-2"><input aria-label="Active" class="form-check-input" type="checkbox" name="active" value="1" id="active" <?= !empty($template['active']) || $id === 0 ? 'checked' : '' ?>><label class="form-check-label" for="active"><?php echo __('finance_active'); ?></label></div>
                     </div>
-                    <div class="col-12"><label class="form-label"><?php echo __('finance_subject'); ?></label><input type="text" name="subject" class="form-control" value="<?= htmlspecialchars($template['subject'] ?? '') ?>"></div>
+                    <div class="col-12"><label class="form-label"><?php echo __('finance_subject'); ?></label><input aria-label="Subject" type="text" name="subject" class="form-control" value="<?= htmlspecialchars($template['subject'] ?? '') ?>"></div>
                     <div class="col-12">
                         <label class="form-label"><?php echo __('finance_body_html'); ?> <span class="text-danger">*</span></label>
                         <textarea aria-label="Body html" name="body_html" required class="form-control" rows="14" placeholder="<?php echo __('finance_available_placeholders'); ?> {{customer_name}}, {{amount}}, {{due_date}}, {{booking_number}}"><?= htmlspecialchars($template['body_html'] ?? '') ?></textarea>

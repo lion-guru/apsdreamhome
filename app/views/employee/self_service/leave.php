@@ -85,11 +85,11 @@ $leave_types = $leave_types ?? [];
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Start Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="start_date" class="form-control" required min="<?= date('Y-m-d') ?>">
+                                    <input aria-label="Start date" type="date" name="start_date" class="form-control" required min="<?= date('Y-m-d') ?>">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">End Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="end_date" class="form-control" required min="<?= date('Y-m-d') ?>">
+                                    <input aria-label="End date" type="date" name="end_date" class="form-control" required min="<?= date('Y-m-d') ?>">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Reason <span class="text-danger">*</span></label>
@@ -97,11 +97,11 @@ $leave_types = $leave_types ?? [];
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Emergency Contact</label>
-                                    <input type="text" name="emergency_contact" class="form-control" placeholder="Name & Phone">
+                                    <input aria-label="Emergency contact" type="text" name="emergency_contact" class="form-control" placeholder="Name & Phone">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Work Coverage Plan</label>
-                                    <input type="text" name="work_coverage" class="form-control" placeholder="Who will cover your work?">
+                                    <input aria-label="Work coverage" type="text" name="work_coverage" class="form-control" placeholder="Who will cover your work?">
                                 </div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-danger">

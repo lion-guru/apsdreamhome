@@ -41,7 +41,7 @@ $d = $state['form_data'] ?? [];
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Price *</label>
-                                <input type="number" step="0.01" name="price" class="form-control" required min="1" value="<?= htmlspecialchars($d['price'] ?? '') ?>">
+                                <input aria-label="Price" type="number" step="0.01" name="price" class="form-control" required min="1" value="<?= htmlspecialchars($d['price'] ?? '') ?>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Unit</label>
@@ -54,11 +54,11 @@ $d = $state['form_data'] ?? [];
                             </div>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" name="negotiable" id="neg" value="1" <?= !empty($d['negotiable']) ? 'checked' : '' ?>>
+                            <input aria-label="Negotiable" class="form-check-input" type="checkbox" name="negotiable" id="neg" value="1" <?= !empty($d['negotiable']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="neg">Price is negotiable</label>
                         </div>
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" name="emi_available" id="emi" value="1" <?= !empty($d['emiAvailable']) ? 'checked' : '' ?>>
+                            <input aria-label="Emi available" class="form-check-input" type="checkbox" name="emi_available" id="emi" value="1" <?= !empty($d['emiAvailable']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="emi">EMI available</label>
                         </div>
                         <div class="d-flex justify-content-between mt-4">

@@ -182,7 +182,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <input type="hidden" id="scheduleId">
                         <div class="mb-3">
                             <label class="form-label">Amount</label>
-                            <input type="number" id="paymentAmount" class="form-control" step="0.01" readonly>
+                            <input aria-label="Payment amount" type="number" id="paymentAmount" class="form-control" step="0.01" readonly>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Payment Method</label>
@@ -196,7 +196,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Transaction ID</label>
-                            <input type="text" id="transactionId" class="form-control" placeholder="Optional">
+                            <input aria-label="Transaction id" type="text" id="transactionId" class="form-control" placeholder="Optional">
                         </div>
                     </form>
                 </div>

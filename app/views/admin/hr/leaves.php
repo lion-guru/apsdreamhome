@@ -189,11 +189,11 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3 mb-md-0">
                                     <label class="form-label text-muted small fw-bold">Start Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="start_date" class="form-control form-control-lg" required>
+                                    <input aria-label="Start date" type="date" name="start_date" class="form-control form-control-lg" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small fw-bold">End Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="end_date" class="form-control form-control-lg" required>
+                                    <input aria-label="End date" type="date" name="end_date" class="form-control form-control-lg" required>
                                 </div>
                             </div>
                         </div>

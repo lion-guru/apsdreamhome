@@ -168,29 +168,29 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Audit Date</label>
-                        <input type="date" name="census_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Census date" type="date" name="census_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Park / Green Area (sqft)</label>
-                        <input type="number" step="100" name="green_area_sqft" class="form-control" value="15000">
+                        <input aria-label="Green area sqft" type="number" step="100" name="green_area_sqft" class="form-control" value="15000">
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Park / Avenue Name</label>
-                        <input type="text" name="park_name" class="form-control" value="Central Amrit Sarovar Park">
+                        <input aria-label="Park name" type="text" name="park_name" class="form-control" value="Central Amrit Sarovar Park">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Trees Planted Count *</label>
-                        <input type="number" name="trees_planted_count" class="form-control" value="120" required>
+                        <input aria-label="Trees planted count" type="number" name="trees_planted_count" class="form-control" value="120" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Survival Rate (%)</label>
-                        <input type="number" step="0.5" name="survival_rate_pct" class="form-control" value="94.0">
+                        <input aria-label="Survival rate pct" type="number" step="0.5" name="survival_rate_pct" class="form-control" value="94.0">
                     </div>
 
                     <div class="col-12">
                         <label class="form-label small fw-semibold">Tree Species Planted / Preserved</label>
-                        <input type="text" name="tree_species_summary" class="form-control" value="Neem, Gulmohar, Peepal, Amaltas, Bougainvillea, Champa">
+                        <input aria-label="Tree species summary" type="text" name="tree_species_summary" class="form-control" value="Neem, Gulmohar, Peepal, Amaltas, Bougainvillea, Champa">
                     </div>
 
                     <div class="col-md-4">
@@ -204,11 +204,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Fertilizer / Vermicompost (kg)</label>
-                        <input type="number" step="1" name="fertilizer_used_kg" class="form-control" value="30">
+                        <input aria-label="Fertilizer used kg" type="number" step="1" name="fertilizer_used_kg" class="form-control" value="30">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Active Gardeners (Headcount)</label>
-                        <input type="number" name="gardener_headcount" class="form-control" value="4">
+                        <input aria-label="Gardener headcount" type="number" name="gardener_headcount" class="form-control" value="4">
                     </div>
 
                     <div class="col-md-4">
@@ -223,11 +223,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Horticulture Supervisor *</label>
-                        <input type="text" name="horticulture_supervisor" class="form-control" value="Kamlesh Maurya" required>
+                        <input aria-label="Horticulture supervisor" type="text" name="horticulture_supervisor" class="form-control" value="Kamlesh Maurya" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Supervisor Contact</label>
-                        <input type="text" name="supervisor_contact" class="form-control" value="+91 9839887766">
+                        <input aria-label="Supervisor contact" type="text" name="supervisor_contact" class="form-control" value="+91 9839887766">
                     </div>
 
                     <div class="col-12">

@@ -25,7 +25,7 @@ $statusBadge = function ($s) {
         <form method="get" class="row g-2 mb-3">
             <div class="col-md-3">
                 <label class="form-label small">Beneficiary User ID</label>
-                <input type="number" name="associate_id" class="form-control form-control-sm" value="<?= htmlspecialchars((string)($filters['associate_id'] ?? '')) ?>">
+                <input aria-label="Associate id" type="number" name="associate_id" class="form-control form-control-sm" value="<?= htmlspecialchars((string)($filters['associate_id'] ?? '')) ?>">
             </div>
             <div class="col-md-2">
                 <label class="form-label small">Status</label>
@@ -38,11 +38,11 @@ $statusBadge = function ($s) {
             </div>
             <div class="col-md-2">
                 <label class="form-label small">From</label>
-                <input type="date" name="from" class="form-control form-control-sm" value="<?= htmlspecialchars((string)($filters['from'] ?? '')) ?>">
+                <input aria-label="From" type="date" name="from" class="form-control form-control-sm" value="<?= htmlspecialchars((string)($filters['from'] ?? '')) ?>">
             </div>
             <div class="col-md-2">
                 <label class="form-label small">To</label>
-                <input type="date" name="to" class="form-control form-control-sm" value="<?= htmlspecialchars((string)($filters['to'] ?? '')) ?>">
+                <input aria-label="To" type="date" name="to" class="form-control form-control-sm" value="<?= htmlspecialchars((string)($filters['to'] ?? '')) ?>">
             </div>
             <div class="col-md-3 d-flex align-items-end">
                 <button class="btn btn-primary btn-sm me-2" type="submit"><i class="fas fa-search me-1"></i>Filter</button>

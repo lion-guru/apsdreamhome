@@ -78,7 +78,7 @@ $page_title = $page_title ?? 'Employee Bonuses';
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    <div class="mb-3"><label class="form-label">Amount (₹) <span class="text-danger">*</span></label><input type="number" name="bonus_amount" class="form-control" step="0.01" required></div>
+                    <div class="mb-3"><label class="form-label">Amount (₹) <span class="text-danger">*</span></label><input aria-label="Bonus amount" type="number" name="bonus_amount" class="form-control" step="0.01" required></div>
                     <div class="row mb-3">
                         <div class="col-6"><label class="form-label">Month</label>
                             <select aria-label="Bonus month" name="bonus_month" class="form-select">
@@ -87,7 +87,7 @@ $page_title = $page_title ?? 'Employee Bonuses';
                                 <?php endfor; ?>
                             </select>
                         </div>
-                        <div class="col-6"><label class="form-label">Year</label><input type="number" name="bonus_year" class="form-control" value="<?= date('Y') ?>"></div>
+                        <div class="col-6"><label class="form-label">Year</label><input aria-label="Bonus year" type="number" name="bonus_year" class="form-control" value="<?= date('Y') ?>"></div>
                     </div>
                     <div class="mb-3"><label class="form-label">Reason</label><textarea aria-label="Reason" name="reason" class="form-control" rows="2"></textarea></div>
                 </div>

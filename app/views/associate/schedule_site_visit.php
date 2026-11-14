@@ -40,22 +40,22 @@ $selected_lead = $selected_lead ?? '';
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold"><?= __('assoc_ssv_visitor_name', [], 'Visitor Name') ?> *</label>
-                                <input type="text" class="form-control" name="visitor_name" id="visitorName" required placeholder="<?= __('assoc_ssv_name_placeholder', [], 'Full name') ?>">
+                                <input aria-label="Visitor name" type="text" class="form-control" name="visitor_name" id="visitorName" required placeholder="<?= __('assoc_ssv_name_placeholder', [], 'Full name') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold"><?= __('assoc_ssv_phone', [], 'Phone Number') ?> *</label>
-                                <input type="tel" class="form-control" name="visitor_phone" id="visitorPhone" required placeholder="<?= __('assoc_ssv_phone_placeholder', [], '10-digit mobile') ?>" pattern="[0-9]{10}">
+                                <input aria-label="Visitor phone" type="tel" class="form-control" name="visitor_phone" id="visitorPhone" required placeholder="<?= __('assoc_ssv_phone_placeholder', [], '10-digit mobile') ?>" pattern="[0-9]{10}">
                             </div>
                         </div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?= __('assoc_ssv_date', [], 'Visit Date') ?> *</label>
-                                <input type="date" class="form-control" name="visit_date" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>">
+                                <input aria-label="Visit date" type="date" class="form-control" name="visit_date" required min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?= __('assoc_ssv_time', [], 'Visit Time') ?> *</label>
-                                <input type="time" class="form-control" name="visit_time" required value="10:00">
+                                <input aria-label="Visit time" type="time" class="form-control" name="visit_time" required value="10:00">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold"><?= __('assoc_ssv_duration', [], 'Duration') ?></label>

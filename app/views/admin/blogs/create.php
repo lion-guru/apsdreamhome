@@ -12,7 +12,7 @@
                             <div class="col-md-8">
                                 <div class="mb-3">
                                     <label class="form-label">Title</label>
-                                    <input type="text" name="title" class="form-control" required>
+                                    <input aria-label="Title" type="text" name="title" class="form-control" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Content</label>
@@ -40,11 +40,11 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Featured Image</label>
-                                    <input type="file" name="image" class="form-control" accept="image/*">
+                                    <input aria-label="Image" type="file" name="image" class="form-control" accept="image/*">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Meta Title</label>
-                                    <input type="text" name="meta_title" class="form-control">
+                                    <input aria-label="Meta title" type="text" name="meta_title" class="form-control">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Meta Description</label>

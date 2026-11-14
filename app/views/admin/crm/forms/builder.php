@@ -126,11 +126,11 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                             <input type="hidden" id="editingFieldIndex">
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Label *</label>
-                                <input type="text" class="form-control" id="fieldLabel" placeholder="e.g. Full Name">
+                                <input aria-label="Field label" type="text" class="form-control" id="fieldLabel" placeholder="e.g. Full Name">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Placeholder</label>
-                                <input type="text" class="form-control" id="fieldPlaceholder" placeholder="e.g. Enter your name">
+                                <input aria-label="Field placeholder" type="text" class="form-control" id="fieldPlaceholder" placeholder="e.g. Enter your name">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Field Type</label>
@@ -149,11 +149,11 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                                 <textarea aria-label="Field options" class="form-control" id="fieldOptions" rows="4" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea>
                             </div>
                             <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="fieldRequired">
+                                <input aria-label="Field required" type="checkbox" class="form-check-input" id="fieldRequired">
                                 <label class="form-check-label fw-bold" for="fieldRequired">Required</label>
                             </div>
                             <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="fieldHidden">
+                                <input aria-label="Field hidden" type="checkbox" class="form-check-input" id="fieldHidden">
                                 <label class="form-check-label fw-bold" for="fieldHidden">Hidden Field</label>
                             </div>
                             <div class="d-flex gap-2">
@@ -172,18 +172,18 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Submit Button Text</label>
-                            <input type="text" class="form-control" name="submit_text" value="<?= htmlspecialchars($settings['submit_text'] ?? 'Submit') ?>">
+                            <input aria-label="Submit text" type="text" class="form-control" name="submit_text" value="<?= htmlspecialchars($settings['submit_text'] ?? 'Submit') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Success Message</label>
-                            <input type="text" class="form-control" name="success_message" value="<?= htmlspecialchars($settings['success_message'] ?? 'Thank you for your interest!') ?>">
+                            <input aria-label="Success message" type="text" class="form-control" name="success_message" value="<?= htmlspecialchars($settings['success_message'] ?? 'Thank you for your interest!') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Redirect URL (optional)</label>
-                            <input type="url" class="form-control" name="redirect_url" value="<?= htmlspecialchars($settings['redirect_url'] ?? '') ?>" placeholder="https://example.com/thank-you">
+                            <input aria-label="Redirect url" type="url" class="form-control" name="redirect_url" value="<?= htmlspecialchars($settings['redirect_url'] ?? '') ?>" placeholder="https://example.com/thank-you">
                         </div>
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" name="auto_assign" id="auto_assign" <?= !empty($settings['auto_assign']) ? 'checked' : '' ?>>
+                            <input aria-label="Auto assign" type="checkbox" class="form-check-input" name="auto_assign" id="auto_assign" <?= !empty($settings['auto_assign']) ? 'checked' : '' ?>>
                             <label class="form-check-label fw-bold" for="auto_assign">Auto-assign to Agent</label>
                         </div>
                         <div class="mb-3" id="assignToContainer" >
@@ -218,7 +218,7 @@ $settings = json_decode($form['settings'] ?? '{}', true) ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Tags (comma-separated)</label>
-                            <input type="text" class="form-control" name="tags" value="<?= htmlspecialchars(implode(', ', $settings['tags'] ?? [])) ?>" placeholder="e.g. website, landing-page">
+                            <input aria-label="Tags" type="text" class="form-control" name="tags" value="<?= htmlspecialchars(implode(', ', $settings['tags'] ?? [])) ?>" placeholder="e.g. website, landing-page">
                         </div>
                     </div>
                 </div>

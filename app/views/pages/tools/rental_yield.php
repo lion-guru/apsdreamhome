@@ -10,15 +10,15 @@
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="propVal"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
-                            <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcYield()">
+                            <input aria-label="Prop val" type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcYield()">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="rentAmt"><?php echo __('monthly_rent_rs', [], 'Monthly Rent (₹)'); ?></label>
-                            <input type="number" class="form-control form-control-lg" id="rentAmt" value="15000" oninput="calcYield()">
+                            <input aria-label="Rent amt" type="number" class="form-control form-control-lg" id="rentAmt" value="15000" oninput="calcYield()">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="expPct"><?php echo __('annual_expenses_pct', [], 'Annual Expenses (%)'); ?></label>
-                            <input type="number" class="form-control" id="expPct" value="10" oninput="calcYield()">
+                            <input aria-label="Exp pct" type="number" class="form-control" id="expPct" value="10" oninput="calcYield()">
                         </div>
                         <div class="row g-3 text-center">
                             <div class="col-6">

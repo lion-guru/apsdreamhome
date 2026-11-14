@@ -22,21 +22,21 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($farmer['name'] ?? '') ?>" required>
+                                <input aria-label="Name" type="text" class="form-control" name="name" value="<?= htmlspecialchars($farmer['name'] ?? '') ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" value="<?= htmlspecialchars($farmer['email'] ?? '') ?>">
+                                <input aria-label="Email" type="email" class="form-control" name="email" value="<?= htmlspecialchars($farmer['email'] ?? '') ?>">
                             </div>
                         </div>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" name="phone" value="<?= htmlspecialchars($farmer['phone'] ?? '') ?>" required>
+                                <input aria-label="Phone" type="tel" class="form-control" name="phone" value="<?= htmlspecialchars($farmer['phone'] ?? '') ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Address <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="address" value="<?= htmlspecialchars($farmer['address'] ?? '') ?>" required>
+                                <input aria-label="Address" type="text" class="form-control" name="address" value="<?= htmlspecialchars($farmer['address'] ?? '') ?>" required>
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
@@ -64,11 +64,11 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label">Aadhar Number</label>
-                                <input type="text" class="form-control" name="aadhar_number" value="<?= htmlspecialchars($farmer['aadhar_number'] ?? '') ?>">
+                                <input aria-label="Aadhar number" type="text" class="form-control" name="aadhar_number" value="<?= htmlspecialchars($farmer['aadhar_number'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">PAN Number</label>
-                                <input type="text" class="form-control" name="pan_number" value="<?= htmlspecialchars($farmer['pan_number'] ?? '') ?>">
+                                <input aria-label="Pan number" type="text" class="form-control" name="pan_number" value="<?= htmlspecialchars($farmer['pan_number'] ?? '') ?>">
                             </div>
                         </div>
 
@@ -76,11 +76,11 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label">Bank Account Number</label>
-                                <input type="text" class="form-control" name="bank_account" value="<?= htmlspecialchars($farmer['bank_account'] ?? '') ?>">
+                                <input aria-label="Bank account" type="text" class="form-control" name="bank_account" value="<?= htmlspecialchars($farmer['bank_account'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">IFSC Code</label>
-                                <input type="text" class="form-control" name="ifsc_code" value="<?= htmlspecialchars($farmer['ifsc_code'] ?? '') ?>">
+                                <input aria-label="Ifsc code" type="text" class="form-control" name="ifsc_code" value="<?= htmlspecialchars($farmer['ifsc_code'] ?? '') ?>">
                             </div>
                         </div>
 

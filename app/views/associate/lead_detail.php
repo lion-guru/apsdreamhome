@@ -241,11 +241,11 @@ $today = date('Y-m-d');
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
                             <label class="form-label"><i class="fas fa-calendar me-1"></i><?= __('assoc_lead_followup_date', [], 'Follow-up Date') ?></label>
-                            <input type="date" class="form-control form-control-sm" name="followup_date" min="<?= $today ?>">
+                            <input aria-label="Followup date" type="date" class="form-control form-control-sm" name="followup_date" min="<?= $today ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label"><i class="fas fa-clock me-1"></i><?= __('assoc_lead_time', [], 'Time') ?></label>
-                            <input type="time" class="form-control form-control-sm" name="followup_time">
+                            <input aria-label="Followup time" type="time" class="form-control form-control-sm" name="followup_time">
                         </div>
                     </div>
                     <div class="row g-2 mb-3">
@@ -320,7 +320,7 @@ $today = date('Y-m-d');
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <input type="file" class="form-control form-control-sm" name="document" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" required>
+                            <input aria-label="Document" type="file" class="form-control form-control-sm" name="document" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" required>
                         </div>
                         <div class="col-md-3">
                             <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fas fa-upload me-1"></i><?= __('assoc_lead_upload', [], 'Upload') ?></button>
@@ -422,10 +422,10 @@ $today = date('Y-m-d');
                                 <option value="no_answer"><?= __('assoc_call_noanswer', [], 'No answer') ?></option>
                                 <option value="busy"><?= __('assoc_call_busy', [], 'Busy') ?></option>
                             </select>
-                            <input type="number" class="form-control" name="duration" min="0" max="999" placeholder="<?= __('assoc_call_mins', [], 'min') ?>" style="max-width:80px">
+                            <input aria-label="Duration" type="number" class="form-control" name="duration" min="0" max="999" placeholder="<?= __('assoc_call_mins', [], 'min') ?>" style="max-width:80px">
                         </div>
                         <div class="input-group input-group-sm">
-                            <input type="text" class="form-control" name="call_notes" maxlength="255" placeholder="<?= __('assoc_call_notes_ph', [], 'Call notes (optional)') ?>">
+                            <input aria-label="Call notes" type="text" class="form-control" name="call_notes" maxlength="255" placeholder="<?= __('assoc_call_notes_ph', [], 'Call notes (optional)') ?>">
                             <button type="submit" class="btn btn-outline-primary" aria-label="Call"><i class="fas fa-phone"></i></button>
                         </div>
                     </form>
@@ -667,11 +667,11 @@ $today = date('Y-m-d');
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-bold"><?= __('assoc_lead_modal_visit_date', [], 'Visit Date *') ?></label>
-                            <input type="date" class="form-control" name="visit_date" min="<?= $today ?>" required value="<?= $today ?>">
+                            <input aria-label="Visit date" type="date" class="form-control" name="visit_date" min="<?= $today ?>" required value="<?= $today ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold"><?= __('assoc_lead_modal_visit_time', [], 'Visit Time *') ?></label>
-                            <input type="time" class="form-control" name="visit_time" required value="10:00">
+                            <input aria-label="Visit time" type="time" class="form-control" name="visit_time" required value="10:00">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold"><?= __('assoc_lead_modal_duration', [], 'Duration') ?></label>

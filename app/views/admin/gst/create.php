@@ -19,7 +19,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Invoice Number</label>
-                        <input type="text" name="invoice_number" class="form-control" value="INV-<?= strtoupper(uniqid()) ?>">
+                        <input aria-label="Invoice number" type="text" name="invoice_number" class="form-control" value="INV-<?= strtoupper(uniqid()) ?>">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Status</label>
@@ -32,25 +32,25 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Client Name</label>
-                        <input type="text" name="client_name" class="form-control" required>
+                        <input aria-label="Client name" type="text" name="client_name" class="form-control" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Client GSTIN</label>
-                        <input type="text" name="client_gstin" class="form-control" placeholder="22AAAAA0000A1Z5">
+                        <input aria-label="Client gstin" type="text" name="client_gstin" class="form-control" placeholder="22AAAAA0000A1Z5">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Invoice Date</label>
-                        <input type="date" name="invoice_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Invoice date" type="date" name="invoice_date" class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Due Date</label>
-                        <input type="date" name="due_date" class="form-control" value="<?= date('Y-m-d', strtotime('+30 days')) ?>">
+                        <input aria-label="Due date" type="date" name="due_date" class="form-control" value="<?= date('Y-m-d', strtotime('+30 days')) ?>">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Total Amount (₹)</label>
-                        <input type="number" name="total_amount" class="form-control" step="0.01" value="0" required>
+                        <input aria-label="Total amount" type="number" name="total_amount" class="form-control" step="0.01" value="0" required>
                     </div>
                 </div>
                 <h5 class="mt-4 mb-3">GST Configuration</h5>
@@ -74,36 +74,36 @@
                     </div>
                     <div class="col-md-2 mb-3">
                         <label class="form-label">CGST (₹)</label>
-                        <input type="number" name="cgst_amount" class="form-control" step="0.01" value="0">
+                        <input aria-label="Cgst amount" type="number" name="cgst_amount" class="form-control" step="0.01" value="0">
                     </div>
                     <div class="col-md-2 mb-3">
                         <label class="form-label">SGST (₹)</label>
-                        <input type="number" name="sgst_amount" class="form-control" step="0.01" value="0">
+                        <input aria-label="Sgst amount" type="number" name="sgst_amount" class="form-control" step="0.01" value="0">
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">IGST (₹)</label>
-                        <input type="number" name="igst_amount" class="form-control" step="0.01" value="0">
+                        <input aria-label="Igst amount" type="number" name="igst_amount" class="form-control" step="0.01" value="0">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">HSN Code</label>
-                        <input type="text" name="hsn_code" class="form-control" placeholder="e.g. 9987">
+                        <input aria-label="Hsn code" type="text" name="hsn_code" class="form-control" placeholder="e.g. 9987">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Place of Supply</label>
-                        <input type="text" name="place_of_supply" class="form-control" placeholder="e.g. Uttar Pradesh">
+                        <input aria-label="Place of supply" type="text" name="place_of_supply" class="form-control" placeholder="e.g. Uttar Pradesh">
                     </div>
                 </div>
                 <h5 class="mt-4 mb-3">E-Invoicing (Optional)</h5>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">E-Invoice Number</label>
-                        <input type="text" name="e_invoice_number" class="form-control">
+                        <input aria-label="E invoice number" type="text" name="e_invoice_number" class="form-control">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">E-Way Bill</label>
-                        <input type="text" name="e_way_bill" class="form-control">
+                        <input aria-label="E way bill" type="text" name="e_way_bill" class="form-control">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary mt-3"><i class="fas fa-save me-1"></i>Create GST Invoice</button>

@@ -37,16 +37,16 @@ unset($_SESSION['success'], $_SESSION['error']);
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
                             <label class="form-label">Current Password</label>
-                            <input type="password" name="current_password" class="form-control" required>
+                            <input aria-label="Current password" type="password" name="current_password" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">New Password</label>
-                            <input type="password" name="new_password" class="form-control" required minlength="6">
+                            <input aria-label="New password" type="password" name="new_password" class="form-control" required minlength="6">
                             <small class="text-muted">Minimum 6 characters</small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Confirm New Password</label>
-                            <input type="password" name="confirm_password" class="form-control" required>
+                            <input aria-label="Confirm password" type="password" name="confirm_password" class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-2"></i>Update Password

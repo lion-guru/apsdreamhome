@@ -58,7 +58,7 @@
         <div class="card-body aps-cp-card-body">
             <form method="GET" id="bulkActionForm" class="row g-3">
                 <div class="col-md-4">
-                    <input type="text" name="search" class="form-control" placeholder="Search by name, phone, email..." value="<?php echo htmlspecialchars($search ?? ''); ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search by name, phone, email..." value="<?php echo htmlspecialchars($search ?? ''); ?>">
                 </div>
                 <div class="col-md-3">
                     <select aria-label="Type" name="type" class="form-select">
@@ -137,7 +137,7 @@
                                 <?php foreach ($properties as $p): ?>
                                     <tr data-id="<?php echo e($p['id']); ?>">
                                         <td>
-                                            <input type="checkbox" name="ids[]" value="<?php echo e($p['id']); ?>" class="form-check-input rowCheckbox">
+                                            <input aria-label="Ids" type="checkbox" name="ids[]" value="<?php echo e($p['id']); ?>" class="form-check-input rowCheckbox">
                                         </td>
                                         <td><?php echo e($p['id']); ?></td>
                                         <td>
@@ -381,12 +381,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 <div id="setPriceGroup" class="mb-3">
                     <label for="bulkPriceValue" class="form-label fw-bold">New Price (₹)</label>
-                    <input type="number" class="form-control" id="bulkPriceValue" placeholder="e.g., 5000000" min="0" step="1000">
+                    <input aria-label="Bulk price value" type="number" class="form-control" id="bulkPriceValue" placeholder="e.g., 5000000" min="0" step="1000">
                 </div>
 
                 <div id="adjustPriceGroup" class="mb-3" style="display: none;">
                     <label for="bulkPricePercent" class="form-label fw-bold">Percentage (%)</label>
-                    <input type="number" class="form-control" id="bulkPricePercent" placeholder="e.g., 10" min="0.01" max="100" step="0.01">
+                    <input aria-label="Bulk price percent" type="number" class="form-control" id="bulkPricePercent" placeholder="e.g., 10" min="0.01" max="100" step="0.01">
                     <div class="mt-2">
                         <label class="form-label fw-bold">Adjustment</label>
                         <select aria-label="Bulk price adjust" class="form-select" id="bulkPriceAdjust">

@@ -17,10 +17,10 @@
             <form method="POST" action="<?= BASE_URL ?>/admin/users">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">Full Name <span class="text-danger">*</span></label><input type="text" name="name" class="form-control" required></div>
-                    <div class="col-md-6"><label class="form-label">Email</label><input type="email" name="email" class="form-control"></div>
-                    <div class="col-md-6"><label class="form-label">Phone <span class="text-danger">*</span></label><input type="text" name="phone" class="form-control" required></div>
-                    <div class="col-md-6"><label class="form-label">Alternate Phone</label><input type="text" name="alt_phone" class="form-control"></div>
+                    <div class="col-md-6"><label class="form-label">Full Name <span class="text-danger">*</span></label><input aria-label="Name" type="text" name="name" class="form-control" required></div>
+                    <div class="col-md-6"><label class="form-label">Email</label><input aria-label="Email" type="email" name="email" class="form-control"></div>
+                    <div class="col-md-6"><label class="form-label">Phone <span class="text-danger">*</span></label><input aria-label="Phone" type="text" name="phone" class="form-control" required></div>
+                    <div class="col-md-6"><label class="form-label">Alternate Phone</label><input aria-label="Alt phone" type="text" name="alt_phone" class="form-control"></div>
                     <div class="col-md-6">
                         <label class="form-label">Address</label>
                         <div class="input-group">
@@ -28,12 +28,12 @@
                             <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="address" title="Pick on Map" aria-label="Add"><i class="fas fa-map-marker-alt"></i></button>
                         </div>
                     </div>
-                    <div class="col-md-3"><label class="form-label">City</label><input type="text" name="city" class="form-control" data-autofill="city"></div>
-                    <div class="col-md-3"><label class="form-label">State</label><input type="text" name="state" class="form-control" data-autofill="state"></div>
+                    <div class="col-md-3"><label class="form-label">City</label><input aria-label="City" type="text" name="city" class="form-control" data-autofill="city"></div>
+                    <div class="col-md-3"><label class="form-label">State</label><input aria-label="State" type="text" name="state" class="form-control" data-autofill="state"></div>
                     <div class="col-md-3">
                         <label class="form-label">Pincode</label>
                         <div class="input-group">
-                            <input type="text" name="pincode" class="form-control" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
+                            <input aria-label="Pincode" type="text" name="pincode" class="form-control" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
                             <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use My Location" aria-label="Use my location">
                                 <i class="fas fa-location-crosshairs"></i>
                             </button>

@@ -45,19 +45,19 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold"><?= __('browse_min_price') ?></label>
-                        <input type="number" name="min_price" class="form-control form-control-sm" placeholder="e.g. 500000" value="<?= (int)$current_min_price ?>">
+                        <input aria-label="Min price" type="number" name="min_price" class="form-control form-control-sm" placeholder="e.g. 500000" value="<?= (int)$current_min_price ?>">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold"><?= __('browse_max_price') ?></label>
-                        <input type="number" name="max_price" class="form-control form-control-sm" placeholder="e.g. 5000000" value="<?= (int)$current_max_price ?>">
+                        <input aria-label="Max price" type="number" name="max_price" class="form-control form-control-sm" placeholder="e.g. 5000000" value="<?= (int)$current_max_price ?>">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold"><?= __('browse_min_area') ?></label>
-                        <input type="number" name="min_area" class="form-control form-control-sm" placeholder="e.g. 1000" value="<?= (int)$current_min_area ?>">
+                        <input aria-label="Min area" type="number" name="min_area" class="form-control form-control-sm" placeholder="e.g. 1000" value="<?= (int)$current_min_area ?>">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold"><?= __('browse_max_area') ?></label>
-                        <input type="number" name="max_area" class="form-control form-control-sm" placeholder="e.g. 5000" value="<?= (int)$current_max_area ?>">
+                        <input aria-label="Max area" type="number" name="max_area" class="form-control form-control-sm" placeholder="e.g. 5000" value="<?= (int)$current_max_area ?>">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold"><?= __('browse_sort_by') ?></label>

@@ -145,7 +145,7 @@ $replies = $ticket['replies'] ?? [];
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label">Attachment</label>
                             <div class="col-sm-10">
-                                <input type="file" class="form-control" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png">
+                                <input aria-label="Attachment" type="file" class="form-control" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png">
                                 <div class="form-text">Max 5MB.</div>
                             </div>
                         </div>

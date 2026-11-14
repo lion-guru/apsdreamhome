@@ -16,7 +16,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Select File <span class="text-danger">*</span></label>
-                            <input type="file" name="file" class="form-control" required>
+                            <input aria-label="File" type="file" name="file" class="form-control" required>
                             <small class="text-muted">Max file size: 50MB. Supported: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF</small>
                         </div>
                         <div class="mb-3">
@@ -35,7 +35,7 @@ $base = $base ?? (defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['
                             <textarea aria-label="Description" name="description" class="form-control" rows="2" placeholder="Brief description of the file"></textarea>
                         </div>
                         <div class="mb-3 form-check">
-                            <input type="checkbox" name="is_public" class="form-check-input" id="isPublic" value="1">
+                            <input aria-label="Is public" type="checkbox" name="is_public" class="form-check-input" id="isPublic" value="1">
                             <label class="form-check-label" for="isPublic">Make file publicly accessible</label>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-upload me-1"></i>Upload</button>

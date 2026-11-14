@@ -167,7 +167,7 @@ $st = $transfer['status'] ?? 'requested';
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                 <div class="mb-2">
                                     <label class="form-label small fw-semibold">Transfer Fee (₹)</label>
-                                    <input type="number" step="100" name="transfer_fee" class="form-control form-control-sm" value="<?= (float)($transfer['transfer_fee'] ?: 5000) ?>">
+                                    <input aria-label="Transfer fee" type="number" step="100" name="transfer_fee" class="form-control form-control-sm" value="<?= (float)($transfer['transfer_fee'] ?: 5000) ?>">
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label small fw-semibold">Approval Remarks</label>

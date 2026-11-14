@@ -19,11 +19,11 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Budget Name <span class="text-danger">*</span></label>
-                        <input type="text" name="budget_name" class="form-control" required placeholder="e.g., FY 2025-26 Operating Budget">
+                        <input aria-label="Budget name" type="text" name="budget_name" class="form-control" required placeholder="e.g., FY 2025-26 Operating Budget">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Fiscal Year <span class="text-danger">*</span></label>
-                        <input type="text" name="fiscal_year" class="form-control" required value="<?= $currentYear ?>" placeholder="e.g., 2025-26" pattern="[0-9]{4}-[0-9]{2}">
+                        <input aria-label="Fiscal year" type="text" name="fiscal_year" class="form-control" required value="<?= $currentYear ?>" placeholder="e.g., 2025-26" pattern="[0-9]{4}-[0-9]{2}">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Department</label>
@@ -48,15 +48,15 @@ $categories = $categories ?? ['operating', 'capital', 'marketing', 'hr', 'it', '
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Period Start <span class="text-danger">*</span></label>
-                        <input type="date" name="period_start" class="form-control" required value="<?= date('Y-m-01') ?>">
+                        <input aria-label="Period start" type="date" name="period_start" class="form-control" required value="<?= date('Y-m-01') ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Period End <span class="text-danger">*</span></label>
-                        <input type="date" name="period_end" class="form-control" required value="<?= date('Y') === (int)$currentYear ? date('Y') . '-03-31' : date('Y', strtotime('+1 year')) . '-03-31' ?>">
+                        <input aria-label="Period end" type="date" name="period_end" class="form-control" required value="<?= date('Y') === (int)$currentYear ? date('Y') . '-03-31' : date('Y', strtotime('+1 year')) . '-03-31' ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Allocated Amount (₹) <span class="text-danger">*</span></label>
-                        <input type="number" name="allocated_amount" class="form-control" step="0.01" min="0" required placeholder="0.00">
+                        <input aria-label="Allocated amount" type="number" name="allocated_amount" class="form-control" step="0.01" min="0" required placeholder="0.00">
                     </div>
                 </div>
 

@@ -77,22 +77,22 @@ $current_year = date('Y');
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-building me-1"></i><?= __('breg_label_company', [], 'Company Name') ?> *</label>
-                        <input type="text" class="form-control" name="company_name" required>
+                        <input aria-label="Company name" type="text" class="form-control" name="company_name" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-user me-1"></i><?= __('breg_label_contact', [], 'Contact Person') ?> *</label>
-                        <input type="text" class="form-control" name="contact_person" required>
+                        <input aria-label="Contact person" type="text" class="form-control" name="contact_person" required>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-mobile-alt me-1"></i><?= __('breg_label_mobile', [], 'Mobile Number') ?> *</label>
-                        <input type="tel" class="form-control" name="mobile" pattern="[0-9]{10}" placeholder="<?= __('breg_placeholder_mobile', [], '10 digit mobile') ?>" required>
+                        <input aria-label="Mobile" type="tel" class="form-control" name="mobile" pattern="[0-9]{10}" placeholder="<?= __('breg_placeholder_mobile', [], '10 digit mobile') ?>" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-envelope me-1"></i><?= __('breg_label_email', [], 'Email Address') ?> *</label>
-                        <input type="email" class="form-control" name="email" required>
+                        <input aria-label="Email" type="email" class="form-control" name="email" required>
                     </div>
                 </div>
 
@@ -122,18 +122,18 @@ $current_year = date('Y');
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-home me-1"></i><?= __('breg_label_total_projects', [], 'Total Projects Completed') ?></label>
-                        <input type="number" class="form-control" name="total_projects" min="0">
+                        <input aria-label="Total projects" type="number" class="form-control" name="total_projects" min="0">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-tools me-1"></i><?= __('breg_label_ongoing', [], 'Ongoing Projects') ?></label>
-                        <input type="number" class="form-control" name="ongoing_projects" min="0">
+                        <input aria-label="Ongoing projects" type="number" class="form-control" name="ongoing_projects" min="0">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-map-marker-alt me-1"></i><?= __('breg_label_city', [], 'City') ?> *</label>
-                        <input type="text" class="form-control" name="city" required>
+                        <input aria-label="City" type="text" class="form-control" name="city" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-map me-1"></i><?= __('breg_label_state', [], 'State') ?> *</label>
@@ -149,17 +149,17 @@ $current_year = date('Y');
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-lock me-1"></i><?= __('breg_label_password', [], 'Password') ?> *</label>
-                        <input type="password" class="form-control" name="password" required>
+                        <input aria-label="Password" type="password" class="form-control" name="password" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label"><i class="fas fa-lock me-1"></i><?= __('breg_label_confirm', [], 'Confirm Password') ?> *</label>
-                        <input type="password" class="form-control" name="confirm_password" required>
+                        <input aria-label="Confirm password" type="password" class="form-control" name="confirm_password" required>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="terms_accepted" id="terms_accepted" required>
+                        <input aria-label="Terms accepted" class="form-check-input" type="checkbox" name="terms_accepted" id="terms_accepted" required>
                         <label class="form-check-label" for="terms_accepted"><?= __('breg_terms', [], 'I accept the Terms & Conditions and Privacy Policy') ?> *</label>
                     </div>
                 </div>

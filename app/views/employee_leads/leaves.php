@@ -175,13 +175,13 @@
                             <div class="mb-3">
                                 <label class="form-label">Duration</label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="duration_type" id="single_day" value="single" checked onchange="toggleDateFields()">
+                                    <input aria-label="Duration type" class="form-check-input" type="radio" name="duration_type" id="single_day" value="single" checked onchange="toggleDateFields()">
                                     <label class="form-check-label" for="single_day">
                                         Single Day
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="duration_type" id="multiple_days" value="multiple" onchange="toggleDateFields()">
+                                    <input aria-label="Duration type" class="form-check-input" type="radio" name="duration_type" id="multiple_days" value="multiple" onchange="toggleDateFields()">
                                     <label class="form-check-label" for="multiple_days">
                                         Multiple Days
                                     </label>
@@ -194,7 +194,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="single_date" class="form-label">Date *</label>
-                                <input type="date" class="form-control" id="single_date" name="start_date" required>
+                                <input aria-label="Single date" type="date" class="form-control" id="single_date" name="start_date" required>
                             </div>
                         </div>
                     </div>
@@ -203,13 +203,13 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="start_date" class="form-label">From Date *</label>
-                                <input type="date" class="form-control" id="start_date" name="start_date" required>
+                                <input aria-label="Start date" type="date" class="form-control" id="start_date" name="start_date" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="end_date" class="form-label">To Date *</label>
-                                <input type="date" class="form-control" id="end_date" name="end_date" required>
+                                <input aria-label="End date" type="date" class="form-control" id="end_date" name="end_date" required>
                             </div>
                         </div>
                     </div>

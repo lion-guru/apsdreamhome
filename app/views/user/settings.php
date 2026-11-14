@@ -56,7 +56,7 @@
                         <div class="mb-4">
                             <label class="form-label fw-bold"><?= __('user_settings_email_notif', null, 'Email Notifications') ?></label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="emailNotif" checked>
+                                <input aria-label="Email notif" class="form-check-input" type="checkbox" id="emailNotif" checked>
                                 <label class="form-check-label" for="emailNotif"><?= __('user_settings_email_notif_desc', null, 'Receive updates about new properties and projects') ?></label>
                             </div>
                         </div>

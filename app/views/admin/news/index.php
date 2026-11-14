@@ -85,7 +85,7 @@ foreach ($newsList as $a) {
                 <label class="form-label small fw-semibold text-muted mb-1" for="newsSearch">Search</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input type="text" id="newsSearch" name="search" class="form-control" placeholder="Search articles..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                    <input aria-label="News search" type="text" id="newsSearch" name="search" class="form-control" placeholder="Search articles..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
             </div>
             <div class="col-md-3">

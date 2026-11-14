@@ -268,15 +268,15 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
                                                                 <div class="modal-body p-3">
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Courier / Logistics Partner</label>
-                                                                        <input type="text" name="courier_partner" class="form-control form-control-sm" placeholder="e.g. Blue Dart, DTDC, Company Vehicle" required>
+                                                                        <input aria-label="Courier partner" type="text" name="courier_partner" class="form-control form-control-sm" placeholder="e.g. Blue Dart, DTDC, Company Vehicle" required>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Tracking / Waybill / AWB Number</label>
-                                                                        <input type="text" name="tracking_number" class="form-control form-control-sm" placeholder="e.g. BD789456123IN" required>
+                                                                        <input aria-label="Tracking number" type="text" name="tracking_number" class="form-control form-control-sm" placeholder="e.g. BD789456123IN" required>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Device Serial / IMEI / Vehicle Chassis / Tour PNR</label>
-                                                                        <input type="text" name="serial_number" class="form-control form-control-sm" placeholder="e.g. IMEI / Chassis Number">
+                                                                        <input aria-label="Serial number" type="text" name="serial_number" class="form-control form-control-sm" placeholder="e.g. IMEI / Chassis Number">
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Admin Dispatch Notes</label>
@@ -305,11 +305,11 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
                                                                 <div class="modal-body p-3">
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Event / Handover Venue</label>
-                                                                        <input type="text" name="handover_event" class="form-control form-control-sm" value="Gorakhpur Head Office Ceremony" required>
+                                                                        <input aria-label="Handover event" type="text" name="handover_event" class="form-control form-control-sm" value="Gorakhpur Head Office Ceremony" required>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Ceremony Photo URL / File Path (Optional)</label>
-                                                                        <input type="text" name="handover_photo" class="form-control form-control-sm" placeholder="uploads/ceremony_2026.jpg">
+                                                                        <input aria-label="Handover photo" type="text" name="handover_photo" class="form-control form-control-sm" placeholder="uploads/ceremony_2026.jpg">
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Remarks & Handover Notes</label>
@@ -338,7 +338,7 @@ $csrfToken = $_SESSION['csrf_token'] ?? '';
                                                                 <div class="modal-body p-3">
                                                                     <div class="mb-3">
                                                                         <label class="form-label small fw-bold">Cash Equivalent Amount (₹)</label>
-                                                                        <input type="number" step="0.01" name="cash_amount" class="form-control form-control-sm"
+                                                                        <input aria-label="Cash amount" type="number" step="0.01" name="cash_amount" class="form-control form-control-sm"
                                                                                value="<?php echo (float)$c['reward_value']; ?>" required>
                                                                         <div class="form-text small">This amount will be credited directly to associate's wallet.</div>
                                                                     </div>

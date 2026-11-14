@@ -11,23 +11,23 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('schedule_name_label', [], 'Full Name') ?> <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="name" required>
+                                <input aria-label="Name" type="text" class="form-control" name="name" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('schedule_phone_label', [], 'Phone') ?> <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" name="phone" required>
+                                <input aria-label="Phone" type="tel" class="form-control" name="phone" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('schedule_email_label', [], 'Email') ?></label>
-                                <input type="email" class="form-control" name="email">
+                                <input aria-label="Email" type="email" class="form-control" name="email">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('schedule_date_label', [], 'Preferred Date') ?></label>
-                                <input type="date" class="form-control" name="meeting_date">
+                                <input aria-label="Meeting date" type="date" class="form-control" name="meeting_date">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('schedule_time_label', [], 'Preferred Time') ?></label>
-                                <input type="time" class="form-control" name="meeting_time">
+                                <input aria-label="Meeting time" type="time" class="form-control" name="meeting_time">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('schedule_purpose_label', [], 'Purpose') ?></label>

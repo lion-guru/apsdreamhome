@@ -91,23 +91,23 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
 
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Upload GeoJSON / CAD File *</label>
-                        <input type="file" name="cad_file" class="form-control" accept=".geojson,.json" required>
+                        <input aria-label="Cad file" type="file" name="cad_file" class="form-control" accept=".geojson,.json" required>
                         <div class="form-text small">Upload exported AutoCAD GeoJSON FeatureCollection containing plot polygons.</div>
                     </div>
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Default Rate (₹/sqft)</label>
-                            <input type="number" step="1" min="100" name="default_rate" class="form-control" value="1200">
+                            <input aria-label="Default rate" type="number" step="1" min="100" name="default_rate" class="form-control" value="1200">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">Road Width Default</label>
-                            <input type="number" step="1" min="10" name="default_road" class="form-control" value="30">
+                            <input aria-label="Default road" type="number" step="1" min="10" name="default_road" class="form-control" value="30">
                         </div>
                     </div>
 
                     <div class="form-check mb-4">
-                        <input class="form-check-input" type="checkbox" name="update_existing" value="1" id="updateExisting" checked>
+                        <input aria-label="Update existing" class="form-check-input" type="checkbox" name="update_existing" value="1" id="updateExisting" checked>
                         <label class="form-check-label small" for="updateExisting">
                             <strong>Update existing plots</strong> if plot number already exists in this colony
                         </label>

@@ -123,7 +123,7 @@ $page_title = 'KYC Upload | APS Dream Homes';
                                 <div class="icon-placeholder mb-3">
                                     <i class="fas fa-id-card fa-3x text-muted"></i>
                                 </div>
-                                <input type="file" id="aadhar_card" name="aadhar_card" class="form-control form-control-sm" accept=".jpg,.jpeg,.png,.pdf" required>
+                                <input aria-label="Aadhar card" type="file" id="aadhar_card" name="aadhar_card" class="form-control form-control-sm" accept=".jpg,.jpeg,.png,.pdf" required>
                                 <div class="file-preview mt-2 small text-truncate"></div>
                             </div>
                         </div>
@@ -134,7 +134,7 @@ $page_title = 'KYC Upload | APS Dream Homes';
                                 <div class="icon-placeholder mb-3">
                                     <i class="fas fa-address-card fa-3x text-muted"></i>
                                 </div>
-                                <input type="file" id="pan_card" name="pan_card" class="form-control form-control-sm" accept=".jpg,.jpeg,.png,.pdf" required>
+                                <input aria-label="Pan card" type="file" id="pan_card" name="pan_card" class="form-control form-control-sm" accept=".jpg,.jpeg,.png,.pdf" required>
                                 <div class="file-preview mt-2 small text-truncate"></div>
                             </div>
                         </div>
@@ -145,7 +145,7 @@ $page_title = 'KYC Upload | APS Dream Homes';
                                 <div class="icon-placeholder mb-3">
                                     <i class="fas fa-file-invoice fa-3x text-muted"></i>
                                 </div>
-                                <input type="file" id="address_proof" name="address_proof" class="form-control form-control-sm" accept=".jpg,.jpeg,.png,.pdf" required>
+                                <input aria-label="Address proof" type="file" id="address_proof" name="address_proof" class="form-control form-control-sm" accept=".jpg,.jpeg,.png,.pdf" required>
                                 <div class="file-preview mt-2 small text-truncate"></div>
                             </div>
                         </div>

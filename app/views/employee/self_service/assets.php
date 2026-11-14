@@ -179,7 +179,7 @@ $summary = $summary ?? ['total' => 0, 'active' => 0, 'returned' => 0, 'issues' =
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Asset</label>
-                        <input type="text" class="form-control" id="reportAssetName" readonly>
+                        <input aria-label="Report asset name" type="text" class="form-control" id="reportAssetName" readonly>
                     </div>
                     <div class="mb-3">
                         <label for="issue_type" class="form-label fw-bold">Issue Type <span class="text-danger">*</span></label>

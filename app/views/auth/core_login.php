@@ -214,7 +214,7 @@ $supportedRoles = [
                     <div class="form-group">
                         <label for="identity">Email or Phone</label>
                         <div class="input-wrap">
-                            <input type="text" name="identity" id="identity" placeholder="Enter email or phone number" required autofocus>
+                            <input aria-label="Identity" type="text" name="identity" id="identity" placeholder="Enter email or phone number" required autofocus>
                             <i class="fas fa-user field-icon"></i>
                         </div>
                     </div>
@@ -222,7 +222,7 @@ $supportedRoles = [
                     <div class="form-group">
                         <label for="password">Password</label>
                         <div class="input-wrap">
-                            <input type="password" name="password" id="password" placeholder="Enter your password" required>
+                            <input aria-label="Password" type="password" name="password" id="password" placeholder="Enter your password" required>
                             <i class="fas fa-lock field-icon"></i>
                             <button type="button" class="pwd-toggle" onclick="togglePwd()" tabindex="-1" aria-label="Toggle password visibility">
                                 <i class="fas fa-eye" id="pwdIcon"></i>
@@ -232,7 +232,7 @@ $supportedRoles = [
 
                     <div class="form-extras">
                         <div class="remember-row">
-                            <input type="checkbox" name="remember" id="remember" value="1">
+                            <input aria-label="Remember" type="checkbox" name="remember" id="remember" value="1">
                             <label for="remember">Remember me</label>
                         </div>
                         <div class="forgot-link">

@@ -55,7 +55,7 @@ if (empty($statusColors['nurture'])) $statusColors['nurture'] = 'bg-orange text-
         <form class="d-flex gap-2" method="GET" action="<?= $base ?>/employee/leads">
             <div class="input-group input-group-sm">
                 <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" class="form-control border-start-0 ps-0" name="search" placeholder="Search name, phone, email..." value="<?= htmlspecialchars($search ?? '') ?>">
+                <input aria-label="Search" type="text" class="form-control border-start-0 ps-0" name="search" placeholder="Search name, phone, email..." value="<?= htmlspecialchars($search ?? '') ?>">
             </div>
             <?php if ($currentStatus): ?>
                 <input type="hidden" name="status" value="<?= htmlspecialchars($currentStatus ?? '') ?>">

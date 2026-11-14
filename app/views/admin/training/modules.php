@@ -97,7 +97,7 @@ $page_description = 'Manage course modules';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Module Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required>
+                        <input aria-label="Title" type="text" name="title" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
@@ -106,7 +106,7 @@ $page_description = 'Manage course modules';
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label class="form-label">Order Index</label>
-                            <input type="number" name="order_index" class="form-control" min="0" value="0">
+                            <input aria-label="Order index" type="number" name="order_index" class="form-control" min="0" value="0">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Content Type</label>
@@ -120,15 +120,15 @@ $page_description = 'Manage course modules';
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Duration (Minutes)</label>
-                            <input type="number" name="duration_minutes" class="form-control" min="0" value="0">
+                            <input aria-label="Duration minutes" type="number" name="duration_minutes" class="form-control" min="0" value="0">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Content URL</label>
-                        <input type="url" name="content_url" class="form-control" placeholder="https://...">
+                        <input aria-label="Content url" type="url" name="content_url" class="form-control" placeholder="https://...">
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" name="is_required" class="form-check-input" id="isRequired" value="1" checked>
+                        <input aria-label="Is required" type="checkbox" name="is_required" class="form-check-input" id="isRequired" value="1" checked>
                         <label class="form-check-label" for="isRequired">Required module</label>
                     </div>
                 </div>

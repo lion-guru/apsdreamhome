@@ -29,7 +29,7 @@ $role = $role ?? '';
                 <div class="card-body">
                     <!-- Search -->
                     <div class="mb-4">
-                        <input type="text" class="form-control" id="searchInput"
+                        <input aria-label="Search input" type="text" class="form-control" id="searchInput"
                                placeholder="Search users by name, email, or phone..."
                                value="<?= htmlspecialchars($search ?? '') ?>"
                                onkeyup="searchUsers(this.value)">

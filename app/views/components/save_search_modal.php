@@ -31,11 +31,11 @@ $currentFilters = $currentFilters ?? [];
 
                     <div class="mb-3">
                         <label for="saveSearchName" class="form-label fw-semibold"><?= __('component_search_name', 'Search name') ?> <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control form-control-lg" id="saveSearchName" name="name" placeholder="<?= htmlspecialchars(__('component_search_name_placeholder', 'e.g. Plots in Gorakhpur under 20L')) ?>" maxlength="100" required>
+                        <input aria-label="Save search name" type="text" class="form-control form-control-lg" id="saveSearchName" name="name" placeholder="<?= htmlspecialchars(__('component_search_name_placeholder', 'e.g. Plots in Gorakhpur under 20L')) ?>" maxlength="100" required>
                     </div>
 
                     <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="saveSearchAlerts" name="email_alerts" value="1">
+                        <input aria-label="Save search alerts" class="form-check-input" type="checkbox" id="saveSearchAlerts" name="email_alerts" value="1">
                         <label class="form-check-label" for="saveSearchAlerts">
                             <i class="fas fa-bell text-success me-1"></i><?= __('component_send_email_alerts', 'Send me email alerts when new properties match') ?>
                         </label>

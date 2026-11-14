@@ -54,7 +54,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
             <form method="GET" action="<?= $base ?>/admin/search-history" class="row g-2 align-items-end">
                 <div class="col-md-5">
                     <label class="form-label small fw-semibold">Search</label>
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="User name or search term..." value="<?= htmlspecialchars($search) ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="User name or search term..." value="<?= htmlspecialchars($search) ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small fw-semibold">Entity Type</label>

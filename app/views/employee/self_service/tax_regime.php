@@ -97,7 +97,7 @@ $fy_label = $fy_label ?? ($financial_year . '-' . ($financial_year + 1));
                                         <h4 class="text-primary">New Regime</h4>
                                         <p class="text-muted">Recommended for most employees</p>
                                         <div class="form-check form-check-inline mt-3">
-                                            <input class="form-check-input" type="radio" name="regime" value="new" id="regime_new" <?= (!$current_regime || ($current_regime['regime'] ?? '') === 'new') ? 'checked' : '' ?> required>
+                                            <input aria-label="Regime" class="form-check-input" type="radio" name="regime" value="new" id="regime_new" <?= (!$current_regime || ($current_regime['regime'] ?? '') === 'new') ? 'checked' : '' ?> required>
                                             <label class="form-check-label fw-bold" for="regime_new">Select New Regime</label>
                                         </div>
                                     </div>
@@ -109,7 +109,7 @@ $fy_label = $fy_label ?? ($financial_year . '-' . ($financial_year + 1));
                                         <h4 class="text-warning">Old Regime</h4>
                                         <p class="text-muted">If you have significant deductions</p>
                                         <div class="form-check form-check-inline mt-3">
-                                            <input class="form-check-input" type="radio" name="regime" value="old" id="regime_old" <?= ($current_regime['regime'] ?? '') === 'old' ? 'checked' : '' ?>>
+                                            <input aria-label="Regime" class="form-check-input" type="radio" name="regime" value="old" id="regime_old" <?= ($current_regime['regime'] ?? '') === 'old' ? 'checked' : '' ?>>
                                             <label class="form-check-label fw-bold" for="regime_old">Select Old Regime</label>
                                         </div>
                                     </div>

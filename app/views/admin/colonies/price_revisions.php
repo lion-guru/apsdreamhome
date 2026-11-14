@@ -24,10 +24,10 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
                     <?php foreach ($colonies as $c): ?><option value="<?= (int)$c['id'] ?>"><?= $e($c['name']) ?></option><?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-md-3"><label class="form-label small">Title *</label><input type="text" name="announcement_title" class="form-control" required maxlength="150" placeholder="e.g. Damar road done — rates up"></div>
-            <div class="col-md-2"><label class="form-label small">Current ₹/sqft</label><input type="number" step="0.01" min="0" name="current_price" class="form-control" value="0"></div>
-            <div class="col-md-2"><label class="form-label small">New ₹/sqft *</label><input type="number" step="0.01" min="0.01" name="new_price" class="form-control" required></div>
-            <div class="col-md-2"><label class="form-label small">Effective *</label><input type="date" name="effective_date" class="form-control" required></div>
+            <div class="col-md-3"><label class="form-label small">Title *</label><input aria-label="Announcement title" type="text" name="announcement_title" class="form-control" required maxlength="150" placeholder="e.g. Damar road done — rates up"></div>
+            <div class="col-md-2"><label class="form-label small">Current ₹/sqft</label><input aria-label="Current price" type="number" step="0.01" min="0" name="current_price" class="form-control" value="0"></div>
+            <div class="col-md-2"><label class="form-label small">New ₹/sqft *</label><input aria-label="New price" type="number" step="0.01" min="0.01" name="new_price" class="form-control" required></div>
+            <div class="col-md-2"><label class="form-label small">Effective *</label><input aria-label="Effective date" type="date" name="effective_date" class="form-control" required></div>
             <div class="col-md-2 pt-4"><button type="submit" class="btn btn-primary w-100">Schedule</button></div>
         </div>
     </form>

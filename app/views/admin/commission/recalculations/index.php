@@ -66,15 +66,15 @@
                     </div>
                     <div class="col-md-2">
                         <label >Date From</label>
-                        <input type="date" name="date_from" class="form-control" required>
+                        <input aria-label="Date from" type="date" name="date_from" class="form-control" required>
                     </div>
                     <div class="col-md-2">
                         <label >Date To</label>
-                        <input type="date" name="date_to" class="form-control" required>
+                        <input aria-label="Date to" type="date" name="date_to" class="form-control" required>
                     </div>
                     <div class="col-md-3">
                         <label >Reason</label>
-                        <input type="text" name="reason" class="form-control" placeholder="Why recalculate?" required>
+                        <input aria-label="Reason" type="text" name="reason" class="form-control" placeholder="Why recalculate?" required>
                     </div>
                     <div class="col-md-2">
                         <label >&nbsp;</label>

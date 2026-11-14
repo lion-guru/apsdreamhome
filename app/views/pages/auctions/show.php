@@ -97,7 +97,7 @@ ob_start();
                                     <form id="bidForm" class="d-flex gap-2">
     <?php echo CSRFProtection::csrfField(); ?>
                                         <input type="hidden" name="auction_id" value="<?= e($auction['id']) ?>">
-                                        <input type="number" name="amount" id="bidAmount" class="form-control" step="0.01" min="<?= ($auction['current_bid'] ?? $auction['start_price']) + $auction['bid_increment'] ?>" placeholder="Enter bid amount" required>
+                                        <input aria-label="Amount" type="number" name="amount" id="bidAmount" class="form-control" step="0.01" min="<?= ($auction['current_bid'] ?? $auction['start_price']) + $auction['bid_increment'] ?>" placeholder="Enter bid amount" required>
                                          <button type="submit" class="btn btn-primary"><i class="fas fa-gavel me-1"></i> <?= __('auction_bid_btn', [], 'Bid') ?></button>
                                     </form>
                                     <small class="text-muted"><?= __('auction_minimum_bid', [], 'Minimum bid:') ?> ₹<?= number_format(($auction['current_bid'] ?? $auction['start_price']) + $auction['bid_increment']) ?></small>

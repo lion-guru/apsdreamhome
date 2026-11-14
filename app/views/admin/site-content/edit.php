@@ -57,14 +57,14 @@ $groupLabels = [
                                     <img src="<?= BASE_URL ?>/<?= htmlspecialchars($val ?? '') ?>" class="img-thumbnail" alt="<?= htmlspecialchars($label ?? '') ?>">
                                 </div>
                             <?php endif; ?>
-                            <input type="file" name="content_image[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" accept="image/*">
+                            <input aria-label="Content image htmlspecialchars key" type="file" name="content_image[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" accept="image/*">
                             <input type="hidden" name="content[<?= htmlspecialchars($key ?? '') ?>]" value="<?= htmlspecialchars($val ?? '') ?>">
 
                         <?php elseif ($type === 'number'): ?>
-                            <input type="number" name="content[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" value="<?= htmlspecialchars($val ?? '') ?>">
+                            <input aria-label="Content htmlspecialchars key" type="number" name="content[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" value="<?= htmlspecialchars($val ?? '') ?>">
 
                         <?php else: ?>
-                            <input type="text" name="content[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" value="<?= htmlspecialchars($val ?? '') ?>">
+                            <input aria-label="Content htmlspecialchars key" type="text" name="content[<?= htmlspecialchars($key ?? '') ?>]" class="form-control" value="<?= htmlspecialchars($val ?? '') ?>">
                         <?php endif; ?>
 
                         <small class="text-muted">Key: <?= htmlspecialchars($key ?? '') ?></small>
@@ -93,11 +93,11 @@ $groupLabels = [
                 <div class="row">
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Key</label>
-                        <input type="text" name="content_key" class="form-control" placeholder="e.g. new_feature_title" required>
+                        <input aria-label="Content key" type="text" name="content_key" class="form-control" placeholder="e.g. new_feature_title" required>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Group</label>
-                        <input type="text" name="content_group" class="form-control" placeholder="e.g. hero, leader_1">
+                        <input aria-label="Content group" type="text" name="content_group" class="form-control" placeholder="e.g. hero, leader_1">
                     </div>
                     <div class="col-md-2 mb-3">
                         <label class="form-label">Type</label>
@@ -110,7 +110,7 @@ $groupLabels = [
                     </div>
                     <div class="col-md-2 mb-3">
                         <label class="form-label">Order</label>
-                        <input type="number" name="sort_order" class="form-control" value="0">
+                        <input aria-label="Sort order" type="number" name="sort_order" class="form-control" value="0">
                     </div>
                     <div class="col-md-2 mb-3">
                         <label class="form-label">&nbsp;</label>

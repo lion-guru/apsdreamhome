@@ -29,7 +29,7 @@ $buckets = $data['buckets'] ?? [];
                     <form method="get" class="row">
                         <div class="col-md-3">
                             <label>As Of Date</label>
-                            <input type="date" name="as_of_date" class="form-control" value="<?php echo htmlspecialchars($asOfDate); ?>">
+                            <input aria-label="As of date" type="date" name="as_of_date" class="form-control" value="<?php echo htmlspecialchars($asOfDate); ?>">
                         </div>
                         <div class="col-md-3">
                             <label>Colony</label>

@@ -21,13 +21,13 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Key Name *</label>
-                                <input type="text" name="key_name" class="form-control" placeholder="e.g. OPENAI_API_KEY" required>
+                                <input aria-label="Key name" type="text" name="key_name" class="form-control" placeholder="e.g. OPENAI_API_KEY" required>
                             </div>
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label">API Key Value *</label>
-                            <input type="text" name="key_value" class="form-control" placeholder="sk-..." required>
+                            <input aria-label="Key value" type="text" name="key_value" class="form-control" placeholder="sk-..." required>
                         </div>
 
                         <div class="row">
@@ -43,7 +43,7 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Status</label>
                                 <div class="form-check form-switch mt-2">
-                                    <input class="form-check-input" type="checkbox" name="is_active" id="is_active" checked>
+                                    <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="is_active" checked>
                                     <label class="form-check-label" for="is_active">Active</label>
                                 </div>
                             </div>

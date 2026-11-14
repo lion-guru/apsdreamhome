@@ -132,9 +132,9 @@ $statusColors = ['scheduled' => 'info', 'in_progress' => 'warning', 'completed' 
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body row g-3">
                 <div class="col-6"><label class="form-label small">Customers Visited</label>
-                    <input type="number" min="0" name="customers_visited" class="form-control" value="<?= (int)$t['customers_planned'] ?>"></div>
+                    <input aria-label="Customers visited" type="number" min="0" name="customers_visited" class="form-control" value="<?= (int)$t['customers_planned'] ?>"></div>
                 <div class="col-6"><label class="form-label small">On-Spot Tokens</label>
-                    <input type="number" min="0" name="tokens_collected" class="form-control" value="0"></div>
+                    <input aria-label="Tokens collected" type="number" min="0" name="tokens_collected" class="form-control" value="0"></div>
                 <div class="col-12"><label class="form-label small">Outcome Notes</label>
                     <textarea aria-label="Outcome notes" name="outcome_notes" class="form-control" rows="2"></textarea></div>
             </div>

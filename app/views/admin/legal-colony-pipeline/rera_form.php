@@ -19,19 +19,19 @@ $colony = $colony ?? null;
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label text-white">RERA Number *</label>
-            <input type="text" name="rera_number" class="form-control bg-dark text-white border-secondary" required placeholder="e.g. UPRERAPRJ12345">
+            <input aria-label="Rera number" type="text" name="rera_number" class="form-control bg-dark text-white border-secondary" required placeholder="e.g. UPRERAPRJ12345">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">State Code</label>
-            <input type="text" name="state_code" class="form-control bg-dark text-white border-secondary" value="UP">
+            <input aria-label="State code" type="text" name="state_code" class="form-control bg-dark text-white border-secondary" value="UP">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Builder Name</label>
-            <input type="text" name="builder_name" class="form-control bg-dark text-white border-secondary" value="APS Dream Homes Pvt. Ltd.">
+            <input aria-label="Builder name" type="text" name="builder_name" class="form-control bg-dark text-white border-secondary" value="APS Dream Homes Pvt. Ltd.">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Builder License</label>
-            <input type="text" name="builder_license" class="form-control bg-dark text-white border-secondary" placeholder="License number">
+            <input aria-label="Builder license" type="text" name="builder_license" class="form-control bg-dark text-white border-secondary" placeholder="License number">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Project Type</label>
@@ -44,19 +44,19 @@ $colony = $colony ?? null;
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Registration Date</label>
-            <input type="date" name="registration_date" class="form-control bg-dark text-white border-secondary" value="<?= date('Y-m-d') ?>">
+            <input aria-label="Registration date" type="date" name="registration_date" class="form-control bg-dark text-white border-secondary" value="<?= date('Y-m-d') ?>">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Validity Date</label>
-            <input type="date" name="validity_date" class="form-control bg-dark text-white border-secondary" value="<?= date('Y-m-d', strtotime('+5 years')) ?>">
+            <input aria-label="Validity date" type="date" name="validity_date" class="form-control bg-dark text-white border-secondary" value="<?= date('Y-m-d', strtotime('+5 years')) ?>">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">City</label>
-            <input type="text" name="city" class="form-control bg-dark text-white border-secondary" value="Gorakhpur">
+            <input aria-label="City" type="text" name="city" class="form-control bg-dark text-white border-secondary" value="Gorakhpur">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">District</label>
-            <input type="text" name="district" class="form-control bg-dark text-white border-secondary" value="Gorakhpur">
+            <input aria-label="District" type="text" name="district" class="form-control bg-dark text-white border-secondary" value="Gorakhpur">
           </div>
         </div>
 

@@ -20,7 +20,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <div class="card-body aps-cp-card-body">
                             <div class="mb-3">
                                 <label class="form-label">Bot Name</label>
-                                <input type="text" name="bot_name" class="form-control" value="<?php echo htmlspecialchars($config['bot_name'] ?? 'APS Assistant'); ?>">
+                                <input aria-label="Bot name" type="text" name="bot_name" class="form-control" value="<?php echo htmlspecialchars($config['bot_name'] ?? 'APS Assistant'); ?>">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Welcome Message</label>
@@ -38,7 +38,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                 </select>
                             </div>
                             <div class="form-check mb-3">
-                                <input type="checkbox" name="is_active" class="form-check-input" value="1" id="activeCheck" <?php echo !isset($config['is_active']) || $config['is_active'] ? 'checked' : ''; ?>>
+                                <input aria-label="Is active" type="checkbox" name="is_active" class="form-check-input" value="1" id="activeCheck" <?php echo !isset($config['is_active']) || $config['is_active'] ? 'checked' : ''; ?>>
                                 <label class="form-check-label" for="activeCheck">Enable Chatbot</label>
                             </div>
                         </div>

@@ -171,11 +171,11 @@
                         </div>
                         <div class="col-md-3">
                             <label for="populate_from" class="form-label">Date From</label>
-                            <input type="date" id="populate_from" name="populate_from" class="form-control form-control-sm">
+                            <input aria-label="Populate from" type="date" id="populate_from" name="populate_from" class="form-control form-control-sm">
                         </div>
                         <div class="col-md-3">
                             <label for="populate_to" class="form-label">Date To</label>
-                            <input type="date" id="populate_to" name="populate_to" class="form-control form-control-sm">
+                            <input aria-label="Populate to" type="date" id="populate_to" name="populate_to" class="form-control form-control-sm">
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-success btn-sm w-100"><i class="fas fa-plus me-1"></i> Add Entries</button>
@@ -312,7 +312,7 @@
                 <div class="modal-body">
                     <p >Mark payment for: <strong id="completeEntryName"></strong></p>
                     <label for="complete_payment_ref" class="form-label">Payment Reference (UTR/Ref No)</label>
-                    <input type="text" id="complete_payment_ref" name="payment_ref" class="form-control" placeholder="e.g. UTR123456789">
+                    <input aria-label="Complete payment ref" type="text" id="complete_payment_ref" name="payment_ref" class="form-control" placeholder="e.g. UTR123456789">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -344,7 +344,7 @@ function completeEntry(id, name) {
                 <div class="modal-body">
                     <p class="text-muted small">Upload the bank's processed-report CSV. Rows match on <code>Payment Reference</code> (APS-COMM-{batch}-{entry}) or <code>Account Number + Amount</code>. Matched payouts flip to completed with UTR + auto SMS/WhatsApp alerts.</p>
                     <label for="utr_file_input" class="form-label">UTR CSV File (max 10MB)</label>
-                    <input type="file" id="utr_file_input" name="utr_file" class="form-control" accept=".csv" required>
+                    <input aria-label="Utr file input" type="file" id="utr_file_input" name="utr_file" class="form-control" accept=".csv" required>
                     <small class="text-muted">Expected columns: Reference, UTR, Amount, Account (header names are flexible).</small>
                 </div>
                 <div class="modal-footer">

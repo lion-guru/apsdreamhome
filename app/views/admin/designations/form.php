@@ -36,7 +36,7 @@
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label>Designation Name *</label>
-                                    <input type="text" name="name" class="form-control" required
+                                    <input aria-label="Name" type="text" name="name" class="form-control" required
                                            value="<?= htmlspecialchars($designation['name'] ?? '') ?>"
                                            placeholder="e.g. Finance Manager">
                                 </div>
@@ -72,14 +72,14 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Min Salary (?/month)</label>
-                                    <input type="number" name="min_salary" class="form-control" min="0" step="1000"
+                                    <input aria-label="Min salary" type="number" name="min_salary" class="form-control" min="0" step="1000"
                                            value="<?= $designation['min_salary'] ?? 0 ?>">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Max Salary (?/month)</label>
-                                    <input type="number" name="max_salary" class="form-control" min="0" step="1000"
+                                    <input aria-label="Max salary" type="number" name="max_salary" class="form-control" min="0" step="1000"
                                            value="<?= $designation['max_salary'] ?? 0 ?>">
                                 </div>
                             </div>
@@ -98,7 +98,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Sub-Role (RBAC)</label>
-                                    <input type="text" name="sub_role" class="form-control"
+                                    <input aria-label="Sub role" type="text" name="sub_role" class="form-control"
                                            value="<?= htmlspecialchars($designation['sub_role'] ?? '') ?>"
                                            placeholder="e.g. employee_finance_manager">
                                     <small class="text-muted">RBAC role string for permissions</small>
@@ -107,7 +107,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Dashboard View</label>
-                                    <input type="text" name="dashboard_view" class="form-control"
+                                    <input aria-label="Dashboard view" type="text" name="dashboard_view" class="form-control"
                                            value="<?= htmlspecialchars($designation['dashboard_view'] ?? '') ?>"
                                            placeholder="e.g. employee/finance-dashboard">
                                     <small class="text-muted">Route for role-specific dashboard</small>

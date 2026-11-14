@@ -46,7 +46,7 @@
         <div class="modal-header"><h5 class="modal-title">Approve RERA</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
             <input type="hidden" name="id" id="reraId" value="">
-            <div class="mb-3"><label class="form-label">RERA Number</label><input type="text" name="rera_number" class="form-control" placeholder="e.g., UP/RERA/2026/12345" required></div>
+            <div class="mb-3"><label class="form-label">RERA Number</label><input aria-label="Rera number" type="text" name="rera_number" class="form-control" placeholder="e.g., UP/RERA/2026/12345" required></div>
         </div>
         <div class="modal-footer"><button type="submit" class="btn btn-success">Approve</button></div>
     </form>

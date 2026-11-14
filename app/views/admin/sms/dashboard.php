@@ -96,7 +96,7 @@ $page_title = "SMS Dashboard";
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" id="searchMobile" placeholder="Search by mobile number...">
+                        <input aria-label="Search mobile" type="text" class="form-control" id="searchMobile" placeholder="Search by mobile number...">
                     </div>
                     <div class="col-md-2">
                         <button class="btn btn-outline-primary w-100" onclick="loadSMSLogs()">
@@ -152,7 +152,7 @@ $page_title = "SMS Dashboard";
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Mobile Number</label>
-                            <input type="tel" class="form-control" name="mobile" placeholder="9876543210" required>
+                            <input aria-label="Mobile" type="tel" class="form-control" name="mobile" placeholder="9876543210" required>
                             <div class="form-text">Enter 10-digit mobile number</div>
                         </div>
                         <div class="mb-3">

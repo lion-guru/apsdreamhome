@@ -145,7 +145,7 @@ function fmtSqft(float $v): string {
                     <div class="row g-3 align-items-end">
                         <div class="col-md-4">
                             <label class="form-label" for="final_approve_price">Final Selling Price (₹/SqFt) <span class="text-danger">*</span></label>
-                            <input type="number" id="final_approve_price" name="final_price_sqft" class="form-control form-control-lg"
+                            <input aria-label="Final approve price" type="number" id="final_approve_price" name="final_price_sqft" class="form-control form-control-lg"
                                    value="<?= number_format((float)($costing['suggested_price_sqft'] ?? 0), 2, '.', '') ?>"
                                    step="0.01" min="0" required>
                             <small class="text-muted">Suggested: <?= fmtRs((float)($costing['suggested_price_sqft'] ?? 0)) ?></small>

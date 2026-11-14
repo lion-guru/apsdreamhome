@@ -70,19 +70,19 @@ $filters = $filters ?? [];
             <form method="GET" class="row g-3" id="filterForm">
                 <div class="col-md-3">
                     <label class="form-label">Lead</label>
-                    <input type="text" class="form-control" name="search" placeholder="Search name, phone..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                    <input aria-label="Search" type="text" class="form-control" name="search" placeholder="Search name, phone..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Date From</label>
-                    <input type="date" class="form-control" name="date_from" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
+                    <input aria-label="Date from" type="date" class="form-control" name="date_from" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Date To</label>
-                    <input type="date" class="form-control" name="date_to" value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>">
+                    <input aria-label="Date to" type="date" class="form-control" name="date_to" value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Min Duration (min)</label>
-                    <input type="number" class="form-control" name="duration_min" min="0" value="<?= htmlspecialchars($filters['duration_min'] ?? '') ?>">
+                    <input aria-label="Duration min" type="number" class="form-control" name="duration_min" min="0" value="<?= htmlspecialchars($filters['duration_min'] ?? '') ?>">
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100 me-2"><i class="fas fa-filter me-1"></i> Filter</button>

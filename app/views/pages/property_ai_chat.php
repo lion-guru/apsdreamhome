@@ -100,7 +100,7 @@ $base = $base ?? BASE_URL;
                     </div>
                     <div class="card-footer bg-white">
                         <div class="input-group">
-                            <input type="text" id="property-chat-input" class="form-control" placeholder="<?= __('user_property_ai_chat_input_ph', 'Ask about this property...') ?>" onkeypress="handlePropertyKeyPress(event)">
+                            <input aria-label="Property chat input" type="text" id="property-chat-input" class="form-control" placeholder="<?= __('user_property_ai_chat_input_ph', 'Ask about this property...') ?>" onkeypress="handlePropertyKeyPress(event)">
                             <button class="btn btn-primary" onclick="sendPropertyMessage()">
                                 <i class="fas fa-paper-plane me-1"></i> <?= __('user_property_ai_chat_send', 'Ask') ?>
                             </button>

@@ -30,45 +30,45 @@ $csrf = $this->getCsrfToken();
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                 <div class="col-md-3">
                     <label class="form-label">HSN/SAC Code <span class="text-danger">*</span></label>
-                    <input type="text" name="hsn_code" class="form-control" required placeholder="e.g., 9954">
+                    <input aria-label="Hsn code" type="text" name="hsn_code" class="form-control" required placeholder="e.g., 9954">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Description <span class="text-danger">*</span></label>
-                    <input type="text" name="description" class="form-control" required placeholder="e.g., Construction Services - Residential">
+                    <input aria-label="Description" type="text" name="description" class="form-control" required placeholder="e.g., Construction Services - Residential">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">GST Rate % <span class="text-danger">*</span></label>
-                    <input type="number" step="0.01" name="gst_rate" class="form-control" value="0" required>
+                    <input aria-label="Gst rate" type="number" step="0.01" name="gst_rate" class="form-control" value="0" required>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Cess Rate %</label>
-                    <input type="number" step="0.01" name="cess_rate" class="form-control" value="0">
+                    <input aria-label="Cess rate" type="number" step="0.01" name="cess_rate" class="form-control" value="0">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Unit/UOM</label>
-                    <input type="text" name="unit" class="form-control" placeholder="SQFT, PCS, KG">
+                    <input aria-label="Unit" type="text" name="unit" class="form-control" placeholder="SQFT, PCS, KG">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">CGST %</label>
-                    <input type="number" step="0.01" name="cgst_rate" class="form-control" value="0">
+                    <input aria-label="Cgst rate" type="number" step="0.01" name="cgst_rate" class="form-control" value="0">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">SGST %</label>
-                    <input type="number" step="0.01" name="sgst_rate" class="form-control" value="0">
+                    <input aria-label="Sgst rate" type="number" step="0.01" name="sgst_rate" class="form-control" value="0">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">IGST %</label>
-                    <input type="number" step="0.01" name="igst_rate" class="form-control" value="0">
+                    <input aria-label="Igst rate" type="number" step="0.01" name="igst_rate" class="form-control" value="0">
                 </div>
                 <div class="col-md-2">
                     <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" name="is_service" id="isService">
+                        <input aria-label="Is service" class="form-check-input" type="checkbox" name="is_service" id="isService">
                         <label class="form-check-label" for="isService">Service (SAC)</label>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" name="is_active" id="isActive" checked>
+                        <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="isActive" checked>
                         <label class="form-check-label" for="isActive">Active</label>
                     </div>
                 </div>
@@ -83,7 +83,7 @@ $csrf = $this->getCsrfToken();
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="fas fa-list me-2"></i>HSN/SAC Master (<?= count($codes) ?> codes)</h5>
             <div class="input-group" style="max-width:300px">
-                <input type="text" class="form-control form-control-sm" id="hsnSearch" placeholder="Search HSN/Description...">
+                <input aria-label="Hsn search" type="text" class="form-control form-control-sm" id="hsnSearch" placeholder="Search HSN/Description...">
                 <span class="input-group-text"><i class="fas fa-search"></i></span>
             </div>
         </div>
@@ -143,45 +143,45 @@ $csrf = $this->getCsrfToken();
                     <input type="hidden" name="hsn_id" id="editHsnId">
                     <div class="col-md-6">
                         <label class="form-label">HSN/SAC Code</label>
-                        <input type="text" name="hsn_code" class="form-control" id="editHsnCode" readonly>
+                        <input aria-label="Hsn code" type="text" name="hsn_code" class="form-control" id="editHsnCode" readonly>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Description <span class="text-danger">*</span></label>
-                        <input type="text" name="description" class="form-control" id="editHsnDesc" required>
+                        <input aria-label="Description" type="text" name="description" class="form-control" id="editHsnDesc" required>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">GST Rate %</label>
-                        <input type="number" step="0.01" name="gst_rate" class="form-control" id="editGstRate">
+                        <input aria-label="Gst rate" type="number" step="0.01" name="gst_rate" class="form-control" id="editGstRate">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Cess Rate %</label>
-                        <input type="number" step="0.01" name="cess_rate" class="form-control" id="editCessRate">
+                        <input aria-label="Cess rate" type="number" step="0.01" name="cess_rate" class="form-control" id="editCessRate">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Unit</label>
-                        <input type="text" name="unit" class="form-control" id="editUnit">
+                        <input aria-label="Unit" type="text" name="unit" class="form-control" id="editUnit">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">CGST %</label>
-                        <input type="number" step="0.01" name="cgst_rate" class="form-control" id="editCgstRate">
+                        <input aria-label="Cgst rate" type="number" step="0.01" name="cgst_rate" class="form-control" id="editCgstRate">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">SGST %</label>
-                        <input type="number" step="0.01" name="sgst_rate" class="form-control" id="editSgstRate">
+                        <input aria-label="Sgst rate" type="number" step="0.01" name="sgst_rate" class="form-control" id="editSgstRate">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">IGST %</label>
-                        <input type="number" step="0.01" name="igst_rate" class="form-control" id="editIgstRate">
+                        <input aria-label="Igst rate" type="number" step="0.01" name="igst_rate" class="form-control" id="editIgstRate">
                     </div>
                     <div class="col-md-3">
                         <div class="form-check mt-4">
-                            <input class="form-check-input" type="checkbox" name="is_service" id="editIsService">
+                            <input aria-label="Is service" class="form-check-input" type="checkbox" name="is_service" id="editIsService">
                             <label class="form-check-label" for="editIsService">Service</label>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-check mt-4">
-                            <input class="form-check-input" type="checkbox" name="is_active" id="editIsActive">
+                            <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="editIsActive">
                             <label class="form-check-label" for="editIsActive">Active</label>
                         </div>
                     </div>

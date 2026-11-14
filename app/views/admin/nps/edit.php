@@ -23,27 +23,27 @@ ob_start();
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Survey Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required value="<?= htmlspecialchars($survey['title'] ?? '') ?>">
+                        <input aria-label="Title" type="text" name="title" class="form-control" required value="<?= htmlspecialchars($survey['title'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Description</label>
-                        <input type="text" name="description" class="form-control" value="<?= htmlspecialchars($survey['description'] ?? '') ?>">
+                        <input aria-label="Description" type="text" name="description" class="form-control" value="<?= htmlspecialchars($survey['description'] ?? '') ?>">
                     </div>
                     <div class="col-12">
                         <label class="form-label">Main Question</label>
-                        <input type="text" name="question_text" class="form-control" value="<?= htmlspecialchars($survey['question_text'] ?? 'How likely are you to recommend us to a friend or colleague?') ?>" required>
+                        <input aria-label="Question text" type="text" name="question_text" class="form-control" value="<?= htmlspecialchars($survey['question_text'] ?? 'How likely are you to recommend us to a friend or colleague?') ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Scale Minimum Label (0)</label>
-                        <input type="text" name="scale_min_label" class="form-control" value="<?= htmlspecialchars($survey['scale_min_label'] ?? 'Not at all likely') ?>" required>
+                        <input aria-label="Scale min label" type="text" name="scale_min_label" class="form-control" value="<?= htmlspecialchars($survey['scale_min_label'] ?? 'Not at all likely') ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Scale Maximum Label (10)</label>
-                        <input type="text" name="scale_max_label" class="form-control" value="<?= htmlspecialchars($survey['scale_max_label'] ?? 'Extremely likely') ?>" required>
+                        <input aria-label="Scale max label" type="text" name="scale_max_label" class="form-control" value="<?= htmlspecialchars($survey['scale_max_label'] ?? 'Extremely likely') ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Follow-up Question (Optional)</label>
-                        <input type="text" name="follow_up_question" class="form-control" value="<?= htmlspecialchars($survey['follow_up_question'] ?? '') ?>">
+                        <input aria-label="Follow up question" type="text" name="follow_up_question" class="form-control" value="<?= htmlspecialchars($survey['follow_up_question'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Status</label>
@@ -55,17 +55,17 @@ ob_start();
                     <div class="col-md-6">
                         <label class="form-label">Send Immediately After Trigger</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="send_immediately" value="1" <?= !empty($survey['send_immediately']) ? 'checked' : '' ?>>
+                            <input aria-label="Send immediately" class="form-check-input" type="checkbox" name="send_immediately" value="1" <?= !empty($survey['send_immediately']) ? 'checked' : '' ?>>
                         </div>
                         <small class="text-muted">If checked, survey will be sent right after trigger event occurs</small>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Delay Days</label>
-                        <input type="number" name="delay_days" class="form-control" min="0" value="<?= (int)($survey['delay_days'] ?? 0) ?>">
+                        <input aria-label="Delay days" type="number" name="delay_days" class="form-control" min="0" value="<?= (int)($survey['delay_days'] ?? 0) ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Delay Hours</label>
-                        <input type="number" name="delay_hours" class="form-control" min="0" value="<?= (int)($survey['delay_hours'] ?? 0) ?>">
+                        <input aria-label="Delay hours" type="number" name="delay_hours" class="form-control" min="0" value="<?= (int)($survey['delay_hours'] ?? 0) ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Trigger Event</label>

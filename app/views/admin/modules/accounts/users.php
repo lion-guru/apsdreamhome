@@ -88,7 +88,7 @@ $users = $users ?? [];
         <div class="table-header">
             <h4>Users Directory</h4>
             <div class="table-controls">
-                <input type="text" class="form-control" placeholder="Search users..." id="userSearch" onkeyup="searchUsers()">
+                <input aria-label="Search users" type="text" class="form-control" placeholder="Search users..." id="userSearch" onkeyup="searchUsers()">
                 <select aria-label="Role filter" class="form-select" id="roleFilter" onchange="filterByRole()">
                     <option value="">All Roles</option>
                     <option value="Client">Client</option>
@@ -109,7 +109,7 @@ $users = $users ?? [];
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">
-                            <input type="checkbox" id="selectAllUsers" onchange="toggleAllUsers()">
+                            <input aria-label="Select all users" type="checkbox" id="selectAllUsers" onchange="toggleAllUsers()">
                         </th>
                         <th scope="col">User ID</th>
                         <th scope="col">Name</th>

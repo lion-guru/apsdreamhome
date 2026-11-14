@@ -130,8 +130,8 @@ $page_title = $page_title ?? 'Employee Documents';
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    <div class="mb-3"><label class="form-label">Document Name</label><input type="text" name="document_name" class="form-control"></div>
-                    <div class="mb-3"><label class="form-label">File</label><input type="file" name="document_file" class="form-control"></div>
+                    <div class="mb-3"><label class="form-label">Document Name</label><input aria-label="Document name" type="text" name="document_name" class="form-control"></div>
+                    <div class="mb-3"><label class="form-label">File</label><input aria-label="Document file" type="file" name="document_file" class="form-control"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-upload me-2"></i>Upload</button>

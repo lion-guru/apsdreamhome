@@ -18,7 +18,7 @@
             <form method="POST" action="<?= BASE_URL ?>/admin/media/update/<?= $media['id'] ?? 0 ?>">
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="row g-3">
-                    <div class="col-md-8"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<?= $media['title'] ?? '' ?>"></div>
+                    <div class="col-md-8"><label class="form-label">Title</label><input aria-label="Title" type="text" name="title" class="form-control" value="<?= $media['title'] ?? '' ?>"></div>
                     <div class="col-md-4"><label class="form-label">Folder</label><select aria-label="Folder" name="folder" class="form-select"><option value="general" <?= ($media['folder'] ?? '') === 'general' ? 'selected' : '' ?>>General</option><option value="properties" <?= ($media['folder'] ?? '') === 'properties' ? 'selected' : '' ?>>Properties</option><option value="projects" <?= ($media['folder'] ?? '') === 'projects' ? 'selected' : '' ?>>Projects</option><option value="documents" <?= ($media['folder'] ?? '') === 'documents' ? 'selected' : '' ?>>Documents</option></select></div>
                     <div class="col-12"><label class="form-label">Alt Text / Description</label><textarea aria-label="Description" name="description" class="form-control" rows="2"><?= $media['description'] ?? '' ?></textarea></div>
                     <div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update</button> <a href="<?= BASE_URL ?>/admin/media" class="btn btn-secondary">Cancel</a></div>

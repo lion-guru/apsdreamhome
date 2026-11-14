@@ -57,7 +57,7 @@ $statusColors = [
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">District</label>
-                    <input type="text" name="district" class="form-control form-control-sm"
+                    <input aria-label="District" type="text" name="district" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($filters['district'] ?? '') ?>" placeholder="e.g. Gorakhpur">
                 </div>
                 <div class="col-md-3">

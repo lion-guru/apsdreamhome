@@ -68,7 +68,7 @@ $statusLabels = [
         <form method="GET" action="<?= BASE_URL ?>/admin/financial-inquiries">
             <div class="row g-2">
                 <div class="col-md-4">
-                    <input type="text" class="form-control" name="search" placeholder="Search name, email, phone..." value="<?= htmlspecialchars($search ?? '') ?>">
+                    <input aria-label="Search" type="text" class="form-control" name="search" placeholder="Search name, email, phone..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <select aria-label="Status" class="form-select" name="status">

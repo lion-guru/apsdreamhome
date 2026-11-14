@@ -278,7 +278,7 @@ $recentCalls = $recentCalls ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Duration (seconds)</label>
-                        <input type="number" class="form-control" name="duration" id="log_duration" min="0" value="0">
+                        <input aria-label="Duration" type="number" class="form-control" name="duration" id="log_duration" min="0" value="0">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Notes</label>

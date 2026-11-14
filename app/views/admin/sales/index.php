@@ -59,7 +59,7 @@ $page_title = $page_title ?? 'Sales Management';
         <div class="card-body aps-cp-card-body">
             <form method="GET" action="<?= BASE_URL ?>/admin/sales" class="row g-3">
                 <div class="col-md-3">
-                    <input type="text" name="search" class="form-control" placeholder="Search sale #, property, customer..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search sale #, property, customer..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <select aria-label="Status" name="status" class="form-select">

@@ -148,13 +148,13 @@ $variance = $variance ?? [];
                     <form method="POST" action="<?= BASE_URL ?>/admin/budgets/add-expense/<?= $budget['id'] ?? '' ?>" class="row g-2">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="col-md-4">
-                            <input type="date" name="expense_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Expense date" type="date" name="expense_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" name="vendor" class="form-control" placeholder="Vendor / Description" required>
+                            <input aria-label="Vendor" type="text" name="vendor" class="form-control" placeholder="Vendor / Description" required>
                         </div>
                         <div class="col-md-3">
-                            <input type="number" name="amount" class="form-control" step="0.01" min="0.01" placeholder="Amount" required>
+                            <input aria-label="Amount" type="number" name="amount" class="form-control" step="0.01" min="0.01" placeholder="Amount" required>
                         </div>
                         <div class="col-md-1">
                             <button type="submit" class="btn btn-success w-100" aria-label="Add"><i class="fas fa-plus"></i></button>

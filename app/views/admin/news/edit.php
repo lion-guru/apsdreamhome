@@ -18,7 +18,7 @@
                     <div class="col-md-8">
                         <div class="mb-3">
                             <label for="title" class="form-label">Title *</label>
-                            <input type="text" class="form-control" id="title" name="title" value="<?= htmlspecialchars($news['title'] ?? '') ?>" required>
+                            <input aria-label="Title" type="text" class="form-control" id="title" name="title" value="<?= htmlspecialchars($news['title'] ?? '') ?>" required>
                         </div>
 
                         <div class="mb-3">
@@ -48,11 +48,11 @@
 
                                 <div class="mb-3">
                                     <label for="published_at" class="form-label">Publish Date</label>
-                                    <input type="datetime-local" class="form-control" id="published_at" name="published_at" value="<?= !empty($news['published_at']) ? date('Y-m-d\TH:i', strtotime($news['published_at'])) : '' ?>">
+                                    <input aria-label="Published at" type="datetime-local" class="form-control" id="published_at" name="published_at" value="<?= !empty($news['published_at']) ? date('Y-m-d\TH:i', strtotime($news['published_at'])) : '' ?>">
                                 </div>
 
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="featured" name="featured" value="1" <?= !empty($news['featured']) ? 'checked' : '' ?>>
+                                    <input aria-label="Featured" type="checkbox" class="form-check-input" id="featured" name="featured" value="1" <?= !empty($news['featured']) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="featured">Featured</label>
                                 </div>
                             </div>
@@ -66,7 +66,7 @@
                                         <img src="<?= (strpos($news['image'], 'http') === 0 ? htmlspecialchars($news['image'] ?? '') : BASE_URL . '/' . htmlspecialchars($news['image'] ?? ''))?>" alt="Current image" class="img-fluid rounded" />
                                     </div>
                                 <?php endif; ?>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                <input aria-label="Image" type="file" class="form-control" id="image" name="image" accept="image/*">
                                 <small class="text-muted">Leave empty to keep current</small>
                                 <div id="imagePreview" class="mt-2 text-center"></div>
                             </div>

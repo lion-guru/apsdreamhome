@@ -254,7 +254,7 @@ if (!empty($_GET['plot_id']) && !empty($plots)) {
 
                     <div class="p-3 rounded-3 border border-danger mt-3 bg-danger bg-opacity-10">
                         <div class="form-check mb-0">
-                            <input class="form-check-input border-danger" type="checkbox" id="modalConsentCheck" required checked>
+                            <input aria-label="Modal consent check" class="form-check-input border-danger" type="checkbox" id="modalConsentCheck" required checked>
                             <label class="form-check-label small fw-bold text-danger ms-1" for="modalConsentCheck">
                                 <i class="fas fa-gavel me-1"></i>Master Deed (Section 2.1 &amp; 2.9) Statutory Consent:
                             </label>

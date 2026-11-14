@@ -10,15 +10,15 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Property Value (₹)</label>
-                            <input type="number" name="property_value" class="form-control" placeholder="e.g. 5000000" required>
+                            <input aria-label="Property value" type="number" name="property_value" class="form-control" placeholder="e.g. 5000000" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Smart Home Investment (₹)</label>
-                            <input type="number" name="smart_home_cost" class="form-control" placeholder="e.g. 200000" required>
+                            <input aria-label="Smart home cost" type="number" name="smart_home_cost" class="form-control" placeholder="e.g. 200000" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Monthly Energy Savings (₹)</label>
-                            <input type="number" name="energy_savings" class="form-control" placeholder="e.g. 5000" required>
+                            <input aria-label="Energy savings" type="number" name="energy_savings" class="form-control" placeholder="e.g. 5000" required>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-calculator me-1"></i>Calculate ROI</button>
                     </form>

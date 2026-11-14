@@ -68,9 +68,9 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
             <form method="POST" action="<?= $base ?>/p/<?= $e($code) ?>/inquire">
                 <input type="hidden" name="csrf_token" value="<?= $e($_SESSION['csrf_token'] ?? '') ?>">
                 <div class="row g-2">
-                    <div class="col-md-4"><input type="text" name="name" class="form-control" placeholder="Your name *" required maxlength="100"></div>
-                    <div class="col-md-4"><input type="tel" name="phone" class="form-control" placeholder="10-digit mobile *" required maxlength="15"></div>
-                    <div class="col-md-4"><input type="text" name="interest" class="form-control" placeholder="Interested in (colony / budget)" maxlength="255"></div>
+                    <div class="col-md-4"><input aria-label="Name" type="text" name="name" class="form-control" placeholder="Your name *" required maxlength="100"></div>
+                    <div class="col-md-4"><input aria-label="Phone" type="tel" name="phone" class="form-control" placeholder="10-digit mobile *" required maxlength="15"></div>
+                    <div class="col-md-4"><input aria-label="Interest" type="text" name="interest" class="form-control" placeholder="Interested in (colony / budget)" maxlength="255"></div>
                 </div>
                 <button type="submit" class="btn btn-primary mt-3"><i class="fas fa-paper-plane me-1"></i>Send Request</button>
             </form>

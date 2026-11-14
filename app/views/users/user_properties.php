@@ -83,7 +83,7 @@ $soldCount = count(array_filter($properties, fn($p) => strtolower($p['status'] ?
                 <div class="col-md-4">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
-                        <input type="text" name="search" class="form-control" placeholder="Search properties..." value="<?= htmlspecialchars($search ?? '') ?>">
+                        <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search properties..." value="<?= htmlspecialchars($search ?? '') ?>">
                     </div>
                 </div>
                 <div class="col-md-3">

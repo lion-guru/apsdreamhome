@@ -21,15 +21,15 @@ $page_title = $page_title ?? 'Change Password';
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Current Password <span class="text-danger">*</span></label>
-                            <input type="password" name="current_password" class="form-control" required autocomplete="current-password">
+                            <input aria-label="Current password" type="password" name="current_password" class="form-control" required autocomplete="current-password">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">New Password <span class="text-danger">*</span></label>
-                            <input type="password" name="new_password" class="form-control" required minlength="8" autocomplete="new-password">
+                            <input aria-label="New password" type="password" name="new_password" class="form-control" required minlength="8" autocomplete="new-password">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Confirm New Password <span class="text-danger">*</span></label>
-                            <input type="password" name="confirm_password" class="form-control" required minlength="8" autocomplete="new-password">
+                            <input aria-label="Confirm password" type="password" name="confirm_password" class="form-control" required minlength="8" autocomplete="new-password">
                         </div>
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Change Password</button>

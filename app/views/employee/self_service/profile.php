@@ -57,19 +57,19 @@ $user = $user ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
+                            <input aria-label="Name" type="text" name="name" class="form-control" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
+                            <input aria-label="Email" type="email" name="email" class="form-control" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Phone</label>
-                            <input type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($user['phone'] ?? '') ?>">
+                            <input aria-label="Phone" type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($user['phone'] ?? '') ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Date of Birth</label>
-                            <input type="date" name="date_of_birth" class="form-control" value="<?= htmlspecialchars($user['date_of_birth'] ?? '') ?>">
+                            <input aria-label="Date of birth" type="date" name="date_of_birth" class="form-control" value="<?= htmlspecialchars($user['date_of_birth'] ?? '') ?>">
                         </div>
                         <div class="col-12">
                             <label class="form-label">Address</label>
@@ -77,7 +77,7 @@ $user = $user ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Emergency Contact</label>
-                            <input type="text" name="emergency_contact" class="form-control" value="<?= htmlspecialchars($user['emergency_contact'] ?? '') ?>" placeholder="Name & Phone">
+                            <input aria-label="Emergency contact" type="text" name="emergency_contact" class="form-control" value="<?= htmlspecialchars($user['emergency_contact'] ?? '') ?>" placeholder="Name & Phone">
                         </div>
 
                         <div class="col-12 mt-4">
@@ -85,11 +85,11 @@ $user = $user ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Bank Account Number</label>
-                            <input type="text" name="bank_account" class="form-control" value="<?= htmlspecialchars($user['bank_account'] ?? '') ?>" placeholder="Account Number">
+                            <input aria-label="Bank account" type="text" name="bank_account" class="form-control" value="<?= htmlspecialchars($user['bank_account'] ?? '') ?>" placeholder="Account Number">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">IFSC Code</label>
-                            <input type="text" name="bank_ifsc" class="form-control" value="<?= htmlspecialchars($user['bank_ifsc'] ?? '') ?>" placeholder="IFSC Code" maxlength="11">
+                            <input aria-label="Bank ifsc" type="text" name="bank_ifsc" class="form-control" value="<?= htmlspecialchars($user['bank_ifsc'] ?? '') ?>" placeholder="IFSC Code" maxlength="11">
                         </div>
 
                         <div class="col-12 mt-4">
@@ -97,11 +97,11 @@ $user = $user ?? [];
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">PAN Number</label>
-                            <input type="text" name="pan_number" class="form-control" value="<?= htmlspecialchars($user['pan_number'] ?? '') ?>" placeholder="ABCDE1234F" maxlength="10" style="text-transform: uppercase;">
+                            <input aria-label="Pan number" type="text" name="pan_number" class="form-control" value="<?= htmlspecialchars($user['pan_number'] ?? '') ?>" placeholder="ABCDE1234F" maxlength="10" style="text-transform: uppercase;">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Aadhaar Number</label>
-                            <input type="text" name="aadhaar_number" class="form-control" value="<?= htmlspecialchars($user['aadhaar_number'] ?? '') ?>" placeholder="1234 5678 9012" maxlength="14">
+                            <input aria-label="Aadhaar number" type="text" name="aadhaar_number" class="form-control" value="<?= htmlspecialchars($user['aadhaar_number'] ?? '') ?>" placeholder="1234 5678 9012" maxlength="14">
                         </div>
 
                         <div class="col-12 mt-4">

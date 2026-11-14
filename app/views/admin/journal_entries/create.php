@@ -16,11 +16,11 @@ $today = $today ?? date('Y-m-d');
             <div class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Journal Number</label>
-                    <input type="text" name="journal_number" class="form-control" id="journalNumber" value="JE-<?= date('YmdHis') ?>" readonly>
+                    <input aria-label="Journal number" type="text" name="journal_number" class="form-control" id="journalNumber" value="JE-<?= date('YmdHis') ?>" readonly>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Entry Date <span class="text-danger">*</span></label>
-                    <input type="date" name="entry_date" class="form-control" required value="<?= $today ?>" max="<?= $today ?>">
+                    <input aria-label="Entry date" type="date" name="entry_date" class="form-control" required value="<?= $today ?>" max="<?= $today ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Entry Type</label>
@@ -48,11 +48,11 @@ $today = $today ?? date('Y-m-d');
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label class="form-label">Reference Number</label>
-                        <input type="text" name="reference_number" class="form-control" placeholder="e.g., INV-2026-001, PAY-12345">
+                        <input aria-label="Reference number" type="text" name="reference_number" class="form-control" placeholder="e.g., INV-2026-001, PAY-12345">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Reference ID (optional)</label>
-                        <input type="number" name="reference_id" class="form-control" placeholder="Related record ID">
+                        <input aria-label="Reference id" type="number" name="reference_id" class="form-control" placeholder="Related record ID">
                     </div>
                 </div>
 
@@ -90,13 +90,13 @@ $today = $today ?? date('Y-m-d');
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="lines[1][debit]" class="form-control form-control-sm line-debit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
+                                    <input aria-label="Lines 1 debit" type="number" name="lines[1][debit]" class="form-control form-control-sm line-debit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
                                 </td>
                                 <td>
-                                    <input type="number" name="lines[1][credit]" class="form-control form-control-sm line-credit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
+                                    <input aria-label="Lines 1 credit" type="number" name="lines[1][credit]" class="form-control form-control-sm line-credit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
                                 </td>
                                 <td>
-                                    <input type="text" name="lines[1][description]" class="form-control form-control-sm" placeholder="Line description">
+                                    <input aria-label="Lines 1 description" type="text" name="lines[1][description]" class="form-control form-control-sm" placeholder="Line description">
                                 </td>
                                 <td class="align-middle text-center">
                                     <button type="button" class="btn btn-sm btn-outline-danger remove-line" disabled aria-label="Delete"><i class="fas fa-trash"></i></button>
@@ -116,13 +116,13 @@ $today = $today ?? date('Y-m-d');
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="lines[2][debit]" class="form-control form-control-sm line-debit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
+                                    <input aria-label="Lines 2 debit" type="number" name="lines[2][debit]" class="form-control form-control-sm line-debit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
                                 </td>
                                 <td>
-                                    <input type="number" name="lines[2][credit]" class="form-control form-control-sm line-credit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
+                                    <input aria-label="Lines 2 credit" type="number" name="lines[2][credit]" class="form-control form-control-sm line-credit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
                                 </td>
                                 <td>
-                                    <input type="text" name="lines[2][description]" class="form-control form-control-sm" placeholder="Line description">
+                                    <input aria-label="Lines 2 description" type="text" name="lines[2][description]" class="form-control form-control-sm" placeholder="Line description">
                                 </td>
                                 <td class="align-middle text-center">
                                     <button type="button" class="btn btn-sm btn-outline-danger remove-line" aria-label="Delete"><i class="fas fa-trash"></i></button>
@@ -281,13 +281,13 @@ document.getElementById('addLineBtn')?.addEventListener('click', function() {
             </select>
         </td>
         <td>
-            <input type="number" name="lines[${lineCounter}][debit]" class="form-control form-control-sm line-debit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
+            <input aria-label="Lines line counter debit" type="number" name="lines[${lineCounter}][debit]" class="form-control form-control-sm line-debit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
         </td>
         <td>
-            <input type="number" name="lines[${lineCounter}][credit]" class="form-control form-control-sm line-credit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
+            <input aria-label="Lines line counter credit" type="number" name="lines[${lineCounter}][credit]" class="form-control form-control-sm line-credit" step="0.01" min="0" placeholder="0.00" oninput="validateLine(this)">
         </td>
         <td>
-            <input type="text" name="lines[${lineCounter}][description]" class="form-control form-control-sm" placeholder="Line description">
+            <input aria-label="Lines line counter description" type="text" name="lines[${lineCounter}][description]" class="form-control form-control-sm" placeholder="Line description">
         </td>
         <td class="align-middle text-center">
             <button type="button" class="btn btn-sm btn-outline-danger remove-line" aria-label="Delete"><i class="fas fa-trash"></i></button>

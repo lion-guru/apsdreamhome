@@ -60,7 +60,7 @@ $offers = $offers ?? [];
                 <div class="row mb-3">
                     <div class="col-md-8">
                         <label class="form-label">Offer Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input aria-label="Name" type="text" name="name" class="form-control" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Type</label>
@@ -77,29 +77,29 @@ $offers = $offers ?? [];
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Interest-Free Months</label>
-                        <input type="number" name="interest_free_months" class="form-control" value="0" min="0">
+                        <input aria-label="Interest free months" type="number" name="interest_free_months" class="form-control" value="0" min="0">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Max Tenure (months)</label>
-                        <input type="number" name="max_tenure_months" class="form-control" value="0" min="0">
+                        <input aria-label="Max tenure months" type="number" name="max_tenure_months" class="form-control" value="0" min="0">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Max Amount (₹)</label>
-                        <input type="number" name="max_amount" class="form-control" value="0" min="0">
+                        <input aria-label="Max amount" type="number" name="max_amount" class="form-control" value="0" min="0">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Discount %</label>
-                        <input type="number" name="discount_percent" class="form-control" value="0" min="0" max="100" step="0.5">
+                        <input aria-label="Discount percent" type="number" name="discount_percent" class="form-control" value="0" min="0" max="100" step="0.5">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Valid From</label>
-                        <input type="date" name="valid_from" class="form-control">
+                        <input aria-label="Valid from" type="date" name="valid_from" class="form-control">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Valid Until</label>
-                        <input type="date" name="valid_until" class="form-control">
+                        <input aria-label="Valid until" type="date" name="valid_until" class="form-control">
                     </div>
                 </div>
                 <div class="mb-3">

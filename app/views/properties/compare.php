@@ -73,7 +73,7 @@
                 <div class="card-header bg-light d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-home me-2"></i>Select Properties</h5>
                     <div class="input-group w-auto">
-                        <input type="text" class="form-control form-control-sm" id="search-properties"
+                        <input aria-label="Search properties" type="text" class="form-control form-control-sm" id="search-properties"
                             placeholder="Search properties..." onkeyup="searchProperties()">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                     </div>
@@ -90,7 +90,7 @@
                                     <!-- Selection Badge -->
                                     <div class="position-absolute top-0 end-0 m-2">
                                         <div class="form-check">
-                                            <input class="form-check-input property-checkbox" type="checkbox"
+                                            <input aria-label="Checkbox property" class="form-check-input property-checkbox" type="checkbox"
                                                 value="<?= $property['id'] ?>" id="checkbox-<?= $property['id'] ?>">
                                         </div>
                                     </div>

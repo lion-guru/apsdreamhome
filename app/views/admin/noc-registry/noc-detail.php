@@ -141,7 +141,7 @@ $eligibility = $eligibility ?? [];
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <input type="hidden" name="noc_id" value="<?= $noc['id'] ?>">
                         <div class="mb-2">
-                            <input type="text" name="reason" class="form-control form-control-sm" placeholder="<?= __('admin_rejection_reason_placeholder') ?>" required>
+                            <input aria-label="Reason" type="text" name="reason" class="form-control form-control-sm" placeholder="<?= __('admin_rejection_reason_placeholder') ?>" required>
                         </div>
                         <button type="submit" class="btn btn-danger w-100"><i class="fas fa-times me-1"></i><?= __('admin_reject_noc') ?></button>
                     </form>

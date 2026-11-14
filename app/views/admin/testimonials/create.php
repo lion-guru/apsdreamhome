@@ -12,15 +12,15 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Customer Name</label>
-                                    <input type="text" name="customer_name" class="form-control" required>
+                                    <input aria-label="Customer name" type="text" name="customer_name" class="form-control" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Customer Email</label>
-                                    <input type="email" name="customer_email" class="form-control">
+                                    <input aria-label="Customer email" type="email" name="customer_email" class="form-control">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Customer Phone</label>
-                                    <input type="text" name="customer_phone" class="form-control">
+                                    <input aria-label="Customer phone" type="text" name="customer_phone" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -45,7 +45,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Display on Website</label>
                                     <div class="form-check">
-                                        <input type="checkbox" name="is_featured" class="form-check-input" id="is_featured">
+                                        <input aria-label="Is featured" type="checkbox" name="is_featured" class="form-check-input" id="is_featured">
                                         <label class="form-check-label" for="is_featured">Featured Testimonial</label>
                                     </div>
                                 </div>

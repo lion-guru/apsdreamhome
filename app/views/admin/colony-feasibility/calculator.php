@@ -153,7 +153,7 @@ $isSuccess   = $feasibility['success'] ?? false;
 
             <div class="mb-3">
               <label class="form-label">Total Raw Land Area (sqft)</label>
-              <input type="number" name="total_raw_area_sqft" class="form-control"
+              <input aria-label="Total raw area sqft" type="number" name="total_raw_area_sqft" class="form-control"
                      value="<?= number_format($feasibility['total_raw_area_sqft'] ?? 0, 0, '.', '') ?>"
                      placeholder="Leave blank to auto-detect from DB">
               <small class="text-muted">Auto-detected from land_acquisitions if left empty</small>
@@ -162,13 +162,13 @@ $isSuccess   = $feasibility['success'] ?? false;
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label">Saleable Yield (%)</label>
-                <input type="number" name="yield_pct" class="form-control" step="0.1" min="10" max="100"
+                <input aria-label="Yield pct" type="number" name="yield_pct" class="form-control" step="0.1" min="10" max="100"
                        value="<?= $feasibility['yield_pct'] ?? 60 ?>">
                 <small class="text-muted">% of raw area that becomes plots</small>
               </div>
               <div class="col-md-6">
                 <label class="form-label">MLM Budget (%)</label>
-                <input type="number" name="mlm_budget_pct" class="form-control" step="0.1" min="0" max="50"
+                <input aria-label="Mlm budget pct" type="number" name="mlm_budget_pct" class="form-control" step="0.1" min="0" max="50"
                        value="<?= $feasibility['mlm_budget_pct'] ?? 25 ?>">
                 <small class="text-muted">Commissions (worst-case 26.4%)</small>
               </div>
@@ -177,13 +177,13 @@ $isSuccess   = $feasibility['success'] ?? false;
             <div class="row mb-3">
               <div class="col-md-6">
                 <label class="form-label">G&A Overhead (%)</label>
-                <input type="number" name="office_overhead_pct" class="form-control" step="0.1" min="0" max="20"
+                <input aria-label="Office overhead pct" type="number" name="office_overhead_pct" class="form-control" step="0.1" min="0" max="20"
                        value="<?= $feasibility['office_overhead_pct'] ?? 5 ?>">
                 <small class="text-muted">Office + staff + marketing</small>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Target Profit Margin (%)</label>
-                <input type="number" name="target_profit_pct" class="form-control" step="0.1" min="0" max="50"
+                <input aria-label="Target profit pct" type="number" name="target_profit_pct" class="form-control" step="0.1" min="0" max="50"
                        value="<?= $feasibility['profit_margin_pct'] ?? 20 ?>">
                 <small class="text-muted">Desired profit on selling price</small>
               </div>

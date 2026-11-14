@@ -92,17 +92,17 @@ $page_title = 'Financial Years Management';
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Financial Year <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="year" required placeholder="e.g. 2026-2027">
+                        <input aria-label="Year" type="text" class="form-control" name="year" required placeholder="e.g. 2026-2027">
                         <small class="text-muted">Format: YYYY-YYYY (e.g. 2026-2027)</small>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="start_date" required>
+                            <input aria-label="Start date" type="date" class="form-control" name="start_date" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">End Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="end_date" required>
+                            <input aria-label="End date" type="date" class="form-control" name="end_date" required>
                         </div>
                     </div>
                     <div class="mb-3">

@@ -39,13 +39,13 @@
                     <form method="GET" class="row g-2">
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="col-md-4">
-                            <input type="text" name="search" class="form-control form-control-sm" placeholder="Search name/phone/ref..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                            <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="Search name/phone/ref..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
                         </div>
                         <div class="col-md-2">
-                            <input type="date" name="date_from" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['date_from'] ?? '') ?>">
+                            <input aria-label="Date from" type="date" name="date_from" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['date_from'] ?? '') ?>">
                         </div>
                         <div class="col-md-2">
-                            <input type="date" name="date_to" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['date_to'] ?? '') ?>">
+                            <input aria-label="Date to" type="date" name="date_to" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['date_to'] ?? '') ?>">
                         </div>
                         <div class="col-md-2">
                             <select aria-label="Batch" name="batch" class="form-select form-select-sm">

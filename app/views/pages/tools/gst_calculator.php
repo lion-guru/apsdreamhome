@@ -10,7 +10,7 @@
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="basePrice"><?php echo __('base_price_rs', [], 'Base Price (₹)'); ?></label>
-                            <input type="number" class="form-control form-control-lg" id="basePrice" value="5000000">
+                            <input aria-label="Base price" type="number" class="form-control form-control-lg" id="basePrice" value="5000000">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>

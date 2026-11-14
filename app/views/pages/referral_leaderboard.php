@@ -106,7 +106,7 @@ $page_title = $page_title ?? 'Referral Leaderboard';
                 </div>
                 <div class="col-md-4 text-md-end">
                     <div class="input-group">
-                        <input type="text" class="form-control" value="<?= $base ?>/register?ref=<?= $_SESSION['referral_code'] ?? '' ?>" readonly id="shareUrl">
+                        <input aria-label="Share url" type="text" class="form-control" value="<?= $base ?>/register?ref=<?= $_SESSION['referral_code'] ?? '' ?>" readonly id="shareUrl">
                         <button class="btn btn-outline-primary" onclick="copyShareUrl()"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                 </div>

@@ -136,8 +136,8 @@ $pct = ($stats['plots'] ?? 0) > 0 ? round(100 * ($stats['linked'] ?? 0) / $stats
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                     <input type="hidden" name="colony_id" value="<?= $colony_id ?>">
                                     <input type="hidden" name="parcel_id" value="<?= (int)$pc['id'] ?>">
-                                    <input type="text" name="owner_name" class="form-control form-control-sm" placeholder="Kisan naam" value="<?= htmlspecialchars($pc['owner_name'] ?? '') ?>">
-                                    <input type="text" name="owner_phone" class="form-control form-control-sm" placeholder="Phone" style="max-width:110px" value="<?= htmlspecialchars($pc['owner_phone'] ?? '') ?>">
+                                    <input aria-label="Owner name" type="text" name="owner_name" class="form-control form-control-sm" placeholder="Kisan naam" value="<?= htmlspecialchars($pc['owner_name'] ?? '') ?>">
+                                    <input aria-label="Owner phone" type="text" name="owner_phone" class="form-control form-control-sm" placeholder="Phone" style="max-width:110px" value="<?= htmlspecialchars($pc['owner_phone'] ?? '') ?>">
                                     <button class="btn btn-sm btn-outline-success" title="Save"><i class="fas fa-check"></i></button>
                                 </form>
                             </td>

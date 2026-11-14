@@ -73,7 +73,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Requested Amount (₹) <span class="text-danger">*</span></label>
-                                <input type="number" step="500" name="requested_amount" class="form-control" placeholder="e.g. 15000" min="1000" required>
+                                <input aria-label="Requested amount" type="number" step="500" name="requested_amount" class="form-control" placeholder="e.g. 15000" min="1000" required>
                                 <small class="text-muted">Minimum request amount: ₹1,000</small>
                             </div>
                             <div class="mb-3">

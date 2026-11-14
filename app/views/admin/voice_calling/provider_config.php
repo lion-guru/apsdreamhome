@@ -47,7 +47,7 @@ $provider = $provider ?? '';
                                         <span class="text-muted small">(encrypted)</span>
                                     <?php endif; ?>
                                 </label>
-                                <input type="<?= $c['config_type'] === 'password' ? 'password' : 'text' ?>" 
+                                <input aria-label="Configs htmlspecialchars c" type="<?= $c['config_type'] === 'password' ? 'password' : 'text' ?>" 
                                        class="form-control" 
                                        name="configs[<?= htmlspecialchars($c['config_key']) ?>]" 
                                        value="<?= htmlspecialchars($c['config_value'] ?? '') ?>"

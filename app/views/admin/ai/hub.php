@@ -537,11 +537,11 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                         <div class="col-md-6">
                             <h6>AI Engine Mode</h6>
                             <div class="btn-group w-100" role="group">
-                                <input type="radio" class="btn-check" name="aiMode" id="modeAuto" checked>
+                                <input aria-label="Ai mode" type="radio" class="btn-check" name="aiMode" id="modeAuto" checked>
                                 <label class="btn btn-outline-primary" for="modeAuto">Auto</label>
-                                <input type="radio" class="btn-check" name="aiMode" id="modeManual">
+                                <input aria-label="Ai mode" type="radio" class="btn-check" name="aiMode" id="modeManual">
                                 <label class="btn btn-outline-secondary" for="modeManual">Manual</label>
-                                <input type="radio" class="btn-check" name="aiMode" id="modeOff">
+                                <input aria-label="Ai mode" type="radio" class="btn-check" name="aiMode" id="modeOff">
                                 <label class="btn btn-outline-danger" for="modeOff">Off</label>
                             </div>
                         </div>
@@ -574,7 +574,7 @@ $aiManager = $aiManager ?? new class { public function getMode() { return 'AUTO'
                     <input type="hidden" name="create_workflow" value="1">
                     <div class="mb-3">
                         <label class="form-label"><?= h($mlSupport->translate('Workflow Name')) ?></label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input aria-label="Name" type="text" name="name" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= h($mlSupport->translate('Description')) ?></label>

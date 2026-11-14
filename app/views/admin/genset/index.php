@@ -175,7 +175,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Date</label>
-                        <input type="date" name="log_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Log date" type="date" name="log_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Outage Reason</label>
@@ -190,41 +190,41 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">DG Unit Identifier</label>
-                        <input type="text" name="genset_number" class="form-control" value="Central DG Set #1 (125 kVA)">
+                        <input aria-label="Genset number" type="text" name="genset_number" class="form-control" value="Central DG Set #1 (125 kVA)">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Start Time</label>
-                        <input type="time" name="start_time" class="form-control" value="18:00">
+                        <input aria-label="Start time" type="time" name="start_time" class="form-control" value="18:00">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Stop Time</label>
-                        <input type="time" name="stop_time" class="form-control" value="20:30">
+                        <input aria-label="Stop time" type="time" name="stop_time" class="form-control" value="20:30">
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Run Hours</label>
-                        <input type="number" step="0.1" name="run_hours" class="form-control" value="2.5" placeholder="Auto / Manual">
+                        <input aria-label="Run hours" type="number" step="0.1" name="run_hours" class="form-control" value="2.5" placeholder="Auto / Manual">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Diesel Consumed (L) *</label>
-                        <input type="number" step="0.5" name="diesel_consumed_litres" class="form-control" value="45.0" required>
+                        <input aria-label="Diesel consumed litres" type="number" step="0.5" name="diesel_consumed_litres" class="form-control" value="45.0" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Diesel Rate / Litre (₹)</label>
-                        <input type="number" step="0.1" name="diesel_rate_per_litre" class="form-control" value="90.50">
+                        <input aria-label="Diesel rate per litre" type="number" step="0.1" name="diesel_rate_per_litre" class="form-control" value="90.50">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Power Generated (kWh)</label>
-                        <input type="number" step="1" name="power_generated_kwh" class="form-control" value="150.0">
+                        <input aria-label="Power generated kwh" type="number" step="1" name="power_generated_kwh" class="form-control" value="150.0">
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Fresh Diesel Added (L)</label>
-                        <input type="number" step="1" name="diesel_added_litres" class="form-control" value="0.0">
+                        <input aria-label="Diesel added litres" type="number" step="1" name="diesel_added_litres" class="form-control" value="0.0">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Closing Tank Stock (L)</label>
-                        <input type="number" step="1" name="diesel_closing_stock_litres" class="form-control" value="210.0">
+                        <input aria-label="Diesel closing stock litres" type="number" step="1" name="diesel_closing_stock_litres" class="form-control" value="210.0">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Mechanical Health</label>
@@ -239,11 +239,11 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">DG Attendant / Operator *</label>
-                        <input type="text" name="operator_name" class="form-control" value="Manoj Verma" required>
+                        <input aria-label="Operator name" type="text" name="operator_name" class="form-control" value="Manoj Verma" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Operator Contact</label>
-                        <input type="text" name="operator_phone" class="form-control" value="+91 9839654321">
+                        <input aria-label="Operator phone" type="text" name="operator_phone" class="form-control" value="+91 9839654321">
                     </div>
 
                     <div class="col-12">

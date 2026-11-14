@@ -68,7 +68,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                 </div>
-                                <input type="tel" id="callPhone" class="form-control" placeholder="919277121112" maxlength="15">
+                                <input aria-label="Call phone" type="tel" id="callPhone" class="form-control" placeholder="919277121112" maxlength="15">
                                 <div class="input-group-append">
                                     <button class="btn btn-teal" onclick="makeCall()" id="callBtn">
                                         <i class="fas fa-phone-alt"></i> Call Now
@@ -87,7 +87,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label>Caller ID (SIM)</label>
-                                    <input type="text" id="callerId" class="form-control form-control-sm" placeholder="SIM number" value="<?= htmlspecialchars($config['caller_id'] ?? '') ?>">
+                                    <input aria-label="Caller id" type="text" id="callerId" class="form-control form-control-sm" placeholder="SIM number" value="<?= htmlspecialchars($config['caller_id'] ?? '') ?>">
                                 </div>
                             </div>
                             <div id="callStatus" class="mt-3"></div>

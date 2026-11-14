@@ -17,7 +17,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">District Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($district['name'] ?? '') ?>" required>
+                            <input aria-label="Name" type="text" class="form-control" name="name" value="<?= htmlspecialchars($district['name'] ?? '') ?>" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">State <span class="text-danger">*</span></label>

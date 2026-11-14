@@ -10,7 +10,7 @@
             <form method="GET" action="<?= BASE_URL ?>/admin/documents/search">
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="input-group">
-                    <input type="text" name="q" class="form-control form-control-lg" placeholder="Search by title, name, description, or OCR text..." value="<?= htmlspecialchars($query ?? '') ?>" autofocus>
+                    <input aria-label="Q" type="text" name="q" class="form-control form-control-lg" placeholder="Search by title, name, description, or OCR text..." value="<?= htmlspecialchars($query ?? '') ?>" autofocus>
                     <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-search me-1"></i>Search</button>
                 </div>
             </form>

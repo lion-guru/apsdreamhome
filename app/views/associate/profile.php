@@ -294,7 +294,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="profile_name" class="form-label small fw-semibold">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" id="profile_name" name="name" class="form-control" value="<?= htmlspecialchars($user['name'] ?? $userName) ?>" required>
+                            <input aria-label="Profile name" type="text" id="profile_name" name="name" class="form-control" value="<?= htmlspecialchars($user['name'] ?? $userName) ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label for="profile_email" class="form-label small fw-semibold">Email Address <span class="text-danger">*</span></label>
@@ -306,20 +306,20 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                             <label for="profile_phone" class="form-label small fw-semibold">Primary Phone Number <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-phone text-muted"></i></span>
-                                <input type="tel" id="profile_phone" name="phone" class="form-control" value="<?= htmlspecialchars($user['phone'] ?? $userPhone) ?>" placeholder="10-digit mobile number" required>
+                                <input aria-label="Profile phone" type="tel" id="profile_phone" name="phone" class="form-control" value="<?= htmlspecialchars($user['phone'] ?? $userPhone) ?>" placeholder="10-digit mobile number" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label for="profile_alt_phone" class="form-label small fw-semibold">Alternate Phone / WhatsApp</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fab fa-whatsapp text-muted"></i></span>
-                                <input type="tel" id="profile_alt_phone" name="alternate_phone" class="form-control" value="<?= htmlspecialchars($associate['alternate_phone'] ?? $user['alternate_phone'] ?? '') ?>" placeholder="WhatsApp number">
+                                <input aria-label="Profile alt phone" type="tel" id="profile_alt_phone" name="alternate_phone" class="form-control" value="<?= htmlspecialchars($associate['alternate_phone'] ?? $user['alternate_phone'] ?? '') ?>" placeholder="WhatsApp number">
                             </div>
                         </div>
 
                         <div class="col-md-4">
                             <label for="profile_dob" class="form-label small fw-semibold">Date of Birth</label>
-                            <input type="date" id="profile_dob" name="dob" class="form-control" value="<?= htmlspecialchars($associate['dob'] ?? $user['dob'] ?? '') ?>">
+                            <input aria-label="Profile dob" type="date" id="profile_dob" name="dob" class="form-control" value="<?= htmlspecialchars($associate['dob'] ?? $user['dob'] ?? '') ?>">
                         </div>
                         <div class="col-md-4">
                             <label for="profile_gender" class="form-label small fw-semibold">Gender</label>
@@ -333,7 +333,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                         </div>
                         <div class="col-md-4">
                             <label for="profile_occupation" class="form-label small fw-semibold">Occupation</label>
-                            <input type="text" id="profile_occupation" name="occupation" class="form-control" value="<?= htmlspecialchars($associate['occupation'] ?? '') ?>" placeholder="e.g. Real Estate Consultant">
+                            <input aria-label="Profile occupation" type="text" id="profile_occupation" name="occupation" class="form-control" value="<?= htmlspecialchars($associate['occupation'] ?? '') ?>" placeholder="e.g. Real Estate Consultant">
                         </div>
 
                         <div class="col-12">
@@ -343,15 +343,15 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
 
                         <div class="col-md-4">
                             <label for="profile_city" class="form-label small fw-semibold">City</label>
-                            <input type="text" id="profile_city" name="city" class="form-control" value="<?= htmlspecialchars($user['city'] ?? '') ?>" placeholder="e.g. Gorakhpur">
+                            <input aria-label="Profile city" type="text" id="profile_city" name="city" class="form-control" value="<?= htmlspecialchars($user['city'] ?? '') ?>" placeholder="e.g. Gorakhpur">
                         </div>
                         <div class="col-md-4">
                             <label for="profile_state" class="form-label small fw-semibold">State</label>
-                            <input type="text" id="profile_state" name="state" class="form-control" value="<?= htmlspecialchars($user['state'] ?? 'Uttar Pradesh') ?>" placeholder="e.g. Uttar Pradesh">
+                            <input aria-label="Profile state" type="text" id="profile_state" name="state" class="form-control" value="<?= htmlspecialchars($user['state'] ?? 'Uttar Pradesh') ?>" placeholder="e.g. Uttar Pradesh">
                         </div>
                         <div class="col-md-4">
                             <label for="profile_pincode" class="form-label small fw-semibold">Pincode</label>
-                            <input type="text" id="profile_pincode" name="pincode" class="form-control" maxlength="6" value="<?= htmlspecialchars($user['pincode'] ?? '') ?>" placeholder="6-digit PIN">
+                            <input aria-label="Profile pincode" type="text" id="profile_pincode" name="pincode" class="form-control" maxlength="6" value="<?= htmlspecialchars($user['pincode'] ?? '') ?>" placeholder="6-digit PIN">
                         </div>
 
                         <div class="col-12 text-end pt-3">
@@ -371,7 +371,7 @@ unset($_SESSION['flash_success'], $_SESSION['success'], $_SESSION['flash_error']
                 <label for="directRefLink" class="visually-hidden">Direct Referral Link</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text bg-light"><i class="fas fa-link text-muted"></i></span>
-                    <input type="text" class="form-control font-monospace small" id="directRefLink" value="<?= htmlspecialchars($referralLink) ?>" readonly>
+                    <input aria-label="Direct ref link" type="text" class="form-control font-monospace small" id="directRefLink" value="<?= htmlspecialchars($referralLink) ?>" readonly>
                     <button class="btn btn-outline-primary" type="button" onclick="copyDirectLink()">
                         <i class="fas fa-copy me-1"></i>Copy Link
                     </button>

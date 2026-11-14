@@ -57,7 +57,7 @@ $incentives = $incentives ?? [];
             <div class="modal-body">
                 <div class="mb-3">
                     <label class="form-label">Name <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control" required>
+                    <input aria-label="Name" type="text" name="name" class="form-control" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Description</label>
@@ -84,15 +84,15 @@ $incentives = $incentives ?? [];
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Discount %</label>
-                        <input type="number" name="discount_percent" class="form-control" value="0" min="0" max="100" step="0.5">
+                        <input aria-label="Discount percent" type="number" name="discount_percent" class="form-control" value="0" min="0" max="100" step="0.5">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Fixed Amount (₹)</label>
-                        <input type="number" name="fixed_amount" class="form-control" value="0" min="0">
+                        <input aria-label="Fixed amount" type="number" name="fixed_amount" class="form-control" value="0" min="0">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Min Remaining Months</label>
-                        <input type="number" name="min_remaining_months" class="form-control" value="0" min="0">
+                        <input aria-label="Min remaining months" type="number" name="min_remaining_months" class="form-control" value="0" min="0">
                     </div>
                 </div>
             </div>

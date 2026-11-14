@@ -23,13 +23,13 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Associate Name *</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <input aria-label="Name" type="text" class="form-control" id="name" name="name" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email Address *</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <input aria-label="Email" type="email" class="form-control" id="email" name="email" required>
                                 </div>
                             </div>
                         </div>
@@ -37,7 +37,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">Phone Number *</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" required>
+                                    <input aria-label="Phone" type="tel" class="form-control" id="phone" name="phone" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -73,7 +73,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="joining_date" class="form-label">Joining Date *</label>
-                                    <input type="date" class="form-control" id="joining_date" name="joining_date" required>
+                                    <input aria-label="Joining date" type="date" class="form-control" id="joining_date" name="joining_date" required>
                                 </div>
                             </div>
                         </div>

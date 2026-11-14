@@ -15,7 +15,7 @@
                 <div class="col-md-8">
                     <div class="mb-3">
                         <label for="title" class="form-label">Title *</label>
-                        <input type="text" class="form-control" id="title" name="title" required>
+                        <input aria-label="Title" type="text" class="form-control" id="title" name="title" required>
                     </div>
 
                     <div class="mb-3">
@@ -45,11 +45,11 @@
 
                             <div class="mb-3">
                                 <label for="published_at" class="form-label">Publish Date</label>
-                                <input type="datetime-local" class="form-control" id="published_at" name="published_at">
+                                <input aria-label="Published at" type="datetime-local" class="form-control" id="published_at" name="published_at">
                             </div>
 
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="featured" name="featured" value="1">
+                                <input aria-label="Featured" type="checkbox" class="form-check-input" id="featured" name="featured" value="1">
                                 <label class="form-check-label" for="featured">Featured</label>
                             </div>
                         </div>
@@ -58,7 +58,7 @@
                     <div class="card bg-light mb-3">
                         <div class="card-body aps-cp-card-body">
                             <h6>Featured Image</h6>
-                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <input aria-label="Image" type="file" class="form-control" id="image" name="image" accept="image/*">
                             <div id="imagePreview" class="mt-2 text-center"></div>
                         </div>
                     </div>

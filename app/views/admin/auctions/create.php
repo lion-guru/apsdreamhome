@@ -17,7 +17,7 @@ ob_start();
                 <div class="row g-3">
                     <div class="col-md-8">
                         <label class="form-label">Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required>
+                        <input aria-label="Title" type="text" name="title" class="form-control" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Auction Type</label>
@@ -43,39 +43,39 @@ ob_start();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Image URL</label>
-                        <input type="url" name="image_url" class="form-control" placeholder="https://...">
+                        <input aria-label="Image url" type="url" name="image_url" class="form-control" placeholder="https://...">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Start Price (₹) <span class="text-danger">*</span></label>
-                        <input type="number" name="start_price" class="form-control" step="0.01" min="0" required>
+                        <input aria-label="Start price" type="number" name="start_price" class="form-control" step="0.01" min="0" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Reserve Price (₹)</label>
-                        <input type="number" name="reserve_price" class="form-control" step="0.01" min="0">
+                        <input aria-label="Reserve price" type="number" name="reserve_price" class="form-control" step="0.01" min="0">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Bid Increment (₹)</label>
-                        <input type="number" name="bid_increment" class="form-control" step="0.01" value="1000" min="0">
+                        <input aria-label="Bid increment" type="number" name="bid_increment" class="form-control" step="0.01" value="1000" min="0">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Buy Now Price (₹)</label>
-                        <input type="number" name="buy_now_price" class="form-control" step="0.01" min="0">
+                        <input aria-label="Buy now price" type="number" name="buy_now_price" class="form-control" step="0.01" min="0">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Deposit Required (₹)</label>
-                        <input type="number" name="deposit_amount" class="form-control" step="0.01" min="0" placeholder="0 for none">
+                        <input aria-label="Deposit amount" type="number" name="deposit_amount" class="form-control" step="0.01" min="0" placeholder="0 for none">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Auto-Extend Threshold (sec)</label>
-                        <input type="number" name="extension_seconds" class="form-control" value="60" min="0">
+                        <input aria-label="Extension seconds" type="number" name="extension_seconds" class="form-control" value="60" min="0">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Starts At</label>
-                        <input type="datetime-local" name="starts_at" class="form-control" required>
+                        <input aria-label="Starts at" type="datetime-local" name="starts_at" class="form-control" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Ends At</label>
-                        <input type="datetime-local" name="ends_at" class="form-control" required>
+                        <input aria-label="Ends at" type="datetime-local" name="ends_at" class="form-control" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Status</label>

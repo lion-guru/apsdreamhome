@@ -357,11 +357,11 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label for="loanAmount" class="form-label">Loan Amount (₹)</label>
-                            <input type="number" class="form-control" id="loanAmount" placeholder="Enter loan amount">
+                            <input aria-label="Loan amount" type="number" class="form-control" id="loanAmount" placeholder="Enter loan amount">
                         </div>
                         <div class="mb-3">
                             <label for="interestRate" class="form-label">Interest Rate (%)</label>
-                            <input type="number" class="form-control" id="interestRate" value="8.5" step="0.1">
+                            <input aria-label="Interest rate" type="number" class="form-control" id="interestRate" value="8.5" step="0.1">
                         </div>
                         <div class="mb-3">
                             <label for="loanTenure" class="form-label">Tenure (Years)</label>
@@ -428,13 +428,13 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="visitorName" class="form-label">Full Name *</label>
-                                <input type="text" class="form-control" id="visitorName" name="name" required>
+                                <input aria-label="Visitor name" type="text" class="form-control" id="visitorName" name="name" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="visitorEmail" class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="visitorEmail" name="email" required>
+                                <input aria-label="Visitor email" type="email" class="form-control" id="visitorEmail" name="email" required>
                             </div>
                         </div>
                     </div>
@@ -443,13 +443,13 @@ $page_description = htmlspecialchars($project['short_description'] ?? $project['
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="visitorPhone" class="form-label">Phone *</label>
-                                <input type="tel" class="form-control" id="visitorPhone" name="phone" required>
+                                <input aria-label="Visitor phone" type="tel" class="form-control" id="visitorPhone" name="phone" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="preferredDate" class="form-label">Preferred Date *</label>
-                                <input type="date" class="form-control" id="preferredDate" name="preferred_date" required>
+                                <input aria-label="Preferred date" type="date" class="form-control" id="preferredDate" name="preferred_date" required>
                             </div>
                         </div>
                     </div>

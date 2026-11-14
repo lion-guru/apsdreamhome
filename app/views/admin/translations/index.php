@@ -52,7 +52,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
         <div class="card-header aps-cp-card-header d-flex justify-content-between align-items-center">
             <i class="fas fa-list me-2"></i>Translations
             <div class="input-group">
-                <input type="text" class="form-control form-control-sm" id="translationSearch" placeholder="Search translations...">
+                <input aria-label="Translation search" type="text" class="form-control form-control-sm" id="translationSearch" placeholder="Search translations...">
             </div>
         </div>
         <div class="card-body p-0">
@@ -113,7 +113,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                     
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Key <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="key" required placeholder="e.g., welcome_message">
+                        <input aria-label="Key" type="text" class="form-control" name="key" required placeholder="e.g., welcome_message">
                     </div>
                     
                     <hr>
@@ -121,7 +121,7 @@ $supported_languages = $supported_languages ?? ['en' => ['name' => 'English', 'n
                     <?php foreach ($supported_languages as $code => $info): ?>
                     <div class="mb-3">
                         <label class="form-label fw-semibold"><?= htmlspecialchars($info['name'] ?? '') ?> (<?= $code ?>) <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="translations[<?= $code ?>]" placeholder="Translation in <?= $info['name'] ?>" required>
+                        <input aria-label="Translations code" type="text" class="form-control" name="translations[<?= $code ?>]" placeholder="Translation in <?= $info['name'] ?>" required>
                     </div>
                     <?php endforeach; ?>
                 </div>

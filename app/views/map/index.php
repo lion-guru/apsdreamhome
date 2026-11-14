@@ -5,7 +5,7 @@
             <small class="text-muted"><?= ($page_description ?? 'Browse properties on map') ?></small>
         </div>
         <div class="d-flex gap-2">
-            <input type="text" id="mapSearch" class="form-control form-control-sm" placeholder="Search location..." >
+            <input aria-label="Map search" type="text" id="mapSearch" class="form-control form-control-sm" placeholder="Search location..." >
             <select aria-label="Property type filter" id="propertyTypeFilter" class="form-select form-select-sm">
                 <option value="">All Types</option>
                 <option value="apartment">Apartment</option>

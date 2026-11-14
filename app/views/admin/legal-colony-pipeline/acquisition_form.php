@@ -18,27 +18,27 @@ $colony = $colony ?? null;
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label text-white">Land Owner Name *</label>
-            <input type="text" name="land_owner_name" class="form-control bg-dark text-white border-secondary" required placeholder="e.g. Ramesh Kumar">
+            <input aria-label="Land owner name" type="text" name="land_owner_name" class="form-control bg-dark text-white border-secondary" required placeholder="e.g. Ramesh Kumar">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Colony Name</label>
-            <input type="text" name="colony_name" class="form-control bg-dark text-white border-secondary" placeholder="e.g. Suryoday Phase 2">
+            <input aria-label="Colony name" type="text" name="colony_name" class="form-control bg-dark text-white border-secondary" placeholder="e.g. Suryoday Phase 2">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Location / Address</label>
-            <input type="text" name="location" class="form-control bg-dark text-white border-secondary" placeholder="e.g. Gorakhpur-Lucknow Highway">
+            <input aria-label="Location" type="text" name="location" class="form-control bg-dark text-white border-secondary" placeholder="e.g. Gorakhpur-Lucknow Highway">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Total Area (Acres) *</label>
-            <input type="number" name="total_area_acres" class="form-control bg-dark text-white border-secondary" step="0.01" min="0.1" required placeholder="e.g. 5.5">
+            <input aria-label="Total area acres" type="number" name="total_area_acres" class="form-control bg-dark text-white border-secondary" step="0.01" min="0.1" required placeholder="e.g. 5.5">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Estimated Land Cost (₹) *</label>
-            <input type="number" name="estimated_cost" class="form-control bg-dark text-white border-secondary" min="1" required placeholder="e.g. 5500000">
+            <input aria-label="Estimated cost" type="number" name="estimated_cost" class="form-control bg-dark text-white border-secondary" min="1" required placeholder="e.g. 5500000">
           </div>
           <div class="col-md-6">
             <label class="form-label text-white">Advance Paid (₹)</label>
-            <input type="number" name="advance_paid" class="form-control bg-dark text-white border-secondary" min="0" value="0" placeholder="e.g. 1000000">
+            <input aria-label="Advance paid" type="number" name="advance_paid" class="form-control bg-dark text-white border-secondary" min="0" value="0" placeholder="e.g. 1000000">
           </div>
         </div>
 

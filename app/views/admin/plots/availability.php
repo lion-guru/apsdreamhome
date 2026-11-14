@@ -84,11 +84,11 @@ $stats = $stats ?? ['available' => 0, 'booked' => 0, 'sold' => 0, 'hold' => 0, '
                         </div>
                         <div class="col-md-3 mb-2 mb-md-0">
                             <label class="form-label fw-bold">Search</label>
-                            <input type="text" id="searchInput" class="form-control" placeholder="Plot # or block..." onkeyup="filterTable()">
+                            <input aria-label="Search input" type="text" id="searchInput" class="form-control" placeholder="Plot # or block..." onkeyup="filterTable()">
                         </div>
                         <div class="col-md-2">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="showCorner" onchange="filterTable()">
+                                <input aria-label="Show corner" class="form-check-input" type="checkbox" id="showCorner" onchange="filterTable()">
                                 <label class="form-check-label">Corner Plots</label>
                             </div>
                         </div>

@@ -13,7 +13,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Rule Name *</label>
-                            <input type="text" name="name" class="form-control" required
+                            <input aria-label="Name" type="text" name="name" class="form-control" required
                                    value="<?= htmlspecialchars($rule['name'] ?? '') ?>"
                                    placeholder="e.g. High Budget Leads, Website Referrals">
                         </div>
@@ -21,14 +21,14 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Source Pattern</label>
-                                <input type="text" name="source_pattern" class="form-control"
+                                <input aria-label="Source pattern" type="text" name="source_pattern" class="form-control"
                                        value="<?= htmlspecialchars($rule['source_pattern'] ?? '*') ?>"
                                        placeholder="* = all, or website,referral">
                                 <small class="text-muted">Comma-separated. Use * for all sources. Supports wildcards.</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">City Pattern</label>
-                                <input type="text" name="city_pattern" class="form-control"
+                                <input aria-label="City pattern" type="text" name="city_pattern" class="form-control"
                                        value="<?= htmlspecialchars($rule['city_pattern'] ?? '*') ?>"
                                        placeholder="* = all, or delhi,noida">
                                 <small class="text-muted">Comma-separated. Use * for all cities.</small>
@@ -38,13 +38,13 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Min Budget (₹)</label>
-                                <input type="number" name="min_budget" class="form-control" step="1000"
+                                <input aria-label="Min budget" type="number" name="min_budget" class="form-control" step="1000"
                                        value="<?= (int)($rule['min_budget'] ?? 0) ?>">
                                 <small class="text-muted">Set 0 for no minimum.</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Max Budget (₹)</label>
-                                <input type="number" name="max_budget" class="form-control" step="1000"
+                                <input aria-label="Max budget" type="number" name="max_budget" class="form-control" step="1000"
                                        value="<?= (int)($rule['max_budget'] ?? 0) ?>">
                                 <small class="text-muted">Set 0 for no maximum.</small>
                             </div>
@@ -80,7 +80,7 @@
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label class="form-label">Priority</label>
-                                <input type="number" name="priority" class="form-control"
+                                <input aria-label="Priority" type="number" name="priority" class="form-control"
                                        value="<?= (int)($rule['priority'] ?? 100) ?>">
                                 <small class="text-muted">Lower = evaluated first. Default: 100.</small>
                             </div>

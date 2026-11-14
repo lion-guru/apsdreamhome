@@ -53,7 +53,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-4">
                             <label class="form-label fw-bold"><?= __('assoc_il_select_file', [], 'Select CSV File') ?></label>
-                            <input type="file" class="form-control" name="csv_file" accept=".csv" required>
+                            <input aria-label="Csv file" type="file" class="form-control" name="csv_file" accept=".csv" required>
                             <small class="text-muted"><?= __('assoc_il_limit', [], 'Maximum 500 leads per import. Duplicate phone numbers will be skipped.') ?></small>
                         </div>
                         <button type="submit" class="btn btn-primary">

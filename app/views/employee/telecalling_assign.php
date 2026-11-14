@@ -9,7 +9,7 @@
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
-                        <tr><th scope="col"><input type="checkbox" id="selectAll"></th><th scope="col">Name</th><th scope="col">Phone</th><th scope="col">Source</th><th scope="col">Status</th><th scope="col">Date</th><th scope="col">Assign To</th><th scope="col">Action</th></tr>
+                        <tr><th scope="col"><input aria-label="Select all" type="checkbox" id="selectAll"></th><th scope="col">Name</th><th scope="col">Phone</th><th scope="col">Source</th><th scope="col">Status</th><th scope="col">Date</th><th scope="col">Assign To</th><th scope="col">Action</th></tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($leads)): foreach ($leads as $lead): ?>

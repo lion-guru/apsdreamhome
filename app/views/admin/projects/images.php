@@ -21,7 +21,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="image" class="form-label">Upload Image</label>
-                                    <input type="file" class="form-control" id="image" name="image" accept="image/jpeg,image/png,image/gif,image/webp" required>
+                                    <input aria-label="Image" type="file" class="form-control" id="image" name="image" accept="image/jpeg,image/png,image/gif,image/webp" required>
                                 </div>
                             </div>
                             <div class="col-md-2">

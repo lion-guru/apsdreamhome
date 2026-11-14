@@ -6,7 +6,7 @@
       <form method="post" action="<?= BASE_URL ?>/admin/backoffice/operations/store">
         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?? '' ?>">
         <div class="row g-3">
-          <div class="col-md-4"><label class="form-label"><?= __('bko_date') ?></label><input type="date" name="log_date" class="form-control" value="<?= date('Y-m-d') ?>"></div>
+          <div class="col-md-4"><label class="form-label"><?= __('bko_date') ?></label><input aria-label="Log date" type="date" name="log_date" class="form-control" value="<?= date('Y-m-d') ?>"></div>
           <div class="col-md-4"><label class="form-label"><?= __('bko_type') ?></label><select aria-label="Log type" name="log_type" class="form-select">
             <?php foreach(['site_visit','client_meeting','collection','payment_received','cheque_collected','document_submission','registry','mutation','legal_update','construction_update','other'] as $t): ?>
               <option value="<?= $t ?>"><?= ucfirst(str_replace('_',' ',$t)) ?></option>
@@ -16,9 +16,9 @@
             <option value=""><?= __('bko_select') ?></option>
             <?php foreach ($colonies as $c): ?><option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?>
           </select></div>
-          <div class="col-md-4"><label class="form-label"><?= __('bko_description') ?></label><input type="text" name="description" class="form-control"></div>
-          <div class="col-md-4"><label class="form-label"><?= __('bko_amount') ?></label><input type="number" name="amount" class="form-control" step="0.01"></div>
-          <div class="col-md-4"><label class="form-label"><?= __('bko_party_name') ?></label><input type="text" name="party_name" class="form-control"></div>
+          <div class="col-md-4"><label class="form-label"><?= __('bko_description') ?></label><input aria-label="Description" type="text" name="description" class="form-control"></div>
+          <div class="col-md-4"><label class="form-label"><?= __('bko_amount') ?></label><input aria-label="Amount" type="number" name="amount" class="form-control" step="0.01"></div>
+          <div class="col-md-4"><label class="form-label"><?= __('bko_party_name') ?></label><input aria-label="Party name" type="text" name="party_name" class="form-control"></div>
           <div class="col-md-4"><label class="form-label"><?= __('bko_party_type') ?></label><select aria-label="Party type" name="party_type" class="form-select">
             <option value="customer"><?= __('bko_customer') ?></option><option value="vendor"><?= __('bko_vendor') ?></option><option value="land_owner"><?= __('bko_land_owner') ?></option><option value="employee"><?= __('bko_employee') ?></option><option value="government"><?= __('bko_government') ?></option><option value="other"><?= __('bko_other') ?></option>
           </select></div>

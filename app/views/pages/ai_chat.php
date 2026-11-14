@@ -33,7 +33,7 @@ $page_description = __('user_ai_chat_description', 'Professional AI Chat Assista
                         </div>
                         
                         <div class="input-group">
-                            <input type="text" id="chat-input" class="form-control" placeholder="<?= __('user_ai_chat_placeholder', 'Type your message...') ?>">
+                            <input aria-label="Chat input" type="text" id="chat-input" class="form-control" placeholder="<?= __('user_ai_chat_placeholder', 'Type your message...') ?>">
                             <button class="btn btn-primary" onclick="sendMessage()">
                                 <i class="fas fa-paper-plane"></i> <?= __('user_ai_chat_send', 'Send') ?>
                             </button>

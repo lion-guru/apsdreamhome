@@ -11,8 +11,8 @@ $colony_id = $colony_id ?? null;
 
     <div class="card mb-4"><div class="card-body">
         <form method="GET" class="row">
-            <div class="col-md-3"><label>Material ID</label><input type="number" name="material_id" class="form-control" value="<?= $material_id ? htmlspecialchars($material_id) : '' ?>" placeholder="Material ID"></div>
-            <div class="col-md-3"><label>Colony ID</label><input type="number" name="colony_id" class="form-control" value="<?= $colony_id ? htmlspecialchars($colony_id) : '' ?>" placeholder="Colony ID"></div>
+            <div class="col-md-3"><label>Material ID</label><input aria-label="Material id" type="number" name="material_id" class="form-control" value="<?= $material_id ? htmlspecialchars($material_id) : '' ?>" placeholder="Material ID"></div>
+            <div class="col-md-3"><label>Colony ID</label><input aria-label="Colony id" type="number" name="colony_id" class="form-control" value="<?= $colony_id ? htmlspecialchars($colony_id) : '' ?>" placeholder="Colony ID"></div>
             <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Filter</button></div>
             <div class="col-md-2 d-flex align-items-end"><a href="<?= BASE_URL ?>/admin/inventory/usage-log" class="btn btn-outline-secondary w-100">Clear</a></div>
         </form>

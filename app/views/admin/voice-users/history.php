@@ -8,11 +8,11 @@
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-3">
                 <label class="form-label">Date From</label>
-                <input type="date" name="date_from" class="form-control" value="<?= htmlspecialchars($_GET['date_from'] ?? '') ?>">
+                <input aria-label="Date from" type="date" name="date_from" class="form-control" value="<?= htmlspecialchars($_GET['date_from'] ?? '') ?>">
             </div>
             <div class="col-md-3">
                 <label class="form-label">Date To</label>
-                <input type="date" name="date_to" class="form-control" value="<?= htmlspecialchars($_GET['date_to'] ?? '') ?>">
+                <input aria-label="Date to" type="date" name="date_to" class="form-control" value="<?= htmlspecialchars($_GET['date_to'] ?? '') ?>">
             </div>
             <div class="col-md-2">
                 <label class="form-label">Status</label>

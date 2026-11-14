@@ -84,7 +84,7 @@ $questions = $questions ?? [];
                             <div class="d-flex gap-2 align-items-center flex-wrap pt-2">
                                 <?php for ($r = 1; $r <= 5; $r++): ?>
                                     <label class="btn btn-outline-secondary px-3 py-2 text-center" style="min-width: 60px;">
-                                        <input type="radio" name="q_<?= $index ?>" value="<?= $r ?>" class="btn-check" <?= $isRequired && $r === 1 ? 'required' : '' ?>>
+                                        <input aria-label="Q index" type="radio" name="q_<?= $index ?>" value="<?= $r ?>" class="btn-check" <?= $isRequired && $r === 1 ? 'required' : '' ?>>
                                         <div class="fw-bold fs-5"><?= $r ?></div>
                                         <small style="font-size: 0.65rem;">
                                             <?= $r === 1 ? 'Poor' : ($r === 5 ? 'Excellent' : '&nbsp;') ?>
@@ -100,10 +100,10 @@ $questions = $questions ?? [];
                         <?php elseif ($qType === 'boolean' || $qType === 'yes_no'): ?>
                             <!-- Yes / No Choice -->
                             <div class="btn-group" role="group" aria-label="Yes or No">
-                                <input type="radio" class="btn-check" name="q_<?= $index ?>" id="q_<?= $index ?>_yes" value="yes" <?= $isRequired ? 'required' : '' ?>>
+                                <input aria-label="Q index" type="radio" class="btn-check" name="q_<?= $index ?>" id="q_<?= $index ?>_yes" value="yes" <?= $isRequired ? 'required' : '' ?>>
                                 <label class="btn btn-outline-success px-4" for="q_<?= $index ?>_yes"><i class="fas fa-check me-1"></i> Yes</label>
 
-                                <input type="radio" class="btn-check" name="q_<?= $index ?>" id="q_<?= $index ?>_no" value="no">
+                                <input aria-label="Q index" type="radio" class="btn-check" name="q_<?= $index ?>" id="q_<?= $index ?>_no" value="no">
                                 <label class="btn btn-outline-danger px-4" for="q_<?= $index ?>_no"><i class="fas fa-times me-1"></i> No</label>
                             </div>
 
@@ -115,7 +115,7 @@ $questions = $questions ?? [];
                                     $optLabel = is_array($opt) ? ($opt['label'] ?? $opt['value'] ?? '') : $opt;
                                 ?>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="q_<?= $index ?>" id="q_<?= $index ?>_<?= $optIdx ?>" value="<?= htmlspecialchars($optVal) ?>" <?= $isRequired ? 'required' : '' ?>>
+                                    <input aria-label="Q index" class="form-check-input" type="radio" name="q_<?= $index ?>" id="q_<?= $index ?>_<?= $optIdx ?>" value="<?= htmlspecialchars($optVal) ?>" <?= $isRequired ? 'required' : '' ?>>
                                     <label class="form-check-label" for="q_<?= $index ?>_<?= $optIdx ?>">
                                         <?= htmlspecialchars($optLabel) ?>
                                     </label>
@@ -131,7 +131,7 @@ $questions = $questions ?? [];
                                     $optLabel = is_array($opt) ? ($opt['label'] ?? $opt['value'] ?? '') : $opt;
                                 ?>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="q_<?= $index ?>[]" id="q_<?= $index ?>_<?= $optIdx ?>" value="<?= htmlspecialchars($optVal) ?>">
+                                    <input aria-label="Q index" class="form-check-input" type="checkbox" name="q_<?= $index ?>[]" id="q_<?= $index ?>_<?= $optIdx ?>" value="<?= htmlspecialchars($optVal) ?>">
                                     <label class="form-check-label" for="q_<?= $index ?>_<?= $optIdx ?>">
                                         <?= htmlspecialchars($optLabel) ?>
                                     </label>

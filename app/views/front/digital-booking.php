@@ -149,11 +149,11 @@ $base = BASE_URL ?? '/apsdreamhome';
             <form id="emiForm" class="row g-3 mb-4">
                 <div class="col-md-3">
                     <label class="form-label">Tenure (Months)</label>
-                    <input type="number" name="tenure" class="form-control" value="60" min="6" max="360" step="6">
+                    <input aria-label="Tenure" type="number" name="tenure" class="form-control" value="60" min="6" max="360" step="6">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Interest Rate (% p.a.)</label>
-                    <input type="number" name="rate" class="form-control" value="9.5" min="0" max="30" step="0.25">
+                    <input aria-label="Rate" type="number" name="rate" class="form-control" value="9.5" min="0" max="30" step="0.25">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">EMI Type</label>
@@ -245,7 +245,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                 </div>
                 <div class="mt-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="termsAccepted" required>
+                        <input aria-label="Terms accepted" class="form-check-input" type="checkbox" id="termsAccepted" required>
                         <label class="form-check-label" for="termsAccepted">
                             I have read and understood all <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms & Conditions</a>, 
                             <a href="#" data-bs-toggle="modal" data-bs-target="#emiModal">EMI Schedule</a>, and 
@@ -253,7 +253,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="privacyAccepted" required>
+                        <input aria-label="Privacy accepted" class="form-check-input" type="checkbox" id="privacyAccepted" required>
                         <label class="form-check-label" for="privacyAccepted">
                             I accept the <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a> and consent to my data being stored securely
                         </label>

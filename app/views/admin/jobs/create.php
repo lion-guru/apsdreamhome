@@ -27,7 +27,7 @@ $job_types = $job_types ?? ['Full-time', 'Part-time', 'Contract', 'Internship'];
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="title" class="form-label">Job Title *</label>
-                        <input type="text" class="form-control" id="title" name="title" required 
+                        <input aria-label="Title" type="text" class="form-control" id="title" name="title" required 
                                placeholder="e.g., Real Estate Sales Manager">
                     </div>
                     <div class="col-md-6 mb-3">
@@ -44,7 +44,7 @@ $job_types = $job_types ?? ['Full-time', 'Part-time', 'Contract', 'Internship'];
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="location" class="form-label">Location *</label>
-                        <input type="text" class="form-control" id="location" name="location" required 
+                        <input aria-label="Location" type="text" class="form-control" id="location" name="location" required 
                                placeholder="e.g., Gorakhpur">
                     </div>
                     <div class="col-md-4 mb-3">
@@ -57,7 +57,7 @@ $job_types = $job_types ?? ['Full-time', 'Part-time', 'Contract', 'Internship'];
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="experience" class="form-label">Experience Required *</label>
-                        <input type="text" class="form-control" id="experience" name="experience" required 
+                        <input aria-label="Experience" type="text" class="form-control" id="experience" name="experience" required 
                                placeholder="e.g., 2-4 years">
                     </div>
                 </div>
@@ -65,12 +65,12 @@ $job_types = $job_types ?? ['Full-time', 'Part-time', 'Contract', 'Internship'];
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="salary_range" class="form-label">Salary Range</label>
-                        <input type="text" class="form-control" id="salary_range" name="salary_range" 
+                        <input aria-label="Salary range" type="text" class="form-control" id="salary_range" name="salary_range" 
                                placeholder="e.g., ₹25,000 - ₹45,000/month">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="closing_date" class="form-label">Application Closing Date</label>
-                        <input type="date" class="form-control" id="closing_date" name="closing_date">
+                        <input aria-label="Closing date" type="date" class="form-control" id="closing_date" name="closing_date">
                     </div>
                 </div>
 

@@ -72,7 +72,7 @@ $base = BASE_URL ?? '';
     <div class="card-body py-2">
         <form method="GET" action="<?= $base ?>/admin/tenants" class="row g-2 align-items-center">
             <div class="col-md-4">
-                <input type="text" name="search" class="form-control form-control-sm" placeholder="Search tenants..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="Search tenants..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
             </div>
             <div class="col-md-2">
                 <select aria-label="Status" name="status" class="form-select form-select-sm">

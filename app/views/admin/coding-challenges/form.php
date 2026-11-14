@@ -34,11 +34,11 @@ $difficultyOptions = ['easy' => 'Easy', 'medium' => 'Medium', 'hard' => 'Hard'];
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Title *</label>
-                    <input type="text" class="form-control" name="title" value="<?= htmlspecialchars($challenge['title'] ?? '') ?>" required>
+                    <input aria-label="Title" type="text" class="form-control" name="title" value="<?= htmlspecialchars($challenge['title'] ?? '') ?>" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Slug *</label>
-                    <input type="text" class="form-control" name="slug" value="<?= htmlspecialchars($challenge['slug'] ?? '') ?>" required>
+                    <input aria-label="Slug" type="text" class="form-control" name="slug" value="<?= htmlspecialchars($challenge['slug'] ?? '') ?>" required>
                     <div class="form-text">URL-friendly identifier (e.g., two-sum)</div>
                 </div>
                 <div class="col-md-4">
@@ -59,19 +59,19 @@ $difficultyOptions = ['easy' => 'Easy', 'medium' => 'Medium', 'hard' => 'Hard'];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Points</label>
-                    <input type="number" class="form-control" name="points" value="<?= htmlspecialchars($challenge['points'] ?? 10) ?>" min="1" max="100">
+                    <input aria-label="Points" type="number" class="form-control" name="points" value="<?= htmlspecialchars($challenge['points'] ?? 10) ?>" min="1" max="100">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Time Limit (seconds)</label>
-                    <input type="number" class="form-control" name="time_limit_seconds" value="<?= htmlspecialchars($challenge['time_limit_seconds'] ?? 2) ?>" min="1" max="300">
+                    <input aria-label="Time limit seconds" type="number" class="form-control" name="time_limit_seconds" value="<?= htmlspecialchars($challenge['time_limit_seconds'] ?? 2) ?>" min="1" max="300">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Memory Limit (MB)</label>
-                    <input type="number" class="form-control" name="memory_limit_mb" value="<?= htmlspecialchars($challenge['memory_limit_mb'] ?? 256) ?>" min="64" max="1024">
+                    <input aria-label="Memory limit mb" type="number" class="form-control" name="memory_limit_mb" value="<?= htmlspecialchars($challenge['memory_limit_mb'] ?? 256) ?>" min="64" max="1024">
                 </div>
                 <div class="col-md-4">
                     <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active" <?= ($challenge['is_active'] ?? 1) ? 'checked' : '' ?>>
+                        <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active" <?= ($challenge['is_active'] ?? 1) ? 'checked' : '' ?>>
                         <label class="form-check-label" for="is_active">Active</label>
                     </div>
                 </div>

@@ -39,7 +39,7 @@ $early_incentives = $early_incentives ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Loan Purpose</label>
-                            <input type="text" name="purpose" class="form-control" placeholder="e.g., Plot purchase financing" maxlength="500">
+                            <input aria-label="Purpose" type="text" name="purpose" class="form-control" placeholder="e.g., Plot purchase financing" maxlength="500">
                         </div>
                     </div>
                 </div>
@@ -52,12 +52,12 @@ $early_incentives = $early_incentives ?? [];
                     <div class="aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Loan Amount (₹) <span class="text-danger">*</span></label>
-                            <input type="number" name="loan_amount" id="loanAmount" class="form-control" min="10000" step="1000" required>
+                            <input aria-label="Loan amount" type="number" name="loan_amount" id="loanAmount" class="form-control" min="10000" step="1000" required>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Interest Rate (% p.a.)</label>
-                                <input type="number" name="interest_rate" id="interestRate" class="form-control" value="10" min="0" max="36" step="0.5">
+                                <input aria-label="Interest rate" type="number" name="interest_rate" id="interestRate" class="form-control" value="10" min="0" max="36" step="0.5">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Interest Type</label>
@@ -69,11 +69,11 @@ $early_incentives = $early_incentives ?? [];
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Tenure (Months) <span class="text-danger">*</span></label>
-                            <input type="number" name="tenure_months" id="tenureMonths" class="form-control" min="1" max="240" required>
+                            <input aria-label="Tenure months" type="number" name="tenure_months" id="tenureMonths" class="form-control" min="1" max="240" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Start Date</label>
-                            <input type="date" name="start_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                            <input aria-label="Start date" type="date" name="start_date" class="form-control" value="<?= date('Y-m-d') ?>">
                         </div>
                     </div>
                 </div>
@@ -107,7 +107,7 @@ $early_incentives = $early_incentives ?? [];
                         <div class="row mt-2">
                             <div class="col-md-4">
                                 <label class="form-label">Interest-Free Months</label>
-                                <input type="number" name="interest_free_months" id="interestFreeMonths" class="form-control" value="0" min="0" max="60">
+                                <input aria-label="Interest free months" type="number" name="interest_free_months" id="interestFreeMonths" class="form-control" value="0" min="0" max="60">
                             </div>
                             <div class="col-md-8">
                                 <label class="form-label">Notes / Remarks</label>

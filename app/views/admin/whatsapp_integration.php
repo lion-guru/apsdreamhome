@@ -74,15 +74,15 @@ $page_title = $page_title ?? 'WhatsApp Integration';
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Phone Number ID</label>
-                            <input type="text" class="form-control form-control-sm" placeholder="e.g. 1234567890" value="">
+                            <input aria-label="E g 1234567890" type="text" class="form-control form-control-sm" placeholder="e.g. 1234567890" value="">
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Business Account ID</label>
-                            <input type="text" class="form-control form-control-sm" placeholder="WABA ID" value="">
+                            <input aria-label="Waba id" type="text" class="form-control form-control-sm" placeholder="WABA ID" value="">
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Access Token</label>
-                            <input type="password" class="form-control form-control-sm" placeholder="API token">
+                            <input aria-label="Api token" type="password" class="form-control form-control-sm" placeholder="API token">
                         </div>
                         <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>
 <button type="submit" class="btn btn-success btn-sm"><i class="fas fa-save me-1"></i>Save Configuration</button>

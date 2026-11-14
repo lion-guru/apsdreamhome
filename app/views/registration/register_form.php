@@ -7,7 +7,7 @@
                 <form method="post" action="<?= htmlspecialchars($base, ENT_QUOTES, 'UTF-8') ?>register">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <?php foreach ($fields as $f): ?>
-                    <div class="mb-3"><label class="form-label"><?= ucfirst($f) ?></label><input type="<?= $f === "password" ? "password" : "text" ?>" class="form-control" name="<?= htmlspecialchars($f, ENT_QUOTES, 'UTF-8') ?>" required></div>
+                    <div class="mb-3"><label class="form-label"><?= ucfirst($f) ?></label><input aria-label="htmlspecialchars f ent quotes" type="<?= $f === "password" ? "password" : "text" ?>" class="form-control" name="<?= htmlspecialchars($f, ENT_QUOTES, 'UTF-8') ?>" required></div>
                     <?php endforeach; ?>
                     <button type="submit" class="btn btn-primary w-100">Register</button>
                 </form>

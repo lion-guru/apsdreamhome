@@ -20,27 +20,27 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Payment Date</label>
-                        <input type="date" name="payment_date" class="form-control" value="<?= htmlspecialchars($payroll['payment_date'] ?? date('Y-m-d')) ?>" required>
+                        <input aria-label="Payment date" type="date" name="payment_date" class="form-control" value="<?= htmlspecialchars($payroll['payment_date'] ?? date('Y-m-d')) ?>" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Basic Salary (₹)</label>
-                        <input type="number" name="basic_salary" class="form-control" step="0.01" value="<?= $payroll['basic_salary'] ?? 0 ?>" required>
+                        <input aria-label="Basic salary" type="number" name="basic_salary" class="form-control" step="0.01" value="<?= $payroll['basic_salary'] ?? 0 ?>" required>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">HRA (₹)</label>
-                        <input type="number" name="hra" class="form-control" step="0.01" value="<?= $payroll['hra'] ?? 0 ?>">
+                        <input aria-label="Hra" type="number" name="hra" class="form-control" step="0.01" value="<?= $payroll['hra'] ?? 0 ?>">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Allowance (₹)</label>
-                        <input type="number" name="allowance" class="form-control" step="0.01" value="<?= $payroll['allowance'] ?? 0 ?>">
+                        <input aria-label="Allowance" type="number" name="allowance" class="form-control" step="0.01" value="<?= $payroll['allowance'] ?? 0 ?>">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Deduction (₹)</label>
-                        <input type="number" name="deduction" class="form-control" step="0.01" value="<?= $payroll['deduction'] ?? 0 ?>">
+                        <input aria-label="Deduction" type="number" name="deduction" class="form-control" step="0.01" value="<?= $payroll['deduction'] ?? 0 ?>">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Payment Status</label>

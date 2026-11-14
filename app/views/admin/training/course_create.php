@@ -35,14 +35,14 @@ $categories = $categories ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Course Code <span class="text-danger">*</span></label>
-                        <input type="text" name="code" class="form-control" required value="<?= htmlspecialchars($course['code'] ?? '') ?>" placeholder="e.g., HR-ONB-001" <?= $mode === 'edit' ? 'readonly' : '' ?>>
+                        <input aria-label="Code" type="text" name="code" class="form-control" required value="<?= htmlspecialchars($course['code'] ?? '') ?>" placeholder="e.g., HR-ONB-001" <?= $mode === 'edit' ? 'readonly' : '' ?>>
                         <?php if ($mode === 'edit'): ?>
                             <div class="form-text">Code cannot be changed after creation</div>
                         <?php endif; ?>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required value="<?= htmlspecialchars($course['title'] ?? '') ?>" placeholder="e.g., New Employee Orientation">
+                        <input aria-label="Title" type="text" name="title" class="form-control" required value="<?= htmlspecialchars($course['title'] ?? '') ?>" placeholder="e.g., New Employee Orientation">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Category</label>
@@ -54,7 +54,7 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Duration (hours)</label>
-                        <input type="number" step="0.5" min="0" name="duration_hours" class="form-control" value="<?= htmlspecialchars($course['duration_hours'] ?? 0) ?>">
+                        <input aria-label="Duration hours" type="number" step="0.5" min="0" name="duration_hours" class="form-control" value="<?= htmlspecialchars($course['duration_hours'] ?? 0) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Format</label>
@@ -67,7 +67,7 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-md-2">
                         <label class="form-label fw-semibold">Max Participants</label>
-                        <input type="number" min="1" name="max_participants" class="form-control" value="<?= htmlspecialchars($course['max_participants'] ?? '') ?>" placeholder="Optional">
+                        <input aria-label="Max participants" type="number" min="1" name="max_participants" class="form-control" value="<?= htmlspecialchars($course['max_participants'] ?? '') ?>" placeholder="Optional">
                     </div>
                 </div>
             </div>
@@ -96,19 +96,19 @@ $categories = $categories ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Instructor Name</label>
-                        <input type="text" name="instructor_name" class="form-control" value="<?= htmlspecialchars($course['instructor_name'] ?? '') ?>" placeholder="e.g., John Smith">
+                        <input aria-label="Instructor name" type="text" name="instructor_name" class="form-control" value="<?= htmlspecialchars($course['instructor_name'] ?? '') ?>" placeholder="e.g., John Smith">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Instructor Email</label>
-                        <input type="email" name="instructor_email" class="form-control" value="<?= htmlspecialchars($course['instructor_email'] ?? '') ?>" placeholder="john.smith@company.com">
+                        <input aria-label="Instructor email" type="email" name="instructor_email" class="form-control" value="<?= htmlspecialchars($course['instructor_email'] ?? '') ?>" placeholder="john.smith@company.com">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Material URL</label>
-                        <input type="url" name="material_url" class="form-control" value="<?= htmlspecialchars($course['material_url'] ?? '') ?>" placeholder="https://... (course materials link)">
+                        <input aria-label="Material url" type="url" name="material_url" class="form-control" value="<?= htmlspecialchars($course['material_url'] ?? '') ?>" placeholder="https://... (course materials link)">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Certificate Template</label>
-                        <input type="url" name="certificate_template" class="form-control" value="<?= htmlspecialchars($course['certificate_template'] ?? '') ?>" placeholder="Certificate template URL (optional)">
+                        <input aria-label="Certificate template" type="url" name="certificate_template" class="form-control" value="<?= htmlspecialchars($course['certificate_template'] ?? '') ?>" placeholder="Certificate template URL (optional)">
                     </div>
                 </div>
             </div>
@@ -123,17 +123,17 @@ $categories = $categories ?? [];
                 <div class="row g-3">
                     <div class="col-md-3">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="assessment_required" value="1" id="assessment_required" <?= !empty($course['assessment_required']) ? 'checked' : '' ?>>
+                            <input aria-label="Assessment required" class="form-check-input" type="checkbox" name="assessment_required" value="1" id="assessment_required" <?= !empty($course['assessment_required']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="assessment_required">Assessment Required</label>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Passing Score (%)</label>
-                        <input type="number" min="0" max="100" name="passing_score" class="form-control" value="<?= htmlspecialchars($course['passing_score'] ?? 70) ?>">
+                        <input aria-label="Passing score" type="number" min="0" max="100" name="passing_score" class="form-control" value="<?= htmlspecialchars($course['passing_score'] ?? 70) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Valid For (months)</label>
-                        <input type="number" min="1" max="120" name="valid_for_months" class="form-control" value="<?= htmlspecialchars($course['valid_for_months'] ?? 12) ?>">
+                        <input aria-label="Valid for months" type="number" min="1" max="120" name="valid_for_months" class="form-control" value="<?= htmlspecialchars($course['valid_for_months'] ?? 12) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Status</label>

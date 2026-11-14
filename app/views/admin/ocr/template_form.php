@@ -54,7 +54,7 @@ $isEdit = !empty($template);
                         <div class="ocr-form-row mb-4">
                             <div>
                                 <label class="ocr-label">Template Name</label>
-                                <input type="text" name="template_name" class="ocr-input" placeholder="e.g. Standard Aadhaar Template" value="<?= htmlspecialchars($template['template_name'] ?? '') ?>" required>
+                                <input aria-label="Template name" type="text" name="template_name" class="ocr-input" placeholder="e.g. Standard Aadhaar Template" value="<?= htmlspecialchars($template['template_name'] ?? '') ?>" required>
                             </div>
                             <div>
                                 <label class="ocr-label">Document Type</label>

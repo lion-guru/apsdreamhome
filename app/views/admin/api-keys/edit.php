@@ -20,13 +20,13 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Key Name *</label>
-                                <input type="text" name="key_name" class="form-control" value="<?= htmlspecialchars($api_key['key_name'] ?? '') ?>" required>
+                                <input aria-label="Key name" type="text" name="key_name" class="form-control" value="<?= htmlspecialchars($api_key['key_name'] ?? '') ?>" required>
                             </div>
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label">API Key Value *</label>
-                            <input type="text" name="key_value" class="form-control" value="<?= htmlspecialchars($api_key['key_value'] ?? '') ?>" required>
+                            <input aria-label="Key value" type="text" name="key_value" class="form-control" value="<?= htmlspecialchars($api_key['key_value'] ?? '') ?>" required>
                             <small class="text-muted">Current value shown. Enter new value to update.</small>
                         </div>
 
@@ -43,7 +43,7 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Status</label>
                                 <div class="form-check form-switch mt-2">
-                                    <input class="form-check-input" type="checkbox" name="is_active" id="is_active" <?= $api_key['is_active'] ? 'checked' : '' ?>>
+                                    <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="is_active" <?= $api_key['is_active'] ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="is_active">Active</label>
                                 </div>
                             </div>

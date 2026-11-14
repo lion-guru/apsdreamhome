@@ -13,9 +13,9 @@ $old = $_POST ?? [];
                 <div class="card-body">
                     <form method="POST" action="<?= BASE_URL ?>/associate/tools/commission">
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
-                        <div class="mb-3"><label class="form-label fw-bold"><?= __('assoc_calc_sale_amount', [], 'Sale Amount (Rs.)') ?></label><input type="number" name="sale_amount" class="form-control" min="1" step="any" required value="<?= htmlspecialchars($old['sale_amount'] ?? '') ?>"></div>
-                        <div class="mb-3"><label class="form-label fw-bold"><?= __('assoc_calc_plot_area', [], 'Plot Area (sqft)') ?></label><input type="number" name="plot_area" class="form-control" min="0" step="any" value="<?= htmlspecialchars($old['plot_area'] ?? '') ?>"></div>
-                        <div class="mb-3"><label class="form-label fw-bold"><?= __('assoc_calc_plot_price', [], 'Plot Price (Rs.)') ?></label><input type="number" name="plot_price" class="form-control" min="0" step="any" value="<?= htmlspecialchars($old['plot_price'] ?? '') ?>"></div>
+                        <div class="mb-3"><label class="form-label fw-bold"><?= __('assoc_calc_sale_amount', [], 'Sale Amount (Rs.)') ?></label><input aria-label="Sale amount" type="number" name="sale_amount" class="form-control" min="1" step="any" required value="<?= htmlspecialchars($old['sale_amount'] ?? '') ?>"></div>
+                        <div class="mb-3"><label class="form-label fw-bold"><?= __('assoc_calc_plot_area', [], 'Plot Area (sqft)') ?></label><input aria-label="Plot area" type="number" name="plot_area" class="form-control" min="0" step="any" value="<?= htmlspecialchars($old['plot_area'] ?? '') ?>"></div>
+                        <div class="mb-3"><label class="form-label fw-bold"><?= __('assoc_calc_plot_price', [], 'Plot Price (Rs.)') ?></label><input aria-label="Plot price" type="number" name="plot_price" class="form-control" min="0" step="any" value="<?= htmlspecialchars($old['plot_price'] ?? '') ?>"></div>
                         <div class="mb-3"><label class="form-label fw-bold"><?= __('assoc_calc_rank', [], 'My Rank') ?></label>
                             <select aria-label="My rank" name="my_rank" class="form-select">
                                 <?php foreach ($ranks as $r): ?>

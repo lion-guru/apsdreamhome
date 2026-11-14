@@ -504,7 +504,7 @@ foreach ($rank_benefits as $rb) {
     <div class="card-body">
         <p class="text-muted"><?= __('assoc_mlm_share_desc', [], 'Share this link with potential associates to grow your team:') ?></p>
         <div class="input-group">
-            <input type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($base ?? '') ?>/associate/register?ref=<?= urlencode($_SESSION['referral_code'] ?? '') ?>" readonly>
+            <input aria-label="Ref link" type="text" class="form-control" id="refLink" value="<?= htmlspecialchars($base ?? '') ?>/associate/register?ref=<?= urlencode($_SESSION['referral_code'] ?? '') ?>" readonly>
             <button class="btn btn-primary" onclick="copyRefLink()"><i class="fas fa-copy me-1"></i> <?= __('assoc_mlm_copy', [], 'Copy') ?></button>
         </div>
         <small class="text-muted mt-2 d-block"><i class="fas fa-info-circle"></i> <?= __('assoc_mlm_share_note', [], 'When someone registers using this link, they join your network as a direct referral.') ?></small>

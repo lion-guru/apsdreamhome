@@ -88,12 +88,12 @@ $categories = $categories ?? [];
                     
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="name" id="category_name" required placeholder="e.g., Residential Plots">
+                        <input aria-label="Name" type="text" class="form-control" name="name" id="category_name" required placeholder="e.g., Residential Plots">
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Code <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="code" id="category_code" required placeholder="e.g., RES_PLOT">
+                        <input aria-label="Code" type="text" class="form-control" name="code" id="category_code" required placeholder="e.g., RES_PLOT">
                         <div class="form-text">Unique code for system reference (uppercase, underscores)</div>
                     </div>
                     

@@ -37,23 +37,23 @@
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('component_full_name', 'Full Name') ?> *</label>
-                        <input type="text" class="form-control" id="qrName" name="name" required placeholder="<?= htmlspecialchars(__('component_enter_full_name', 'Enter your full name')) ?>">
+                        <input aria-label="Qr name" type="text" class="form-control" id="qrName" name="name" required placeholder="<?= htmlspecialchars(__('component_enter_full_name', 'Enter your full name')) ?>">
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('component_email', 'Email') ?> *</label>
-                        <input type="email" class="form-control" id="qrEmail" name="email" required placeholder="<?= htmlspecialchars(__('component_enter_email', 'Enter your email')) ?>">
+                        <input aria-label="Qr email" type="email" class="form-control" id="qrEmail" name="email" required placeholder="<?= htmlspecialchars(__('component_enter_email', 'Enter your email')) ?>">
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('component_phone_number', 'Phone Number') ?> *</label>
-                        <input type="tel" class="form-control" id="qrPhone" name="phone" required placeholder="<?= htmlspecialchars(__('component_enter_phone_10', 'Enter 10-digit phone number')) ?>" pattern="[0-9]{10}">
+                        <input aria-label="Qr phone" type="tel" class="form-control" id="qrPhone" name="phone" required placeholder="<?= htmlspecialchars(__('component_enter_phone_10', 'Enter 10-digit phone number')) ?>" pattern="[0-9]{10}">
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('component_referral_code_optional', 'Referral Code (Optional)') ?></label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="qrReferralCode" name="referral_code" placeholder="<?= htmlspecialchars(__('component_enter_referral_placeholder', 'Enter referral code for 5% discount')) ?>">
+                            <input aria-label="Qr referral code" type="text" class="form-control" id="qrReferralCode" name="referral_code" placeholder="<?= htmlspecialchars(__('component_enter_referral_placeholder', 'Enter referral code for 5% discount')) ?>">
                             <button type="button" class="btn btn-outline-primary" onclick="requestReferralCode()">
                                 <i class="fas fa-ticket-alt me-1"></i>Request Code
                             </button>
@@ -110,17 +110,17 @@
     <?php echo CSRFProtection::csrfField(); ?>
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('component_full_name', 'Full Name') ?> *</label>
-                        <input type="text" class="form-control" id="rrName" name="name" required placeholder="<?= htmlspecialchars(__('component_enter_full_name', 'Enter your full name')) ?>">
+                        <input aria-label="Rr name" type="text" class="form-control" id="rrName" name="name" required placeholder="<?= htmlspecialchars(__('component_enter_full_name', 'Enter your full name')) ?>">
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('component_email', 'Email') ?> *</label>
-                        <input type="email" class="form-control" id="rrEmail" name="email" required placeholder="<?= htmlspecialchars(__('component_enter_email', 'Enter your email')) ?>">
+                        <input aria-label="Rr email" type="email" class="form-control" id="rrEmail" name="email" required placeholder="<?= htmlspecialchars(__('component_enter_email', 'Enter your email')) ?>">
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('component_phone_number', 'Phone Number') ?> *</label>
-                        <input type="tel" class="form-control" id="rrPhone" name="phone" required placeholder="<?= htmlspecialchars(__('component_enter_phone_10', 'Enter 10-digit phone number')) ?>" pattern="[0-9]{10}">
+                        <input aria-label="Rr phone" type="tel" class="form-control" id="rrPhone" name="phone" required placeholder="<?= htmlspecialchars(__('component_enter_phone_10', 'Enter 10-digit phone number')) ?>" pattern="[0-9]{10}">
                     </div>
                     
                     <button type="button" class="btn btn-primary w-100 py-3 fw-bold" onclick="submitReferralRequest()">

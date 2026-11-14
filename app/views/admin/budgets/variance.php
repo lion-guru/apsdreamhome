@@ -25,7 +25,7 @@ $filters = $filters ?? ['fiscal_year' => '', 'budget_id' => null];
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Specific Budget</label>
-                    <input type="number" name="budget_id" class="form-control" value="<?= $filters['budget_id'] ? htmlspecialchars($filters['budget_id']) : '' ?>" placeholder="Budget ID (optional)">
+                    <input aria-label="Budget id" type="number" name="budget_id" class="form-control" value="<?= $filters['budget_id'] ? htmlspecialchars($filters['budget_id']) : '' ?>" placeholder="Budget ID (optional)">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">Generate Report</button>

@@ -130,11 +130,11 @@ $page_title = $page_title ?? 'Investment Plans';
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Plan Name</label>
-                        <input type="text" class="form-control" id="investPlanName" readonly>
+                        <input aria-label="Invest plan name" type="text" class="form-control" id="investPlanName" readonly>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Investment Amount (₹)</label>
-                        <input type="number" class="form-control" name="amount" id="investAmount" required min="0" step="1000">
+                        <input aria-label="Amount" type="number" class="form-control" name="amount" id="investAmount" required min="0" step="1000">
                         <div class="form-text">Min: <span id="minAmt">0</span> | Max: <span id="maxAmt">No limit</span></div>
                     </div>
                     <div class="mb-3">

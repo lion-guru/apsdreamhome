@@ -45,7 +45,7 @@ $sc = function($key, $default = '') { return $GLOBALS['_site_settings_cache'][$k
             <div class="col-lg-6">
                 <form action="<?php echo BASE_URL; ?>/subscribe" method="POST" class="d-flex gap-2" id="newsletterForm">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                    <input type="email" name="email" class="form-control" placeholder="<?= __('newsletter_ph_email') ?>" required>
+                    <input aria-label="Email" type="email" name="email" class="form-control" placeholder="<?= __('newsletter_ph_email') ?>" required>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane"></i> <?= __('subscribe') ?>
                     </button>

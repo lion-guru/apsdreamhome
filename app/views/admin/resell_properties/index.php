@@ -54,7 +54,7 @@
         <h2  class="fs-6 fw-semibold mb-0">All Listings (<?= $total ?>)</h2>
         <form class="d-flex gap-2" method="GET" action="<?= $base ?>/admin/resell-properties">
     <?php echo CSRFProtection::csrfField(); ?>
-            <input type="text" class="form-control form-control-sm" name="search" placeholder="Search..." value="<?= htmlspecialchars($search ?? '') ?>">
+            <input aria-label="Search" type="text" class="form-control form-control-sm" name="search" placeholder="Search..." value="<?= htmlspecialchars($search ?? '') ?>">
             <select aria-label="Status" class="form-select form-select-sm" name="status" >
                 <option value="">All Status</option>
                 <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pending</option>

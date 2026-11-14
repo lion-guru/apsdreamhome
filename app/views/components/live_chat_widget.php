@@ -52,15 +52,15 @@ define('LIVE_CHAT_WIDGET_LOADED', true);
                 <form id="lcw-prechat-form" class="lcw-prechat-form" novalidate>
     <?php echo CSRFProtection::csrfField(); ?>
                     <div class="mb-2">
-                        <input type="text" class="form-control form-control-sm" id="lcw-name" name="name"
+                        <input aria-label="Lcw name" type="text" class="form-control form-control-sm" id="lcw-name" name="name"
                                placeholder="<?= htmlspecialchars(__('component_your_name', 'Your name *')) ?>" maxlength="80" required>
                     </div>
                     <div class="mb-2">
-                        <input type="email" class="form-control form-control-sm" id="lcw-email" name="email"
+                        <input aria-label="Lcw email" type="email" class="form-control form-control-sm" id="lcw-email" name="email"
                                placeholder="<?= htmlspecialchars(__('component_email_star', 'Email *')) ?>" maxlength="120" required>
                     </div>
                     <div class="mb-2">
-                        <input type="tel" class="form-control form-control-sm" id="lcw-phone" name="phone"
+                        <input aria-label="Lcw phone" type="tel" class="form-control form-control-sm" id="lcw-phone" name="phone"
                                placeholder="<?= htmlspecialchars(__('component_phone_optional', 'Phone (optional)')) ?>" maxlength="20">
                     </div>
                     <div class="mb-2">

@@ -17,7 +17,7 @@
                 <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/commission/revenue/daily/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <div class="mb-2"><label class="form-label">Date</label><input type="date" name="stat_date" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
+                        <div class="mb-2"><label class="form-label">Date</label><input aria-label="Stat date" type="date" name="stat_date" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
                         <div class="mb-2"><label class="form-label">Agent</label>
                             <select aria-label="Agent id" name="agent_id" class="form-select" required>
                                 <option value="">Select</option>
@@ -26,9 +26,9 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="mb-2"><label class="form-label">Revenue (&#8377;)</label><input type="number" step="0.01" name="revenue" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Deals</label><input type="number" name="deals" class="form-control" value="0"></div>
-                        <div class="mb-2"><label class="form-label">Commission (&#8377;)</label><input type="number" step="0.01" name="commission" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Revenue (&#8377;)</label><input aria-label="Revenue" type="number" step="0.01" name="revenue" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Deals</label><input aria-label="Deals" type="number" name="deals" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Commission (&#8377;)</label><input aria-label="Commission" type="number" step="0.01" name="commission" class="form-control" required></div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
                     </form>
                 </div>

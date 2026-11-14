@@ -28,7 +28,7 @@
 
         <div class="card border-0 shadow-sm"><div class="card-body text-start">
             <h6 class="fw-bold"><i class="fas fa-microphone me-1"></i>Voice Commands</h6>
-            <div class="input-group"><input type="text" id="voice-cmd" class="form-control" placeholder="Type or speak a command (Hindi/English)"><button class="btn btn-primary" onclick="sendCommand()" aria-label="Call"><i class="fas fa-paper-plane"></i></button></div>
+            <div class="input-group"><input aria-label="Voice cmd" type="text" id="voice-cmd" class="form-control" placeholder="Type or speak a command (Hindi/English)"><button class="btn btn-primary" onclick="sendCommand()" aria-label="Call"><i class="fas fa-paper-plane"></i></button></div>
             <div id="cmd-result" class="mt-2"></div>
         </div></div>
     </div>

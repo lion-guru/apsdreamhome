@@ -90,7 +90,7 @@ $ai_agents = $ai_agents ?? [];
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                         </div>
-                                        <input type="tel" id="quickCallPhone" class="form-control" placeholder="919277121112" maxlength="15">
+                                        <input aria-label="Quick call phone" type="tel" id="quickCallPhone" class="form-control" placeholder="919277121112" maxlength="15">
                                     </div>
                                 </div>
                                 <div class="col-md-3">

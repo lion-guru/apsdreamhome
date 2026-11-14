@@ -161,10 +161,10 @@ $base = BASE_URL;
 
                 <div class="phone-input-group">
                     <div class="country-code">+91</div>
-                    <input type="tel" class="phone-input" name="phone" id="phoneInput" placeholder="Enter 10-digit phone number" pattern="[0-9]{10}" maxlength="10" required autofocus>
+                    <input aria-label="Phone" type="tel" class="phone-input" name="phone" id="phoneInput" placeholder="Enter 10-digit phone number" pattern="[0-9]{10}" maxlength="10" required autofocus>
                 </div>
 
-                <input type="email" class="email-input" name="email" placeholder="Email address (optional, for email OTP)">
+                <input aria-label="Email" type="email" class="email-input" name="email" placeholder="Email address (optional, for email OTP)">
 
                 <div class="channel-selector">
                     <div class="channel-option selected" data-channel="whatsapp">

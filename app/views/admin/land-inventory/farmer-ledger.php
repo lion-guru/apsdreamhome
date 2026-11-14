@@ -66,7 +66,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
             <div class="col-md-3">
                 <label class="form-label small">Search</label>
-                <input type="text" name="search" class="form-control form-control-sm" 
+                <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" 
                        placeholder="Farmer name, phone, village, survey no..." 
                        value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
             </div>

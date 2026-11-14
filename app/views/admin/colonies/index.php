@@ -62,7 +62,7 @@ foreach ($colonies as $c) {
     </div>
     <div class="col-md-3">
         <label class="form-label small mb-1">Search</label>
-        <input type="text" name="search" class="form-control form-control-sm" placeholder="Name or slug..." value="<?= htmlspecialchars($search) ?>">
+        <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="Name or slug..." value="<?= htmlspecialchars($search) ?>">
     </div>
     <div class="col-md-3 d-flex gap-2">
         <button type="submit" class="btn btn-primary btn-sm flex-fill">Apply</button>
@@ -131,7 +131,7 @@ foreach ($colonies as $c) {
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h2  class="fs-6 fw-semibold mb-0 fw-bold">All Colonies</h2>
             <div class="d-flex gap-2">
-                <input type="text" id="colonySearch" class="form-control form-control-sm" placeholder="Search colonies..." style="width:200px;">
+                <input aria-label="Colony search" type="text" id="colonySearch" class="form-control form-control-sm" placeholder="Search colonies..." style="width:200px;">
             </div>
         </div>
     </div>

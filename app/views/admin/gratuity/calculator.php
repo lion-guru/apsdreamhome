@@ -33,7 +33,7 @@ $result = $result ?? null;
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Calculation Date</label>
-                            <input type="date" name="calculation_date" class="form-control" value="<?= htmlspecialchars($calculation_date) ?>" max="<?= date('Y-m-d') ?>">
+                            <input aria-label="Calculation date" type="date" name="calculation_date" class="form-control" value="<?= htmlspecialchars($calculation_date) ?>" max="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary w-100">

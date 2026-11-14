@@ -21,7 +21,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="mb-3">
                         <label class="form-label">Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required placeholder="e.g. Site visit - Plot 12, Suryoday">
+                        <input aria-label="Title" type="text" name="title" class="form-control" required placeholder="e.g. Site visit - Plot 12, Suryoday">
                     </div>
 
                     <div class="row">
@@ -36,29 +36,29 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Location</label>
-                            <input type="text" name="location" class="form-control" placeholder="Office / Colony / Video link">
+                            <input aria-label="Location" type="text" name="location" class="form-control" placeholder="Office / Colony / Video link">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Lead ID</label>
-                            <input type="number" name="lead_id" class="form-control" placeholder="CRM lead ID (optional)">
+                            <input aria-label="Lead id" type="number" name="lead_id" class="form-control" placeholder="CRM lead ID (optional)">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">User ID</label>
-                            <input type="number" name="user_id" class="form-control" placeholder="Associated user ID (optional)">
+                            <input aria-label="User id" type="number" name="user_id" class="form-control" placeholder="Associated user ID (optional)">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Start Time <span class="text-danger">*</span></label>
-                            <input type="datetime-local" name="start_time" class="form-control" required>
+                            <input aria-label="Start time" type="datetime-local" name="start_time" class="form-control" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">End Time</label>
-                            <input type="datetime-local" name="end_time" class="form-control">
+                            <input aria-label="End time" type="datetime-local" name="end_time" class="form-control">
                         </div>
                     </div>
 

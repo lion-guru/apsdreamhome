@@ -35,7 +35,7 @@ $base = BASE_URL;
             <i class="fas fa-camera"></i>
             <span>Change Photo</span>
         </label>
-        <input type="file" id="profileImageInput" accept="image/jpeg,image/png,image/gif,image/webp" hidden>
+        <input aria-label="Profile image input" type="file" id="profileImageInput" accept="image/jpeg,image/png,image/gif,image/webp" hidden>
         <?php if ($photoUrl): ?>
             <button type="button" class="photo-delete-btn" id="profilePhotoDeleteBtn">
                 <i class="fas fa-trash"></i> Remove

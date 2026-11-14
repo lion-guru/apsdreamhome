@@ -20,7 +20,7 @@ $denoms = [500, 200, 100, 50, 20, 10];
         <p class="text-muted mb-0">System: <strong><?= $inr($pos['system'] ?? 0) ?></strong> (open <?= $inr($pos['opening'] ?? 0) ?> + receipts <?= $inr($pos['receipts'] ?? 0) ?> − expenses <?= $inr($pos['expenses'] ?? 0) ?> − deposits <?= $inr($pos['deposits'] ?? 0) ?>)</p>
     </div>
     <div class="d-flex gap-2 no-print">
-        <form method="GET" class="d-flex"><input type="date" name="date" class="form-control form-control-sm" value="<?= $e($date) ?>" onchange="this.form.submit()"></form>
+        <form method="GET" class="d-flex"><input aria-label="Date" type="date" name="date" class="form-control form-control-sm" value="<?= $e($date) ?>" onchange="this.form.submit()"></form>
         <button class="btn btn-outline-secondary btn-sm js-print"><i class="fas fa-print me-1"></i>Print Sheet</button>
 <script nonce="<?= $GLOBALS['csp_nonce'] ?? '' ?>">document.querySelectorAll(".js-print").forEach(function(b){b.addEventListener("click",function(){window.print();});});</script>
     </div>
@@ -44,12 +44,12 @@ $denoms = [500, 200, 100, 50, 20, 10];
             <input type="hidden" name="closing_date" value="<?= $e($date) ?>">
             <div class="row g-2">
                 <?php foreach ($denoms as $dval): ?>
-                    <div class="col-4 col-md-2"><label class="form-label small">₹<?= $dval ?> ×</label><input type="number" min="0" name="denom_<?= $dval ?>" class="form-control denom" data-val="<?= $dval ?>" value="0"></div>
+                    <div class="col-4 col-md-2"><label class="form-label small">₹<?= $dval ?> ×</label><input aria-label="Denom dval" type="number" min="0" name="denom_<?= $dval ?>" class="form-control denom" data-val="<?= $dval ?>" value="0"></div>
                 <?php endforeach; ?>
-                <div class="col-4 col-md-2"><label class="form-label small">Coins ₹</label><input type="number" min="0" name="denom_coins" class="form-control denom" data-val="1" value="0"></div>
-                <div class="col-md-3"><label class="form-label small">Bank deposit ₹</label><input type="number" step="0.01" min="0" name="bank_deposit" id="bankDeposit" class="form-control" value="0"></div>
-                <div class="col-md-3"><label class="form-label small">Challan photo (≤5MB)</label><input type="file" name="bank_slip" class="form-control" accept=".jpg,.jpeg,.png,.webp"></div>
-                <div class="col-12"><label class="form-label small">Notes</label><input type="text" name="notes" class="form-control" maxlength="1000"></div>
+                <div class="col-4 col-md-2"><label class="form-label small">Coins ₹</label><input aria-label="Denom coins" type="number" min="0" name="denom_coins" class="form-control denom" data-val="1" value="0"></div>
+                <div class="col-md-3"><label class="form-label small">Bank deposit ₹</label><input aria-label="Bank deposit" type="number" step="0.01" min="0" name="bank_deposit" id="bankDeposit" class="form-control" value="0"></div>
+                <div class="col-md-3"><label class="form-label small">Challan photo (≤5MB)</label><input aria-label="Bank slip" type="file" name="bank_slip" class="form-control" accept=".jpg,.jpeg,.png,.webp"></div>
+                <div class="col-12"><label class="form-label small">Notes</label><input aria-label="Notes" type="text" name="notes" class="form-control" maxlength="1000"></div>
             </div>
             <div class="alert alert-info mt-3 mb-0">Counted: <strong id="countTotal">₹0</strong> · System (pre-deposit) <strong><?= $inr($pos['system'] ?? 0) ?></strong> · Diff vs (system − deposit): <strong id="countDiff">—</strong></div>
             <button type="submit" class="btn btn-success mt-3"><i class="fas fa-lock me-1"></i>Freeze Day Closing</button>

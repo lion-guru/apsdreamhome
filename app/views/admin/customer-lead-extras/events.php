@@ -94,7 +94,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Lead Name</label>
-                        <input type="text" class="form-control" name="lead_search" placeholder="Search by lead name...">
+                        <input aria-label="Lead search" type="text" class="form-control" name="lead_search" placeholder="Search by lead name...">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Event Type</label>
@@ -113,7 +113,7 @@ $page_description = 'Monitor and analyze lead interactions and events';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Date Range</label>
-                        <input type="date" class="form-control" name="date_from">
+                        <input aria-label="Date from" type="date" class="form-control" name="date_from">
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100">

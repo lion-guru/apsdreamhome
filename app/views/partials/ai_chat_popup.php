@@ -36,7 +36,7 @@ $base = $base ?? BASE_URL;
         </div>
         <div class="ai-popup-footer">
             <div class="input-group input-group-sm">
-                <input type="text" id="ai-popup-input" class="form-control" placeholder="Type a message..." onkeypress="handlePopupKeyPress(event)">
+                <input aria-label="Ai popup input" type="text" id="ai-popup-input" class="form-control" placeholder="Type a message..." onkeypress="handlePopupKeyPress(event)">
                 <button class="btn btn-primary" onclick="sendPopupMessage()" aria-label="Send message">
                     <i class="fas fa-paper-plane" aria-hidden="true"></i>
                 </button>

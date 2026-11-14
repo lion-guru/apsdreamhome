@@ -45,7 +45,7 @@ unset($_SESSION['bulk_result']);
             </div>
             <div class="mb-3">
               <label class="form-label">CSV File</label>
-              <input type="file" name="csv" accept=".csv,text/csv" class="form-control" required>
+              <input aria-label="Csv" type="file" name="csv" accept=".csv,text/csv" class="form-control" required>
               <small class="text-muted">First row must be column headers. <a href="<?= BASE_URL ?>/admin/bulk-operations/template/leads">Download template</a></small>
             </div>
             <button type="submit" class="btn btn-primary w-100"><i class="fas fa-upload"></i> Upload & Import</button>

@@ -82,11 +82,11 @@ $filters = $filters ?? [];
                 </div>
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">From Date</label>
-                    <input type="date" name="from_date" class="aps-cp-form-input" value="<?= htmlspecialchars($filters['from_date'] ?? '') ?>">
+                    <input aria-label="From date" type="date" name="from_date" class="aps-cp-form-input" value="<?= htmlspecialchars($filters['from_date'] ?? '') ?>">
                 </div>
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">To Date</label>
-                    <input type="date" name="to_date" class="aps-cp-form-input" value="<?= htmlspecialchars($filters['to_date'] ?? '') ?>">
+                    <input aria-label="To date" type="date" name="to_date" class="aps-cp-form-input" value="<?= htmlspecialchars($filters['to_date'] ?? '') ?>">
                 </div>
                 <button type="submit" class="aps-cp-btn aps-cp-btn-primary"><i class="fas fa-filter"></i> Filter</button>
                 <a href="<?= BASE_URL ?>/admin/finance/collections" class="aps-cp-btn aps-cp-btn-outline">Reset</a>
@@ -144,7 +144,7 @@ $filters = $filters ?? [];
                                             <form method="POST" action="<?= BASE_URL ?>/admin/finance/collections/reject" >
                                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                                                 <input type="hidden" name="id" value="<?= $c['id'] ?>">
-                                                <input type="text" name="reason" placeholder="Reason" required >
+                                                <input aria-label="Reason" type="text" name="reason" placeholder="Reason" required >
                                                 <button type="submit" class="aps-cp-btn aps-cp-btn-sm aps-cp-btn-danger" data-aps-confirm="Reject this collection?" aria-label="Close"><i class="fas fa-times"></i></button>
                                             </form>
                                         <?php endif; ?>

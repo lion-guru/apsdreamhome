@@ -32,7 +32,7 @@ $extraHead = '<link href="https://cdn.datatables.net/1.13.6/css/dataTables.boots
 
     <form method="GET" class="mb-4">
         <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Search by name, phone, email, or address..." value="<?php echo htmlspecialchars($search ?? ''); ?>">
+            <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search by name, phone, email, or address..." value="<?php echo htmlspecialchars($search ?? ''); ?>">
             <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
             <?php if (!empty($search)): ?>
             <a href="?" class="btn btn-outline-secondary">Clear</a>

@@ -21,14 +21,14 @@ $typeBadge = ['drone_video' => 'danger', 'site_photo' => 'success', 'layout_3d' 
     <form method="POST" action="<?= $base ?>/admin/colonies/<?= (int)($colony['id'] ?? 0) ?>/media-hub/upload" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
         <div class="row g-2">
-            <div class="col-md-3"><label class="form-label small">Title *</label><input type="text" name="title" class="form-control" required maxlength="150" placeholder="e.g. Drone flyover — north block"></div>
+            <div class="col-md-3"><label class="form-label small">Title *</label><input aria-label="Title" type="text" name="title" class="form-control" required maxlength="150" placeholder="e.g. Drone flyover — north block"></div>
             <div class="col-md-2"><label class="form-label small">Type *</label>
                 <select aria-label="Media type" name="media_type" class="form-select"><option value="site_photo">Site Photo</option><option value="drone_video">Drone Video (URL)</option><option value="layout_3d">3D Layout (URL)</option><option value="youtube_embed">YouTube Embed</option><option value="sajra_scan">Revenue Sajra Scan (upload)</option></select>
             </div>
-            <div class="col-md-3"><label class="form-label small">Media URL (for video/embed)</label><input type="text" name="media_url" class="form-control" maxlength="255" placeholder="https://…"></div>
-            <div class="col-md-2"><label class="form-label small">Photo upload (≤8MB)</label><input type="file" name="media_file" class="form-control" accept=".jpg,.jpeg,.png,.gif,.webp"></div>
-            <div class="col-md-2"><label class="form-label small">Tags</label><input type="text" name="tags" class="form-control" maxlength="100" placeholder="Road Work"></div>
-            <div class="col-md-2 pt-4"><div class="form-check"><input type="checkbox" name="is_featured" value="1" class="form-check-input" id="featBox"><label class="form-check-label small" for="featBox">Featured</label></div></div>
+            <div class="col-md-3"><label class="form-label small">Media URL (for video/embed)</label><input aria-label="Media url" type="text" name="media_url" class="form-control" maxlength="255" placeholder="https://…"></div>
+            <div class="col-md-2"><label class="form-label small">Photo upload (≤8MB)</label><input aria-label="Media file" type="file" name="media_file" class="form-control" accept=".jpg,.jpeg,.png,.gif,.webp"></div>
+            <div class="col-md-2"><label class="form-label small">Tags</label><input aria-label="Tags" type="text" name="tags" class="form-control" maxlength="100" placeholder="Road Work"></div>
+            <div class="col-md-2 pt-4"><div class="form-check"><input aria-label="Is featured" type="checkbox" name="is_featured" value="1" class="form-check-input" id="featBox"><label class="form-check-label small" for="featBox">Featured</label></div></div>
             <div class="col-md-2 pt-4"><button type="submit" class="btn btn-primary w-100">Add</button></div>
         </div>
     </form>

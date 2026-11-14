@@ -72,13 +72,13 @@ $base = BASE_URL;
                                 
                                 <div class="mb-4">
                                     <label class="form-label">Configuration File</label>
-                                    <input type="file" name="config_file" class="form-control" accept=".json" required>
+                                    <input aria-label="Config file" type="file" name="config_file" class="form-control" accept=".json" required>
                                     <div class="form-text">Select a JSON configuration file to import</div>
                                 </div>
 
                                 <div class="mb-4">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="overwrite" id="overwrite" value="1" checked>
+                                        <input aria-label="Overwrite" class="form-check-input" type="checkbox" name="overwrite" id="overwrite" value="1" checked>
                                         <label class="form-check-label" for="overwrite">
                                             Overwrite existing configurations (uncheck to skip existing)
                                         </label>

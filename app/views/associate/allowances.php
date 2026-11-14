@@ -374,7 +374,7 @@ $claims = $claims ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Travel Notes / Vehicle Number (Optional)</label>
-                        <input type="text" name="notes" class="form-control form-control-sm" placeholder="e.g. UP53-AB-1234 / Green City Visit">
+                        <input aria-label="Notes" type="text" name="notes" class="form-control form-control-sm" placeholder="e.g. UP53-AB-1234 / Green City Visit">
                     </div>
                 </div>
                 <div class="modal-footer">

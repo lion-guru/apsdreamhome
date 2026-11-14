@@ -44,7 +44,7 @@
                 <p class="mb-4" style="opacity: 0.8;"><?= __('blog_newsletter_desc') ?></p>
                 <form class="d-flex gap-2" id="blogNewsletterForm">
     <?php echo CSRFProtection::csrfField(); ?>
-                    <input type="email" class="form-control" name="email" placeholder="<?= __('blog_newsletter_ph_email') ?>" required >
+                    <input aria-label="Email" type="email" class="form-control" name="email" placeholder="<?= __('blog_newsletter_ph_email') ?>" required >
                     <button type="submit" id="blogNewsletterSubmit" class="btn btn-navy-submit px-4 fw-bold" style="background: #f4c542; border: none; color: #1e293b;">
                         <i class="fas fa-envelope me-1"></i><?= __('subscribe') ?>
                     </button>

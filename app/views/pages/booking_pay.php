@@ -39,7 +39,7 @@
                                     <label class="form-label"><?= __('booking_amount') ?> (&#8377;)</label>
                                     <div class="input-group">
                                         <span class="input-group-text">&#8377;</span>
-                                        <input type="number" step="0.01" name="amount" id="payAmount" class="form-control form-control-lg" 
+                                        <input aria-label="Amount" type="number" step="0.01" name="amount" id="payAmount" class="form-control form-control-lg" 
                                             value="<?= number_format($tokenDue > 0 ? $tokenDue : $requiredToken, 2) ?>" 
                                             min="1" max="<?= e($requiredToken) ?>" required>
                                     </div>
@@ -59,10 +59,10 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label"><?= __('booking_transaction_ref') ?></label>
-                                    <input type="text" name="reference" class="form-control" placeholder="<?= __('booking_transaction_placeholder') ?>">
+                                    <input aria-label="Reference" type="text" name="reference" class="form-control" placeholder="<?= __('booking_transaction_placeholder') ?>">
                                 </div>
                                 <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" id="terms" required>
+                                    <input aria-label="Terms" type="checkbox" class="form-check-input" id="terms" required>
                                     <label class="form-check-label" for="terms">
                                         <?= __('booking_terms_agree') ?>
                                     </label>

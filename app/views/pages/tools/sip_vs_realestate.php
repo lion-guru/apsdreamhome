@@ -11,25 +11,25 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="sipAmt"><?php echo __('monthly_sip_rs', [], 'Monthly SIP (₹)'); ?></label>
-                                <input type="number" class="form-control form-control-lg" id="sipAmt" value="10000" oninput="calcSIP()">
+                                <input aria-label="Sip amt" type="number" class="form-control form-control-lg" id="sipAmt" value="10000" oninput="calcSIP()">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="propInv"><?php echo __('property_investment_rs', [], 'Property Investment (₹)'); ?></label>
-                                <input type="number" class="form-control form-control-lg" id="propInv" value="5000000" oninput="calcSIP()">
+                                <input aria-label="Prop inv" type="number" class="form-control form-control-lg" id="propInv" value="5000000" oninput="calcSIP()">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="sipTenure"><?php echo __('tenure_years', [], 'Tenure (Years)'); ?></label>
-                                <input type="number" class="form-control" id="sipTenure" value="10" min="1" max="30" oninput="calcSIP()">
+                                <input aria-label="Sip tenure" type="number" class="form-control" id="sipTenure" value="10" min="1" max="30" oninput="calcSIP()">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="sipReturn"><?php echo __('sip_return_pct', [], 'SIP Return (%)'); ?></label>
-                                <input type="number" class="form-control" id="sipReturn" value="12" oninput="calcSIP()">
+                                <input aria-label="Sip return" type="number" class="form-control" id="sipReturn" value="12" oninput="calcSIP()">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold" for="propApp"><?php echo __('property_appreciation', [], 'Property Appreciation (%)'); ?></label>
-                                <input type="number" class="form-control" id="propApp" value="8" oninput="calcSIP()">
+                                <input aria-label="Prop app" type="number" class="form-control" id="propApp" value="8" oninput="calcSIP()">
                             </div>
                         </div>
                         <div class="row g-3 text-center">

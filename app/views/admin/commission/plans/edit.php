@@ -86,7 +86,7 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
             <div class="row mb-4">
                 <div class="col-md-3">
                     <label class="cp-label">Plan Name</label>
-                    <input type="text" name="plan_name" class="cp-input" value="<?= htmlspecialchars($plan['plan_name'] ?? '') ?>" required <?= $canEdit ? '' : 'disabled' ?>>
+                    <input aria-label="Plan name" type="text" name="plan_name" class="cp-input" value="<?= htmlspecialchars($plan['plan_name'] ?? '') ?>" required <?= $canEdit ? '' : 'disabled' ?>>
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Code</label>
@@ -102,23 +102,23 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Effective Date</label>
-                    <input type="date" name="effective_date" class="cp-input" value="<?= $plan['effective_date'] ?? '' ?>" <?= $canEdit ? '' : 'disabled' ?>>
+                    <input aria-label="Effective date" type="date" name="effective_date" class="cp-input" value="<?= $plan['effective_date'] ?? '' ?>" <?= $canEdit ? '' : 'disabled' ?>>
                 </div>
                 <div class="col-md-3">
                     <label class="cp-label">Description</label>
-                    <input type="text" name="description" class="cp-input" value="<?= htmlspecialchars($plan['description'] ?? '') ?>" <?= $canEdit ? '' : 'disabled' ?>>
+                    <input aria-label="Description" type="text" name="description" class="cp-input" value="<?= htmlspecialchars($plan['description'] ?? '') ?>" <?= $canEdit ? '' : 'disabled' ?>>
                 </div>
             </div>
 
             <h6 ><i class="fas fa-cog me-1"></i>Global Parameters</h6>
             <div class="row mb-4">
-                <div class="col-md-2"><label class="cp-label">Global Cap %</label><input type="number" name="global_cap_pct" class="cp-input" value="<?= $plan['global_cap_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
-                <div class="col-md-2"><label class="cp-label">Track A %</label><input type="number" name="track_a_pct" class="cp-input" value="<?= $plan['track_a_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
-                <div class="col-md-2"><label class="cp-label">Track B %</label><input type="number" name="track_b_pct" class="cp-input" value="<?= $plan['track_b_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
-                <div class="col-md-2"><label class="cp-label">Track C %</label><input type="number" name="track_c_pct" class="cp-input" value="<?= $plan['track_c_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
-                <div class="col-md-2"><label class="cp-label">Royalty %</label><input type="number" name="royalty_pool_pct" class="cp-input" value="<?= $plan['royalty_pool_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
-                <div class="col-md-1"><label class="cp-label">Override G1</label><input type="number" name="same_level_override_gen1" class="cp-input" value="<?= $plan['same_level_override_gen1'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
-                <div class="col-md-1"><label class="cp-label">Override G2</label><input type="number" name="same_level_override_gen2" class="cp-input" value="<?= $plan['same_level_override_gen2'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
+                <div class="col-md-2"><label class="cp-label">Global Cap %</label><input aria-label="Global cap pct" type="number" name="global_cap_pct" class="cp-input" value="<?= $plan['global_cap_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
+                <div class="col-md-2"><label class="cp-label">Track A %</label><input aria-label="Track a pct" type="number" name="track_a_pct" class="cp-input" value="<?= $plan['track_a_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
+                <div class="col-md-2"><label class="cp-label">Track B %</label><input aria-label="Track b pct" type="number" name="track_b_pct" class="cp-input" value="<?= $plan['track_b_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
+                <div class="col-md-2"><label class="cp-label">Track C %</label><input aria-label="Track c pct" type="number" name="track_c_pct" class="cp-input" value="<?= $plan['track_c_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
+                <div class="col-md-2"><label class="cp-label">Royalty %</label><input aria-label="Royalty pool pct" type="number" name="royalty_pool_pct" class="cp-input" value="<?= $plan['royalty_pool_pct'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
+                <div class="col-md-1"><label class="cp-label">Override G1</label><input aria-label="Same level override gen1" type="number" name="same_level_override_gen1" class="cp-input" value="<?= $plan['same_level_override_gen1'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
+                <div class="col-md-1"><label class="cp-label">Override G2</label><input aria-label="Same level override gen2" type="number" name="same_level_override_gen2" class="cp-input" value="<?= $plan['same_level_override_gen2'] ?>" step="0.5" <?= $canEdit ? '' : 'disabled' ?>></div>
             </div>
 
             <h6 ><i class="fas fa-layer-group me-1"></i>Rank Levels</h6>
@@ -137,13 +137,13 @@ $statusBadge = match($plan['status']) { 'active' => 'bg-success', 'draft' => 'bg
                             <tr>
                                 <td ><?= $lv['level_order'] ?></td>
                                 <td ><?= htmlspecialchars($lv['level_name'] ?? '') ?></td>
-                                <td><input type="number" name="levels[<?= $lv['id'] ?>][direct_commission]" value="<?= $lv['direct_commission'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
-                                <td><input type="number" name="levels[<?= $lv['id'] ?>][team_commission]" value="<?= $lv['team_commission'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
-                                <td><input type="number" name="levels[<?= $lv['id'] ?>][level_bonus]" value="<?= $lv['level_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
-                                <td><input type="number" name="levels[<?= $lv['id'] ?>][matching_bonus]" value="<?= $lv['matching_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
-                                <td><input type="number" name="levels[<?= $lv['id'] ?>][leadership_bonus]" value="<?= $lv['leadership_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
-                                <td><input type="number" name="levels[<?= $lv['id'] ?>][performance_bonus]" value="<?= $lv['performance_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
-                                <td><input type="number" name="levels[<?= $lv['id'] ?>][monthly_target]" value="<?= $lv['monthly_target'] ?>" step="1000" min="0" <?= $canEdit ? '' : 'disabled' ?>></td>
+                                <td><input aria-label="Levels lv" type="number" name="levels[<?= $lv['id'] ?>][direct_commission]" value="<?= $lv['direct_commission'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
+                                <td><input aria-label="Levels lv" type="number" name="levels[<?= $lv['id'] ?>][team_commission]" value="<?= $lv['team_commission'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
+                                <td><input aria-label="Levels lv" type="number" name="levels[<?= $lv['id'] ?>][level_bonus]" value="<?= $lv['level_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
+                                <td><input aria-label="Levels lv" type="number" name="levels[<?= $lv['id'] ?>][matching_bonus]" value="<?= $lv['matching_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
+                                <td><input aria-label="Levels lv" type="number" name="levels[<?= $lv['id'] ?>][leadership_bonus]" value="<?= $lv['leadership_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
+                                <td><input aria-label="Levels lv" type="number" name="levels[<?= $lv['id'] ?>][performance_bonus]" value="<?= $lv['performance_bonus'] ?>" step="0.01" min="0" max="100" <?= $canEdit ? '' : 'disabled' ?>></td>
+                                <td><input aria-label="Levels lv" type="number" name="levels[<?= $lv['id'] ?>][monthly_target]" value="<?= $lv['monthly_target'] ?>" step="1000" min="0" <?= $canEdit ? '' : 'disabled' ?>></td>
                                 <td ><?= number_format($rowTotal, 1) ?>%</td>
                             </tr>
                             <?php endforeach; ?>

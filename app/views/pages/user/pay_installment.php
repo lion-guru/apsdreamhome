@@ -228,7 +228,7 @@ $razorpay = $razorpay ?? ['key_id' => '', 'test' => true];
                                 <?= \App\Helpers\SecurityHelper::csrfField(); ?>
                                 <input type="hidden" name="payment_method" value="upi_manual">
                                 <div class="input-group mb-2">
-                                    <input type="text" name="utr_number" id="utr_number" class="form-control" placeholder="Enter 12-digit UPI Ref / UTR No. (e.g. 432156789012)" required pattern="[A-Za-z0-9]{6,30}">
+                                    <input aria-label="Utr number" type="text" name="utr_number" id="utr_number" class="form-control" placeholder="Enter 12-digit UPI Ref / UTR No. (e.g. 432156789012)" required pattern="[A-Za-z0-9]{6,30}">
                                     <button class="btn btn-success px-4 fw-bold" type="submit" id="btn-submit-utr">
                                         <i class="fas fa-check me-1"></i> Submit UTR
                                     </button>

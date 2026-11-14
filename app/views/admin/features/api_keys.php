@@ -54,8 +54,8 @@ ob_start();
       <form method="post" action="<?= $BASE_URL ?>/admin/api-keys/create">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
         <div class="row g-2">
-          <div class="col-md-3"><input type="text" name="name" class="form-control" placeholder="Key name (e.g. Mobile App)" required></div>
-          <div class="col-md-2"><input type="text" name="service_name" class="form-control" placeholder="Service (e.g. Gemini)"></div>
+          <div class="col-md-3"><input aria-label="Name" type="text" name="name" class="form-control" placeholder="Key name (e.g. Mobile App)" required></div>
+          <div class="col-md-2"><input aria-label="Service name" type="text" name="service_name" class="form-control" placeholder="Service (e.g. Gemini)"></div>
           <div class="col-md-2">
             <select aria-label="Key type" name="key_type" class="form-select">
               <option value="api_key">API Key</option>
@@ -64,7 +64,7 @@ ob_start();
               <option value="certificate">Certificate</option>
             </select>
           </div>
-          <div class="col-md-3"><input type="text" name="description" class="form-control" placeholder="Description (optional)"></div>
+          <div class="col-md-3"><input aria-label="Description" type="text" name="description" class="form-control" placeholder="Description (optional)"></div>
           <div class="col-md-2"><button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus"></i> Create</button></div>
         </div>
       </form>

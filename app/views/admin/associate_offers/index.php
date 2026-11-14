@@ -307,11 +307,11 @@ $today = date('Y-m-d');
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label class="form-label fw-bold small">Campaign Title <span class="text-danger">*</span></label>
-                            <input name="title" class="form-control" maxlength="150" required placeholder="e.g. Navratri Bonanza / Diwali Special Target">
+                            <input aria-label="Title" name="title" class="form-control" maxlength="150" required placeholder="e.g. Navratri Bonanza / Diwali Special Target">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Festival / Occasion Tag</label>
-                            <input name="festival_name" class="form-control" maxlength="100" placeholder="e.g. Navratri Special, New Year Blast" value="Festival Special">
+                            <input aria-label="Festival name" name="festival_name" class="form-control" maxlength="100" placeholder="e.g. Navratri Special, New Year Blast" value="Festival Special">
                         </div>
 
                         <div class="col-12">
@@ -328,11 +328,11 @@ $today = date('Y-m-d');
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Target Value <span class="text-danger">*</span></label>
-                            <input name="criteria_value" type="number" step="0.01" min="1" class="form-control" value="1000000" required>
+                            <input aria-label="Criteria value" name="criteria_value" type="number" step="0.01" min="1" class="form-control" value="1000000" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Min Verified Site Visits</label>
-                            <input name="min_site_visits" type="number" min="0" class="form-control" value="2">
+                            <input aria-label="Min site visits" name="min_site_visits" type="number" min="0" class="form-control" value="2">
                         </div>
 
                         <div class="col-md-4">
@@ -345,11 +345,11 @@ $today = date('Y-m-d');
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Reward Item Name</label>
-                            <input name="reward_item" class="form-control" placeholder="e.g. 5g Pure Gold Coin / Smart LED TV" value="5g Pure Gold Coin">
+                            <input aria-label="Reward item" name="reward_item" class="form-control" placeholder="e.g. 5g Pure Gold Coin / Smart LED TV" value="5g Pure Gold Coin">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Reward Value (₹ Cash Equivalent)</label>
-                            <input name="reward_value" type="number" step="0.01" min="0" class="form-control" value="35000" required>
+                            <input aria-label="Reward value" name="reward_value" type="number" step="0.01" min="0" class="form-control" value="35000" required>
                         </div>
 
                         <div class="col-md-4">
@@ -363,11 +363,11 @@ $today = date('Y-m-d');
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Starts On</label>
-                            <input name="starts_at" type="date" class="form-control" value="<?= $today ?>" required>
+                            <input aria-label="Starts at" name="starts_at" type="date" class="form-control" value="<?= $today ?>" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Ends On</label>
-                            <input name="ends_at" type="date" class="form-control" value="<?= date('Y-m-d', strtotime('+30 days')) ?>" required>
+                            <input aria-label="Ends at" name="ends_at" type="date" class="form-control" value="<?= date('Y-m-d', strtotime('+30 days')) ?>" required>
                         </div>
                     </div>
                 </div>

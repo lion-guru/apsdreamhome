@@ -30,11 +30,11 @@ $csrf = $this->getCsrfToken();
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                 <div class="col-md-2">
                     <label class="form-label small">From Date</label>
-                    <input type="date" name="from_date" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['from_date'] ?? '') ?>">
+                    <input aria-label="From date" type="date" name="from_date" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['from_date'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">To Date</label>
-                    <input type="date" name="to_date" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['to_date'] ?? '') ?>">
+                    <input aria-label="To date" type="date" name="to_date" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['to_date'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Type</label>
@@ -65,7 +65,7 @@ $csrf = $this->getCsrfToken();
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">GSTIN</label>
-                    <input type="text" name="gstin" class="form-control form-control-sm" placeholder="Customer GSTIN" value="<?= htmlspecialchars($filters['gstin'] ?? '') ?>">
+                    <input aria-label="Gstin" type="text" name="gstin" class="form-control form-control-sm" placeholder="Customer GSTIN" value="<?= htmlspecialchars($filters['gstin'] ?? '') ?>">
                 </div>
                 <div class="col-12 d-flex gap-2">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-search me-1"></i>Filter</button>

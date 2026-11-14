@@ -13,35 +13,35 @@ $page_title = $page_title ?? 'Add Employee';
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control" required>
+                    <input aria-label="Name" type="text" name="name" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Email <span class="text-danger">*</span></label>
-                    <input type="email" name="email" class="form-control" required>
+                    <input aria-label="Email" type="email" name="email" class="form-control" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Phone</label>
-                    <input type="text" name="phone" class="form-control">
+                    <input aria-label="Phone" type="text" name="phone" class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Department</label>
-                    <input type="text" name="department" class="form-control" value="General" placeholder="e.g. General, HR, IT, Operations, Sales, Marketing, Marketplace">
+                    <input aria-label="Department" type="text" name="department" class="form-control" value="General" placeholder="e.g. General, HR, IT, Operations, Sales, Marketing, Marketplace">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Designation</label>
-                    <input type="text" name="designation" class="form-control">
+                    <input aria-label="Designation" type="text" name="designation" class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Salary (₹)</label>
-                    <input type="number" name="salary" class="form-control" step="0.01">
+                    <input aria-label="Salary" type="number" name="salary" class="form-control" step="0.01">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Joining Date</label>
-                    <input type="date" name="join_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                    <input aria-label="Join date" type="date" name="join_date" class="form-control" value="<?= date('Y-m-d') ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Password</label>
-                    <input type="text" name="password" class="form-control" value="employee@123">
+                    <input aria-label="Password" type="text" name="password" class="form-control" value="employee@123">
                     <div class="form-text">Default: employee@123</div>
                 </div>
                 
@@ -58,7 +58,7 @@ $page_title = $page_title ?? 'Add Employee';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Commission Rate</label>
-                    <input type="number" name="commission_rate" class="form-control" step="0.01" value="0.00">
+                    <input aria-label="Commission rate" type="number" name="commission_rate" class="form-control" step="0.01" value="0.00">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Commission Type</label>

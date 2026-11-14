@@ -111,7 +111,7 @@ function renderGenealogyNode($userId, $sponsorTree, $rankColors, $rankIcons, $ba
             <span class="badge bg-primary"><?= $totalMembers ?> members</span>
         </div>
         <div class="aps-cp-card-body">
-            <input type="text" id="genealogySearch" class="form-control" placeholder="Search by name, email, or referral code..." autocomplete="off">
+            <input aria-label="Genealogy search" type="text" id="genealogySearch" class="form-control" placeholder="Search by name, email, or referral code..." autocomplete="off">
         </div>
     </div>
 

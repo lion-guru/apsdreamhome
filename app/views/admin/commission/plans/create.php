@@ -40,11 +40,11 @@ $ranks = [
             <div class="row mb-4">
                 <div class="col-md-3">
                     <label class="cp-label">Plan Name *</label>
-                    <input type="text" name="plan_name" class="cp-input" required placeholder="e.g. Standard Commission Plan">
+                    <input aria-label="Plan name" type="text" name="plan_name" class="cp-input" required placeholder="e.g. Standard Commission Plan">
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Plan Code *</label>
-                    <input type="text" name="plan_code" class="cp-input" required placeholder="e.g. STD" maxlength="20">
+                    <input aria-label="Plan code" type="text" name="plan_code" class="cp-input" required placeholder="e.g. STD" maxlength="20">
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Plan Type</label>
@@ -57,11 +57,11 @@ $ranks = [
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Effective Date</label>
-                    <input type="date" name="effective_date" class="cp-input" value="<?= date('Y-m-d') ?>">
+                    <input aria-label="Effective date" type="date" name="effective_date" class="cp-input" value="<?= date('Y-m-d') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="cp-label">Description</label>
-                    <input type="text" name="description" class="cp-input" placeholder="Optional description">
+                    <input aria-label="Description" type="text" name="description" class="cp-input" placeholder="Optional description">
                 </div>
             </div>
 
@@ -69,31 +69,31 @@ $ranks = [
             <div class="row mb-4">
                 <div class="col-md-2">
                     <label class="cp-label">Global Cap %</label>
-                    <input type="number" name="global_cap_pct" class="cp-input" value="20" step="0.5" min="0" max="100">
+                    <input aria-label="Global cap pct" type="number" name="global_cap_pct" class="cp-input" value="20" step="0.5" min="0" max="100">
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Track A (Slab Diff) %</label>
-                    <input type="number" name="track_a_pct" class="cp-input" value="15" step="0.5" min="0" max="100">
+                    <input aria-label="Track a pct" type="number" name="track_a_pct" class="cp-input" value="15" step="0.5" min="0" max="100">
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Track B (Rollup) %</label>
-                    <input type="number" name="track_b_pct" class="cp-input" value="3" step="0.5" min="0" max="100">
+                    <input aria-label="Track b pct" type="number" name="track_b_pct" class="cp-input" value="3" step="0.5" min="0" max="100">
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Track C (Milestone) %</label>
-                    <input type="number" name="track_c_pct" class="cp-input" value="2" step="0.5" min="0" max="100">
+                    <input aria-label="Track c pct" type="number" name="track_c_pct" class="cp-input" value="2" step="0.5" min="0" max="100">
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Royalty Pool %</label>
-                    <input type="number" name="royalty_pool_pct" class="cp-input" value="2" step="0.5" min="0" max="100">
+                    <input aria-label="Royalty pool pct" type="number" name="royalty_pool_pct" class="cp-input" value="2" step="0.5" min="0" max="100">
                 </div>
                 <div class="col-md-1">
                     <label class="cp-label">Override G1 %</label>
-                    <input type="number" name="same_level_override_gen1" class="cp-input" value="2" step="0.5" min="0">
+                    <input aria-label="Same level override gen1" type="number" name="same_level_override_gen1" class="cp-input" value="2" step="0.5" min="0">
                 </div>
                 <div class="col-md-1">
                     <label class="cp-label">Override G2 %</label>
-                    <input type="number" name="same_level_override_gen2" class="cp-input" value="1" step="0.5" min="0">
+                    <input aria-label="Same level override gen2" type="number" name="same_level_override_gen2" class="cp-input" value="1" step="0.5" min="0">
                 </div>
             </div>
 

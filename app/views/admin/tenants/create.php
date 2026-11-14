@@ -43,15 +43,15 @@ $base = BASE_URL ?? '';
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Company Name *</label>
-                                        <input type="text" name="name" class="form-control" required placeholder="e.g. ABC Real Estate" id="tenantName">
+                                        <input aria-label="Name" type="text" name="name" class="form-control" required placeholder="e.g. ABC Real Estate" id="tenantName">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Slug (auto-generated)</label>
-                                        <input type="text" name="slug" class="form-control" placeholder="auto-from-name" id="tenantSlug">
+                                        <input aria-label="Slug" type="text" name="slug" class="form-control" placeholder="auto-from-name" id="tenantSlug">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Domain</label>
-                                        <input type="text" name="domain" class="form-control" placeholder="e.g. abc-realestate.com">
+                                        <input aria-label="Domain" type="text" name="domain" class="form-control" placeholder="e.g. abc-realestate.com">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Status</label>
@@ -72,27 +72,27 @@ $base = BASE_URL ?? '';
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label class="form-label fw-semibold">Contact Name</label>
-                                        <input type="text" name="contact_name" class="form-control" placeholder="Full name">
+                                        <input aria-label="Contact name" type="text" name="contact_name" class="form-control" placeholder="Full name">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label fw-semibold">Email</label>
-                                        <input type="email" name="contact_email" class="form-control" placeholder="email@example.com">
+                                        <input aria-label="Contact email" type="email" name="contact_email" class="form-control" placeholder="email@example.com">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label fw-semibold">Phone</label>
-                                        <input type="text" name="contact_phone" class="form-control" placeholder="+91-XXXXXXXXXX">
+                                        <input aria-label="Contact phone" type="text" name="contact_phone" class="form-control" placeholder="+91-XXXXXXXXXX">
                                     </div>
                                     <div class="col-md-12">
                                         <label class="form-label fw-semibold">Address</label>
-                                        <input type="text" name="address" class="form-control" placeholder="Full address">
+                                        <input aria-label="Address" type="text" name="address" class="form-control" placeholder="Full address">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">City</label>
-                                        <input type="text" name="city" class="form-control">
+                                        <input aria-label="City" type="text" name="city" class="form-control">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">State</label>
-                                        <input type="text" name="state" class="form-control">
+                                        <input aria-label="State" type="text" name="state" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -119,19 +119,19 @@ $base = BASE_URL ?? '';
                             <div class="card-body">
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Max Users</label>
-                                    <input type="number" name="max_users" class="form-control form-control-sm" value="1" min="1" id="maxUsers">
+                                    <input aria-label="Max users" type="number" name="max_users" class="form-control form-control-sm" value="1" min="1" id="maxUsers">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Max Leads</label>
-                                    <input type="number" name="max_leads" class="form-control form-control-sm" value="50" min="1" id="maxLeads">
+                                    <input aria-label="Max leads" type="number" name="max_leads" class="form-control form-control-sm" value="50" min="1" id="maxLeads">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Max Properties</label>
-                                    <input type="number" name="max_properties" class="form-control form-control-sm" value="10" min="1" id="maxProps">
+                                    <input aria-label="Max properties" type="number" name="max_properties" class="form-control form-control-sm" value="10" min="1" id="maxProps">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Storage (MB)</label>
-                                    <input type="number" name="storage_limit_mb" class="form-control form-control-sm" value="100" min="10" id="maxStorage">
+                                    <input aria-label="Storage limit mb" type="number" name="storage_limit_mb" class="form-control form-control-sm" value="100" min="10" id="maxStorage">
                                 </div>
                             </div>
                         </div>
@@ -141,11 +141,11 @@ $base = BASE_URL ?? '';
                             <div class="card-body">
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Primary Color</label>
-                                    <input type="color" name="primary_color" class="form-control form-control-sm form-control-color" value="#667eea">
+                                    <input aria-label="Primary color" type="color" name="primary_color" class="form-control form-control-sm form-control-color" value="#667eea">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Secondary Color</label>
-                                    <input type="color" name="secondary_color" class="form-control form-control-sm form-control-color" value="#764ba2">
+                                    <input aria-label="Secondary color" type="color" name="secondary_color" class="form-control form-control-sm form-control-color" value="#764ba2">
                                 </div>
                             </div>
                         </div>

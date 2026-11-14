@@ -22,11 +22,11 @@ ob_start();
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Key Name</label>
-            <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($key['name'] ?? '') ?>" required>
+            <input aria-label="Name" type="text" name="name" class="form-control" value="<?= htmlspecialchars($key['name'] ?? '') ?>" required>
           </div>
           <div class="col-md-6">
             <label class="form-label">Rate Limit (req/min)</label>
-            <input type="number" name="rate_limit" class="form-control" value="<?= (int)($key['rate_limit_per_minute'] ?? 60) ?>" min="1" max="1000">
+            <input aria-label="Rate limit" type="number" name="rate_limit" class="form-control" value="<?= (int)($key['rate_limit_per_minute'] ?? 60) ?>" min="1" max="1000">
           </div>
           <div class="col-md-12">
             <label class="form-label">Scopes</label>
@@ -37,7 +37,7 @@ ob_start();
               foreach ($allScopes as $scope): ?>
                 <div class="col-md-4">
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="scopes[]" value="<?= $scope ?>" <?= in_array($scope, $currentScopes) ? 'checked' : '' ?>>
+                    <input aria-label="Scopes" class="form-check-input" type="checkbox" name="scopes[]" value="<?= $scope ?>" <?= in_array($scope, $currentScopes) ? 'checked' : '' ?>>
                     <label class="form-check-label"><code><?= $scope ?></code></label>
                   </div>
                 </div>

@@ -108,7 +108,7 @@ $templates = $templates ?? [];
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Template Name *</label>
-                                <input type="text" name="name" class="form-control" id="inputName" placeholder="welcome_customer" required>
+                                <input aria-label="Name" type="text" name="name" class="form-control" id="inputName" placeholder="welcome_customer" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Category</label>
@@ -122,7 +122,7 @@ $templates = $templates ?? [];
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Subject *</label>
-                                <input type="text" name="subject" class="form-control" id="inputSubject" placeholder="Welcome to APS Dream Home!" required>
+                                <input aria-label="Subject" type="text" name="subject" class="form-control" id="inputSubject" placeholder="Welcome to APS Dream Home!" required>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">HTML Body</label>
@@ -139,7 +139,7 @@ $templates = $templates ?? [];
                             </div>
                             <div class="col-12">
                                 <div class="form-check">
-                                    <input type="checkbox" name="is_active" class="form-check-input" id="inputIsActive" checked>
+                                    <input aria-label="Is active" type="checkbox" name="is_active" class="form-check-input" id="inputIsActive" checked>
                                     <label class="form-check-label" for="inputIsActive">Active</label>
                                 </div>
                             </div>

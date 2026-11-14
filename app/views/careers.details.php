@@ -50,10 +50,10 @@
                     <?php else: ?>
                     <form method="post" action="<?= BASE_URL ?>careers/apply/<?= $job['id'] ?? 0 ?>" enctype="multipart/form-data">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <div class="mb-2"><input type="text" class="form-control form-control-sm" name="name" placeholder="Your Name" required></div>
-                        <div class="mb-2"><input type="email" class="form-control form-control-sm" name="email" placeholder="Your Email" required></div>
-                        <div class="mb-2"><input type="tel" class="form-control form-control-sm" name="phone" placeholder="Phone Number" required></div>
-                        <div class="mb-2"><input type="file" class="form-control form-control-sm" name="resume" accept=".pdf,.doc,.docx" required></div>
+                        <div class="mb-2"><input aria-label="Name" type="text" class="form-control form-control-sm" name="name" placeholder="Your Name" required></div>
+                        <div class="mb-2"><input aria-label="Email" type="email" class="form-control form-control-sm" name="email" placeholder="Your Email" required></div>
+                        <div class="mb-2"><input aria-label="Phone" type="tel" class="form-control form-control-sm" name="phone" placeholder="Phone Number" required></div>
+                        <div class="mb-2"><input aria-label="Resume" type="file" class="form-control form-control-sm" name="resume" accept=".pdf,.doc,.docx" required></div>
                         <button type="submit" class="btn btn-primary w-100 btn-sm"><i class="fas fa-paper-plane me-1"></i>Submit Application</button>
                     </form>
                     <?php endif; ?>

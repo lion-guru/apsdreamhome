@@ -20,7 +20,7 @@
             
             <div class="mb-3">
               <label class="form-label">Property ID</label>
-              <input type="number" name="property_id" class="form-control" placeholder="Enter property ID (e.g., 1)" required>
+              <input aria-label="Property id" type="number" name="property_id" class="form-control" placeholder="Enter property ID (e.g., 1)" required>
               <div class="form-text">The plot property ID to generate valuation for.</div>
             </div>
 

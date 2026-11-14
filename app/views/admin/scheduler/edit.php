@@ -17,7 +17,7 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'schedule' => '', 'desc
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Task Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($task['name'] ?? '') ?>" required>
+                            <input aria-label="Name" type="text" name="name" class="form-control" value="<?= htmlspecialchars($task['name'] ?? '') ?>" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
@@ -36,14 +36,14 @@ $task = $task ?? ['id' => 0, 'name' => '', 'type' => '', 'schedule' => '', 'desc
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Schedule Expression <span class="text-danger">*</span></label>
-                            <input type="text" name="schedule" class="form-control" value="<?= htmlspecialchars($task['schedule'] ?? '') ?>" required>
+                            <input aria-label="Schedule" type="text" name="schedule" class="form-control" value="<?= htmlspecialchars($task['schedule'] ?? '') ?>" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Command / Action</label>
-                            <input type="text" name="command" class="form-control" value="<?= htmlspecialchars($task['command'] ?? '') ?>">
+                            <input aria-label="Command" type="text" name="command" class="form-control" value="<?= htmlspecialchars($task['command'] ?? '') ?>">
                         </div>
                         <div class="mb-3 form-check form-switch">
-                            <input type="checkbox" name="enabled" class="form-check-input" id="enabledToggle" value="1" <?= ($task['enabled'] ?? false) ? 'checked' : '' ?>>
+                            <input aria-label="Enabled" type="checkbox" name="enabled" class="form-check-input" id="enabledToggle" value="1" <?= ($task['enabled'] ?? false) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="enabledToggle">Task enabled</label>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update Task</button>

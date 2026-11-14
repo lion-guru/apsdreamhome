@@ -181,30 +181,30 @@ $employee_id = $employee_id ?? 0;
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Certification Name <span class="text-danger">*</span></label>
-                        <input type="text" name="certification_name" class="form-control" required placeholder="e.g., AWS Solutions Architect">
+                        <input aria-label="Certification name" type="text" name="certification_name" class="form-control" required placeholder="e.g., AWS Solutions Architect">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Issuing Body</label>
-                        <input type="text" name="issuing_body" class="form-control" placeholder="e.g., Amazon Web Services">
+                        <input aria-label="Issuing body" type="text" name="issuing_body" class="form-control" placeholder="e.g., Amazon Web Services">
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Issue Date <span class="text-danger">*</span></label>
-                            <input type="date" name="issue_date" class="form-control" required value="<?= date('Y-m-d') ?>">
+                            <input aria-label="Issue date" type="date" name="issue_date" class="form-control" required value="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Expiry Date</label>
-                            <input type="date" name="expiry_date" class="form-control">
+                            <input aria-label="Expiry date" type="date" name="expiry_date" class="form-control">
                         </div>
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Credential ID</label>
-                            <input type="text" name="credential_id" class="form-control" placeholder="Optional: Credential/license number">
+                            <input aria-label="Credential id" type="text" name="credential_id" class="form-control" placeholder="Optional: Credential/license number">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Credential URL</label>
-                            <input type="url" name="credential_url" class="form-control" placeholder="https://...">
+                            <input aria-label="Credential url" type="url" name="credential_url" class="form-control" placeholder="https://...">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -237,30 +237,30 @@ $employee_id = $employee_id ?? 0;
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Certification Name <span class="text-danger">*</span></label>
-                            <input type="text" name="certification_name" class="form-control" required id="editCertName">
+                            <input aria-label="Certification name" type="text" name="certification_name" class="form-control" required id="editCertName">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Issuing Body</label>
-                            <input type="text" name="issuing_body" class="form-control" id="editCertBody">
+                            <input aria-label="Issuing body" type="text" name="issuing_body" class="form-control" id="editCertBody">
                         </div>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Issue Date</label>
-                                <input type="date" name="issue_date" class="form-control" id="editCertIssue">
+                                <input aria-label="Issue date" type="date" name="issue_date" class="form-control" id="editCertIssue">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Expiry Date</label>
-                                <input type="date" name="expiry_date" class="form-control" id="editCertExpiry">
+                                <input aria-label="Expiry date" type="date" name="expiry_date" class="form-control" id="editCertExpiry">
                             </div>
                         </div>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Credential ID</label>
-                                <input type="text" name="credential_id" class="form-control" id="editCertCredId">
+                                <input aria-label="Credential id" type="text" name="credential_id" class="form-control" id="editCertCredId">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Credential URL</label>
-                                <input type="url" name="credential_url" class="form-control" id="editCertCredUrl">
+                                <input aria-label="Credential url" type="url" name="credential_url" class="form-control" id="editCertCredUrl">
                             </div>
                         </div>
                         <div class="mb-3">

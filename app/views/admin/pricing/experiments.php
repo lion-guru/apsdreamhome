@@ -68,29 +68,29 @@ $statusBadge = [
                         </div>
                         <div class="mb-2">
                             <label class="form-label small fw-semibold">Experiment name</label>
-                            <input type="text" name="experiment_name" class="form-control form-control-sm" required maxlength="100" placeholder="e.g. Colony 5 winter premium test">
+                            <input aria-label="Experiment name" type="text" name="experiment_name" class="form-control form-control-sm" required maxlength="100" placeholder="e.g. Colony 5 winter premium test">
                         </div>
                         <div class="row g-2 mb-2">
                             <div class="col-8">
                                 <label class="form-label small fw-semibold">Control base Rs./sqft</label>
-                                <input type="number" name="control_base_pps" class="form-control form-control-sm" min="1" step="0.01" required placeholder="e.g. 1550">
+                                <input aria-label="Control base pps" type="number" name="control_base_pps" class="form-control form-control-sm" min="1" step="0.01" required placeholder="e.g. 1550">
                             </div>
                             <div class="col-4">
                                 <label class="form-label small fw-semibold">Min sample</label>
-                                <input type="number" name="min_sample_size" class="form-control form-control-sm" min="10" value="30">
+                                <input aria-label="Min sample size" type="number" name="min_sample_size" class="form-control form-control-sm" min="10" value="30">
                             </div>
                         </div>
                         <label class="form-label small fw-semibold">Variants</label>
                         <?php for ($i = 0; $i < 3; $i++): ?>
                             <div class="row g-2 mb-1">
                                 <div class="col-4">
-                                    <input type="text" name="variant_label[<?= $i ?>]" class="form-control form-control-sm" placeholder="Label <?= $i + 1 ?><?= $i === 0 ? ' (required)' : '' ?>" <?= $i === 0 ? 'required' : '' ?>>
+                                    <input aria-label="Variant label i" type="text" name="variant_label[<?= $i ?>]" class="form-control form-control-sm" placeholder="Label <?= $i + 1 ?><?= $i === 0 ? ' (required)' : '' ?>" <?= $i === 0 ? 'required' : '' ?>>
                                 </div>
                                 <div class="col-4">
-                                    <input type="number" name="variant_pps[<?= $i ?>]" class="form-control form-control-sm" min="1" step="0.01" placeholder="Rs./sqft" <?= $i === 0 ? 'required' : '' ?>>
+                                    <input aria-label="Variant pps i" type="number" name="variant_pps[<?= $i ?>]" class="form-control form-control-sm" min="1" step="0.01" placeholder="Rs./sqft" <?= $i === 0 ? 'required' : '' ?>>
                                 </div>
                                 <div class="col-4">
-                                    <input type="number" name="variant_split[<?= $i ?>]" class="form-control form-control-sm" min="1" max="90" step="0.1" placeholder="Split %" <?= $i === 0 ? 'required' : '' ?>>
+                                    <input aria-label="Variant split i" type="number" name="variant_split[<?= $i ?>]" class="form-control form-control-sm" min="1" max="90" step="0.1" placeholder="Split %" <?= $i === 0 ? 'required' : '' ?>>
                                 </div>
                             </div>
                         <?php endfor; ?>

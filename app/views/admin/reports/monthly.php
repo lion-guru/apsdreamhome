@@ -6,7 +6,7 @@
                 <div>
                     <form method="GET" class="d-inline-flex align-items-center gap-2">
     <?php echo CSRFProtection::csrfField(); ?>
-                        <input type="month" name="month" class="form-control form-control-sm" value="<?php echo htmlspecialchars($report_data['month'] ?? date('Y-m')); ?>">
+                        <input aria-label="Month" type="month" name="month" class="form-control form-control-sm" value="<?php echo htmlspecialchars($report_data['month'] ?? date('Y-m')); ?>">
                         <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> View</button>
                     </form>
                 </div>

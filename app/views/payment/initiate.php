@@ -60,7 +60,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="amount" class="form-label">Amount (₹) *</label>
-                                    <input type="number" class="form-control" id="amount" name="amount" required>
+                                    <input aria-label="Amount" type="number" class="form-control" id="amount" name="amount" required>
                                 </div>
                             </div>
                             <div class="col-md-4">

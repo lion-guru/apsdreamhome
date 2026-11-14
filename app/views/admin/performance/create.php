@@ -56,7 +56,7 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required value="<?= htmlspecialchars($goal['title'] ?? '') ?>" placeholder="e.g., Increase Q4 sales by 20%">
+                        <input aria-label="Title" type="text" name="title" class="form-control" required value="<?= htmlspecialchars($goal['title'] ?? '') ?>" placeholder="e.g., Increase Q4 sales by 20%">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Assigned By</label>
@@ -84,15 +84,15 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Target Value <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" min="0" name="target_value" class="form-control" required value="<?= htmlspecialchars($goal['target_value'] ?? '') ?>" placeholder="e.g., 1000000">
+                        <input aria-label="Target value" type="number" step="0.01" min="0" name="target_value" class="form-control" required value="<?= htmlspecialchars($goal['target_value'] ?? '') ?>" placeholder="e.g., 1000000">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Target Unit <span class="text-danger">*</span></label>
-                        <input type="text" name="target_unit" class="form-control" required value="<?= htmlspecialchars($goal['target_unit'] ?? '') ?>" placeholder="e.g., ₹, units, %, hours">
+                        <input aria-label="Target unit" type="text" name="target_unit" class="form-control" required value="<?= htmlspecialchars($goal['target_unit'] ?? '') ?>" placeholder="e.g., ₹, units, %, hours">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Weightage %</label>
-                        <input type="number" min="0" max="100" name="weightage" class="form-control" value="<?= htmlspecialchars($goal['weightage'] ?? 100) ?>" placeholder="100">
+                        <input aria-label="Weightage" type="number" min="0" max="100" name="weightage" class="form-control" value="<?= htmlspecialchars($goal['weightage'] ?? 100) ?>" placeholder="100">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Review Frequency</label>
@@ -116,15 +116,15 @@ $db = $db ?? \App\Core\Database\Database::getInstance();
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
-                        <input type="date" name="start_date" class="form-control" required value="<?= htmlspecialchars($goal['start_date'] ?? date('Y-m-d')) ?>">
+                        <input aria-label="Start date" type="date" name="start_date" class="form-control" required value="<?= htmlspecialchars($goal['start_date'] ?? date('Y-m-d')) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">End Date <span class="text-danger">*</span></label>
-                        <input type="date" name="end_date" class="form-control" required value="<?= htmlspecialchars($goal['end_date'] ?? date('Y-m-d', strtotime('+3 months'))) ?>">
+                        <input aria-label="End date" type="date" name="end_date" class="form-control" required value="<?= htmlspecialchars($goal['end_date'] ?? date('Y-m-d', strtotime('+3 months'))) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Next Review Date</label>
-                        <input type="date" name="next_review_date" class="form-control" value="<?= htmlspecialchars($goal['next_review_date'] ?? '') ?>">
+                        <input aria-label="Next review date" type="date" name="next_review_date" class="form-control" value="<?= htmlspecialchars($goal['next_review_date'] ?? '') ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Status</label>

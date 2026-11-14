@@ -61,7 +61,7 @@ $stats = $stats ?? ['total' => 0, 'under_construction' => 0, 'completed' => 0, '
 <div class="card border-0 shadow-sm" style="border-radius:12px;">
     <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h2  class="fs-6 fw-semibold mb-0 fw-bold">All Projects</h2>
-        <input type="text" id="projectSearch" class="form-control form-control-sm"
+        <input aria-label="Project search" type="text" id="projectSearch" class="form-control form-control-sm"
                placeholder="Search projects..." style="width:220px;"
                id="projectSearch">
     </div>

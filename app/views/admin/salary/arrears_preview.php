@@ -55,35 +55,35 @@ $preview_year = $preview_year ?? date('Y');
                         <div class="row g-2">
                             <div class="col-md-6">
                                 <label class="form-label">Basic Salary *</label>
-                                <input type="number" step="0.01" name="basic_salary" class="form-control" value="<?= $current_structure['basic_salary'] ?? 0 ?>" required>
+                                <input aria-label="Basic salary" type="number" step="0.01" name="basic_salary" class="form-control" value="<?= $current_structure['basic_salary'] ?? 0 ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">HRA</label>
-                                <input type="number" step="0.01" name="hra" class="form-control" value="<?= $current_structure['hra'] ?? 0 ?>">
+                                <input aria-label="Hra" type="number" step="0.01" name="hra" class="form-control" value="<?= $current_structure['hra'] ?? 0 ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Conveyance</label>
-                                <input type="number" step="0.01" name="conveyance" class="form-control" value="<?= $current_structure['conveyance'] ?? 0 ?>">
+                                <input aria-label="Conveyance" type="number" step="0.01" name="conveyance" class="form-control" value="<?= $current_structure['conveyance'] ?? 0 ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Medical Allowance</label>
-                                <input type="number" step="0.01" name="medical_allowance" class="form-control" value="<?= $current_structure['medical_allowance'] ?? 0 ?>">
+                                <input aria-label="Medical allowance" type="number" step="0.01" name="medical_allowance" class="form-control" value="<?= $current_structure['medical_allowance'] ?? 0 ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Special Allowance</label>
-                                <input type="number" step="0.01" name="special_allowance" class="form-control" value="<?= $current_structure['special_allowance'] ?? 0 ?>">
+                                <input aria-label="Special allowance" type="number" step="0.01" name="special_allowance" class="form-control" value="<?= $current_structure['special_allowance'] ?? 0 ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Other Allowances</label>
-                                <input type="number" step="0.01" name="other_allowances" class="form-control" value="<?= $current_structure['other_allowances'] ?? 0 ?>">
+                                <input aria-label="Other allowances" type="number" step="0.01" name="other_allowances" class="form-control" value="<?= $current_structure['other_allowances'] ?? 0 ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">PF (Employee)</label>
-                                <input type="number" step="0.01" name="pf_employee" class="form-control" value="<?= $current_structure['pf_employee'] ?? 0 ?>">
+                                <input aria-label="Pf employee" type="number" step="0.01" name="pf_employee" class="form-control" value="<?= $current_structure['pf_employee'] ?? 0 ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">TDS</label>
-                                <input type="number" step="0.01" name="tds" class="form-control" value="<?= $current_structure['tds'] ?? 0 ?>">
+                                <input aria-label="Tds" type="number" step="0.01" name="tds" class="form-control" value="<?= $current_structure['tds'] ?? 0 ?>">
                             </div>
                         </div>
                         <hr>

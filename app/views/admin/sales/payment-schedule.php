@@ -44,11 +44,11 @@ foreach ($schedule as $s) {
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars((string)$csrf_token) ?>">
             <div class="col-md-3">
                 <label class="form-label small"><?= __('sale_tenure_months') ?></label>
-                <input type="number" name="tenure_months" value="12" class="form-control form-control-sm" required>
+                <input aria-label="Tenure months" type="number" name="tenure_months" value="12" class="form-control form-control-sm" required>
             </div>
             <div class="col-md-3">
                 <label class="form-label small"><?= __('sale_rate_pa') ?></label>
-                <input type="number" step="0.01" name="rate_per_annum" value="10.0" class="form-control form-control-sm" required>
+                <input aria-label="Rate per annum" type="number" step="0.01" name="rate_per_annum" value="10.0" class="form-control form-control-sm" required>
             </div>
             <div class="col-md-3">
                 <button class="btn btn-sm btn-warning" type="submit"

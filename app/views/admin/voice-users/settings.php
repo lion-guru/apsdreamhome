@@ -19,15 +19,15 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">API Key</label>
-                        <input type="password" name="api_key" class="form-control" value="<?= htmlspecialchars($settings['api_key'] ?? '') ?>">
+                        <input aria-label="Api key" type="password" name="api_key" class="form-control" value="<?= htmlspecialchars($settings['api_key'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">API Secret</label>
-                        <input type="password" name="api_secret" class="form-control" value="<?= htmlspecialchars($settings['api_secret'] ?? '') ?>">
+                        <input aria-label="Api secret" type="password" name="api_secret" class="form-control" value="<?= htmlspecialchars($settings['api_secret'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">From Number</label>
-                        <input type="text" name="from_number" class="form-control" value="<?= htmlspecialchars($settings['from_number'] ?? '') ?>" placeholder="+1234567890">
+                        <input aria-label="From number" type="text" name="from_number" class="form-control" value="<?= htmlspecialchars($settings['from_number'] ?? '') ?>" placeholder="+1234567890">
                     </div>
                 </div>
             </div>
@@ -38,19 +38,19 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Max Call Duration (seconds)</label>
-                        <input type="number" name="max_duration" class="form-control" value="<?= $settings['max_duration'] ?? 300 ?>">
+                        <input aria-label="Max duration" type="number" name="max_duration" class="form-control" value="<?= $settings['max_duration'] ?? 300 ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Max Retries</label>
-                        <input type="number" name="max_retries" class="form-control" value="<?= $settings['max_retries'] ?? 3 ?>">
+                        <input aria-label="Max retries" type="number" name="max_retries" class="form-control" value="<?= $settings['max_retries'] ?? 3 ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Retry Interval (minutes)</label>
-                        <input type="number" name="retry_interval" class="form-control" value="<?= $settings['retry_interval'] ?? 30 ?>">
+                        <input aria-label="Retry interval" type="number" name="retry_interval" class="form-control" value="<?= $settings['retry_interval'] ?? 30 ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Concurrent Calls</label>
-                        <input type="number" name="concurrent_calls" class="form-control" value="<?= $settings['concurrent_calls'] ?? 5 ?>">
+                        <input aria-label="Concurrent calls" type="number" name="concurrent_calls" class="form-control" value="<?= $settings['concurrent_calls'] ?? 5 ?>">
                     </div>
                 </div>
             </div>

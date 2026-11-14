@@ -21,7 +21,7 @@ $p = $property ?? [];
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
             <div class="mb-3">
                 <label class="form-label small fw-semibold">Select Image</label>
-                <input type="file" class="form-control" name="property_image" accept="image/*">
+                <input aria-label="Property image" type="file" class="form-control" name="property_image" accept="image/*">
                 <div class="form-text">Supported formats: JPG, PNG, WebP. Max 5MB.</div>
             </div>
             <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-upload me-1"></i>Upload Image</button>

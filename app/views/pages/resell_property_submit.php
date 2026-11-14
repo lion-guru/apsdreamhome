@@ -27,7 +27,7 @@ $content = $content ?? '';
           <div class="row g-3">
             <div class="col-md-12">
               <label class="form-label"><?= __('user_resell_submit_property_title', 'Property Title') ?> *</label>
-              <input name="title" class="form-control" required maxlength="200" placeholder="<?= __('user_resell_submit_title_ph', 'e.g. 3BHK House in Gorakhpur') ?>">
+              <input aria-label="Title" name="title" class="form-control" required maxlength="200" placeholder="<?= __('user_resell_submit_title_ph', 'e.g. 3BHK House in Gorakhpur') ?>">
             </div>
             <div class="col-md-12">
               <label class="form-label"><?= __('user_resell_submit_description', 'Description') ?></label>
@@ -48,35 +48,35 @@ $content = $content ?? '';
             </div>
             <div class="col-md-4">
               <label class="form-label"><?= __('user_resell_submit_asking_price', 'Asking Price (₹)') ?> *</label>
-              <input name="asking_price" type="number" class="form-control" required min="1" placeholder="2500000">
+              <input aria-label="Asking price" name="asking_price" type="number" class="form-control" required min="1" placeholder="2500000">
             </div>
             <div class="col-md-4">
               <label class="form-label"><?= __('user_resell_submit_area', 'Area (sqft)') ?> *</label>
-              <input name="area_sqft" type="number" class="form-control" required min="1" placeholder="1200">
+              <input aria-label="Area sqft" name="area_sqft" type="number" class="form-control" required min="1" placeholder="1200">
             </div>
             <div class="col-md-3">
               <label class="form-label"><?= __('user_resell_submit_bedrooms', 'Bedrooms') ?></label>
-              <input name="bedrooms" type="number" class="form-control" min="0" value="0">
+              <input aria-label="Bedrooms" name="bedrooms" type="number" class="form-control" min="0" value="0">
             </div>
             <div class="col-md-3">
               <label class="form-label"><?= __('user_resell_submit_bathrooms', 'Bathrooms') ?></label>
-              <input name="bathrooms" type="number" class="form-control" min="0" value="0">
+              <input aria-label="Bathrooms" name="bathrooms" type="number" class="form-control" min="0" value="0">
             </div>
             <div class="col-md-3">
               <label class="form-label"><?= __('user_resell_submit_age', 'Age (years)') ?></label>
-              <input name="age_years" type="number" class="form-control" min="0" value="0">
+              <input aria-label="Age years" name="age_years" type="number" class="form-control" min="0" value="0">
             </div>
             <div class="col-md-3">
               <label class="form-label"><?= __('user_resell_submit_original_price', 'Original Price (₹)') ?></label>
-              <input name="original_price" type="number" class="form-control" placeholder="<?= __('user_resell_submit_optional', 'Optional') ?>">
+              <input aria-label="Original price" name="original_price" type="number" class="form-control" placeholder="<?= __('user_resell_submit_optional', 'Optional') ?>">
             </div>
             <div class="col-md-12">
               <label class="form-label"><?= __('user_resell_submit_location', 'Location/Address') ?> *</label>
-              <input name="location" class="form-control" required placeholder="<?= __('user_resell_submit_location_ph', 'Full address or area name') ?>">
+              <input aria-label="Location" name="location" class="form-control" required placeholder="<?= __('user_resell_submit_location_ph', 'Full address or area name') ?>">
             </div>
             <div class="col-12">
               <label class="form-label"><?= __('user_resell_submit_amenities', 'Amenities (comma separated)') ?></label>
-              <input name="amenities" class="form-control" placeholder="<?= __('user_resell_submit_amenities_ph', 'parking, garden, security, power backup') ?>">
+              <input aria-label="Amenities" name="amenities" class="form-control" placeholder="<?= __('user_resell_submit_amenities_ph', 'parking, garden, security, power backup') ?>">
               <small class="text-muted"><?= __('user_resell_submit_amenities_hint', 'Separate multiple amenities with commas') ?></small>
             </div>
             <div class="col-12">

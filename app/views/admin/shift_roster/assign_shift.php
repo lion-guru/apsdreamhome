@@ -42,16 +42,16 @@ $today = $today ?? date('Y-m-d');
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Shift Date <span class="text-danger">*</span></label>
-                                <input type="date" name="shift_date" class="form-control" required value="<?= htmlspecialchars($today) ?>" min="<?= date('Y-m-d') ?>">
+                                <input aria-label="Shift date" type="date" name="shift_date" class="form-control" required value="<?= htmlspecialchars($today) ?>" min="<?= date('Y-m-d') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Start Time</label>
-                                <input type="time" name="start_time" class="form-control" id="shift_start_time">
+                                <input aria-label="Start time" type="time" name="start_time" class="form-control" id="shift_start_time">
                                 <small class="text-muted">Leave empty to use shift type default</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">End Time</label>
-                                <input type="time" name="end_time" class="form-control" id="shift_end_time">
+                                <input aria-label="End time" type="time" name="end_time" class="form-control" id="shift_end_time">
                                 <small class="text-muted">Leave empty to use shift type default</small>
                             </div>
                             <div class="col-12">

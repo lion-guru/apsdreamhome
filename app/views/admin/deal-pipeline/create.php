@@ -35,7 +35,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Deal Value <span class="text-danger">*</span></label>
-                        <input type="number" name="deal_value" class="form-control" required>
+                        <input aria-label="Deal value" type="number" name="deal_value" class="form-control" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Assigned To</label>
@@ -50,11 +50,11 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Expected Close Date</label>
-                        <input type="date" name="expected_close_date" class="form-control">
+                        <input aria-label="Expected close date" type="date" name="expected_close_date" class="form-control">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Probability (%)</label>
-                        <input type="number" name="probability" class="form-control" value="50" min="0" max="100">
+                        <input aria-label="Probability" type="number" name="probability" class="form-control" value="50" min="0" max="100">
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Priority</label>

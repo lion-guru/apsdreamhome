@@ -26,13 +26,13 @@ $page_description = 'Edit existing custom field for lead tracking';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Field Name *</label>
-                                <input type="text" class="form-control" name="field_name" value="<?php echo htmlspecialchars($customField['field_name'] ?? ''); ?>" required>
+                                <input aria-label="Field name" type="text" class="form-control" name="field_name" value="<?php echo htmlspecialchars($customField['field_name'] ?? ''); ?>" required>
                                 <small class="text-muted">Use lowercase letters, numbers, and underscores only. This will be used in the database.</small>
                             </div>
                             
                             <div class="mb-3">
                                 <label class="form-label">Field Label *</label>
-                                <input type="text" class="form-control" name="field_label" value="<?php echo htmlspecialchars($customField['field_label'] ?? ''); ?>" required>
+                                <input aria-label="Field label" type="text" class="form-control" name="field_label" value="<?php echo htmlspecialchars($customField['field_label'] ?? ''); ?>" required>
                                 <small class="text-muted">This is the label that will be shown to users.</small>
                             </div>
                             
@@ -49,7 +49,7 @@ $page_description = 'Edit existing custom field for lead tracking';
                             
                             <div class="mb-3">
                                 <label class="form-label">Field Group</label>
-                                <input type="text" class="form-control" name="field_group" value="<?php echo htmlspecialchars($customField['field_group'] ?? 'general'); ?>">
+                                <input aria-label="Field group" type="text" class="form-control" name="field_group" value="<?php echo htmlspecialchars($customField['field_group'] ?? 'general'); ?>">
                                 <small class="text-muted">Group similar fields together for better organization.</small>
                             </div>
                         </div>
@@ -57,13 +57,13 @@ $page_description = 'Edit existing custom field for lead tracking';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Default Value</label>
-                                <input type="text" class="form-control" name="default_value" value="<?php echo htmlspecialchars($customField['default_value'] ?? ''); ?>">
+                                <input aria-label="Default value" type="text" class="form-control" name="default_value" value="<?php echo htmlspecialchars($customField['default_value'] ?? ''); ?>">
                                 <small class="text-muted">Optional: Set a default value that will be pre-filled for new leads.</small>
                             </div>
                             
                             <div class="mb-3">
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="is_required" id="is_required" <?php echo $customField['is_required'] ? 'checked' : ''; ?>>
+                                    <input aria-label="Is required" type="checkbox" class="form-check-input" name="is_required" id="is_required" <?php echo $customField['is_required'] ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="is_required">Required Field</label>
                                 </div>
                                 <small class="text-muted">If checked, leads must have a value for this field.</small>
@@ -71,7 +71,7 @@ $page_description = 'Edit existing custom field for lead tracking';
                             
                             <div class="mb-3">
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="is_active" id="is_active" <?php echo $customField['is_active'] ? 'checked' : ''; ?>>
+                                    <input aria-label="Is active" type="checkbox" class="form-check-input" name="is_active" id="is_active" <?php echo $customField['is_active'] ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="is_active">Active Field</label>
                                 </div>
                                 <small class="text-muted">If unchecked, this field will be hidden but data will be preserved.</small>
@@ -79,13 +79,13 @@ $page_description = 'Edit existing custom field for lead tracking';
                             
                             <div class="mb-3">
                                 <label class="form-label">Validation Rules (Optional)</label>
-                                <input type="text" class="form-control" name="validation_rules" value="<?php echo htmlspecialchars($customField['validation_rules'] ?? ''); ?>">
+                                <input aria-label="Validation rules" type="text" class="form-control" name="validation_rules" value="<?php echo htmlspecialchars($customField['validation_rules'] ?? ''); ?>">
                                 <small class="text-muted">Leave blank for no validation. Use pipe (|) to separate multiple rules.</small>
                             </div>
                             
                             <div class="mb-3">
                                 <label class="form-label">Sort Order</label>
-                                <input type="number" class="form-control" name="sort_order" min="0" value="<?php echo (int)$customField['sort_order']; ?>">
+                                <input aria-label="Sort order" type="number" class="form-control" name="sort_order" min="0" value="<?php echo (int)$customField['sort_order']; ?>">
                                 <small class="text-muted">Lower numbers appear first. Leave as 0 for default ordering.</small>
                             </div>
                         </div>

@@ -17,7 +17,7 @@ $types = $types ?? ['asset', 'liability', 'equity', 'income', 'expense'];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Search</label>
-                    <input type="text" name="search" class="form-control" value="<?= htmlspecialchars($filters['search']) ?>" placeholder="Code, Name, Description...">
+                    <input aria-label="Search" type="text" name="search" class="form-control" value="<?= htmlspecialchars($filters['search']) ?>" placeholder="Code, Name, Description...">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Account Type</label>

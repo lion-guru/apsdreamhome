@@ -51,7 +51,7 @@ $content = $content ?? '';
                 <form method="post" action="<?= BASE_URL ?>/user/two-factor/enable">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                   <div class="mb-2">
-                    <input type="text" name="code" class="form-control form-control-lg text-center" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required autofocus>
+                    <input aria-label="Code" type="text" name="code" class="form-control form-control-lg text-center" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required autofocus>
                     <small class="text-muted">Current code: <strong><?= e($current_otp) ?></strong> (changes every 30s)</small>
                   </div>
                   <button type="submit" class="btn btn-primary w-100"><i class="fas fa-check"></i> Enable 2FA</button>

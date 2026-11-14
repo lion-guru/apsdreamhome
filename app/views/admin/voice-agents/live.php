@@ -188,7 +188,7 @@ $stat = $stat ?? ['in_progress' => 0, 'completed' => 0, 'failed' => 0, 'with_rec
             <div class="modal-body">
                 <div class="mb-3">
                     <label class="form-label">Transfer to (E.164 phone)</label>
-                    <input type="tel" class="form-control" id="transferToNumber" placeholder="+919876543210">
+                    <input aria-label="Transfer to number" type="tel" class="form-control" id="transferToNumber" placeholder="+919876543210">
                 </div>
                 <div id="transferResult" class="alert d-none"></div>
             </div>

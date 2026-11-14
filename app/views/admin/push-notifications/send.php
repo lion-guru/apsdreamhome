@@ -27,7 +27,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                            <input type="text" name="title" class="form-control" placeholder="e.g. New Property Alert!" required maxlength="100">
+                            <input aria-label="Title" type="text" name="title" class="form-control" placeholder="e.g. New Property Alert!" required maxlength="100">
                             <small class="text-muted">Max 100 characters. Keep it short and attention-grabbing.</small>
                         </div>
 
@@ -39,7 +39,7 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-semibold">URL (optional)</label>
-                            <input type="text" name="url" class="form-control" placeholder="/properties" value="/">
+                            <input aria-label="Url" type="text" name="url" class="form-control" placeholder="/properties" value="/">
                             <small class="text-muted">Page to open when the notification is clicked. Use relative paths (e.g. /properties).</small>
                         </div>
 

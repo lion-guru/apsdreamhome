@@ -57,39 +57,39 @@ $shift_types = $shift_types ?? [];
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label class="form-label" for="stName">Name *</label>
-                            <input type="text" class="form-control" id="stName" name="name" required maxlength="100" placeholder="e.g. Morning Shift">
+                            <input aria-label="St name" type="text" class="form-control" id="stName" name="name" required maxlength="100" placeholder="e.g. Morning Shift">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="stCode">Code *</label>
-                            <input type="text" class="form-control" id="stCode" name="code" required maxlength="20" placeholder="e.g. MOR">
+                            <input aria-label="St code" type="text" class="form-control" id="stCode" name="code" required maxlength="20" placeholder="e.g. MOR">
                         </div>
                         <div class="col-12">
                             <label class="form-label" for="stDesc">Description</label>
-                            <input type="text" class="form-control" id="stDesc" name="description" maxlength="255">
+                            <input aria-label="St desc" type="text" class="form-control" id="stDesc" name="description" maxlength="255">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="stStart">Start Time *</label>
-                            <input type="time" class="form-control" id="stStart" name="start_time" required>
+                            <input aria-label="St start" type="time" class="form-control" id="stStart" name="start_time" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="stEnd">End Time *</label>
-                            <input type="time" class="form-control" id="stEnd" name="end_time" required>
+                            <input aria-label="St end" type="time" class="form-control" id="stEnd" name="end_time" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="stDuration">Duration (hrs)</label>
-                            <input type="number" class="form-control" id="stDuration" name="duration_hours" min="0" max="24" step="0.5" value="8">
+                            <input aria-label="St duration" type="number" class="form-control" id="stDuration" name="duration_hours" min="0" max="24" step="0.5" value="8">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="stBreak">Break (mins)</label>
-                            <input type="number" class="form-control" id="stBreak" name="break_duration" min="0" max="480" value="60">
+                            <input aria-label="St break" type="number" class="form-control" id="stBreak" name="break_duration" min="0" max="480" value="60">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="stColor">Color</label>
-                            <input type="color" class="form-control form-control-color w-100" id="stColor" name="color" value="#007bff">
+                            <input aria-label="St color" type="color" class="form-control form-control-color w-100" id="stColor" name="color" value="#007bff">
                         </div>
                         <div class="col-12">
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="stOvernight" name="is_overnight" value="1">
+                                <input aria-label="St overnight" type="checkbox" class="form-check-input" id="stOvernight" name="is_overnight" value="1">
                                 <label class="form-check-label" for="stOvernight">Overnight shift (spans midnight)</label>
                             </div>
                         </div>

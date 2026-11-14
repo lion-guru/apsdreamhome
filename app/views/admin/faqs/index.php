@@ -73,7 +73,7 @@ $topCat = array_key_first($categories) ?? '';
     <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h2  class="fs-6 fw-semibold mb-0 fw-bold">All FAQs</h2>
         <div class="d-flex gap-2">
-            <input type="text" id="faqSearch" class="form-control form-control-sm" placeholder="Search FAQs..." style="width:180px;">
+            <input aria-label="Faq search" type="text" id="faqSearch" class="form-control form-control-sm" placeholder="Search FAQs..." style="width:180px;">
             <?php if (!empty($categories)): ?>
             <select aria-label="Faq cat filter" id="faqCatFilter" class="form-select form-select-sm" style="width:140px;">
                 <option value="">All Categories</option>

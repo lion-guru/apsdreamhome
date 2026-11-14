@@ -58,11 +58,11 @@
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" name="author_name" required placeholder="Your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                                    <input aria-label="Author name" type="text" class="form-control" name="author_name" required placeholder="Your name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="author_email" placeholder="your@email.com (not published)">
+                                    <input aria-label="Author email" type="email" class="form-control" name="author_email" placeholder="your@email.com (not published)">
                                 </div>
                             </div>
                             <div class="mb-3">

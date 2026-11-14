@@ -44,7 +44,7 @@ $categories = ['asset_return', 'access_revocation', 'knowledge_transfer', 'clear
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Template Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($template['name'] ?? '') ?>" placeholder="e.g., Standard Employee Offboarding">
+                        <input aria-label="Name" type="text" name="name" class="form-control" required value="<?= htmlspecialchars($template['name'] ?? '') ?>" placeholder="e.g., Standard Employee Offboarding">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Category</label>
@@ -90,7 +90,7 @@ $categories = ['asset_return', 'access_revocation', 'knowledge_transfer', 'clear
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold small">Item Name <span class="text-danger">*</span></label>
-                                <input type="text" name="items[<?= $index ?>][item_name]" class="form-control" required value="<?= htmlspecialchars($item['item_name'] ?? '') ?>" placeholder="e.g., Collect laptop and access card">
+                                <input aria-label="Items index item name" type="text" name="items[<?= $index ?>][item_name]" class="form-control" required value="<?= htmlspecialchars($item['item_name'] ?? '') ?>" placeholder="e.g., Collect laptop and access card">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label small">Category</label>
@@ -102,15 +102,15 @@ $categories = ['asset_return', 'access_revocation', 'knowledge_transfer', 'clear
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label small">Due (days)</label>
-                                <input type="number" min="0" max="365" name="items[<?= $index ?>][due_days]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['due_days'] ?? '') ?>" placeholder="Days after start">
+                                <input aria-label="Items index due days" type="number" min="0" max="365" name="items[<?= $index ?>][due_days]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['due_days'] ?? '') ?>" placeholder="Days after start">
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label small">Assigned Role</label>
-                                <input type="text" name="items[<?= $index ?>][assigned_to_role]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['assigned_to_role'] ?? '') ?>" placeholder="e.g., HR, IT, Manager">
+                                <input aria-label="Items index assigned to role" type="text" name="items[<?= $index ?>][assigned_to_role]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['assigned_to_role'] ?? '') ?>" placeholder="e.g., HR, IT, Manager">
                             </div>
                             <div class="col-md-1">
                                 <div class="form-check form-switch mt-3">
-                                    <input class="form-check-input" type="checkbox" name="items[<?= $index ?>][is_mandatory]" value="1" id="mandatory_<?= $index ?>" <?= !empty($item['is_mandatory']) ? 'checked' : '' ?>>
+                                    <input aria-label="Items index is mandatory" class="form-check-input" type="checkbox" name="items[<?= $index ?>][is_mandatory]" value="1" id="mandatory_<?= $index ?>" <?= !empty($item['is_mandatory']) ? 'checked' : '' ?>>
                                     <label class="form-check-label small" for="mandatory_<?= $index ?>">Mandatory</label>
                                 </div>
                             </div>
@@ -157,7 +157,7 @@ function addItem() {
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold small">Item Name <span class="text-danger">*</span></label>
-                    <input type="text" name="items[${index}][item_name]" class="form-control" required placeholder="e.g., Collect laptop and access card">
+                    <input aria-label="Items index item name" type="text" name="items[${index}][item_name]" class="form-control" required placeholder="e.g., Collect laptop and access card">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">Category</label>
@@ -173,15 +173,15 @@ function addItem() {
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Due (days)</label>
-                    <input type="number" min="0" max="365" name="items[${index}][due_days]" class="form-control form-control-sm" placeholder="Days after start">
+                    <input aria-label="Items index due days" type="number" min="0" max="365" name="items[${index}][due_days]" class="form-control form-control-sm" placeholder="Days after start">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Assigned Role</label>
-                    <input type="text" name="items[${index}][assigned_to_role]" class="form-control form-control-sm" placeholder="e.g., HR, IT, Manager">
+                    <input aria-label="Items index assigned to role" type="text" name="items[${index}][assigned_to_role]" class="form-control form-control-sm" placeholder="e.g., HR, IT, Manager">
                 </div>
                 <div class="col-md-1">
                     <div class="form-check form-switch mt-3">
-                        <input class="form-check-input" type="checkbox" name="items[${index}][is_mandatory]" value="1" id="mandatory_${index}" checked>
+                        <input aria-label="Items index is mandatory" class="form-check-input" type="checkbox" name="items[${index}][is_mandatory]" value="1" id="mandatory_${index}" checked>
                         <label class="form-check-label small" for="mandatory_${index}">Mandatory</label>
                     </div>
                 </div>

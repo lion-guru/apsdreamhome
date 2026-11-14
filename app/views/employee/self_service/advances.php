@@ -267,7 +267,7 @@ $summary = $summary ?? ['total_advances' => 0, 'total_pending' => 0, 'total_repa
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Amount (₹) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="1000" name="amount" class="form-control" required placeholder="Enter amount">
+                            <input aria-label="Amount" type="number" step="0.01" min="1000" name="amount" class="form-control" required placeholder="Enter amount">
                         </div>
                         <div class="col-md-6" id="installmentsGroup" style="display: none;">
                             <label class="form-label fw-semibold">Number of Installments <span class="text-danger">*</span></label>
@@ -286,7 +286,7 @@ $summary = $summary ?? ['total_advances' => 0, 'total_pending' => 0, 'total_repa
                         </div>
                         <div class="col-md-6" id="interestGroup" style="display: none;">
                             <label class="form-label fw-semibold">Interest Rate (% per annum) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.1" min="0" max="24" name="interest_rate" class="form-control" value="12" required placeholder="e.g., 12">
+                            <input aria-label="Interest rate" type="number" step="0.1" min="0" max="24" name="interest_rate" class="form-control" value="12" required placeholder="e.g., 12">
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Reason <span class="text-danger">*</span></label>

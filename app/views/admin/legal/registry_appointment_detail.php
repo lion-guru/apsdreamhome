@@ -177,15 +177,15 @@ $appointment = $appointment ?? [];
                             <?= \App\Helpers\SecurityHelper::csrfField() ?>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Confirmed SRO Date <span class="text-danger">*</span></label>
-                                <input type="date" name="confirmed_date" class="form-control" value="<?= $appointment['preferred_date_1'] ?>" required>
+                                <input aria-label="Confirmed date" type="date" name="confirmed_date" class="form-control" value="<?= $appointment['preferred_date_1'] ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Assigned Legal Executive</label>
-                                <input type="text" name="assigned_executive_name" class="form-control" placeholder="e.g. Adv. Rajesh Tripathi" required>
+                                <input aria-label="Assigned executive name" type="text" name="assigned_executive_name" class="form-control" placeholder="e.g. Adv. Rajesh Tripathi" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Executive Phone</label>
-                                <input type="text" name="assigned_executive_phone" class="form-control" placeholder="e.g. 9839000000" required>
+                                <input aria-label="Assigned executive phone" type="text" name="assigned_executive_phone" class="form-control" placeholder="e.g. 9839000000" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Instructions to Buyer</label>
@@ -210,11 +210,11 @@ $appointment = $appointment ?? [];
                             <?= \App\Helpers\SecurityHelper::csrfField() ?>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Official Deed / Bahi # <span class="text-danger">*</span></label>
-                                <input type="text" name="deed_registration_number" class="form-control" placeholder="e.g. 2026/04/SADAR/8942" required>
+                                <input aria-label="Deed registration number" type="text" name="deed_registration_number" class="form-control" placeholder="e.g. 2026/04/SADAR/8942" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Upload Scanned Deed PDF</label>
-                                <input type="file" name="registered_deed_file" class="form-control" accept=".pdf,image/*">
+                                <input aria-label="Registered deed file" type="file" name="registered_deed_file" class="form-control" accept=".pdf,image/*">
                             </div>
                             <button type="submit" class="btn btn-success w-100">
                                 <i class="fas fa-check-double me-1"></i>Mark Registry Completed

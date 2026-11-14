@@ -28,11 +28,11 @@ $accounts = $accounts ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Account Code <span class="text-danger">*</span></label>
-                        <input type="text" name="account_code" class="form-control" required maxlength="20" value="<?= htmlspecialchars($account['account_code'] ?? '') ?>">
+                        <input aria-label="Account code" type="text" name="account_code" class="form-control" required maxlength="20" value="<?= htmlspecialchars($account['account_code'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Account Name <span class="text-danger">*</span></label>
-                        <input type="text" name="account_name" class="form-control" required maxlength="255" value="<?= htmlspecialchars($account['account_name'] ?? '') ?>">
+                        <input aria-label="Account name" type="text" name="account_name" class="form-control" required maxlength="255" value="<?= htmlspecialchars($account['account_name'] ?? '') ?>">
                     </div>
 
                     <div class="col-md-6">
@@ -65,7 +65,7 @@ $accounts = $accounts ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Opening Balance</label>
-                        <input type="number" name="opening_balance" class="form-control" step="0.01" value="<?= htmlspecialchars($account['opening_balance'] ?? '0.00') ?>">
+                        <input aria-label="Opening balance" type="number" name="opening_balance" class="form-control" step="0.01" value="<?= htmlspecialchars($account['opening_balance'] ?? '0.00') ?>">
                     </div>
 
                     <div class="col-12">
@@ -75,7 +75,7 @@ $accounts = $accounts ?? [];
 
                     <div class="col-12">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="is_active" id="isActive" <?= !empty($account['is_active']) ? 'checked' : '' ?>>
+                            <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="isActive" <?= !empty($account['is_active']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="isActive">Active</label>
                         </div>
                     </div>

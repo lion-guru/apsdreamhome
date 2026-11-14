@@ -40,11 +40,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('assoc_label_email', [], 'Email') ?></label>
-                        <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($associate_email ?? ''); ?>">
+                        <input aria-label="Email" type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($associate_email ?? ''); ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('assoc_label_phone', [], 'Phone') ?></label>
-                        <input type="tel" name="phone" class="form-control" value="<?php echo htmlspecialchars($associate_phone ?? ''); ?>">
+                        <input aria-label="Phone" type="tel" name="phone" class="form-control" value="<?php echo htmlspecialchars($associate_phone ?? ''); ?>">
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-2"></i><?= __('assoc_update_btn', [], 'Update Profile') ?>
@@ -64,25 +64,25 @@
                 <form action="<?= defined('BASE_URL') ? BASE_URL : '' ?>/associate/settings/notifications" method="POST">
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" name="email_leads" id="email_leads" <?php echo $notifications['email_leads'] ? 'checked' : ''; ?>>
+                        <input aria-label="Email leads" class="form-check-input" type="checkbox" name="email_leads" id="email_leads" <?php echo $notifications['email_leads'] ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="email_leads">
                             <i class="fas fa-envelope text-primary me-2"></i><?= __('assoc_notif_email_leads', [], 'Email me for new leads') ?>
                         </label>
                     </div>
                     <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" name="email_commissions" id="email_commissions" <?php echo $notifications['email_commissions'] ? 'checked' : ''; ?>>
+                        <input aria-label="Email commissions" class="form-check-input" type="checkbox" name="email_commissions" id="email_commissions" <?php echo $notifications['email_commissions'] ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="email_commissions">
                             <i class="fas fa-money-bill-wave text-success me-2"></i><?= __('assoc_notif_commission', [], 'Email me for commission updates') ?>
                         </label>
                     </div>
                     <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" name="sms_important" id="sms_important" <?php echo $notifications['sms_important'] ? 'checked' : ''; ?>>
+                        <input aria-label="Sms important" class="form-check-input" type="checkbox" name="sms_important" id="sms_important" <?php echo $notifications['sms_important'] ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="sms_important">
                             <i class="fas fa-sms text-warning me-2"></i><?= __('assoc_notif_sms', [], 'SMS for important updates') ?>
                         </label>
                     </div>
                     <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" name="marketing_emails" id="marketing_emails" <?php echo $notifications['marketing_emails'] ? 'checked' : ''; ?>>
+                        <input aria-label="Marketing emails" class="form-check-input" type="checkbox" name="marketing_emails" id="marketing_emails" <?php echo $notifications['marketing_emails'] ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="marketing_emails">
                             <i class="fas fa-bullhorn text-info me-2"></i><?= __('assoc_notif_marketing', [], 'Marketing emails') ?>
                         </label>
@@ -108,15 +108,15 @@
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('assoc_label_current_password', [], 'Current Password') ?></label>
-                        <input type="password" name="current_password" class="form-control" required>
+                        <input aria-label="Current password" type="password" name="current_password" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('assoc_label_new_password', [], 'New Password') ?></label>
-                        <input type="password" name="new_password" class="form-control" required>
+                        <input aria-label="New password" type="password" name="new_password" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold"><?= __('assoc_label_confirm_password', [], 'Confirm New Password') ?></label>
-                        <input type="password" name="confirm_password" class="form-control" required>
+                        <input aria-label="Confirm password" type="password" name="confirm_password" class="form-control" required>
                     </div>
                     <button type="submit" class="btn btn-warning">
                         <i class="fas fa-key me-2"></i><?= __('assoc_update_password', [], 'Update Password') ?>

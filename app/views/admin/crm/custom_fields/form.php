@@ -8,16 +8,16 @@
         <form method="POST" action="<?= BASE_URL ?>/admin/crm/custom-fields/<?= $field ? $field['id'] . '/update' : 'store' ?>">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="mb-3"><label class="form-label fw-bold">Field Name (DB column)</label><input type="text" name="field_name" class="form-control" value="<?= htmlspecialchars($field['field_name'] ?? '') ?>" required pattern="[a-z_]+" title="Lowercase letters and underscores only"></div>
-            <div class="mb-3"><label class="form-label fw-bold">Field Label (Display)</label><input type="text" name="field_label" class="form-control" value="<?= htmlspecialchars($field['field_label'] ?? '') ?>" required></div>
+            <div class="mb-3"><label class="form-label fw-bold">Field Label (Display)</label><input aria-label="Field label" type="text" name="field_label" class="form-control" value="<?= htmlspecialchars($field['field_label'] ?? '') ?>" required></div>
             <div class="row mb-3">
                 <div class="col-md-4"><label class="form-label fw-bold">Type</label><select aria-label="Field type" name="field_type" class="form-select"><?php foreach (['text','select','textarea','checkbox','date','number'] as $t): ?><option value="<?= $t ?>" <?= ($field['field_type'] ?? 'text') === $t ? 'selected' : '' ?>><?= ucfirst($t) ?></option><?php endforeach; ?></select></div>
                 <div class="col-md-4"><label class="form-label fw-bold">Section</label><select aria-label="Section" name="section" class="form-select"><?php foreach (['general','preferences','financial','location'] as $s): ?><option value="<?= $s ?>" <?= ($field['section'] ?? 'general') === $s ? 'selected' : '' ?>><?= ucfirst($s) ?></option><?php endforeach; ?></select></div>
-                <div class="col-md-4"><label class="form-label fw-bold">Order</label><input type="number" name="order_index" class="form-control" value="<?= $field['order_index'] ?? 0 ?>"></div>
+                <div class="col-md-4"><label class="form-label fw-bold">Order</label><input aria-label="Order index" type="number" name="order_index" class="form-control" value="<?= $field['order_index'] ?? 0 ?>"></div>
             </div>
             <div class="mb-3"><label class="form-label fw-bold">Options (one per line, for select fields)</label><textarea aria-label="Options" name="options" class="form-control" rows="4" placeholder="Option 1&#10;Option 2&#10;Option 3"><?= htmlspecialchars($field['options_list'] ?? '') ?></textarea></div>
             <div class="row mb-4">
-                <div class="col-md-4"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="is_required" id="is_required" value="1" <?= !empty($field['is_required']) ? 'checked' : '' ?>><label class="form-check-label" for="is_required">Required</label></div></div>
-                <div class="col-md-4"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="is_searchable" id="is_searchable" value="1" <?= !empty($field['is_searchable']) ? 'checked' : '' ?>><label class="form-check-label" for="is_searchable">Searchable</label></div></div>
+                <div class="col-md-4"><div class="form-check form-switch"><input aria-label="Is required" class="form-check-input" type="checkbox" name="is_required" id="is_required" value="1" <?= !empty($field['is_required']) ? 'checked' : '' ?>><label class="form-check-label" for="is_required">Required</label></div></div>
+                <div class="col-md-4"><div class="form-check form-switch"><input aria-label="Is searchable" class="form-check-input" type="checkbox" name="is_searchable" id="is_searchable" value="1" <?= !empty($field['is_searchable']) ? 'checked' : '' ?>><label class="form-check-label" for="is_searchable">Searchable</label></div></div>
             </div>
             <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-1"></i><?= $field ? 'Update' : 'Create' ?> Field</button>
         </form>

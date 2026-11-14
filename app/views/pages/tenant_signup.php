@@ -166,23 +166,23 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
 
                 <div class="form-group">
                     <label for="company_name">Company Name</label>
-                    <input type="text" id="company_name" name="company_name" placeholder="Your Real Estate Company" required>
+                    <input aria-label="Company name" type="text" id="company_name" name="company_name" placeholder="Your Real Estate Company" required>
                 </div>
 
                 <div class="form-group">
                     <label for="admin_email">Admin Email</label>
-                    <input type="email" id="admin_email" name="admin_email" placeholder="admin@yourcompany.com" required>
+                    <input aria-label="Admin email" type="email" id="admin_email" name="admin_email" placeholder="admin@yourcompany.com" required>
                 </div>
 
                 <div class="form-group">
                     <label for="admin_password">Admin Password</label>
-                    <input type="password" id="admin_password" name="admin_password" placeholder="Min 8 characters" required minlength="8">
+                    <input aria-label="Admin password" type="password" id="admin_password" name="admin_password" placeholder="Min 8 characters" required minlength="8">
                 </div>
 
                 <div class="form-group">
                     <label for="subdomain">Subdomain</label>
                     <div style="display: flex; gap: 8px;">
-                        <input type="text" id="subdomain" name="subdomain" placeholder="yourcompany" required style="flex: 1;">
+                        <input aria-label="Subdomain" type="text" id="subdomain" name="subdomain" placeholder="yourcompany" required style="flex: 1;">
                         <span style="display: flex; align-items: center; color: #a0a0c0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 0 16px;">.apsdreamhome.com</span>
                     </div>
                 </div>

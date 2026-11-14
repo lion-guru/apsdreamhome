@@ -134,7 +134,7 @@ $assignment = $assignment ?? [];
                     <h5 class="mb-0 fw-semibold"><i class="fas fa-book me-2"></i>Learning Modules</h5>
                     <?php if ($assignment['status'] === 'in_progress'): ?>
                         <div class="d-flex gap-2">
-                            <input type="range" id="progressSlider" min="0" max="100" value="<?= $assignment['progress'] ?>" class="form-range flex-grow-1 me-2" style="max-width: 200px;">
+                            <input aria-label="Progress slider" type="range" id="progressSlider" min="0" max="100" value="<?= $assignment['progress'] ?>" class="form-range flex-grow-1 me-2" style="max-width: 200px;">
                             <span class="fw-semibold text-primary" id="progressValue"><?= $assignment['progress'] ?>%</span>
                         </div>
                     <?php endif; ?>
@@ -211,7 +211,7 @@ $assignment = $assignment ?? [];
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Progress (%)</label>
-                                <input type="range" name="progress" class="form-range" min="0" max="100" value="<?= $assignment['progress'] ?>" id="progressInput" oninput="document.getElementById('progressDisplay').textContent = this.value + '%'">
+                                <input aria-label="Progress" type="range" name="progress" class="form-range" min="0" max="100" value="<?= $assignment['progress'] ?>" id="progressInput" oninput="document.getElementById('progressDisplay').textContent = this.value + '%'">
                                 <div class="text-center fw-semibold" id="progressDisplay"><?= $assignment['progress'] ?>%</div>
                             </div>
                             <div class="col-md-6 d-flex align-items-end">

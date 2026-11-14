@@ -46,9 +46,9 @@ $csrf_token = $csrf_token ?? ($_SESSION['csrf_token'] ?? '');
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                         <input type="hidden" name="tier_key" value="<?= htmlspecialchars($tier['tier']) ?>">
                         <div class="row g-1 text-start">
-                            <div class="col-4"><label class="small text-muted">Min refs</label><input type="number" name="min_referrals" class="form-control form-control-sm" value="<?= (int)$tier['min_referrals'] ?>" min="0"></div>
-                            <div class="col-4"><label class="small text-muted">₹/signup</label><input type="number" name="bonus_per_referral" class="form-control form-control-sm" value="<?= htmlspecialchars($tier['bonus_per_referral']) ?>" min="0" step="1"></div>
-                            <div class="col-4"><label class="small text-muted">₹/booking</label><input type="number" name="bonus_on_booking" class="form-control form-control-sm" value="<?= htmlspecialchars($tier['bonus_on_booking']) ?>" min="0" step="1"></div>
+                            <div class="col-4"><label class="small text-muted">Min refs</label><input aria-label="Min referrals" type="number" name="min_referrals" class="form-control form-control-sm" value="<?= (int)$tier['min_referrals'] ?>" min="0"></div>
+                            <div class="col-4"><label class="small text-muted">₹/signup</label><input aria-label="Bonus per referral" type="number" name="bonus_per_referral" class="form-control form-control-sm" value="<?= htmlspecialchars($tier['bonus_per_referral']) ?>" min="0" step="1"></div>
+                            <div class="col-4"><label class="small text-muted">₹/booking</label><input aria-label="Bonus on booking" type="number" name="bonus_on_booking" class="form-control form-control-sm" value="<?= htmlspecialchars($tier['bonus_on_booking']) ?>" min="0" step="1"></div>
                         </div>
                         <button type="submit" class="btn btn-sm btn-outline-primary w-100 mt-2">Save Tier</button>
                     </form>

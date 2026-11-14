@@ -52,15 +52,15 @@ $base = BASE_URL ?? '';
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Company Name *</label>
-                                        <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($tenant['name'] ?? '') ?>">
+                                        <input aria-label="Name" type="text" name="name" class="form-control" required value="<?= htmlspecialchars($tenant['name'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Slug</label>
-                                        <input type="text" name="slug" class="form-control" value="<?= htmlspecialchars($tenant['slug'] ?? '') ?>" <?= ($tenant['slug'] ?? '') === 'apsdreamhome' ? 'readonly' : '' ?>>
+                                        <input aria-label="Slug" type="text" name="slug" class="form-control" value="<?= htmlspecialchars($tenant['slug'] ?? '') ?>" <?= ($tenant['slug'] ?? '') === 'apsdreamhome' ? 'readonly' : '' ?>>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Domain</label>
-                                        <input type="text" name="domain" class="form-control" value="<?= htmlspecialchars($tenant['domain'] ?? '') ?>">
+                                        <input aria-label="Domain" type="text" name="domain" class="form-control" value="<?= htmlspecialchars($tenant['domain'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Status</label>
@@ -81,27 +81,27 @@ $base = BASE_URL ?? '';
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label class="form-label fw-semibold">Contact Name</label>
-                                        <input type="text" name="contact_name" class="form-control" value="<?= htmlspecialchars($tenant['contact_name'] ?? '') ?>">
+                                        <input aria-label="Contact name" type="text" name="contact_name" class="form-control" value="<?= htmlspecialchars($tenant['contact_name'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label fw-semibold">Email</label>
-                                        <input type="email" name="contact_email" class="form-control" value="<?= htmlspecialchars($tenant['contact_email'] ?? '') ?>">
+                                        <input aria-label="Contact email" type="email" name="contact_email" class="form-control" value="<?= htmlspecialchars($tenant['contact_email'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label fw-semibold">Phone</label>
-                                        <input type="text" name="contact_phone" class="form-control" value="<?= htmlspecialchars($tenant['contact_phone'] ?? '') ?>">
+                                        <input aria-label="Contact phone" type="text" name="contact_phone" class="form-control" value="<?= htmlspecialchars($tenant['contact_phone'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-12">
                                         <label class="form-label fw-semibold">Address</label>
-                                        <input type="text" name="address" class="form-control" value="<?= htmlspecialchars($tenant['address'] ?? '') ?>">
+                                        <input aria-label="Address" type="text" name="address" class="form-control" value="<?= htmlspecialchars($tenant['address'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">City</label>
-                                        <input type="text" name="city" class="form-control" value="<?= htmlspecialchars($tenant['city'] ?? '') ?>">
+                                        <input aria-label="City" type="text" name="city" class="form-control" value="<?= htmlspecialchars($tenant['city'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">State</label>
-                                        <input type="text" name="state" class="form-control" value="<?= htmlspecialchars($tenant['state'] ?? '') ?>">
+                                        <input aria-label="State" type="text" name="state" class="form-control" value="<?= htmlspecialchars($tenant['state'] ?? '') ?>">
                                     </div>
                                 </div>
                             </div>
@@ -129,19 +129,19 @@ $base = BASE_URL ?? '';
                             <div class="card-body">
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Max Users</label>
-                                    <input type="number" name="max_users" class="form-control form-control-sm" value="<?= $tenant['max_users'] ?? 1 ?>" min="1">
+                                    <input aria-label="Max users" type="number" name="max_users" class="form-control form-control-sm" value="<?= $tenant['max_users'] ?? 1 ?>" min="1">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Max Leads</label>
-                                    <input type="number" name="max_leads" class="form-control form-control-sm" value="<?= $tenant['max_leads'] ?? 50 ?>" min="1">
+                                    <input aria-label="Max leads" type="number" name="max_leads" class="form-control form-control-sm" value="<?= $tenant['max_leads'] ?? 50 ?>" min="1">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Max Properties</label>
-                                    <input type="number" name="max_properties" class="form-control form-control-sm" value="<?= $tenant['max_properties'] ?? 10 ?>" min="1">
+                                    <input aria-label="Max properties" type="number" name="max_properties" class="form-control form-control-sm" value="<?= $tenant['max_properties'] ?? 10 ?>" min="1">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Storage (MB)</label>
-                                    <input type="number" name="storage_limit_mb" class="form-control form-control-sm" value="<?= $tenant['storage_limit_mb'] ?? 100 ?>" min="10">
+                                    <input aria-label="Storage limit mb" type="number" name="storage_limit_mb" class="form-control form-control-sm" value="<?= $tenant['storage_limit_mb'] ?? 100 ?>" min="10">
                                 </div>
                             </div>
                         </div>
@@ -152,11 +152,11 @@ $base = BASE_URL ?? '';
                             <div class="card-body">
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Primary Color</label>
-                                    <input type="color" name="primary_color" class="form-control form-control-sm form-control-color" value="<?= htmlspecialchars($tenant['primary_color'] ?? '#667eea') ?>">
+                                    <input aria-label="Primary color" type="color" name="primary_color" class="form-control form-control-sm form-control-color" value="<?= htmlspecialchars($tenant['primary_color'] ?? '#667eea') ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold small">Secondary Color</label>
-                                    <input type="color" name="secondary_color" class="form-control form-control-sm form-control-color" value="<?= htmlspecialchars($tenant['secondary_color'] ?? '#764ba2') ?>">
+                                    <input aria-label="Secondary color" type="color" name="secondary_color" class="form-control form-control-sm form-control-color" value="<?= htmlspecialchars($tenant['secondary_color'] ?? '#764ba2') ?>">
                                 </div>
                             </div>
                         </div>

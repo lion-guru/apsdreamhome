@@ -305,7 +305,7 @@ $priorities = $priorities ?? [];
                             <textarea aria-label="Comment" name="comment" id="detail_comment" class="form-control" rows="4" required placeholder="Enter your comment..."></textarea>
                         </div>
                         <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" name="is_internal" id="is_internal" value="1">
+                            <input aria-label="Is internal" class="form-check-input" type="checkbox" name="is_internal" id="is_internal" value="1">
                             <label class="form-check-label" for="is_internal">Internal note (visible to admins only)</label>
                         </div>
                     </div>

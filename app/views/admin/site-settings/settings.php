@@ -106,7 +106,7 @@ $tabs = [
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             <label class="form-label">Company Name</label>
-                            <input type="text" name="settings[company_name]" class="form-control" value="<?= sc($settings, 'company_name', 'APS Dream Home') ?>">
+                            <input aria-label="Settings company name" type="text" name="settings[company_name]" class="form-control" value="<?= sc($settings, 'company_name', 'APS Dream Home') ?>">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Logo</label>
@@ -115,12 +115,12 @@ $tabs = [
                             <?php elseif (!empty($settings['company_logo'])): ?>
                                 <div class="mb-2"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded"><small class="text-muted">Logo file missing</small></div></div>
                             <?php endif; ?>
-                            <input type="file" name="settings_image[company_logo]" class="form-control" accept="image/*">
+                            <input aria-label="Settings image company logo" type="file" name="settings_image[company_logo]" class="form-control" accept="image/*">
                             <input type="hidden" name="settings[company_logo]" value="<?= sc($settings, 'company_logo') ?>">
                         </div>
                         <div class="col-12 mb-3">
                             <label class="form-label">Tagline</label>
-                            <input type="text" name="settings[company_tagline]" class="form-control" value="<?= sc($settings, 'company_tagline', 'Building Dreams, Delivering Trust') ?>">
+                            <input aria-label="Settings company tagline" type="text" name="settings[company_tagline]" class="form-control" value="<?= sc($settings, 'company_tagline', 'Building Dreams, Delivering Trust') ?>">
                         </div>
                     </div>
                 </div>
@@ -130,19 +130,19 @@ $tabs = [
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Registration Number</label>
-                            <input type="text" name="settings[company_reg_number]" class="form-control" value="<?= sc($settings, 'company_reg_number') ?>">
+                            <input aria-label="Settings company reg number" type="text" name="settings[company_reg_number]" class="form-control" value="<?= sc($settings, 'company_reg_number') ?>">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">CIN Number</label>
-                            <input type="text" name="settings[company_cin]" class="form-control" value="<?= sc($settings, 'company_cin') ?>">
+                            <input aria-label="Settings company cin" type="text" name="settings[company_cin]" class="form-control" value="<?= sc($settings, 'company_cin') ?>">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">GST Number</label>
-                            <input type="text" name="settings[company_gst]" class="form-control" value="<?= sc($settings, 'company_gst') ?>">
+                            <input aria-label="Settings company gst" type="text" name="settings[company_gst]" class="form-control" value="<?= sc($settings, 'company_gst') ?>">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">PAN Number</label>
-                            <input type="text" name="settings[company_pan]" class="form-control" value="<?= sc($settings, 'company_pan') ?>">
+                            <input aria-label="Settings company pan" type="text" name="settings[company_pan]" class="form-control" value="<?= sc($settings, 'company_pan') ?>">
                         </div>
                     </div>
                 </div>
@@ -160,7 +160,7 @@ $tabs = [
                         <?php elseif (!empty($settings['company_favicon'])): ?>
                             <div class="mb-2 text-center"><div class="img-preview d-flex align-items-center justify-content-center bg-light border rounded"><small class="text-muted">Favicon missing</small></div></div>
                         <?php endif; ?>
-                        <input type="file" name="settings_image[company_favicon]" class="form-control" accept="image/*">
+                        <input aria-label="Settings image company favicon" type="file" name="settings_image[company_favicon]" class="form-control" accept="image/*">
                         <input type="hidden" name="settings[company_favicon]" value="<?= sc($settings, 'company_favicon') ?>">
                     </div>
                 </div>
@@ -186,21 +186,21 @@ $tabs = [
                         <label class="form-label">Primary Phone</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                            <input type="text" name="settings[contact_phone]" class="form-control" value="<?= sc($settings, 'contact_phone', '+91 92771 21112') ?>">
+                            <input aria-label="Settings contact phone" type="text" name="settings[contact_phone]" class="form-control" value="<?= sc($settings, 'contact_phone', '+91 92771 21112') ?>">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Secondary Phone</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                            <input type="text" name="settings[contact_phone_2]" class="form-control" value="<?= sc($settings, 'contact_phone_2') ?>">
+                            <input aria-label="Settings contact phone 2" type="text" name="settings[contact_phone_2]" class="form-control" value="<?= sc($settings, 'contact_phone_2') ?>">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">WhatsApp Number</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fab fa-whatsapp text-success"></i></span>
-                            <input type="text" name="settings[contact_whatsapp]" class="form-control" value="<?= sc($settings, 'contact_whatsapp') ?>" placeholder="+91XXXXXXXXXX">
+                            <input aria-label="Settings contact whatsapp" type="text" name="settings[contact_whatsapp]" class="form-control" value="<?= sc($settings, 'contact_whatsapp') ?>" placeholder="+91XXXXXXXXXX">
                         </div>
                     </div>
                 </div>
@@ -212,14 +212,14 @@ $tabs = [
                         <label class="form-label">Primary Email</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                            <input type="email" name="settings[contact_email]" class="form-control" value="<?= sc($settings, 'contact_email', 'info@apsdreamhome.com') ?>">
+                            <input aria-label="Settings contact email" type="email" name="settings[contact_email]" class="form-control" value="<?= sc($settings, 'contact_email', 'info@apsdreamhome.com') ?>">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Sales Email</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                            <input type="email" name="settings[contact_email_2]" class="form-control" value="<?= sc($settings, 'contact_email_2') ?>">
+                            <input aria-label="Settings contact email 2" type="email" name="settings[contact_email_2]" class="form-control" value="<?= sc($settings, 'contact_email_2') ?>">
                         </div>
                     </div>
                 </div>
@@ -232,11 +232,11 @@ $tabs = [
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Short Address</label>
-                            <input type="text" name="settings[contact_address]" class="form-control" value="<?= sc($settings, 'contact_address') ?>">
+                            <input aria-label="Settings contact address" type="text" name="settings[contact_address]" class="form-control" value="<?= sc($settings, 'contact_address') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Working Hours</label>
-                            <input type="text" name="settings[contact_working_hours]" class="form-control" value="<?= sc($settings, 'contact_working_hours', 'Mon - Sat: 9:00 AM - 7:00 PM') ?>">
+                            <input aria-label="Settings contact working hours" type="text" name="settings[contact_working_hours]" class="form-control" value="<?= sc($settings, 'contact_working_hours', 'Mon - Sat: 9:00 AM - 7:00 PM') ?>">
                         </div>
                         <div class="col-12 mb-3">
                             <label class="form-label">Full Address</label>
@@ -244,11 +244,11 @@ $tabs = [
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Latitude</label>
-                            <input type="text" name="settings[contact_map_lat]" class="form-control" value="<?= sc($settings, 'contact_map_lat') ?>">
+                            <input aria-label="Settings contact map lat" type="text" name="settings[contact_map_lat]" class="form-control" value="<?= sc($settings, 'contact_map_lat') ?>">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Longitude</label>
-                            <input type="text" name="settings[contact_map_lng]" class="form-control" value="<?= sc($settings, 'contact_map_lng') ?>">
+                            <input aria-label="Settings contact map lng" type="text" name="settings[contact_map_lng]" class="form-control" value="<?= sc($settings, 'contact_map_lng') ?>">
                         </div>
                     </div>
                 </div>
@@ -263,27 +263,27 @@ $tabs = [
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label"><i class="fab fa-facebook text-primary me-2"></i>Facebook</label>
-                    <input type="url" name="settings[social_facebook]" class="form-control" value="<?= sc($settings, 'social_facebook') ?>" placeholder="https://facebook.com/yourpage">
+                    <input aria-label="Settings social facebook" type="url" name="settings[social_facebook]" class="form-control" value="<?= sc($settings, 'social_facebook') ?>" placeholder="https://facebook.com/yourpage">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label"><i class="fab fa-instagram text-danger me-2"></i>Instagram</label>
-                    <input type="url" name="settings[social_instagram]" class="form-control" value="<?= sc($settings, 'social_instagram') ?>" placeholder="https://instagram.com/yourpage">
+                    <input aria-label="Settings social instagram" type="url" name="settings[social_instagram]" class="form-control" value="<?= sc($settings, 'social_instagram') ?>" placeholder="https://instagram.com/yourpage">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label"><i class="fab fa-twitter text-info me-2"></i>Twitter / X</label>
-                    <input type="url" name="settings[social_twitter]" class="form-control" value="<?= sc($settings, 'social_twitter') ?>" placeholder="https://twitter.com/yourpage">
+                    <input aria-label="Settings social twitter" type="url" name="settings[social_twitter]" class="form-control" value="<?= sc($settings, 'social_twitter') ?>" placeholder="https://twitter.com/yourpage">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label"><i class="fab fa-youtube text-danger me-2"></i>YouTube</label>
-                    <input type="url" name="settings[social_youtube]" class="form-control" value="<?= sc($settings, 'social_youtube') ?>" placeholder="https://youtube.com/@yourchannel">
+                    <input aria-label="Settings social youtube" type="url" name="settings[social_youtube]" class="form-control" value="<?= sc($settings, 'social_youtube') ?>" placeholder="https://youtube.com/@yourchannel">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label"><i class="fab fa-linkedin text-primary me-2"></i>LinkedIn</label>
-                    <input type="url" name="settings[social_linkedin]" class="form-control" value="<?= sc($settings, 'social_linkedin') ?>" placeholder="https://linkedin.com/company/yourcompany">
+                    <input aria-label="Settings social linkedin" type="url" name="settings[social_linkedin]" class="form-control" value="<?= sc($settings, 'social_linkedin') ?>" placeholder="https://linkedin.com/company/yourcompany">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label"><i class="fab fa-telegram text-info me-2"></i>Telegram</label>
-                    <input type="url" name="settings[social_telegram]" class="form-control" value="<?= sc($settings, 'social_telegram') ?>" placeholder="https://t.me/yourchannel">
+                    <input aria-label="Settings social telegram" type="url" name="settings[social_telegram]" class="form-control" value="<?= sc($settings, 'social_telegram') ?>" placeholder="https://t.me/yourchannel">
                 </div>
             </div>
         </div>
@@ -297,7 +297,7 @@ $tabs = [
                     <p class="text-muted small mb-3">These are fallback meta tags. Individual pages can override these.</p>
                     <div class="mb-3">
                         <label class="form-label">Meta Title</label>
-                        <input type="text" name="settings[seo_title]" class="form-control" value="<?= sc($settings, 'seo_title') ?>" maxlength="70">
+                        <input aria-label="Settings seo title" type="text" name="settings[seo_title]" class="form-control" value="<?= sc($settings, 'seo_title') ?>" maxlength="70">
                         <div class="form-text">Recommended: 50-60 characters. Currently: <span id="seoTitleCount"><?= strlen($settings['seo_title'] ?? '') ?></span>/70</div>
                     </div>
                     <div class="mb-3">
@@ -322,7 +322,7 @@ $tabs = [
                     <?php elseif (!empty($settings['seo_og_image'])): ?>
                         <div class="mb-2 text-center"><div class="d-flex align-items-center justify-content-center bg-light border rounded"><small class="text-muted">OG Image file missing</small></div></div>
                     <?php endif; ?>
-                    <input type="file" name="settings_image[seo_og_image]" class="form-control" accept="image/*">
+                    <input aria-label="Settings image seo og image" type="file" name="settings_image[seo_og_image]" class="form-control" accept="image/*">
                     <input type="hidden" name="settings[seo_og_image]" value="<?= sc($settings, 'seo_og_image') ?>">
                     <div class="form-text">Recommended: 1200x630px for social sharing</div>
                 </div>
@@ -348,11 +348,11 @@ $tabs = [
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Copyright Text</label>
-                    <input type="text" name="settings[footer_copyright]" class="form-control" value="<?= sc($settings, 'footer_copyright', '© 2026 APS Dream Home. All rights reserved.') ?>">
+                    <input aria-label="Settings footer copyright" type="text" name="settings[footer_copyright]" class="form-control" value="<?= sc($settings, 'footer_copyright', '© 2026 APS Dream Home. All rights reserved.') ?>">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Developer Credit</label>
-                    <input type="text" name="settings[footer_developer]" class="form-control" value="<?= sc($settings, 'footer_developer', 'Developed by APS Tech Team') ?>">
+                    <input aria-label="Settings footer developer" type="text" name="settings[footer_developer]" class="form-control" value="<?= sc($settings, 'footer_developer', 'Developed by APS Tech Team') ?>">
                 </div>
             </div>
         </div>
@@ -365,7 +365,7 @@ $tabs = [
                     <h6><i class="fas fa-image me-2"></i>Hero Banner</h6>
                     <div class="mb-3">
                         <label class="form-label">Hero Title</label>
-                        <input type="text" name="settings[hero_title]" class="form-control" value="<?= sc($settings, 'hero_title') ?>">
+                        <input aria-label="Settings hero title" type="text" name="settings[hero_title]" class="form-control" value="<?= sc($settings, 'hero_title') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Hero Subtitle</label>
@@ -374,16 +374,16 @@ $tabs = [
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">CTA Button Text</label>
-                            <input type="text" name="settings[hero_cta_text]" class="form-control" value="<?= sc($settings, 'hero_cta_text', 'Explore Properties') ?>">
+                            <input aria-label="Settings hero cta text" type="text" name="settings[hero_cta_text]" class="form-control" value="<?= sc($settings, 'hero_cta_text', 'Explore Properties') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">CTA Button URL</label>
-                            <input type="text" name="settings[hero_cta_url]" class="form-control" value="<?= sc($settings, 'hero_cta_url', '/properties') ?>">
+                            <input aria-label="Settings hero cta url" type="text" name="settings[hero_cta_url]" class="form-control" value="<?= sc($settings, 'hero_cta_url', '/properties') ?>">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Trust Badge Text</label>
-                        <input type="text" name="settings[hero_badge]" class="form-control" value="<?= sc($settings, 'hero_badge', 'Trusted by 2000+ Families') ?>">
+                        <input aria-label="Settings hero badge" type="text" name="settings[hero_badge]" class="form-control" value="<?= sc($settings, 'hero_badge', 'Trusted by 2000+ Families') ?>">
                     </div>
                 </div>
             </div>
@@ -393,23 +393,23 @@ $tabs = [
                     <div class="row g-2">
                         <div class="col-6 mb-2">
                             <label class="form-label small text-muted">Label</label>
-                            <input type="text" name="settings[stat_properties_label]" class="form-control form-control-sm" value="<?= sc($settings, 'stat_properties_label') ?>">
-                            <input type="text" name="settings[stat_properties_value]" class="form-control form-control-sm mt-1" value="<?= sc($settings, 'stat_properties_value') ?>">
+                            <input aria-label="Settings stat properties label" type="text" name="settings[stat_properties_label]" class="form-control form-control-sm" value="<?= sc($settings, 'stat_properties_label') ?>">
+                            <input aria-label="Settings stat properties value" type="text" name="settings[stat_properties_value]" class="form-control form-control-sm mt-1" value="<?= sc($settings, 'stat_properties_value') ?>">
                         </div>
                         <div class="col-6 mb-2">
                             <label class="form-label small text-muted">Label</label>
-                            <input type="text" name="settings[stat_families_label]" class="form-control form-control-sm" value="<?= sc($settings, 'stat_families_label') ?>">
-                            <input type="text" name="settings[stat_families_value]" class="form-control form-control-sm mt-1" value="<?= sc($settings, 'stat_families_value') ?>">
+                            <input aria-label="Settings stat families label" type="text" name="settings[stat_families_label]" class="form-control form-control-sm" value="<?= sc($settings, 'stat_families_label') ?>">
+                            <input aria-label="Settings stat families value" type="text" name="settings[stat_families_value]" class="form-control form-control-sm mt-1" value="<?= sc($settings, 'stat_families_value') ?>">
                         </div>
                         <div class="col-6 mb-2">
                             <label class="form-label small text-muted">Label</label>
-                            <input type="text" name="settings[stat_projects_label]" class="form-control form-control-sm" value="<?= sc($settings, 'stat_projects_label') ?>">
-                            <input type="text" name="settings[stat_projects_value]" class="form-control form-control-sm mt-1" value="<?= sc($settings, 'stat_projects_value') ?>">
+                            <input aria-label="Settings stat projects label" type="text" name="settings[stat_projects_label]" class="form-control form-control-sm" value="<?= sc($settings, 'stat_projects_label') ?>">
+                            <input aria-label="Settings stat projects value" type="text" name="settings[stat_projects_value]" class="form-control form-control-sm mt-1" value="<?= sc($settings, 'stat_projects_value') ?>">
                         </div>
                         <div class="col-6 mb-2">
                             <label class="form-label small text-muted">Label</label>
-                            <input type="text" name="settings[stat_experience_label]" class="form-control form-control-sm" value="<?= sc($settings, 'stat_experience_label') ?>">
-                            <input type="text" name="settings[stat_experience_value]" class="form-control form-control-sm mt-1" value="<?= sc($settings, 'stat_experience_value') ?>">
+                            <input aria-label="Settings stat experience label" type="text" name="settings[stat_experience_label]" class="form-control form-control-sm" value="<?= sc($settings, 'stat_experience_label') ?>">
+                            <input aria-label="Settings stat experience value" type="text" name="settings[stat_experience_value]" class="form-control form-control-sm mt-1" value="<?= sc($settings, 'stat_experience_value') ?>">
                         </div>
                     </div>
                 </div>
@@ -449,12 +449,12 @@ $tabs = [
                     <h6><i class="fas fa-server me-2"></i>SMTP Server</h6>
                     <div class="mb-3">
                         <label class="form-label">SMTP Host</label>
-                        <input type="text" name="settings[smtp_host]" class="form-control" value="<?= sc($settings, 'smtp_host', 'smtp.gmail.com') ?>" placeholder="smtp.gmail.com">
+                        <input aria-label="Settings smtp host" type="text" name="settings[smtp_host]" class="form-control" value="<?= sc($settings, 'smtp_host', 'smtp.gmail.com') ?>" placeholder="smtp.gmail.com">
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">SMTP Port</label>
-                            <input type="number" name="settings[smtp_port]" class="form-control" value="<?= sc($settings, 'smtp_port', '587') ?>">
+                            <input aria-label="Settings smtp port" type="number" name="settings[smtp_port]" class="form-control" value="<?= sc($settings, 'smtp_port', '587') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Encryption</label>
@@ -470,12 +470,12 @@ $tabs = [
                     <h6><i class="fas fa-key me-2"></i>SMTP Credentials</h6>
                     <div class="mb-3">
                         <label class="form-label">Username / Email</label>
-                        <input type="text" name="settings[smtp_username]" class="form-control" value="<?= sc($settings, 'smtp_username') ?>" placeholder="your@email.com">
+                        <input aria-label="Settings smtp username" type="text" name="settings[smtp_username]" class="form-control" value="<?= sc($settings, 'smtp_username') ?>" placeholder="your@email.com">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
                         <div class="input-group">
-                            <input type="password" name="settings[smtp_password]" class="form-control" value="<?= sc($settings, 'smtp_password') ?>" id="smtpPassword">
+                            <input aria-label="Settings smtp password" type="password" name="settings[smtp_password]" class="form-control" value="<?= sc($settings, 'smtp_password') ?>" id="smtpPassword">
                             <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('smtpPassword');p.type=p.type==='password'?'text':'password'" aria-label="View"><i class="fas fa-eye"></i></button>
                         </div>
                         <div class="form-text">For Gmail, use App Password (not regular password)</div>
@@ -487,15 +487,15 @@ $tabs = [
                     <h6><i class="fas fa-paper-plane me-2"></i>Email Defaults</h6>
                     <div class="mb-3">
                         <label class="form-label">From Name</label>
-                        <input type="text" name="settings[smtp_from_name]" class="form-control" value="<?= sc($settings, 'smtp_from_name', 'APS Dream Home') ?>">
+                        <input aria-label="Settings smtp from name" type="text" name="settings[smtp_from_name]" class="form-control" value="<?= sc($settings, 'smtp_from_name', 'APS Dream Home') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">From Email</label>
-                        <input type="email" name="settings[smtp_from_email]" class="form-control" value="<?= sc($settings, 'smtp_from_email') ?>" placeholder="noreply@apsdreamhome.com">
+                        <input aria-label="Settings smtp from email" type="email" name="settings[smtp_from_email]" class="form-control" value="<?= sc($settings, 'smtp_from_email') ?>" placeholder="noreply@apsdreamhome.com">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Reply-To Email</label>
-                        <input type="email" name="settings[smtp_reply_to]" class="form-control" value="<?= sc($settings, 'smtp_reply_to') ?>" placeholder="support@apsdreamhome.com">
+                        <input aria-label="Settings smtp reply to" type="email" name="settings[smtp_reply_to]" class="form-control" value="<?= sc($settings, 'smtp_reply_to') ?>" placeholder="support@apsdreamhome.com">
                     </div>
                 </div>
                 <div class="settings-group">
@@ -503,7 +503,7 @@ $tabs = [
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             <label class="form-label">Test Email Recipient</label>
-                            <input type="email" class="form-control" id="testEmail" placeholder="test@example.com">
+                            <input aria-label="Test email" type="email" class="form-control" id="testEmail" placeholder="test@example.com">
                         </div>
                         <div class="col-md-4 mb-3 d-flex align-items-end">
                             <button type="button" class="btn btn-outline-primary w-100" onclick="testSmtpConnection()">
@@ -535,18 +535,18 @@ $tabs = [
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Key ID</label>
-                        <input type="text" name="settings[razorpay_key_id]" class="form-control" value="<?= sc($settings, 'razorpay_key_id') ?>" placeholder="rzp_test_...">
+                        <input aria-label="Settings razorpay key id" type="text" name="settings[razorpay_key_id]" class="form-control" value="<?= sc($settings, 'razorpay_key_id') ?>" placeholder="rzp_test_...">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Key Secret</label>
                         <div class="input-group">
-                            <input type="password" name="settings[razorpay_key_secret]" class="form-control" value="<?= sc($settings, 'razorpay_key_secret') ?>" id="razorpaySecret">
+                            <input aria-label="Settings razorpay key secret" type="password" name="settings[razorpay_key_secret]" class="form-control" value="<?= sc($settings, 'razorpay_key_secret') ?>" id="razorpaySecret">
                             <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('razorpaySecret');p.type=p.type==='password'?'text':'password'" aria-label="View"><i class="fas fa-eye"></i></button>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Webhook Secret</label>
-                        <input type="text" name="settings[razorpay_webhook_secret]" class="form-control" value="<?= sc($settings, 'razorpay_webhook_secret') ?>" placeholder="whsec_...">
+                        <input aria-label="Settings razorpay webhook secret" type="text" name="settings[razorpay_webhook_secret]" class="form-control" value="<?= sc($settings, 'razorpay_webhook_secret') ?>" placeholder="whsec_...">
                     </div>
                 </div>
             </div>
@@ -562,12 +562,12 @@ $tabs = [
                     </div>
                     <div class="mb-3">
                         <label class="form-label">UPI VPA / ID</label>
-                        <input type="text" name="settings[upi_vpa]" class="form-control" value="<?= sc($settings, 'upi_vpa') ?>" placeholder="apsdreamhome@upi">
+                        <input aria-label="Settings upi vpa" type="text" name="settings[upi_vpa]" class="form-control" value="<?= sc($settings, 'upi_vpa') ?>" placeholder="apsdreamhome@upi">
                         <div class="form-text">This will be shown on QR code for payments</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Collectee Name</label>
-                        <input type="text" name="settings[upi_name]" class="form-control" value="<?= sc($settings, 'upi_name', 'APS Dream Home') ?>">
+                        <input aria-label="Settings upi name" type="text" name="settings[upi_name]" class="form-control" value="<?= sc($settings, 'upi_name', 'APS Dream Home') ?>">
                     </div>
                 </div>
                 <div class="settings-group">
@@ -600,14 +600,14 @@ $tabs = [
                     <div class="mb-3">
                         <label class="form-label">MSG91 Auth Key</label>
                         <div class="input-group">
-                            <input type="password" name="settings[sms_api_key]" class="form-control" value="<?= sc($settings, 'sms_api_key') ?>" id="smsApiKey">
+                            <input aria-label="Settings sms api key" type="password" name="settings[sms_api_key]" class="form-control" value="<?= sc($settings, 'sms_api_key') ?>" id="smsApiKey">
                             <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('smsApiKey');p.type=p.type==='password'?'text':'password'" aria-label="View"><i class="fas fa-eye"></i></button>
                         </div>
                         <div class="form-text">Get from <a href="https://msg91.com" target="_blank">msg91.com</a> →' API section</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Sender ID</label>
-                        <input type="text" name="settings[sms_sender_id]" class="form-control" value="<?= sc($settings, 'sms_sender_id') ?>" placeholder="APSDRM">
+                        <input aria-label="Settings sms sender id" type="text" name="settings[sms_sender_id]" class="form-control" value="<?= sc($settings, 'sms_sender_id') ?>" placeholder="APSDRM">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Default Route</label>
@@ -630,12 +630,12 @@ $tabs = [
                     </div>
                     <div class="mb-3">
                         <label class="form-label">WhatsApp Business Phone</label>
-                        <input type="text" name="settings[whatsapp_business_phone]" class="form-control" value="<?= sc($settings, 'whatsapp_business_phone') ?>" placeholder="+91XXXXXXXXXX">
+                        <input aria-label="Settings whatsapp business phone" type="text" name="settings[whatsapp_business_phone]" class="form-control" value="<?= sc($settings, 'whatsapp_business_phone') ?>" placeholder="+91XXXXXXXXXX">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">API Token</label>
                         <div class="input-group">
-                            <input type="password" name="settings[whatsapp_api_token]" class="form-control" value="<?= sc($settings, 'whatsapp_api_token') ?>" id="whatsappToken">
+                            <input aria-label="Settings whatsapp api token" type="password" name="settings[whatsapp_api_token]" class="form-control" value="<?= sc($settings, 'whatsapp_api_token') ?>" id="whatsappToken">
                             <button class="btn btn-outline-secondary" type="button" onclick="var p=document.getElementById('whatsappToken');p.type=p.type==='password'?'text':'password'" aria-label="WhatsApp"><i class="fas fa-eye"></i></button>
                         </div>
                     </div>

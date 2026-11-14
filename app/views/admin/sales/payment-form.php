@@ -30,11 +30,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_amount_label') ?></label>
-                    <input type="number" step="0.01" name="amount" value="<?= htmlspecialchars((string)($installment['amount_due'] ?? 0)) ?>" class="form-control" required>
+                    <input aria-label="Amount" type="number" step="0.01" name="amount" value="<?= htmlspecialchars((string)($installment['amount_due'] ?? 0)) ?>" class="form-control" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_payment_date') ?></label>
-                    <input type="date" name="paid_date" value="<?= htmlspecialchars(date('Y-m-d')) ?>" class="form-control" required>
+                    <input aria-label="Paid date" type="date" name="paid_date" value="<?= htmlspecialchars(date('Y-m-d')) ?>" class="form-control" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_mode_label') ?></label>
@@ -46,19 +46,19 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-4" id="chequeFields" >
                     <label class="form-label"><?= __('sale_cheque_dd_num') ?></label>
-                    <input type="text" name="cheque_number" class="form-control">
+                    <input aria-label="Cheque number" type="text" name="cheque_number" class="form-control">
                 </div>
                 <div class="col-md-4" id="chequeDateField" >
                     <label class="form-label"><?= __('sale_cheque_date') ?></label>
-                    <input type="date" name="cheque_date" class="form-control">
+                    <input aria-label="Cheque date" type="date" name="cheque_date" class="form-control">
                 </div>
                 <div class="col-md-4" id="bankField" >
                     <label class="form-label"><?= __('sale_bank_name') ?></label>
-                    <input type="text" name="bank_name" class="form-control">
+                    <input aria-label="Bank name" type="text" name="bank_name" class="form-control">
                 </div>
                 <div class="col-md-4" id="refField" >
                     <label class="form-label"><?= __('sale_transaction_ref') ?></label>
-                    <input type="text" name="transaction_ref" class="form-control">
+                    <input aria-label="Transaction ref" type="text" name="transaction_ref" class="form-control">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_status_label') ?></label>

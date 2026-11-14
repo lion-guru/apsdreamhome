@@ -25,23 +25,23 @@ $logged_in = $logged_in ?? false;
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('testi_your_name', [], 'Your Name') ?> *</label>
-                                <input type="text" class="form-control" name="name" required
+                                <input aria-label="Name" type="text" class="form-control" name="name" required
                                        value="<?= htmlspecialchars($_POST['name'] ?? ($_SESSION['user_name'] ?? '')) ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('testi_email', [], 'Email') ?> *</label>
-                                <input type="email" class="form-control" name="email" required
+                                <input aria-label="Email" type="email" class="form-control" name="email" required
                                        value="<?= htmlspecialchars($_POST['email'] ?? ($_SESSION['user_email'] ?? '')) ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('testi_project_name', [], 'Project Name') ?></label>
-                                <input type="text" class="form-control" name="project_name"
+                                <input aria-label="Project name" type="text" class="form-control" name="project_name"
                                        value="<?= htmlspecialchars($_POST['project_name'] ?? '') ?>"
                                        placeholder="e.g. Suryoday Heights Phase 1">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= __('testi_location', [], 'Location') ?></label>
-                                <input type="text" class="form-control" name="location"
+                                <input aria-label="Location" type="text" class="form-control" name="location"
                                        value="<?= htmlspecialchars($_POST['location'] ?? '') ?>"
                                        placeholder="e.g. Gorakhpur">
                             </div>
@@ -49,7 +49,7 @@ $logged_in = $logged_in ?? false;
                                 <label class="form-label"><?= __('testi_rating', [], 'Rating') ?> *</label>
                                 <div class="rating-input">
                                     <?php for ($i = 5; $i >= 1; $i--): ?>
-                                        <input type="radio" name="rating" value="<?= $i ?>" id="r<?= $i ?>" <?= ($_POST['rating'] ?? 5) == $i ? 'checked' : '' ?>>
+                                        <input aria-label="Rating" type="radio" name="rating" value="<?= $i ?>" id="r<?= $i ?>" <?= ($_POST['rating'] ?? 5) == $i ? 'checked' : '' ?>>
                                         <label for="r<?= $i ?>" class="me-2">★</label>
                                     <?php endfor; ?>
                                 </div>

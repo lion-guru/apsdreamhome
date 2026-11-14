@@ -70,7 +70,7 @@ $flash = $flash ?? [];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Entity ID</label>
-                    <input type="number" name="id" class="form-control" min="1" required>
+                    <input aria-label="Id" type="number" name="id" class="form-control" min="1" required>
                 </div>
                 <div class="col-md-4">
                     <button type="submit" class="btn btn-primary">Generate</button>

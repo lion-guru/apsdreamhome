@@ -26,11 +26,11 @@ function inr($v) { return '₹' . number_format((float)$v, 2); }
         <form method="GET" action="<?php echo BASE_URL; ?>/admin/reports/profit-loss" class="row g-3 align-items-end no-print">
             <div class="col-md-3">
                 <label class="form-label">From</label>
-                <input type="date" name="start_date" class="form-control" value="<?php echo e($st['start_date'] ?? ''); ?>">
+                <input aria-label="Start date" type="date" name="start_date" class="form-control" value="<?php echo e($st['start_date'] ?? ''); ?>">
             </div>
             <div class="col-md-3">
                 <label class="form-label">To</label>
-                <input type="date" name="end_date" class="form-control" value="<?php echo e($st['end_date'] ?? ''); ?>">
+                <input aria-label="End date" type="date" name="end_date" class="form-control" value="<?php echo e($st['end_date'] ?? ''); ?>">
             </div>
             <div class="col-md-3">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-filter me-1"></i>Apply</button>

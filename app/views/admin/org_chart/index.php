@@ -156,7 +156,7 @@ $nodes = $nodes ?? [];
                 <button class="btn btn-sm btn-outline-secondary" onclick="expandAll()">Expand All</button>
                 <button class="btn btn-sm btn-outline-secondary" onclick="collapseAll()">Collapse All</button>
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="showVacant" checked onchange="toggleVacant()">
+                    <input aria-label="Show vacant" class="form-check-input" type="checkbox" id="showVacant" checked onchange="toggleVacant()">
                     <label class="form-check-label small" for="showVacant">Show Vacant</label>
                 </div>
             </div>
@@ -216,7 +216,7 @@ $nodes = $nodes ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Position Title <span class="text-danger">*</span></label>
-                        <input type="text" name="position_title" class="form-control" required placeholder="e.g., Senior Manager">
+                        <input aria-label="Position title" type="text" name="position_title" class="form-control" required placeholder="e.g., Senior Manager">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Department</label>
@@ -230,11 +230,11 @@ $nodes = $nodes ?? [];
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Sort Order</label>
-                            <input type="number" name="sort_order" class="form-control" value="0" min="0">
+                            <input aria-label="Sort order" type="number" name="sort_order" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-6">
                             <div class="form-check form-switch mt-3">
-                                <input class="form-check-input" type="checkbox" name="is_vacant" value="1" id="is_vacant">
+                                <input aria-label="Is vacant" class="form-check-input" type="checkbox" name="is_vacant" value="1" id="is_vacant">
                                 <label class="form-check-label" for="is_vacant">Vacant Position</label>
                             </div>
                         </div>

@@ -13,7 +13,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Template Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($template['name'] ?? '') ?>" required>
+                            <input aria-label="Name" type="text" name="name" class="form-control" value="<?= htmlspecialchars($template['name'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Type</label>
@@ -45,7 +45,7 @@
                         <small class="text-muted">Use {{placeholders}} for dynamic values (e.g. {{customer_name}}, {{date}})</small>
                     </div>
                     <div class="mb-3 form-check">
-                        <input type="checkbox" name="is_active" class="form-check-input" value="1" id="isActive" <?= ($template['is_active'] ?? 0) ? 'checked' : '' ?>>
+                        <input aria-label="Is active" type="checkbox" name="is_active" class="form-check-input" value="1" id="isActive" <?= ($template['is_active'] ?? 0) ? 'checked' : '' ?>>
                         <label class="form-check-label" for="isActive">Active</label>
                     </div>
                     <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Update Template</button>

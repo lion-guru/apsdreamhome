@@ -209,7 +209,7 @@
                             <div class="row g-3">
                                 <div class="col-md-8">
                                     <label class="form-label">Milestone Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="milestone_name" id="milestone_name" class="form-control" required maxlength="255">
+                                    <input aria-label="Milestone name" type="text" name="milestone_name" id="milestone_name" class="form-control" required maxlength="255">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Category</label>
@@ -235,35 +235,35 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Progress % (0–100)</label>
-                                    <input type="number" name="progress_pct" id="progress_pct" class="form-control" min="0" max="100" step="0.01" value="0">
+                                    <input aria-label="Progress pct" type="number" name="progress_pct" id="progress_pct" class="form-control" min="0" max="100" step="0.01" value="0">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Start Date</label>
-                                    <input type="date" name="start_date" id="start_date" class="form-control">
+                                    <input aria-label="Start date" type="date" name="start_date" id="start_date" class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Expected Completion</label>
-                                    <input type="date" name="expected_completion" id="expected_completion" class="form-control">
+                                    <input aria-label="Expected completion" type="date" name="expected_completion" id="expected_completion" class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Actual Completion</label>
-                                    <input type="date" name="actual_completion" id="actual_completion" class="form-control">
+                                    <input aria-label="Actual completion" type="date" name="actual_completion" id="actual_completion" class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Contractor Name</label>
-                                    <input type="text" name="contractor_name" id="contractor_name" class="form-control" maxlength="255">
+                                    <input aria-label="Contractor name" type="text" name="contractor_name" id="contractor_name" class="form-control" maxlength="255">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Contractor Contact</label>
-                                    <input type="text" name="contractor_contact" id="contractor_contact" class="form-control" maxlength="50">
+                                    <input aria-label="Contractor contact" type="text" name="contractor_contact" id="contractor_contact" class="form-control" maxlength="50">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Estimated Cost (₹)</label>
-                                    <input type="number" name="estimated_cost" id="estimated_cost" class="form-control" min="0" step="0.01" value="0">
+                                    <input aria-label="Estimated cost" type="number" name="estimated_cost" id="estimated_cost" class="form-control" min="0" step="0.01" value="0">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Actual Cost (₹)</label>
-                                    <input type="number" name="actual_cost" id="actual_cost" class="form-control" min="0" step="0.01" value="0">
+                                    <input aria-label="Actual cost" type="number" name="actual_cost" id="actual_cost" class="form-control" min="0" step="0.01" value="0">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Remarks</label>
@@ -275,7 +275,7 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Site Photo <small class="text-muted">(jpg/png/webp, optional)</small></label>
-                                    <input type="file" name="site_photo" id="site_photo" class="form-control" accept=".jpg,.jpeg,.png,.webp">
+                                    <input aria-label="Site photo" type="file" name="site_photo" id="site_photo" class="form-control" accept=".jpg,.jpeg,.png,.webp">
                                     <small class="text-muted">Upload path saved to <code>site_photo_path</code> column.</small>
                                 </div>
                             </div>

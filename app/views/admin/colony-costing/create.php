@@ -44,7 +44,7 @@ $val = function(string $key, $default = 0) use ($e) {
                     </div>
                     <div class="card-body">
                         <label class="form-label" for="costing_label">Label / Description</label>
-                        <input type="text" id="costing_label" name="costing_label" class="form-control"
+                        <input aria-label="Costing label" type="text" id="costing_label" name="costing_label" class="form-control"
                                value="<?= htmlspecialchars($val('costing_label', 'Initial Costing')) ?>"
                                placeholder="e.g. Phase 1 — July 2026 Estimate">
                     </div>
@@ -59,20 +59,20 @@ $val = function(string $key, $default = 0) use ($e) {
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label" for="total_land_sqft">Total Land (SqFt) <span class="text-danger">*</span></label>
-                                <input type="number" id="total_land_sqft" name="total_land_sqft"
+                                <input aria-label="Total land sqft" type="number" id="total_land_sqft" name="total_land_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('total_land_sqft', 0) ?>" required>
                                 <small class="text-muted">1 Acre = 43,560 SqFt</small>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label" for="land_purchase_rate">Purchase Rate (₹/SqFt) <span class="text-danger">*</span></label>
-                                <input type="number" id="land_purchase_rate" name="land_purchase_rate"
+                                <input aria-label="Land purchase rate" type="number" id="land_purchase_rate" name="land_purchase_rate"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('land_purchase_rate', 0) ?>" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label" for="land_registry_cost">Registry / Stamp Duty (₹ Total)</label>
-                                <input type="number" id="land_registry_cost" name="land_registry_cost"
+                                <input aria-label="Land registry cost" type="number" id="land_registry_cost" name="land_registry_cost"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('land_registry_cost', 0) ?>">
                             </div>
@@ -89,25 +89,25 @@ $val = function(string $key, $default = 0) use ($e) {
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label" for="road_wastage_pct">Roads (%)</label>
-                                <input type="number" id="road_wastage_pct" name="road_wastage_pct"
+                                <input aria-label="Road wastage pct" type="number" id="road_wastage_pct" name="road_wastage_pct"
                                        class="form-control calc-trigger" min="0" max="50" step="0.01"
                                        value="<?= $val('road_wastage_pct', 15) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label" for="drainage_wastage_pct">Drainage / Nali (%)</label>
-                                <input type="number" id="drainage_wastage_pct" name="drainage_wastage_pct"
+                                <input aria-label="Drainage wastage pct" type="number" id="drainage_wastage_pct" name="drainage_wastage_pct"
                                        class="form-control calc-trigger" min="0" max="30" step="0.01"
                                        value="<?= $val('drainage_wastage_pct', 5) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label" for="park_wastage_pct">Park / Green (%)</label>
-                                <input type="number" id="park_wastage_pct" name="park_wastage_pct"
+                                <input aria-label="Park wastage pct" type="number" id="park_wastage_pct" name="park_wastage_pct"
                                        class="form-control calc-trigger" min="0" max="30" step="0.01"
                                        value="<?= $val('park_wastage_pct', 5) ?>">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label" for="other_wastage_pct">Other (%)</label>
-                                <input type="number" id="other_wastage_pct" name="other_wastage_pct"
+                                <input aria-label="Other wastage pct" type="number" id="other_wastage_pct" name="other_wastage_pct"
                                        class="form-control calc-trigger" min="0" max="20" step="0.01"
                                        value="<?= $val('other_wastage_pct', 0) ?>">
                             </div>
@@ -140,37 +140,37 @@ $val = function(string $key, $default = 0) use ($e) {
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label" for="road_dev_cost_sqft">Road Construction (₹/SqFt)</label>
-                                <input type="number" id="road_dev_cost_sqft" name="road_dev_cost_sqft"
+                                <input aria-label="Road dev cost sqft" type="number" id="road_dev_cost_sqft" name="road_dev_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('road_dev_cost_sqft', 0) ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label" for="drainage_dev_cost_sqft">Drainage / Nali (₹/SqFt)</label>
-                                <input type="number" id="drainage_dev_cost_sqft" name="drainage_dev_cost_sqft"
+                                <input aria-label="Drainage dev cost sqft" type="number" id="drainage_dev_cost_sqft" name="drainage_dev_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('drainage_dev_cost_sqft', 0) ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label" for="electricity_cost_sqft">Electricity (₹/SqFt)</label>
-                                <input type="number" id="electricity_cost_sqft" name="electricity_cost_sqft"
+                                <input aria-label="Electricity cost sqft" type="number" id="electricity_cost_sqft" name="electricity_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('electricity_cost_sqft', 0) ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label" for="water_pipeline_cost_sqft">Water Pipeline (₹/SqFt)</label>
-                                <input type="number" id="water_pipeline_cost_sqft" name="water_pipeline_cost_sqft"
+                                <input aria-label="Water pipeline cost sqft" type="number" id="water_pipeline_cost_sqft" name="water_pipeline_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('water_pipeline_cost_sqft', 0) ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label" for="boundary_wall_cost_sqft">Boundary Wall (₹/SqFt)</label>
-                                <input type="number" id="boundary_wall_cost_sqft" name="boundary_wall_cost_sqft"
+                                <input aria-label="Boundary wall cost sqft" type="number" id="boundary_wall_cost_sqft" name="boundary_wall_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('boundary_wall_cost_sqft', 0) ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label" for="other_dev_cost_sqft">Other Dev. (₹/SqFt)</label>
-                                <input type="number" id="other_dev_cost_sqft" name="other_dev_cost_sqft"
+                                <input aria-label="Other dev cost sqft" type="number" id="other_dev_cost_sqft" name="other_dev_cost_sqft"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('other_dev_cost_sqft', 0) ?>">
                             </div>
@@ -187,27 +187,27 @@ $val = function(string $key, $default = 0) use ($e) {
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label" for="legal_approval_cost">Legal / RERA / NOC Cost (₹ Total)</label>
-                                <input type="number" id="legal_approval_cost" name="legal_approval_cost"
+                                <input aria-label="Legal approval cost" type="number" id="legal_approval_cost" name="legal_approval_cost"
                                        class="form-control calc-trigger" min="0" step="0.01"
                                        value="<?= $val('legal_approval_cost', 0) ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label" for="admin_overhead_pct">Admin Overhead (%)</label>
-                                <input type="number" id="admin_overhead_pct" name="admin_overhead_pct"
+                                <input aria-label="Admin overhead pct" type="number" id="admin_overhead_pct" name="admin_overhead_pct"
                                        class="form-control calc-trigger" min="0" max="30" step="0.01"
                                        value="<?= $val('admin_overhead_pct', 5) ?>">
                                 <small class="text-muted">Applied on pre-overhead cost</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label" for="marketing_commission_pct">MLM Commission Budget (%)</label>
-                                <input type="number" id="marketing_commission_pct" name="marketing_commission_pct"
+                                <input aria-label="Marketing commission pct" type="number" id="marketing_commission_pct" name="marketing_commission_pct"
                                        class="form-control calc-trigger" min="0" max="30" step="0.01"
                                        value="<?= $val('marketing_commission_pct', 20) ?>">
                                 <small class="text-muted">% of final selling price reserved for agent commissions</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label" for="target_profit_pct">Target Profit Margin (%)</label>
-                                <input type="number" id="target_profit_pct" name="target_profit_pct"
+                                <input aria-label="Target profit pct" type="number" id="target_profit_pct" name="target_profit_pct"
                                        class="form-control calc-trigger" min="0" max="80" step="0.01"
                                        value="<?= $val('target_profit_pct', 20) ?>">
                                 <small class="text-muted">% of final selling price as company profit</small>
@@ -225,7 +225,7 @@ $val = function(string $key, $default = 0) use ($e) {
                         <div class="row g-3 align-items-end">
                             <div class="col-md-6">
                                 <label class="form-label" for="final_price_sqft">Final Price (₹/SqFt)</label>
-                                <input type="number" id="final_price_sqft" name="final_price_sqft"
+                                <input aria-label="Final price sqft" type="number" id="final_price_sqft" name="final_price_sqft"
                                        class="form-control form-control-lg" min="0" step="0.01"
                                        value="<?= $val('final_price_sqft', 0) ?>"
                                        placeholder="Leave 0 to use suggested price">

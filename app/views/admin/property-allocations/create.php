@@ -35,11 +35,11 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Booking Amount <span class="text-danger">*</span></label>
-                        <input type="number" name="booking_amount" class="form-control" required>
+                        <input aria-label="Booking amount" type="number" name="booking_amount" class="form-control" required>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Total Price <span class="text-danger">*</span></label>
-                        <input type="number" name="total_price" class="form-control" required>
+                        <input aria-label="Total price" type="number" name="total_price" class="form-control" required>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Installment Plan</label>
@@ -54,7 +54,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Installment Months (if applicable)</label>
-                        <input type="number" name="installment_months" class="form-control" value="0">
+                        <input aria-label="Installment months" type="number" name="installment_months" class="form-control" value="0">
                     </div>
                 </div>
                 <div class="mb-3">

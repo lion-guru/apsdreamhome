@@ -47,18 +47,18 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         <div class="prop-section">
             <h6><i class="fas fa-building"></i><?= __('assoc_ap_property_type', [], 'Property Type') ?></h6>
             <div class="type-selector" id="typeSelector">
-                <label class="type-option active" data-value="plot"><input type="radio" name="property_type" value="plot" checked><i class="fas fa-map text-success"></i><span><?= __('assoc_ap_type_plot', [], 'Plot') ?></span></label>
-                <label class="type-option" data-value="house"><input type="radio" name="property_type" value="house"><i class="fas fa-home text-primary"></i><span><?= __('assoc_ap_type_house', [], 'House') ?></span></label>
-                <label class="type-option" data-value="flat"><input type="radio" name="property_type" value="flat"><i class="fas fa-building text-info"></i><span><?= __('assoc_ap_type_flat', [], 'Flat') ?></span></label>
-                <label class="type-option" data-value="shop"><input type="radio" name="property_type" value="shop"><i class="fas fa-store text-warning"></i><span><?= __('assoc_ap_type_shop', [], 'Shop') ?></span></label>
+                <label class="type-option active" data-value="plot"><input aria-label="Property type" type="radio" name="property_type" value="plot" checked><i class="fas fa-map text-success"></i><span><?= __('assoc_ap_type_plot', [], 'Plot') ?></span></label>
+                <label class="type-option" data-value="house"><input aria-label="Property type" type="radio" name="property_type" value="house"><i class="fas fa-home text-primary"></i><span><?= __('assoc_ap_type_house', [], 'House') ?></span></label>
+                <label class="type-option" data-value="flat"><input aria-label="Property type" type="radio" name="property_type" value="flat"><i class="fas fa-building text-info"></i><span><?= __('assoc_ap_type_flat', [], 'Flat') ?></span></label>
+                <label class="type-option" data-value="shop"><input aria-label="Property type" type="radio" name="property_type" value="shop"><i class="fas fa-store text-warning"></i><span><?= __('assoc_ap_type_shop', [], 'Shop') ?></span></label>
             </div>
         </div>
 
         <div class="prop-section">
             <h6><i class="fas fa-tag"></i><?= __('assoc_ap_purpose', [], 'Purpose') ?></h6>
             <div class="d-flex gap-3">
-                <div class="form-check flex-fill"><input class="form-check-input" type="radio" name="listing_type" value="sell" id="sell" checked><label class="form-check-label fw-bold" for="sell"><i class="fas fa-indian-rupee-sign text-success me-1"></i><?= __('assoc_ap_sell', [], 'Sell') ?></label></div>
-                <div class="form-check flex-fill"><input class="form-check-input" type="radio" name="listing_type" value="rent" id="rent"><label class="form-check-label fw-bold" for="rent"><i class="fas fa-key text-primary me-1"></i><?= __('assoc_ap_rent', [], 'Rent') ?></label></div>
+                <div class="form-check flex-fill"><input aria-label="Listing type" class="form-check-input" type="radio" name="listing_type" value="sell" id="sell" checked><label class="form-check-label fw-bold" for="sell"><i class="fas fa-indian-rupee-sign text-success me-1"></i><?= __('assoc_ap_sell', [], 'Sell') ?></label></div>
+                <div class="form-check flex-fill"><input aria-label="Listing type" class="form-check-input" type="radio" name="listing_type" value="rent" id="rent"><label class="form-check-label fw-bold" for="rent"><i class="fas fa-key text-primary me-1"></i><?= __('assoc_ap_rent', [], 'Rent') ?></label></div>
             </div>
         </div>
 
@@ -66,16 +66,16 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <h6><i class="fas fa-info-circle"></i><?= __('assoc_ap_details', [], 'Details') ?></h6>
             <div class="mb-3">
                 <label class="form-label"><?= __('assoc_ap_title_label', [], 'Property Title') ?> *</label>
-                <input type="text" name="title" class="form-control" placeholder="<?= __('assoc_ap_title_placeholder', [], 'e.g. 3BHK House in Civil Lines') ?>" required>
+                <input aria-label="Title" type="text" name="title" class="form-control" placeholder="<?= __('assoc_ap_title_placeholder', [], 'e.g. 3BHK House in Civil Lines') ?>" required>
             </div>
             <div class="row g-3">
                 <div class="col-8">
                     <label class="form-label"><?= __('assoc_ap_price', [], 'Price (₹)') ?> *</label>
-                    <input type="text" name="price" id="price" class="form-control" placeholder="<?= __('assoc_ap_price_placeholder', [], 'e.g. 25,00,000') ?>" required inputmode="numeric">
+                    <input aria-label="Price" type="text" name="price" id="price" class="form-control" placeholder="<?= __('assoc_ap_price_placeholder', [], 'e.g. 25,00,000') ?>" required inputmode="numeric">
                 </div>
                 <div class="col-4">
                     <label class="form-label"><?= __('assoc_ap_area', [], 'Area (sq.ft.)') ?></label>
-                    <input type="text" name="area" class="form-control" placeholder="<?= __('assoc_ap_area_placeholder', [], 'e.g. 1000') ?>" inputmode="numeric">
+                    <input aria-label="Area" type="text" name="area" class="form-control" placeholder="<?= __('assoc_ap_area_placeholder', [], 'e.g. 1000') ?>" inputmode="numeric">
                 </div>
             </div>
             <div class="quick-price">
@@ -102,7 +102,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 </div>
                 <div class="col-6">
                     <label class="form-label"><?= __('assoc_ap_city', [], 'City/Location') ?> *</label>
-                    <input type="text" name="location" class="form-control" placeholder="<?= __('assoc_ap_city_placeholder', [], 'e.g. Mathura') ?>" required>
+                    <input aria-label="Location" type="text" name="location" class="form-control" placeholder="<?= __('assoc_ap_city_placeholder', [], 'e.g. Mathura') ?>" required>
                 </div>
             </div>
             <div class="mt-3">
@@ -119,7 +119,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
         <div class="prop-section">
             <h6><i class="fas fa-camera"></i><?= __('assoc_ap_photo', [], 'Photo') ?></h6>
             <div class="photo-upload-zone">
-                <input type="file" name="property_image" accept="image/*">
+                <input aria-label="Property image" type="file" name="property_image" accept="image/*">
                 <i class="fas fa-cloud-upload-alt d-block"></i>
                 <div class="fw-bold text-primary"><?= __('assoc_ap_tap_photo', [], 'Tap to Add Photo') ?></div>
                 <div class="text-muted small"><?= __('assoc_ap_tap_desc', [], 'Take photo or choose from gallery') ?></div>

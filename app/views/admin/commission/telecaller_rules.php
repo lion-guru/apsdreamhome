@@ -11,7 +11,7 @@
                 <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/commission/telecaller/rules/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <div class="mb-2"><label class="form-label">Rule Name</label><input type="text" name="rule_name" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Rule Name</label><input aria-label="Rule name" type="text" name="rule_name" class="form-control" required></div>
                         <div class="mb-2"><label class="form-label">Commission Type</label>
                             <select aria-label="Commission type" name="commission_type" class="form-select">
                                 <option value="per_call">Per Call</option>
@@ -20,15 +20,15 @@
                                 <option value="percentage">Percentage</option>
                             </select>
                         </div>
-                        <div class="mb-2"><label class="form-label">Fixed Amount (&#8377;)</label><input type="number" step="0.01" name="amount" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Percentage (if type=percentage)</label><input type="number" step="0.01" name="percentage" class="form-control"></div>
-                        <div class="mb-2"><label class="form-label">Min Calls</label><input type="number" name="min_calls" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Fixed Amount (&#8377;)</label><input aria-label="Amount" type="number" step="0.01" name="amount" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Percentage (if type=percentage)</label><input aria-label="Percentage" type="number" step="0.01" name="percentage" class="form-control"></div>
+                        <div class="mb-2"><label class="form-label">Min Calls</label><input aria-label="Min calls" type="number" name="min_calls" class="form-control" value="0"></div>
                         <div class="mb-2"><label class="form-label">Target Type</label>
                             <select aria-label="Target type" name="target_type" class="form-select">
                                 <option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly" selected>Monthly</option>
                             </select>
                         </div>
-                        <div class="mb-2 form-check"><input type="checkbox" name="is_active" class="form-check-input" checked id="a"><label class="form-check-label" for="a">Active</label></div>
+                        <div class="mb-2 form-check"><input aria-label="Is active" type="checkbox" name="is_active" class="form-check-input" checked id="a"><label class="form-check-label" for="a">Active</label></div>
                         <button type="submit" class="btn"><i class="fas fa-save"></i> Save Rule</button>
                     </form>
                 </div>

@@ -19,9 +19,9 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="mb-2"><label class="form-label">Bonus % (if fixed amount=0)</label><input type="number" step="0.01" name="bonus_percentage" class="form-control" value="0"></div>
-                        <div class="mb-2"><label class="form-label">Fixed Amount (&#8377;)</label><input type="number" step="0.01" name="bonus_amount" class="form-control" value="0"></div>
-                        <div class="mb-2"><label class="form-label">Achievement ID (optional)</label><input type="number" name="achievement_id" class="form-control"></div>
+                        <div class="mb-2"><label class="form-label">Bonus % (if fixed amount=0)</label><input aria-label="Bonus percentage" type="number" step="0.01" name="bonus_percentage" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Fixed Amount (&#8377;)</label><input aria-label="Bonus amount" type="number" step="0.01" name="bonus_amount" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Achievement ID (optional)</label><input aria-label="Achievement id" type="number" name="achievement_id" class="form-control"></div>
                         <button type="submit" class="btn btn-warning"><i class="fas fa-save"></i> Add Bonus</button>
                     </form>
                 </div>

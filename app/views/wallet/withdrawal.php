@@ -199,7 +199,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                             <label class="form-label fw-bold">Withdrawal Amount</label>
                             <div class="input-group">
                                 <span class="input-group-text">₹</span>
-                                <input type="number" class="form-control form-control-lg" 
+                                <input aria-label="Withdrawal amount" type="number" class="form-control form-control-lg" 
                                        id="withdrawalAmount" name="amount" 
                                        placeholder="Enter amount" 
                                        min="500" 

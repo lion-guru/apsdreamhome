@@ -36,7 +36,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Department Name *</label>
-                                    <input type="text" name="name" class="form-control" required
+                                    <input aria-label="Name" type="text" name="name" class="form-control" required
                                            value="<?= htmlspecialchars($department['name'] ?? '') ?>"
                                            placeholder="e.g. Finance & Accounts">
                                 </div>
@@ -44,7 +44,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Code *</label>
-                                    <input type="text" name="code" class="form-control" required
+                                    <input aria-label="Code" type="text" name="code" class="form-control" required
                                            value="<?= htmlspecialchars($department['code'] ?? '') ?>"
                                            placeholder="e.g. FIN" maxlength="20"
                                            >
@@ -99,7 +99,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Annual Budget (₹)</label>
-                                    <input type="number" name="dept_budget" class="form-control" min="0" step="100000"
+                                    <input aria-label="Dept budget" type="number" name="dept_budget" class="form-control" min="0" step="100000"
                                            value="<?= $department['dept_budget'] ?? 0 ?>">
                                 </div>
                             </div>

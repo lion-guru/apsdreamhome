@@ -48,11 +48,11 @@ $total_amount = $total_amount ?? 0;
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Payment Reference</label>
-                        <input type="text" name="payment_ref" class="form-control" placeholder="e.g., Bank Transfer #12345">
+                        <input aria-label="Payment ref" type="text" name="payment_ref" class="form-control" placeholder="e.g., Bank Transfer #12345">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Payment Date</label>
-                        <input type="date" name="payment_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Payment date" type="date" name="payment_date" class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
                     <button type="submit" class="btn btn-success btn-lg" data-aps-confirm="Process payout for selected users?"><i class="fas fa-paper-plane me-1"></i>Process Payout</button>
                 </form>

@@ -704,7 +704,7 @@ $base = BASE_URL;
                         <div class="field-group" id="fg-name">
                             <label for="regName">Full Name <span class="req">*</span></label>
                             <div class="input-wrap">
-                                <input type="text" class="form-control" name="name" id="regName" placeholder="e.g. Rahul Sharma" value="<?php echo htmlspecialchars($old['name'] ?? $old['full_name'] ?? ''); ?>" required autocomplete="name">
+                                <input aria-label="Name" type="text" class="form-control" name="name" id="regName" placeholder="e.g. Rahul Sharma" value="<?php echo htmlspecialchars($old['name'] ?? $old['full_name'] ?? ''); ?>" required autocomplete="name">
                                 <i class="fas fa-user field-icon"></i>
                             </div>
                             <div class="field-msg" id="msg-name"></div>
@@ -715,7 +715,7 @@ $base = BASE_URL;
                                 <div class="field-group" id="fg-email">
                                     <label for="regEmail">Email <span class="req">*</span></label>
                                     <div class="input-wrap">
-                                        <input type="email" class="form-control" name="email" id="regEmail" placeholder="you@example.com" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required autocomplete="email">
+                                        <input aria-label="Email" type="email" class="form-control" name="email" id="regEmail" placeholder="you@example.com" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required autocomplete="email">
                                         <i class="fas fa-envelope field-icon"></i>
                                     </div>
                                     <div class="field-msg" id="msg-email"></div>
@@ -725,7 +725,7 @@ $base = BASE_URL;
                                 <div class="field-group" id="fg-phone">
                                     <label for="regPhone">Phone <span class="req">*</span></label>
                                     <div class="input-wrap">
-                                        <input type="tel" class="form-control" name="phone" id="regPhone" placeholder="10-digit mobile" pattern="[0-9]{10}" maxlength="10" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" required autocomplete="tel">
+                                        <input aria-label="Phone" type="tel" class="form-control" name="phone" id="regPhone" placeholder="10-digit mobile" pattern="[0-9]{10}" maxlength="10" value="<?php echo htmlspecialchars($old['phone'] ?? ''); ?>" required autocomplete="tel">
                                         <i class="fas fa-phone field-icon"></i>
                                     </div>
                                     <div class="field-msg" id="msg-phone"></div>
@@ -743,7 +743,7 @@ $base = BASE_URL;
                                 <div class="field-group" id="fg-password">
                                     <label for="regPassword">Password <span class="req">*</span></label>
                                     <div class="input-wrap">
-                                        <input type="password" class="form-control" name="password" id="regPassword" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password">
+                                        <input aria-label="Password" type="password" class="form-control" name="password" id="regPassword" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password">
                                         <i class="fas fa-lock field-icon"></i>
                                         <button type="button" class="pwd-toggle" onclick="togglePwd('regPassword', this)" tabindex="-1" aria-label="Toggle password visibility"><i class="fas fa-eye"></i></button>
                                     </div>
@@ -757,7 +757,7 @@ $base = BASE_URL;
                                 <div class="field-group" id="fg-confirm">
                                     <label for="regConfirm">Confirm Password <span class="req">*</span></label>
                                     <div class="input-wrap">
-                                        <input type="password" class="form-control" name="confirm_password" id="regConfirm" placeholder="Re-enter password" required autocomplete="new-password">
+                                        <input aria-label="Confirm password" type="password" class="form-control" name="confirm_password" id="regConfirm" placeholder="Re-enter password" required autocomplete="new-password">
                                         <i class="fas fa-check-double field-icon"></i>
                                         <button type="button" class="pwd-toggle" onclick="togglePwd('regConfirm', this)" tabindex="-1" aria-label="Toggle password visibility"><i class="fas fa-eye"></i></button>
                                     </div>
@@ -775,7 +775,7 @@ $base = BASE_URL;
                             <div class="field-group">
                                 <label>Referral Code <span class="opt">(optional)</span></label>
                                 <div class="input-wrap">
-                                    <input type="text" class="form-control" name="referral_code" id="refCode" placeholder="Got a code? Enter it here" value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
+                                    <input aria-label="Referral code" type="text" class="form-control" name="referral_code" id="refCode" placeholder="Got a code? Enter it here" value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
                                     <i class="fas fa-ticket field-icon"></i>
                                 </div>
                             </div>
@@ -800,7 +800,7 @@ $base = BASE_URL;
                             <div class="field-group" id="fg-ref-agent">
                                 <label for="regRefAgent">Referral Code <span class="req">*</span></label>
                                 <div class="input-wrap">
-                                    <input type="text" class="form-control" name="referral_code" id="regRefAgent" placeholder="Enter referrer's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
+                                    <input aria-label="Referral code" type="text" class="form-control" name="referral_code" id="regRefAgent" placeholder="Enter referrer's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
                                     <i class="fas fa-ticket field-icon"></i>
                                 </div>
                                 <div class="field-msg error" id="msg-ref-agent"><i class="fas fa-info-circle"></i> Required to join as Agent</div>
@@ -828,7 +828,7 @@ $base = BASE_URL;
                             <div class="field-group" id="fg-sponsor">
                                 <label for="sponsorCode">Sponsor Code <span class="req">*</span></label>
                                 <div class="input-wrap">
-                                    <input type="text" class="form-control" name="sponsor_code" id="sponsorCode" placeholder="Enter your sponsor's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
+                                    <input aria-label="Sponsor code" type="text" class="form-control" name="sponsor_code" id="sponsorCode" placeholder="Enter your sponsor's code" required value="<?php echo htmlspecialchars($ref ?? ''); ?>" autocomplete="off">
                                     <i class="fas fa-link field-icon"></i>
                                 </div>
                                 <div class="sponsor-box">

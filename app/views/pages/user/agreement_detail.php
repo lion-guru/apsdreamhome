@@ -282,7 +282,7 @@ $customerName = htmlspecialchars($agreement['customer_name'] ?? ($user['name'] ?
                     <i class="fas fa-info-circle me-2"></i><?= __('user_agreement_detail_sign_disclaimer', null, 'By clicking "I Agree" below, you acknowledge that you have read and agree to all terms and conditions of this') ?> <?= $type ?>.
                 </div>
                 <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="agreeCheck" >
+                    <input aria-label="Agree check" class="form-check-input" type="checkbox" id="agreeCheck" >
                     <label class="form-check-label fw-semibold" for="agreeCheck" >
                         <?= __('user_agreement_detail_i_agree', null, 'I have read, understood, and agree to all the terms and conditions of this agreement.') ?>
                     </label>

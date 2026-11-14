@@ -10,15 +10,15 @@
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-3">
                             <label class="form-label">Current Password</label>
-                            <input type="password" name="current_password" class="form-control" required>
+                            <input aria-label="Current password" type="password" name="current_password" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">New Password</label>
-                            <input type="password" name="new_password" class="form-control" required minlength="8">
+                            <input aria-label="New password" type="password" name="new_password" class="form-control" required minlength="8">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Confirm New Password</label>
-                            <input type="password" name="confirm_password" class="form-control" required minlength="8">
+                            <input aria-label="Confirm password" type="password" name="confirm_password" class="form-control" required minlength="8">
                         </div>
                         
 <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>

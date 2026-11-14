@@ -62,19 +62,19 @@
             
             <div class="mb-3">
                 <label class="form-label">Select CSV File</label>
-                <input type="file" name="csv_file" id="csv_file" class="form-control" accept=".csv" required>
+                <input aria-label="Csv file" type="file" name="csv_file" id="csv_file" class="form-control" accept=".csv" required>
                 <div class="form-text">Maximum file size: 2MB. UTF-8 encoding recommended.</div>
             </div>
 
             <div class="mb-3">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="skip_duplicates" id="skip_duplicates" value="1" checked>
+                    <input aria-label="Skip duplicates" class="form-check-input" type="checkbox" name="skip_duplicates" id="skip_duplicates" value="1" checked>
                     <label class="form-check-label" for="skip_duplicates">
                         Skip duplicate emails (don't fail on existing emails)
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="send_welcome" id="send_welcome" value="1">
+                    <input aria-label="Send welcome" class="form-check-input" type="checkbox" name="send_welcome" id="send_welcome" value="1">
                     <label class="form-check-label" for="send_welcome">
                         Send welcome email to imported users
                     </label>

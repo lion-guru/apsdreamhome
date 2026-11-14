@@ -13,7 +13,7 @@
                     <option value="all">All</option>
                 </select>
                 <label class="form-check form-check-inline me-2">
-                    <input type="checkbox" name="dry_run" class="form-check-input" value="1">
+                    <input aria-label="Dry run" type="checkbox" name="dry_run" class="form-check-input" value="1">
                     <span class="form-check-label small">Dry Run</span>
                 </label>
                 <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-play me-1"></i>Run Cron</button>

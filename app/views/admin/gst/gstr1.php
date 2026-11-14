@@ -30,7 +30,7 @@ $csrf = $this->getCsrfToken();
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                 <div class="col-md-4">
                     <label class="form-label">Return Period</label>
-                    <input type="month" name="period" class="form-control" value="<?= htmlspecialchars($period) ?>" required>
+                    <input aria-label="Period" type="month" name="period" class="form-control" value="<?= htmlspecialchars($period) ?>" required>
                 </div>
                 <div class="col-md-4 d-flex gap-2">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-search me-1"></i> Load Data</button>

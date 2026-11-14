@@ -198,7 +198,7 @@ $statusMap = [
                                 <div class="d-flex gap-2">
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
                                         <label class="btn btn-outline-warning btn-sm">
-                                            <input type="radio" name="rating" value="<?= $i ?>" <?= $i === 5 ? 'checked' : '' ?> class="d-none">
+                                            <input aria-label="Rating" type="radio" name="rating" value="<?= $i ?>" <?= $i === 5 ? 'checked' : '' ?> class="d-none">
                                             <i class="fas fa-star"></i> <?= $i ?>
                                         </label>
                                     <?php endfor; ?>
@@ -232,11 +232,11 @@ $statusMap = [
                             <div class="row g-2">
                                 <div class="col-md-6">
                                     <label class="form-label"><?= __('assoc_sv_new_date', [], 'New Date') ?></label>
-                                    <input type="date" class="form-control" name="new_date" min="<?= date('Y-m-d') ?>" required>
+                                    <input aria-label="New date" type="date" class="form-control" name="new_date" min="<?= date('Y-m-d') ?>" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label"><?= __('assoc_sv_new_time', [], 'New Time') ?></label>
-                                    <input type="time" class="form-control" name="new_time" required>
+                                    <input aria-label="New time" type="time" class="form-control" name="new_time" required>
                                 </div>
                             </div>
                         </div>

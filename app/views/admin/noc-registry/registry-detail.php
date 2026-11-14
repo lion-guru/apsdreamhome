@@ -137,7 +137,7 @@ $stamp_duty_calc = $stamp_duty_calc ?? [];
 
                         <div class="mb-3" id="regNoGroup" >
                             <label class="form-label small fw-semibold"><?= __('admin_registration_number') ?></label>
-                            <input type="text" name="registration_no" class="form-control" placeholder="e.g. REG-2026-001234">
+                            <input aria-label="Registration no" type="text" name="registration_no" class="form-control" placeholder="e.g. REG-2026-001234">
                         </div>
 
                         <div class="mb-3">

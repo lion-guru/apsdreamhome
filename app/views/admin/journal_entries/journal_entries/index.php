@@ -22,7 +22,7 @@ $types = $types ?? ['manual', 'system', 'adjustment', 'closing'];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Search</label>
-                    <input type="text" name="search" class="form-control" value="<?= htmlspecialchars($filters['search']) ?>" placeholder="Journal #, Reference, Description...">
+                    <input aria-label="Search" type="text" name="search" class="form-control" value="<?= htmlspecialchars($filters['search']) ?>" placeholder="Journal #, Reference, Description...">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Status</label>
@@ -44,11 +44,11 @@ $types = $types ?? ['manual', 'system', 'adjustment', 'closing'];
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">From Date</label>
-                    <input type="date" name="from_date" class="form-control" value="<?= htmlspecialchars($filters['from_date']) ?>">
+                    <input aria-label="From date" type="date" name="from_date" class="form-control" value="<?= htmlspecialchars($filters['from_date']) ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">To Date</label>
-                    <input type="date" name="to_date" class="form-control" value="<?= htmlspecialchars($filters['to_date']) ?>">
+                    <input aria-label="To date" type="date" name="to_date" class="form-control" value="<?= htmlspecialchars($filters['to_date']) ?>">
                 </div>
                 <div class="col-md-1 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">Filter</button>

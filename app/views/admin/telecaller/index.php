@@ -100,7 +100,7 @@ $telecallerFilter = $telecallerFilter ?? '';
             <form method="GET" action="<?php echo BASE_URL; ?>/admin/telecaller" class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Date</label>
-                    <input type="date" name="date" class="form-control" value="<?php echo htmlspecialchars($dateFilter ?? ''); ?>">
+                    <input aria-label="Date" type="date" name="date" class="form-control" value="<?php echo htmlspecialchars($dateFilter ?? ''); ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Telecaller</label>
@@ -217,39 +217,39 @@ $telecallerFilter = $telecallerFilter ?? '';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Date <span class="text-danger">*</span></label>
-                            <input type="date" name="task_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+                            <input aria-label="Task date" type="date" name="task_date" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Leads Assigned</label>
-                            <input type="number" name="total_leads_assigned" class="form-control" value="0" min="0">
+                            <input aria-label="Total leads assigned" type="number" name="total_leads_assigned" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Calls Made</label>
-                            <input type="number" name="calls_made" class="form-control" value="0" min="0">
+                            <input aria-label="Calls made" type="number" name="calls_made" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Calls Connected</label>
-                            <input type="number" name="calls_connected" class="form-control" value="0" min="0">
+                            <input aria-label="Calls connected" type="number" name="calls_connected" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Leads Converted</label>
-                            <input type="number" name="leads_converted" class="form-control" value="0" min="0">
+                            <input aria-label="Leads converted" type="number" name="leads_converted" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Callbacks</label>
-                            <input type="number" name="leads_callback" class="form-control" value="0" min="0">
+                            <input aria-label="Leads callback" type="number" name="leads_callback" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Not Interested</label>
-                            <input type="number" name="leads_not_interested" class="form-control" value="0" min="0">
+                            <input aria-label="Leads not interested" type="number" name="leads_not_interested" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Pending Calls</label>
-                            <input type="number" name="pending_calls" class="form-control" value="0" min="0">
+                            <input aria-label="Pending calls" type="number" name="pending_calls" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Target Calls</label>
-                            <input type="number" name="target_calls" class="form-control" value="0" min="0">
+                            <input aria-label="Target calls" type="number" name="target_calls" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-12">
                             <label class="form-label">Notes</label>

@@ -52,17 +52,17 @@
         <form action="<?php echo BASE_URL; ?>/admin/login" method="post" id="adminLoginForm" class="admin-login-form" autocomplete="off" novalidate>
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required autofocus autocomplete="username">
+                <input aria-label="Username" type="text" class="form-control" id="username" name="username" required autofocus autocomplete="username">
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
+                <input aria-label="Password" type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
             </div>
 
             <?php if (isset($captcha_question)): ?>
                 <div class="mb-3">
                     <label for="captcha_answer" class="form-label">Security Question: <?php echo htmlspecialchars($captcha_question ?? ''); ?></label>
-                    <input type="number" class="form-control" id="captcha_answer" name="captcha_answer" required>
+                    <input aria-label="Captcha answer" type="number" class="form-control" id="captcha_answer" name="captcha_answer" required>
                 </div>
             <?php endif; ?>
 

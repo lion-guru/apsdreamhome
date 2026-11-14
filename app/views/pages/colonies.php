@@ -234,15 +234,15 @@ function getAmenityIcon($amenity) {
                     <input type="hidden" id="colony_id" name="colony_id">
                     <div class="mb-3">
                         <label class="form-label"><?= __('colonies_form_name') ?></label>
-                        <input type="text" class="form-control" name="name" required>
+                        <input aria-label="Name" type="text" class="form-control" name="name" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= __('colonies_form_phone') ?></label>
-                        <input type="tel" class="form-control" name="phone" required>
+                        <input aria-label="Phone" type="tel" class="form-control" name="phone" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= __('colonies_form_email') ?></label>
-                        <input type="email" class="form-control" name="email">
+                        <input aria-label="Email" type="email" class="form-control" name="email">
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= __('colonies_form_message') ?></label>

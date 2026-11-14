@@ -125,7 +125,7 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                     <div class="mb-3">
                         <label class="form-label">Upload New Avatar</label>
-                        <input type="file" name="avatar" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif" id="avatarInput" required>
+                        <input aria-label="Avatar" type="file" name="avatar" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif" id="avatarInput" required>
                         <div class="form-text">Max 5MB. JPG, PNG, WebP, GIF</div>
                     </div>
                     <div class="d-flex gap-2">
@@ -147,10 +147,10 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
                 <form id="profileForm">
                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                     <div class="row g-3">
-                        <div class="col-md-6"><label class="form-label">Name</label><input type="text" class="form-control" name="name" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></div>
-                        <div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></div>
-                        <div class="col-md-6"><label class="form-label">Phone</label><input type="text" class="form-control" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>"></div>
-                        <div class="col-md-6"><label class="form-label">City</label><input type="text" class="form-control" name="city" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></div>
+                        <div class="col-md-6"><label class="form-label">Name</label><input aria-label="Name" type="text" class="form-control" name="name" value="<?= htmlspecialchars($user['name'] ?? '') ?>"></div>
+                        <div class="col-md-6"><label class="form-label">Email</label><input aria-label="Email" type="email" class="form-control" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>"></div>
+                        <div class="col-md-6"><label class="form-label">Phone</label><input aria-label="Phone" type="text" class="form-control" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>"></div>
+                        <div class="col-md-6"><label class="form-label">City</label><input aria-label="City" type="text" class="form-control" name="city" value="<?= htmlspecialchars($user['city'] ?? '') ?>"></div>
                         <div class="col-md-6">
                             <label class="form-label">Role</label>
                             <select aria-label="Role" class="form-select" name="role">
@@ -167,7 +167,7 @@ if (in_array($user['role'] ?? '', ['associate','agent','telecaller'])) $tabs['ml
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="col-md-6"><label class="form-label">New Password (leave blank to keep)</label><input type="text" class="form-control" name="password" placeholder="Min 6 chars"></div>
+                        <div class="col-md-6"><label class="form-label">New Password (leave blank to keep)</label><input aria-label="Password" type="text" class="form-control" name="password" placeholder="Min 6 chars"></div>
                         <div class="col-12"><label class="form-label">Address</label><textarea aria-label="Address" class="form-control" name="address" rows="2"><?= htmlspecialchars($user['address'] ?? '') ?></textarea></div>
                     </div>
                     <div class="mt-3"><button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Save Changes</button></div>
@@ -243,7 +243,7 @@ function deleteAvatar() {
                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                     <div class="mb-3">
                         <label class="form-label">New Sponsor ID</label>
-                        <input type="number" class="form-control" name="new_sponsor_id" required min="1" placeholder="Enter user ID">
+                        <input aria-label="New sponsor id" type="number" class="form-control" name="new_sponsor_id" required min="1" placeholder="Enter user ID">
                     </div>
                     <button type="submit" class="btn btn-warning"><i class="fas fa-exchange-alt me-2"></i>Change Sponsor</button>
                 </form>
@@ -259,7 +259,7 @@ function deleteAvatar() {
                     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                     <div class="mb-3">
                         <label class="form-label">New Referral Code</label>
-                        <input type="text" class="form-control" name="new_referral_code" required minlength="3" maxlength="20" value="<?= htmlspecialchars($user['referral_code'] ?? '') ?>">
+                        <input aria-label="New referral code" type="text" class="form-control" name="new_referral_code" required minlength="3" maxlength="20" value="<?= htmlspecialchars($user['referral_code'] ?? '') ?>">
                     </div>
                     <button type="submit" class="btn btn-info"><i class="fas fa-code me-2"></i>Change Code</button>
                 </form>

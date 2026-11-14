@@ -45,7 +45,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
             <div class="row mb-3">
                 <div class="col-md-2">
                     <label class="cp-label">Sale Amount (₹)</label>
-                    <input type="number" name="sale_amount" class="cp-input" value="<?= htmlspecialchars($_POST['sale_amount'] ?? 1500000, ENT_QUOTES, 'UTF-8') ?>" step="10000" min="0">
+                    <input aria-label="Sale amount" type="number" name="sale_amount" class="cp-input" value="<?= htmlspecialchars($_POST['sale_amount'] ?? 1500000, ENT_QUOTES, 'UTF-8') ?>" step="10000" min="0">
                 </div>
                 <div class="col-md-2">
                     <label class="cp-label">Plan A</label>
@@ -108,21 +108,21 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 <?php if ($simMode === 'referral_sweep'): ?>
                 <div class="col-md-3">
                     <label class="cp-label">Candidate Customer % (guard ≤5)</label>
-                    <input type="number" name="candidate_pct" class="cp-input" value="<?= htmlspecialchars($_POST['candidate_pct'] ?? 2.0, ENT_QUOTES, 'UTF-8') ?>" step="0.1" min="0" max="5">
+                    <input aria-label="Candidate pct" type="number" name="candidate_pct" class="cp-input" value="<?= htmlspecialchars($_POST['candidate_pct'] ?? 2.0, ENT_QUOTES, 'UTF-8') ?>" step="0.1" min="0" max="5">
                 </div>
                 <?php else: ?>
                 <div class="col-md-3">
                     <label class="cp-label">Candidate L1 % (guard L1+L2≤30)</label>
-                    <input type="number" name="candidate_l1" class="cp-input" value="<?= htmlspecialchars($_POST['candidate_l1'] ?? 20.0, ENT_QUOTES, 'UTF-8') ?>" step="0.5" min="0" max="30">
+                    <input aria-label="Candidate l1" type="number" name="candidate_l1" class="cp-input" value="<?= htmlspecialchars($_POST['candidate_l1'] ?? 20.0, ENT_QUOTES, 'UTF-8') ?>" step="0.5" min="0" max="30">
                 </div>
                 <div class="col-md-3">
                     <label class="cp-label">Candidate L2 %</label>
-                    <input type="number" name="candidate_l2" class="cp-input" value="<?= htmlspecialchars($_POST['candidate_l2'] ?? 5.0, ENT_QUOTES, 'UTF-8') ?>" step="0.5" min="0" max="30">
+                    <input aria-label="Candidate l2" type="number" name="candidate_l2" class="cp-input" value="<?= htmlspecialchars($_POST['candidate_l2'] ?? 5.0, ENT_QUOTES, 'UTF-8') ?>" step="0.5" min="0" max="30">
                 </div>
                 <?php endif; ?>
                 <div class="col-md-3">
                     <label class="cp-label">History Window (days)</label>
-                    <input type="number" name="window_days" class="cp-input" value="<?= htmlspecialchars($_POST['window_days'] ?? 90, ENT_QUOTES, 'UTF-8') ?>" step="30" min="7" max="365">
+                    <input aria-label="Window days" type="number" name="window_days" class="cp-input" value="<?= htmlspecialchars($_POST['window_days'] ?? 90, ENT_QUOTES, 'UTF-8') ?>" step="30" min="7" max="365">
                 </div>
                 <div class="col-md-3">
                     <label class="cp-label">&nbsp;</label>
@@ -356,7 +356,7 @@ $simMode = $_POST['sim_mode'] ?? 'single';
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label text-white">Preset Name</label>
-                        <input type="text" name="name" class="cp-input" required placeholder="e.g., Diwali 2026 Push, Monsoon Slowdown">
+                        <input aria-label="Name" type="text" name="name" class="cp-input" required placeholder="e.g., Diwali 2026 Push, Monsoon Slowdown">
                     </div>
                     <div class="mb-3">
                         <label class="form-label text-white">Description</label>

@@ -11,24 +11,24 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="paCurrent">Current Property Value (₹)</label>
-                                <input type="number" class="form-control" id="paCurrent" value="5000000" oninput="calcPA()">
+                                <input aria-label="Pa current" type="number" class="form-control" id="paCurrent" value="5000000" oninput="calcPA()">
                                 <small class="text-muted">Aaj ki market value</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="paRate">Annual Appreciation Rate (%)</label>
-                                <input type="range" class="form-range" id="paRate" min="1" max="15" value="7" step="0.5" oninput="document.getElementById('paRateVal').textContent=this.value+'%'; calcPA()">
+                                <input aria-label="Pa rate" type="range" class="form-range" id="paRate" min="1" max="15" value="7" step="0.5" oninput="document.getElementById('paRateVal').textContent=this.value+'%'; calcPA()">
                                 <div class="d-flex justify-content-between"><small class="text-muted">1%</small><span class="badge bg-primary" id="paRateVal">7%</span><small class="text-muted">15%</small></div>
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="paYears">Time Period (Years)</label>
-                                <input type="range" class="form-range" id="paYears" min="1" max="30" value="10" step="1" oninput="document.getElementById('paYearsVal').textContent=this.value+' yrs'; calcPA()">
+                                <input aria-label="Pa years" type="range" class="form-range" id="paYears" min="1" max="30" value="10" step="1" oninput="document.getElementById('paYearsVal').textContent=this.value+' yrs'; calcPA()">
                                 <div class="d-flex justify-content-between"><small class="text-muted">1 yr</small><span class="badge bg-success" id="paYearsVal">10 yrs</span><small class="text-muted">30 yrs</small></div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="paRent">Expected Rent Yield (%) <small class="text-muted">(optional)</small></label>
-                                <input type="number" class="form-control" id="paRent" value="3" step="0.1" oninput="calcPA()">
+                                <input aria-label="Pa rent" type="number" class="form-control" id="paRent" value="3" step="0.1" oninput="calcPA()">
                                 <small class="text-muted">Salana kiraya se return</small>
                             </div>
                         </div>

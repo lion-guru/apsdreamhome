@@ -46,7 +46,7 @@ $customers = $customers ?? [];
     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="fas fa-address-book me-2 text-primary"></i><?= __('assoc_cust_title', [], 'My Customers') ?></h5>
         <div>
-            <input type="text" id="searchCustomer" class="form-control form-control-sm" placeholder="<?= __('assoc_cust_search', [], 'Search customers...') ?>" oninput="filterCustomers()">
+            <input aria-label="Search customer" type="text" id="searchCustomer" class="form-control form-control-sm" placeholder="<?= __('assoc_cust_search', [], 'Search customers...') ?>" oninput="filterCustomers()">
         </div>
     </div>
     <div class="card-body">

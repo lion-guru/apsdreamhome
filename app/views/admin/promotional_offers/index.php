@@ -220,7 +220,7 @@ $today = date('Y-m-d');
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label class="form-label fw-bold">Offer Campaign Title <span class="text-danger">*</span></label>
-                            <input name="title" class="form-control" maxlength="255" required placeholder="e.g. Navratri Shubh Labh Concession">
+                            <input aria-label="Title" name="title" class="form-control" maxlength="255" required placeholder="e.g. Navratri Shubh Labh Concession">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Festival / Tag</label>
@@ -239,7 +239,7 @@ $today = date('Y-m-d');
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Promo Code (कस्टमर कूपन कोड)</label>
-                            <input name="promo_code" class="form-control text-uppercase" maxlength="50" placeholder="e.g. FESTIVE21, SUBHLABH5">
+                            <input aria-label="Promo code" name="promo_code" class="form-control text-uppercase" maxlength="50" placeholder="e.g. FESTIVE21, SUBHLABH5">
                             <small class="text-muted">Unique alphanumeric code entered during plot booking.</small>
                         </div>
                         <div class="col-md-6">
@@ -264,31 +264,31 @@ $today = date('Y-m-d');
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold" id="label_discount_value">Concession Value (₹)</label>
-                            <input name="discount_value" id="modal_discount_value" type="number" step="0.01" class="form-control" value="21000" placeholder="Amount in ₹">
+                            <input aria-label="Discount value" name="discount_value" id="modal_discount_value" type="number" step="0.01" class="form-control" value="21000" placeholder="Amount in ₹">
                             <div class="d-none" id="div_discount_percentage">
                                 <label class="form-label fw-bold mt-2">Discount Percentage (%)</label>
-                                <input name="discount_percentage" id="modal_discount_pct" type="number" step="0.01" min="0" max="100" class="form-control" value="5">
+                                <input aria-label="Discount percentage" name="discount_percentage" id="modal_discount_pct" type="number" step="0.01" min="0" max="100" class="form-control" value="5">
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Minimum Plot Booking Value (₹)</label>
-                            <input name="min_booking_amount" type="number" step="0.01" class="form-control" value="100000" placeholder="e.g. 100000">
+                            <input aria-label="Min booking amount" name="min_booking_amount" type="number" step="0.01" class="form-control" value="100000" placeholder="e.g. 100000">
                             <small class="text-muted">Minimum booking token or deal price required to apply this offer.</small>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Max Redemptions Limit</label>
-                            <input name="max_redemptions" type="number" class="form-control" value="100" placeholder="0 for Unlimited">
+                            <input aria-label="Max redemptions" name="max_redemptions" type="number" class="form-control" value="100" placeholder="0 for Unlimited">
                             <small class="text-muted">Cap on total customer bookings using this promo code.</small>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Valid Starting From</label>
-                            <input name="valid_from" type="date" class="form-control" value="<?= date('Y-m-d') ?>">
+                            <input aria-label="Valid from" name="valid_from" type="date" class="form-control" value="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Valid Until (Expiry Date)</label>
-                            <input name="valid_until" type="date" class="form-control" value="<?= date('Y-m-d', strtotime('+45 days')) ?>">
+                            <input aria-label="Valid until" name="valid_until" type="date" class="form-control" value="<?= date('Y-m-d', strtotime('+45 days')) ?>">
                         </div>
 
                         <div class="col-12">

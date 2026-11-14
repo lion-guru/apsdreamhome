@@ -169,11 +169,11 @@ $statusBadges = [
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= __('assoc_doc_upload_name', [], 'Document Title') ?></label>
-                        <input type="text" name="title" class="form-control" placeholder="e.g. My Aadhaar Card" required>
+                        <input aria-label="Title" type="text" name="title" class="form-control" placeholder="e.g. My Aadhaar Card" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= __('assoc_doc_upload_file', [], 'Select File') ?></label>
-                        <input type="file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                        <input aria-label="Document file" type="file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
                         <small class="text-muted">PDF, JPG, PNG, DOC/DOCX — Max 10MB</small>
                     </div>
                 </div>

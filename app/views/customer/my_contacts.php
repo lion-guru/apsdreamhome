@@ -25,11 +25,11 @@ $stages = ['new' => 'New', 'contacted' => 'Contacted', 'closed' => 'Closed'];
         <div class="card-body">
             <form method="POST" action="<?= BASE_URL ?>/user/contacts/store" class="row g-2">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-                <div class="col-md-3"><input type="text" name="name" class="form-control" required maxlength="150" placeholder="<?= __('user_contacts_name', [], 'Full name *') ?>"></div>
-                <div class="col-md-3"><input type="text" name="phone" class="form-control" required maxlength="20" placeholder="<?= __('user_contacts_phone', [], 'Mobile *') ?>"></div>
-                <div class="col-md-3"><input type="email" name="email" class="form-control" maxlength="150" placeholder="<?= __('user_contacts_email', [], 'Email') ?>"></div>
-                <div class="col-md-3"><input type="text" name="property_ref" class="form-control" maxlength="150" placeholder="<?= __('user_contacts_prop', [], 'Property ref') ?>"></div>
-                <div class="col-12"><input type="text" name="notes" class="form-control" placeholder="<?= __('user_contacts_notes', [], 'Notes') ?>"></div>
+                <div class="col-md-3"><input aria-label="Name" type="text" name="name" class="form-control" required maxlength="150" placeholder="<?= __('user_contacts_name', [], 'Full name *') ?>"></div>
+                <div class="col-md-3"><input aria-label="Phone" type="text" name="phone" class="form-control" required maxlength="20" placeholder="<?= __('user_contacts_phone', [], 'Mobile *') ?>"></div>
+                <div class="col-md-3"><input aria-label="Email" type="email" name="email" class="form-control" maxlength="150" placeholder="<?= __('user_contacts_email', [], 'Email') ?>"></div>
+                <div class="col-md-3"><input aria-label="Property ref" type="text" name="property_ref" class="form-control" maxlength="150" placeholder="<?= __('user_contacts_prop', [], 'Property ref') ?>"></div>
+                <div class="col-12"><input aria-label="Notes" type="text" name="notes" class="form-control" placeholder="<?= __('user_contacts_notes', [], 'Notes') ?>"></div>
                 <div class="col-12"><button type="submit" class="btn btn-primary"><i class="fas fa-plus me-1"></i><?= __('user_contacts_add_btn', [], 'Add Contact') ?></button></div>
             </form>
         </div>

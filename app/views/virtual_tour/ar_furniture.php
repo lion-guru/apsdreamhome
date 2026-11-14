@@ -36,15 +36,15 @@
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label">Width (ft)</label>
-                                <input type="number" name="width" class="form-control" value="12" min="5" max="50" required>
+                                <input aria-label="Width" type="number" name="width" class="form-control" value="12" min="5" max="50" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Length (ft)</label>
-                                <input type="number" name="length" class="form-control" value="15" min="5" max="50" required>
+                                <input aria-label="Length" type="number" name="length" class="form-control" value="15" min="5" max="50" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Height (ft)</label>
-                                <input type="number" name="height" class="form-control" value="10" min="8" max="20" required>
+                                <input aria-label="Height" type="number" name="height" class="form-control" value="10" min="8" max="20" required>
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-info"><i class="fas fa-cube me-2"></i>Visualize Room</button>

@@ -123,10 +123,10 @@ $orderId = 'ORD_' . strtoupper(bin2hex(random_bytes(5)));
                     form.method = 'POST';
                     form.action = '/checkout/verify';
                     form.innerHTML =
-                        '<input name="razorpay_order_id" value="' + response.razorpay_order_id + '">' +
-                        '<input name="razorpay_payment_id" value="' + response.razorpay_payment_id + '">' +
-                        '<input name="razorpay_signature" value="' + response.razorpay_signature + '">' +
-                        '<input name="csrf_token" value="' + csrf + '">';
+                        '<input aria-label="Razorpay order id" name="razorpay_order_id" value="' + response.razorpay_order_id + '">' +
+                        '<input aria-label="Razorpay payment id" name="razorpay_payment_id" value="' + response.razorpay_payment_id + '">' +
+                        '<input aria-label="Razorpay signature" name="razorpay_signature" value="' + response.razorpay_signature + '">' +
+                        '<input aria-label="Csrf token" name="csrf_token" value="' + csrf + '">';
                     document.body.appendChild(form);
                     form.submit();
                 },

@@ -124,7 +124,7 @@ $active_page = 'menu-permissions';
                                                         <td><code class="small"><?= htmlspecialchars($item['url'] ?? '') ?></code></td>
                                                         <td class="text-center">
                                                             <div class="form-check form-switch d-inline-block">
-                                                                <input class="form-check-input perm-check" type="checkbox" role="switch"
+                                                                <input aria-label="Can view" class="form-check-input perm-check" type="checkbox" role="switch"
                                                                        name="can_view" data-perm="can_view"
                                                                        data-role="<?= $roleKey ?>" data-menu-id="<?= $item['id'] ?>"
                                                                        <?= $perms['can_view'] ? 'checked' : '' ?>
@@ -133,7 +133,7 @@ $active_page = 'menu-permissions';
                                                         </td>
                                                         <td class="text-center">
                                                             <div class="form-check form-switch d-inline-block">
-                                                                <input class="form-check-input perm-check" type="checkbox" role="switch"
+                                                                <input aria-label="Can create" class="form-check-input perm-check" type="checkbox" role="switch"
                                                                        name="can_create" data-perm="can_create"
                                                                        data-role="<?= $roleKey ?>" data-menu-id="<?= $item['id'] ?>"
                                                                        <?= $perms['can_create'] ? 'checked' : '' ?>
@@ -142,7 +142,7 @@ $active_page = 'menu-permissions';
                                                         </td>
                                                         <td class="text-center">
                                                             <div class="form-check form-switch d-inline-block">
-                                                                <input class="form-check-input perm-check" type="checkbox" role="switch"
+                                                                <input aria-label="Can edit" class="form-check-input perm-check" type="checkbox" role="switch"
                                                                        name="can_edit" data-perm="can_edit"
                                                                        data-role="<?= $roleKey ?>" data-menu-id="<?= $item['id'] ?>"
                                                                        <?= $perms['can_edit'] ? 'checked' : '' ?>
@@ -151,7 +151,7 @@ $active_page = 'menu-permissions';
                                                         </td>
                                                         <td class="text-center">
                                                             <div class="form-check form-switch d-inline-block">
-                                                                <input class="form-check-input perm-check" type="checkbox" role="switch"
+                                                                <input aria-label="Can delete" class="form-check-input perm-check" type="checkbox" role="switch"
                                                                        name="can_delete" data-perm="can_delete"
                                                                        data-role="<?= $roleKey ?>" data-menu-id="<?= $item['id'] ?>"
                                                                        <?= $perms['can_delete'] ? 'checked' : '' ?>
@@ -514,22 +514,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     ${item.name}
                 </td>
                 <td class="text-center">
-                    <input type="checkbox" class="user-perm-check" data-perm="can_view" 
+                    <input aria-label="user id" type="checkbox" class="user-perm-check" data-perm="can_view" 
                            data-user-id="${userId}" data-menu-id="${item.id}"
                            ${perm.can_view ? 'checked' : ''}>
                 </td>
                 <td class="text-center">
-                    <input type="checkbox" class="user-perm-check" data-perm="can_create" 
+                    <input aria-label="user id" type="checkbox" class="user-perm-check" data-perm="can_create" 
                            data-user-id="${userId}" data-menu-id="${item.id}"
                            ${perm.can_create ? 'checked' : ''} ${!perm.can_view ? 'disabled' : ''}>
                 </td>
                 <td class="text-center">
-                    <input type="checkbox" class="user-perm-check" data-perm="can_edit" 
+                    <input aria-label="user id" type="checkbox" class="user-perm-check" data-perm="can_edit" 
                            data-user-id="${userId}" data-menu-id="${item.id}"
                            ${perm.can_edit ? 'checked' : ''} ${!perm.can_view ? 'disabled' : ''}>
                 </td>
                 <td class="text-center">
-                    <input type="checkbox" class="user-perm-check" data-perm="can_delete" 
+                    <input aria-label="user id" type="checkbox" class="user-perm-check" data-perm="can_delete" 
                            data-user-id="${userId}" data-menu-id="${item.id}"
                            ${perm.can_delete ? 'checked' : ''} ${!perm.can_view ? 'disabled' : ''}>
                 </td>

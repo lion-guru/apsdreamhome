@@ -499,15 +499,15 @@
     <?php echo CSRFProtection::csrfField(); ?>
                                 <div class="col-md-6">
                                     <label class="form-label">Your Name *</label>
-                                    <input type="text" class="form-control" name="name" required>
+                                    <input aria-label="Name" type="text" class="form-control" name="name" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Your Email *</label>
-                                    <input type="email" class="form-control" name="email" required>
+                                    <input aria-label="Email" type="email" class="form-control" name="email" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Phone Number *</label>
-                                    <input type="tel" class="form-control" name="phone" required>
+                                    <input aria-label="Phone" type="tel" class="form-control" name="phone" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Service Type *</label>

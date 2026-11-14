@@ -23,15 +23,15 @@ $commission = $price * $defaultRate / 100;
                 <div class="row mb-4">
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Property Price (₹)</label>
-                        <input type="text" class="form-control" id="calcPrice" value="<?= number_format($price) ?>" readonly>
+                        <input aria-label="Calc price" type="text" class="form-control" id="calcPrice" value="<?= number_format($price) ?>" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Commission Rate (%)</label>
-                        <input type="number" class="form-control" id="calcRate" value="<?= $defaultRate ?>" step="0.1" min="0" max="10" oninput="calculateCommission()">
+                        <input aria-label="Calc rate" type="number" class="form-control" id="calcRate" value="<?= $defaultRate ?>" step="0.1" min="0" max="10" oninput="calculateCommission()">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Commission Amount (₹)</label>
-                        <input type="text" class="form-control fw-bold text-success" id="calcAmount" value="₹<?= number_format($commission, 2) ?>" readonly>
+                        <input aria-label="Calc amount" type="text" class="form-control fw-bold text-success" id="calcAmount" value="₹<?= number_format($commission, 2) ?>" readonly>
                     </div>
                 </div>
                 <div class="row g-3">

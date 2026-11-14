@@ -21,15 +21,15 @@ $base = BASE_URL ?? '';
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
-                    <input type="text" name="name" class="form-control" required placeholder="Enter lead name">
+                    <input aria-label="Name" type="text" name="name" class="form-control" required placeholder="Enter lead name">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Phone <span class="text-danger">*</span></label>
-                    <input type="tel" name="phone" class="form-control" required placeholder="+91 XXXXX XXXXX" pattern="[+]?[0-9\s\-]{10,15}">
+                    <input aria-label="Phone" type="tel" name="phone" class="form-control" required placeholder="+91 XXXXX XXXXX" pattern="[+]?[0-9\s\-]{10,15}">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Email</label>
-                    <input type="email" name="email" class="form-control" placeholder="email@example.com">
+                    <input aria-label="Email" type="email" name="email" class="form-control" placeholder="email@example.com">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Source</label>
@@ -45,15 +45,15 @@ $base = BASE_URL ?? '';
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Budget (₹)</label>
-                    <input type="number" name="budget" class="form-control" placeholder="e.g. 5000000" min="0">
+                    <input aria-label="Budget" type="number" name="budget" class="form-control" placeholder="e.g. 5000000" min="0">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">City</label>
-                    <input type="text" name="city" class="form-control" placeholder="e.g. Lucknow">
+                    <input aria-label="City" type="text" name="city" class="form-control" placeholder="e.g. Lucknow">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Property Interest</label>
-                    <input type="text" name="property_interest" class="form-control" placeholder="e.g. 2BHK Apartment, Plot">
+                    <input aria-label="Property interest" type="text" name="property_interest" class="form-control" placeholder="e.g. 2BHK Apartment, Plot">
                 </div>
                 <div class="col-12">
                     <label class="form-label fw-semibold">Notes</label>

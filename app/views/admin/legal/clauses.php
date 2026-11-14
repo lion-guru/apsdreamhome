@@ -12,8 +12,8 @@ $categories = $categories ?? [];
         <div class="aps-cp-card-body">
             <form method="GET" class="row g-2 align-items-end">
                 <div class="col-md-3"><label class="form-label small">Category</label><select aria-label="Category id" name="category_id" class="form-select form-select-sm" onchange="this.form.submit()"><option value="">All</option><?php foreach ($categories as $c): ?><option value="<?= $c['id'] ?>" <?= ($_GET['category_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?></select></div>
-                <div class="col-md-3"><label class="form-label small">Tag</label><input type="text" name="tag" class="form-control form-control-sm" placeholder="Filter by tag..." value="<?= htmlspecialchars($_GET['tag'] ?? '') ?>"></div>
-                <div class="col-md-4"><label class="form-label small">Search</label><input type="text" name="search" class="form-control form-control-sm" placeholder="Search clauses..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"></div>
+                <div class="col-md-3"><label class="form-label small">Tag</label><input aria-label="Tag" type="text" name="tag" class="form-control form-control-sm" placeholder="Filter by tag..." value="<?= htmlspecialchars($_GET['tag'] ?? '') ?>"></div>
+                <div class="col-md-4"><label class="form-label small">Search</label><input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="Search clauses..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"></div>
                 <div class="col-md-1"><button class="btn btn-sm btn-outline-primary w-100">Filter</button></div>
             </form>
         </div>
@@ -58,10 +58,10 @@ $categories = $categories ?? [];
                                 <div class="modal-header"><h5 class="modal-title">Edit Clause</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                                 <div class="modal-body">
                                     <div class="row g-3">
-                                        <div class="col-md-6"><label class="form-label">Title</label><input type="text" name="title" class="form-control" value="<?= htmlspecialchars($cl['title'] ?? '') ?>" required></div>
+                                        <div class="col-md-6"><label class="form-label">Title</label><input aria-label="Title" type="text" name="title" class="form-control" value="<?= htmlspecialchars($cl['title'] ?? '') ?>" required></div>
                                         <div class="col-md-6"><label class="form-label">Category</label><select aria-label="Category id" name="category_id" class="form-select"><option value="">None</option><?php foreach ($categories as $c): ?><option value="<?= $c['id'] ?>" <?= ($cl['category_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?></select></div>
-                                        <div class="col-md-6"><label class="form-label">Tags (comma separated)</label><input type="text" name="tags" class="form-control" value="<?= htmlspecialchars($cl['tags'] ?? '') ?>"></div>
-                                        <div class="col-md-6"><label class="form-label">Sort Order</label><input type="number" name="sort_order" class="form-control" value="<?= (int)($cl['sort_order'] ?? 0) ?>"></div>
+                                        <div class="col-md-6"><label class="form-label">Tags (comma separated)</label><input aria-label="Tags" type="text" name="tags" class="form-control" value="<?= htmlspecialchars($cl['tags'] ?? '') ?>"></div>
+                                        <div class="col-md-6"><label class="form-label">Sort Order</label><input aria-label="Sort order" type="number" name="sort_order" class="form-control" value="<?= (int)($cl['sort_order'] ?? 0) ?>"></div>
                                         <div class="col-12"><label class="form-label">Content</label><textarea aria-label="Content" name="content" class="form-control" rows="6" required><?= htmlspecialchars($cl['content'] ?? '') ?></textarea></div>
                                     </div>
                                 </div>
@@ -87,10 +87,10 @@ $categories = $categories ?? [];
                 <div class="modal-header"><h5 class="modal-title">New Clause</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="row g-3">
-                        <div class="col-md-6"><label class="form-label">Title</label><input type="text" name="title" class="form-control" required></div>
+                        <div class="col-md-6"><label class="form-label">Title</label><input aria-label="Title" type="text" name="title" class="form-control" required></div>
                         <div class="col-md-6"><label class="form-label">Category</label><select aria-label="Category id" name="category_id" class="form-select"><option value="">None</option><?php foreach ($categories as $c): ?><option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?></select></div>
-                        <div class="col-md-6"><label class="form-label">Tags (comma separated)</label><input type="text" name="tags" class="form-control" placeholder="force-majeure,delay,liability"></div>
-                        <div class="col-md-6"><label class="form-label">Sort Order</label><input type="number" name="sort_order" class="form-control" value="0"></div>
+                        <div class="col-md-6"><label class="form-label">Tags (comma separated)</label><input aria-label="Tags" type="text" name="tags" class="form-control" placeholder="force-majeure,delay,liability"></div>
+                        <div class="col-md-6"><label class="form-label">Sort Order</label><input aria-label="Sort order" type="number" name="sort_order" class="form-control" value="0"></div>
                         <div class="col-12"><label class="form-label">Content</label><textarea aria-label="Content" name="content" class="form-control" rows="6" required></textarea></div>
                     </div>
                 </div>

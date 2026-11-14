@@ -179,15 +179,15 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="pay_ref_<?= $m['id'] ?>" class="form-label">Bank UTR Number / Cheque Ref <span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control" id="pay_ref_<?= $m['id'] ?>" name="payment_ref" placeholder="e.g. UTR-PUNB20261012-765432" required>
+                                                            <input aria-label="Pay ref m" type="text" class="form-control" id="pay_ref_<?= $m['id'] ?>" name="payment_ref" placeholder="e.g. UTR-PUNB20261012-765432" required>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="tds_<?= $m['id'] ?>" class="form-label">TDS Deducted (u/s 194LA) (₹)</label>
-                                                            <input type="number" step="0.01" class="form-control" id="tds_<?= $m['id'] ?>" name="tds_deducted" value="0.00">
+                                                            <input aria-label="Tds m" type="number" step="0.01" class="form-control" id="tds_<?= $m['id'] ?>" name="tds_deducted" value="0.00">
                                                         </div>
                                                         <div class="mb-3">
                                                             <label for="date_<?= $m['id'] ?>" class="form-label">Disbursement Date</label>
-                                                            <input type="date" class="form-control" id="date_<?= $m['id'] ?>" name="disbursed_at" value="<?= date('Y-m-d') ?>">
+                                                            <input aria-label="Date m" type="date" class="form-control" id="date_<?= $m['id'] ?>" name="disbursed_at" value="<?= date('Y-m-d') ?>">
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">

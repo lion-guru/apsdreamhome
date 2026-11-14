@@ -20,7 +20,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="area"><?php echo __('area_sqft', [], 'Area (sq ft)'); ?></label>
-                                <input type="number" class="form-control form-control-lg" id="area" value="1500" min="100" oninput="calcVal()">
+                                <input aria-label="Area" type="number" class="form-control form-control-lg" id="area" value="1500" min="100" oninput="calcVal()">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
@@ -37,7 +37,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="age"><?php echo __('property_age_years', [], 'Property Age (Years)'); ?></label>
-                                <input type="number" class="form-control" id="age" value="0" min="0" max="50" oninput="calcVal()">
+                                <input aria-label="Age" type="number" class="form-control" id="age" value="0" min="0" max="50" oninput="calcVal()">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">

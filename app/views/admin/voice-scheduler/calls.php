@@ -32,13 +32,13 @@
                 </select>
             </div>
             <div class="col-auto">
-                <input type="date" name="date_from" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_from'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="From">
+                <input aria-label="Date from" type="date" name="date_from" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_from'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="From">
             </div>
             <div class="col-auto">
-                <input type="date" name="date_to" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_to'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="To">
+                <input aria-label="Date to" type="date" name="date_to" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_to'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="To">
             </div>
             <div class="col-auto">
-                <input type="text" name="search" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['search'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="Search lead/phone">
+                <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['search'] ?? '', ENT_QUOTES, 'UTF-8') ?>" placeholder="Search lead/phone">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-sm btn-outline-primary" aria-label="Search"><i class="fas fa-search"></i></button>

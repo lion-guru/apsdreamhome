@@ -16,7 +16,7 @@
                     <form class="form-inline mr-3" method="GET" action="<?php echo BASE_URL; ?>/farmers/search">
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="input-group">
-                            <input type="text"
+                            <input aria-label="Q" type="text"
                                    name="q"
                                    class="form-control"
                                    placeholder="Search Farmers..."

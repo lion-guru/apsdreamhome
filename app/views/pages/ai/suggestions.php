@@ -21,12 +21,12 @@
 
                             <div class="col-md-6">
                                 <label for="budget" class="form-label"><?= __('aisug_label_budget', [], 'Budget (₹)') ?></label>
-                                <input type="number" id="budget" name="budget" class="form-control" placeholder="<?= __('aisug_placeholder_budget', [], 'e.g. 5000000') ?>" required>
+                                <input aria-label="Budget" type="number" id="budget" name="budget" class="form-control" placeholder="<?= __('aisug_placeholder_budget', [], 'e.g. 5000000') ?>" required>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="location" class="form-label"><?= __('aisug_label_location', [], 'Location') ?></label>
-                                <input type="text" id="location" name="location" class="form-control" placeholder="<?= __('aisug_placeholder_location', [], 'e.g. Lucknow, UP') ?>" required>
+                                <input aria-label="Location" type="text" id="location" name="location" class="form-control" placeholder="<?= __('aisug_placeholder_location', [], 'e.g. Lucknow, UP') ?>" required>
                             </div>
 
                             <div class="col-md-12">

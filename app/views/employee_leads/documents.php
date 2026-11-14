@@ -174,25 +174,25 @@ function docTypeLabel($type) {
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Document Number</label>
-                        <input type="text" name="document_number" class="form-control" placeholder="e.g., Aadhaar number, PAN number, etc.">
+                        <input aria-label="Document number" type="text" name="document_number" class="form-control" placeholder="e.g., Aadhaar number, PAN number, etc.">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Issued By</label>
-                        <input type="text" name="issued_by" class="form-control" placeholder="Issuing authority/organization">
+                        <input aria-label="Issued by" type="text" name="issued_by" class="form-control" placeholder="Issuing authority/organization">
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Issue Date</label>
-                            <input type="date" name="issue_date" class="form-control" max="<?= date('Y-m-d') ?>">
+                            <input aria-label="Issue date" type="date" name="issue_date" class="form-control" max="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Expiry Date</label>
-                            <input type="date" name="expiry_date" class="form-control" min="<?= date('Y-m-d') ?>">
+                            <input aria-label="Expiry date" type="date" name="expiry_date" class="form-control" min="<?= date('Y-m-d') ?>">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">File <span class="text-danger">*</span></label>
-                        <input type="file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                        <input aria-label="Document file" type="file" name="document_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
                         <div class="form-text">Max 5MB. Allowed: PDF, JPG, PNG, DOC, DOCX</div>
                     </div>
                 </div>

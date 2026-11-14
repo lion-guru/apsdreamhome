@@ -4,11 +4,11 @@
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
         <div class="mb-3">
             <label class="form-label">File <span class="text-danger">*</span></label>
-            <input type="file" name="file" class="form-control" required>
+            <input aria-label="File" type="file" name="file" class="form-control" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Title</label>
-            <input type="text" name="title" class="form-control">
+            <input aria-label="Title" type="text" name="title" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">Folder</label>

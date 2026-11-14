@@ -19,21 +19,21 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="name" required placeholder="Farmer's full name">
+                                <input aria-label="Name" type="text" class="form-control" name="name" required placeholder="Farmer's full name">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" placeholder="farmer@example.com">
+                                <input aria-label="Email" type="email" class="form-control" name="email" placeholder="farmer@example.com">
                             </div>
                         </div>
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" name="phone" required placeholder="+91 9XXXXXXXX">
+                                <input aria-label="Phone" type="tel" class="form-control" name="phone" required placeholder="+91 9XXXXXXXX">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Address <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="address" required placeholder="Full address">
+                                <input aria-label="Address" type="text" class="form-control" name="address" required placeholder="Full address">
                             </div>
                         </div>
                         <div class="row g-3 mb-4">
@@ -61,11 +61,11 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label">Aadhar Number</label>
-                                <input type="text" class="form-control" name="aadhar_number" placeholder="XXXX XXXX XXXX">
+                                <input aria-label="Aadhar number" type="text" class="form-control" name="aadhar_number" placeholder="XXXX XXXX XXXX">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">PAN Number</label>
-                                <input type="text" class="form-control" name="pan_number" placeholder="ABCDE1234F">
+                                <input aria-label="Pan number" type="text" class="form-control" name="pan_number" placeholder="ABCDE1234F">
                             </div>
                         </div>
 
@@ -73,11 +73,11 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label">Bank Account Number</label>
-                                <input type="text" class="form-control" name="bank_account" placeholder="Account number">
+                                <input aria-label="Bank account" type="text" class="form-control" name="bank_account" placeholder="Account number">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">IFSC Code</label>
-                                <input type="text" class="form-control" name="ifsc_code" placeholder="SBIN0001234">
+                                <input aria-label="Ifsc code" type="text" class="form-control" name="ifsc_code" placeholder="SBIN0001234">
                             </div>
                         </div>
 

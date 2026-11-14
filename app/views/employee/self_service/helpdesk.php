@@ -198,7 +198,7 @@ $tickets = $tickets ?? [];
                     <div class="row mb-3">
                         <label for="subject" class="col-sm-3 col-form-label fw-bold">Subject <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="subject" name="subject" required placeholder="Brief summary of the issue">
+                            <input aria-label="Subject" type="text" class="form-control" id="subject" name="subject" required placeholder="Brief summary of the issue">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -221,7 +221,7 @@ $tickets = $tickets ?? [];
                     <div class="row mb-3">
                         <label for="attachment" class="col-sm-3 col-form-label">Attachment</label>
                         <div class="col-sm-9">
-                            <input type="file" class="form-control" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png,.xls,.xlsx">
+                            <input aria-label="Attachment" type="file" class="form-control" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png,.xls,.xlsx">
                             <div class="form-text">Max 5MB. PDF, DOC, JPG, PNG, XLS.</div>
                         </div>
                     </div>

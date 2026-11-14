@@ -10,7 +10,7 @@
     </div>
 
 
-    <div class="row mb-3"><div class="col-md-5"><input type="text" id="segmentSearch" class="form-control" placeholder="Search segments..."></div></div>
+    <div class="row mb-3"><div class="col-md-5"><input aria-label="Segment search" type="text" id="segmentSearch" class="form-control" placeholder="Search segments..."></div></div>
     <?php if (empty($segments)): ?>
         <div class="text-center py-5 bg-white rounded shadow-sm">
             <i class="fas fa-layer-group fa-3x text-muted mb-3"></i>
@@ -104,11 +104,11 @@ document.getElementById('segmentSearch')?.addEventListener('input', function(){
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Segment Name *</label>
-                            <input type="text" class="form-control" name="name" required placeholder="e.g. High-Value Leads">
+                            <input aria-label="Name" type="text" class="form-control" name="name" required placeholder="e.g. High-Value Leads">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Description</label>
-                            <input type="text" class="form-control" name="description" placeholder="Brief description">
+                            <input aria-label="Description" type="text" class="form-control" name="description" placeholder="Brief description">
                         </div>
                         <div class="col-12"><hr><h6 class="fw-bold text-muted">Filter Criteria</h6></div>
                         <div class="col-md-4">
@@ -131,19 +131,19 @@ document.getElementById('segmentSearch')?.addEventListener('input', function(){
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">City</label>
-                            <input type="text" class="form-control" name="city" placeholder="e.g. Noida">
+                            <input aria-label="City" type="text" class="form-control" name="city" placeholder="e.g. Noida">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Min Score</label>
-                            <input type="number" class="form-control" name="min_score" min="0" max="100" placeholder="0">
+                            <input aria-label="Min score" type="number" class="form-control" name="min_score" min="0" max="100" placeholder="0">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Min Budget</label>
-                            <input type="number" class="form-control" name="min_budget" placeholder="e.g. 1000000">
+                            <input aria-label="Min budget" type="number" class="form-control" name="min_budget" placeholder="e.g. 1000000">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Max Budget</label>
-                            <input type="number" class="form-control" name="max_budget" placeholder="e.g. 5000000">
+                            <input aria-label="Max budget" type="number" class="form-control" name="max_budget" placeholder="e.g. 5000000">
                         </div>
                     </div>
                 </div>

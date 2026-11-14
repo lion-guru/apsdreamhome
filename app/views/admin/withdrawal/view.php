@@ -390,7 +390,7 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                         <div class="form-text">Notes will be visible to the user in their withdrawal history.</div>
                     </div>
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="sendNotificationApprove" name="send_notification" checked>
+                        <input aria-label="Send notification approve" class="form-check-input" type="checkbox" id="sendNotificationApprove" name="send_notification" checked>
                         <label class="form-check-label" for="sendNotificationApprove">
                             <i class="fas fa-bell me-1"></i>Send notification to user
                         </label>
@@ -435,7 +435,7 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                         <div class="form-text">This reason will be visible to the user and recorded in the audit trail.</div>
                     </div>
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="sendNotificationReject" name="send_notification" checked>
+                        <input aria-label="Send notification reject" class="form-check-input" type="checkbox" id="sendNotificationReject" name="send_notification" checked>
                         <label class="form-check-label" for="sendNotificationReject">
                             <i class="fas fa-bell me-1"></i>Send notification to user
                         </label>
@@ -480,7 +480,7 @@ $csrf_token = $_SESSION['csrf_token'] ?? '';
                         <div class="form-text">Notes will be recorded in the audit trail and visible to the user.</div>
                     </div>
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="sendNotificationComplete" name="send_notification" checked>
+                        <input aria-label="Send notification complete" class="form-check-input" type="checkbox" id="sendNotificationComplete" name="send_notification" checked>
                         <label class="form-check-label" for="sendNotificationComplete">
                             <i class="fas fa-bell me-1"></i>Send completion notification to user
                         </label>

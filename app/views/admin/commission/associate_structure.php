@@ -21,10 +21,10 @@
                                 <option value="diamond">Diamond</option>
                             </select>
                         </div>
-                        <div class="mb-2"><label class="form-label">Direct Sale %</label><input type="number" step="0.01" name="commission_percentage" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Gen 1 Override %</label><input type="number" step="0.01" name="gen1_override_pct" class="form-control" value="0"></div>
-                        <div class="mb-2"><label class="form-label">Gen 2 Override %</label><input type="number" step="0.01" name="gen2_override_pct" class="form-control" value="0"></div>
-                        <div class="mb-2"><label class="form-label">Gen 3 Override %</label><input type="number" step="0.01" name="gen3_override_pct" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Direct Sale %</label><input aria-label="Commission percentage" type="number" step="0.01" name="commission_percentage" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Gen 1 Override %</label><input aria-label="Gen1 override pct" type="number" step="0.01" name="gen1_override_pct" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Gen 2 Override %</label><input aria-label="Gen2 override pct" type="number" step="0.01" name="gen2_override_pct" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Gen 3 Override %</label><input aria-label="Gen3 override pct" type="number" step="0.01" name="gen3_override_pct" class="form-control" value="0"></div>
                         <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save</button>
                     </form>
                 </div>

@@ -12,7 +12,7 @@ $page_title = $page_title ?? 'users';
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="col-md-4">
                 <label class="form-label small">Search</label>
-                <input type="text" name="search" class="form-control" placeholder="Name, email, phone..." value="<?= htmlspecialchars($search ?? '') ?>">
+                <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Name, email, phone..." value="<?= htmlspecialchars($search ?? '') ?>">
             </div>
             <div class="col-md-3">
                 <label class="form-label small">Department</label>

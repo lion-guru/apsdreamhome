@@ -118,7 +118,7 @@ $filter_status = $filter_status ?? '';
                                 <div class="modal-header"><h5 class="modal-title">Mark Claim #<?= (int)$c['id'] ?> Paid</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                                 <div class="modal-body"><label class="form-label">Payment Reference</label>
-                                <input type="text" name="payment_reference" class="form-control" value="PAY-<?= date('YmdHis') ?>" required></div>
+                                <input aria-label="Payment reference" type="text" name="payment_reference" class="form-control" value="PAY-<?= date('YmdHis') ?>" required></div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-success">Mark Paid</button>

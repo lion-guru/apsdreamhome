@@ -41,7 +41,7 @@ $total_circle_rates = $total_circle_rates ?? 0;
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="col-md-2">
                             <label class="form-label">State Code</label>
-                            <input type="text" name="state_code" class="form-control" placeholder="UP" maxlength="2" required >
+                            <input aria-label="State code" type="text" name="state_code" class="form-control" placeholder="UP" maxlength="2" required >
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Property Type</label>
@@ -54,11 +54,11 @@ $total_circle_rates = $total_circle_rates ?? 0;
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Stamp Rate (%)</label>
-                            <input type="number" name="stamp_rate" class="form-control" step="0.1" min="0" max="20" required placeholder="7.0">
+                            <input aria-label="Stamp rate" type="number" name="stamp_rate" class="form-control" step="0.1" min="0" max="20" required placeholder="7.0">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Registration (%)</label>
-                            <input type="number" name="registration_rate" class="form-control" step="0.1" min="0" max="5" value="1.0">
+                            <input aria-label="Registration rate" type="number" name="registration_rate" class="form-control" step="0.1" min="0" max="5" value="1.0">
                         </div>
                         <div class="col-md-2 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary w-100"><i class="fas fa-save me-1"></i>Save</button>

@@ -19,19 +19,19 @@ $page_title = $page_title ?? 'Create Shift Type';
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Shift Name <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control" required placeholder="e.g., Morning Shift">
+                                <input aria-label="Name" type="text" name="name" class="form-control" required placeholder="e.g., Morning Shift">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Description</label>
-                                <input type="text" name="description" class="form-control" placeholder="e.g., Standard morning shift 9AM-6PM">
+                                <input aria-label="Description" type="text" name="description" class="form-control" placeholder="e.g., Standard morning shift 9AM-6PM">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Start Time <span class="text-danger">*</span></label>
-                                <input type="time" name="start_time" class="form-control" required value="09:00">
+                                <input aria-label="Start time" type="time" name="start_time" class="form-control" required value="09:00">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">End Time <span class="text-danger">*</span></label>
-                                <input type="time" name="end_time" class="form-control" required value="18:00">
+                                <input aria-label="End time" type="time" name="end_time" class="form-control" required value="18:00">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Color</label>
@@ -40,7 +40,7 @@ $page_title = $page_title ?? 'Create Shift Type';
                             </div>
                             <div class="col-md-6">
                                 <div class="form-check mt-4">
-                                    <input class="form-check-input" type="checkbox" name="is_active" value="1" checked id="is_active">
+                                    <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" value="1" checked id="is_active">
                                     <label class="form-check-label" for="is_active">Active</label>
                                 </div>
                             </div>

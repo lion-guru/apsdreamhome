@@ -46,7 +46,7 @@ $statusBadge = function ($s) {
         <form method="get" class="row g-2 mb-3">
             <input type="hidden" name="status" value="<?= htmlspecialchars($filters['status'] ?? 'pending') ?>">
             <div class="col-md-6">
-                <input type="text" name="search" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Search by booking #, customer, plot..." class="form-control form-control-sm">
+                <input aria-label="Search" type="text" name="search" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Search by booking #, customer, plot..." class="form-control form-control-sm">
             </div>
             <div class="col-md-3">
                 <button class="btn btn-sm btn-primary" type="submit"><i class="fas fa-search me-1"></i>Search</button>

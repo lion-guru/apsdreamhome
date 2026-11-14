@@ -38,15 +38,15 @@ $isAssign = ($mode ?? '') === 'assign';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Date</label>
-                        <input type="date" name="shift_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Shift date" type="date" name="shift_date" class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Start Time</label>
-                        <input type="time" name="start_time" class="form-control">
+                        <input aria-label="Start time" type="time" name="start_time" class="form-control">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">End Time</label>
-                        <input type="time" name="end_time" class="form-control">
+                        <input aria-label="End time" type="time" name="end_time" class="form-control">
                     </div>
                     <div class="col-md-12">
                         <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Assign Shift</button>
@@ -61,7 +61,7 @@ $isAssign = ($mode ?? '') === 'assign';
             <form method="GET" class="row g-2 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label small">Date</label>
-                    <input type="date" name="date" class="form-control" value="<?= htmlspecialchars($date ?? date('Y-m-d')) ?>">
+                    <input aria-label="Date" type="date" name="date" class="form-control" value="<?= htmlspecialchars($date ?? date('Y-m-d')) ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">&nbsp;</label>

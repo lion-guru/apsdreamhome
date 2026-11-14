@@ -17,7 +17,7 @@ $daysOfWeek = $daysOfWeek ?? [];
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Title <span class="text-danger">*</span></label>
-                    <input type="text" name="title" class="form-control" required placeholder="e.g. Weekly Sales Summary">
+                    <input aria-label="Title" type="text" name="title" class="form-control" required placeholder="e.g. Weekly Sales Summary">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Report Type <span class="text-danger">*</span></label>
@@ -48,21 +48,21 @@ $daysOfWeek = $daysOfWeek ?? [];
                 </div>
                 <div class="col-md-3" id="dayOfMonthField" style="display:none">
                     <label class="form-label">Day of Month</label>
-                    <input type="number" name="day_of_month" class="form-control" min="1" max="31" value="1">
+                    <input aria-label="Day of month" type="number" name="day_of_month" class="form-control" min="1" max="31" value="1">
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
-                    <label class="form-check-label mb-0"><input type="checkbox" name="status" value="active" checked class="form-check-input me-2"> Active</label>
+                    <label class="form-check-label mb-0"><input aria-label="Status" type="checkbox" name="status" value="active" checked class="form-check-input me-2"> Active</label>
                 </div>
             </div>
 
             <div class="row g-3 mt-3">
                 <div class="col-md-6">
                     <label class="form-label">Recipients (comma-separated emails)</label>
-                    <input type="text" name="recipients" class="form-control" placeholder="finance@apsdreamhome.com, manager@apsdreamhome.com">
+                    <input aria-label="Recipients" type="text" name="recipients" class="form-control" placeholder="finance@apsdreamhome.com, manager@apsdreamhome.com">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Notes</label>
-                    <input type="text" name="notes" class="form-control">
+                    <input aria-label="Notes" type="text" name="notes" class="form-control">
                 </div>
             </div>
 

@@ -42,7 +42,7 @@
             <div class="row g-3 mt-2">
                 <div class="col-12">
                     <label class="form-label">Title *</label>
-                    <input type="text" class="form-control" name="title" placeholder="Brief description of the request" required>
+                    <input aria-label="Title" type="text" class="form-control" name="title" placeholder="Brief description of the request" required>
                 </div>
             </div>
             
@@ -78,14 +78,14 @@
                 
                 <div class="col-md-4">
                     <label class="form-label">Related Entity ID (Optional)</label>
-                    <input type="number" class="form-control" name="related_entity_id" placeholder="Entity ID">
+                    <input aria-label="Related entity id" type="number" class="form-control" name="related_entity_id" placeholder="Entity ID">
                 </div>
             </div>
             
             <div class="row g-3 mt-2">
                 <div class="col-md-6">
                     <label class="form-label">Due Date (Optional)</label>
-                    <input type="date" class="form-control" name="due_date">
+                    <input aria-label="Due date" type="date" class="form-control" name="due_date">
                 </div>
             </div>
             

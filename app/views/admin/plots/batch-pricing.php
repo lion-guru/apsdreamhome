@@ -44,7 +44,7 @@ $statuses = ['available' => 'Available', 'hold' => 'Hold', 'reserved' => 'Reserv
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Value</label>
-                    <input type="number" step="0.01" name="value" class="form-control" value="<?= htmlspecialchars((string)$params['value']) ?>" required>
+                    <input aria-label="Value" type="number" step="0.01" name="value" class="form-control" value="<?= htmlspecialchars((string)$params['value']) ?>" required>
                 </div>
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-eye me-1"></i>Preview Changes</button>

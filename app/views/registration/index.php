@@ -19,19 +19,19 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label small">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control" required>
+                                <input aria-label="Name" type="text" name="name" class="form-control" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">Email <span class="text-danger">*</span></label>
-                                <input type="email" name="email" class="form-control" required>
+                                <input aria-label="Email" type="email" name="email" class="form-control" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">Phone <span class="text-danger">*</span></label>
-                                <input type="tel" name="phone" class="form-control" placeholder="10-digit mobile" required>
+                                <input aria-label="Phone" type="tel" name="phone" class="form-control" placeholder="10-digit mobile" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">Password <span class="text-danger">*</span></label>
-                                <input type="password" name="password" class="form-control" minlength="8" required>
+                                <input aria-label="Password" type="password" name="password" class="form-control" minlength="8" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">State <span class="text-danger">*</span></label>
@@ -44,7 +44,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">City <span class="text-danger">*</span></label>
-                                <input type="text" name="city" class="form-control" required>
+                                <input aria-label="City" type="text" name="city" class="form-control" required>
                             </div>
                             <div class="col-12">
                                 <label class="form-label small">Address <span class="text-danger">*</span></label>
@@ -52,16 +52,16 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">Pincode <span class="text-danger">*</span></label>
-                                <input type="text" name="pincode" class="form-control" maxlength="6" pattern="\d{6}" required>
+                                <input aria-label="Pincode" type="text" name="pincode" class="form-control" maxlength="6" pattern="\d{6}" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">Referral Code</label>
-                                <input type="text" name="referral_code" class="form-control" value="<?= htmlspecialchars($referralCode ?? '') ?>" readonly>
+                                <input aria-label="Referral code" type="text" name="referral_code" class="form-control" value="<?= htmlspecialchars($referralCode ?? '') ?>" readonly>
                             </div>
                         </div>
 
                         <div class="form-check mt-3">
-                            <input type="checkbox" name="terms" class="form-check-input" id="terms" required>
+                            <input aria-label="Terms" type="checkbox" name="terms" class="form-check-input" id="terms" required>
                             <label class="form-check-label small" for="terms">I agree to the <a href="<?= ($base ?? BASE_URL) ?>terms" target="_blank">Terms & Conditions</a></label>
                         </div>
 

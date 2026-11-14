@@ -64,7 +64,7 @@ $current_status = $current_status ?? 'all';
         <div class="card-body p-2">
             <form method="GET" action="/admin/plot-transfers" class="d-flex gap-2">
                 <input type="hidden" name="status" value="<?= htmlspecialchars($current_status) ?>">
-                <input type="text" name="q" class="form-control form-control-sm" placeholder="Search by NOC #, Buyer name, Phone, Plot #..." value="<?= htmlspecialchars($search ?? '') ?>">
+                <input aria-label="Q" type="text" name="q" class="form-control form-control-sm" placeholder="Search by NOC #, Buyer name, Phone, Plot #..." value="<?= htmlspecialchars($search ?? '') ?>">
                 <button type="submit" class="btn btn-sm btn-primary px-3">
                     <i class="fas fa-search me-1"></i>Search
                 </button>

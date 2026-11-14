@@ -284,7 +284,7 @@ $recent_logs = $recent_logs ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Recipient</label>
-                        <input type="text" name="to" class="form-control" placeholder="Phone number or email" required>
+                        <input aria-label="To" type="text" name="to" class="form-control" placeholder="Phone number or email" required>
                         <small class="form-text">Phone: +91XXXXXXXXXX or email: user@example.com</small>
                     </div>
                     <div class="mb-3">

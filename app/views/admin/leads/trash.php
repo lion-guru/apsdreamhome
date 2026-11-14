@@ -32,7 +32,7 @@ $base = BASE_URL ?? '';
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form method="GET" action="<?= $base ?>/admin/leads/trash/list" class="d-flex gap-2">
-            <input type="text" name="search" class="form-control" placeholder="Search deleted leads..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+            <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search deleted leads..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
             <button type="submit" class="btn btn-danger"><i class="fas fa-search me-1"></i>Search</button>
             <a href="<?= $base ?>/admin/leads/trash/list" class="btn btn-outline-secondary">Clear</a>
         </form>

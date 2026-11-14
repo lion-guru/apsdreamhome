@@ -97,7 +97,7 @@
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text">₹</span>
-                                        <input type="number" class="form-control" id="propertyAmount" value="1000000" min="100000" step="50000">
+                                        <input aria-label="Property amount" type="number" class="form-control" id="propertyAmount" value="1000000" min="100000" step="50000">
                                         <span class="input-group-text">Lakhs</span>
                                     </div>
                                     <div class="form-text">Typical property value (₹10L - ₹5Cr)</div>
@@ -109,7 +109,7 @@
                                         <i class="fas fa-users me-2"></i>Direct Referrals
                                     </label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="directReferrals" value="5" min="0" max="100">
+                                        <input aria-label="Direct referrals" type="number" class="form-control" id="directReferrals" value="5" min="0" max="100">
                                         <span class="input-group-text">People</span>
                                     </div>
                                     <div class="form-text">People you directly refer</div>
@@ -121,7 +121,7 @@
                                         <i class="fas fa-network-wired me-2"></i>Total Team Size
                                     </label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="teamSize" value="25" min="0" max="1000">
+                                        <input aria-label="Team size" type="number" class="form-control" id="teamSize" value="25" min="0" max="1000">
                                         <span class="input-group-text">People</span>
                                     </div>
                                     <div class="form-text">Your entire network size</div>
@@ -133,7 +133,7 @@
                                         <i class="fas fa-chart-line me-2"></i>Avg Monthly Sales per Person
                                     </label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="monthlySales" value="2" min="0" max="20" step="0.5">
+                                        <input aria-label="Monthly sales" type="number" class="form-control" id="monthlySales" value="2" min="0" max="20" step="0.5">
                                         <span class="input-group-text">Sales</span>
                                     </div>
                                     <div class="form-text">Average sales per team member</div>
@@ -145,7 +145,7 @@
                                         <i class="fas fa-percentage me-2"></i>Team Active Rate
                                     </label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="activeRate" value="30" min="10" max="100" step="5">
+                                        <input aria-label="Active rate" type="number" class="form-control" id="activeRate" value="30" min="10" max="100" step="5">
                                         <span class="input-group-text">%</span>
                                     </div>
                                     <div class="form-text">Percentage of active team members</div>
@@ -157,7 +157,7 @@
                                         <i class="fas fa-clock me-2"></i>Hours per Week
                                     </label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="workHours" value="20" min="5" max="80" step="5">
+                                        <input aria-label="Work hours" type="number" class="form-control" id="workHours" value="20" min="5" max="80" step="5">
                                         <span class="input-group-text">Hours</span>
                                     </div>
                                     <div class="form-text">Time you invest weekly</div>

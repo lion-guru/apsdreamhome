@@ -57,7 +57,7 @@ $base = BASE_URL . '/admin/ai-calling/history';
                 <div class="row g-2 align-items-end">
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Search</label>
-                        <input type="text" name="q" class="form-control form-control-sm" placeholder="Phone or lead name..." value="<?= htmlspecialchars($filters['q'] ?? '') ?>">
+                        <input aria-label="Q" type="text" name="q" class="form-control form-control-sm" placeholder="Phone or lead name..." value="<?= htmlspecialchars($filters['q'] ?? '') ?>">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">Status</label>
@@ -70,11 +70,11 @@ $base = BASE_URL . '/admin/ai-calling/history';
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">From</label>
-                        <input type="date" name="from" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['from'] ?? '') ?>">
+                        <input aria-label="From" type="date" name="from" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['from'] ?? '') ?>">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small fw-semibold">To</label>
-                        <input type="date" name="to" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['to'] ?? '') ?>">
+                        <input aria-label="To" type="date" name="to" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['to'] ?? '') ?>">
                     </div>
                     <div class="col-md-3 d-flex gap-1">
                         <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search me-1"></i>Filter</button>

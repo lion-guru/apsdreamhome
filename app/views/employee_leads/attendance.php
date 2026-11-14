@@ -211,7 +211,7 @@
 
                     <div class="mb-3">
                         <label for="location" class="form-label">Location (Optional)</label>
-                        <input type="text" class="form-control" id="location" name="location"
+                        <input aria-label="Location" type="text" class="form-control" id="location" name="location"
                                placeholder="Enter your current location">
                     </div>
                     <div class="mb-3">

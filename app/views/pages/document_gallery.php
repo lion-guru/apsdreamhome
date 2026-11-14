@@ -112,7 +112,7 @@ $bookingDocCategories = [
     <?php echo CSRFProtection::csrfField(); ?>
                 <div class="col-md-6">
                     <label for="q" class="form-label"><?= __('common_search') ?></label>
-                    <input type="text" class="form-control" id="q" name="q" placeholder="<?= __('document_search_placeholder') ?>" value="<?= htmlspecialchars($searchQuery ?? '') ?>">
+                    <input aria-label="Q" type="text" class="form-control" id="q" name="q" placeholder="<?= __('document_search_placeholder') ?>" value="<?= htmlspecialchars($searchQuery ?? '') ?>">
                 </div>
                 <div class="col-md-4">
                     <label for="category" class="form-label"><?= __('common_category') ?></label>

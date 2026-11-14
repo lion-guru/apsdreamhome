@@ -23,7 +23,7 @@ $isEdit = !empty($template['id']);
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Template Name *</label>
-                                <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($template['name'] ?? '') ?>" required placeholder="e.g. Welcome Lead Email">
+                                <input aria-label="Name" type="text" class="form-control" name="name" value="<?= htmlspecialchars($template['name'] ?? '') ?>" required placeholder="e.g. Welcome Lead Email">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">Type</label>
@@ -49,7 +49,7 @@ $isEdit = !empty($template['id']);
                         <div id="emailFields">
                             <div class="mt-3">
                                 <label class="form-label fw-bold">Subject</label>
-                                <input type="text" class="form-control" name="subject" value="<?= htmlspecialchars($template['subject'] ?? '') ?>" placeholder="e.g. Welcome to APS Dream Home, {{name}}!">
+                                <input aria-label="Subject" type="text" class="form-control" name="subject" value="<?= htmlspecialchars($template['subject'] ?? '') ?>" placeholder="e.g. Welcome to APS Dream Home, {{name}}!">
                             </div>
                         </div>
 

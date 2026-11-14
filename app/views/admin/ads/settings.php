@@ -19,7 +19,7 @@
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="mb-3">
                     <label for="adsense_publisher_id" class="form-label"><i class="fab fa-google me-1"></i>AdSense Publisher ID</label>
-                    <input type="text" class="form-control" id="adsense_publisher_id" name="adsense_publisher_id"
+                    <input aria-label="Adsense publisher id" type="text" class="form-control" id="adsense_publisher_id" name="adsense_publisher_id"
                            placeholder="ca-pub-xxxxxxxxxxxxxx"
                            value="<?= htmlspecialchars($adsense_publisher_id ?? '') ?>">
                     <div class="form-text">Example: <code>ca-pub-1234567890123456</code>. Find this in your AdSense account under Settings &gt; Account Info.</div>

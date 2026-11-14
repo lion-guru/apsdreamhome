@@ -61,7 +61,7 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                 <div class="card-body">
                     <p class="text-muted mb-3">Share this link directly via email, WhatsApp, or social media:</p>
                     <div class="position-relative">
-                        <input type="text" class="form-control" readonly id="directUrl" value="<?= $baseUrl ?>/form/<?= $form['id'] ?? '' ?>">
+                        <input aria-label="Direct url" type="text" class="form-control" readonly id="directUrl" value="<?= $baseUrl ?>/form/<?= $form['id'] ?? '' ?>">
                         <button class="btn btn-sm btn-success position-absolute" onclick="copyToClipboard('directUrl')"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                     <div class="mt-3 d-flex gap-2 flex-wrap">

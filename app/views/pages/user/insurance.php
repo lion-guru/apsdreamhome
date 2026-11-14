@@ -129,7 +129,7 @@ ob_start();
             <div class="aps-cp-modal-body">
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="nominee_name"><?= __('user_insurance_label_nominee_name', null, 'Nominee Name') ?></label>
-                    <input type="text" name="nominee_name" id="nominee_name" class="aps-cp-input" required>
+                    <input aria-label="Nominee name" type="text" name="nominee_name" id="nominee_name" class="aps-cp-input" required>
                 </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="nominee_relation"><?= __('user_insurance_label_nominee_relation', null, 'Nominee Relation') ?></label>
@@ -144,7 +144,7 @@ ob_start();
                 </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="start_date"><?= __('user_insurance_label_start_date', null, 'Start Date') ?></label>
-                    <input type="date" name="start_date" id="start_date" class="aps-cp-input" value="<?= date('Y-m-d') ?>" required>
+                    <input aria-label="Start date" type="date" name="start_date" id="start_date" class="aps-cp-input" value="<?= date('Y-m-d') ?>" required>
                 </div>
             </div>
             <div class="aps-cp-modal-foot">

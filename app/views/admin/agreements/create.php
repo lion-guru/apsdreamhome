@@ -54,12 +54,12 @@ $bookings = $bookings ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Party A (Seller/Company) <span class="text-danger">*</span></label>
-                            <input type="text" name="party_a_name" class="form-control" id="party_a_name" value="APS Dream Home" required>
+                            <input aria-label="Party a name" type="text" name="party_a_name" class="form-control" id="party_a_name" value="APS Dream Home" required>
                             <input type="hidden" name="party_a_id" id="party_a_id" value="">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Party B (Buyer/Tenant) <span class="text-danger">*</span></label>
-                            <input type="text" name="party_b_name" class="form-control" id="party_b_name" value="" required>
+                            <input aria-label="Party b name" type="text" name="party_b_name" class="form-control" id="party_b_name" value="" required>
                             <input type="hidden" name="party_b_id" id="party_b_id" value="">
                         </div>
                     </div>
@@ -67,37 +67,37 @@ $bookings = $bookings ?? [];
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Agreement Date <span class="text-danger">*</span></label>
-                            <input type="date" name="agreement_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Agreement date" type="date" name="agreement_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Validity Date</label>
-                            <input type="date" name="validity_date" class="form-control">
+                            <input aria-label="Validity date" type="date" name="validity_date" class="form-control">
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label class="form-label">Total Value (Rs.)</label>
-                            <input type="number" name="total_value" class="form-control" id="total_value" step="0.01" min="0" value="0">
+                            <input aria-label="Total value" type="number" name="total_value" class="form-control" id="total_value" step="0.01" min="0" value="0">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Stamp Duty (Rs.)</label>
-                            <input type="number" name="stamp_duty_amount" class="form-control" step="0.01" min="0" value="0">
+                            <input aria-label="Stamp duty amount" type="number" name="stamp_duty_amount" class="form-control" step="0.01" min="0" value="0">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Registration Fee (Rs.)</label>
-                            <input type="number" name="registration_fee" class="form-control" step="0.01" min="0" value="0">
+                            <input aria-label="Registration fee" type="number" name="registration_fee" class="form-control" step="0.01" min="0" value="0">
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Registration Date</label>
-                            <input type="date" name="registration_date" class="form-control">
+                            <input aria-label="Registration date" type="date" name="registration_date" class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Plot ID (auto-filled from booking)</label>
-                            <input type="number" name="plot_id" class="form-control" id="plot_id" value="">
+                            <input aria-label="Plot id" type="number" name="plot_id" class="form-control" id="plot_id" value="">
                         </div>
                     </div>
 

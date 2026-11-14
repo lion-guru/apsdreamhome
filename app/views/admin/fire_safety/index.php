@@ -243,17 +243,17 @@ $currentColony = $current_colony ?? null;
                         <?php endif; ?>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Inspection Date <span class="text-danger">*</span></label>
-                            <input type="date" name="inspection_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Inspection date" type="date" name="inspection_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Fire Zone / Ring Main Identifier <span class="text-danger">*</span></label>
-                            <input type="text" name="fire_zone_identifier" class="form-control" placeholder="e.g. Ring Main Zone A – Sector 3" required>
+                            <input aria-label="Fire zone identifier" type="text" name="fire_zone_identifier" class="form-control" placeholder="e.g. Ring Main Zone A – Sector 3" required>
                         </div>
 
                         <!-- Pressure & Pump Status -->
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Static Line Pressure (Bar)</label>
-                            <input type="number" step="0.01" name="static_line_pressure_bar" class="form-control" value="7.00" min="0" max="20">
+                            <input aria-label="Static line pressure bar" type="number" step="0.01" name="static_line_pressure_bar" class="form-control" value="7.00" min="0" max="20">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Jockey Pump Status</label>
@@ -286,25 +286,25 @@ $currentColony = $current_colony ?? null;
                         <!-- Water Storage & Hydrant Valves -->
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Fire Water Storage (kL)</label>
-                            <input type="number" step="0.01" name="fire_water_storage_kl" class="form-control" value="100.00" min="0">
+                            <input aria-label="Fire water storage kl" type="number" step="0.01" name="fire_water_storage_kl" class="form-control" value="100.00" min="0">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Hydrant Valves Tested</label>
-                            <input type="number" name="hydrant_valves_tested" class="form-control" value="0" min="0">
+                            <input aria-label="Hydrant valves tested" type="number" name="hydrant_valves_tested" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Hydrant Valves Healthy</label>
-                            <input type="number" name="hydrant_valves_healthy" class="form-control" value="0" min="0">
+                            <input aria-label="Hydrant valves healthy" type="number" name="hydrant_valves_healthy" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Hose Boxes Equipped</label>
-                            <input type="number" name="hose_boxes_equipped" class="form-control" value="0" min="0">
+                            <input aria-label="Hose boxes equipped" type="number" name="hose_boxes_equipped" class="form-control" value="0" min="0">
                         </div>
 
                         <!-- Extinguishers & Drill -->
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Extinguishers Checked</label>
-                            <input type="number" name="extinguishers_checked" class="form-control" value="0" min="0">
+                            <input aria-label="Extinguishers checked" type="number" name="extinguishers_checked" class="form-control" value="0" min="0">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Fire Drill Conducted?</label>
@@ -327,21 +327,21 @@ $currentColony = $current_colony ?? null;
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">NOC Certificate Number</label>
-                            <input type="text" name="noc_certificate_number" class="form-control" placeholder="UP/FIRE/GKP/2024/XXXX">
+                            <input aria-label="Noc certificate number" type="text" name="noc_certificate_number" class="form-control" placeholder="UP/FIRE/GKP/2024/XXXX">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">NOC Expiry Date</label>
-                            <input type="date" name="noc_expiry_date" class="form-control">
+                            <input aria-label="Noc expiry date" type="date" name="noc_expiry_date" class="form-control">
                         </div>
 
                         <!-- Officer Details -->
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Fire Safety Officer Name</label>
-                            <input type="text" name="fire_officer_name" class="form-control" placeholder="Chief Fire Safety Officer">
+                            <input aria-label="Fire officer name" type="text" name="fire_officer_name" class="form-control" placeholder="Chief Fire Safety Officer">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Fire Officer Contact</label>
-                            <input type="tel" name="fire_officer_contact" class="form-control" placeholder="98XXXXXXXX">
+                            <input aria-label="Fire officer contact" type="tel" name="fire_officer_contact" class="form-control" placeholder="98XXXXXXXX">
                         </div>
 
                         <!-- Defects & Remarks -->

@@ -33,7 +33,7 @@ $_date = $date ?? date('Y-m-d');
                             <?php endforeach; ?>
                         </select>
                         <label class="mr-2">Date:</label>
-                        <input type="date" name="date" value="<?= $_date ?>" class="form-control form-control-sm mr-3">
+                        <input aria-label="Date" type="date" name="date" value="<?= $_date ?>" class="form-control form-control-sm mr-3">
                         <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter"></i> Filter</button>
                     </form>
                 </div>

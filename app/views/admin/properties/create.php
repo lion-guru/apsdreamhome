@@ -40,7 +40,7 @@ $active_page = 'properties';
 
                     <div class="mb-3">
                         <label for="title" class="form-label">Property Title *</label>
-                        <input type="text" class="form-control" id="title" name="title" required>
+                        <input aria-label="Title" type="text" class="form-control" id="title" name="title" required>
                         <div class="form-text">Descriptive title for the property</div>
                     </div>
 
@@ -57,13 +57,13 @@ $active_page = 'properties';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="bedrooms" class="form-label">Bedrooms</label>
-                                <input type="number" class="form-control" id="bedrooms" name="bedrooms" min="0" value="0">
+                                <input aria-label="Bedrooms" type="number" class="form-control" id="bedrooms" name="bedrooms" min="0" value="0">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="bathrooms" class="form-label">Bathrooms</label>
-                                <input type="number" class="form-control" id="bathrooms" name="bathrooms" min="0" value="0">
+                                <input aria-label="Bathrooms" type="number" class="form-control" id="bathrooms" name="bathrooms" min="0" value="0">
                             </div>
                         </div>
                     </div>
@@ -86,7 +86,7 @@ $active_page = 'properties';
 
                     <div class="mb-3">
                         <label for="price" class="form-label">Price (₹) *</label>
-                        <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                        <input aria-label="Price" type="number" class="form-control" id="price" name="price" step="0.01" required>
                         <div class="form-text">Property price in Indian Rupees</div>
                     </div>
 
@@ -103,20 +103,20 @@ $active_page = 'properties';
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="city" class="form-label">City</label>
-                                <input type="text" class="form-control" id="city" name="city" data-autofill="city">
+                                <input aria-label="City" type="text" class="form-control" id="city" name="city" data-autofill="city">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="state" class="form-label">State</label>
-                                <input type="text" class="form-control" id="state" name="state" data-autofill="state">
+                                <input aria-label="State" type="text" class="form-control" id="state" name="state" data-autofill="state">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="pincode" class="form-label">Pincode</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="pincode" name="pincode" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
+                                    <input aria-label="Pincode" type="text" class="form-control" id="pincode" name="pincode" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
                                     <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use my location" aria-label="Use my location">
                                         <i class="fas fa-location-crosshairs"></i>
                                     </button>
@@ -129,19 +129,19 @@ $active_page = 'properties';
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="city" class="form-label">City</label>
-                                <input type="text" class="form-control" id="city" name="city">
+                                <input aria-label="City" type="text" class="form-control" id="city" name="city">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="state" class="form-label">State</label>
-                                <input type="text" class="form-control" id="state" name="state">
+                                <input aria-label="State" type="text" class="form-control" id="state" name="state">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="pincode" class="form-label">Pincode</label>
-                                <input type="text" class="form-control" id="pincode" name="pincode">
+                                <input aria-label="Pincode" type="text" class="form-control" id="pincode" name="pincode">
                             </div>
                         </div>
                     </div>
@@ -150,7 +150,7 @@ $active_page = 'properties';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="area" class="form-label">Area (sq ft) *</label>
-                                <input type="number" class="form-control" id="area" name="area" step="0.01" required>
+                                <input aria-label="Area" type="number" class="form-control" id="area" name="area" step="0.01" required>
                                 <div class="form-text">Total area in square feet</div>
                             </div>
                         </div>
@@ -170,7 +170,7 @@ $active_page = 'properties';
                     <div class="mb-3">
                         <label for="featured" class="form-label">Featured Property</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="featured" name="featured" value="1">
+                            <input aria-label="Featured" class="form-check-input" type="checkbox" id="featured" name="featured" value="1">
                             <label class="form-check-label" for="featured">
                                 Mark as featured property (show on homepage)
                             </label>
@@ -212,13 +212,13 @@ $active_page = 'properties';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="latitude" class="form-label">Latitude</label>
-                                <input type="number" class="form-control" id="latitude" name="latitude" step="0.00000001" placeholder="28.6139">
+                                <input aria-label="Latitude" type="number" class="form-control" id="latitude" name="latitude" step="0.00000001" placeholder="28.6139">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="longitude" class="form-label">Longitude</label>
-                                <input type="number" class="form-control" id="longitude" name="longitude" step="0.00000001" placeholder="77.2090">
+                                <input aria-label="Longitude" type="number" class="form-control" id="longitude" name="longitude" step="0.00000001" placeholder="77.2090">
                             </div>
                         </div>
                     </div>
@@ -231,7 +231,7 @@ $active_page = 'properties';
                     <h5 class="mb-3"><i class="fas fa-images"></i> Property Images</h5>
                     <div class="mb-3">
                         <label for="images" class="form-label">Property Images</label>
-                        <input type="file" class="form-control" id="images" name="images[]" multiple accept="image/*">
+                        <input aria-label="Images" type="file" class="form-control" id="images" name="images[]" multiple accept="image/*">
                         <div class="form-text">Upload multiple images of the property (JPG, PNG, GIF)</div>
                     </div>
                     <div class="alert alert-info">

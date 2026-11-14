@@ -55,11 +55,11 @@ $categories = ['festival' => 'Festival', 'offer' => 'Offer', 'launch' => 'Launch
             <form id="customizeForm" enctype="multipart/form-data">
                 <div class="modal-body">
                     <input type="hidden" name="slug" id="customizeSlug">
-                    <div class="mb-2"><label class="form-label">Photo (optional)</label><input type="file" class="form-control" name="photo" accept="image/*"></div>
-                    <div class="mb-2"><input type="text" class="form-control" name="price" placeholder="Price (e.g. ₹999/sq.ft.)"></div>
-                    <div class="mb-2"><input type="text" class="form-control" name="location" placeholder="Location"></div>
-                    <div class="mb-2"><input type="text" class="form-control" name="offer" placeholder="Offer"></div>
-                    <div class="mb-2"><input type="text" class="form-control" name="property_type" placeholder="Type"></div>
+                    <div class="mb-2"><label class="form-label">Photo (optional)</label><input aria-label="Photo" type="file" class="form-control" name="photo" accept="image/*"></div>
+                    <div class="mb-2"><input aria-label="Price" type="text" class="form-control" name="price" placeholder="Price (e.g. ₹999/sq.ft.)"></div>
+                    <div class="mb-2"><input aria-label="Location" type="text" class="form-control" name="location" placeholder="Location"></div>
+                    <div class="mb-2"><input aria-label="Offer" type="text" class="form-control" name="offer" placeholder="Offer"></div>
+                    <div class="mb-2"><input aria-label="Property type" type="text" class="form-control" name="property_type" placeholder="Type"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

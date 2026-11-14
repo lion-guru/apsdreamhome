@@ -33,7 +33,7 @@ $settings = $settings ?? [];
                         <div class="mb-3">
                             <label class="form-label">Bot Token</label>
                             <div class="input-group">
-                                <input type="password" name="telegram_bot_token" class="form-control" 
+                                <input aria-label="Telegram bot token" type="password" name="telegram_bot_token" class="form-control" 
                                        value="<?= htmlspecialchars($settings['telegram_bot_token'] ?? '') ?>" 
                                        id="telegramToken" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ">
                                 <button class="btn btn-outline-secondary" type="button" 
@@ -44,7 +44,7 @@ $settings = $settings ?? [];
 
                         <div class="mb-3">
                             <label class="form-label">Bot Username</label>
-                            <input type="text" name="telegram_bot_username" class="form-control" 
+                            <input aria-label="Telegram bot username" type="text" name="telegram_bot_username" class="form-control" 
                                    value="<?= htmlspecialchars($settings['telegram_bot_username'] ?? '') ?>" 
                                    placeholder="your_bot_username">
                             <div class="form-text">The username you set when creating the bot (without @)</div>
@@ -53,7 +53,7 @@ $settings = $settings ?? [];
                         <div class="mb-3">
                             <label class="form-label">Webhook URL</label>
                             <div class="input-group">
-                                <input type="text" name="telegram_webhook_url" class="form-control" 
+                                <input aria-label="Telegram webhook url" type="text" name="telegram_webhook_url" class="form-control" 
                                        value="<?= htmlspecialchars($settings['telegram_webhook_url'] ?? BASE_URL . '/api/communication/telegram-webhook') ?>" 
                                        id="telegramWebhook" readonly>
                                 <button class="btn btn-outline-secondary" type="button" 
@@ -100,12 +100,12 @@ $settings = $settings ?? [];
                     <form id="telegramTestForm" class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Chat ID</label>
-                            <input type="text" name="to" class="form-control" placeholder="123456789" required>
+                            <input aria-label="To" type="text" name="to" class="form-control" placeholder="123456789" required>
                             <div class="form-text">Get this by messaging your bot then visiting: <code>https://api.telegram.org/bot<TOKEN>/getUpdates</code></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Test Message</label>
-                            <input type="text" name="message" class="form-control" placeholder="Hello from APS Dream Home!" required>
+                            <input aria-label="Message" type="text" name="message" class="form-control" placeholder="Hello from APS Dream Home!" required>
                         </div>
                         <div class="col-12">
                             <button type="submit" class="btn btn-outline-primary" id="telegramTestBtn">

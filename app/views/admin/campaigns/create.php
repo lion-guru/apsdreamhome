@@ -39,7 +39,7 @@ $error = $error ?? null;
                         <label for="name" class="form-label fw-bold">
                             <i class="fas fa-tag"></i> Campaign Name *
                         </label>
-                        <input type="text" class="form-control" id="name" name="name"
+                        <input aria-label="Name" type="text" class="form-control" id="name" name="name"
                             value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" required
                             placeholder="Enter campaign name">
                     </div>
@@ -84,14 +84,14 @@ $error = $error ?? null;
                         <label for="start_date" class="form-label fw-bold">
                             <i class="fas fa-calendar"></i> Start Date
                         </label>
-                        <input type="date" class="form-control" id="start_date" name="start_date"
+                        <input aria-label="Start date" type="date" class="form-control" id="start_date" name="start_date"
                             value="<?= htmlspecialchars($_POST['start_date'] ?? date('Y-m-d'), ENT_QUOTES, 'UTF-8') ?>">
                     </div>
                     <div class="col-md-3">
                         <label for="end_date" class="form-label fw-bold">
                             <i class="fas fa-calendar-check"></i> End Date
                         </label>
-                        <input type="date" class="form-control" id="end_date" name="end_date"
+                        <input aria-label="End date" type="date" class="form-control" id="end_date" name="end_date"
                             value="<?= htmlspecialchars($_POST['end_date'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                     </div>
                 </div>
@@ -102,7 +102,7 @@ $error = $error ?? null;
                         <label for="budget" class="form-label fw-bold">
                             <i class="fas fa-dollar-sign"></i> Budget ($)
                         </label>
-                        <input type="number" class="form-control" id="budget" name="budget"
+                        <input aria-label="Budget" type="number" class="form-control" id="budget" name="budget"
                             value="<?= htmlspecialchars($_POST['budget'] ?? '0') ?>"
                             step="0.01" min="0" placeholder="0.00">
                     </div>
@@ -110,7 +110,7 @@ $error = $error ?? null;
                         <label for="expected_revenue" class="form-label fw-bold">
                             <i class="fas fa-chart-line"></i> Expected Revenue ($)
                         </label>
-                        <input type="number" class="form-control" id="expected_revenue" name="expected_revenue"
+                        <input aria-label="Expected revenue" type="number" class="form-control" id="expected_revenue" name="expected_revenue"
                             value="<?= htmlspecialchars($_POST['expected_revenue'] ?? '0') ?>"
                             step="0.01" min="0" placeholder="0.00">
                     </div>
@@ -125,7 +125,7 @@ $error = $error ?? null;
                     </div>
                     <div class="col-md-4">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="auto_launch" name="auto_launch"
+                            <input aria-label="Auto launch" class="form-check-input" type="checkbox" id="auto_launch" name="auto_launch"
                                 <?= isset($_POST['auto_launch']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="auto_launch">
                                 Auto-launch on start date
@@ -134,7 +134,7 @@ $error = $error ?? null;
                     </div>
                     <div class="col-md-4">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="track_conversions" name="track_conversions"
+                            <input aria-label="Track conversions" class="form-check-input" type="checkbox" id="track_conversions" name="track_conversions"
                                 <?= isset($_POST['track_conversions']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="track_conversions">
                                 Track conversions
@@ -143,7 +143,7 @@ $error = $error ?? null;
                     </div>
                     <div class="col-md-4">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="send_notifications" name="send_notifications"
+                            <input aria-label="Send notifications" class="form-check-input" type="checkbox" id="send_notifications" name="send_notifications"
                                 <?= isset($_POST['send_notifications']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="send_notifications">
                                 Send notifications

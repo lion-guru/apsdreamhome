@@ -236,12 +236,12 @@ $statusBadges = [
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small">Completed Date</label>
-                                <input type="date" name="completed_date" class="form-control form-control-sm" 
+                                <input aria-label="Completed date" type="date" name="completed_date" class="form-control form-control-sm" 
                                        value="<?= htmlspecialchars($milestone['completed_date'] ?? '') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small">Reference No.</label>
-                                <input type="text" name="reference_no" class="form-control form-control-sm" 
+                                <input aria-label="Reference no" type="text" name="reference_no" class="form-control form-control-sm" 
                                        value="<?= htmlspecialchars($milestone['reference_no'] ?? '') ?>" placeholder="Bahi No / Challan No">
                             </div>
                             <div class="col-12">
@@ -250,7 +250,7 @@ $statusBadges = [
                             </div>
                             <div class="col-12">
                                 <label class="form-label small">Document Path/URL</label>
-                                <input type="text" name="document_path" class="form-control form-control-sm" 
+                                <input aria-label="Document path" type="text" name="document_path" class="form-control form-control-sm" 
                                        value="<?= htmlspecialchars($milestone['document_path'] ?? '') ?>" placeholder="Path to uploaded PDF/scan">
                             </div>
                         </div>

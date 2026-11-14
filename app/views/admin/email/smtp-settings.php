@@ -49,12 +49,12 @@ $smtp = $smtp ?? [
                         <div class="row g-3 mb-3">
                             <div class="col-md-5">
                                 <label class="form-label">SMTP Host <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="smtp_host" value="<?= htmlspecialchars($smtp['host'] ?? '') ?>" required placeholder="smtp.gmail.com">
+                                <input aria-label="Smtp host" type="text" class="form-control" name="smtp_host" value="<?= htmlspecialchars($smtp['host'] ?? '') ?>" required placeholder="smtp.gmail.com">
                                 <div class="form-text">e.g., smtp.gmail.com, smtp.office365.com, mail.yourdomain.com</div>
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Port <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="smtp_port" value="<?= htmlspecialchars($smtp['port'] ?? '587') ?>" required placeholder="587">
+                                <input aria-label="Smtp port" type="number" class="form-control" name="smtp_port" value="<?= htmlspecialchars($smtp['port'] ?? '587') ?>" required placeholder="587">
                                 <div class="form-text">587 (TLS) or 465 (SSL)</div>
                             </div>
                             <div class="col-md-5">
@@ -70,12 +70,12 @@ $smtp = $smtp ?? [
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Username <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="smtp_username" value="<?= htmlspecialchars($smtp['username'] ?? '') ?>" required placeholder="your@email.com" autocomplete="off">
+                                <input aria-label="Smtp username" type="text" class="form-control" name="smtp_username" value="<?= htmlspecialchars($smtp['username'] ?? '') ?>" required placeholder="your@email.com" autocomplete="off">
                                 <div class="form-text">Full email address for authentication.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Password <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control" name="smtp_password" value="<?= htmlspecialchars($smtp['password'] ?? '') ?>" required placeholder="Enter SMTP password" autocomplete="off">
+                                <input aria-label="Smtp password" type="password" class="form-control" name="smtp_password" value="<?= htmlspecialchars($smtp['password'] ?? '') ?>" required placeholder="Enter SMTP password" autocomplete="off">
                                 <div class="form-text">SMTP password or App Password.</div>
                             </div>
                         </div>
@@ -89,12 +89,12 @@ $smtp = $smtp ?? [
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">From Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" name="smtp_from_email" value="<?= htmlspecialchars($smtp['from_email'] ?? '') ?>" required placeholder="noreply@apsdreamhome.com">
+                                <input aria-label="Smtp from email" type="email" class="form-control" name="smtp_from_email" value="<?= htmlspecialchars($smtp['from_email'] ?? '') ?>" required placeholder="noreply@apsdreamhome.com">
                                 <div class="form-text">The "From" address for all outgoing emails.</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">From Name</label>
-                                <input type="text" class="form-control" name="smtp_from_name" value="<?= htmlspecialchars($smtp['from_name'] ?? 'APS Dream Home') ?>" placeholder="APS Dream Home">
+                                <input aria-label="Smtp from name" type="text" class="form-control" name="smtp_from_name" value="<?= htmlspecialchars($smtp['from_name'] ?? 'APS Dream Home') ?>" placeholder="APS Dream Home">
                                 <div class="form-text">The display name recipients will see.</div>
                             </div>
                         </div>

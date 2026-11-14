@@ -132,11 +132,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Your Name *</label>
-                        <input type="text" class="form-control" name="visitor_name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>" required>
+                        <input aria-label="Visitor name" type="text" class="form-control" name="visitor_name" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Phone *</label>
-                        <input type="tel" class="form-control" name="visitor_phone" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>" required pattern="[0-9]{10}">
+                        <input aria-label="Visitor phone" type="tel" class="form-control" name="visitor_phone" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>" required pattern="[0-9]{10}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Colony / Location</label>
@@ -150,11 +150,11 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Date *</label>
-                            <input type="date" class="form-control" name="visit_date" min="<?= $today ?>" value="<?= $today ?>" required>
+                            <input aria-label="Visit date" type="date" class="form-control" name="visit_date" min="<?= $today ?>" value="<?= $today ?>" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Time *</label>
-                            <input type="time" class="form-control" name="visit_time" value="10:00" required>
+                            <input aria-label="Visit time" type="time" class="form-control" name="visit_time" value="10:00" required>
                         </div>
                     </div>
                     <div class="mb-3">

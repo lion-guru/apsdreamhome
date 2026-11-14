@@ -27,7 +27,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                 <div class="row g-3">
                     <div class="col-md-8">
                         <label class="form-label">Campaign Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($campaign['name'] ?? '') ?>">
+                        <input aria-label="Name" type="text" name="name" class="form-control" required value="<?= htmlspecialchars($campaign['name'] ?? '') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Channel</label>
@@ -44,7 +44,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <?php if (($campaign['type'] ?? '') === 'email'): ?>
                     <div class="col-12">
                         <label class="form-label">Subject Line</label>
-                        <input type="text" name="subject" class="form-control" value="<?= htmlspecialchars($campaign['subject'] ?? '') ?>">
+                        <input aria-label="Subject" type="text" name="subject" class="form-control" value="<?= htmlspecialchars($campaign['subject'] ?? '') ?>">
                     </div>
                     <?php endif; ?>
                     <div class="col-12">
@@ -54,7 +54,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Schedule (optional)</label>
-                        <input type="datetime-local" name="scheduled_at" class="form-control" value="<?= !empty($campaign['scheduled_at']) ? date('Y-m-d\TH:i', strtotime($campaign['scheduled_at'])) : '' ?>">
+                        <input aria-label="Scheduled at" type="datetime-local" name="scheduled_at" class="form-control" value="<?= !empty($campaign['scheduled_at']) ? date('Y-m-d\TH:i', strtotime($campaign['scheduled_at'])) : '' ?>">
                     </div>
                 </div>
 

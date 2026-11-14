@@ -52,15 +52,15 @@ $docTypes = [
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Document #</label>
-                            <input type="text" name="doc_number" class="form-control form-control-sm">
+                            <input aria-label="Doc number" type="text" name="doc_number" class="form-control form-control-sm">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Document Date</label>
-                            <input type="date" name="doc_date" class="form-control form-control-sm">
+                            <input aria-label="Doc date" type="date" name="doc_date" class="form-control form-control-sm">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">File (PDF / Image)</label>
-                            <input type="file" name="document_file" class="form-control form-control-sm" accept=".pdf,image/*">
+                            <input aria-label="Document file" type="file" name="document_file" class="form-control form-control-sm" accept=".pdf,image/*">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Verification Status</label>

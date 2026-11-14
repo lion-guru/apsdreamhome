@@ -15,11 +15,11 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
     <form method="POST" action="<?= $base ?>/admin/sales/bonanza-races/store">
         <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
         <div class="row g-2">
-            <div class="col-md-3"><label class="form-label small">Race name *</label><input type="text" name="race_name" class="form-control" required maxlength="150" placeholder="e.g. Diwali Dhamaka"></div>
-            <div class="col-md-2"><label class="form-label small">Start *</label><input type="date" name="start_date" class="form-control" required></div>
-            <div class="col-md-2"><label class="form-label small">End *</label><input type="date" name="end_date" class="form-control" required></div>
-            <div class="col-md-2"><label class="form-label small">Target bookings *</label><input type="number" min="1" name="target_bookings" class="form-control" value="5" required></div>
-            <div class="col-md-2"><label class="form-label small">Prize</label><input type="text" name="prize_text" class="form-control" maxlength="255" placeholder="e.g. Royal Enfield"></div>
+            <div class="col-md-3"><label class="form-label small">Race name *</label><input aria-label="Race name" type="text" name="race_name" class="form-control" required maxlength="150" placeholder="e.g. Diwali Dhamaka"></div>
+            <div class="col-md-2"><label class="form-label small">Start *</label><input aria-label="Start date" type="date" name="start_date" class="form-control" required></div>
+            <div class="col-md-2"><label class="form-label small">End *</label><input aria-label="End date" type="date" name="end_date" class="form-control" required></div>
+            <div class="col-md-2"><label class="form-label small">Target bookings *</label><input aria-label="Target bookings" type="number" min="1" name="target_bookings" class="form-control" value="5" required></div>
+            <div class="col-md-2"><label class="form-label small">Prize</label><input aria-label="Prize text" type="text" name="prize_text" class="form-control" maxlength="255" placeholder="e.g. Royal Enfield"></div>
             <div class="col-md-1 pt-4"><button type="submit" class="btn btn-primary w-100">Go</button></div>
         </div>
     </form>

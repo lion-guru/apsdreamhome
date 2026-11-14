@@ -17,7 +17,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Year <span class="text-danger">*</span></label>
-                    <input type="number" name="period_year" min="2020" max="2100" class="form-control" value="<?= (int)$default_year ?>" required>
+                    <input aria-label="Period year" type="number" name="period_year" min="2020" max="2100" class="form-control" value="<?= (int)$default_year ?>" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Month <span class="text-danger">*</span></label>

@@ -26,11 +26,11 @@ $page_title = $page_title ?? 'Add Legal Service';
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label class="form-label">Title <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control" required placeholder="e.g. Property Registration">
+                                <input aria-label="Title" type="text" name="title" class="form-control" required placeholder="e.g. Property Registration">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Icon (Font Awesome)</label>
-                                <input type="text" name="icon" class="form-control" value="fa-gavel" placeholder="fa-gavel">
+                                <input aria-label="Icon" type="text" name="icon" class="form-control" value="fa-gavel" placeholder="fa-gavel">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Description</label>
@@ -38,11 +38,11 @@ $page_title = $page_title ?? 'Add Legal Service';
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Price Range</label>
-                                <input type="text" name="price_range" class="form-control" placeholder="e.g. ₹5,000 - ₹25,000">
+                                <input aria-label="Price range" type="text" name="price_range" class="form-control" placeholder="e.g. ₹5,000 - ₹25,000">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Duration</label>
-                                <input type="text" name="duration" class="form-control" placeholder="e.g. 3-5 Business Days">
+                                <input aria-label="Duration" type="text" name="duration" class="form-control" placeholder="e.g. 3-5 Business Days">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Features (one per line)</label>
@@ -57,7 +57,7 @@ $page_title = $page_title ?? 'Add Legal Service';
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Display Order</label>
-                                <input type="number" name="display_order" class="form-control" value="0" min="0">
+                                <input aria-label="Display order" type="number" name="display_order" class="form-control" value="0" min="0">
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save Service</button>

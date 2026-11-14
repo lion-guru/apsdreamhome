@@ -22,7 +22,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Template Name</label>
-                                    <input type="text" name="template_name" class="form-control" required value="<?= htmlspecialchars($template['template_name'] ?? '') ?>">
+                                    <input aria-label="Template name" type="text" name="template_name" class="form-control" required value="<?= htmlspecialchars($template['template_name'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Channel</label>
@@ -36,7 +36,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Subject</label>
-                                <input type="text" name="subject" class="form-control" value="<?= htmlspecialchars($template['subject'] ?? '') ?>">
+                                <input aria-label="Subject" type="text" name="subject" class="form-control" value="<?= htmlspecialchars($template['subject'] ?? '') ?>">
                             </div>
 
                             <div class="mb-3">
@@ -47,7 +47,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Variables (comma-separated)</label>
-                                <input type="text" name="variables" class="form-control" value="<?= htmlspecialchars($template['variables'] ?? '') ?>">
+                                <input aria-label="Variables" type="text" name="variables" class="form-control" value="<?= htmlspecialchars($template['variables'] ?? '') ?>">
                             </div>
 
                             <div class="d-flex gap-2">

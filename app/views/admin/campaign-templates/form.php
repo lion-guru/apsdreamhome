@@ -87,7 +87,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <!-- Name -->
                     <div class="col-md-6">
                         <label for="name" class="form-label"><i class="fas fa-tag me-1"></i> Template Name *</label>
-                        <input type="text" class="form-control" id="name" name="name" required
+                        <input aria-label="Name" type="text" class="form-control" id="name" name="name" required
                                value="<?= htmlspecialchars($template['name'] ?? $_POST['name'] ?? '') ?>"
                                placeholder="e.g. Welcome Email, Price Drop Alert">
                     </div>
@@ -109,7 +109,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <!-- Subject (email only) -->
                     <div class="col-md-12" id="subjectGroup">
                         <label for="subject" class="form-label"><i class="fas fa-heading me-1"></i> Subject Line</label>
-                        <input type="text" class="form-control" id="subject" name="subject"
+                        <input aria-label="Subject" type="text" class="form-control" id="subject" name="subject"
                                value="<?= htmlspecialchars($template['subject'] ?? $_POST['subject'] ?? '') ?>"
                                placeholder="Email subject line with merge fields like {{name}}">
                         <small style="color:#64748b;font-size:0.8rem;">Only used for email templates. SMS/WhatsApp/Push use the body directly.</small>
@@ -138,7 +138,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     <!-- Is Active -->
                     <div class="col-md-12">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1"
+                            <input aria-label="Is active" class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1"
                                    <?= ($template['is_active'] ?? 1) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="is_active">Template is active and available for campaigns</label>
                         </div>

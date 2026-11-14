@@ -233,15 +233,15 @@ $nextOptions = $statusAdvance[$currentStatus] ?? [];
                                 <input type="hidden" name="lead_id" value="<?= $id ?>">
                                 <div class="col-md-4">
                                     <label class="form-label small">Total Consideration (₹)</label>
-                                    <input type="number" step="0.01" name="total_consideration" class="form-control form-control-sm" value="<?= (float)($lead['expected_price'] ?? 0) ?>" required>
+                                    <input aria-label="Total consideration" type="number" step="0.01" name="total_consideration" class="form-control form-control-sm" value="<?= (float)($lead['expected_price'] ?? 0) ?>" required>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small">Advance Paid (₹)</label>
-                                    <input type="number" step="0.01" name="advance_paid" class="form-control form-control-sm" value="0">
+                                    <input aria-label="Advance paid" type="number" step="0.01" name="advance_paid" class="form-control form-control-sm" value="0">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small">Sale Agreement Date</label>
-                                    <input type="date" name="sale_agreement_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>">
+                                    <input aria-label="Sale agreement date" type="date" name="sale_agreement_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>">
                                 </div>
                                 <div class="col-12 text-end">
                                     <button type="button" class="btn btn-secondary btn-sm" disabled>Use "Close Deal" from Deals page</button>

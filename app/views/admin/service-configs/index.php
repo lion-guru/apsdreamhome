@@ -48,15 +48,15 @@ $serviceLabels = [
                             <td>
                                 <?php if ($s['config_type'] === 'password' || $s['is_secret']): ?>
                                     <?php $sDefault = $defaults[$s['service_name']][$s['config_key']]['placeholder'] ?? ''; ?>
-                                    <input type="password" name="configs[<?= $sName ?>][<?= $sKey ?>]" class="form-control form-control-sm" value="<?= $sVal ?>" placeholder="<?= $sDefault ? 'Default: ' . htmlspecialchars($sDefault) : 'Enter value' ?>">
+                                    <input aria-label="Configs s name s key" type="password" name="configs[<?= $sName ?>][<?= $sKey ?>]" class="form-control form-control-sm" value="<?= $sVal ?>" placeholder="<?= $sDefault ? 'Default: ' . htmlspecialchars($sDefault) : 'Enter value' ?>">
                                 <?php elseif ($s['config_type'] === 'boolean'): ?>
                                     <div class="form-check form-switch">
                                         <input type="hidden" name="configs[<?= $sName ?>][<?= $sKey ?>]" value="0">
-                                        <input type="checkbox" name="configs[<?= $sName ?>][<?= $sKey ?>]" class="form-check-input" value="1" <?= ($s['config_value'] === '1' || $s['config_value'] === 'true') ? 'checked' : '' ?>>
+                                        <input aria-label="Configs s name s key" type="checkbox" name="configs[<?= $sName ?>][<?= $sKey ?>]" class="form-check-input" value="1" <?= ($s['config_value'] === '1' || $s['config_value'] === 'true') ? 'checked' : '' ?>>
                                     </div>
                                 <?php else: ?>
                                     <?php $sDefault = $defaults[$s['service_name']][$s['config_key']]['value'] ?? ''; ?>
-                                    <input type="text" name="configs[<?= $sName ?>][<?= $sKey ?>]" class="form-control form-control-sm" value="<?= $sVal ?>" placeholder="<?= $sDefault ? 'Default: ' . htmlspecialchars($sDefault) : 'Enter value' ?>">
+                                    <input aria-label="Configs s name s key" type="text" name="configs[<?= $sName ?>][<?= $sKey ?>]" class="form-control form-control-sm" value="<?= $sVal ?>" placeholder="<?= $sDefault ? 'Default: ' . htmlspecialchars($sDefault) : 'Enter value' ?>">
                                 <?php endif; ?>
                             </td>
                             <td><span class="badge bg-secondary"><?= $sType ?></span></td>

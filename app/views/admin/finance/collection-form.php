@@ -22,7 +22,7 @@ $bookings = $bookings ?? [];
 
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Customer Name <span >*</span></label>
-                    <input type="text" name="customer_name" class="aps-cp-form-input" required placeholder="e.g. Rajesh Kumar">
+                    <input aria-label="Customer name" type="text" name="customer_name" class="aps-cp-form-input" required placeholder="e.g. Rajesh Kumar">
                 </div>
 
                 <div class="aps-cp-form-row">
@@ -37,14 +37,14 @@ $bookings = $bookings ?? [];
                     </div>
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Collection Date <span >*</span></label>
-                        <input type="date" name="collection_date" class="aps-cp-form-input" required value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Collection date" type="date" name="collection_date" class="aps-cp-form-input" required value="<?= date('Y-m-d') ?>">
                     </div>
                 </div>
 
                 <div class="aps-cp-form-row">
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Amount (₹) <span >*</span></label>
-                        <input type="number" name="amount" class="aps-cp-form-input" required min="1" step="0.01" placeholder="e.g. 5000">
+                        <input aria-label="Amount" type="number" name="amount" class="aps-cp-form-input" required min="1" step="0.01" placeholder="e.g. 5000">
                     </div>
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Payment Method</label>
@@ -60,7 +60,7 @@ $bookings = $bookings ?? [];
                 <div class="aps-cp-form-row">
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Reference Number</label>
-                        <input type="text" name="reference_number" class="aps-cp-form-input" placeholder="Cheque/UPI ref (optional)">
+                        <input aria-label="Reference number" type="text" name="reference_number" class="aps-cp-form-input" placeholder="Cheque/UPI ref (optional)">
                     </div>
                     <div class="aps-cp-form-group">
                         <label class="aps-cp-form-label">Booking (Optional)</label>
@@ -75,7 +75,7 @@ $bookings = $bookings ?? [];
 
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Receipt Photo</label>
-                    <input type="file" name="receipt_photo" class="aps-cp-form-input" accept="image/*">
+                    <input aria-label="Receipt photo" type="file" name="receipt_photo" class="aps-cp-form-input" accept="image/*">
                     <div >Upload receipt photo (JPG/PNG/WebP, max 5MB)</div>
                 </div>
 

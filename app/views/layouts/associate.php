@@ -785,7 +785,7 @@ $GLOBALS['_html_doc_started'] = true;
 
                     <div class="border rounded-3 p-3 mt-4" style="background: #f8f9fa; border-color: #d4af37 !important;">
                         <div class="form-check mb-0">
-                            <input class="form-check-input" type="checkbox" id="legalConsentCheckbox"
+                            <input aria-label="Legal consent checkbox" class="form-check-input" type="checkbox" id="legalConsentCheckbox"
                                    style="border-color: #d4af37; width: 1.4em; height: 1.4em; margin-top: 0.1em;">
                             <label class="form-check-label fw-bold" for="legalConsentCheckbox" style="font-size: 0.95rem; line-height: 1.6; color: #1a1a2e;">
                                 <i class="fas fa-check-circle text-success me-1"></i>

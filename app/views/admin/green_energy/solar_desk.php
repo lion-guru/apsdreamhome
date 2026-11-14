@@ -188,15 +188,15 @@ $current_status = $current_status ?? null;
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label class="form-label fw-semibold">PVVNL Net-Metering Sanction Ref</label>
-                                                                <input type="text" name="sanction_ref" class="form-control" value="<?= htmlspecialchars($req['sanction_ref'] ?? '') ?>" placeholder="e.g. PVVNL/SOLAR/2026/8941">
+                                                                <input aria-label="Sanction ref" type="text" name="sanction_ref" class="form-control" value="<?= htmlspecialchars($req['sanction_ref'] ?? '') ?>" placeholder="e.g. PVVNL/SOLAR/2026/8941">
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label class="form-label fw-semibold">Solar EPC Partner Name</label>
-                                                                <input type="text" name="installer_partner" class="form-control" value="<?= htmlspecialchars($req['installer_partner'] ?? '') ?>" placeholder="e.g. Tata Power Solar / Waree Energies">
+                                                                <input aria-label="Installer partner" type="text" name="installer_partner" class="form-control" value="<?= htmlspecialchars($req['installer_partner'] ?? '') ?>" placeholder="e.g. Tata Power Solar / Waree Energies">
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label class="form-label fw-semibold">Installer Contact Number</label>
-                                                                <input type="text" name="installer_contact" class="form-control" value="<?= htmlspecialchars($req['installer_contact'] ?? '') ?>" placeholder="10-digit mobile number">
+                                                                <input aria-label="Installer contact" type="text" name="installer_contact" class="form-control" value="<?= htmlspecialchars($req['installer_contact'] ?? '') ?>" placeholder="10-digit mobile number">
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label class="form-label fw-semibold">Admin Notes</label>

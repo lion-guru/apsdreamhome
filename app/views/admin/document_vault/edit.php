@@ -32,11 +32,11 @@ $category = $category ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($category['name'] ?? '') ?>" placeholder="e.g., Identity Proof">
+                        <input aria-label="Name" type="text" name="name" class="form-control" required value="<?= htmlspecialchars($category['name'] ?? '') ?>" placeholder="e.g., Identity Proof">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Code <span class="text-danger">*</span></label>
-                        <input type="text" name="code" class="form-control" required value="<?= htmlspecialchars($category['code'] ?? '') ?>" readonly>
+                        <input aria-label="Code" type="text" name="code" class="form-control" required value="<?= htmlspecialchars($category['code'] ?? '') ?>" readonly>
                         <div class="form-text">Code cannot be changed after creation</div>
                     </div>
                     <div class="col-12">
@@ -46,17 +46,17 @@ $category = $category ?? [];
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Mandatory</label>
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="is_mandatory" value="1" id="is_mandatory" <?= !empty($category['is_mandatory']) ? 'checked' : '' ?>>
+                            <input aria-label="Is mandatory" class="form-check-input" type="checkbox" name="is_mandatory" value="1" id="is_mandatory" <?= !empty($category['is_mandatory']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="is_mandatory">Required for all employees</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Retention (Years)</label>
-                        <input type="number" min="1" max="99" name="retention_years" class="form-control" value="<?= htmlspecialchars($category['retention_years'] ?? 7) ?>">
+                        <input aria-label="Retention years" type="number" min="1" max="99" name="retention_years" class="form-control" value="<?= htmlspecialchars($category['retention_years'] ?? 7) ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Max File Size (MB)</label>
-                        <input type="number" min="1" max="100" name="max_size_mb" class="form-control" value="<?= htmlspecialchars($category['max_size_mb'] ?? 10) ?>">
+                        <input aria-label="Max size mb" type="number" min="1" max="100" name="max_size_mb" class="form-control" value="<?= htmlspecialchars($category['max_size_mb'] ?? 10) ?>">
                     </div>
                 </div>
             </div>
@@ -70,23 +70,23 @@ $category = $category ?? [];
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Allowed Types</label>
-                        <input type="text" name="allowed_types" class="form-control" value="<?= htmlspecialchars($category['allowed_types'] ? implode(', ', json_decode($category['allowed_types'], true)) : 'pdf,jpg,jpeg,png') ?>" placeholder="pdf,jpg,jpeg,png,doc,docx">
+                        <input aria-label="Allowed types" type="text" name="allowed_types" class="form-control" value="<?= htmlspecialchars($category['allowed_types'] ? implode(', ', json_decode($category['allowed_types'], true)) : 'pdf,jpg,jpeg,png') ?>" placeholder="pdf,jpg,jpeg,png,doc,docx">
                         <div class="form-text">Comma-separated extensions</div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Max File Size (MB)</label>
-                        <input type="number" min="1" max="100" name="max_size_mb" class="form-control" value="<?= htmlspecialchars($category['max_size_mb'] ?? 10) ?>">
+                        <input aria-label="Max size mb" type="number" min="1" max="100" name="max_size_mb" class="form-control" value="<?= htmlspecialchars($category['max_size_mb'] ?? 10) ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Requires Expiry</label>
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="requires_expiry" value="1" id="requires_expiry" <?= !empty($category['requires_expiry']) ? 'checked' : '' ?>>
+                            <input aria-label="Requires expiry" class="form-check-input" type="checkbox" name="requires_expiry" value="1" id="requires_expiry" <?= !empty($category['requires_expiry']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="requires_expiry">Document expires</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Expiry Alert (Days)</label>
-                        <input type="number" min="1" max="365" name="expiry_alert_days" class="form-control" value="<?= htmlspecialchars($category['expiry_alert_days'] ?? 30) ?>">
+                        <input aria-label="Expiry alert days" type="number" min="1" max="365" name="expiry_alert_days" class="form-control" value="<?= htmlspecialchars($category['expiry_alert_days'] ?? 30) ?>">
                     </div>
                 </div>
             </div>
@@ -100,13 +100,13 @@ $category = $category ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active" <?= empty($category['is_active']) ? '' : 'checked' ?>>
+                            <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active" <?= empty($category['is_active']) ? '' : 'checked' ?>>
                             <label class="form-check-label" for="is_active">Active</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Sort Order</label>
-                        <input type="number" min="0" name="sort_order" class="form-control" value="<?= htmlspecialchars($category['sort_order'] ?? 0) ?>">
+                        <input aria-label="Sort order" type="number" min="0" name="sort_order" class="form-control" value="<?= htmlspecialchars($category['sort_order'] ?? 0) ?>">
                     </div>
                 </div>
             </div>

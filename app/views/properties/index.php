@@ -16,7 +16,7 @@ include __DIR__ . '/../layouts/base.php';
                     <div class="col-md-5">
                         <div class="input-group input-group-lg">
                             <span class="input-group-text bg-transparent border-end-0 text-white-50"><i class="bi bi-search"></i></span>
-                            <input type="text" class="form-control bg-transparent border-start-0 text-white" placeholder="Search by location, project name...">
+                            <input aria-label="Search by location project name" type="text" class="form-control bg-transparent border-start-0 text-white" placeholder="Search by location, project name...">
                         </div>
                     </div>
                     <div class="col-md-3">

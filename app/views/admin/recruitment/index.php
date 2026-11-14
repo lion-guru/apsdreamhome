@@ -66,7 +66,7 @@ $stats = $stats ?? [];
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label small fw-semibold">Search</label>
-                    <input type="text" name="search" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Title, code, department...">
+                    <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['search'] ?? '') ?>" placeholder="Title, code, department...">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-semibold">Status</label>

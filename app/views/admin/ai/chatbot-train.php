@@ -21,7 +21,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="mb-3">
                                 <label class="form-label">Intent</label>
-                                <input type="text" name="intent" class="form-control" placeholder="e.g., property_inquiry" required>
+                                <input aria-label="Intent" type="text" name="intent" class="form-control" placeholder="e.g., property_inquiry" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Category</label>

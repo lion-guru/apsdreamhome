@@ -85,11 +85,11 @@ ob_start();
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">From</label>
-                    <input type="date" name="from" class="form-control" value="<?= $filters['from'] ?? '' ?>">
+                    <input aria-label="From" type="date" name="from" class="form-control" value="<?= $filters['from'] ?? '' ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">To</label>
-                    <input type="date" name="to" class="form-control" value="<?= $filters['to'] ?? '' ?>">
+                    <input aria-label="To" type="date" name="to" class="form-control" value="<?= $filters['to'] ?? '' ?>">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search me-1"></i>Filter</button>

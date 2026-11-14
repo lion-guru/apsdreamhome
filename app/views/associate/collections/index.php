@@ -70,11 +70,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-auto">
                     <label class="form-label small mb-1">From</label>
-                    <input type="date" name="from" class="form-control form-control-sm" value="<?php echo htmlspecialchars($filters['from'] ?? ''); ?>">
+                    <input aria-label="From" type="date" name="from" class="form-control form-control-sm" value="<?php echo htmlspecialchars($filters['from'] ?? ''); ?>">
                 </div>
                 <div class="col-auto">
                     <label class="form-label small mb-1">To</label>
-                    <input type="date" name="to" class="form-control form-control-sm" value="<?php echo htmlspecialchars($filters['to'] ?? ''); ?>">
+                    <input aria-label="To" type="date" name="to" class="form-control form-control-sm" value="<?php echo htmlspecialchars($filters['to'] ?? ''); ?>">
                 </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-filter me-1"></i>Filter</button>

@@ -174,28 +174,28 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Audit Date</label>
-                        <input type="date" name="audit_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Audit date" type="date" name="audit_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">NVR Identifier</label>
-                        <input type="text" name="nvr_identifier" class="form-control" value="Main Control Room NVR-1 (32 Ch)">
+                        <input aria-label="Nvr identifier" type="text" name="nvr_identifier" class="form-control" value="Main Control Room NVR-1 (32 Ch)">
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Cameras Installed *</label>
-                        <input type="number" name="total_cameras_installed" class="form-control" value="32" required>
+                        <input aria-label="Total cameras installed" type="number" name="total_cameras_installed" class="form-control" value="32" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Cameras Online *</label>
-                        <input type="number" name="cameras_online_count" class="form-control" value="30" required>
+                        <input aria-label="Cameras online count" type="number" name="cameras_online_count" class="form-control" value="30" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Retention (Days)</label>
-                        <input type="number" name="recording_retention_days" class="form-control" value="30">
+                        <input aria-label="Recording retention days" type="number" name="recording_retention_days" class="form-control" value="30">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Footage Exports (Today)</label>
-                        <input type="number" name="footage_exported_count" class="form-control" value="0">
+                        <input aria-label="Footage exported count" type="number" name="footage_exported_count" class="form-control" value="0">
                     </div>
 
                     <div class="col-md-4">
@@ -216,16 +216,16 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Technician Full Name *</label>
-                        <input type="text" name="cctv_technician_name" class="form-control" value="Ashok Kumar" required>
+                        <input aria-label="Cctv technician name" type="text" name="cctv_technician_name" class="form-control" value="Ashok Kumar" required>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Technician Phone</label>
-                        <input type="text" name="technician_phone" class="form-control" value="+91 9839332211">
+                        <input aria-label="Technician phone" type="text" name="technician_phone" class="form-control" value="+91 9839332211">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Offline Camera Locations / Channel IDs</label>
-                        <input type="text" name="offline_camera_locations" class="form-control" placeholder="e.g. Cam #14: Sector B Outer Wall, Cam #22: Tube-well">
+                        <input aria-label="Offline camera locations" type="text" name="offline_camera_locations" class="form-control" placeholder="e.g. Cam #14: Sector B Outer Wall, Cam #22: Tube-well">
                     </div>
 
                     <div class="col-12">

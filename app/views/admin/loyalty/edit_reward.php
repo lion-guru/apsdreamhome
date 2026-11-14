@@ -18,7 +18,7 @@ $isEdit = $reward !== null;
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Reward Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($reward['name'] ?? '') ?>" required>
+                            <input aria-label="Name" type="text" name="name" class="form-control" value="<?= htmlspecialchars($reward['name'] ?? '') ?>" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
@@ -27,11 +27,11 @@ $isEdit = $reward !== null;
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <label class="form-label">Points Required <span class="text-danger">*</span></label>
-                                <input type="number" name="points_required" class="form-control" value="<?= htmlspecialchars($reward['points_required'] ?? $reward['points'] ?? '') ?>" required min="0">
+                                <input aria-label="Points required" type="number" name="points_required" class="form-control" value="<?= htmlspecialchars($reward['points_required'] ?? $reward['points'] ?? '') ?>" required min="0">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Stock / Quantity</label>
-                                <input type="number" name="stock" class="form-control" value="<?= htmlspecialchars($reward['stock'] ?? $reward['quantity'] ?? 1) ?>" min="0">
+                                <input aria-label="Stock" type="number" name="stock" class="form-control" value="<?= htmlspecialchars($reward['stock'] ?? $reward['quantity'] ?? 1) ?>" min="0">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Category</label>
@@ -46,7 +46,7 @@ $isEdit = $reward !== null;
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Reward Image</label>
-                            <input type="file" name="image" class="form-control" accept="image/*">
+                            <input aria-label="Image" type="file" name="image" class="form-control" accept="image/*">
                             <?php if ($isEdit && !empty($reward['image'])): ?>
                                 <small class="text-muted">Current: <a href="<?= $base ?>/<?= $reward['image'] ?>" target="_blank"><?= $reward['image'] ?></a></small>
                             <?php endif; ?>

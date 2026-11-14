@@ -27,7 +27,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
             <div class="card-body aps-cp-card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <input type="text" class="form-control" placeholder="Search users...">
+                        <input aria-label="Search users" type="text" class="form-control" placeholder="Search users...">
                     </div>
                     <div class="col-md-3">
                         <select class="form-select">

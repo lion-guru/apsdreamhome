@@ -33,7 +33,7 @@
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Campaign Name <span >*</span></label>
-                            <input type="text" name="name" class="form-control" required
+                            <input aria-label="Name" type="text" name="name" class="form-control" required
                                    value="<?= htmlspecialchars($campaign['name'] ?? '') ?>"
                                    placeholder="e.g. Diwali Property Offer, EMI Reminder"
                                    >
@@ -48,7 +48,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Notification Title <span >*</span></label>
-                            <input type="text" name="title" class="form-control" required maxlength="100"
+                            <input aria-label="Title" type="text" name="title" class="form-control" required maxlength="100"
                                    value="<?= htmlspecialchars($campaign['title'] ?? '') ?>"
                                    placeholder="Push notification title"
                                    >
@@ -100,7 +100,7 @@
                                     <select aria-label="Target value" name="target_value" id="target_value_select" class="form-select">
                                         <option value="">Not applicable for All Users</option>
                                     </select>
-                                    <input type="text" name="target_value" id="target_value_input" class="form-control"
+                                    <input aria-label="Target value" type="text" name="target_value" id="target_value_input" class="form-control"
                                            value="<?= htmlspecialchars($campaign['target_value'] ?? '') ?>"
                                            placeholder="User ID or segment name"
                                            >
@@ -109,7 +109,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Schedule</label>
-                                <input type="datetime-local" name="scheduled_at" class="form-control"
+                                <input aria-label="Scheduled at" type="datetime-local" name="scheduled_at" class="form-control"
                                        value="<?= !empty($campaign['scheduled_at']) ? date('Y-m-d\TH:i', strtotime($campaign['scheduled_at'])) : '' ?>"
                                        >
                                 <small >Leave empty for draft. Set a future time to schedule.</small>

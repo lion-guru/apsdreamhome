@@ -202,7 +202,7 @@ $requests = $requests ?? [];
                     <div class="row mb-3">
                         <label for="days_to_encash" class="col-sm-3 col-form-label fw-bold">Days to Encash <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control" id="days_to_encash" name="days_to_encash" step="0.5" min="0.5" max="<?= $policy['max_encashable_days'] ?? 30 ?>" required>
+                            <input aria-label="Days to encash" type="number" class="form-control" id="days_to_encash" name="days_to_encash" step="0.5" min="0.5" max="<?= $policy['max_encashable_days'] ?? 30 ?>" required>
                             <div class="form-text">Maximum: <?= $policy['max_encashable_days'] ?? 30 ?> days per financial year</div>
                         </div>
                     </div>

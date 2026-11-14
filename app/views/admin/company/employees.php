@@ -87,15 +87,15 @@ $employeeUsers = $employeeUsers ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Position <span class="text-danger">*</span></label>
-                        <input type="text" name="position" class="form-control" required>
+                        <input aria-label="Position" type="text" name="position" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Salary</label>
-                        <input type="number" step="0.01" name="salary" class="form-control">
+                        <input aria-label="Salary" type="number" step="0.01" name="salary" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Join Date</label>
-                        <input type="date" name="join_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Join date" type="date" name="join_date" class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Status</label>

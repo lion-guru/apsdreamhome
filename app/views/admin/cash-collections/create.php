@@ -33,15 +33,15 @@ ob_start();
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Customer Name *</label>
-                                <input type="text" class="form-control" name="customer_name" required placeholder="Customer who paid">
+                                <input aria-label="Customer name" type="text" class="form-control" name="customer_name" required placeholder="Customer who paid">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Amount (₹) *</label>
-                                <input type="number" class="form-control" name="amount" required min="1" step="0.01" placeholder="0.00">
+                                <input aria-label="Amount" type="number" class="form-control" name="amount" required min="1" step="0.01" placeholder="0.00">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Collection Date *</label>
-                                <input type="date" class="form-control" name="collection_date" required value="<?= date('Y-m-d') ?>">
+                                <input aria-label="Collection date" type="date" class="form-control" name="collection_date" required value="<?= date('Y-m-d') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Payment Method</label>
@@ -71,11 +71,11 @@ ob_start();
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Installment ID</label>
-                                <input type="number" class="form-control" name="installment_id" placeholder="Leave blank if not EMI payment">
+                                <input aria-label="Installment id" type="number" class="form-control" name="installment_id" placeholder="Leave blank if not EMI payment">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Reference Number</label>
-                                <input type="text" class="form-control" name="reference_number" placeholder="Cheque no, UPI ref, etc.">
+                                <input aria-label="Reference number" type="text" class="form-control" name="reference_number" placeholder="Cheque no, UPI ref, etc.">
                             </div>
                         </div>
                     </div>
@@ -86,7 +86,7 @@ ob_start();
                     <div class="card-body aps-cp-card-body">
                         <div class="mb-3">
                             <label class="form-label">Receipt Photo</label>
-                            <input type="file" class="form-control" name="receipt_photo" accept="image/*">
+                            <input aria-label="Receipt photo" type="file" class="form-control" name="receipt_photo" accept="image/*">
                             <small class="text-muted">Upload a photo of the physical receipt (JPG, PNG, WebP — max 10MB)</small>
                         </div>
                         <div class="mb-0">

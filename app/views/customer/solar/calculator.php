@@ -52,7 +52,7 @@ $is_logged_in = $is_logged_in ?? false;
                     <label class="form-label fw-semibold text-secondary">
                         Average Monthly Electricity Bill: <span id="billDisplay" class="fw-bold text-primary fs-5">₹3,500</span>
                     </label>
-                    <input type="range" class="form-range" id="billRange" min="1000" max="15000" step="500" value="3500" oninput="updateCalculator()">
+                    <input aria-label="Bill range" type="range" class="form-range" id="billRange" min="1000" max="15000" step="500" value="3500" oninput="updateCalculator()">
                     <div class="d-flex justify-content-between text-muted small">
                         <span>₹1,000</span>
                         <span>₹5,000</span>
@@ -65,7 +65,7 @@ $is_logged_in = $is_logged_in ?? false;
                     <label class="form-label fw-semibold text-secondary">
                         Plot / Estimated Rooftop Footprint: <span id="areaDisplay" class="fw-bold text-primary fs-5">1,000 sq.ft</span>
                     </label>
-                    <input type="range" class="form-range" id="areaRange" min="400" max="4000" step="100" value="1000" oninput="updateCalculator()">
+                    <input aria-label="Area range" type="range" class="form-range" id="areaRange" min="400" max="4000" step="100" value="1000" oninput="updateCalculator()">
                     <div class="d-flex justify-content-between text-muted small">
                         <span>400 sq.ft</span>
                         <span>1,000 sq.ft</span>
@@ -78,19 +78,19 @@ $is_logged_in = $is_logged_in ?? false;
                     <label class="form-label fw-semibold text-secondary">System Capacity Selection</label>
                     <div class="row g-2">
                         <div class="col-3">
-                            <input type="radio" class="btn-check" name="kwChoice" id="kw1" value="1" onchange="updateCalculator()">
+                            <input aria-label="Kw choice" type="radio" class="btn-check" name="kwChoice" id="kw1" value="1" onchange="updateCalculator()">
                             <label class="btn btn-outline-primary w-100 py-2" for="kw1"><strong>1 kW</strong><br><small class="text-muted">Compact</small></label>
                         </div>
                         <div class="col-3">
-                            <input type="radio" class="btn-check" name="kwChoice" id="kw2" value="2" onchange="updateCalculator()">
+                            <input aria-label="Kw choice" type="radio" class="btn-check" name="kwChoice" id="kw2" value="2" onchange="updateCalculator()">
                             <label class="btn btn-outline-primary w-100 py-2" for="kw2"><strong>2 kW</strong><br><small class="text-muted">Standard</small></label>
                         </div>
                         <div class="col-3">
-                            <input type="radio" class="btn-check" name="kwChoice" id="kw3" value="3" checked onchange="updateCalculator()">
+                            <input aria-label="Kw choice" type="radio" class="btn-check" name="kwChoice" id="kw3" value="3" checked onchange="updateCalculator()">
                             <label class="btn btn-outline-primary w-100 py-2" for="kw3"><strong>3 kW</strong><br><small class="text-muted">Most Popular</small></label>
                         </div>
                         <div class="col-3">
-                            <input type="radio" class="btn-check" name="kwChoice" id="kw5" value="5" onchange="updateCalculator()">
+                            <input aria-label="Kw choice" type="radio" class="btn-check" name="kwChoice" id="kw5" value="5" onchange="updateCalculator()">
                             <label class="btn btn-outline-primary w-100 py-2" for="kw5"><strong>5 kW</strong><br><small class="text-muted">High Power</small></label>
                         </div>
                     </div>
@@ -202,17 +202,17 @@ $is_logged_in = $is_logged_in ?? false;
 
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Electricity Consumer Account (CA / Connection No.)</label>
-                    <input type="text" name="consumer_number" class="form-control" placeholder="10-digit PVVNL Consumer Number">
+                    <input aria-label="Consumer number" type="text" name="consumer_number" class="form-control" placeholder="10-digit PVVNL Consumer Number">
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Electricity DISCOM Provider</label>
-                    <input type="text" name="discom_provider" class="form-control" value="Purvanchal Vidyut Vitaran Nigam Ltd (PVVNL)" readonly>
+                    <input aria-label="Discom provider" type="text" name="discom_provider" class="form-control" value="Purvanchal Vidyut Vitaran Nigam Ltd (PVVNL)" readonly>
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Special Instructions / Site Notes</label>
-                    <input type="text" name="notes" class="form-control" placeholder="e.g. Roof is open concrete slab with stair access.">
+                    <input aria-label="Notes" type="text" name="notes" class="form-control" placeholder="e.g. Roof is open concrete slab with stair access.">
                 </div>
 
                 <div class="col-12 mt-4">

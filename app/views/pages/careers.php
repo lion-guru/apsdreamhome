@@ -300,21 +300,21 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('careers_full_name', null, 'Full Name') ?> <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="name" placeholder="Enter your full name" required>
+                            <input aria-label="Name" type="text" class="form-control" name="name" placeholder="Enter your full name" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('careers_email', null, 'Email') ?> <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" name="email" placeholder="you@example.com" required>
+                            <input aria-label="Email" type="email" class="form-control" name="email" placeholder="you@example.com" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('careers_phone', null, 'Phone') ?> <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" name="phone" placeholder="9876543210" required>
+                            <input aria-label="Phone" type="tel" class="form-control" name="phone" placeholder="9876543210" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('careers_position_applied', null, 'Position Applied For') ?></label>
-                            <input type="text" class="form-control" name="position" id="applicationPosition" readonly>
+                            <input aria-label="Position" type="text" class="form-control" name="position" id="applicationPosition" readonly>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -323,7 +323,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold"><?= __('careers_resume_cv', null, 'Resume/CV') ?> <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" name="resume" accept=".pdf,.doc,.docx" required>
+                        <input aria-label="Resume" type="file" class="form-control" name="resume" accept=".pdf,.doc,.docx" required>
                         <small class="text-muted"><?= __('careers_resume_help', null, 'PDF, DOC, or DOCX only — Max 5MB') ?></small>
                     </div>
                 </form>
@@ -476,21 +476,21 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('careers_full_name', null, 'Full Name') ?> <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="name" placeholder="Enter your full name" required>
+                            <input aria-label="Name" type="text" class="form-control" name="name" placeholder="Enter your full name" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('careers_email', null, 'Email') ?> <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" name="email" placeholder="you@college.edu" required>
+                            <input aria-label="Email" type="email" class="form-control" name="email" placeholder="you@college.edu" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('careers_phone', null, 'Phone') ?> <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" name="phone" placeholder="9876543210" required>
+                            <input aria-label="Phone" type="tel" class="form-control" name="phone" placeholder="9876543210" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold"><?= __('student_college', null, 'College/University') ?> <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="college" placeholder="Enter your college name" required>
+                            <input aria-label="College" type="text" class="form-control" name="college" placeholder="Enter your college name" required>
                         </div>
                     </div>
                     <div class="row">

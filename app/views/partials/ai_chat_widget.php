@@ -57,7 +57,7 @@ $user_role = $this->getUserRole() ?? 'customer';
         <!-- Chat Input -->
         <div class="ai-chat-input">
             <div class="ai-input-wrapper">
-                <input type="text" id="ai-chat-input-field" placeholder="Type your message..." 
+                <input aria-label="Ai chat input field" type="text" id="ai-chat-input-field" placeholder="Type your message..." 
                        onkeypress="handleAIChatKeyPress(event)">
                 <button onclick="sendAIMessage()" class="ai-send-btn" aria-label="Send message" title="Send message">
                     <i class="fas fa-paper-plane"></i>

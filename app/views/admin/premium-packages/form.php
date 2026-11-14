@@ -13,11 +13,11 @@
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label">Name *</label>
-                <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($pkg['name'] ?? '') ?>" required>
+                <input aria-label="Name" type="text" name="name" class="form-control" value="<?= htmlspecialchars($pkg['name'] ?? '') ?>" required>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Slug *</label>
-                <input type="text" name="slug" class="form-control" value="<?= htmlspecialchars($pkg['slug'] ?? '') ?>" required placeholder="e.g. featured, urgent, premium_plus">
+                <input aria-label="Slug" type="text" name="slug" class="form-control" value="<?= htmlspecialchars($pkg['slug'] ?? '') ?>" required placeholder="e.g. featured, urgent, premium_plus">
               </div>
             </div>
             <div class="mb-3 mt-3">
@@ -27,29 +27,29 @@
             <div class="row g-3 mb-3">
               <div class="col-md-3">
                 <label class="form-label">Price (₹)</label>
-                <input type="number" name="price" class="form-control" value="<?= $pkg['price'] ?? 0 ?>" min="0" step="1">
+                <input aria-label="Price" type="number" name="price" class="form-control" value="<?= $pkg['price'] ?? 0 ?>" min="0" step="1">
               </div>
               <div class="col-md-3">
                 <label class="form-label">Duration (days)</label>
-                <input type="number" name="duration_days" class="form-control" value="<?= $pkg['duration_days'] ?? 30 ?>" min="1">
+                <input aria-label="Duration days" type="number" name="duration_days" class="form-control" value="<?= $pkg['duration_days'] ?? 30 ?>" min="1">
               </div>
               <div class="col-md-3">
                 <label class="form-label">Badge Label</label>
-                <input type="text" name="badge_label" class="form-control" value="<?= htmlspecialchars($pkg['badge_label'] ?? 'Featured') ?>">
+                <input aria-label="Badge label" type="text" name="badge_label" class="form-control" value="<?= htmlspecialchars($pkg['badge_label'] ?? 'Featured') ?>">
               </div>
               <div class="col-md-3">
                 <label class="form-label">Badge Color</label>
-                <input type="color" name="badge_color" class="form-control form-control-color" value="<?= htmlspecialchars($pkg['badge_color'] ?? '#ff6b35') ?>">
+                <input aria-label="Badge color" type="color" name="badge_color" class="form-control form-control-color" value="<?= htmlspecialchars($pkg['badge_color'] ?? '#ff6b35') ?>">
               </div>
             </div>
             <div class="row g-3 mb-3">
               <div class="col-md-3">
                 <label class="form-label">Priority Order</label>
-                <input type="number" name="priority_order" class="form-control" value="<?= $pkg['priority_order'] ?? 0 ?>" min="0">
+                <input aria-label="Priority order" type="number" name="priority_order" class="form-control" value="<?= $pkg['priority_order'] ?? 0 ?>" min="0">
               </div>
               <div class="col-md-3 d-flex align-items-end">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="is_active" id="is_active" <?= !isset($pkg['is_active']) || $pkg['is_active'] ? 'checked' : '' ?>>
+                  <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="is_active" <?= !isset($pkg['is_active']) || $pkg['is_active'] ? 'checked' : '' ?>>
                   <label class="form-check-label" for="is_active">Active</label>
                 </div>
               </div>
@@ -61,7 +61,7 @@
               <?php for ($i = 1; $i <= 10; $i++): ?>
                 <div class="input-group mb-1">
                   <span class="input-group-text"><?= $i ?></span>
-                  <input type="text" name="feature_<?= $i ?>" class="form-control" value="<?= htmlspecialchars($features[$i-1] ?? '') ?>" placeholder="Feature description">
+                  <input aria-label="Feature i" type="text" name="feature_<?= $i ?>" class="form-control" value="<?= htmlspecialchars($features[$i-1] ?? '') ?>" placeholder="Feature description">
                 </div>
               <?php endfor; ?>
             </div>

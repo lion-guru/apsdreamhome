@@ -31,11 +31,11 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Purchase Amount (&#8377;) <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" min="0.01" name="amount" class="form-control" required>
+                        <input aria-label="Amount" type="number" step="0.01" min="0.01" name="amount" class="form-control" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Transaction Date</label>
-                        <input type="date" name="transaction_date" class="form-control" value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Transaction date" type="date" name="transaction_date" class="form-control" value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Payment Method</label>
@@ -49,7 +49,7 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
 
                     <div class="col-md-6">
                         <label class="form-label">Reference Number</label>
-                        <input type="text" name="reference_number" class="form-control" maxlength="100"
+                        <input aria-label="Reference number" type="text" name="reference_number" class="form-control" maxlength="100"
                                placeholder="UTR / Cheque / Transaction No.">
                     </div>
                     <div class="col-md-6">

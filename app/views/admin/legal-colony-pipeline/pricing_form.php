@@ -22,28 +22,28 @@ $colony = $colony ?? null;
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label text-white">Override Price per sqft (₹)</label>
-                <input type="number" name="override_price_per_sqft" class="form-control bg-dark text-white border-secondary" value="0" min="0" step="0.01">
+                <input aria-label="Override price per sqft" type="number" name="override_price_per_sqft" class="form-control bg-dark text-white border-secondary" value="0" min="0" step="0.01">
                 <small class="text-info">Leave 0 to use calculated price from ColonyPricingService</small>
               </div>
               <div class="col-md-6">
                 <label class="form-label text-white">Corner Plot Premium %</label>
-                <input type="number" name="corner_premium_pct" class="form-control bg-dark text-white border-secondary" value="10" min="0" step="0.5">
+                <input aria-label="Corner premium pct" type="number" name="corner_premium_pct" class="form-control bg-dark text-white border-secondary" value="10" min="0" step="0.5">
               </div>
               <div class="col-md-6">
                 <label class="form-label text-white">Park Facing Premium %</label>
-                <input type="number" name="park_facing_premium_pct" class="form-control bg-dark text-white border-secondary" value="15" min="0" step="0.5">
+                <input aria-label="Park facing premium pct" type="number" name="park_facing_premium_pct" class="form-control bg-dark text-white border-secondary" value="15" min="0" step="0.5">
               </div>
               <div class="col-md-6">
                 <label class="form-label text-white">Wide Road Premium %</label>
-                <input type="number" name="wide_road_premium_pct" class="form-control bg-dark text-white border-secondary" value="8" min="0" step="0.5">
+                <input aria-label="Wide road premium pct" type="number" name="wide_road_premium_pct" class="form-control bg-dark text-white border-secondary" value="8" min="0" step="0.5">
               </div>
               <div class="col-md-6">
                 <label class="form-label text-white">Wide Road Threshold (ft)</label>
-                <input type="number" name="wide_road_threshold" class="form-control bg-dark text-white border-secondary" value="40">
+                <input aria-label="Wide road threshold" type="number" name="wide_road_threshold" class="form-control bg-dark text-white border-secondary" value="40">
               </div>
               <div class="col-md-6">
                 <div class="form-check mt-4">
-                  <input type="checkbox" name="force_below_cost" class="form-check-input" id="forceBelow">
+                  <input aria-label="Force below cost" type="checkbox" name="force_below_cost" class="form-check-input" id="forceBelow">
                   <label class="form-check-label text-white" for="forceBelow">Force pricing below cost floor</label>
                 </div>
               </div>

@@ -135,15 +135,15 @@ ob_start();
             <div class="aps-cp-modal-body">
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="principal_amount"><?= __('user_investment_plans_label_principal', null, 'Principal Amount (₹)') ?></label>
-                    <input type="number" name="principal_amount" id="principal_amount" class="aps-cp-input" min="1000" step="100" required>
+                    <input aria-label="Principal amount" type="number" name="principal_amount" id="principal_amount" class="aps-cp-input" min="1000" step="100" required>
                 </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="sip_date"><?= __('user_investment_plans_label_sip_date', null, 'SIP Date (1-28)') ?></label>
-                    <input type="number" name="sip_date" id="sip_date" class="aps-cp-input" min="1" max="28" value="5">
+                    <input aria-label="Sip date" type="number" name="sip_date" id="sip_date" class="aps-cp-input" min="1" max="28" value="5">
                 </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-form-check">
-                        <input type="checkbox" name="auto_invest" value="1" checked> <span><?= __('user_investment_plans_auto_debit', null, 'Enable auto-debit for SIP') ?></span>
+                        <input aria-label="Auto invest" type="checkbox" name="auto_invest" value="1" checked> <span><?= __('user_investment_plans_auto_debit', null, 'Enable auto-debit for SIP') ?></span>
                     </label>
                 </div>
             </div>

@@ -49,7 +49,7 @@ $selectedAmenities = $d['amenities'] ?? [];
                             foreach ($amenitiesList as $key => $icon):
                                 $isChecked = in_array($key, $selectedAmenities, true);
                             ?>
-                                <input type="checkbox" class="btn-check" name="amenities[]" id="am-<?= $key ?>" value="<?= $key ?>" <?= $isChecked ? 'checked' : '' ?>>
+                                <input aria-label="Amenities" type="checkbox" class="btn-check" name="amenities[]" id="am-<?= $key ?>" value="<?= $key ?>" <?= $isChecked ? 'checked' : '' ?>>
                                 <label class="btn btn-outline-primary amenity-chip" for="am-<?= $key ?>">
                                     <i class="fas <?= $icon ?> me-1"></i><?= ucwords(str_replace('_', ' ', $key)) ?>
                                 </label>

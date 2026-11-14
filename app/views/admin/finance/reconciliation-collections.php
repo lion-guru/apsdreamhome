@@ -29,7 +29,7 @@ $filters = $filters ?? [];
                 </div>
                 <div class="aps-cp-form-group">
                     <label class="aps-cp-form-label">Date</label>
-                    <input type="date" name="session_date" class="aps-cp-form-input" required value="<?= date('Y-m-d') ?>">
+                    <input aria-label="Session date" type="date" name="session_date" class="aps-cp-form-input" required value="<?= date('Y-m-d') ?>">
                 </div>
                 <button type="submit" class="aps-cp-btn aps-cp-btn-primary" data-aps-confirm="Start reconciliation for this collector+date?">
                     <i class="fas fa-play"></i> Start Session

@@ -9,7 +9,7 @@
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-3">
                             <label class="form-label">Email Address</label>
-                            <input type="email" name="email" class="form-control" required autofocus>
+                            <input aria-label="Email" type="email" name="email" class="form-control" required autofocus>
                         </div>
                         
 <?php echo SimpleCaptcha::renderField("Enter Security Code"); ?>

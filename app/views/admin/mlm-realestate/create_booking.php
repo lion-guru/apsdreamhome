@@ -31,11 +31,11 @@ $success = $success ?? '';
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Customer Name <span class="text-danger">*</span></label>
-                        <input type="text" name="customer_name" class="form-control" required placeholder="Full name of buyer">
+                        <input aria-label="Customer name" type="text" name="customer_name" class="form-control" required placeholder="Full name of buyer">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Customer User ID</label>
-                        <input type="number" name="customer_id" class="form-control" placeholder="If registered user">
+                        <input aria-label="Customer id" type="number" name="customer_id" class="form-control" placeholder="If registered user">
                     </div>
                 </div>
 
@@ -84,11 +84,11 @@ $success = $success ?? '';
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label">Initial Payment (₹) <span class="text-danger">*</span></label>
-                        <input type="number" name="initial_payment" class="form-control" step="0.01" min="0" required>
+                        <input aria-label="Initial payment" type="number" name="initial_payment" class="form-control" step="0.01" min="0" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Booking Date <span class="text-danger">*</span></label>
-                        <input type="date" name="booking_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Booking date" type="date" name="booking_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
                 </div>
 

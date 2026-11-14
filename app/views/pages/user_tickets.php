@@ -115,7 +115,7 @@ $extraHead = '<style>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label"><?php echo __('tickets_subject', [], 'Subject'); ?> <span class="text-danger">*</span></label>
-                            <input type="text" name="subject" class="form-control" required placeholder="<?php echo __('tickets_subject_placeholder', [], 'Brief title of your issue'); ?>">
+                            <input aria-label="Subject" type="text" name="subject" class="form-control" required placeholder="<?php echo __('tickets_subject_placeholder', [], 'Brief title of your issue'); ?>">
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">

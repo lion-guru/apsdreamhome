@@ -21,15 +21,15 @@ $id = (int)($lead['id'] ?? 0);
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label small">Negotiated Price (₹) <span class="text-danger">*</span></label>
-                        <input type="number" name="negotiated_price" step="0.01" class="form-control form-control-sm" required value="<?= htmlspecialchars($deal['negotiated_price'] ?? '') ?>">
+                        <input aria-label="Negotiated price" type="number" name="negotiated_price" step="0.01" class="form-control form-control-sm" required value="<?= htmlspecialchars($deal['negotiated_price'] ?? '') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small">Final Price (₹) <span class="text-danger">*</span></label>
-                        <input type="number" name="final_price" step="0.01" class="form-control form-control-sm" required value="<?= htmlspecialchars($deal['final_price'] ?? '') ?>">
+                        <input aria-label="Final price" type="number" name="final_price" step="0.01" class="form-control form-control-sm" required value="<?= htmlspecialchars($deal['final_price'] ?? '') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small">Broker Commission (₹)</label>
-                        <input type="number" name="broker_commission" step="0.01" class="form-control form-control-sm" value="<?= htmlspecialchars($deal['broker_commission'] ?? 0) ?>">
+                        <input aria-label="Broker commission" type="number" name="broker_commission" step="0.01" class="form-control form-control-sm" value="<?= htmlspecialchars($deal['broker_commission'] ?? 0) ?>">
                     </div>
                 </div>
 
@@ -37,15 +37,15 @@ $id = (int)($lead['id'] ?? 0);
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small">Sale Deed Number <span class="text-danger">*</span></label>
-                        <input type="text" name="sale_deed_number" class="form-control form-control-sm" required>
+                        <input aria-label="Sale deed number" type="text" name="sale_deed_number" class="form-control form-control-sm" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small">Registration Date <span class="text-danger">*</span></label>
-                        <input type="date" name="registration_date" class="form-control form-control-sm" required value="<?= date('Y-m-d') ?>">
+                        <input aria-label="Registration date" type="date" name="registration_date" class="form-control form-control-sm" required value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small">Reg Office / SRO <span class="text-danger">*</span></label>
-                        <input type="text" name="registration_office" class="form-control form-control-sm" required placeholder="e.g. SRO Gorakhpur">
+                        <input aria-label="Registration office" type="text" name="registration_office" class="form-control form-control-sm" required placeholder="e.g. SRO Gorakhpur">
                     </div>
                 </div>
 
@@ -53,19 +53,19 @@ $id = (int)($lead['id'] ?? 0);
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label small">Stamp Duty (₹)</label>
-                        <input type="number" name="stamp_duty_amount" step="0.01" class="form-control form-control-sm" placeholder="Auto-calculated if blank">
+                        <input aria-label="Stamp duty amount" type="number" name="stamp_duty_amount" step="0.01" class="form-control form-control-sm" placeholder="Auto-calculated if blank">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small">Registration Fee (₹)</label>
-                        <input type="number" name="registration_fee" step="0.01" class="form-control form-control-sm" placeholder="Auto-calculated if blank">
+                        <input aria-label="Registration fee" type="number" name="registration_fee" step="0.01" class="form-control form-control-sm" placeholder="Auto-calculated if blank">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small">Mutation Filed Date</label>
-                        <input type="date" name="mutation_filed_date" class="form-control form-control-sm">
+                        <input aria-label="Mutation filed date" type="date" name="mutation_filed_date" class="form-control form-control-sm">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small">Mutation Number</label>
-                        <input type="text" name="mutation_number" class="form-control form-control-sm">
+                        <input aria-label="Mutation number" type="text" name="mutation_number" class="form-control form-control-sm">
                     </div>
                 </div>
 
@@ -73,17 +73,17 @@ $id = (int)($lead['id'] ?? 0);
                 <div class="row g-3">
                     <div class="col-md-4">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="property_tax_upto_date" value="1" id="taxUpto">
+                            <input aria-label="Property tax upto date" class="form-check-input" type="checkbox" name="property_tax_upto_date" value="1" id="taxUpto">
                             <label class="form-check-label" for="taxUpto">Property Tax Up-to-date</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small">RERA Registration #</label>
-                        <input type="text" name="rera_registration" class="form-control form-control-sm">
+                        <input aria-label="Rera registration" type="text" name="rera_registration" class="form-control form-control-sm">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small">DD Reference</label>
-                        <input type="text" name="dd_reference" class="form-control form-control-sm">
+                        <input aria-label="Dd reference" type="text" name="dd_reference" class="form-control form-control-sm">
                     </div>
                 </div>
 

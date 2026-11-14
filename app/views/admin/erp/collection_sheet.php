@@ -12,7 +12,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
         <h4 class="mb-0"><i class="fas fa-file-invoice-dollar me-2"></i>Monthly Collection Sheet</h4>
         <div class="d-flex gap-2 align-items-center">
             <form method="GET" action="<?= BASE_URL ?>/admin/erp/collection-sheet" class="d-flex gap-2">
-                <input type="month" name="month" class="form-control form-control-sm" value="<?= htmlspecialchars($month) ?>">
+                <input aria-label="Month" type="month" name="month" class="form-control form-control-sm" value="<?= htmlspecialchars($month) ?>">
                 <button type="submit" class="btn btn-sm btn-primary">View</button>
             </form>
             <a href="<?= BASE_URL ?>/admin/erp/collection-sheet.csv?month=<?= htmlspecialchars($month) ?>" class="btn btn-sm btn-success"><i class="fas fa-download me-1"></i>Export CSV</a>

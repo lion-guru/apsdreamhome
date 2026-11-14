@@ -11,10 +11,10 @@
                 <div class="card-body aps-cp-card-body">
                     <form method="post" action="<?= BASE_URL ?>/admin/commission/agent-rates/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <div class="mb-2"><label class="form-label">Min Sqft</label><input type="number" name="min_sqft" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Max Sqft</label><input type="number" name="max_sqft" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Commission Per Sqft (&#8377;)</label><input type="number" step="0.01" name="commission_per_sqft" class="form-control" required></div>
-                        <div class="mb-2"><label class="form-label">Commission %</label><input type="number" step="0.01" name="commission_percentage" class="form-control" value="0"></div>
+                        <div class="mb-2"><label class="form-label">Min Sqft</label><input aria-label="Min sqft" type="number" name="min_sqft" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Max Sqft</label><input aria-label="Max sqft" type="number" name="max_sqft" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Commission Per Sqft (&#8377;)</label><input aria-label="Commission per sqft" type="number" step="0.01" name="commission_per_sqft" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label">Commission %</label><input aria-label="Commission percentage" type="number" step="0.01" name="commission_percentage" class="form-control" value="0"></div>
                         <div class="mb-2"><label class="form-label">Status</label>
                             <select aria-label="Status" name="status" class="form-select"><option value="active">Active</option><option value="inactive">Inactive</option></select>
                         </div>

@@ -18,13 +18,13 @@ $today = $today ?? date('Y-m-d');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Transaction Number</label>
-                                    <input type="text" name="transaction_number" class="form-control" value="" required>
+                                    <input aria-label="Transaction number" type="text" name="transaction_number" class="form-control" value="" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Transaction Date</label>
-                                    <input type="date" name="transaction_date" class="form-control" value="<?= htmlspecialchars($today) ?>" required>
+                                    <input aria-label="Transaction date" type="date" name="transaction_date" class="form-control" value="<?= htmlspecialchars($today) ?>" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -61,7 +61,7 @@ $today = $today ?? date('Y-m-d');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Amount</label>
-                                    <input type="number" name="amount" class="form-control" step="0.01" min="0.01" required>
+                                    <input aria-label="Amount" type="number" name="amount" class="form-control" step="0.01" min="0.01" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -79,13 +79,13 @@ $today = $today ?? date('Y-m-d');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Exchange Rate</label>
-                                    <input type="number" name="exchange_rate" class="form-control" step="0.0001" value="1" required>
+                                    <input aria-label="Exchange rate" type="number" name="exchange_rate" class="form-control" step="0.0001" value="1" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Amount (INR)</label>
-                                    <input type="number" name="amount_inr" class="form-control" step="0.01" readonly>
+                                    <input aria-label="Amount inr" type="number" name="amount_inr" class="form-control" step="0.01" readonly>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -97,7 +97,7 @@ $today = $today ?? date('Y-m-d');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Reference Document</label>
-                                    <input type="text" name="reference_document" class="form-control" placeholder="Invoice/PO number">
+                                    <input aria-label="Reference document" type="text" name="reference_document" class="form-control" placeholder="Invoice/PO number">
                                 </div>
                             </div>
                             <div class="col-md-12">

@@ -99,7 +99,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         <form class="d-flex gap-2" method="GET" action="<?= BASE_URL ?>/associate/leads">
             <div class="input-group search-box">
                 <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" class="form-control border-start-0" name="q" placeholder="<?= __('assoc_leads_search_placeholder', [], 'Search name, phone, email, notes...') ?>" value="<?= htmlspecialchars($search ?? '') ?>">
+                <input aria-label="Q" type="text" class="form-control border-start-0" name="q" placeholder="<?= __('assoc_leads_search_placeholder', [], 'Search name, phone, email, notes...') ?>" value="<?= htmlspecialchars($search ?? '') ?>">
             </div>
             <?php if ($status_filter): ?>
                 <input type="hidden" name="status" value="<?= htmlspecialchars($status_filter ?? '') ?>">
@@ -124,7 +124,7 @@ $priorityColors = ['high' => 'danger', 'medium' => 'warning', 'low' => 'info'];
         <select aria-label="Bulk status" name="bulk_status" class="form-select form-select-sm" style="width:auto">
             <option value="contacted">contacted</option><option value="qualified">qualified</option><option value="site_visit">site_visit</option><option value="proposal">proposal</option><option value="negotiation">negotiation</option><option value="closed_won">closed_won</option><option value="closed_lost">closed_lost</option><option value="nurture">nurture</option><option value="new">new</option>
         </select>
-        <input type="number" name="bulk_assign_to" class="form-control form-control-sm" style="width:110px" placeholder="<?= __('assoc_leads_bulk_userid', [], 'user id') ?>">
+        <input aria-label="Bulk assign to" type="number" name="bulk_assign_to" class="form-control form-control-sm" style="width:110px" placeholder="<?= __('assoc_leads_bulk_userid', [], 'user id') ?>">
         <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('<?= __('assoc_leads_bulk_confirm', [], 'Apply to selected leads?') ?>')"><?= __('assoc_leads_apply', [], 'Apply') ?></button>
     </form>
     </div></div>

@@ -9,27 +9,27 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" name="full_name" class="form-control" required>
+                        <input aria-label="Full name" type="text" name="full_name" class="form-control" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Email <span class="text-danger">*</span></label>
-                        <input type="email" name="email" class="form-control" required>
+                        <input aria-label="Email" type="email" name="email" class="form-control" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Phone <span class="text-danger">*</span></label>
-                        <input type="text" name="phone" class="form-control" required>
+                        <input aria-label="Phone" type="text" name="phone" class="form-control" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Experience (Years)</label>
-                        <input type="number" name="experience_years" class="form-control" step="0.5">
+                        <input aria-label="Experience years" type="number" name="experience_years" class="form-control" step="0.5">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Current Company</label>
-                        <input type="text" name="current_company" class="form-control">
+                        <input aria-label="Current company" type="text" name="current_company" class="form-control">
                     </div>
                     <div class="col-12">
                         <label class="form-label">Resume (PDF/DOC/DOCX, max 5MB) <span class="text-danger">*</span></label>
-                        <input type="file" name="resume" class="form-control" accept=".pdf,.doc,.docx" required>
+                        <input aria-label="Resume" type="file" name="resume" class="form-control" accept=".pdf,.doc,.docx" required>
                     </div>
                     <div class="col-12">
                         <label class="form-label">Cover Letter</label>

@@ -49,7 +49,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                         ?>
                             <tr>
                                 <td>
-                                    <input type="number" name="benefits[<?= $rn ?>][rank_order]" value="<?= (int)$b['rank_order'] ?>" class="form-control form-control-sm" min="1" max="99">
+                                    <input aria-label="Benefits rn rank order" type="number" name="benefits[<?= $rn ?>][rank_order]" value="<?= (int)$b['rank_order'] ?>" class="form-control form-control-sm" min="1" max="99">
                                 </td>
                                 <td class="fw-bold">
                                     <span class="badge">
@@ -58,13 +58,13 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                                     <?= $rn ?>
                                 </td>
                                 <td>
-                                    <input type="number" name="benefits[<?= $rn ?>][min_legs]" value="<?= (int)($b['min_leg_count'] ?? 0) ?>" class="form-control form-control-sm" min="0">
+                                    <input aria-label="Benefits rn min legs" type="number" name="benefits[<?= $rn ?>][min_legs]" value="<?= (int)($b['min_leg_count'] ?? 0) ?>" class="form-control form-control-sm" min="0">
                                 </td>
                                 <td>
-                                    <input type="number" name="benefits[<?= $rn ?>][min_volume]" value="<?= (float)$b['min_qualifying_volume'] ?>" class="form-control form-control-sm" min="0" step="1000">
+                                    <input aria-label="Benefits rn min volume" type="number" name="benefits[<?= $rn ?>][min_volume]" value="<?= (float)$b['min_qualifying_volume'] ?>" class="form-control form-control-sm" min="0" step="1000">
                             </td>
                             <td>
-                                <input type="number" name="benefits[<?= $rn ?>][direct_sale_pct]" value="<?= (float)$b['direct_sale_pct'] ?>" class="form-control form-control-sm" min="0" max="100" step="0.1" required>
+                                <input aria-label="Benefits rn direct sale pct" type="number" name="benefits[<?= $rn ?>][direct_sale_pct]" value="<?= (float)$b['direct_sale_pct'] ?>" class="form-control form-control-sm" min="0" max="100" step="0.1" required>
                             </td>
                             <td class="text-center">
                                 <span class="text-muted small">Differential</span>
@@ -145,7 +145,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Global Commission Cap (%)</label>
                     <div class="input-group">
-                        <input type="number" name="settings[global_cap_pct]" value="<?= htmlspecialchars($settings['global_cap_pct'] ?? '20') ?>" class="form-control" min="1" max="50" step="0.5">
+                        <input aria-label="Settings global cap pct" type="number" name="settings[global_cap_pct]" value="<?= htmlspecialchars($settings['global_cap_pct'] ?? '20') ?>" class="form-control" min="1" max="50" step="0.5">
                         <span class="input-group-text">%</span>
                     </div>
                     <small class="text-muted">Max % of sale value distributed as commission</small>
@@ -153,19 +153,19 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Royalty Pool (%)</label>
                     <div class="input-group">
-                        <input type="number" name="settings[royalty_pool_pct]" value="<?= htmlspecialchars($settings['royalty_pool_pct'] ?? '2') ?>" class="form-control" min="0" max="10" step="0.5">
+                        <input aria-label="Settings royalty pool pct" type="number" name="settings[royalty_pool_pct]" value="<?= htmlspecialchars($settings['royalty_pool_pct'] ?? '2') ?>" class="form-control" min="0" max="10" step="0.5">
                         <span class="input-group-text">%</span>
                     </div>
                     <small class="text-muted">Shared by VP+ ranks from total sales</small>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Min Qualifying Volume (₹)</label>
-                    <input type="number" name="settings[min_qualifying_volume]" value="<?= htmlspecialchars($settings['min_qualifying_volume'] ?? '50000') ?>" class="form-control" min="0" step="10000">
+                    <input aria-label="Settings min qualifying volume" type="number" name="settings[min_qualifying_volume]" value="<?= htmlspecialchars($settings['min_qualifying_volume'] ?? '50000') ?>" class="form-control" min="0" step="10000">
                     <small class="text-muted">Min monthly team sales for Track B</small>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Escrow Release Threshold (₹)</label>
-                    <input type="number" name="settings[escrow_release_threshold]" value="<?= htmlspecialchars($settings['escrow_release_threshold'] ?? '100000') ?>" class="form-control" min="10000" step="10000">
+                    <input aria-label="Settings escrow release threshold" type="number" name="settings[escrow_release_threshold]" value="<?= htmlspecialchars($settings['escrow_release_threshold'] ?? '100000') ?>" class="form-control" min="10000" step="10000">
                     <small class="text-muted">Min escrow balance to trigger payout</small>
                 </div>
             </div>
@@ -177,7 +177,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
         <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0 fw-bold"><i class="fas fa-hands-helping text-warning me-2"></i>Matching Bonus</h5>
             <div class="form-check form-switch mb-0">
-                <input class="form-check-input" type="checkbox" name="settings[matching_bonus_enabled]" value="1" id="matchingToggle"
+                <input aria-label="Settings matching bonus enabled" class="form-check-input" type="checkbox" name="settings[matching_bonus_enabled]" value="1" id="matchingToggle"
                     <?= ($settings['matching_bonus_enabled'] ?? '1') === '1' ? 'checked' : '' ?>>
                 <label class="form-check-label fw-semibold" for="matchingToggle">Enabled</label>
             </div>
@@ -190,7 +190,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Gen 1 Match Rate (%)</label>
                     <div class="input-group">
-                        <input type="number" name="settings[gen1_match_pct]" value="<?= htmlspecialchars($settings['gen1_match_pct'] ?? '100') ?>" class="form-control" min="0" max="200" step="5">
+                        <input aria-label="Settings gen1 match pct" type="number" name="settings[gen1_match_pct]" value="<?= htmlspecialchars($settings['gen1_match_pct'] ?? '100') ?>" class="form-control" min="0" max="200" step="5">
                         <span class="input-group-text">%</span>
                     </div>
                     <small class="text-muted">Default: 100%</small>
@@ -198,7 +198,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Gen 2 Match Rate (%)</label>
                     <div class="input-group">
-                        <input type="number" name="settings[gen2_match_pct]" value="<?= htmlspecialchars($settings['gen2_match_pct'] ?? '50') ?>" class="form-control" min="0" max="200" step="5">
+                        <input aria-label="Settings gen2 match pct" type="number" name="settings[gen2_match_pct]" value="<?= htmlspecialchars($settings['gen2_match_pct'] ?? '50') ?>" class="form-control" min="0" max="200" step="5">
                         <span class="input-group-text">%</span>
                     </div>
                     <small class="text-muted">Default: 50%</small>
@@ -206,14 +206,14 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Gen 3 Match Rate (%)</label>
                     <div class="input-group">
-                        <input type="number" name="settings[gen3_match_pct]" value="<?= htmlspecialchars($settings['gen3_match_pct'] ?? '25') ?>" class="form-control" min="0" max="200" step="5">
+                        <input aria-label="Settings gen3 match pct" type="number" name="settings[gen3_match_pct]" value="<?= htmlspecialchars($settings['gen3_match_pct'] ?? '25') ?>" class="form-control" min="0" max="200" step="5">
                         <span class="input-group-text">%</span>
                     </div>
                     <small class="text-muted">Default: 25%</small>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Max Generations</label>
-                    <input type="number" name="settings[matching_max_levels]" value="<?= htmlspecialchars($settings['matching_max_levels'] ?? '3') ?>" class="form-control" min="1" max="10">
+                    <input aria-label="Settings matching max levels" type="number" name="settings[matching_max_levels]" value="<?= htmlspecialchars($settings['matching_max_levels'] ?? '3') ?>" class="form-control" min="1" max="10">
                     <small class="text-muted">How many generations deep</small>
                 </div>
             </div>
@@ -225,7 +225,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
         <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0 fw-bold"><i class="fas fa-network-wired text-info me-2"></i>Generation Bonus</h5>
             <div class="form-check form-switch mb-0">
-                <input class="form-check-input" type="checkbox" name="settings[generation_bonus_enabled]" value="1" id="genBonusToggle"
+                <input aria-label="Settings generation bonus enabled" class="form-check-input" type="checkbox" name="settings[generation_bonus_enabled]" value="1" id="genBonusToggle"
                     <?= ($settings['generation_bonus_enabled'] ?? '1') === '1' ? 'checked' : '' ?>>
                 <label class="form-check-label fw-semibold" for="genBonusToggle">Enabled</label>
             </div>
@@ -238,7 +238,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Base Rate (%)</label>
                     <div class="input-group">
-                        <input type="number" name="settings[generation_bonus_pct]" value="<?= htmlspecialchars($settings['generation_bonus_pct'] ?? '5') ?>" class="form-control" min="0" max="20" step="0.5">
+                        <input aria-label="Settings generation bonus pct" type="number" name="settings[generation_bonus_pct]" value="<?= htmlspecialchars($settings['generation_bonus_pct'] ?? '5') ?>" class="form-control" min="0" max="20" step="0.5">
                         <span class="input-group-text">%</span>
                     </div>
                     <small class="text-muted">Applied to Gen 1 volume</small>
@@ -252,7 +252,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
         <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0 fw-bold"><i class="fas fa-infinity text-purple me-2"></i>Infinity Override</h5>
             <div class="form-check form-switch mb-0">
-                <input class="form-check-input" type="checkbox" name="settings[infinity_override_enabled]" value="1" id="infinityToggle"
+                <input aria-label="Settings infinity override enabled" class="form-check-input" type="checkbox" name="settings[infinity_override_enabled]" value="1" id="infinityToggle"
                     <?= ($settings['infinity_override_enabled'] ?? '1') === '1' ? 'checked' : '' ?>>
                 <label class="form-check-label fw-semibold" for="infinityToggle">Enabled</label>
             </div>
@@ -265,7 +265,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Override Rate (%)</label>
                     <div class="input-group">
-                        <input type="number" name="settings[infinity_override_pct]" value="<?= htmlspecialchars($settings['infinity_override_pct'] ?? '1') ?>" class="form-control" min="0" max="5" step="0.25">
+                        <input aria-label="Settings infinity override pct" type="number" name="settings[infinity_override_pct]" value="<?= htmlspecialchars($settings['infinity_override_pct'] ?? '1') ?>" class="form-control" min="0" max="5" step="0.25">
                         <span class="input-group-text">%</span>
                     </div>
                     <small class="text-muted">Default: 1%</small>
@@ -291,7 +291,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
         <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0 fw-bold"><i class="fas fa-medal text-warning me-2"></i>Rank Promotion Bonuses</h5>
             <div class="form-check form-switch mb-0">
-                <input class="form-check-input" type="checkbox" name="settings[rank_bonus_enabled]" value="1" id="rankBonusToggle"
+                <input aria-label="Settings rank bonus enabled" class="form-check-input" type="checkbox" name="settings[rank_bonus_enabled]" value="1" id="rankBonusToggle"
                     <?= ($settings['rank_bonus_enabled'] ?? '1') === '1' ? 'checked' : '' ?>>
                 <label class="form-check-label fw-semibold" for="rankBonusToggle">Enabled</label>
             </div>
@@ -317,7 +317,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
                     <label class="form-label fw-semibold small"><?= $rl ?></label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text">₹</span>
-                        <input type="number" name="rank_bonus[<?= $rk ?>]" value="<?= (int)($rankBonusAmounts[$rk] ?? 0) ?>"
+                        <input aria-label="Rank bonus rk" type="number" name="rank_bonus[<?= $rk ?>]" value="<?= (int)($rankBonusAmounts[$rk] ?? 0) ?>"
                                class="form-control rank-bonus-input" min="0" step="1000" data-rank="<?= $rk ?>">
                     </div>
                 </div>
@@ -334,7 +334,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
         <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0 fw-bold"><i class="fas fa-calendar-check text-success me-2"></i>Monthly Qualification Rules</h5>
             <div class="form-check form-switch mb-0">
-                <input class="form-check-input" type="checkbox" name="settings[qualification_required]" value="1" id="qualToggle"
+                <input aria-label="Settings qualification required" class="form-check-input" type="checkbox" name="settings[qualification_required]" value="1" id="qualToggle"
                     <?= ($settings['qualification_required'] ?? '1') === '1' ? 'checked' : '' ?>>
                 <label class="form-check-label fw-semibold" for="qualToggle">Required</label>
             </div>
@@ -343,7 +343,7 @@ $base     = defined('BASE_URL') ? BASE_URL : '';
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label fw-bold">Min Monthly Volume (₹)</label>
-                    <input type="number" name="settings[min_monthly_volume]" value="<?= htmlspecialchars($settings['min_monthly_volume'] ?? '10000') ?>" class="form-control" min="0" step="1000">
+                    <input aria-label="Settings min monthly volume" type="number" name="settings[min_monthly_volume]" value="<?= htmlspecialchars($settings['min_monthly_volume'] ?? '10000') ?>" class="form-control" min="0" step="1000">
                     <small class="text-muted">Associate must achieve this volume monthly to stay active</small>
                 </div>
             </div>

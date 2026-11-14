@@ -8,27 +8,27 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <div class="mb-3">
             <label class="form-label">Source Type</label>
-            <input type="text" name="source_type" class="form-control" value="site_visit">
+            <input aria-label="Source type" type="text" name="source_type" class="form-control" value="site_visit">
         </div>
         <div class="mb-3">
             <label class="form-label">Source ID</label>
-            <input type="number" name="source_id" class="form-control">
+            <input aria-label="Source id" type="number" name="source_id" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">User ID</label>
-            <input type="number" name="user_id" class="form-control">
+            <input aria-label="User id" type="number" name="user_id" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">Customer Name</label>
-            <input type="text" name="user_name" class="form-control">
+            <input aria-label="User name" type="text" name="user_name" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">Customer Email</label>
-            <input type="email" name="user_email" class="form-control">
+            <input aria-label="User email" type="email" name="user_email" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">Customer Phone</label>
-            <input type="text" name="user_phone" class="form-control">
+            <input aria-label="User phone" type="text" name="user_phone" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">Channel</label>
@@ -40,11 +40,11 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Platform</label>
-            <input type="text" name="platform" class="form-control" value="web">
+            <input aria-label="Platform" type="text" name="platform" class="form-control" value="web">
         </div>
         <div class="mb-3">
             <label class="form-label">Title</label>
-            <input type="text" name="title" class="form-control" value="Customer Feedback Survey">
+            <input aria-label="Title" type="text" name="title" class="form-control" value="Customer Feedback Survey">
         </div>
         <div class="mb-3">
             <label class="form-label">Message</label>

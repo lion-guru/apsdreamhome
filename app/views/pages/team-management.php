@@ -173,15 +173,15 @@ $base = $base ?? BASE_URL;
     <?php echo CSRFProtection::csrfField(); ?>
                     <div class="mb-3">
                         <label class="form-label"><?= __('team_label_name', [], 'Full Name') ?></label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input aria-label="Name" type="text" name="name" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= __('team_label_email', [], 'Email') ?></label>
-                        <input type="email" name="email" class="form-control" required>
+                        <input aria-label="Email" type="email" name="email" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= __('team_label_phone', [], 'Phone') ?></label>
-                        <input type="tel" name="phone" class="form-control">
+                        <input aria-label="Phone" type="tel" name="phone" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><?= __('team_label_position', [], 'Position') ?></label>

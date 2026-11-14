@@ -66,7 +66,7 @@
     <?php if ($sajra_url !== ''): ?>
     <div class="alert alert-info d-flex align-items-center gap-2 py-2 mb-3 flex-wrap" role="alert">
         <button class="btn btn-sm btn-outline-primary" id="sajraToggle" type="button">🗺️ Revenue Sajra Overlay: OFF</button>
-        <label class="small mb-0">Opacity <input type="range" id="sajraOpacity" min="10" max="90" value="50" style="vertical-align:middle;"></label>
+        <label class="small mb-0">Opacity <input aria-label="Sajra opacity" type="range" id="sajraOpacity" min="10" max="90" value="50" style="vertical-align:middle;"></label>
         <span class="small text-muted">Reference alignment — verify khasra on the tehsil record.</span>
     </div>
     <?php endif; ?>
@@ -235,9 +235,9 @@
         <div class="modal-body">
             <p class="small text-muted">Fill your details — our team confirms the hold on call/SMS. <?= $refCode !== '' ? 'Associate ref <strong>' . htmlspecialchars($refCode) . '</strong> auto-attached.' : '' ?></p>
             <div class="mb-2"><label class="form-label small">Your Name</label>
-                <input type="text" id="holdName" class="form-control form-control-sm" placeholder="Full name"></div>
+                <input aria-label="Hold name" type="text" id="holdName" class="form-control form-control-sm" placeholder="Full name"></div>
             <div class="mb-2"><label class="form-label small">Mobile Number</label>
-                <input type="tel" id="holdPhone" class="form-control form-control-sm" placeholder="10-digit mobile" maxlength="13"></div>
+                <input aria-label="Hold phone" type="tel" id="holdPhone" class="form-control form-control-sm" placeholder="10-digit mobile" maxlength="13"></div>
             <div id="holdMsg" class="small mt-2"></div>
         </div>
         <div class="modal-footer">

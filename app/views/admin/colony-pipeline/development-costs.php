@@ -21,12 +21,12 @@ $cid = (int)($colony['id'] ?? 0);
     <div class="card-body">
         <form method="POST" action="<?= BASE_URL ?>/admin/colony-pipeline/<?= $cid ?>/costs/store" class="row g-2">
             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-            <div class="col-md-3"><input type="text" name="cost_type" class="form-control" placeholder="Cost type *" required></div>
-            <div class="col-md-3"><input type="text" name="vendor_name" class="form-control" placeholder="Vendor"></div>
-            <div class="col-md-2"><input type="number" step="0.01" name="amount" class="form-control" placeholder="Amount *" required></div>
-            <div class="col-md-2"><input type="number" step="0.01" name="gst_amount" class="form-control" placeholder="GST" value="0"></div>
+            <div class="col-md-3"><input aria-label="Cost type" type="text" name="cost_type" class="form-control" placeholder="Cost type *" required></div>
+            <div class="col-md-3"><input aria-label="Vendor name" type="text" name="vendor_name" class="form-control" placeholder="Vendor"></div>
+            <div class="col-md-2"><input aria-label="Amount" type="number" step="0.01" name="amount" class="form-control" placeholder="Amount *" required></div>
+            <div class="col-md-2"><input aria-label="Gst amount" type="number" step="0.01" name="gst_amount" class="form-control" placeholder="GST" value="0"></div>
             <div class="col-md-2"><button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus me-1"></i>Add</button></div>
-            <div class="col-12"><input type="text" name="work_description" class="form-control" placeholder="Work description"></div>
+            <div class="col-12"><input aria-label="Work description" type="text" name="work_description" class="form-control" placeholder="Work description"></div>
         </form>
     </div>
 </div>

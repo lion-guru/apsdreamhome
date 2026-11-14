@@ -20,7 +20,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Phone Number ID <span class="text-danger">*</span></label>
-                            <input type="text" name="whatsapp_phone_number_id" class="form-control"
+                            <input aria-label="Whatsapp phone number id" type="text" name="whatsapp_phone_number_id" class="form-control"
                                    value="<?php echo htmlspecialchars($settings['whatsapp_phone_number_id'] ?? $_ENV['WHATSAPP_PHONE_NUMBER_ID'] ?? ''); ?>"
                                    placeholder="e.g. 123456789012345">
                             <div class="form-text">Meta Business WhatsApp Phone Number ID</div>
@@ -29,7 +29,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                         <div class="mb-3">
                             <label class="form-label">Access Token <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input type="password" name="whatsapp_access_token" class="form-control" id="waToken"
+                                <input aria-label="Whatsapp access token" type="password" name="whatsapp_access_token" class="form-control" id="waToken"
                                        value="<?php echo htmlspecialchars($settings['whatsapp_access_token'] ?? ''); ?>"
                                        placeholder="Long-lived access token">
                                 <button class="btn btn-outline-secondary" type="button" onclick="const t=document.getElementById('waToken'); t.type=t.type==='password'?'text':'password'" aria-label="WhatsApp"><i class="fas fa-eye"></i></button>
@@ -39,7 +39,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
 
                         <div class="mb-3">
                             <label class="form-label">Business Account ID</label>
-                            <input type="text" name="whatsapp_business_account_id" class="form-control"
+                            <input aria-label="Whatsapp business account id" type="text" name="whatsapp_business_account_id" class="form-control"
                                    value="<?php echo htmlspecialchars($settings['whatsapp_business_account_id'] ?? $_ENV['WHATSAPP_BUSINESS_ACCOUNT_ID'] ?? ''); ?>"
                                    placeholder="e.g. 123456789012345">
                             <div class="form-text">Meta WhatsApp Business Account ID (for template sync)</div>
@@ -47,7 +47,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
 
                         <div class="mb-3">
                             <label class="form-label">Webhook Verify Token</label>
-                            <input type="text" name="whatsapp_webhook_verify_token" class="form-control"
+                            <input aria-label="Whatsapp webhook verify token" type="text" name="whatsapp_webhook_verify_token" class="form-control"
                                    value="<?php echo htmlspecialchars($settings['whatsapp_webhook_verify_token'] ?? $_ENV['WHATSAPP_WEBHOOK_VERIFY_TOKEN'] ?? 'apsdreamhome_webhook_2026'); ?>">
                             <div class="form-text">Set this same token in Meta App Dashboard webhook settings</div>
                         </div>
@@ -68,7 +68,7 @@ $webhookUrl = rtrim($base, '/') . '/api/communication/whatsapp-webhook';
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                            <input type="text" name="test_phone" class="form-control" placeholder="+919XXXXXXXXX" required>
+                            <input aria-label="Test phone" type="text" name="test_phone" class="form-control" placeholder="+919XXXXXXXXX" required>
                             <div class="form-text">Include country code (e.g. +919XXXXXXXXX)</div>
                         </div>
                         <div class="mb-3">

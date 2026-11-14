@@ -173,7 +173,7 @@ $base = BASE_URL;
                          ?>
                          <label><?= e($label) ?></label>
                          <div class="input-wrap">
-                             <input type="text" name="identity" placeholder="<?= e($placeholder) ?>" required autofocus>
+                             <input aria-label="Identity" type="text" name="identity" placeholder="<?= e($placeholder) ?>" required autofocus>
                              <i class="fas fa-<?= e($icon) ?> field-icon"></i>
                          </div>
                      </div>

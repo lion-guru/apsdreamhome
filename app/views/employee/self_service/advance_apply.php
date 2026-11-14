@@ -34,7 +34,7 @@ $page_description = $page_description ?? 'Request a salary advance or loan with 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-check form-check-inline mb-2">
-                                            <input class="form-check-input" type="radio" name="type" id="type_advance" value="advance" checked>
+                                            <input aria-label="Type" class="form-check-input" type="radio" name="type" id="type_advance" value="advance" checked>
                                             <label class="form-check-label" for="type_advance">
                                                 <i class="fas fa-money-bill-wave me-1"></i> Salary Advance (Interest-free)
                                             </label>
@@ -42,7 +42,7 @@ $page_description = $page_description ?? 'Request a salary advance or loan with 
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-check form-check-inline mb-2">
-                                            <input class="form-check-input" type="radio" name="type" id="type_loan" value="loan">
+                                            <input aria-label="Type" class="form-check-input" type="radio" name="type" id="type_loan" value="loan">
                                             <label class="form-check-label" for="type_loan">
                                                 <i class="fas fa-university me-1"></i> Salary Loan (With interest)
                                             </label>
@@ -59,7 +59,7 @@ $page_description = $page_description ?? 'Request a salary advance or loan with 
                             <div class="col-sm-10">
                                 <div class="input-group">
                                     <span class="input-group-text">₹</span>
-                                    <input type="number" class="form-control" id="amount" name="amount" step="100" min="1000" max="500000" required>
+                                    <input aria-label="Amount" type="number" class="form-control" id="amount" name="amount" step="100" min="1000" max="500000" required>
                                 </div>
                                 <div class="form-text">Minimum ₹1,000, Maximum ₹5,00,000</div>
                             </div>
@@ -85,7 +85,7 @@ $page_description = $page_description ?? 'Request a salary advance or loan with 
                             <label for="interest_rate" class="col-sm-2 col-form-label fw-bold">Interest Rate (% p.a.)</label>
                             <div class="col-sm-10">
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="interest_rate" name="interest_rate" step="0.1" min="0" max="24" value="12">
+                                    <input aria-label="Interest rate" type="number" class="form-control" id="interest_rate" name="interest_rate" step="0.1" min="0" max="24" value="12">
                                     <span class="input-group-text">% per annum</span>
                                 </div>
                                 <div class="form-text">Standard rate: 12% p.a. (Reducing balance)</div>

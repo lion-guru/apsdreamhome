@@ -22,13 +22,13 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Date')) ?> <span class="text-danger">*</span></label>
-                                <input type="date" name="income_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                                <input aria-label="Income date" type="date" name="income_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label"><?= h($mlSupport->translate('Amount')) ?> <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><?= h($currency_symbol ?? '₹') ?></span>
-                                    <input type="number" step="0.01" name="amount" class="form-control" required min="0">
+                                    <input aria-label="Amount" type="number" step="0.01" name="amount" class="form-control" required min="0">
                                 </div>
                             </div>
                         </div>

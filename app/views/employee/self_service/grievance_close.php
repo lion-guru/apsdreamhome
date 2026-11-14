@@ -80,19 +80,19 @@ $grievance = $grievance ?? [];
                         <div class="text-center py-3 mb-3">
                             <label class="form-label d-block text-muted small fw-semibold text-uppercase mb-2">Select Your Rating</label>
                             <div class="star-rating justify-content-center">
-                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <input aria-label="Star5" type="radio" id="star5" name="rating" value="5" required>
                                 <label for="star5" title="5 stars - Outstanding"><i class="fas fa-star"></i></label>
                                 
-                                <input type="radio" id="star4" name="rating" value="4">
+                                <input aria-label="Star4" type="radio" id="star4" name="rating" value="4">
                                 <label for="star4" title="4 stars - Good"><i class="fas fa-star"></i></label>
                                 
-                                <input type="radio" id="star3" name="rating" value="3" checked>
+                                <input aria-label="Star3" type="radio" id="star3" name="rating" value="3" checked>
                                 <label for="star3" title="3 stars - Satisfactory"><i class="fas fa-star"></i></label>
                                 
-                                <input type="radio" id="star2" name="rating" value="2">
+                                <input aria-label="Star2" type="radio" id="star2" name="rating" value="2">
                                 <label for="star2" title="2 stars - Poor"><i class="fas fa-star"></i></label>
                                 
-                                <input type="radio" id="star1" name="rating" value="1">
+                                <input aria-label="Star1" type="radio" id="star1" name="rating" value="1">
                                 <label for="star1" title="1 star - Very Dissatisfied"><i class="fas fa-star"></i></label>
                             </div>
                         </div>

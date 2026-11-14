@@ -77,15 +77,15 @@ $pagination = $pagination ?? ['current_page' => 1, 'per_page' => 20, 'total' => 
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">From Date</label>
-                    <input type="date" name="from_date" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>">
+                    <input aria-label="From date" type="date" name="from_date" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['from_date'] ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small">To Date</label>
-                    <input type="date" name="to_date" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>">
+                    <input aria-label="To date" type="date" name="to_date" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['to_date'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small">Search</label>
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Description/Ref" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="Description/Ref" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100 btn-sm"><i class="fas fa-filter me-1"></i>Filter</button>

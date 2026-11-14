@@ -42,21 +42,21 @@ $old = $old ?? [];
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">State</label>
-                                <input type="text" name="state" class="form-control" value="<?= htmlspecialchars($old['state_val'] ?? $d['state'] ?? 'Uttar Pradesh') ?>">
+                                <input aria-label="State" type="text" name="state" class="form-control" value="<?= htmlspecialchars($old['state_val'] ?? $d['state'] ?? 'Uttar Pradesh') ?>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">District</label>
-                                <input type="text" name="district" class="form-control" value="<?= htmlspecialchars($old['district'] ?? $d['district'] ?? '') ?>">
+                                <input aria-label="District" type="text" name="district" class="form-control" value="<?= htmlspecialchars($old['district'] ?? $d['district'] ?? '') ?>">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">City *</label>
-                                <input type="text" name="city" class="form-control" required value="<?= htmlspecialchars($old['city'] ?? $d['city'] ?? '') ?>">
+                                <input aria-label="City" type="text" name="city" class="form-control" required value="<?= htmlspecialchars($old['city'] ?? $d['city'] ?? '') ?>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Pincode</label>
-                                <input type="text" name="pincode" class="form-control" pattern="[0-9]{6}" value="<?= htmlspecialchars($old['pincode'] ?? $d['pincode'] ?? '') ?>">
+                                <input aria-label="Pincode" type="text" name="pincode" class="form-control" pattern="[0-9]{6}" value="<?= htmlspecialchars($old['pincode'] ?? $d['pincode'] ?? '') ?>">
                             </div>
                         </div>
                         <div class="mb-3">

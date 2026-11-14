@@ -263,22 +263,22 @@ $currentColony = $current_colony ?? null;
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">Log Date <span class="text-danger">*</span></label>
-                            <input type="date" name="log_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Log date" type="date" name="log_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">STP Plant Code <span class="text-danger">*</span></label>
-                            <input type="text" name="stp_plant_code" class="form-control" placeholder="STP-PLANT-01" value="STP-PLANT-01 (MBBR)" required>
+                            <input aria-label="Stp plant code" type="text" name="stp_plant_code" class="form-control" placeholder="STP-PLANT-01" value="STP-PLANT-01 (MBBR)" required>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Raw Sewage Inflow (kL)</label>
-                            <input type="number" step="0.1" name="raw_sewage_inflow_kl" class="form-control" placeholder="e.g. 85.0" value="75.0" required>
+                            <input aria-label="Raw sewage inflow kl" type="number" step="0.1" name="raw_sewage_inflow_kl" class="form-control" placeholder="e.g. 85.0" value="75.0" required>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Treated Water Output (kL)</label>
-                            <input type="number" step="0.1" name="treated_water_output_kl" class="form-control" placeholder="e.g. 70.0" value="68.0" required>
+                            <input aria-label="Treated water output kl" type="number" step="0.1" name="treated_water_output_kl" class="form-control" placeholder="e.g. 70.0" value="68.0" required>
                         </div>
 
                         <div class="col-12">
@@ -289,42 +289,42 @@ $currentColony = $current_colony ?? null;
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">Inlet Raw BOD (mg/L)</label>
-                            <input type="number" step="0.1" name="inlet_bod_mg_l" class="form-control" placeholder="250.0" value="220.0">
+                            <input aria-label="Inlet bod mg l" type="number" step="0.1" name="inlet_bod_mg_l" class="form-control" placeholder="250.0" value="220.0">
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">Outlet Treated BOD (mg/L) <span class="text-success">&lt;10</span></label>
-                            <input type="number" step="0.1" name="outlet_bod_mg_l" class="form-control" placeholder="e.g. 8.2" value="7.5" required>
+                            <input aria-label="Outlet bod mg l" type="number" step="0.1" name="outlet_bod_mg_l" class="form-control" placeholder="e.g. 8.2" value="7.5" required>
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">Inlet Raw COD (mg/L)</label>
-                            <input type="number" step="0.1" name="inlet_cod_mg_l" class="form-control" placeholder="450.0" value="400.0">
+                            <input aria-label="Inlet cod mg l" type="number" step="0.1" name="inlet_cod_mg_l" class="form-control" placeholder="450.0" value="400.0">
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">Outlet Treated COD (mg/L) <span class="text-success">&lt;50</span></label>
-                            <input type="number" step="0.1" name="outlet_cod_mg_l" class="form-control" placeholder="e.g. 32.0" value="28.0">
+                            <input aria-label="Outlet cod mg l" type="number" step="0.1" name="outlet_cod_mg_l" class="form-control" placeholder="e.g. 32.0" value="28.0">
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">Outlet TSS (mg/L) <span class="text-success">&lt;20</span></label>
-                            <input type="number" step="0.1" name="outlet_tss_mg_l" class="form-control" placeholder="e.g. 11.0" value="9.5">
+                            <input aria-label="Outlet tss mg l" type="number" step="0.1" name="outlet_tss_mg_l" class="form-control" placeholder="e.g. 11.0" value="9.5">
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">Outlet pH (6.5 - 8.5)</label>
-                            <input type="number" step="0.01" name="outlet_ph" class="form-control" placeholder="e.g. 7.35" value="7.40">
+                            <input aria-label="Outlet ph" type="number" step="0.01" name="outlet_ph" class="form-control" placeholder="e.g. 7.35" value="7.40">
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">Residual Chlorine (ppm)</label>
-                            <input type="number" step="0.1" name="chlorine_dosing_ppm" class="form-control" placeholder="e.g. 1.2" value="1.0">
+                            <input aria-label="Chlorine dosing ppm" type="number" step="0.1" name="chlorine_dosing_ppm" class="form-control" placeholder="e.g. 1.2" value="1.0">
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">Blower Hours (hrs)</label>
-                            <input type="number" step="0.1" name="aeration_blower_hours" class="form-control" placeholder="18.0" value="20.0">
+                            <input aria-label="Aeration blower hours" type="number" step="0.1" name="aeration_blower_hours" class="form-control" placeholder="18.0" value="20.0">
                         </div>
 
                         <div class="col-md-6">
@@ -340,17 +340,17 @@ $currentColony = $current_colony ?? null;
 
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Dewatered Sludge Cake Disposed (kg)</label>
-                            <input type="number" step="0.1" name="sludge_cake_disposed_kg" class="form-control" placeholder="e.g. 45.0" value="35.0">
+                            <input aria-label="Sludge cake disposed kg" type="number" step="0.1" name="sludge_cake_disposed_kg" class="form-control" placeholder="e.g. 45.0" value="35.0">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">STP Plant Operator Name</label>
-                            <input type="text" name="operator_name" class="form-control" placeholder="Sunil Kumar">
+                            <input aria-label="Operator name" type="text" name="operator_name" class="form-control" placeholder="Sunil Kumar">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Operator Contact Number</label>
-                            <input type="text" name="operator_phone" class="form-control" placeholder="+91 9876543210">
+                            <input aria-label="Operator phone" type="text" name="operator_phone" class="form-control" placeholder="+91 9876543210">
                         </div>
 
                         <div class="col-12">

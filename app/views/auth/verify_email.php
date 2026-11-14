@@ -26,12 +26,12 @@
                         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                         <div class="mb-3">
                             <label class="form-label" for="veEmail">Email *</label>
-                            <input type="email" class="form-control" name="email" id="veEmail" required
+                            <input aria-label="Email" type="email" class="form-control" name="email" id="veEmail" required
                                 value="<?= htmlspecialchars($_GET['email'] ?? '') ?>" placeholder="you@example.com">
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="veToken">Verification code *</label>
-                            <input type="text" class="form-control" name="token" id="veToken" required
+                            <input aria-label="Token" type="text" class="form-control" name="token" id="veToken" required
                                 value="<?= htmlspecialchars($_GET['token'] ?? '') ?>" placeholder="Paste the code from your email">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Verify Email</button>

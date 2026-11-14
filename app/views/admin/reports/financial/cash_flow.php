@@ -18,11 +18,11 @@ $end_date = $end_date ?? '';
             <form method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Start Date</label>
-                    <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($start_date) ?>">
+                    <input aria-label="Start date" type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($start_date) ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">End Date</label>
-                    <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($end_date) ?>">
+                    <input aria-label="End date" type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($end_date) ?>">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary">Generate</button>

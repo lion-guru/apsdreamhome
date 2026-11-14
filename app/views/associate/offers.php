@@ -279,7 +279,7 @@ foreach ($claims as $cl) {
                                                 <label class="form-label fw-bold small text-uppercase">Choose Reward Mode</label>
                                                 <div class="row g-2">
                                                     <div class="col-6">
-                                                        <input type="radio" class="btn-check" name="claim_mode" id="mode_cash_<?= $off['id'] ?>" value="wallet_cash" checked>
+                                                        <input aria-label="Claim mode" type="radio" class="btn-check" name="claim_mode" id="mode_cash_<?= $off['id'] ?>" value="wallet_cash" checked>
                                                         <label class="btn btn-outline-success w-100 py-2 text-center" for="mode_cash_<?= $off['id'] ?>">
                                                             <i class="fas fa-wallet fa-lg d-block mb-1"></i>
                                                             <strong>₹<?= number_format($rewardVal, 0) ?> Cash</strong>
@@ -287,7 +287,7 @@ foreach ($claims as $cl) {
                                                         </label>
                                                     </div>
                                                     <div class="col-6">
-                                                        <input type="radio" class="btn-check" name="claim_mode" id="mode_gift_<?= $off['id'] ?>" value="physical_gift">
+                                                        <input aria-label="Claim mode" type="radio" class="btn-check" name="claim_mode" id="mode_gift_<?= $off['id'] ?>" value="physical_gift">
                                                         <label class="btn btn-outline-danger w-100 py-2 text-center" for="mode_gift_<?= $off['id'] ?>">
                                                             <i class="fas fa-box-open fa-lg d-block mb-1"></i>
                                                             <strong>Physical Gift</strong>
@@ -299,7 +299,7 @@ foreach ($claims as $cl) {
 
                                             <div class="mb-3">
                                                 <label class="form-label small fw-bold">Contact Phone Number</label>
-                                                <input type="text" class="form-control" name="contact_phone" placeholder="Enter active contact number" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
+                                                <input aria-label="Contact phone" type="text" class="form-control" name="contact_phone" placeholder="Enter active contact number" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
                                             </div>
 
                                             <div class="mb-3">
@@ -427,7 +427,7 @@ foreach ($claims as $cl) {
                                     ग्राहक मोबाइल कैमरा से स्कैन करके सीधा यह ऑफर पा सकते हैं।
                                 </div>
                                 <div class="input-group input-group-sm mb-2">
-                                    <input type="text" class="form-control font-monospace" id="qrInput_<?= (int)($co['id'] ?? 0) ?>" value="<?= htmlspecialchars($dealUrl) ?>" readonly>
+                                    <input aria-label="Qr input int co" type="text" class="form-control font-monospace" id="qrInput_<?= (int)($co['id'] ?? 0) ?>" value="<?= htmlspecialchars($dealUrl) ?>" readonly>
                                     <button class="btn btn-outline-secondary copy-link-btn" type="button" data-input-id="qrInput_<?= (int)($co['id'] ?? 0) ?>" title="Copy link">
                                         <i class="far fa-copy"></i>
                                     </button>

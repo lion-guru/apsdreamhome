@@ -24,24 +24,24 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="location" class="form-label fw-bold"><?= __('aigen_label_location', [], 'Location') ?></label>
-                                <input type="text" id="location" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_location', [], 'e.g. Gorakhpur, UP') ?>">
+                                <input aria-label="Location" type="text" id="location" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_location', [], 'e.g. Gorakhpur, UP') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label for="price" class="form-label fw-bold"><?= __('aigen_label_price', [], 'Price (₹)') ?></label>
-                                <input type="number" id="price" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_price', [], 'e.g. 5000000') ?>">
+                                <input aria-label="Price" type="number" id="price" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_price', [], 'e.g. 5000000') ?>">
                             </div>
                             
                             <div class="col-md-4">
                                 <label for="bedrooms" class="form-label fw-bold"><?= __('aigen_label_bedrooms', [], 'Bedrooms') ?></label>
-                                <input type="number" id="bedrooms" class="form-control py-2" placeholder="<?= __('aigen_placeholder_bedrooms', [], 'e.g. 3') ?>">
+                                <input aria-label="Bedrooms" type="number" id="bedrooms" class="form-control py-2" placeholder="<?= __('aigen_placeholder_bedrooms', [], 'e.g. 3') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label for="bathrooms" class="form-label fw-bold"><?= __('aigen_label_bathrooms', [], 'Bathrooms') ?></label>
-                                <input type="number" id="bathrooms" class="form-control py-2" placeholder="<?= __('aigen_placeholder_bathrooms', [], 'e.g. 2') ?>">
+                                <input aria-label="Bathrooms" type="number" id="bathrooms" class="form-control py-2" placeholder="<?= __('aigen_placeholder_bathrooms', [], 'e.g. 2') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label for="area" class="form-label fw-bold"><?= __('aigen_label_area', [], 'Area (sq ft)') ?></label>
-                                <input type="number" id="area" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_area', [], 'e.g. 1200') ?>">
+                                <input aria-label="Area" type="number" id="area" class="form-control py-2" required placeholder="<?= __('aigen_placeholder_area', [], 'e.g. 1200') ?>">
                             </div>
                             
                             <div class="col-12">

@@ -64,13 +64,13 @@
                             <input type="hidden" name="listing_id" value="<?= $listing['id'] ?>">
                             <div class="mb-2">
                                 <label class="form-label">Your Name</label>
-                                <input type="text" name="reviewer_name" class="form-control" required value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                                <input aria-label="Reviewer name" type="text" name="reviewer_name" class="form-control" required value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                             </div>
                             <div class="mb-2">
                                 <label class="form-label">Rating</label>
                                 <div class="star-rating">
                                     <?php for ($i = 5; $i >= 1; $i--): ?>
-                                        <input type="radio" name="rating" value="<?= $i ?>" id="star<?= $i ?>" <?= $i === 5 ? 'checked' : '' ?>>
+                                        <input aria-label="Rating" type="radio" name="rating" value="<?= $i ?>" id="star<?= $i ?>" <?= $i === 5 ? 'checked' : '' ?>>
                                         <label for="star<?= $i ?>" class="fs-4 text-warning">★</label>
                                     <?php endfor; ?>
                                 </div>

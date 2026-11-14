@@ -155,11 +155,11 @@ class AuthController extends BaseController
             $stmt = $db->prepare("INSERT INTO mlm_network_tree ($mlmCols) VALUES ($mlmVals)");
             $stmt->execute($mlmParams);
 
-            // Create wallet
-            $walletCols = "user_id, balance, created_at, updated_at";
-            $walletVals = "?, 0, NOW(), NOW()";
-            $walletParams = [$userId];
-            if (!empty($insertExtra)) { $walletCols .= ", tenant_id"; $walletVals .= ", ?"; $walletParams[] = $insertExtra['tenant_id']; }
+            // Create wallet (S523: `balance` column did not exist — every signup 1054'd here.
+            // Canonical wallet_points shape, mirroring WalletService::credit().)
+            $walletCols = "user_id, tenant_id, points_balance, total_earned, total_used, total_transferred_to_emi, referral_earnings, commission_earnings, bonus_earnings, status, wallet_activated, created_at, updated_at";
+            $walletVals = "?, ?, 0, 0, 0, 0, 0, 0, 0, 'active', 0, NOW(), NOW()";
+            $walletParams = [$userId, $insertExtra['tenant_id'] ?? ($tid ?? 1)];
             $stmt = $db->prepare("INSERT INTO wallet_points ($walletCols) VALUES ($walletVals)");
             $stmt->execute($walletParams);
 

@@ -32,7 +32,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" placeholder="Search media...">
+                        <input aria-label="Search media" type="text" class="form-control" placeholder="Search media...">
                     </div>
                     <div class="col-md-3">
                         <button class="btn btn-primary w-100">Filter</button>

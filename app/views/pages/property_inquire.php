@@ -40,15 +40,15 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                         <input type="hidden" name="source" value="inquire_page">
                         <div class="mb-3">
                             <label class="form-label">Your Name *</label>
-                            <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                            <input aria-label="Name" type="text" name="name" class="form-control" required value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Phone Number *</label>
-                            <input type="tel" name="phone" class="form-control" required pattern="[0-9]{10}" maxlength="10" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
+                            <input aria-label="Phone" type="tel" name="phone" class="form-control" required pattern="[0-9]{10}" maxlength="10" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Email (optional)</label>
-                            <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($_SESSION['user_email'] ?? '') ?>">
+                            <input aria-label="Email" type="email" name="email" class="form-control" value="<?= htmlspecialchars($_SESSION['user_email'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Message</label>

@@ -184,7 +184,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Date</label>
-                        <input type="date" name="log_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Log date" type="date" name="log_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Shift</label>
@@ -198,58 +198,58 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Pump Station / Number</label>
-                        <input type="text" name="pump_number" class="form-control" value="Borewell Pump #1">
+                        <input aria-label="Pump number" type="text" name="pump_number" class="form-control" value="Borewell Pump #1">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Start Time</label>
-                        <input type="time" name="pump_start_time" class="form-control" value="06:00">
+                        <input aria-label="Pump start time" type="time" name="pump_start_time" class="form-control" value="06:00">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Stop Time</label>
-                        <input type="time" name="pump_stop_time" class="form-control" value="10:00">
+                        <input aria-label="Pump stop time" type="time" name="pump_stop_time" class="form-control" value="10:00">
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Run Hours</label>
-                        <input type="number" step="0.1" name="run_hours" class="form-control" value="4.0" placeholder="Auto / Manual">
+                        <input aria-label="Run hours" type="number" step="0.1" name="run_hours" class="form-control" value="4.0" placeholder="Auto / Manual">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Water Pumped (kL)</label>
-                        <input type="number" step="0.5" name="water_pumped_kl" class="form-control" value="60.0" required>
+                        <input aria-label="Water pumped kl" type="number" step="0.5" name="water_pumped_kl" class="form-control" value="60.0" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Power Consumption (kWh)</label>
-                        <input type="number" step="0.5" name="power_units_kwh" class="form-control" value="28.0">
+                        <input aria-label="Power units kwh" type="number" step="0.5" name="power_units_kwh" class="form-control" value="28.0">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">OHT Level (%)</label>
-                        <input type="number" min="0" max="100" name="oht_level_pct" class="form-control" value="85">
+                        <input aria-label="Oht level pct" type="number" min="0" max="100" name="oht_level_pct" class="form-control" value="85">
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Water TDS (PPM)</label>
-                        <input type="number" name="tds_ppm" class="form-control" value="240" required>
+                        <input aria-label="Tds ppm" type="number" name="tds_ppm" class="form-control" value="240" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">pH Level</label>
-                        <input type="number" step="0.1" name="ph_level" class="form-control" value="7.2">
+                        <input aria-label="Ph level" type="number" step="0.1" name="ph_level" class="form-control" value="7.2">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Chlorine Dosing (g)</label>
-                        <input type="number" step="1" name="chlorine_dose_gm" class="form-control" value="50">
+                        <input aria-label="Chlorine dose gm" type="number" step="1" name="chlorine_dose_gm" class="form-control" value="50">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Line Pressure (Bar)</label>
-                        <input type="number" step="0.1" name="line_pressure_bar" class="form-control" value="2.5">
+                        <input aria-label="Line pressure bar" type="number" step="0.1" name="line_pressure_bar" class="form-control" value="2.5">
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Pump Attendant / Operator *</label>
-                        <input type="text" name="operator_name" class="form-control" value="Suresh Yadav" required>
+                        <input aria-label="Operator name" type="text" name="operator_name" class="form-control" value="Suresh Yadav" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Operator Contact</label>
-                        <input type="text" name="operator_phone" class="form-control" value="+91 9839123456">
+                        <input aria-label="Operator phone" type="text" name="operator_phone" class="form-control" value="+91 9839123456">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Pump Mechanical Health</label>

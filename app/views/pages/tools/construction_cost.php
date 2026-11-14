@@ -11,7 +11,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="builtArea"><?php echo __('built_area_sqft', [], 'Built-up Area (sq ft)'); ?></label>
-                                <input type="number" class="form-control form-control-lg" id="builtArea" value="1500" oninput="calcConstr()">
+                                <input aria-label="Built area" type="number" class="form-control form-control-lg" id="builtArea" value="1500" oninput="calcConstr()">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold" for="quality"><?php echo __('construction_quality', [], 'Construction Quality'); ?></label>

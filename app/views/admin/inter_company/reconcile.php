@@ -32,11 +32,11 @@ $status = $status ?? 'open';
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label">Reconciliation Number</label>
-                        <input type="text" name="reconciliation_number" class="form-control" value="" required>
+                        <input aria-label="Reconciliation number" type="text" name="reconciliation_number" class="form-control" value="" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Reconciliation Date</label>
-                        <input type="date" name="reconciliation_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Reconciliation date" type="date" name="reconciliation_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">From Entity</label>
@@ -52,11 +52,11 @@ $status = $status ?? 'open';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Period Start</label>
-                        <input type="date" name="period_start" class="form-control" required>
+                        <input aria-label="Period start" type="date" name="period_start" class="form-control" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Period End</label>
-                        <input type="date" name="period_end" class="form-control" required>
+                        <input aria-label="Period end" type="date" name="period_end" class="form-control" required>
                     </div>
                     <div class="col-md-12 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Create Reconciliation</button>

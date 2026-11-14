@@ -83,27 +83,27 @@ $land_records = $land_records ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Survey Number <span class="text-danger">*</span></label>
-                        <input type="text" name="survey_number" class="form-control" required placeholder="e.g. SURV-2024-001">
+                        <input aria-label="Survey number" type="text" name="survey_number" class="form-control" required placeholder="e.g. SURV-2024-001">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Location <span class="text-danger">*</span></label>
-                        <input type="text" name="location" class="form-control" required placeholder="e.g. Gorakhpur">
+                        <input aria-label="Location" type="text" name="location" class="form-control" required placeholder="e.g. Gorakhpur">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Land Area (sqft) <span class="text-danger">*</span></label>
-                        <input type="number" name="land_area" class="form-control" required step="0.01" min="0.01">
+                        <input aria-label="Land area" type="number" name="land_area" class="form-control" required step="0.01" min="0.01">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Land Type <span class="text-danger">*</span></label>
-                        <input type="text" name="land_type" class="form-control" required placeholder="e.g. Agricultural, Residential">
+                        <input aria-label="Land type" type="text" name="land_type" class="form-control" required placeholder="e.g. Agricultural, Residential">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Owner Name</label>
-                        <input type="text" name="owner_name" class="form-control" placeholder="e.g. Ram Singh">
+                        <input aria-label="Owner name" type="text" name="owner_name" class="form-control" placeholder="e.g. Ram Singh">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Owner Contact</label>
-                        <input type="text" name="owner_contact" class="form-control" placeholder="e.g. 9876543210">
+                        <input aria-label="Owner contact" type="text" name="owner_contact" class="form-control" placeholder="e.g. 9876543210">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Acquisition Status</label>
@@ -116,11 +116,11 @@ $land_records = $land_records ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Acquisition Cost</label>
-                        <input type="number" name="acquisition_cost" class="form-control" step="0.01" min="0" value="0.00">
+                        <input aria-label="Acquisition cost" type="number" name="acquisition_cost" class="form-control" step="0.01" min="0" value="0.00">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Colony ID</label>
-                        <input type="number" name="colony_id" class="form-control" placeholder="e.g. 1 (optional)">
+                        <input aria-label="Colony id" type="number" name="colony_id" class="form-control" placeholder="e.g. 1 (optional)">
                     </div>
                 </div>
                 <div class="modal-footer">

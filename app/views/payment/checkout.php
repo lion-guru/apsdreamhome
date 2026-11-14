@@ -62,26 +62,26 @@ include __DIR__ . '/../layouts/header.php'; ?>
 
                         <div class="mb-3">
                             <label for="card_number" class="form-label">Card Number</label>
-                            <input type="text" class="form-control" id="card_number" name="card_number"
+                            <input aria-label="Card number" type="text" class="form-control" id="card_number" name="card_number"
                                    placeholder="1234 5678 9012 3456" maxlength="19">
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="expiry_date" class="form-label">Expiry Date</label>
-                                <input type="text" class="form-control" id="expiry_date" name="expiry_date"
+                                <input aria-label="Expiry date" type="text" class="form-control" id="expiry_date" name="expiry_date"
                                        placeholder="MM/YY" maxlength="5">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="cvv" class="form-label">CVV</label>
-                                <input type="text" class="form-control" id="cvv" name="cvv"
+                                <input aria-label="Cvv" type="text" class="form-control" id="cvv" name="cvv"
                                        placeholder="123" maxlength="4">
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="cardholder_name" class="form-label">Cardholder Name</label>
-                            <input type="text" class="form-control" id="cardholder_name" name="cardholder_name"
+                            <input aria-label="Cardholder name" type="text" class="form-control" id="cardholder_name" name="cardholder_name"
                                    placeholder="John Doe">
                         </div>
 

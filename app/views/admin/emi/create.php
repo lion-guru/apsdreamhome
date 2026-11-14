@@ -41,25 +41,25 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                         <!-- Total Amount -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Total Amount (₹) *</label>
-                            <input type="number" name="total_amount" class="form-control" step="0.01" min="0" required readonly>
+                            <input aria-label="Total amount" type="number" name="total_amount" class="form-control" step="0.01" min="0" required readonly>
                         </div>
                         
                         <!-- Down Payment -->
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Down Payment (₹) *</label>
-                            <input type="number" name="down_payment" class="form-control" step="0.01" min="0" required>
+                            <input aria-label="Down payment" type="number" name="down_payment" class="form-control" step="0.01" min="0" required>
                         </div>
                         
                         <!-- Interest Rate -->
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Interest Rate (%) *</label>
-                            <input type="number" name="interest_rate" class="form-control" step="0.01" min="0" max="100" value="8.5" required>
+                            <input aria-label="Interest rate" type="number" name="interest_rate" class="form-control" step="0.01" min="0" max="100" value="8.5" required>
                         </div>
                         
                         <!-- Tenure -->
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Tenure (Months) *</label>
-                            <input type="number" name="tenure_months" class="form-control" min="1" max="360" value="120" required>
+                            <input aria-label="Tenure months" type="number" name="tenure_months" class="form-control" min="1" max="360" value="120" required>
                         </div>
                     </div>
                     

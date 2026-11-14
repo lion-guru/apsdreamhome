@@ -7689,3 +7689,44 @@ Parallel actor holds S518–S521 lineage; this entry = S522. Next-free = **523**
 _958. **Never publish a commit whose contents you have not enumerated.** `--allow-empty` while unsure is how misleading single-line messages land on main. This session proved it: the real migration was fine — the deliverable commit was not. Use `git status --short` BEFORE every commit, and (if the only delta rides a parallel actor's whole-tree sweep) say so instead of pushing an empty commit.
 _959. **A stash push with --include-untracked can save less than you think.** The stash here held only AGENTS.md.new; the untracked commit was the empty tree, and the two files I expected (migration, a11y scripts) were never in it because they were already tracked. Inventory `stash^3` before trusting "I stashed it".
 _960. **A cleanup that mangles `AGENTS.md.new` into a one-file stash is not a loss** — it is a stale backup of the session log on top of HEAD's deleted state. Junk it last, after re-reading it, not while busy.
+
+
+## Session 523: Wallet System Reconciled — Ghost Rows Purged, FK Root Cause Fixed, Dead Writer Repaired, Probe WD Cleaned (2026-11-14)
+
+### Trigger
+Owner: "Wallet double-counting (wallet_points vs legacy wallet_transactions) — ye thik karo data to sab testing wala hi hai na fake data hai sab to jaise ho thik karo."
+
+### What was actually wrong (verified, not assumed)
+1. **No dashboard summed both tables** — all ₹-amount SUM readers hit `mlm_commission_ledger` (referral/commission MLM aggregates), none touched the wallet pair. The "double-counting" was purely **balance-vs-ledger drift**:
+   - `wallet_points` = 76 rows, **37 with `user_id IS NULL`** (junk pre-restore seed from 2026-04/06/09/10/11-05; zero FKs into them).
+   - **3 NULL-owner rows carried phantom balances**: id 40 = ₹200 @2026-05-12, id 250 = ₹5,000 @2026-10-15, id 660 = ₹5,000 @2026-11-05 → **₹10,400 owed to nobody**, zero ledger rows.
+   - The ONE row that matters (user 1, ₹600 = 3 × ₹200 referral credits) already reconciled exactly with `wallet_transactions` (3 rows, balance_after 200/400/600).
+2. **Root cause of the ghost class**: FK `fk_wallet_points_user_id` had `ON DELETE SET NULL` — every user hard-delete (e.g., `UserService::deleteUser()`, `TeamManagementController::deleteMember()`) silently detached the wallet, creating balance-carrying ownerless rows.
+3. **Dead duplicate with a non-existent column**: `app/Http/Controllers/Associate/AuthController.php:159` INSERT listed `balance` (no such column on `wallet_points`) → would 1054 on every signup. Route name `Associate\AuthController` has zero route references (the live handler is `Auth\AssociateAuthController@handleAssociateRegister`), but the fix removes the trap for anyone who reuses this class.
+4. **Parallel actor's S522 claim correction**: the parallel actor's in-tab note said "migration kabhi run nahi hui". **False.** `backfill_historical_emi_schedules_s522.php` executed on 2026-11-14 (transaction committed): live DB now holds **20 `TEST-HIST-*` plot_bookings and 276 `booking_payment_schedules` rows (274 pending / 2 paid)**, and `backups/db/pre_historical_backfill.sql` exists. The migration in repo is what ran — the only blemish was the empty commit `8c7cd3f00` (already disclosed in S522).
+
+### What I did (owner-authorized dev-mode cleanup, every step backed up)
+- Safety dumps: `wallet_pre_s523_2026-11-14.sql` (wallet pair + activation tables, 20 KB) and `probe_wd_s523_2026-11-14.sql` (users id=124035 + its wallet row, 13 KB).
+- Migration `database/migrations/fix_wallet_consistency_s523.php` (idempotent):
+  1. Deleted 37 NULL-owner ghost rows.
+  2. FK `fk_wallet_points_user_id`: **ON DELETE SET NULL → RESTRICT ON UPDATE CASCADE** (loud failure instead of silent orphaning — both hard-delete code paths will now throw if a user has a wallet; app already soft-deletes by design).
+  3. `wallet_points.user_id` → `bigint(20) UNSIGNED NOT NULL`.
+  4. Added `UNIQUE KEY uniq_wp_tenant_user (tenant_id, user_id)` — one wallet per tenant per user.
+  5. Prints reconciliation table: rows / sum(balance) / signed ledger sum.
+- Repaired dead-dup wallet insert to canonical shape (`points_balance`, `status`, `wallet_activated` cols etc.).
+- Deleted another actor's stale **Probe WD** account (`probe_wd_20261114050937@t.local`, user 124035, created 09:39 this morning): ₹5,000 in `wallet_points` with **zero** ledger rows (un-ledgered direct write, fully childless across mlm_profiles / commission ledger / booking_transfers / wallet_transactions — verified zero children before delete; backup saved). **This explanation matters**: it was not corruption — the probe corpus just bypassed `WalletService::credit()`.
+- `AGENTS.md.new` deleted with a dedicated commit — it was a stale mojibake-degraded older snapshot of this same log (no S522 tail, ~91 % of then-current size, "Master Suite 10/10" ending); fully subsumed by current `AGENTS.md` and by git history. This was the parallel actor's open question; decision taken on evidence.
+- Safety re-verify: PHP lint clean ×3; PHPStan clean; **master suite 11/11 PASSED**; post-migration reconciliation printed **rows=39 balance=600 earned=600 ledger=600 RECONCILED**.
+
+### Owner actions still open
+Play Console upload AAB (`1.2.10+13`) · `bohisawagar-banner.jpg` drop · HTTPS assetlinks SHA-256 · `scripts vacuum_opencode_db.ps1` (needs OpenCode CLOSED) · C: drive space monitoring · visual baselines regeneration · `8c7cd3f00` empty commit acceptance (no force-push without explicit order) · Lighthouse/axe final pass (no browser tool in this env).
+
+### AGENTS.md numbering (Rule 4)
+Parallel actor holds S518–S522 lineage (their a11y sweep in-flight, ~1,000 uncommitted view edits = theirs, untouched). This entry = S523. Next-free = **524**.
+
+### Key Lessons
+_961. **Balance and ledger must agree per user — enforce it with NOT NULL/UNIQUE, not with hope.** 37 NULL-owner rows accumulated unnoticed for months; the one user with real activity had exactly one reconciled balance. DB constraints beat code discipline.
+_962. **`ON DELETE SET NULL` on a money table creates phantom payouts.** Every user hard-delete silently orphaned a balance-carrying wallet. Root-cause class: referential rules that detach money from identity. RESTRICT (or CASCADE with explicit ledger audit) is the only honest reply.
+_963. **A stale "report" that contradicts the DB is falsified by three queries.** The sibling tab claimed the S522 backfill never ran; one `SELECT COUNT(booking_number LIKE 'TEST-HIST-%')` settled it (20). Before accepting a status claim, run the cheapest query that decides it.
+_964. **Clean your own actor's evidence before claiming "zero drift".** The 40-row / ₹5600 reconciliation I first saw this session was explained entirely by the parallel actor's ₹5,000 probe account — which was itself a live demo of the exact un-ledgered-write bug this round fixed. Every "drift" needs a *name*, not a SUM.
+_965. **Backup, then delete, then verify — in that order, every time.** `probe_wd_s523_2026-11-14.sql` existed before the two DELETEs; post-delete reconciliation printed the exact expected tuple. Zero rescue needed, but only because the dump existed.

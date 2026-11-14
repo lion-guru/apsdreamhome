@@ -394,7 +394,7 @@ $related_projects = $normRelated;
                                     <label class="form-label small fw-bold text-dark mb-0" for="emiRangePrice">प्रॉपर्टी / प्लॉट मूल्य (Total Price)</label>
                                     <span class="fw-bold text-primary font-monospace" id="emiDisplayPrice">₹<?= number_format($defaultEmiPrice) ?></span>
                                 </div>
-                                <input type="range" class="form-range" id="emiRangePrice" min="500000" max="10000000" step="50000" value="<?= $defaultEmiPrice ?>">
+                                <input aria-label="Emi range price" type="range" class="form-range" id="emiRangePrice" min="500000" max="10000000" step="50000" value="<?= $defaultEmiPrice ?>">
                                 <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
                                     <span>₹5 Lakh</span>
                                     <span>₹50 Lakh</span>
@@ -408,7 +408,7 @@ $related_projects = $normRelated;
                                     <label class="form-label small fw-bold text-dark mb-0" for="emiRangeDp">डाउन पेमेंट (Down Payment: <span id="emiDisplayDpPct">20%</span>)</label>
                                     <span class="fw-bold text-success font-monospace" id="emiDisplayDpAmt">₹3,00,000</span>
                                 </div>
-                                <input type="range" class="form-range" id="emiRangeDp" min="10" max="60" step="5" value="20">
+                                <input aria-label="Emi range dp" type="range" class="form-range" id="emiRangeDp" min="10" max="60" step="5" value="20">
                                 <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
                                     <span>10% (Min)</span>
                                     <span>30%</span>
@@ -422,7 +422,7 @@ $related_projects = $normRelated;
                                     <label class="form-label small fw-bold text-dark mb-0" for="emiRangeTenure">लोन अवधि (Loan Tenure)</label>
                                     <span class="fw-bold text-dark font-monospace" id="emiDisplayTenure">5 Years (60 Months)</span>
                                 </div>
-                                <input type="range" class="form-range" id="emiRangeTenure" min="1" max="15" step="1" value="5">
+                                <input aria-label="Emi range tenure" type="range" class="form-range" id="emiRangeTenure" min="1" max="15" step="1" value="5">
                                 <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
                                     <span>1 Year</span>
                                     <span>5 Years</span>
@@ -437,7 +437,7 @@ $related_projects = $normRelated;
                                     <label class="form-label small fw-bold text-dark mb-0" for="emiRangeRate">वार्षिक ब्याज दर (Interest Rate)</label>
                                     <span class="fw-bold text-dark font-monospace" id="emiDisplayRate">8.5% p.a.</span>
                                 </div>
-                                <input type="range" class="form-range" id="emiRangeRate" min="7.0" max="14.0" step="0.25" value="8.5">
+                                <input aria-label="Emi range rate" type="range" class="form-range" id="emiRangeRate" min="7.0" max="14.0" step="0.25" value="8.5">
                                 <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
                                     <span>7%</span>
                                     <span>8.5% (Bank avg)</span>
@@ -888,24 +888,24 @@ $related_projects = $normRelated;
 
                     <div class="mb-3">
                         <label class="form-label small fw-bold" for="sv_name">आपका पूरा नाम (Full Name) *</label>
-                        <input type="text" class="form-control" name="name" id="sv_name" required placeholder="उदा. राहुल शर्मा" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
+                        <input aria-label="Name" type="text" class="form-control" name="name" id="sv_name" required placeholder="उदा. राहुल शर्मा" value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                     </div>
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-bold" for="sv_phone">मोबाइल नंबर (Mobile) *</label>
-                            <input type="tel" class="form-control" name="phone" id="sv_phone" required placeholder="10-digit number" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
+                            <input aria-label="Phone" type="tel" class="form-control" name="phone" id="sv_phone" required placeholder="10-digit number" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold" for="sv_email">ईमेल (Email)</label>
-                            <input type="email" class="form-control" name="email" id="sv_email" placeholder="name@example.com" value="<?= htmlspecialchars($_SESSION['user_email'] ?? 'sitevisit@apsdreamhome.com') ?>">
+                            <input aria-label="Email" type="email" class="form-control" name="email" id="sv_email" placeholder="name@example.com" value="<?= htmlspecialchars($_SESSION['user_email'] ?? 'sitevisit@apsdreamhome.com') ?>">
                         </div>
                     </div>
 
                     <div class="row g-2 mb-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-bold" for="sv_date">पसंदीदा तारीख (Visit Date) *</label>
-                            <input type="date" class="form-control" name="visit_date" id="sv_date" required min="<?= date('Y-m-d', strtotime('+1 day')) ?>" value="<?= date('Y-m-d', strtotime('+1 day')) ?>">
+                            <input aria-label="Visit date" type="date" class="form-control" name="visit_date" id="sv_date" required min="<?= date('Y-m-d', strtotime('+1 day')) ?>" value="<?= date('Y-m-d', strtotime('+1 day')) ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold" for="sv_time">पसंदीदा समय (Time Slot) *</label>

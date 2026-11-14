@@ -59,7 +59,7 @@ $pagination = $pagination ?? [];
                 <label class="form-label fw-bold"><?= __('resell_search') ?></label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="<?= __('resell_search_ph') ?>" value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control border-start-0 ps-0" placeholder="<?= __('resell_search_ph') ?>" value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
             </div>
 
@@ -91,12 +91,12 @@ $pagination = $pagination ?? [];
 
             <div class="col-md-2">
                 <label class="form-label fw-bold"><?= __('resell_min_price') ?></label>
-                <input type="number" name="min_price" class="form-control" placeholder="Min" value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>">
+                <input aria-label="Min price" type="number" name="min_price" class="form-control" placeholder="Min" value="<?= htmlspecialchars($filters['min_price'] ?? '') ?>">
             </div>
 
             <div class="col-md-2">
                 <label class="form-label fw-bold"><?= __('resell_max_price') ?></label>
-                <input type="number" name="max_price" class="form-control" placeholder="Max" value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>">
+                <input aria-label="Max price" type="number" name="max_price" class="form-control" placeholder="Max" value="<?= htmlspecialchars($filters['max_price'] ?? '') ?>">
             </div>
 
             <div class="col-12 text-end mt-4">

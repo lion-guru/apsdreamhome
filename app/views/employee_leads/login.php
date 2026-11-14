@@ -71,7 +71,7 @@ require_once __DIR__ . '/../layouts/header.php';
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="fas fa-envelope text-primary"></i>
                                 </span>
-                                <input type="email" class="form-control border-start-0" id="email" name="email"
+                                <input aria-label="Email" type="email" class="form-control border-start-0" id="email" name="email"
                                     placeholder="Enter your email" required
                                     value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
                             </div>
@@ -85,7 +85,7 @@ require_once __DIR__ . '/../layouts/header.php';
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="fas fa-lock text-primary"></i>
                                 </span>
-                                <input type="password" class="form-control border-start-0 border-end-0" id="password" name="password"
+                                <input aria-label="Password" type="password" class="form-control border-start-0 border-end-0" id="password" name="password"
                                     placeholder="Enter your password" required>
                                 <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword" aria-label="View"><i class="fas fa-eye" id="toggleIcon"></i></button>
                             </div>
@@ -93,7 +93,7 @@ require_once __DIR__ . '/../layouts/header.php';
 
                         <div class="mb-4 d-flex justify-content-between align-items-center">
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                <input aria-label="Remember" type="checkbox" class="form-check-input" id="remember" name="remember">
                                 <label class="form-check-label" for="remember">
                                     <small>Remember me for 30 days</small>
                                 </label>

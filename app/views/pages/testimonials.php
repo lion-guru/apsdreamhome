@@ -100,21 +100,21 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><?= __('testi_lbl_name', null, 'Full Name') ?> *</label>
-                                    <input type="text" name="name" class="form-control" required>
+                                    <input aria-label="Name" type="text" name="name" class="form-control" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><?= __('email_lbl', null, 'Email') ?> *</label>
-                                    <input type="email" name="email" class="form-control" required>
+                                    <input aria-label="Email" type="email" name="email" class="form-control" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><?= __('phone_lbl', null, 'Phone') ?></label>
-                                    <input type="tel" name="phone" class="form-control">
+                                    <input aria-label="Phone" type="tel" name="phone" class="form-control">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><?= __('testi_lbl_location', null, 'Location') ?></label>
-                                    <input type="text" name="location" class="form-control" placeholder="<?= __('testi_ph_location') ?>">
+                                    <input aria-label="Location" type="text" name="location" class="form-control" placeholder="<?= __('testi_ph_location') ?>">
                                 </div>
                             </div>
                             <div class="row">
@@ -132,7 +132,7 @@
                                     <label class="form-label"><?= __('testi_lbl_rating', null, 'Rating') ?> *</label>
                                     <div class="star-rating">
                                         <?php for ($i = 5; $i >= 1; $i--): ?>
-                                            <input type="radio" name="rating" id="star<?php echo e($i); ?>" value="<?php echo e($i); ?>" <?php echo $i === 5 ? 'checked' : ''; ?>>
+                                            <input aria-label="Rating" type="radio" name="rating" id="star<?php echo e($i); ?>" value="<?php echo e($i); ?>" <?php echo $i === 5 ? 'checked' : ''; ?>>
                                             <label for="star<?php echo e($i); ?>"><i class="fas fa-star"></i></label>
                                         <?php endfor; ?>
                                     </div>
@@ -140,7 +140,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('testi_lbl_review_title', null, 'Review Title') ?> *</label>
-                                <input type="text" name="title" class="form-control" placeholder="<?= __('testi_ph_review_title') ?>" required>
+                                <input aria-label="Title" type="text" name="title" class="form-control" placeholder="<?= __('testi_ph_review_title') ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('testi_lbl_experience', null, 'Your Experience') ?> *</label>
@@ -148,7 +148,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><?= __('testi_lbl_photo', null, 'Photo (Optional)') ?></label>
-                                <input type="file" name="photo" class="form-control" accept="image/*">
+                                <input aria-label="Photo" type="file" name="photo" class="form-control" accept="image/*">
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg w-100">
                                 <i class="fas fa-paper-plane me-2"></i><?= __('testi_btn_submit', null, 'Submit Review') ?>

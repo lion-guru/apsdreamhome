@@ -21,7 +21,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="vendor_name" class="form-label fw-semibold">Vendor Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="vendor_name" name="vendor_name" required>
+                                <input aria-label="Vendor name" type="text" class="form-control" id="vendor_name" name="vendor_name" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="vendor_type" class="form-label fw-semibold">Vendor Type</label>
@@ -39,18 +39,18 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="contact_person" class="form-label fw-semibold">Contact Person</label>
-                                <input type="text" class="form-control" id="contact_person" name="contact_person">
+                                <input aria-label="Contact person" type="text" class="form-control" id="contact_person" name="contact_person">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="phone" class="form-label fw-semibold">Phone</label>
-                                <input type="text" class="form-control" id="phone" name="phone">
+                                <input aria-label="Phone" type="text" class="form-control" id="phone" name="phone">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="email" class="form-label fw-semibold">Email</label>
-                                <input type="email" class="form-control" id="email" name="email">
+                                <input aria-label="Email" type="email" class="form-control" id="email" name="email">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="status" class="form-label fw-semibold">Status</label>
@@ -73,23 +73,23 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="city" class="form-label fw-semibold">City</label>
-                                <input type="text" class="form-control" id="city" name="city" data-autofill="city">
+                                <input aria-label="City" type="text" class="form-control" id="city" name="city" data-autofill="city">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="state" class="form-label fw-semibold">State</label>
-                                <input type="text" class="form-control" id="state" name="state" data-autofill="state">
+                                <input aria-label="State" type="text" class="form-control" id="state" name="state" data-autofill="state">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="district" class="form-label fw-semibold">District</label>
-                                <input type="text" class="form-control" id="district" name="district" data-autofill="district">
+                                <input aria-label="District" type="text" class="form-control" id="district" name="district" data-autofill="district">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="pincode" class="form-label fw-semibold">Pincode</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="pincode" name="pincode" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
+                                    <input aria-label="Pincode" type="text" class="form-control" id="pincode" name="pincode" data-autofill="pincode" maxlength="6" placeholder="Enter pincode">
                                     <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use my location" aria-label="Use my location">
                                         <i class="fas fa-location-crosshairs"></i>
                                     </button>
@@ -113,29 +113,29 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="pan_number" class="form-label fw-semibold">PAN Number</label>
-                                <input type="text" class="form-control" id="pan_number" name="pan_number" placeholder="AAAAA0000A" maxlength="10" >
+                                <input aria-label="Pan number" type="text" class="form-control" id="pan_number" name="pan_number" placeholder="AAAAA0000A" maxlength="10" >
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="gstin" class="form-label fw-semibold">GSTIN</label>
-                                <input type="text" class="form-control" id="gstin" name="gstin" placeholder="22AAAAA0000A1Z5" maxlength="15" >
+                                <input aria-label="Gstin" type="text" class="form-control" id="gstin" name="gstin" placeholder="22AAAAA0000A1Z5" maxlength="15" >
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label fw-semibold">TDS Section</label>
-                                <input type="text" class="form-control" id="tds_section_display" value="194C" readonly >
+                                <input aria-label="Tds section display" type="text" class="form-control" id="tds_section_display" value="194C" readonly >
                                 <div class="form-text">Auto-detected from Entity Type</div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label fw-semibold">TDS Rate</label>
-                                <input type="text" class="form-control" id="tds_rate_display" value="1%" readonly >
+                                <input aria-label="Tds rate display" type="text" class="form-control" id="tds_rate_display" value="1%" readonly >
                                 <div class="form-text" id="tds_rate_hint">Individual/Proprietorship = 1%, Company/Partnership = 2%</div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label fw-semibold">TDS Applicable</label>
                                 <div class="form-check form-switch mt-2">
-                                    <input class="form-check-input" type="checkbox" id="is_tds_applicable" name="is_tds_applicable" value="1" checked>
+                                    <input aria-label="Is tds applicable" class="form-check-input" type="checkbox" id="is_tds_applicable" name="is_tds_applicable" value="1" checked>
                                     <label class="form-check-label" for="is_tds_applicable">Deduct TDS on payments</label>
                                 </div>
                             </div>
@@ -147,11 +147,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="bank_name" class="form-label fw-semibold">Bank Name</label>
-                                <input type="text" class="form-control" id="bank_name" name="bank_name">
+                                <input aria-label="Bank name" type="text" class="form-control" id="bank_name" name="bank_name">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="bank_account" class="form-label fw-semibold">Account Number</label>
-                                <input type="text" class="form-control" id="bank_account" name="bank_account">
+                                <input aria-label="Bank account" type="text" class="form-control" id="bank_account" name="bank_account">
                             </div>
                         </div>
 
@@ -159,7 +159,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="ifsc_code" class="form-label fw-semibold">IFSC Code</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="ifsc_code" name="ifsc_code" placeholder="SBIN0001234" data-autofill="ifsc" maxlength="11" >
+                                    <input aria-label="Ifsc code" type="text" class="form-control" id="ifsc_code" name="ifsc_code" placeholder="SBIN0001234" data-autofill="ifsc" maxlength="11" >
                                     <button type="button" class="btn btn-outline-secondary" data-action="ifsc-lookup" title="Lookup IFSC" aria-label="Search"><i class="fas fa-search"></i></button>
                                 </div>
                             </div>
@@ -184,11 +184,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="contract_start" class="form-label fw-semibold">Contract Start</label>
-                                <input type="date" class="form-control" id="contract_start" name="contract_start">
+                                <input aria-label="Contract start" type="date" class="form-control" id="contract_start" name="contract_start">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="contract_end" class="form-label fw-semibold">Contract End</label>
-                                <input type="date" class="form-control" id="contract_end" name="contract_end">
+                                <input aria-label="Contract end" type="date" class="form-control" id="contract_end" name="contract_end">
                             </div>
                         </div>
 

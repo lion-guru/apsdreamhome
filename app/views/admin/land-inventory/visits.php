@@ -23,21 +23,21 @@ $id = (int)($lead['id'] ?? 0);
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                         <div class="mb-2">
                             <label class="form-label small">Visit Date / Time <span class="text-danger">*</span></label>
-                            <input type="datetime-local" name="visit_date" class="form-control form-control-sm" value="<?= date('Y-m-d\TH:i') ?>" required>
+                            <input aria-label="Visit date" type="datetime-local" name="visit_date" class="form-control form-control-sm" value="<?= date('Y-m-d\TH:i') ?>" required>
                         </div>
                         <div class="row g-2">
                             <div class="col-6">
                                 <label class="form-label small">GPS Lat</label>
-                                <input type="number" step="0.0000001" name="gps_lat" class="form-control form-control-sm">
+                                <input aria-label="Gps lat" type="number" step="0.0000001" name="gps_lat" class="form-control form-control-sm">
                             </div>
                             <div class="col-6">
                                 <label class="form-label small">GPS Lng</label>
-                                <input type="number" step="0.0000001" name="gps_lng" class="form-control form-control-sm">
+                                <input aria-label="Gps lng" type="number" step="0.0000001" name="gps_lng" class="form-control form-control-sm">
                             </div>
                         </div>
                         <div class="mb-2 mt-2">
                             <label class="form-label small">Weather</label>
-                            <input type="text" name="weather" class="form-control form-control-sm" placeholder="Sunny / Cloudy / Rainy">
+                            <input aria-label="Weather" type="text" name="weather" class="form-control form-control-sm" placeholder="Sunny / Cloudy / Rainy">
                         </div>
                         <div class="mb-2">
                             <label class="form-label small">Observations</label>
@@ -54,7 +54,7 @@ $id = (int)($lead['id'] ?? 0);
                             </div>
                             <div class="col-6">
                                 <div class="form-check mt-4">
-                                    <input class="form-check-input" type="checkbox" name="encroachment_found" value="1" id="enc">
+                                    <input aria-label="Encroachment found" class="form-check-input" type="checkbox" name="encroachment_found" value="1" id="enc">
                                     <label class="form-check-label" for="enc">Encroachment Found</label>
                                 </div>
                             </div>

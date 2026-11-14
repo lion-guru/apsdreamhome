@@ -89,19 +89,19 @@ $criteria = $criteria ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Min Monthly Sales (₹)</label>
-                        <input type="number" step="0.01" name="min_monthly_sales" id="criteriaSales" class="form-control" value="0">
+                        <input aria-label="Min monthly sales" type="number" step="0.01" name="min_monthly_sales" id="criteriaSales" class="form-control" value="0">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Min Team Size</label>
-                        <input type="number" name="min_team_size" id="criteriaTeam" class="form-control" value="0">
+                        <input aria-label="Min team size" type="number" name="min_team_size" id="criteriaTeam" class="form-control" value="0">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Min Active Downlines</label>
-                        <input type="number" name="min_active_downlines" id="criteriaDownlines" class="form-control" value="0">
+                        <input aria-label="Min active downlines" type="number" name="min_active_downlines" id="criteriaDownlines" class="form-control" value="0">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Min Monthly Commission (₹)</label>
-                        <input type="number" step="0.01" name="min_monthly_commission" id="criteriaCommission" class="form-control" value="0">
+                        <input aria-label="Min monthly commission" type="number" step="0.01" name="min_monthly_commission" id="criteriaCommission" class="form-control" value="0">
                     </div>
                 </div>
                 <div class="modal-footer">

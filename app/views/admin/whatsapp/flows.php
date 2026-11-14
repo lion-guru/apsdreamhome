@@ -125,15 +125,15 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <div class="modal-body row g-3">
                     <div class="col-md-8">
                         <label class="form-label small fw-semibold">Flow Title</label>
-                        <input type="text" name="title" class="form-control form-control-sm" placeholder="e.g. Price Revision Inquiry" required>
+                        <input aria-label="Title" type="text" name="title" class="form-control form-control-sm" placeholder="e.g. Price Revision Inquiry" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Execution Priority</label>
-                        <input type="number" name="priority" class="form-control form-control-sm" value="50">
+                        <input aria-label="Priority" type="number" name="priority" class="form-control form-control-sm" value="50">
                     </div>
                     <div class="col-md-8">
                         <label class="form-label small fw-semibold">Trigger Keywords (Comma separated)</label>
-                        <input type="text" name="trigger_keyword" class="form-control form-control-sm" placeholder="e.g. price, cost, discount, offer" required>
+                        <input aria-label="Trigger keyword" type="text" name="trigger_keyword" class="form-control form-control-sm" placeholder="e.g. price, cost, discount, offer" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Match Logic</label>

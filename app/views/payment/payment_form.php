@@ -21,7 +21,7 @@
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         <div class="mb-3">
                             <label class="form-label">Amount (₹)</label>
-                            <input type="number" name="amount" class="form-control form-control-lg" required step="0.01" value="<?= htmlspecialchars($_POST['amount'] ?? $amount ?? '') ?>">
+                            <input aria-label="Amount" type="number" name="amount" class="form-control form-control-lg" required step="0.01" value="<?= htmlspecialchars($_POST['amount'] ?? $amount ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Payment Method</label>
@@ -36,36 +36,36 @@
                         <div id="cardDetails" >
                             <div class="mb-3">
                                 <label class="form-label">Card Number</label>
-                                <input type="text" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
+                                <input aria-label="Card number" type="text" name="card_number" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
                                     <label class="form-label">Expiry</label>
-                                    <input type="text" name="expiry" class="form-control" placeholder="MM/YY" maxlength="5">
+                                    <input aria-label="Expiry" type="text" name="expiry" class="form-control" placeholder="MM/YY" maxlength="5">
                                 </div>
                                 <div class="col-6">
                                     <label class="form-label">CVV</label>
-                                    <input type="password" name="cvv" class="form-control" placeholder="***" maxlength="4">
+                                    <input aria-label="Cvv" type="password" name="cvv" class="form-control" placeholder="***" maxlength="4">
                                 </div>
                             </div>
                         </div>
                         <div id="upiDetails" >
                             <div class="mb-3">
                                 <label class="form-label">UPI ID</label>
-                                <input type="text" name="upi_id" class="form-control" placeholder="example@paytm" value="<?= htmlspecialchars($_POST['upi_id'] ?? '') ?>">
+                                <input aria-label="Upi id" type="text" name="upi_id" class="form-control" placeholder="example@paytm" value="<?= htmlspecialchars($_POST['upi_id'] ?? '') ?>">
                             </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Name</label>
-                            <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($_POST['name'] ?? $name ?? '') ?>">
+                            <input aria-label="Name" type="text" name="name" class="form-control" required value="<?= htmlspecialchars($_POST['name'] ?? $name ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" required value="<?= htmlspecialchars($_POST['email'] ?? $email ?? '') ?>">
+                            <input aria-label="Email" type="email" name="email" class="form-control" required value="<?= htmlspecialchars($_POST['email'] ?? $email ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Phone</label>
-                            <input type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($_POST['phone'] ?? $phone ?? '') ?>">
+                            <input aria-label="Phone" type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($_POST['phone'] ?? $phone ?? '') ?>">
                         </div>
                         <button type="submit" class="btn btn-primary w-100 btn-lg"><i class="fas fa-lock me-1"></i>Pay ₹<?= number_format($_POST['amount'] ?? $amount ?? 0, 2) ?></button>
                     </form>

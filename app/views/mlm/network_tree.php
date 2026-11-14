@@ -17,7 +17,7 @@
         <div class="card-body aps-cp-card-body">
             <div class="mb-3">
                 <label class="form-label"><i class="fas fa-search me-1"></i>Search Member</label>
-                <input type="text" id="treeSearch" class="form-control" placeholder="Type member name or ID..." onkeyup="filterTree(this.value)">
+                <input aria-label="Tree search" type="text" id="treeSearch" class="form-control" placeholder="Type member name or ID..." onkeyup="filterTree(this.value)">
             </div>
             <div id="treeContainer" class="overflow-auto py-3">
                 <?php if (!empty($treeData)): ?>

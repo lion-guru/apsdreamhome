@@ -19,7 +19,7 @@
                     </select>
                 </div>
                 <div class="col">
-                    <input type="text" id="searchFilter" class="form-control form-control-sm" placeholder="Search logs..." onkeyup="applyFilters()">
+                    <input aria-label="Search filter" type="text" id="searchFilter" class="form-control form-control-sm" placeholder="Search logs..." onkeyup="applyFilters()">
                 </div>
                 <div class="col-auto">
                     <select aria-label="Date filter" id="dateFilter" class="form-select form-select-sm" onchange="applyFilters()">

@@ -104,13 +104,13 @@ $active_page = 'bookings';
                             <label class="form-label fw-bold mb-3">Customer Selection <span class="text-danger">*</span></label>
                             <div class="d-flex gap-4">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="customer_type" id="type_existing" value="existing" checked onchange="toggleCustomerFields()">
+                                    <input aria-label="Customer type" class="form-check-input" type="radio" name="customer_type" id="type_existing" value="existing" checked onchange="toggleCustomerFields()">
                                     <label class="form-check-label" for="type_existing">
                                         Existing Customer
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="customer_type" id="type_new" value="new" onchange="toggleCustomerFields()">
+                                    <input aria-label="Customer type" class="form-check-input" type="radio" name="customer_type" id="type_new" value="new" onchange="toggleCustomerFields()">
                                     <label class="form-check-label" for="type_new">
                                         New Customer
                                     </label>
@@ -143,19 +143,19 @@ $active_page = 'bookings';
                     <div class="row g-3">
                         <div class="col-md-4">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="new_customer_name" name="new_customer_name" placeholder="John Doe">
+                                <input aria-label="New customer name" type="text" class="form-control" id="new_customer_name" name="new_customer_name" placeholder="John Doe">
                                 <label for="new_customer_name">Full Name <span class="text-danger">*</span></label>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-floating">
-                                <input type="tel" class="form-control" id="new_customer_phone" name="new_customer_phone" placeholder="9876543210">
+                                <input aria-label="New customer phone" type="tel" class="form-control" id="new_customer_phone" name="new_customer_phone" placeholder="9876543210">
                                 <label for="new_customer_phone">Phone Number <span class="text-danger">*</span></label>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-floating">
-                                <input type="email" class="form-control" id="new_customer_email" name="new_customer_email" placeholder="john@example.com">
+                                <input aria-label="New customer email" type="email" class="form-control" id="new_customer_email" name="new_customer_email" placeholder="john@example.com">
                                 <label for="new_customer_email">Email Address <span class="text-muted">(Optional)</span></label>
                             </div>
                         </div>
@@ -179,21 +179,21 @@ $active_page = 'bookings';
 
                 <div class="col-md-4">
                     <div class="form-floating">
-                        <input type="date" class="form-control" id="booking_date" name="booking_date" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Booking date" type="date" class="form-control" id="booking_date" name="booking_date" value="<?= date('Y-m-d') ?>" required>
                         <label for="booking_date">Booking Date <span class="text-danger">*</span></label>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="form-floating">
-                        <input type="number" class="form-control" id="total_plot_value" name="total_plot_value" step="0.01" min="0" required placeholder="0.00" readonly>
+                        <input aria-label="Total plot value" type="number" class="form-control" id="total_plot_value" name="total_plot_value" step="0.01" min="0" required placeholder="0.00" readonly>
                         <label for="total_plot_value">Total Plot Value (₹) <span class="text-danger">*</span></label>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="form-floating">
-                        <input type="number" class="form-control" id="booking_amount" name="booking_amount" step="0.01" min="0" required placeholder="0.00">
+                        <input aria-label="Booking amount" type="number" class="form-control" id="booking_amount" name="booking_amount" step="0.01" min="0" required placeholder="0.00">
                         <label for="booking_amount">Booking/Token Amount Paid (₹) <span class="text-danger">*</span></label>
                     </div>
                 </div>

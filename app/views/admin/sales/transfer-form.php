@@ -33,11 +33,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-8">
                     <label class="form-label"><?= __('sale_reason') ?> *</label>
-                    <input type="text" name="reason" class="form-control" required placeholder="e.g. Resale to family member, Buyer replacement, etc.">
+                    <input aria-label="Reason" type="text" name="reason" class="form-control" required placeholder="e.g. Resale to family member, Buyer replacement, etc.">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('sale_transfer_charge') ?></label>
-                    <input type="number" step="0.01" name="transfer_charge" value="0" class="form-control">
+                    <input aria-label="Transfer charge" type="number" step="0.01" name="transfer_charge" value="0" class="form-control">
                 </div>
                 <div class="col-12">
                     <label class="form-label"><?= __('sale_internal_notes') ?></label>

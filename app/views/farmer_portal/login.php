@@ -53,7 +53,7 @@ $GLOBALS['_html_doc_started'] = true;
                                     <span class="input-group-text bg-light border-2">
                                         <i class="fas fa-phone text-success"></i>
                                     </span>
-                                    <input type="tel" name="phone" class="form-control" placeholder="Enter your 10-digit phone number" pattern="[0-9]{10}" maxlength="10" required >
+                                    <input aria-label="Phone" type="tel" name="phone" class="form-control" placeholder="Enter your 10-digit phone number" pattern="[0-9]{10}" maxlength="10" required >
                                 </div>
                                 <small class="text-muted">Enter the phone number registered with us</small>
                             </div>
@@ -64,7 +64,7 @@ $GLOBALS['_html_doc_started'] = true;
                                     <span class="input-group-text bg-light border-2">
                                         <i class="fas fa-lock text-success"></i>
                                     </span>
-                                    <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+                                    <input aria-label="Password" type="password" name="password" class="form-control" placeholder="Enter your password" required>
                                 </div>
                             </div>
 

@@ -226,7 +226,7 @@
 <div class="referral-section" id="referralSection">
             <h6 class="mb-3"><i class="fas fa-ticket-alt me-2"></i><?php echo __('auth_referral_code', 'Referral Code'); ?></h6>
 <div class="d-flex align-items-center mb-3">
-                 <input type="text" class="form-control" id="referralCode" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>" value="<?php echo htmlspecialchars($_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''); ?>">
+                 <input aria-label="Referral code" type="text" class="form-control" id="referralCode" placeholder="<?php echo __('auth_enter_referral', 'Enter referral code'); ?>" value="<?php echo htmlspecialchars($_GET['ref'] ?? $_COOKIE['aps_ref'] ?? $_SESSION['aps_ref'] ?? ''); ?>">
                  <span class="company-code-badge ms-2" onclick="useCompanyCode()">
                      <i class="fas fa-building me-1"></i>Use Company Code
                  </span>
@@ -240,7 +240,7 @@
 
         <div class="mb-3 mt-4" id="phoneSection" >
             <label class="form-label fw-bold"><?php echo __('auth_phone_number_required', 'Phone Number *'); ?></label>
-            <input type="tel" class="form-control" id="phone" placeholder="<?php echo __('auth_enter_phone', 'Enter your phone number'); ?>" pattern="[0-9]{10}">
+            <input aria-label="Phone" type="tel" class="form-control" id="phone" placeholder="<?php echo __('auth_enter_phone', 'Enter your phone number'); ?>" pattern="[0-9]{10}">
         </div>
 
         <button class="btn-complete mt-3" id="completeBtn" onclick="completeRegistration()" disabled>

@@ -49,7 +49,7 @@
                 <div class="card-body aps-cp-card-body">
                     <form method="POST" action="<?= BASE_URL ?>/admin/property-features/market-data/store">
                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                        <div class="mb-2"><input type="text" name="location" class="form-control form-control-sm" placeholder="Location *" required></div>
+                        <div class="mb-2"><input aria-label="Location" type="text" name="location" class="form-control form-control-sm" placeholder="Location *" required></div>
                         <div class="mb-2">
                             <select aria-label="Property type" name="property_type" class="form-select form-select-sm" required>
                                 <option value="">Type *</option>
@@ -59,21 +59,21 @@
                                 <option value="commercial">Commercial</option>
                             </select>
                         </div>
-                        <div class="mb-2"><input type="date" name="data_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>"></div>
+                        <div class="mb-2"><input aria-label="Data date" type="date" name="data_date" class="form-control form-control-sm" value="<?= date('Y-m-d') ?>"></div>
                         <div class="row g-2 mb-2">
-                            <div class="col-6"><input type="number" step="0.01" name="avg_price_per_sqft" class="form-control form-control-sm" placeholder="Avg Price/sqft"></div>
-                            <div class="col-6"><input type="number" step="0.01" name="median_price" class="form-control form-control-sm" placeholder="Median Price"></div>
+                            <div class="col-6"><input aria-label="Avg price per sqft" type="number" step="0.01" name="avg_price_per_sqft" class="form-control form-control-sm" placeholder="Avg Price/sqft"></div>
+                            <div class="col-6"><input aria-label="Median price" type="number" step="0.01" name="median_price" class="form-control form-control-sm" placeholder="Median Price"></div>
                         </div>
                         <div class="row g-2 mb-2">
-                            <div class="col-6"><input type="number" step="0.01" name="price_trend_percentage" class="form-control form-control-sm" placeholder="Trend %"></div>
-                            <div class="col-6"><input type="number" step="0.1" name="days_on_market_avg" class="form-control form-control-sm" placeholder="Days on Market"></div>
+                            <div class="col-6"><input aria-label="Price trend percentage" type="number" step="0.01" name="price_trend_percentage" class="form-control form-control-sm" placeholder="Trend %"></div>
+                            <div class="col-6"><input aria-label="Days on market avg" type="number" step="0.1" name="days_on_market_avg" class="form-control form-control-sm" placeholder="Days on Market"></div>
                         </div>
                         <div class="row g-2 mb-2">
-                            <div class="col-6"><input type="number" name="inventory_count" class="form-control form-control-sm" placeholder="Inventory"></div>
-                            <div class="col-6"><input type="number" step="0.01" name="sales_volume" class="form-control form-control-sm" placeholder="Sales Volume"></div>
+                            <div class="col-6"><input aria-label="Inventory count" type="number" name="inventory_count" class="form-control form-control-sm" placeholder="Inventory"></div>
+                            <div class="col-6"><input aria-label="Sales volume" type="number" step="0.01" name="sales_volume" class="form-control form-control-sm" placeholder="Sales Volume"></div>
                         </div>
                         <div class="row g-2 mb-2">
-                            <div class="col-6"><input type="number" step="0.01" name="rental_yield_avg" class="form-control form-control-sm" placeholder="Rental Yield %"></div>
+                            <div class="col-6"><input aria-label="Rental yield avg" type="number" step="0.01" name="rental_yield_avg" class="form-control form-control-sm" placeholder="Rental Yield %"></div>
                             <div class="col-6">
                                 <select aria-label="Market sentiment" name="market_sentiment" class="form-select form-select-sm">
                                     <option value="bullish">Bullish</option>
@@ -82,8 +82,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-2"><input type="number" step="0.1" name="confidence_score" class="form-control form-control-sm" placeholder="Confidence (0-100)" value="75"></div>
-                        <div class="mb-2"><input type="text" name="data_source" class="form-control form-control-sm" placeholder="Source" value="internal"></div>
+                        <div class="mb-2"><input aria-label="Confidence score" type="number" step="0.1" name="confidence_score" class="form-control form-control-sm" placeholder="Confidence (0-100)" value="75"></div>
+                        <div class="mb-2"><input aria-label="Data source" type="text" name="data_source" class="form-control form-control-sm" placeholder="Source" value="internal"></div>
                         <button type="submit" class="btn btn-success w-100 btn-sm"><i class="fas fa-save me-1"></i>Save Entry</button>
                     </form>
                 </div>

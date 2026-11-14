@@ -36,14 +36,14 @@ $managers = $managers ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Job Code <span class="text-danger">*</span></label>
-                        <input type="text" name="job_code" class="form-control" required value="<?= htmlspecialchars($job['job_code'] ?? '') ?>" placeholder="e.g., ENG-2024-001" <?= $mode === 'edit' ? 'readonly' : '' ?>>
+                        <input aria-label="Job code" type="text" name="job_code" class="form-control" required value="<?= htmlspecialchars($job['job_code'] ?? '') ?>" placeholder="e.g., ENG-2024-001" <?= $mode === 'edit' ? 'readonly' : '' ?>>
                         <?php if ($mode === 'edit'): ?>
                             <div class="form-text">Code cannot be changed after creation</div>
                         <?php endif; ?>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required value="<?= htmlspecialchars($job['title'] ?? '') ?>" placeholder="e.g., Senior PHP Developer">
+                        <input aria-label="Title" type="text" name="title" class="form-control" required value="<?= htmlspecialchars($job['title'] ?? '') ?>" placeholder="e.g., Senior PHP Developer">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Department</label>
@@ -60,7 +60,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Designation</label>
-                        <input type="text" name="designation" class="form-control" value="<?= htmlspecialchars($job['designation'] ?? '') ?>" placeholder="e.g., Senior Developer">
+                        <input aria-label="Designation" type="text" name="designation" class="form-control" value="<?= htmlspecialchars($job['designation'] ?? '') ?>" placeholder="e.g., Senior Developer">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Employment Type</label>
@@ -74,11 +74,11 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Experience (Min Years)</label>
-                        <input type="number" min="0" max="30" name="experience_min" class="form-control" value="<?= htmlspecialchars($job['experience_min'] ?? 0) ?>">
+                        <input aria-label="Experience min" type="number" min="0" max="30" name="experience_min" class="form-control" value="<?= htmlspecialchars($job['experience_min'] ?? 0) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Experience (Max Years)</label>
-                        <input type="number" min="0" max="50" name="experience_max" class="form-control" value="<?= htmlspecialchars($job['experience_max'] ?? 0) ?>">
+                        <input aria-label="Experience max" type="number" min="0" max="50" name="experience_max" class="form-control" value="<?= htmlspecialchars($job['experience_max'] ?? 0) ?>">
                     </div>
                 </div>
             </div>
@@ -93,11 +93,11 @@ $managers = $managers ?? [];
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Min Salary (₹)</label>
-                        <input type="number" min="0" step="10000" name="salary_min" class="form-control" value="<?= htmlspecialchars($job['salary_min'] ?? '') ?>" placeholder="e.g., 800000">
+                        <input aria-label="Salary min" type="number" min="0" step="10000" name="salary_min" class="form-control" value="<?= htmlspecialchars($job['salary_min'] ?? '') ?>" placeholder="e.g., 800000">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Max Salary (₹)</label>
-                        <input type="number" min="0" step="10000" name="salary_max" class="form-control" value="<?= htmlspecialchars($job['salary_max'] ?? '') ?>" placeholder="e.g., 1500000">
+                        <input aria-label="Salary max" type="number" min="0" step="10000" name="salary_max" class="form-control" value="<?= htmlspecialchars($job['salary_max'] ?? '') ?>" placeholder="e.g., 1500000">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Currency</label>
@@ -108,25 +108,25 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Location</label>
-                        <input type="text" name="location" class="form-control" value="<?= htmlspecialchars($job['location'] ?? '') ?>" placeholder="e.g., Bangalore, India">
+                        <input aria-label="Location" type="text" name="location" class="form-control" value="<?= htmlspecialchars($job['location'] ?? '') ?>" placeholder="e.g., Bangalore, India">
                     </div>
                     <div class="col-md-3">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="is_remote" value="1" id="is_remote" <?= !empty($job['is_remote']) ? 'checked' : '' ?>>
+                            <input aria-label="Is remote" class="form-check-input" type="checkbox" name="is_remote" value="1" id="is_remote" <?= !empty($job['is_remote']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="is_remote">Remote Eligible</label>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Experience Min (Years)</label>
-                        <input type="number" min="0" name="experience_min" class="form-control" value="<?= htmlspecialchars($job['experience_min'] ?? 0) ?>">
+                        <input aria-label="Experience min" type="number" min="0" name="experience_min" class="form-control" value="<?= htmlspecialchars($job['experience_min'] ?? 0) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Experience Max (Years)</label>
-                        <input type="number" min="0" name="experience_max" class="form-control" value="<?= htmlspecialchars($job['experience_max'] ?? 0) ?>">
+                        <input aria-label="Experience max" type="number" min="0" name="experience_max" class="form-control" value="<?= htmlspecialchars($job['experience_max'] ?? 0) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Openings</label>
-                        <input type="number" min="1" name="openings" class="form-control" value="<?= htmlspecialchars($job['openings'] ?? 1) ?>">
+                        <input aria-label="Openings" type="number" min="1" name="openings" class="form-control" value="<?= htmlspecialchars($job['openings'] ?? 1) ?>">
                     </div>
                 </div>
             </div>
@@ -141,14 +141,14 @@ $managers = $managers ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Job Code <span class="text-danger">*</span></label>
-                        <input type="text" name="job_code" class="form-control" required value="<?= htmlspecialchars($job['job_code'] ?? '') ?>" placeholder="e.g., ENG-2024-001" <?= $mode === 'edit' ? 'readonly' : '' ?>>
+                        <input aria-label="Job code" type="text" name="job_code" class="form-control" required value="<?= htmlspecialchars($job['job_code'] ?? '') ?>" placeholder="e.g., ENG-2024-001" <?= $mode === 'edit' ? 'readonly' : '' ?>>
                         <?php if ($mode === 'edit'): ?>
                             <div class="form-text">Code cannot be changed after creation</div>
                         <?php endif; ?>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required value="<?= htmlspecialchars($job['title'] ?? '') ?>" placeholder="e.g., Senior PHP Developer">
+                        <input aria-label="Title" type="text" name="title" class="form-control" required value="<?= htmlspecialchars($job['title'] ?? '') ?>" placeholder="e.g., Senior PHP Developer">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Department</label>
@@ -165,7 +165,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Designation</label>
-                        <input type="text" name="designation" class="form-control" value="<?= htmlspecialchars($job['designation'] ?? '') ?>" placeholder="e.g., Senior Developer">
+                        <input aria-label="Designation" type="text" name="designation" class="form-control" value="<?= htmlspecialchars($job['designation'] ?? '') ?>" placeholder="e.g., Senior Developer">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Employment Type</label>
@@ -190,11 +190,11 @@ $managers = $managers ?? [];
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Min Salary (₹)</label>
-                        <input type="number" min="0" step="10000" name="salary_min" class="form-control" value="<?= htmlspecialchars($job['salary_min'] ?? '') ?>" placeholder="e.g., 800000">
+                        <input aria-label="Salary min" type="number" min="0" step="10000" name="salary_min" class="form-control" value="<?= htmlspecialchars($job['salary_min'] ?? '') ?>" placeholder="e.g., 800000">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Max Salary (₹)</label>
-                        <input type="number" min="0" step="10000" name="salary_max" class="form-control" value="<?= htmlspecialchars($job['salary_max'] ?? '') ?>" placeholder="e.g., 1500000">
+                        <input aria-label="Salary max" type="number" min="0" step="10000" name="salary_max" class="form-control" value="<?= htmlspecialchars($job['salary_max'] ?? '') ?>" placeholder="e.g., 1500000">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Currency</label>
@@ -205,25 +205,25 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Location</label>
-                        <input type="text" name="location" class="form-control" value="<?= htmlspecialchars($job['location'] ?? '') ?>" placeholder="e.g., Bangalore, India">
+                        <input aria-label="Location" type="text" name="location" class="form-control" value="<?= htmlspecialchars($job['location'] ?? '') ?>" placeholder="e.g., Bangalore, India">
                     </div>
                     <div class="col-md-3">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="is_remote" value="1" id="is_remote" <?= !empty($job['is_remote']) ? 'checked' : '' ?>>
+                            <input aria-label="Is remote" class="form-check-input" type="checkbox" name="is_remote" value="1" id="is_remote" <?= !empty($job['is_remote']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="is_remote">Remote Eligible</label>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Experience Min (Years)</label>
-                        <input type="number" min="0" name="experience_min" class="form-control" value="<?= htmlspecialchars($job['experience_min'] ?? 0) ?>">
+                        <input aria-label="Experience min" type="number" min="0" name="experience_min" class="form-control" value="<?= htmlspecialchars($job['experience_min'] ?? 0) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Experience Max (Years)</label>
-                        <input type="number" min="0" name="experience_max" class="form-control" value="<?= htmlspecialchars($job['experience_max'] ?? 0) ?>">
+                        <input aria-label="Experience max" type="number" min="0" name="experience_max" class="form-control" value="<?= htmlspecialchars($job['experience_max'] ?? 0) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Openings</label>
-                        <input type="number" min="1" name="openings" class="form-control" value="<?= htmlspecialchars($job['openings'] ?? 1) ?>">
+                        <input aria-label="Openings" type="number" min="1" name="openings" class="form-control" value="<?= htmlspecialchars($job['openings'] ?? 1) ?>">
                     </div>
                 </div>
             </div>
@@ -238,14 +238,14 @@ $managers = $managers ?? [];
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Job Code <span class="text-danger">*</span></label>
-                        <input type="text" name="job_code" class="form-control" required value="<?= htmlspecialchars($job['job_code'] ?? '') ?>" placeholder="e.g., ENG-2024-001" <?= $mode === 'edit' ? 'readonly' : '' ?>>
+                        <input aria-label="Job code" type="text" name="job_code" class="form-control" required value="<?= htmlspecialchars($job['job_code'] ?? '') ?>" placeholder="e.g., ENG-2024-001" <?= $mode === 'edit' ? 'readonly' : '' ?>>
                         <?php if ($mode === 'edit'): ?>
                             <div class="form-text">Code cannot be changed after creation</div>
                         <?php endif; ?>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required value="<?= htmlspecialchars($job['title'] ?? '') ?>" placeholder="e.g., Senior PHP Developer">
+                        <input aria-label="Title" type="text" name="title" class="form-control" required value="<?= htmlspecialchars($job['title'] ?? '') ?>" placeholder="e.g., Senior PHP Developer">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Department</label>
@@ -262,7 +262,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Designation</label>
-                        <input type="text" name="designation" class="form-control" value="<?= htmlspecialchars($job['designation'] ?? '') ?>" placeholder="e.g., Senior Developer">
+                        <input aria-label="Designation" type="text" name="designation" class="form-control" value="<?= htmlspecialchars($job['designation'] ?? '') ?>" placeholder="e.g., Senior Developer">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Employment Type</label>
@@ -287,11 +287,11 @@ $managers = $managers ?? [];
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Min Salary (₹)</label>
-                        <input type="number" min="0" step="10000" name="salary_min" class="form-control" value="<?= htmlspecialchars($job['salary_min'] ?? '') ?>" placeholder="e.g., 800000">
+                        <input aria-label="Salary min" type="number" min="0" step="10000" name="salary_min" class="form-control" value="<?= htmlspecialchars($job['salary_min'] ?? '') ?>" placeholder="e.g., 800000">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Max Salary (₹)</label>
-                        <input type="number" min="0" step="10000" name="salary_max" class="form-control" value="<?= htmlspecialchars($job['salary_max'] ?? '') ?>" placeholder="e.g., 1500000">
+                        <input aria-label="Salary max" type="number" min="0" step="10000" name="salary_max" class="form-control" value="<?= htmlspecialchars($job['salary_max'] ?? '') ?>" placeholder="e.g., 1500000">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Currency</label>
@@ -302,25 +302,25 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Location</label>
-                        <input type="text" name="location" class="form-control" value="<?= htmlspecialchars($job['location'] ?? '') ?>" placeholder="e.g., Bangalore, India">
+                        <input aria-label="Location" type="text" name="location" class="form-control" value="<?= htmlspecialchars($job['location'] ?? '') ?>" placeholder="e.g., Bangalore, India">
                     </div>
                     <div class="col-md-3">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="is_remote" value="1" id="is_remote" <?= !empty($job['is_remote']) ? 'checked' : '' ?>>
+                            <input aria-label="Is remote" class="form-check-input" type="checkbox" name="is_remote" value="1" id="is_remote" <?= !empty($job['is_remote']) ? 'checked' : '' ?>>
                             <label class="form-check-label" for="is_remote">Remote Eligible</label>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Experience Min (Years)</label>
-                        <input type="number" min="0" name="experience_min" class="form-control" value="<?= htmlspecialchars($job['experience_min'] ?? 0) ?>">
+                        <input aria-label="Experience min" type="number" min="0" name="experience_min" class="form-control" value="<?= htmlspecialchars($job['experience_min'] ?? 0) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Experience Max (Years)</label>
-                        <input type="number" min="0" name="experience_max" class="form-control" value="<?= htmlspecialchars($job['experience_max'] ?? 0) ?>">
+                        <input aria-label="Experience max" type="number" min="0" name="experience_max" class="form-control" value="<?= htmlspecialchars($job['experience_max'] ?? 0) ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Openings</label>
-                        <input type="number" min="1" name="openings" class="form-control" value="<?= htmlspecialchars($job['openings'] ?? 1) ?>">
+                        <input aria-label="Openings" type="number" min="1" name="openings" class="form-control" value="<?= htmlspecialchars($job['openings'] ?? 1) ?>">
                     </div>
                 </div>
             </div>
@@ -355,7 +355,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Education Requirement</label>
-                        <input type="text" name="education_requirement" class="form-control" value="<?= htmlspecialchars($job['education_requirement'] ?? '') ?>" placeholder="e.g., Bachelor's in CS or equivalent">
+                        <input aria-label="Education requirement" type="text" name="education_requirement" class="form-control" value="<?= htmlspecialchars($job['education_requirement'] ?? '') ?>" placeholder="e.g., Bachelor's in CS or equivalent">
                     </div>
                 </div>
             </div>
@@ -398,7 +398,7 @@ $managers = $managers ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Closes At</label>
-                        <input type="datetime-local" name="closes_at" class="form-control" value="<?= htmlspecialchars($job['closes_at'] ?? '') ?>">
+                        <input aria-label="Closes at" type="datetime-local" name="closes_at" class="form-control" value="<?= htmlspecialchars($job['closes_at'] ?? '') ?>">
                     </div>
                 </div>
             </div>

@@ -20,19 +20,19 @@ $types = ['innova' => 'Innova', 'bolero' => 'Bolero', 'scorpio' => 'Scorpio', 'e
                 <form method="POST" action="<?= $base ?>/admin/site-visits/fleet/vehicles/store" class="row g-3">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                     <div class="col-12"><label class="form-label small">Vehicle Name</label>
-                        <input type="text" name="vehicle_name" class="form-control form-control-sm" placeholder="e.g. Innova White" required></div>
+                        <input aria-label="Vehicle name" type="text" name="vehicle_name" class="form-control form-control-sm" placeholder="e.g. Innova White" required></div>
                     <div class="col-6"><label class="form-label small">Vehicle No.</label>
-                        <input type="text" name="vehicle_no" class="form-control form-control-sm" placeholder="UP53 AB 1234" required></div>
+                        <input aria-label="Vehicle no" type="text" name="vehicle_no" class="form-control form-control-sm" placeholder="UP53 AB 1234" required></div>
                     <div class="col-6"><label class="form-label small">Type</label>
                         <select aria-label="Vehicle type" name="vehicle_type" class="form-select form-select-sm">
                             <?php foreach ($types as $k => $l): ?><option value="<?= $k ?>"><?= $l ?></option><?php endforeach; ?>
                         </select></div>
                     <div class="col-4"><label class="form-label small">Capacity</label>
-                        <input type="number" min="1" max="30" name="capacity" class="form-control form-control-sm" value="6"></div>
+                        <input aria-label="Capacity" type="number" min="1" max="30" name="capacity" class="form-control form-control-sm" value="6"></div>
                     <div class="col-8"><label class="form-label small">Driver Name</label>
-                        <input type="text" name="driver_name" class="form-control form-control-sm"></div>
+                        <input aria-label="Driver name" type="text" name="driver_name" class="form-control form-control-sm"></div>
                     <div class="col-12"><label class="form-label small">Driver Phone</label>
-                        <input type="text" name="driver_phone" class="form-control form-control-sm" placeholder="10-digit mobile"></div>
+                        <input aria-label="Driver phone" type="text" name="driver_phone" class="form-control form-control-sm" placeholder="10-digit mobile"></div>
                     <div class="col-12"><button class="btn btn-primary btn-sm w-100"><i class="fas fa-plus me-1"></i>Add to Fleet</button></div>
                 </form>
             </div>

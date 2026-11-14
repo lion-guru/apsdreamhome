@@ -19,7 +19,7 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <input type="text" class="form-control form-control-sm" id="userFilter" placeholder="User..." onkeyup="applyFilters()">
+                    <input aria-label="User filter" type="text" class="form-control form-control-sm" id="userFilter" placeholder="User..." onkeyup="applyFilters()">
                 </div>
                 <div class="col text-end">
                     <span class="text-muted small"><?= count($auditLogs ?? []) ?> entries</span>

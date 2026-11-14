@@ -211,11 +211,11 @@ $tds = $tds ?? ['challans' => [], 'total_paid' => 0, 'count' => 0];
                     <input type="hidden" name="id" id="payId">
                     <div class="form-group">
                         <label>Amount</label>
-                        <input type="number" step="0.01" class="form-control" name="amount" id="payAmount" required>
+                        <input aria-label="Amount" type="number" step="0.01" class="form-control" name="amount" id="payAmount" required>
                     </div>
                     <div class="form-group">
                         <label>Challan Ref</label>
-                        <input type="text" class="form-control" name="challan_ref">
+                        <input aria-label="Challan ref" type="text" class="form-control" name="challan_ref">
                     </div>
                     <div class="form-group">
                         <label>Notes</label>

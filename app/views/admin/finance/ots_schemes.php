@@ -17,11 +17,11 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
     <form method="POST" action="<?= $base ?>/admin/finance/ots-schemes/create">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
         <div class="row g-2">
-            <div class="col-md-3"><label class="form-label small">Scheme name *</label><input type="text" name="scheme_name" class="form-control" required maxlength="150" placeholder="e.g. Diwali Fast-Track"></div>
-            <div class="col-md-2"><label class="form-label small">Start *</label><input type="date" name="start_date" class="form-control" required></div>
-            <div class="col-md-2"><label class="form-label small">End *</label><input type="date" name="end_date" class="form-control" required></div>
-            <div class="col-md-2"><label class="form-label small">Waiver %</label><input type="number" step="0.01" min="0" max="100" name="waiver_percentage" class="form-control" value="100"></div>
-            <div class="col-md-1"><label class="form-label small">Min OD mo.</label><input type="number" min="0" name="min_overdue_months" class="form-control" value="2"></div>
+            <div class="col-md-3"><label class="form-label small">Scheme name *</label><input aria-label="Scheme name" type="text" name="scheme_name" class="form-control" required maxlength="150" placeholder="e.g. Diwali Fast-Track"></div>
+            <div class="col-md-2"><label class="form-label small">Start *</label><input aria-label="Start date" type="date" name="start_date" class="form-control" required></div>
+            <div class="col-md-2"><label class="form-label small">End *</label><input aria-label="End date" type="date" name="end_date" class="form-control" required></div>
+            <div class="col-md-2"><label class="form-label small">Waiver %</label><input aria-label="Waiver percentage" type="number" step="0.01" min="0" max="100" name="waiver_percentage" class="form-control" value="100"></div>
+            <div class="col-md-1"><label class="form-label small">Min OD mo.</label><input aria-label="Min overdue months" type="number" min="0" name="min_overdue_months" class="form-control" value="2"></div>
             <div class="col-md-2"><label class="form-label small">&nbsp;</label><button type="submit" class="btn btn-primary w-100">Launch</button></div>
             <div class="col-12"><label class="form-label small">Terms &amp; conditions</label><textarea aria-label="Terms conditions" name="terms_conditions" class="form-control" rows="2" maxlength="2000"></textarea></div>
         </div>

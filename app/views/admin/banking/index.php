@@ -147,8 +147,8 @@ $page_title = 'Banking & Reconciliation';
                 <div class="col-md-3">
                     <label class="form-label">Date Range</label>
                     <div class="d-flex gap-2">
-                        <input type="date" class="form-control" name="date_from" value="<?php echo htmlspecialchars($_GET['date_from'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" placeholder="From">
-                        <input type="date" class="form-control" name="date_to" value="<?php echo htmlspecialchars($_GET['date_to'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" placeholder="To">
+                        <input aria-label="Date from" type="date" class="form-control" name="date_from" value="<?php echo htmlspecialchars($_GET['date_from'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" placeholder="From">
+                        <input aria-label="Date to" type="date" class="form-control" name="date_to" value="<?php echo htmlspecialchars($_GET['date_to'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" placeholder="To">
                     </div>
                 </div>
                 <div class="col-12">

@@ -16,15 +16,15 @@
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="mb-3">
               <label class="form-label">Loan Amount (₹)</label>
-              <input type="number" name="principal" class="form-control" value="5000000" required>
+              <input aria-label="Principal" type="number" name="principal" class="form-control" value="5000000" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Interest Rate (% per annum)</label>
-              <input type="number" name="rate" class="form-control" value="8.5" step="0.1" required>
+              <input aria-label="Rate" type="number" name="rate" class="form-control" value="8.5" step="0.1" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Tenure (Years)</label>
-              <input type="number" name="tenure" class="form-control" value="15" min="1" max="30" required>
+              <input aria-label="Tenure" type="number" name="tenure" class="form-control" value="15" min="1" max="30" required>
             </div>
             <button type="button" class="btn btn-primary w-100" onclick="calculateEMI()">
               <i class="fas fa-calculator"></i> Calculate EMI

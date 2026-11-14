@@ -205,7 +205,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                         </div>
                         <div class="col-md-3">
                             <label for="modal_unit" class="form-label fw-semibold">Unit / Shop No <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="modal_unit" name="unit_number" placeholder="e.g. SHOP-G-04" required>
+                            <input aria-label="Modal unit" type="text" class="form-control" id="modal_unit" name="unit_number" placeholder="e.g. SHOP-G-04" required>
                         </div>
                         <div class="col-md-3">
                             <label for="modal_type" class="form-label fw-semibold">Unit Type</label>
@@ -221,15 +221,15 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row g-3 mb-3">
                         <div class="col-md-4">
                             <label for="modal_carpet" class="form-label">Carpet Area (sq.ft)</label>
-                            <input type="number" step="0.01" class="form-control" id="modal_carpet" name="carpet_area_sqft" placeholder="e.g. 350">
+                            <input aria-label="Modal carpet" type="number" step="0.01" class="form-control" id="modal_carpet" name="carpet_area_sqft" placeholder="e.g. 350">
                         </div>
                         <div class="col-md-4">
                             <label for="modal_rent" class="form-label fw-semibold">Monthly Rent (₹) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" class="form-control" id="modal_rent" name="monthly_rent" placeholder="e.g. 25000" required>
+                            <input aria-label="Modal rent" type="number" step="0.01" class="form-control" id="modal_rent" name="monthly_rent" placeholder="e.g. 25000" required>
                         </div>
                         <div class="col-md-4">
                             <label for="modal_deposit" class="form-label fw-semibold">Security Deposit (₹)</label>
-                            <input type="number" step="0.01" class="form-control" id="modal_deposit" name="security_deposit" placeholder="e.g. 75000">
+                            <input aria-label="Modal deposit" type="number" step="0.01" class="form-control" id="modal_deposit" name="security_deposit" placeholder="e.g. 75000">
                         </div>
                     </div>
 
@@ -238,26 +238,26 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row g-3 mb-3">
                         <div class="col-md-4">
                             <label for="modal_tenant_name" class="form-label fw-semibold">Tenant Full Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="modal_tenant_name" name="tenant_name" placeholder="e.g. Vivek Agrawal" required>
+                            <input aria-label="Modal tenant name" type="text" class="form-control" id="modal_tenant_name" name="tenant_name" placeholder="e.g. Vivek Agrawal" required>
                         </div>
                         <div class="col-md-4">
                             <label for="modal_tenant_biz" class="form-label">Business / Trade Name</label>
-                            <input type="text" class="form-control" id="modal_tenant_biz" name="tenant_business_name" placeholder="e.g. Agrawal Pharmacy">
+                            <input aria-label="Modal tenant biz" type="text" class="form-control" id="modal_tenant_biz" name="tenant_business_name" placeholder="e.g. Agrawal Pharmacy">
                         </div>
                         <div class="col-md-4">
                             <label for="modal_tenant_phone" class="form-label fw-semibold">Contact Phone <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="modal_tenant_phone" name="tenant_phone" placeholder="e.g. 9876543210" required>
+                            <input aria-label="Modal tenant phone" type="text" class="form-control" id="modal_tenant_phone" name="tenant_phone" placeholder="e.g. 9876543210" required>
                         </div>
                     </div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="modal_tenant_email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="modal_tenant_email" name="tenant_email" placeholder="e.g. tenant@example.com">
+                            <input aria-label="Modal tenant email" type="email" class="form-control" id="modal_tenant_email" name="tenant_email" placeholder="e.g. tenant@example.com">
                         </div>
                         <div class="col-md-6">
                             <label for="modal_tenant_gstin" class="form-label">GSTIN (if applicable)</label>
-                            <input type="text" class="form-control" id="modal_tenant_gstin" name="tenant_gstin" placeholder="e.g. 09ABCDE1234F1Z5">
+                            <input aria-label="Modal tenant gstin" type="text" class="form-control" id="modal_tenant_gstin" name="tenant_gstin" placeholder="e.g. 09ABCDE1234F1Z5">
                         </div>
                     </div>
 
@@ -266,15 +266,15 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label for="modal_start" class="form-label">Lease Start Date</label>
-                            <input type="date" class="form-control" id="modal_start" name="lease_start_date" value="<?= date('Y-m-d') ?>">
+                            <input aria-label="Modal start" type="date" class="form-control" id="modal_start" name="lease_start_date" value="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-md-4">
                             <label for="modal_end" class="form-label">Lease End Date</label>
-                            <input type="date" class="form-control" id="modal_end" name="lease_end_date" value="<?= date('Y-m-d', strtotime('+11 months')) ?>">
+                            <input aria-label="Modal end" type="date" class="form-control" id="modal_end" name="lease_end_date" value="<?= date('Y-m-d', strtotime('+11 months')) ?>">
                         </div>
                         <div class="col-md-4">
                             <label for="modal_meter" class="form-label">Submeter Reading (Units)</label>
-                            <input type="number" step="0.01" class="form-control" id="modal_meter" name="electricity_submeter_reading" value="0.00">
+                            <input aria-label="Modal meter" type="number" step="0.01" class="form-control" id="modal_meter" name="electricity_submeter_reading" value="0.00">
                         </div>
                     </div>
                 </div>

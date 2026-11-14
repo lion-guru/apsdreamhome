@@ -449,7 +449,7 @@ $categories = [
                     </div>
                     <div class="col-md-8">
                         <label class="form-label">Question Pattern (Main)</label>
-                        <input type="text" name="question_pattern" class="form-control"
+                        <input aria-label="Question pattern" type="text" name="question_pattern" class="form-control"
                             placeholder="e.g., Suryoday Heights ka price kya hai?" required>
                     </div>
                 </div>
@@ -460,7 +460,7 @@ $categories = [
                 </div>
                 <div class="mt-3">
                     <label class="form-label">Keywords (comma separated)</label>
-                    <input type="text" name="keywords" class="form-control"
+                    <input aria-label="Keywords" type="text" name="keywords" class="form-control"
                         placeholder="suryoday, price, rate, plot, gorakhpur">
                 </div>
                 <div class="mt-3">
@@ -515,7 +515,7 @@ $categories = [
 
                             <div class="col-md-6 mb-2">
                                 <label class="small text-muted">Question Pattern</label>
-                                <input type="text" name="question_pattern" class="form-control form-control-sm"
+                                <input aria-label="Question pattern" type="text" name="question_pattern" class="form-control form-control-sm"
                                     value="<?php echo htmlspecialchars($qa['question_pattern'] ?? ''); ?>">
                             </div>
 
@@ -532,7 +532,7 @@ $categories = [
 
                             <div class="col-md-3 mb-2">
                                 <label class="small text-muted">Keywords</label>
-                                <input type="text" name="keywords" class="form-control form-control-sm"
+                                <input aria-label="Keywords" type="text" name="keywords" class="form-control form-control-sm"
                                     value="<?php echo htmlspecialchars($qa['keywords'] ?? ''); ?>">
                             </div>
 
@@ -593,7 +593,7 @@ $categories = [
                         </div>
                     </div>
                     <div class="input-group mt-3">
-                        <input type="text" id="testInput" class="form-control"
+                        <input aria-label="Test input" type="text" id="testInput" class="form-control"
                             placeholder="Type a test message...">
                         <button class="btn btn-primary" onclick="sendTestMessage()">
                             <i class="fas fa-paper-plane"></i> Send

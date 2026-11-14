@@ -35,11 +35,11 @@ $claim_types = $claim_types ?? [];
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Amount (₹) <span class="text-danger">*</span></label>
-                                    <input type="number" step="0.01" min="0.01" name="amount" class="form-control" required>
+                                    <input aria-label="Amount" type="number" step="0.01" min="0.01" name="amount" class="form-control" required>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Expense Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="expense_date" class="form-control" required max="<?= date('Y-m-d') ?>">
+                                    <input aria-label="Expense date" type="date" name="expense_date" class="form-control" required max="<?= date('Y-m-d') ?>">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Description <span class="text-danger">*</span></label>
@@ -47,7 +47,7 @@ $claim_types = $claim_types ?? [];
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Receipt / Bill <span class="text-danger">*</span></label>
-                                    <input type="file" name="receipt_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <input aria-label="Receipt file" type="file" name="receipt_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
                                     <small class="text-muted">PDF, JPG, PNG (Max 5MB)</small>
                                 </div>
                                 <div class="col-12">

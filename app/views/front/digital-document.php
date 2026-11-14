@@ -54,7 +54,7 @@ $base = BASE_URL ?? '/apsdreamhome';
                             <input type="hidden" name="signature_type" value="digital">
                         </div>
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="videoConsentCheck" name="video_consent" value="1">
+                            <input aria-label="Video consent check" type="checkbox" class="form-check-input" id="videoConsentCheck" name="video_consent" value="1">
                             <label class="form-check-label" for="videoConsentCheck">
                                 I have recorded video consent accepting all terms (optional but recommended)
                             </label>

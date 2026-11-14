@@ -113,7 +113,7 @@ foreach ($properties as $p) {
                 <label class="form-label small fw-semibold text-muted mb-1">Search</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input type="text" name="search" class="form-control" placeholder="Property name, desc..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Property name, desc..." value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
                 </div>
             </div>
             <div class="col-md-2">
@@ -172,7 +172,7 @@ foreach ($properties as $p) {
             <option value="reserved">Reserved</option>
             <option value="under_maintenance">Under Maintenance</option>
         </select>
-        <input type="text" id="bulkNotes" class="form-control form-control-sm" style="width:200px;" placeholder="Notes (optional)">
+        <input aria-label="Bulk notes" type="text" id="bulkNotes" class="form-control form-control-sm" style="width:200px;" placeholder="Notes (optional)">
         <button type="button" class="btn btn-sm btn-warning fw-semibold" id="bulkApply">
             <i class="fas fa-bolt me-1"></i>Apply Status
         </button>

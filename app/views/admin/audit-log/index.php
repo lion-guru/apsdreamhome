@@ -53,7 +53,7 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small text-muted">From</label>
-                    <input type="date" name="date_from" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
+                    <input aria-label="Date from" type="date" name="date_from" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-outline-primary btn-sm w-100"><i class="fas fa-filter me-1"></i>Filter</button>

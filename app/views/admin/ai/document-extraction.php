@@ -350,16 +350,16 @@ function renderReviewForm(job) {
             
             switch (field.field_type) {
                 case 'date':
-                    html += `<input type="date" name="${field.field_name}" class="form-control" value="${value}" ${required}>`;
+                    html += `<input aria-label="field field name" type="date" name="${field.field_name}" class="form-control" value="${value}" ${required}>`;
                     break;
                 case 'number':
-                    html += `<input type="number" name="${field.field_name}" class="form-control" value="${value}" ${required}>`;
+                    html += `<input aria-label="field field name" type="number" name="${field.field_name}" class="form-control" value="${value}" ${required}>`;
                     break;
                 case 'currency':
-                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="₹">`;
+                    html += `<input aria-label="field field name" type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="₹">`;
                     break;
                 case 'percentage':
-                    html += `<input type="number" step="0.01" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="%">`;
+                    html += `<input aria-label="field field name" type="number" step="0.01" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="%">`;
                     break;
                 case 'select':
                     html += `<select aria-label="${field.field name}" name="${field.field_name}" class="form-select" ${required}><option value="">Select...</option></select>`;
@@ -368,22 +368,22 @@ function renderReviewForm(job) {
                     html += `<textarea aria-label="${field.field name}" name="${field.field_name}" class="form-control" rows="2" ${required}>${value}</textarea>`;
                     break;
                 case 'aadhaar':
-                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="XXXX-XXXX-1234" maxlength="14">`;
+                    html += `<input aria-label="field field name" type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="XXXX-XXXX-1234" maxlength="14">`;
                     break;
                 case 'pan':
-                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="ABCDE1234F" maxlength="10" >`;
+                    html += `<input aria-label="field field name" type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="ABCDE1234F" maxlength="10" >`;
                     break;
                 case 'phone':
-                    html += `<input type="tel" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="+91">`;
+                    html += `<input aria-label="field field name" type="tel" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="+91">`;
                     break;
                 case 'email':
-                    html += `<input type="email" name="${field.field_name}" class="form-control" value="${value}" ${required}>`;
+                    html += `<input aria-label="field field name" type="email" name="${field.field_name}" class="form-control" value="${value}" ${required}>`;
                     break;
                 case 'area':
-                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="sq ft / sq m / acres">`;
+                    html += `<input aria-label="field field name" type="text" name="${field.field_name}" class="form-control" value="${value}" ${required} placeholder="sq ft / sq m / acres">`;
                     break;
                 default:
-                    html += `<input type="text" name="${field.field_name}" class="form-control" value="${value}" ${required}>`;
+                    html += `<input aria-label="field field name" type="text" name="${field.field_name}" class="form-control" value="${value}" ${required}>`;
             }
             
             html += `
@@ -398,7 +398,7 @@ function renderReviewForm(job) {
             html += `
                 <div class="col-md-6 mb-3">
                     <label class="form-label">${key}</label>
-                    <input type="text" name="${key}" class="form-control" value="${value}">
+                    <input aria-label="key" type="text" name="${key}" class="form-control" value="${value}">
                 </div>
             `;
         });

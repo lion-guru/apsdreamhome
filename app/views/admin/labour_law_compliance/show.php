@@ -33,15 +33,15 @@ $csrf = \App\Helpers\SecurityHelper::generateCSRFToken();
         </div>
         <div class="mb-3">
             <label class="form-label">Last Filed Date</label>
-            <input type="date" name="last_filed_date" class="form-control" value="<?= htmlspecialchars($item['last_filed_date'] ?? '') ?>">
+            <input aria-label="Last filed date" type="date" name="last_filed_date" class="form-control" value="<?= htmlspecialchars($item['last_filed_date'] ?? '') ?>">
         </div>
         <div class="mb-3">
             <label class="form-label">Next Due Date</label>
-            <input type="date" name="next_due_date" class="form-control" value="<?= htmlspecialchars($item['next_due_date'] ?? '') ?>">
+            <input aria-label="Next due date" type="date" name="next_due_date" class="form-control" value="<?= htmlspecialchars($item['next_due_date'] ?? '') ?>">
         </div>
         <div class="mb-3">
             <label class="form-label">Penalty Amount</label>
-            <input type="number" step="0.01" name="penalty_amount" class="form-control" value="<?= htmlspecialchars((string)$item['penalty_amount']) ?>">
+            <input aria-label="Penalty amount" type="number" step="0.01" name="penalty_amount" class="form-control" value="<?= htmlspecialchars((string)$item['penalty_amount']) ?>">
         </div>
         <div class="mb-3">
             <label class="form-label">Remarks</label>

@@ -75,7 +75,7 @@ $error = $error ?? null;
             <form method="get" action="<?= BASE_URL ?>/admin/voice-uploads" class="row g-2 align-items-end">
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Search</label>
-                    <input type="text" name="search" class="form-control" placeholder="Search by name or phone..." value="<?= htmlspecialchars($search) ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control" placeholder="Search by name or phone..." value="<?= htmlspecialchars($search) ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">Status</label>

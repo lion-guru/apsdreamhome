@@ -47,15 +47,15 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Balance Difference</label>
-                    <input type="text" class="form-control" id="swapDiffPreview" value="-" readonly>
+                    <input aria-label="Swap diff preview" type="text" class="form-control" id="swapDiffPreview" value="-" readonly>
                 </div>
                 <div class="col-md-8">
                     <label class="form-label">Reason *</label>
-                    <input type="text" name="reason" class="form-control" required placeholder="e.g. Customer wants corner plot">
+                    <input aria-label="Reason" type="text" name="reason" class="form-control" required placeholder="e.g. Customer wants corner plot">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Swap Charge (Rs.)</label>
-                    <input type="number" step="0.01" min="0" name="swap_charge" value="0" class="form-control">
+                    <input aria-label="Swap charge" type="number" step="0.01" min="0" name="swap_charge" value="0" class="form-control">
                 </div>
             </div>
             <div class="mt-3 d-flex gap-2">

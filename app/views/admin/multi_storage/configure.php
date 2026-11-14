@@ -86,7 +86,7 @@ $fields = $fieldDefs[$provider] ?? [];
                         <label class="form-label"><?= $f['label'] ?> <?= $f['required'] ? '<span class="text-danger">*</span>' : '' ?></label>
                         <?php if ($f['type'] === 'password'): ?>
                             <div class="input-group">
-                                <input type="password" name="configs[<?= $provider ?>][<?= $f['key'] ?>]" class="form-control" value="<?= htmlspecialchars($config[$key] ?? '') ?>" placeholder="<?= htmlspecialchars($placeholder) ?>">
+                                <input aria-label="Configs provider f" type="password" name="configs[<?= $provider ?>][<?= $f['key'] ?>]" class="form-control" value="<?= htmlspecialchars($config[$key] ?? '') ?>" placeholder="<?= htmlspecialchars($placeholder) ?>">
                                 <button class="btn btn-outline-secondary" type="button" onclick="togglePassword(this)" aria-label="View"><i class="fas fa-eye"></i></button>
                             </div>
                         <?php elseif ($f['type'] === 'textarea'): ?>
@@ -95,11 +95,11 @@ $fields = $fieldDefs[$provider] ?? [];
                         <?php elseif ($f['type'] === 'boolean'): ?>
                             <div class="form-check form-switch">
                                 <input type="hidden" name="configs[<?= $provider ?>][<?= $f['key'] ?>]" value="0">
-                                <input type="checkbox" name="configs[<?= $provider ?>][<?= $f['key'] ?>]" class="form-check-input" value="1" <?= !empty($config[$key]) && $config[$key] !== '0' ? 'checked' : '' ?>>
+                                <input aria-label="Configs provider f" type="checkbox" name="configs[<?= $provider ?>][<?= $f['key'] ?>]" class="form-check-input" value="1" <?= !empty($config[$key]) && $config[$key] !== '0' ? 'checked' : '' ?>>
                                 <label class="form-check-label">Enabled</label>
                             </div>
                         <?php else: ?>
-                            <input type="text" name="configs[<?= $provider ?>][<?= $f['key'] ?>]" class="form-control" value="<?= htmlspecialchars($config[$key] ?? '') ?>" placeholder="<?= htmlspecialchars($placeholder) ?>">
+                            <input aria-label="Configs provider f" type="text" name="configs[<?= $provider ?>][<?= $f['key'] ?>]" class="form-control" value="<?= htmlspecialchars($config[$key] ?? '') ?>" placeholder="<?= htmlspecialchars($placeholder) ?>">
                         <?php endif; ?>
                         <?php if ($help): ?><div class="form-text"><?= $help ?></div><?php endif; ?>
                     </div>

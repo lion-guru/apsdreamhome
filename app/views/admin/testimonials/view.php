@@ -124,7 +124,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="featured" id="featuredCheck" <?php echo ($t['featured'] ?? false) ? 'checked' : ''; ?>>
+                                <input aria-label="Featured" class="form-check-input" type="checkbox" name="featured" id="featuredCheck" <?php echo ($t['featured'] ?? false) ? 'checked' : ''; ?>>
                                 <label class="form-check-label" for="featuredCheck">
                                     <i class="fas fa-star text-warning me-1"></i>Feature on Homepage
                                 </label>

@@ -41,21 +41,21 @@ $statusOptions = ['active' => 'Active', 'expired' => 'Expired', 'suspended' => '
 
                             <div class="col-md-6">
                                 <label for="credential_label" class="form-label">Label <span class="text-danger">*</span></label>
-                                <input type="text" name="credential_label" id="credential_label" class="form-control"
+                                <input aria-label="Credential label" type="text" name="credential_label" id="credential_label" class="form-control"
                                        value="<?= htmlspecialchars($credential['credential_label'] ?? '') ?>" required
                                        placeholder="e.g. Company GSTIN">
                             </div>
 
                             <div class="col-md-12">
                                 <label for="credential_value" class="form-label">Value <span class="text-danger">*</span></label>
-                                <input type="text" name="credential_value" id="credential_value" class="form-control font-monospace"
+                                <input aria-label="Credential value" type="text" name="credential_value" id="credential_value" class="form-control font-monospace"
                                        value="<?= htmlspecialchars($credential['credential_value'] ?? '') ?>" required
                                        placeholder="e.g. 09AAACN1234F1Z5">
                             </div>
 
                             <div class="col-md-6">
                                 <label for="issuer" class="form-label">Issuer</label>
-                                <input type="text" name="issuer" id="issuer" class="form-control"
+                                <input aria-label="Issuer" type="text" name="issuer" id="issuer" class="form-control"
                                        value="<?= htmlspecialchars($credential['issuer'] ?? '') ?>"
                                        placeholder="e.g. GST Network, NSDL">
                             </div>
@@ -73,26 +73,26 @@ $statusOptions = ['active' => 'Active', 'expired' => 'Expired', 'suspended' => '
 
                             <div class="col-md-6">
                                 <label for="issue_date" class="form-label">Issue Date</label>
-                                <input type="date" name="issue_date" id="issue_date" class="form-control"
+                                <input aria-label="Issue date" type="date" name="issue_date" id="issue_date" class="form-control"
                                        value="<?= htmlspecialchars($credential['issue_date'] ?? '') ?>">
                             </div>
 
                             <div class="col-md-6">
                                 <label for="expiry_date" class="form-label">Expiry Date</label>
-                                <input type="date" name="expiry_date" id="expiry_date" class="form-control"
+                                <input aria-label="Expiry date" type="date" name="expiry_date" id="expiry_date" class="form-control"
                                        value="<?= htmlspecialchars($credential['expiry_date'] ?? '') ?>">
                             </div>
 
                             <div class="col-md-12">
                                 <label for="document_path" class="form-label">Document Path</label>
-                                <input type="text" name="document_path" id="document_path" class="form-control"
+                                <input aria-label="Document path" type="text" name="document_path" id="document_path" class="form-control"
                                        value="<?= htmlspecialchars($credential['document_path'] ?? '') ?>"
                                        placeholder="Path to scanned document (optional)">
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-check form-switch">
-                                    <input type="checkbox" name="is_primary" id="is_primary" class="form-check-input"
+                                    <input aria-label="Is primary" type="checkbox" name="is_primary" id="is_primary" class="form-check-input"
                                            value="1" <?= !empty($credential['is_primary']) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="is_primary">Primary credential for this type</label>
                                 </div>

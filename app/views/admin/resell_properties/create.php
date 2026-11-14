@@ -16,7 +16,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="property_title" class="form-label">Property Title *</label>
-                        <input type="text" class="form-control" id="property_title" name="property_title" required>
+                        <input aria-label="Property title" type="text" class="form-control" id="property_title" name="property_title" required>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -37,19 +37,19 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="seller_name" class="form-label">Seller Name *</label>
-                        <input type="text" class="form-control" id="seller_name" name="seller_name" required>
+                        <input aria-label="Seller name" type="text" class="form-control" id="seller_name" name="seller_name" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="seller_email" class="form-label">Seller Email *</label>
-                        <input type="email" class="form-control" id="seller_email" name="seller_email" required>
+                        <input aria-label="Seller email" type="email" class="form-control" id="seller_email" name="seller_email" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="seller_phone" class="form-label">Seller Phone *</label>
-                        <input type="tel" class="form-control" id="seller_phone" name="seller_phone" required>
+                        <input aria-label="Seller phone" type="tel" class="form-control" id="seller_phone" name="seller_phone" required>
                     </div>
                 </div>
             </div>
@@ -57,19 +57,19 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="area_sqft" class="form-label">Area (Sq Ft) *</label>
-                        <input type="number" class="form-control" id="area_sqft" name="area_sqft" required>
+                        <input aria-label="Area sqft" type="number" class="form-control" id="area_sqft" name="area_sqft" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="original_price" class="form-label">Original Price (₹) *</label>
-                        <input type="number" class="form-control" id="original_price" name="original_price" required>
+                        <input aria-label="Original price" type="number" class="form-control" id="original_price" name="original_price" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="expected_price" class="form-label">Expected Price (₹) *</label>
-                        <input type="number" class="form-control" id="expected_price" name="expected_price" required>
+                        <input aria-label="Expected price" type="number" class="form-control" id="expected_price" name="expected_price" required>
                     </div>
                 </div>
             </div>
@@ -81,19 +81,19 @@
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="colony_name" class="form-label">Colony Name *</label>
-                        <input type="text" class="form-control" id="colony_name" name="colony_name" required>
+                        <input aria-label="Colony name" type="text" class="form-control" id="colony_name" name="colony_name" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="district_name" class="form-label">District Name *</label>
-                        <input type="text" class="form-control" id="district_name" name="district_name" required>
+                        <input aria-label="District name" type="text" class="form-control" id="district_name" name="district_name" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label for="state_name" class="form-label">State Name *</label>
-                        <input type="text" class="form-control" id="state_name" name="state_name" required>
+                        <input aria-label="State name" type="text" class="form-control" id="state_name" name="state_name" required>
                     </div>
                 </div>
             </div>
@@ -113,19 +113,19 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="commission_rate" class="form-label">Commission Rate/Amount *</label>
-                        <input type="number" class="form-control" id="commission_rate" name="commission_rate" step="0.01" required>
+                        <input aria-label="Commission rate" type="number" class="form-control" id="commission_rate" name="commission_rate" step="0.01" required>
                     </div>
                 </div>
             </div>
             <div class="mb-3">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="featured" name="featured">
+                    <input aria-label="Featured" class="form-check-input" type="checkbox" id="featured" name="featured">
                     <label class="form-check-label" for="featured">Featured Property</label>
                 </div>
             </div>
             <div class="mb-3">
                 <label for="images" class="form-label">Property Images</label>
-                <input type="file" class="form-control" id="images" name="images[]" multiple accept="image/*">
+                <input aria-label="Images" type="file" class="form-control" id="images" name="images[]" multiple accept="image/*">
             </div>
             <div class="d-flex justify-content-between">
                 <a href="<?= BASE_URL ?>/admin/resell-properties" class="btn btn-secondary">

@@ -22,7 +22,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             <input type="hidden" name="lat" id="ckLat">
             <input type="hidden" name="lng" id="ckLng">
             <div class="mb-2"><span id="gpsStatus" class="badge bg-secondary">Locating… allow GPS access</span></div>
-            <div class="mb-3"><label class="form-label small">Gate selfie (optional, ≤5MB)</label><input type="file" name="gate_photo" class="form-control" accept=".jpg,.jpeg,.png,.webp"></div>
+            <div class="mb-3"><label class="form-label small">Gate selfie (optional, ≤5MB)</label><input aria-label="Gate photo" type="file" name="gate_photo" class="form-control" accept=".jpg,.jpeg,.png,.webp"></div>
             <button type="submit" class="btn btn-success w-100" id="ckBtn" disabled><i class="fas fa-check me-1"></i>Check In at Site</button>
         </form>
     </div></div>

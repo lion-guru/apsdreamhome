@@ -37,7 +37,7 @@ $csrf = $this->getCsrfToken();
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                 <div class="col-md-4">
                     <label class="form-label">Return Period</label>
-                    <input type="month" name="period" class="form-control" value="<?= htmlspecialchars($period) ?>" required>
+                    <input aria-label="Period" type="month" name="period" class="form-control" value="<?= htmlspecialchars($period) ?>" required>
                 </div>
                 <div class="col-md-4 d-flex gap-2">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-sync me-1"></i> Recompute</button>
@@ -85,33 +85,33 @@ $csrf = $this->getCsrfToken();
                                     <tr>
                                         <td><?= $section ?></td>
                                         <td><?= $desc ?></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][taxable]" class="form-control input-cell" value="<?= number_format($s['taxable_value'] ?? $d['taxable'] ?? 0, 2, '.', '') ?>"></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][igst]" class="form-control input-cell" value="<?= number_format($s['igst_amount'] ?? $d['igst'] ?? 0, 2, '.', '') ?>"></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][cgst]" class="form-control input-cell" value="<?= number_format($s['cgst_amount'] ?? $d['cgst'] ?? 0, 2, '.', '') ?>"></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][sgst]" class="form-control input-cell" value="<?= number_format($s['sgst_amount'] ?? $d['sgst'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section taxable" type="number" step="0.01" name="data[<?= $section ?>][taxable]" class="form-control input-cell" value="<?= number_format($s['taxable_value'] ?? $d['taxable'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section igst" type="number" step="0.01" name="data[<?= $section ?>][igst]" class="form-control input-cell" value="<?= number_format($s['igst_amount'] ?? $d['igst'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section cgst" type="number" step="0.01" name="data[<?= $section ?>][cgst]" class="form-control input-cell" value="<?= number_format($s['cgst_amount'] ?? $d['cgst'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section sgst" type="number" step="0.01" name="data[<?= $section ?>][sgst]" class="form-control input-cell" value="<?= number_format($s['sgst_amount'] ?? $d['sgst'] ?? 0, 2, '.', '') ?>"></td>
                                     </tr>
                                 <?php elseif ($section === '4'): ?>
                                     <tr>
                                         <td><?= $section ?></td>
                                         <td><?= $desc ?></td>
                                         <td></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][igst]" class="form-control input-cell" value="<?= number_format($s['igst_amount'] ?? $d['igst'] ?? 0, 2, '.', '') ?>"></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][cgst]" class="form-control input-cell" value="<?= number_format($s['cgst_amount'] ?? $d['cgst'] ?? 0, 2, '.', '') ?>"></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][sgst]" class="form-control input-cell" value="<?= number_format($s['sgst_amount'] ?? $d['sgst'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section igst" type="number" step="0.01" name="data[<?= $section ?>][igst]" class="form-control input-cell" value="<?= number_format($s['igst_amount'] ?? $d['igst'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section cgst" type="number" step="0.01" name="data[<?= $section ?>][cgst]" class="form-control input-cell" value="<?= number_format($s['cgst_amount'] ?? $d['cgst'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section sgst" type="number" step="0.01" name="data[<?= $section ?>][sgst]" class="form-control input-cell" value="<?= number_format($s['sgst_amount'] ?? $d['sgst'] ?? 0, 2, '.', '') ?>"></td>
                                     </tr>
                                 <?php elseif ($section === '5'): ?>
                                     <tr>
                                         <td><?= $section ?></td>
                                         <td><?= $desc ?></td>
                                         <td></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][tax_paid_itc]" class="form-control input-cell" value="<?= number_format($s['tax_paid_itc'] ?? $d['tax_paid_itc'] ?? 0, 2, '.', '') ?>"></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][tax_paid_cash]" class="form-control input-cell" value="<?= number_format($s['tax_paid_cash'] ?? $d['tax_paid_cash'] ?? 0, 2, '.', '') ?>"></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][interest]" class="form-control input-cell" value="<?= number_format($s['interest'] ?? $d['interest'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section tax paid itc" type="number" step="0.01" name="data[<?= $section ?>][tax_paid_itc]" class="form-control input-cell" value="<?= number_format($s['tax_paid_itc'] ?? $d['tax_paid_itc'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section tax paid cash" type="number" step="0.01" name="data[<?= $section ?>][tax_paid_cash]" class="form-control input-cell" value="<?= number_format($s['tax_paid_cash'] ?? $d['tax_paid_cash'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section interest" type="number" step="0.01" name="data[<?= $section ?>][interest]" class="form-control input-cell" value="<?= number_format($s['interest'] ?? $d['interest'] ?? 0, 2, '.', '') ?>"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">Late Fee</td>
                                         <td></td>
-                                        <td class="text-end"><input type="number" step="0.01" name="data[<?= $section ?>][late_fee]" class="form-control input-cell" value="<?= number_format($s['late_fee'] ?? $d['late_fee'] ?? 0, 2, '.', '') ?>"></td>
+                                        <td class="text-end"><input aria-label="Data section late fee" type="number" step="0.01" name="data[<?= $section ?>][late_fee]" class="form-control input-cell" value="<?= number_format($s['late_fee'] ?? $d['late_fee'] ?? 0, 2, '.', '') ?>"></td>
                                         <td class="text-end"></td>
                                         <td class="text-end"></td>
                                     </tr>

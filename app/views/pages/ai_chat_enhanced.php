@@ -122,7 +122,7 @@ $base = $base ?? BASE_URL;
                     </div>
                     <div class="card-footer bg-white">
                         <div class="input-group">
-                            <input type="text" id="enhanced-chat-input" class="form-control" placeholder="<?= __('user_ai_chat_enhanced_placeholder', 'Type your message...') ?>" onkeypress="handleEnhancedKeyPress(event)">
+                            <input aria-label="Enhanced chat input" type="text" id="enhanced-chat-input" class="form-control" placeholder="<?= __('user_ai_chat_enhanced_placeholder', 'Type your message...') ?>" onkeypress="handleEnhancedKeyPress(event)">
                             <button class="btn btn-primary" onclick="sendEnhancedMessage()">
                                 <i class="fas fa-paper-plane me-1"></i> <?= __('user_ai_chat_enhanced_send', 'Send') ?>
                             </button>

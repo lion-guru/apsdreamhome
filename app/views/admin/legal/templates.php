@@ -35,7 +35,7 @@ $merge_fields = $merge_fields ?? [];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label small">Search</label>
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Search templates..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                    <input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="Search templates..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
                 </div>
                 <div class="col-md-1">
                     <button class="btn btn-sm btn-outline-primary w-100">Filter</button>
@@ -90,7 +90,7 @@ $merge_fields = $merge_fields ?? [];
                 <div class="modal-header"><h5 class="modal-title">New Template</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="row g-3">
-                        <div class="col-md-6"><label class="form-label">Name</label><input type="text" name="name" class="form-control" required></div>
+                        <div class="col-md-6"><label class="form-label">Name</label><input aria-label="Name" type="text" name="name" class="form-control" required></div>
                         <div class="col-md-6"><label class="form-label">Category</label><select aria-label="Category id" name="category_id" class="form-select"><option value="">None</option><?php foreach ($categories as $c): ?><option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?></select></div>
                         <div class="col-md-6"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><option value="draft">Draft</option><option value="active">Active</option></select></div>
                         <div class="col-md-6"><label class="form-label">Language</label><select aria-label="Language" name="language" class="form-select"><option value="en">English</option><option value="hi">Hindi</option></select></div>

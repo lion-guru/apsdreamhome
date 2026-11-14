@@ -42,10 +42,10 @@ $filters = $filters ?? [];
                     </select>
                 </div>
                 <div class="col-auto">
-                    <input type="date" name="date_from" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
+                    <input aria-label="Date from" type="date" name="date_from" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_from'] ?? '') ?>">
                 </div>
                 <div class="col-auto">
-                    <input type="date" name="date_to" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>">
+                    <input aria-label="Date to" type="date" name="date_to" class="form-control form-control-sm" value="<?= htmlspecialchars($filters['date_to'] ?? '') ?>">
                 </div>
                 <div class="col-auto">
                     <button class="btn btn-sm btn-outline-primary"><i class="fas fa-filter"></i> Filter</button>
@@ -121,22 +121,22 @@ $filters = $filters ?? [];
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="asDate">Shift Date *</label>
-                        <input type="date" class="form-control" id="asDate" name="shift_date" required value="<?= date('Y-m-d') ?>">
+                        <input aria-label="As date" type="date" class="form-control" id="asDate" name="shift_date" required value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label" for="asStart">Start Time</label>
-                            <input type="time" class="form-control" id="asStart" name="start_time">
+                            <input aria-label="As start" type="time" class="form-control" id="asStart" name="start_time">
                             <div class="form-text">Defaults to shift type hours.</div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="asEnd">End Time</label>
-                            <input type="time" class="form-control" id="asEnd" name="end_time">
+                            <input aria-label="As end" type="time" class="form-control" id="asEnd" name="end_time">
                         </div>
                     </div>
                     <div class="mb-3 mt-3">
                         <label class="form-label" for="asNotes">Notes</label>
-                        <input type="text" class="form-control" id="asNotes" name="notes" maxlength="255">
+                        <input aria-label="As notes" type="text" class="form-control" id="asNotes" name="notes" maxlength="255">
                     </div>
                 </div>
                 <div class="modal-footer">

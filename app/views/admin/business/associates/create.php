@@ -13,23 +13,23 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" required value="<?= htmlspecialchars($old['name'] ?? '') ?>">
+                        <input aria-label="Name" type="text" name="name" class="form-control" required value="<?= htmlspecialchars($old['name'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Email <span class="text-danger">*</span></label>
-                        <input type="email" name="email" class="form-control" required value="<?= htmlspecialchars($old['email'] ?? '') ?>">
+                        <input aria-label="Email" type="email" name="email" class="form-control" required value="<?= htmlspecialchars($old['email'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Phone <span class="text-danger">*</span></label>
-                        <input type="text" name="phone" class="form-control" required value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
+                        <input aria-label="Phone" type="text" name="phone" class="form-control" required value="<?= htmlspecialchars($old['phone'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Joining Date</label>
-                        <input type="date" name="joining_date" class="form-control" value="<?= htmlspecialchars($old['joining_date'] ?? date('Y-m-d')) ?>">
+                        <input aria-label="Joining date" type="date" name="joining_date" class="form-control" value="<?= htmlspecialchars($old['joining_date'] ?? date('Y-m-d')) ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Commission Rate (%)</label>
-                        <input type="number" name="commission_rate" step="0.1" class="form-control" value="<?= htmlspecialchars($old['commission_rate'] ?? 0) ?>">
+                        <input aria-label="Commission rate" type="number" name="commission_rate" step="0.1" class="form-control" value="<?= htmlspecialchars($old['commission_rate'] ?? 0) ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Status</label>

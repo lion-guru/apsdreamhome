@@ -131,17 +131,17 @@ $filter_status = $filter_status ?? '';
                     </select></div>
                 <div class="row">
                     <div class="col-md-6 mb-3"><label class="form-label">Amount (₹) <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" min="1" name="amount" class="form-control" required></div>
+                        <input aria-label="Amount" type="number" step="0.01" min="1" name="amount" class="form-control" required></div>
                     <div class="col-md-6 mb-3"><label class="form-label">Repay Months <span class="text-danger">*</span></label>
-                        <input type="number" min="1" max="60" name="repay_months" class="form-control" value="6" required></div>
+                        <input aria-label="Repay months" type="number" min="1" max="60" name="repay_months" class="form-control" value="6" required></div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3"><label class="form-label">Interest % (annual, 0 = interest-free)</label>
-                        <input type="number" step="0.01" min="0" name="interest_rate" class="form-control" value="0"></div>
+                        <input aria-label="Interest rate" type="number" step="0.01" min="0" name="interest_rate" class="form-control" value="0"></div>
                     <div class="col-md-3 mb-3"><label class="form-label">Start Month</label>
-                        <input type="number" min="1" max="12" name="start_month" class="form-control" value="<?= date('n') ?>"></div>
+                        <input aria-label="Start month" type="number" min="1" max="12" name="start_month" class="form-control" value="<?= date('n') ?>"></div>
                     <div class="col-md-3 mb-3"><label class="form-label">Start Year</label>
-                        <input type="number" min="2020" max="2100" name="start_year" class="form-control" value="<?= date('Y') ?>"></div>
+                        <input aria-label="Start year" type="number" min="2020" max="2100" name="start_year" class="form-control" value="<?= date('Y') ?>"></div>
                 </div>
                 <div class="mb-3"><label class="form-label">Reason</label>
                     <textarea aria-label="Reason" name="reason" class="form-control" rows="2" placeholder="Purpose of advance..."></textarea></div>

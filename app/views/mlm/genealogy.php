@@ -490,7 +490,7 @@
 
         <!-- Search -->
         <div class="search-container">
-            <input type="text" class="search-box" id="searchBox" placeholder="Search members by name, email, or ID...">
+            <input aria-label="Search box" type="text" class="search-box" id="searchBox" placeholder="Search members by name, email, or ID...">
             <div class="search-results" id="searchResults"></div>
         </div>
 

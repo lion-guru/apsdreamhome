@@ -64,16 +64,16 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Template Code <span class="text-danger">*</span></label>
-                        <input type="text" name="template_code" id="tpl_code" class="form-control" required readonly>
+                        <input aria-label="Template code" type="text" name="template_code" id="tpl_code" class="form-control" required readonly>
                         <small class="text-muted">Unique identifier (auto-generated, read-only after creation)</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Template Name</label>
-                        <input type="text" name="template_name" id="tpl_name" class="form-control">
+                        <input aria-label="Template name" type="text" name="template_name" id="tpl_name" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Subject <span class="text-danger">*</span></label>
-                        <input type="text" name="subject" id="tpl_subject" class="form-control" required>
+                        <input aria-label="Subject" type="text" name="subject" id="tpl_subject" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Body HTML</label>

@@ -129,7 +129,7 @@ $isDelayed = $currentStatus === 'delayed';
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-2">
                         <label class="form-label">Possession Date</label>
-                        <input type="date" class="form-control" name="possession_date" value="<?= date('Y-m-d', strtotime('+7 days')) ?>" required>
+                        <input aria-label="Possession date" type="date" class="form-control" name="possession_date" value="<?= date('Y-m-d', strtotime('+7 days')) ?>" required>
                     </div>
                     <div class="mb-2">
                         <textarea aria-label="Handover notes" class="form-control" name="handover_notes" rows="2" placeholder="Notes about this handover..."></textarea>
@@ -148,11 +148,11 @@ $isDelayed = $currentStatus === 'delayed';
                     <div class="row g-2 mb-2">
                         <div class="col-6">
                             <label class="form-label">Handover Date</label>
-                            <input type="date" class="form-control" name="possession_date" value="<?= date('Y-m-d') ?>" required>
+                            <input aria-label="Possession date" type="date" class="form-control" name="possession_date" value="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="col-6">
                             <label class="form-label">Defect Liability (days)</label>
-                            <input type="number" class="form-control" name="defect_liability_period" value="365" min="30" max="1095">
+                            <input aria-label="Defect liability period" type="number" class="form-control" name="defect_liability_period" value="365" min="30" max="1095">
                         </div>
                     </div>
                     <div class="mb-2">
@@ -286,7 +286,7 @@ $isDelayed = $currentStatus === 'delayed';
                                                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                                         <input type="hidden" name="defect_id" value="<?= $d['id'] ?>">
                                         <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control" name="resolution_notes" placeholder="Resolution notes..." required>
+                                            <input aria-label="Resolution notes" type="text" class="form-control" name="resolution_notes" placeholder="Resolution notes..." required>
                                             <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Resolve</button>
                                         </div>
                                     </form>

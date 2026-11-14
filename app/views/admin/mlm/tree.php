@@ -124,7 +124,7 @@ function buildTreeHtml($parentId, $byParent, $rankColors, $rankIcons) {
             </div>
         </div>
         <div class="aps-cp-card-body">
-            <input type="text" id="treeSearch" class="form-control" placeholder="Search by name, email, or referral code..." autocomplete="off">
+            <input aria-label="Tree search" type="text" id="treeSearch" class="form-control" placeholder="Search by name, email, or referral code..." autocomplete="off">
         </div>
     </div>
 

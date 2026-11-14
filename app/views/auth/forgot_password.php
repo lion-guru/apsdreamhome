@@ -100,7 +100,7 @@ if ($page_description === 'forgot_password_page_description' || empty($page_desc
                                     <label for="email" class="form-label">
                                         <i class="fas fa-envelope me-2"></i><?= __('forgot_password_label_email') ?>
                                     </label>
-                                    <input type="email" class="form-control form-control-lg" id="email" name="email" required
+                                    <input aria-label="Email" type="email" class="form-control form-control-lg" id="email" name="email" required
                                         placeholder="<?= __('forgot_password_ph_email') ?>" autocomplete="email">
                                     <div class="form-text">
                                         <i class="fas fa-info-circle me-1"></i>
@@ -133,7 +133,7 @@ if ($page_description === 'forgot_password_page_description' || empty($page_desc
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text">+91</span>
-                                        <input type="tel" class="form-control form-control-lg" id="mobile" name="mobile" required
+                                        <input aria-label="Mobile" type="tel" class="form-control form-control-lg" id="mobile" name="mobile" required
                                             placeholder="9876543210" pattern="[0-9]{10}" maxlength="10">
                                     </div>
                                     <div class="form-text">
@@ -144,7 +144,7 @@ if ($page_description === 'forgot_password_page_description' || empty($page_desc
 
                                 <div class="mb-4">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="send-otp-mobile" name="send_otp">
+                                        <input aria-label="Send otp mobile" class="form-check-input" type="checkbox" id="send-otp-mobile" name="send_otp">
                                         <label class="form-check-label" for="send-otp-mobile">
                                             <i class="fas fa-key me-2"></i><?= __('forgot_password_label_otp_instead') ?>
                                         </label>

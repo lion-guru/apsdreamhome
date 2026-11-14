@@ -28,15 +28,15 @@ $page_title = $page_title ?? 'Create Payroll Run';
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Period Start <span class="text-danger">*</span></label>
-                        <input type="date" name="period_start" class="form-control" required value="<?= date('Y-m-01') ?>">
+                        <input aria-label="Period start" type="date" name="period_start" class="form-control" required value="<?= date('Y-m-01') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Period End <span class="text-danger">*</span></label>
-                        <input type="date" name="period_end" class="form-control" required value="<?= date('Y-m-t') ?>">
+                        <input aria-label="Period end" type="date" name="period_end" class="form-control" required value="<?= date('Y-m-t') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Pay Date <span class="text-danger">*</span></label>
-                        <input type="date" name="pay_date" class="form-control" required value="<?= date('Y-m-d', strtotime('last day of this month')) ?>">
+                        <input aria-label="Pay date" type="date" name="pay_date" class="form-control" required value="<?= date('Y-m-d', strtotime('last day of this month')) ?>">
                     </div>
                 </div>
             </div>

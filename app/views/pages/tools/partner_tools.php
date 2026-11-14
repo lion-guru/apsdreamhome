@@ -16,7 +16,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <label class="text-white-50" for="areaValue">Value</label>
-                                <input type="number" id="areaValue" class="form-control" value="1000" oninput="convertArea()" >
+                                <input aria-label="Area value" type="number" id="areaValue" class="form-control" value="1000" oninput="convertArea()" >
                             </div>
                             <div class="col-md-3">
                                 <label class="text-white-50" for="areaFrom">From</label>
@@ -61,19 +61,19 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="text-white-50" for="priceArea">Plot Area (sqft)</label>
-                            <input type="number" id="priceArea" class="form-control" value="1000" oninput="calcPrice()" >
+                            <input aria-label="Price area" type="number" id="priceArea" class="form-control" value="1000" oninput="calcPrice()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50" for="priceRate">Rate per sqft (₹)</label>
-                            <input type="number" id="priceRate" class="form-control" value="2500" oninput="calcPrice()" >
+                            <input aria-label="Price rate" type="number" id="priceRate" class="form-control" value="2500" oninput="calcPrice()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50" for="pricePLC">PLC Charges (₹, optional)</label>
-                            <input type="number" id="pricePLC" class="form-control" value="0" oninput="calcPrice()" >
+                            <input aria-label="Price plc" type="number" id="pricePLC" class="form-control" value="0" oninput="calcPrice()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50" for="priceDiscount">Discount % (optional)</label>
-                            <input type="number" id="priceDiscount" class="form-control" value="0" oninput="calcPrice()" >
+                            <input aria-label="Price discount" type="number" id="priceDiscount" class="form-control" value="0" oninput="calcPrice()" >
                         </div>
                         <div >
                             <div class="d-flex justify-content-between mb-2">
@@ -107,7 +107,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="text-white-50" for="commAmount">Sale Amount (₹)</label>
-                            <input type="number" id="commAmount" class="form-control" value="2500000" oninput="calcCommission()" >
+                            <input aria-label="Comm amount" type="number" id="commAmount" class="form-control" value="2500000" oninput="calcCommission()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50" for="commRank">Your Rank</label>
@@ -156,7 +156,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="text-white-50" for="stampValue">Property Value (₹)</label>
-                            <input type="number" id="stampValue" class="form-control" value="2500000" oninput="calcStamp()" >
+                            <input aria-label="Stamp value" type="number" id="stampValue" class="form-control" value="2500000" oninput="calcStamp()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50" for="stampState">State</label>
@@ -195,15 +195,15 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="text-white-50" for="emiLoan">Loan Amount (₹)</label>
-                            <input type="number" id="emiLoan" class="form-control" value="1500000" oninput="calcEMI()" >
+                            <input aria-label="Emi loan" type="number" id="emiLoan" class="form-control" value="1500000" oninput="calcEMI()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50" for="emiRate">Interest Rate (% p.a.)</label>
-                            <input type="number" id="emiRate" class="form-control" value="8.5" step="0.1" oninput="calcEMI()" >
+                            <input aria-label="Emi rate" type="number" id="emiRate" class="form-control" value="8.5" step="0.1" oninput="calcEMI()" >
                         </div>
                         <div class="mb-3">
                             <label class="text-white-50" for="emiTenure">Tenure (years)</label>
-                            <input type="range" id="emiTenure" class="form-range" min="1" max="30" value="15" oninput="calcEMI()" >
+                            <input aria-label="Emi tenure" type="range" id="emiTenure" class="form-range" min="1" max="30" value="15" oninput="calcEMI()" >
                             <span class="text-white-50" id="emiTenureLabel">15 years</span>
                         </div>
                         <div >
@@ -252,7 +252,7 @@
                             ];
                             foreach ($items as $i => $item): ?>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="item<?= $i ?>" >
+                                    <input aria-label="Item i" class="form-check-input" type="checkbox" id="item<?= $i ?>" >
                                     <label class="form-check-label text-white-50 ms-2" for="item<?= $i ?>" ><?= $item ?></label>
                                 </div>
                             <?php endforeach; ?>

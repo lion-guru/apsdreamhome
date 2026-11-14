@@ -70,22 +70,22 @@ $associate_email = $associate_email ?? '';
             <h6><i class="fas fa-building"></i>Property Type</h6>
             <div class="type-selector" id="propertyTypeSelector">
                 <label class="type-option active" data-value="plot">
-                    <input type="radio" name="property_type" value="plot" checked>
+                    <input aria-label="Property type" type="radio" name="property_type" value="plot" checked>
                     <i class="fas fa-map text-success"></i>
                     <span>Plot / Naksha</span>
                 </label>
                 <label class="type-option" data-value="house">
-                    <input type="radio" name="property_type" value="house">
+                    <input aria-label="Property type" type="radio" name="property_type" value="house">
                     <i class="fas fa-home text-primary"></i>
                     <span>House / Villa</span>
                 </label>
                 <label class="type-option" data-value="flat">
-                    <input type="radio" name="property_type" value="flat">
+                    <input aria-label="Property type" type="radio" name="property_type" value="flat">
                     <i class="fas fa-building text-info"></i>
                     <span>Flat / Apartment</span>
                 </label>
                 <label class="type-option" data-value="shop">
-                    <input type="radio" name="property_type" value="shop">
+                    <input aria-label="Property type" type="radio" name="property_type" value="shop">
                     <i class="fas fa-store text-warning"></i>
                     <span>Shop / Office</span>
                 </label>
@@ -97,13 +97,13 @@ $associate_email = $associate_email ?? '';
             <h6><i class="fas fa-tag"></i>Purpose</h6>
             <div class="d-flex gap-3">
                 <div class="form-check flex-fill">
-                    <input class="form-check-input" type="radio" name="listing_type" value="sell" id="purposeSell" checked>
+                    <input aria-label="Listing type" class="form-check-input" type="radio" name="listing_type" value="sell" id="purposeSell" checked>
                     <label class="form-check-label fw-bold" for="purposeSell">
                         <i class="fas fa-indian-rupee-sign text-success me-1"></i> Sell
                     </label>
                 </div>
                 <div class="form-check flex-fill">
-                    <input class="form-check-input" type="radio" name="listing_type" value="rent" id="purposeRent">
+                    <input aria-label="Listing type" class="form-check-input" type="radio" name="listing_type" value="rent" id="purposeRent">
                     <label class="form-check-label fw-bold" for="purposeRent">
                         <i class="fas fa-key text-primary me-1"></i> Rent
                     </label>
@@ -117,7 +117,7 @@ $associate_email = $associate_email ?? '';
             <div class="row g-3">
                 <div class="col-8">
                     <label class="form-label">Expected Price *</label>
-                    <input type="text" name="price" id="price" class="form-control" placeholder="e.g. 25,00,000" required inputmode="numeric">
+                    <input aria-label="Price" type="text" name="price" id="price" class="form-control" placeholder="e.g. 25,00,000" required inputmode="numeric">
                 </div>
                 <div class="col-4">
                     <label class="form-label">Unit</label>
@@ -142,7 +142,7 @@ $associate_email = $associate_email ?? '';
             <div class="row g-3 mt-1">
                 <div class="col-6">
                     <label class="form-label">Area *</label>
-                    <input type="text" name="area" id="area" class="form-control" placeholder="e.g. 1000" required inputmode="numeric">
+                    <input aria-label="Area" type="text" name="area" id="area" class="form-control" placeholder="e.g. 1000" required inputmode="numeric">
                 </div>
                 <div class="col-6">
                     <label class="form-label">Area Unit</label>
@@ -208,7 +208,7 @@ $associate_email = $associate_email ?? '';
                 </div>
                 <div class="col-6">
                     <label class="form-label">Floor</label>
-                    <input type="text" name="floor" class="form-control" placeholder="e.g. 2nd Floor" inputmode="numeric">
+                    <input aria-label="Floor" type="text" name="floor" class="form-control" placeholder="e.g. 2nd Floor" inputmode="numeric">
                 </div>
             </div>
             <div class="row g-3 mt-1">
@@ -261,7 +261,7 @@ $associate_email = $associate_email ?? '';
         <div class="prop-section">
             <h6><i class="fas fa-camera"></i>Property Photos</h6>
             <div class="photo-upload-zone" id="photoDropZone">
-                <input type="file" name="property_image" id="photoInput" accept="image/*">
+                <input aria-label="Property image" type="file" name="property_image" id="photoInput" accept="image/*">
                 <i class="fas fa-cloud-upload-alt d-block"></i>
                 <div class="fw-bold text-primary">Tap to Add Photo</div>
                 <div class="text-muted small">Take photo or choose from gallery</div>
@@ -276,16 +276,16 @@ $associate_email = $associate_email ?? '';
             <div class="row g-3">
                 <div class="col-6">
                     <label class="form-label">Your Name *</label>
-                    <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($associate_name ?? '') ?>" required>
+                    <input aria-label="Name" type="text" name="name" class="form-control" value="<?= htmlspecialchars($associate_name ?? '') ?>" required>
                 </div>
                 <div class="col-6">
                     <label class="form-label">Phone *</label>
-                    <input type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($associate_phone ?? '') ?>" required inputmode="tel">
+                    <input aria-label="Phone" type="tel" name="phone" class="form-control" value="<?= htmlspecialchars($associate_phone ?? '') ?>" required inputmode="tel">
                 </div>
             </div>
             <div class="mt-3">
                 <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($associate_email ?? '') ?>">
+                <input aria-label="Email" type="email" name="email" class="form-control" value="<?= htmlspecialchars($associate_email ?? '') ?>">
             </div>
         </div>
 

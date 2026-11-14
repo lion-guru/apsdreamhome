@@ -11,7 +11,7 @@ $status = $status ?? '';
 
     <div class="card mb-4"><div class="card-body">
         <form method="GET" class="row">
-            <div class="col-md-3"><label>Month</label><input type="month" name="month_year" class="form-control" value="<?= $month_year ?>"></div>
+            <div class="col-md-3"><label>Month</label><input aria-label="Month year" type="month" name="month_year" class="form-control" value="<?= $month_year ?>"></div>
             <div class="col-md-2"><label>Status</label><select aria-label="Status" name="status" class="form-select"><option value="">All</option><option value="processed" <?= $status==='processed'?'selected':'' ?>>Processed</option><option value="paid" <?= $status==='paid'?'selected':'' ?>>Paid</option></select></div>
             <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Filter</button></div>
             <div class="col-md-2 d-flex align-items-end"><a href="<?= BASE_URL ?>/admin/pf-esi/register" class="btn btn-outline-secondary w-100">Clear</a></div>
@@ -22,7 +22,7 @@ $status = $status ?? '';
     <div class="card mb-4"><div class="card-header"><strong>Mark as Paid</strong></div><div class="card-body">
         <form method="POST" action="<?= BASE_URL ?>/admin/pf-esi/mark-paid" class="row" onsubmit="return confirm('Mark selected records as paid?');">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
-            <div class="col-md-4"><label>Payment Reference</label><input type="text" name="payment_ref" class="form-control" placeholder="e.g., PAY-20260101"></div>
+            <div class="col-md-4"><label>Payment Reference</label><input aria-label="Payment ref" type="text" name="payment_ref" class="form-control" placeholder="e.g., PAY-20260101"></div>
             <div class="col-md-2 d-flex align-items-end"><button type="submit" class="btn btn-success w-100"><i class="fas fa-check me-2"></i>Mark Paid</button></div>
         </form>
     </div></div>
@@ -34,7 +34,7 @@ $status = $status ?? '';
         <?php if (empty($deductions)) { ?><tr><td colspan="13" class="text-center text-muted py-4">No records found</td></tr>
         <?php } else { foreach ($deductions as $d) { ?>
             <tr>
-                <td><?php if ($d['status'] === 'processed') { ?><input type="checkbox" name="ids[]" value="<?= $d['id'] ?>" class="form-check-input"><?php } ?></td>
+                <td><?php if ($d['status'] === 'processed') { ?><input aria-label="Ids" type="checkbox" name="ids[]" value="<?= $d['id'] ?>" class="form-check-input"><?php } ?></td>
                 <td><?= htmlspecialchars($d['employee_name']) ?></td>
                 <td><?= htmlspecialchars($d['department'] ?? '—') ?></td>
                 <td>₹<?= number_format($d['basic_salary'], 2) ?></td>

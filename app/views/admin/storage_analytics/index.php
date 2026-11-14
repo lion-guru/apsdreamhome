@@ -60,8 +60,8 @@ $lastBackup = $lastBackup ?? null;
     <div class="card mb-4"><div class="card-header fw-bold">Cost Calculator</div>
         <div class="card-body">
             <form onsubmit="return calcCost(event)" class="row g-2 align-items-end">
-                <div class="col-md-2"><label class="form-label small">Size (GB)</label><input type="number" id="cc_size" class="form-control" step="0.1" min="0" value="10"></div>
-                <div class="col-md-2"><label class="form-label small">Requests/month</label><input type="number" id="cc_req" class="form-control" min="0" value="10000"></div>
+                <div class="col-md-2"><label class="form-label small">Size (GB)</label><input aria-label="Cc size" type="number" id="cc_size" class="form-control" step="0.1" min="0" value="10"></div>
+                <div class="col-md-2"><label class="form-label small">Requests/month</label><input aria-label="Cc req" type="number" id="cc_req" class="form-control" min="0" value="10000"></div>
                 <div class="col-md-2"><label class="form-label small">Tier</label><select aria-label="Cc tier" id="cc_tier" class="form-select"><option value="standard">Standard</option><option value="infrequent">Infrequent</option><option value="glacier">Glacier</option><option value="deep_archive">Deep Archive</option></select></div>
                 <div class="col-md-2"><button class="btn btn-primary w-100">Calculate</button></div>
                 <div class="col-md-4"><div id="cc_result" class="alert alert-info py-2 mb-0">Enter values and click Calculate</div></div>
@@ -72,8 +72,8 @@ $lastBackup = $lastBackup ?? null;
     <div class="card"><div class="card-header fw-bold">Presigned URL Generator</div>
         <div class="card-body">
             <form onsubmit="return genUrl(event)" class="row g-2 align-items-end">
-                <div class="col-md-5"><label class="form-label small">File Path</label><input type="text" id="pg_path" class="form-control" placeholder="documents/report.pdf"></div>
-                <div class="col-md-2"><label class="form-label small">Expiry (minutes)</label><input type="number" id="pg_expiry" class="form-control" min="1" max="10080" value="60"></div>
+                <div class="col-md-5"><label class="form-label small">File Path</label><input aria-label="Pg path" type="text" id="pg_path" class="form-control" placeholder="documents/report.pdf"></div>
+                <div class="col-md-2"><label class="form-label small">Expiry (minutes)</label><input aria-label="Pg expiry" type="number" id="pg_expiry" class="form-control" min="1" max="10080" value="60"></div>
                 <div class="col-md-2"><button class="btn btn-primary w-100">Generate</button></div>
                 <div class="col-md-3"><div id="pg_result" class="text-muted small">Generated URL will appear here</div></div>
             </form>

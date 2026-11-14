@@ -35,7 +35,7 @@ $states = $states ?? [];
                 <div class="row g-3">
                     <div class="col-md-8">
                         <label class="form-label fw-bold"><?= __('assoc_ep_title_label', [], 'Property Title') ?> *</label>
-                        <input type="text" name="title" class="form-control" value="<?= htmlspecialchars($property['name'] ?? '') ?>" required>
+                        <input aria-label="Title" type="text" name="title" class="form-control" value="<?= htmlspecialchars($property['name'] ?? '') ?>" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold"><?= __('assoc_ep_type', [], 'Property Type') ?> *</label>
@@ -61,15 +61,15 @@ $states = $states ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold"><?= __('assoc_ep_price', [], 'Price (₹)') ?> *</label>
-                        <input type="number" name="price" class="form-control" value="<?= (int)($property['price'] ?? 0) ?>" min="1" required>
+                        <input aria-label="Price" type="number" name="price" class="form-control" value="<?= (int)($property['price'] ?? 0) ?>" min="1" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold"><?= __('assoc_ep_area', [], 'Area (sq ft)') ?></label>
-                        <input type="number" name="area" class="form-control" value="<?= (int)($property['area_sqft'] ?? 0) ?>" min="0">
+                        <input aria-label="Area" type="number" name="area" class="form-control" value="<?= (int)($property['area_sqft'] ?? 0) ?>" min="0">
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-bold"><?= __('assoc_ep_address', [], 'Location / Address') ?></label>
-                        <input type="text" name="location" class="form-control" value="<?= htmlspecialchars($property['address'] ?? '') ?>">
+                        <input aria-label="Location" type="text" name="location" class="form-control" value="<?= htmlspecialchars($property['address'] ?? '') ?>">
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-bold"><?= __('assoc_ep_description', [], 'Description') ?></label>
@@ -77,7 +77,7 @@ $states = $states ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-bold"><?= __('assoc_ep_replace_image', [], 'Replace Image (optional)') ?></label>
-                        <input type="file" name="property_image" class="form-control" accept="image/*">
+                        <input aria-label="Property image" type="file" name="property_image" class="form-control" accept="image/*">
                         <?php if (!empty($property['image'])): ?>
                             <div class="mt-2">
                                 <small class="text-muted"><?= __('assoc_ep_current', [], 'Current') ?>:</small><br>

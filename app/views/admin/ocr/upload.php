@@ -67,7 +67,7 @@ $doc_type_labels = $doc_type_labels ?? [];
                             ];
                             foreach ($doc_types as $i => $dt): ?>
                                 <div class="ocr-type-option">
-                                    <input type="radio" name="document_type" id="doctype_<?= $dt ?>" value="<?= $dt ?>" <?= $i === 0 ? 'checked' : '' ?>>
+                                    <input aria-label="Document type" type="radio" name="document_type" id="doctype_<?= $dt ?>" value="<?= $dt ?>" <?= $i === 0 ? 'checked' : '' ?>>
                                     <label for="doctype_<?= $dt ?>">
                                         <i class="<?= $typeIcons[$dt] ?? 'fas fa-file' ?>"></i>
                                         <?= $doc_type_labels[$dt] ?? $dt ?>
@@ -78,7 +78,7 @@ $doc_type_labels = $doc_type_labels ?? [];
 
                         <label class="ocr-label">Upload File</label>
                         <div class="ocr-upload-zone" id="uploadZone">
-                            <input type="file" name="document_file" id="documentFile" class="ocr-file-input" accept=".jpg,.jpeg,.png,.pdf">
+                            <input aria-label="Document file" type="file" name="document_file" id="documentFile" class="ocr-file-input" accept=".jpg,.jpeg,.png,.pdf">
                             <div class="ocr-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
                             <div class="ocr-upload-text">Drag & drop your file here or <span >browse</span></div>
                             <div class="ocr-upload-hint">JPG, PNG, or PDF — Max 10MB</div>

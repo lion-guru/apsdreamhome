@@ -10,12 +10,12 @@
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="col-md-6">
                     <label class="form-label">Slot Key <span class="text-danger">*</span></label>
-                    <input type="text" name="slot_key" class="form-control" value="<?= htmlspecialchars($ad['slot_key'] ?? '') ?>" required placeholder="e.g. header_banner, sidebar_ad">
+                    <input aria-label="Slot key" type="text" name="slot_key" class="form-control" value="<?= htmlspecialchars($ad['slot_key'] ?? '') ?>" required placeholder="e.g. header_banner, sidebar_ad">
                     <div class="form-text">Unique identifier used in code to render this ad</div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Title <span class="text-danger">*</span></label>
-                    <input type="text" name="title" class="form-control" value="<?= htmlspecialchars($ad['title'] ?? '') ?>" required>
+                    <input aria-label="Title" type="text" name="title" class="form-control" value="<?= htmlspecialchars($ad['title'] ?? '') ?>" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Slot Type</label>
@@ -36,15 +36,15 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Sort Order</label>
-                    <input type="number" name="sort_order" class="form-control" value="<?= (int)($ad['sort_order'] ?? 0) ?>" min="0">
+                    <input aria-label="Sort order" type="number" name="sort_order" class="form-control" value="<?= (int)($ad['sort_order'] ?? 0) ?>" min="0">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Image URL</label>
-                    <input type="url" name="image_url" class="form-control" value="<?= htmlspecialchars($ad['image_url'] ?? '') ?>" placeholder="https://example.com/ad.jpg">
+                    <input aria-label="Image url" type="url" name="image_url" class="form-control" value="<?= htmlspecialchars($ad['image_url'] ?? '') ?>" placeholder="https://example.com/ad.jpg">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Link URL</label>
-                    <input type="url" name="link_url" class="form-control" value="<?= htmlspecialchars($ad['link_url'] ?? '') ?>" placeholder="https://example.com">
+                    <input aria-label="Link url" type="url" name="link_url" class="form-control" value="<?= htmlspecialchars($ad['link_url'] ?? '') ?>" placeholder="https://example.com">
                 </div>
                 <div class="col-12">
                     <label class="form-label">Content / Text Ad</label>

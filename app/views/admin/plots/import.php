@@ -97,7 +97,7 @@ $page_title = $page_title ?? 'Import Plots';
                         
                         <div class="mb-3">
                             <label for="import_file" class="form-label">Select CSV File</label>
-                            <input type="file" class="form-control" id="import_file" name="import_file" accept=".csv" required>
+                            <input aria-label="Import file" type="file" class="form-control" id="import_file" name="import_file" accept=".csv" required>
                             <div class="form-text">Only CSV files accepted (max 5MB)</div>
                         </div>
                         

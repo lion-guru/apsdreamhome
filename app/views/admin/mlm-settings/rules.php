@@ -35,12 +35,12 @@
                     <td>
                         <form method="POST" action="<?php echo BASE_URL; ?>/admin/mlm-settings/rules/update/<?php echo e($r['id']); ?>" class="d-flex align-items-center gap-2">
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                            <input type="number" step="0.01" name="rate_percentage" value="<?php echo e($r['rate_percentage']); ?>" class="form-control form-control-sm">
+                            <input aria-label="Rate percentage" type="number" step="0.01" name="rate_percentage" value="<?php echo e($r['rate_percentage']); ?>" class="form-control form-control-sm">
                     </td>
                     <td><?php echo e($r['priority']); ?></td>
                     <td>
                         <div class="form-check form-switch">
-                            <input type="checkbox" name="is_active" class="form-check-input" value="1" <?php echo $r['is_active'] ? 'checked' : ''; ?>>
+                            <input aria-label="Is active" type="checkbox" name="is_active" class="form-check-input" value="1" <?php echo $r['is_active'] ? 'checked' : ''; ?>>
                         </div>
                     </td>
                     <td>

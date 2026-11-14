@@ -70,7 +70,7 @@ $statusLabels = [
         <form method="GET" action="<?= BASE_URL ?>/admin/blogs/comments">
             <div class="row g-2">
                 <div class="col-md-4">
-                    <input type="text" class="form-control" name="search" placeholder="Search name, email, content..." value="<?= htmlspecialchars($search ?? '') ?>">
+                    <input aria-label="Search" type="text" class="form-control" name="search" placeholder="Search name, email, content..." value="<?= htmlspecialchars($search ?? '') ?>">
                 </div>
                 <div class="col-md-3">
                     <select aria-label="Status" class="form-select" name="status">

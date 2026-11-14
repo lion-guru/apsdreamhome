@@ -61,7 +61,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
 
                         <div class="mb-3">
                             <label for="title" class="form-label fw-semibold">Issue Summary / Title <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="title" name="title" placeholder="e.g. Street lamp outside Plot 42 not glowing" required>
+                            <input aria-label="Title" type="text" class="form-control" id="title" name="title" placeholder="e.g. Street lamp outside Plot 42 not glowing" required>
                         </div>
 
                         <div class="mb-4">

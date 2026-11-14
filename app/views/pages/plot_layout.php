@@ -167,7 +167,7 @@
             <a href="<?= BASE_URL ?>/plots" class="back-nav-btn" title="<?= __('plot_back_listings', [], 'Back to Plot Listings') ?>">
                 <i class="fas fa-arrow-left"></i> <span><?= __('plot_listings_label', [], 'Plot Listings') ?></span>
             </a>
-            <input type="text" id="searchInput" placeholder="<?= __('plot_search_placeholder', [], 'Search plot number...') ?>" oninput="searchPlots(this.value)">
+            <input aria-label="Search input" type="text" id="searchInput" placeholder="<?= __('plot_search_placeholder', [], 'Search plot number...') ?>" oninput="searchPlots(this.value)">
             <button class="filter-btn active" data-status="all" onclick="filterStatus('all', this)">All</button>
             <button class="filter-btn" data-status="available" onclick="filterStatus('available', this)">Available</button>
             <button class="filter-btn" data-status="booked" onclick="filterStatus('booked', this)">Booked</button>

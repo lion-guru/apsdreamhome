@@ -41,11 +41,11 @@ $mode = $mode ?? 'create';
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Invoice Number <span class="text-danger">*</span></label>
-                                <input type="text" name="invoice_number" class="form-control" required value="<?= htmlspecialchars($data['invoice_number'] ?? '') ?>" placeholder="e.g., INV-2024-001">
+                                <input aria-label="Invoice number" type="text" name="invoice_number" class="form-control" required value="<?= htmlspecialchars($data['invoice_number'] ?? '') ?>" placeholder="e.g., INV-2024-001">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Invoice Date <span class="text-danger">*</span></label>
-                                <input type="date" name="invoice_date" class="form-control" required value="<?= htmlspecialchars($data['invoice_date'] ?? date('Y-m-d')) ?>">
+                                <input aria-label="Invoice date" type="date" name="invoice_date" class="form-control" required value="<?= htmlspecialchars($data['invoice_date'] ?? date('Y-m-d')) ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Invoice Type <span class="text-danger">*</span></label>
@@ -64,11 +64,11 @@ $mode = $mode ?? 'create';
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Place of Supply</label>
-                                <input type="text" name="place_of_supply" class="form-control" id="placeOfSupply" value="<?= htmlspecialchars($data['place_of_supply'] ?? '') ?>" placeholder="State code (e.g., 09)" maxlength="2">
+                                <input aria-label="Place of supply" type="text" name="place_of_supply" class="form-control" id="placeOfSupply" value="<?= htmlspecialchars($data['place_of_supply'] ?? '') ?>" placeholder="State code (e.g., 09)" maxlength="2">
                             </div>
                             <div class="col-md-4">
                                 <div class="form-check mt-4">
-                                    <input class="form-check-input" type="checkbox" name="reverse_charge" id="reverseCharge" <?= ($data['reverse_charge'] ?? 0) ? 'checked' : '' ?>>
+                                    <input aria-label="Reverse charge" class="form-check-input" type="checkbox" name="reverse_charge" id="reverseCharge" <?= ($data['reverse_charge'] ?? 0) ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="reverseCharge">Reverse Charge</label>
                                 </div>
                             </div>
@@ -82,20 +82,20 @@ $mode = $mode ?? 'create';
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Customer GSTIN <span class="text-danger">*</span></label>
-                                <input type="text" name="customer_gstin" class="form-control" id="customerGstin" value="<?= htmlspecialchars($data['customer_gstin'] ?? '') ?>" placeholder="15-char GSTIN" maxlength="15">
+                                <input aria-label="Customer gstin" type="text" name="customer_gstin" class="form-control" id="customerGstin" value="<?= htmlspecialchars($data['customer_gstin'] ?? '') ?>" placeholder="15-char GSTIN" maxlength="15">
                                 <div class="form-text">Mandatory for B2B invoices</div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Customer Name</label>
-                                <input type="text" name="customer_name" class="form-control" value="<?= htmlspecialchars($data['customer_name'] ?? '') ?>">
+                                <input aria-label="Customer name" type="text" name="customer_name" class="form-control" value="<?= htmlspecialchars($data['customer_name'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">State Code</label>
-                                <input type="text" name="customer_state_code" class="form-control" value="<?= htmlspecialchars($data['customer_state_code'] ?? '') ?>" placeholder="e.g., 09" maxlength="2">
+                                <input aria-label="Customer state code" type="text" name="customer_state_code" class="form-control" value="<?= htmlspecialchars($data['customer_state_code'] ?? '') ?>" placeholder="e.g., 09" maxlength="2">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Pincode</label>
-                                <input type="text" name="customer_pincode" class="form-control" value="<?= htmlspecialchars($data['customer_pincode'] ?? '') ?>" placeholder="6-digit pincode" maxlength="6">
+                                <input aria-label="Customer pincode" type="text" name="customer_pincode" class="form-control" value="<?= htmlspecialchars($data['customer_pincode'] ?? '') ?>" placeholder="6-digit pincode" maxlength="6">
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Address</label>
@@ -196,35 +196,35 @@ $mode = $mode ?? 'create';
             </div>
             <div class="col-md-4">
                 <label class="form-label small">Description <span class="text-danger">*</span></label>
-                <input type="text" name="item_desc_{INDEX}" class="form-control form-control-sm item-desc" required placeholder="Description">
+                <input aria-label="Item desc index" type="text" name="item_desc_{INDEX}" class="form-control form-control-sm item-desc" required placeholder="Description">
             </div>
             <div class="col-md-2">
                 <label class="form-label small">UOM</label>
-                <input type="text" name="item_uom_{INDEX}" class="form-control form-control-sm item-uom" value="PCS">
+                <input aria-label="Item uom index" type="text" name="item_uom_{INDEX}" class="form-control form-control-sm item-uom" value="PCS">
             </div>
             <div class="col-md-1">
                 <label class="form-label small">Qty</label>
-                <input type="number" step="0.001" name="item_qty_{INDEX}" class="form-control form-control-sm item-qty" value="1" min="0.001" required>
+                <input aria-label="Item qty index" type="number" step="0.001" name="item_qty_{INDEX}" class="form-control form-control-sm item-qty" value="1" min="0.001" required>
             </div>
             <div class="col-md-2">
                 <label class="form-label small">Rate</label>
-                <input type="number" step="0.01" name="item_rate_{INDEX}" class="form-control form-control-sm item-rate" value="0" min="0" required>
+                <input aria-label="Item rate index" type="number" step="0.01" name="item_rate_{INDEX}" class="form-control form-control-sm item-rate" value="0" min="0" required>
             </div>
             <div class="col-md-2">
                 <label class="form-label small">Disc</label>
-                <input type="number" step="0.01" name="item_discount_{INDEX}" class="form-control form-control-sm item-discount" value="0" min="0">
+                <input aria-label="Item discount index" type="number" step="0.01" name="item_discount_{INDEX}" class="form-control form-control-sm item-discount" value="0" min="0">
             </div>
             <div class="col-md-2">
                 <label class="form-label small">GST%</label>
-                <input type="number" step="0.01" name="item_gst_{INDEX}" class="form-control form-control-sm item-gst" value="0" min="0" max="100" required>
+                <input aria-label="Item gst index" type="number" step="0.01" name="item_gst_{INDEX}" class="form-control form-control-sm item-gst" value="0" min="0" max="100" required>
             </div>
             <div class="col-md-1">
                 <label class="form-label small">Cess%</label>
-                <input type="number" step="0.01" name="item_cess_{INDEX}" class="form-control form-control-sm item-cess" value="0" min="0">
+                <input aria-label="Item cess index" type="number" step="0.01" name="item_cess_{INDEX}" class="form-control form-control-sm item-cess" value="0" min="0">
             </div>
             <div class="col-md-1">
                 <label class="form-label small">Amount</label>
-                <input type="text" name="item_amt_{INDEX}" class="form-control form-control-sm item-amt text-end" readonly style="background:#e9ecef">
+                <input aria-label="Item amt index" type="text" name="item_amt_{INDEX}" class="form-control form-control-sm item-amt text-end" readonly style="background:#e9ecef">
             </div>
             <div class="col-auto">
                 <button type="button" class="btn btn-outline-danger btn-sm remove-item" title="Remove"><i class="fas fa-trash"></i></button>

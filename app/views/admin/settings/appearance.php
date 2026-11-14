@@ -11,15 +11,15 @@ $social = json_encode(json_decode($s['social_json'] ?? '[]', true), JSON_PRETTY_
                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="mb-3">
                     <label class="form-label">Brand Name</label>
-                    <input type="text" name="brand_name" class="form-control" value="<?php echo h($s['brand_name'] ?? ''); ?>">
+                    <input aria-label="Brand name" type="text" name="brand_name" class="form-control" value="<?php echo h($s['brand_name'] ?? ''); ?>">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Logo URL</label>
-                    <input type="text" name="logo_url" class="form-control" value="<?php echo h($s['logo_url'] ?? ''); ?>">
+                    <input aria-label="Logo url" type="text" name="logo_url" class="form-control" value="<?php echo h($s['logo_url'] ?? ''); ?>">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Favicon URL</label>
-                    <input type="text" name="favicon_url" class="form-control" value="<?php echo h($s['favicon_url'] ?? ''); ?>">
+                    <input aria-label="Favicon url" type="text" name="favicon_url" class="form-control" value="<?php echo h($s['favicon_url'] ?? ''); ?>">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Navigation (JSON)</label>

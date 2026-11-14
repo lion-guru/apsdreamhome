@@ -46,11 +46,11 @@ $plotValue = (float)($booking['total_plot_value'] ?? 0);
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label class="form-label small fw-bold">Preferred Registry Date 1 <span class="text-danger">*</span></label>
-                        <input type="date" name="preferred_date_1" class="form-control" min="<?= date('Y-m-d', strtotime('+1 day')) ?>" value="<?= date('Y-m-d', strtotime('+3 days')) ?>" required>
+                        <input aria-label="Preferred date 1" type="date" name="preferred_date_1" class="form-control" min="<?= date('Y-m-d', strtotime('+1 day')) ?>" value="<?= date('Y-m-d', strtotime('+3 days')) ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small fw-bold">Alternate Preferred Date 2</label>
-                        <input type="date" name="preferred_date_2" class="form-control" min="<?= date('Y-m-d', strtotime('+1 day')) ?>">
+                        <input aria-label="Preferred date 2" type="date" name="preferred_date_2" class="form-control" min="<?= date('Y-m-d', strtotime('+1 day')) ?>">
                     </div>
                     <div class="col-12">
                         <label class="form-label small fw-bold">Sub-Registrar Office Jurisdiction <span class="text-danger">*</span></label>
@@ -69,15 +69,15 @@ $plotValue = (float)($booking['total_plot_value'] ?? 0);
                     <label class="form-label small fw-bold d-block text-dark">Buyer Ownership Category (UP Stamp Duty Rate)</label>
                     <div class="d-flex gap-4 mb-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="buyer_gender" id="genderMale" value="male" checked onchange="updateStampCalc()">
+                            <input aria-label="Buyer gender" class="form-check-input" type="radio" name="buyer_gender" id="genderMale" value="male" checked onchange="updateStampCalc()">
                             <label class="form-check-label" for="genderMale">Male (7.0%)</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="buyer_gender" id="genderFemale" value="female" onchange="updateStampCalc()">
+                            <input aria-label="Buyer gender" class="form-check-input" type="radio" name="buyer_gender" id="genderFemale" value="female" onchange="updateStampCalc()">
                             <label class="form-check-label" for="genderFemale">Female (6.0% concession)</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="buyer_gender" id="genderJoint" value="joint" onchange="updateStampCalc()">
+                            <input aria-label="Buyer gender" class="form-check-input" type="radio" name="buyer_gender" id="genderJoint" value="joint" onchange="updateStampCalc()">
                             <label class="form-check-label" for="genderJoint">Joint (6.5%)</label>
                         </div>
                     </div>
@@ -93,25 +93,25 @@ $plotValue = (float)($booking['total_plot_value'] ?? 0);
                     <div class="col-md-6 border-end">
                         <span class="badge bg-secondary mb-2">Witness 1</span>
                         <div class="mb-2">
-                            <input type="text" name="witness_1_name" class="form-control form-control-sm" placeholder="Full Name" required>
+                            <input aria-label="Witness 1 name" type="text" name="witness_1_name" class="form-control form-control-sm" placeholder="Full Name" required>
                         </div>
                         <div class="mb-2">
-                            <input type="text" name="witness_1_phone" class="form-control form-control-sm" placeholder="Mobile Number" required>
+                            <input aria-label="Witness 1 phone" type="text" name="witness_1_phone" class="form-control form-control-sm" placeholder="Mobile Number" required>
                         </div>
                         <div>
-                            <input type="text" name="witness_1_aadhaar" class="form-control form-control-sm" placeholder="Aadhaar (Last 4 Digits or Full)" required>
+                            <input aria-label="Witness 1 aadhaar" type="text" name="witness_1_aadhaar" class="form-control form-control-sm" placeholder="Aadhaar (Last 4 Digits or Full)" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <span class="badge bg-secondary mb-2">Witness 2</span>
                         <div class="mb-2">
-                            <input type="text" name="witness_2_name" class="form-control form-control-sm" placeholder="Full Name" required>
+                            <input aria-label="Witness 2 name" type="text" name="witness_2_name" class="form-control form-control-sm" placeholder="Full Name" required>
                         </div>
                         <div class="mb-2">
-                            <input type="text" name="witness_2_phone" class="form-control form-control-sm" placeholder="Mobile Number" required>
+                            <input aria-label="Witness 2 phone" type="text" name="witness_2_phone" class="form-control form-control-sm" placeholder="Mobile Number" required>
                         </div>
                         <div>
-                            <input type="text" name="witness_2_aadhaar" class="form-control form-control-sm" placeholder="Aadhaar (Last 4 Digits or Full)" required>
+                            <input aria-label="Witness 2 aadhaar" type="text" name="witness_2_aadhaar" class="form-control form-control-sm" placeholder="Aadhaar (Last 4 Digits or Full)" required>
                         </div>
                     </div>
                 </div>

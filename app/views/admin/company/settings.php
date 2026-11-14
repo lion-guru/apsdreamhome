@@ -24,22 +24,22 @@ $company = $company ?? [];
                 <div class="row g-4">
                     <div class="col-md-6">
                         <label class="form-label">Company Name <span class="text-danger">*</span></label>
-                        <input type="text" name="company_name" class="form-control"
+                        <input aria-label="Company name" type="text" name="company_name" class="form-control"
                                value="<?= htmlspecialchars($company['company_name'] ?? '') ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Phone</label>
-                        <input type="text" name="phone" class="form-control"
+                        <input aria-label="Phone" type="text" name="phone" class="form-control"
                                value="<?= htmlspecialchars($company['phone'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control"
+                        <input aria-label="Email" type="email" name="email" class="form-control"
                                value="<?= htmlspecialchars($company['email'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Address</label>
-                        <input type="text" name="address" class="form-control"
+                        <input aria-label="Address" type="text" name="address" class="form-control"
                                value="<?= htmlspecialchars($company['address'] ?? '') ?>">
                     </div>
                     <div class="col-12">

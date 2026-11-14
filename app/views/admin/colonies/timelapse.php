@@ -139,11 +139,11 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Stage Title *</label>
-                        <input type="text" name="title" class="form-control" placeholder="e.g. 40ft Main Road Tarring" required>
+                        <input aria-label="Title" type="text" name="title" class="form-control" placeholder="e.g. 40ft Main Road Tarring" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Stage Order (1-10)</label>
-                        <input type="number" name="stage_order" class="form-control" value="<?= count($milestones) + 1 ?>" min="1" max="20" required>
+                        <input aria-label="Stage order" type="number" name="stage_order" class="form-control" value="<?= count($milestones) + 1 ?>" min="1" max="20" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Stage Code</label>
@@ -174,37 +174,37 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-semibold">Completion %</label>
-                        <input type="number" name="completion_pct" class="form-control" min="0" max="100" value="50">
+                        <input aria-label="Completion pct" type="number" name="completion_pct" class="form-control" min="0" max="100" value="50">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small">Site Engineer / Supervisor</label>
-                        <input type="text" name="verified_by" class="form-control" placeholder="e.g. Er. Rajesh Verma">
+                        <input aria-label="Verified by" type="text" name="verified_by" class="form-control" placeholder="e.g. Er. Rajesh Verma">
                     </div>
                 </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">Before Photo (Raw/Initial State)</label>
-                        <input type="file" name="photo_before" class="form-control" accept="image/*">
+                        <input aria-label="Photo before" type="file" name="photo_before" class="form-control" accept="image/*">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small fw-semibold">After / Current Photo (Developed State)</label>
-                        <input type="file" name="photo_after" class="form-control" accept="image/*">
+                        <input aria-label="Photo after" type="file" name="photo_after" class="form-control" accept="image/*">
                     </div>
                 </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label small">Drone Aerial Video URL (YouTube / Vimeo / MP4)</label>
-                        <input type="url" name="drone_video_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                        <input aria-label="Drone video url" type="url" name="drone_video_url" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small">Target Date</label>
-                        <input type="date" name="target_date" class="form-control">
+                        <input aria-label="Target date" type="date" name="target_date" class="form-control">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small">Completed Date</label>
-                        <input type="date" name="completed_date" class="form-control">
+                        <input aria-label="Completed date" type="date" name="completed_date" class="form-control">
                     </div>
                 </div>
             </div>

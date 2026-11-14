@@ -268,32 +268,32 @@ $bankAddUrl = '/wallet/bank-accounts/add';
     <?php echo CSRFProtection::csrfField(); ?>
             <div class="mb-3">
                 <label class="form-label fw-bold">Bank Name *</label>
-                <input type="text" class="form-control" id="bankName" name="bank_name" required placeholder="e.g., State Bank of India">
+                <input aria-label="Bank name" type="text" class="form-control" id="bankName" name="bank_name" required placeholder="e.g., State Bank of India">
             </div>
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Account Number *</label>
-                <input type="text" class="form-control" id="accountNumber" name="account_number" required placeholder="Enter your account number" pattern="[0-9]{9,18}">
+                <input aria-label="Account number" type="text" class="form-control" id="accountNumber" name="account_number" required placeholder="Enter your account number" pattern="[0-9]{9,18}">
             </div>
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Confirm Account Number *</label>
-                <input type="text" class="form-control" id="confirmAccountNumber" required placeholder="Confirm account number" pattern="[0-9]{9,18}">
+                <input aria-label="Confirm account number" type="text" class="form-control" id="confirmAccountNumber" required placeholder="Confirm account number" pattern="[0-9]{9,18}">
             </div>
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Account Holder Name *</label>
-                <input type="text" class="form-control" id="accountHolder" name="account_holder" required placeholder="Name as per bank records">
+                <input aria-label="Account holder" type="text" class="form-control" id="accountHolder" name="account_holder" required placeholder="Name as per bank records">
             </div>
             
             <div class="mb-3">
                 <label class="form-label fw-bold">IFSC Code *</label>
-                <input type="text" class="form-control" id="ifscCode" name="ifsc_code" required placeholder="e.g., SBIN0001234" pattern="[A-Z]{4}[0-9]{7}" >
+                <input aria-label="Ifsc code" type="text" class="form-control" id="ifscCode" name="ifsc_code" required placeholder="e.g., SBIN0001234" pattern="[A-Z]{4}[0-9]{7}" >
             </div>
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Branch Name</label>
-                <input type="text" class="form-control" id="branchName" name="branch_name" placeholder="e.g., Main Branch, New Delhi">
+                <input aria-label="Branch name" type="text" class="form-control" id="branchName" name="branch_name" placeholder="e.g., Main Branch, New Delhi">
             </div>
             
             <div class="mb-3">
@@ -307,7 +307,7 @@ $bankAddUrl = '/wallet/bank-accounts/add';
             
             <div class="mb-4">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="isPrimary" name="is_primary">
+                    <input aria-label="Is primary" class="form-check-input" type="checkbox" id="isPrimary" name="is_primary">
                     <label class="form-check-label" for="isPrimary">
                         Set as primary bank account
                     </label>
@@ -340,32 +340,32 @@ $bankAddUrl = '/wallet/bank-accounts/add';
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Bank Name *</label>
-                <input type="text" class="form-control" id="editBankName" name="bank_name" required>
+                <input aria-label="Edit bank name" type="text" class="form-control" id="editBankName" name="bank_name" required>
             </div>
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Account Number *</label>
-                <input type="text" class="form-control" id="editAccountNumber" name="account_number" required pattern="[0-9]{9,18}">
+                <input aria-label="Edit account number" type="text" class="form-control" id="editAccountNumber" name="account_number" required pattern="[0-9]{9,18}">
             </div>
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Confirm Account Number *</label>
-                <input type="text" class="form-control" id="editConfirmAccountNumber" required pattern="[0-9]{9,18}">
+                <input aria-label="Edit confirm account number" type="text" class="form-control" id="editConfirmAccountNumber" required pattern="[0-9]{9,18}">
             </div>
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Account Holder Name *</label>
-                <input type="text" class="form-control" id="editAccountHolder" name="account_holder" required>
+                <input aria-label="Edit account holder" type="text" class="form-control" id="editAccountHolder" name="account_holder" required>
             </div>
             
             <div class="mb-3">
                 <label class="form-label fw-bold">IFSC Code *</label>
-                <input type="text" class="form-control" id="editIfscCode" name="ifsc_code" required pattern="[A-Z]{4}[0-9]{7}" >
+                <input aria-label="Edit ifsc code" type="text" class="form-control" id="editIfscCode" name="ifsc_code" required pattern="[A-Z]{4}[0-9]{7}" >
             </div>
             
             <div class="mb-3">
                 <label class="form-label fw-bold">Branch Name</label>
-                <input type="text" class="form-control" id="editBranchName" name="branch_name">
+                <input aria-label="Edit branch name" type="text" class="form-control" id="editBranchName" name="branch_name">
             </div>
             
             <div class="mb-3">

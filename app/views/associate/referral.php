@@ -117,7 +117,7 @@ $tierInfo = $tier_info ?? ['tier' => 'bronze', 'label' => 'Bronze', 'color' => '
         <div class="mb-3">
             <label class="form-label fw-bold"><?= __('assoc_ref_share_link', [], 'Share Link') ?></label>
             <div class="input-group">
-                <input type="text" class="form-control" id="shareLink" value="<?= htmlspecialchars($shareUrl ?? '') ?>" readonly>
+                <input aria-label="Share link" type="text" class="form-control" id="shareLink" value="<?= htmlspecialchars($shareUrl ?? '') ?>" readonly>
                 <button class="btn btn-outline-secondary" type="button" onclick="copyLink()">
                     <i class="fas fa-link me-1"></i> <?= __('assoc_ref_copy', [], 'Copy') ?>
                 </button>

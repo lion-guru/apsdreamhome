@@ -10,19 +10,19 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Level Name</label>
-                        <input name="level_name" class="form-control" value="<?php echo htmlspecialchars($level['level_name'] ?? ''); ?>">
+                        <input aria-label="Level name" name="level_name" class="form-control" value="<?php echo htmlspecialchars($level['level_name'] ?? ''); ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Level Number</label>
-                        <input name="level_number" type="number" class="form-control" value="<?php echo $level['level_number'] ?? ''; ?>">
+                        <input aria-label="Level number" name="level_number" type="number" class="form-control" value="<?php echo $level['level_number'] ?? ''; ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Joining Fee (₹)</label>
-                        <input name="joining_fee" type="number" step="0.01" class="form-control" value="<?php echo $level['joining_fee'] ?? ''; ?>">
+                        <input aria-label="Joining fee" name="joining_fee" type="number" step="0.01" class="form-control" value="<?php echo $level['joining_fee'] ?? ''; ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Monthly Maintenance (₹)</label>
-                        <input name="monthly_maintenance" type="number" step="0.01" class="form-control" value="<?php echo $level['monthly_maintenance'] ?? ''; ?>">
+                        <input aria-label="Monthly maintenance" name="monthly_maintenance" type="number" step="0.01" class="form-control" value="<?php echo $level['monthly_maintenance'] ?? ''; ?>">
                     </div>
                 </div>
             </div>
@@ -34,27 +34,27 @@
                 <div class="card-body aps-cp-card-body">
                     <div class="mb-3">
                         <label class="form-label">Direct Commission (%)</label>
-                        <input name="direct_commission_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['direct_commission_percentage'] ?? ''; ?>">
+                        <input aria-label="Direct commission percentage" name="direct_commission_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['direct_commission_percentage'] ?? ''; ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Team Commission (%)</label>
-                        <input name="team_commission_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['team_commission_percentage'] ?? ''; ?>">
+                        <input aria-label="Team commission percentage" name="team_commission_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['team_commission_percentage'] ?? ''; ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Level Difference (%)</label>
-                        <input name="level_difference_commission_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['level_difference_commission_percentage'] ?? ''; ?>">
+                        <input aria-label="Level difference commission percentage" name="level_difference_commission_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['level_difference_commission_percentage'] ?? ''; ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Matching Bonus (%)</label>
-                        <input name="matching_bonus_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['matching_bonus_percentage'] ?? ''; ?>">
+                        <input aria-label="Matching bonus percentage" name="matching_bonus_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['matching_bonus_percentage'] ?? ''; ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Leadership Bonus (%)</label>
-                        <input name="leadership_bonus_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['leadership_bonus_percentage'] ?? ''; ?>">
+                        <input aria-label="Leadership bonus percentage" name="leadership_bonus_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['leadership_bonus_percentage'] ?? ''; ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Performance Bonus (%)</label>
-                        <input name="performance_bonus_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['performance_bonus_percentage'] ?? ''; ?>">
+                        <input aria-label="Performance bonus percentage" name="performance_bonus_percentage" type="number" step="0.01" class="form-control" value="<?php echo $level['performance_bonus_percentage'] ?? ''; ?>">
                     </div>
                 </div>
             </div>
@@ -67,15 +67,15 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label class="form-label">Team Size Required</label>
-                            <input name="team_size_required" type="number" class="form-control" value="<?php echo $level['team_size_required'] ?? 0; ?>">
+                            <input aria-label="Team size required" name="team_size_required" type="number" class="form-control" value="<?php echo $level['team_size_required'] ?? 0; ?>">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Direct Referrals Required</label>
-                            <input name="direct_referrals_required" type="number" class="form-control" value="<?php echo $level['direct_referrals_required'] ?? 0; ?>">
+                            <input aria-label="Direct referrals required" name="direct_referrals_required" type="number" class="form-control" value="<?php echo $level['direct_referrals_required'] ?? 0; ?>">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Monthly Target (₹)</label>
-                            <input name="monthly_target" type="number" step="0.01" class="form-control" value="<?php echo $level['monthly_target'] ?? ''; ?>">
+                            <input aria-label="Monthly target" name="monthly_target" type="number" step="0.01" class="form-control" value="<?php echo $level['monthly_target'] ?? ''; ?>">
                         </div>
                     </div>
                 </div>

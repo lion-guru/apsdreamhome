@@ -31,11 +31,11 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Khasra / Gata Number</label>
-                        <input type="text" name="khasra_number" class="form-control" maxlength="100">
+                        <input aria-label="Khasra number" type="text" name="khasra_number" class="form-control" maxlength="100">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Land Area <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" min="0" name="land_area" class="form-control" required>
+                        <input aria-label="Land area" type="number" step="0.01" min="0" name="land_area" class="form-control" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Area Unit</label>
@@ -49,24 +49,24 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
 
                     <div class="col-md-4">
                         <label class="form-label">Land Type</label>
-                        <input type="text" name="land_type" class="form-control" maxlength="100" placeholder="e.g. Agricultural">
+                        <input aria-label="Land type" type="text" name="land_type" class="form-control" maxlength="100" placeholder="e.g. Agricultural">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Soil Type</label>
-                        <input type="text" name="soil_type" class="form-control" maxlength="100">
+                        <input aria-label="Soil type" type="text" name="soil_type" class="form-control" maxlength="100">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Irrigation Source</label>
-                        <input type="text" name="irrigation_source" class="form-control" maxlength="100">
+                        <input aria-label="Irrigation source" type="text" name="irrigation_source" class="form-control" maxlength="100">
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label">Water Source</label>
-                        <input type="text" name="water_source" class="form-control" maxlength="100">
+                        <input aria-label="Water source" type="text" name="water_source" class="form-control" maxlength="100">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Road Access</label>
-                        <input type="text" name="road_access" class="form-control" maxlength="100">
+                        <input aria-label="Road access" type="text" name="road_access" class="form-control" maxlength="100">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Electricity Available</label>
@@ -78,28 +78,28 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
 
                     <div class="col-md-6">
                         <label class="form-label">Location</label>
-                        <input type="text" name="location" class="form-control" maxlength="255">
+                        <input aria-label="Location" type="text" name="location" class="form-control" maxlength="255">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Village</label>
-                        <input type="text" name="village" class="form-control" maxlength="100">
+                        <input aria-label="Village" type="text" name="village" class="form-control" maxlength="100">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Tehsil</label>
-                        <input type="text" name="tehsil" class="form-control" maxlength="100">
+                        <input aria-label="Tehsil" type="text" name="tehsil" class="form-control" maxlength="100">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">District</label>
-                        <input type="text" name="district" class="form-control" maxlength="100">
+                        <input aria-label="District" type="text" name="district" class="form-control" maxlength="100">
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label">State</label>
-                        <input type="text" name="state" class="form-control" maxlength="100">
+                        <input aria-label="State" type="text" name="state" class="form-control" maxlength="100">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Land Value (&#8377;)</label>
-                        <input type="number" step="0.01" min="0" name="land_value" class="form-control" value="0">
+                        <input aria-label="Land value" type="number" step="0.01" min="0" name="land_value" class="form-control" value="0">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Current Status</label>
@@ -122,11 +122,11 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
 
                     <div class="col-md-4">
                         <label class="form-label">Acquisition Date</label>
-                        <input type="date" name="acquisition_date" class="form-control">
+                        <input aria-label="Acquisition date" type="date" name="acquisition_date" class="form-control">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Acquisition Amount (&#8377;)</label>
-                        <input type="number" step="0.01" min="0" name="acquisition_amount" class="form-control" value="0">
+                        <input aria-label="Acquisition amount" type="number" step="0.01" min="0" name="acquisition_amount" class="form-control" value="0">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Payment Status</label>
@@ -139,15 +139,15 @@ $farmer_id = $farmer_id ?? ($farmer['id'] ?? 0);
 
                     <div class="col-md-4">
                         <label class="form-label">Payment Received (&#8377;)</label>
-                        <input type="number" step="0.01" min="0" name="payment_received" class="form-control" value="0">
+                        <input aria-label="Payment received" type="number" step="0.01" min="0" name="payment_received" class="form-control" value="0">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Ownership Document Ref</label>
-                        <input type="text" name="ownership_document" class="form-control" maxlength="255">
+                        <input aria-label="Ownership document" type="text" name="ownership_document" class="form-control" maxlength="255">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Mutation Document Ref</label>
-                        <input type="text" name="mutation_document" class="form-control" maxlength="255">
+                        <input aria-label="Mutation document" type="text" name="mutation_document" class="form-control" maxlength="255">
                     </div>
 
                     <div class="col-12">

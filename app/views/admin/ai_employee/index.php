@@ -78,7 +78,7 @@ $csrf = $_SESSION['csrf_token'] ?? '';
             </div>
             <div class="col-md-3">
                 <label class="form-label">Lead ID</label>
-                <input type="number" name="lead_id" class="form-control" required min="1">
+                <input aria-label="Lead id" type="number" name="lead_id" class="form-control" required min="1">
             </div>
             <div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Queue task</button></div>
         </form>

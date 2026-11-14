@@ -6,7 +6,7 @@
   </div>
   <form class="row g-2 mb-4" method="get">
     <?php echo CSRFProtection::csrfField(); ?>
-    <div class="col-auto"><input type="date" name="date" class="form-control" value="<?= $filter_date ?>"></div>
+    <div class="col-auto"><input aria-label="Date" type="date" name="date" class="form-control" value="<?= $filter_date ?>"></div>
     <div class="col-auto"><select aria-label="Log type" name="log_type" class="form-select">
       <option value=""><?= __('admin_all_types') ?></option>
       <?php foreach(['site_visit','client_meeting','collection','payment_received','cheque_collected','document_submission','registry','mutation','legal_update','construction_update','other'] as $t): ?>

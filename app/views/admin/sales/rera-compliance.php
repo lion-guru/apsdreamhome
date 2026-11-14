@@ -62,7 +62,7 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 <input type="hidden" name="colony_id" value="<?= $selected_colony ?>">
                 <div class="col-md-2">
                     <label class="form-label small"><?= __('sale_year') ?></label>
-                    <input type="number" name="year" value="<?= (int)date('Y') ?>" class="form-control form-control-sm" required>
+                    <input aria-label="Year" type="number" name="year" value="<?= (int)date('Y') ?>" class="form-control form-control-sm" required>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small"><?= __('sale_quarter') ?></label>
@@ -74,11 +74,11 @@ $base = defined('BASE_URL') ? BASE_URL : '';
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small"><?= __('sale_construction_pct') ?></label>
-                    <input type="number" step="0.01" name="progress" min="0" max="100" class="form-control form-control-sm" required>
+                    <input aria-label="Progress" type="number" step="0.01" name="progress" min="0" max="100" class="form-control form-control-sm" required>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small"><?= __('sale_escrow_withdrawn_label') ?></label>
-                    <input type="number" step="0.01" name="withdrawn" value="0" class="form-control form-control-sm" required>
+                    <input aria-label="Withdrawn" type="number" step="0.01" name="withdrawn" value="0" class="form-control form-control-sm" required>
                 </div>
                 <div class="col-md-2">
                     <button class="btn btn-sm btn-primary" type="submit"><i class="fas fa-save me-1"></i><?= __('sale_save') ?></button>

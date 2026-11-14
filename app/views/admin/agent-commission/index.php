@@ -202,7 +202,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/apsdreamhome';
                     </div>
                     <div class="mb-3">
                         <label>Commission %</label>
-                        <input type="number" name="commission_pct" step="0.01" min="0" max="100" value="5.00" required>
+                        <input aria-label="Commission pct" type="number" name="commission_pct" step="0.01" min="0" max="100" value="5.00" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fas fa-link me-1"></i>Assign Agent

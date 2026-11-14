@@ -120,7 +120,7 @@
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
                                 <div class="col-6"><label class="small text-muted">Room Type</label><select aria-label="Cost room type" class="form-select form-select-sm" id="costRoomType"><option>Bedroom</option><option>Living Room</option><option>Kitchen</option><option selected>Full Home</option><option>Bathroom</option></select></div>
-                                <div class="col-6"><label class="small text-muted">Area (sq ft)</label><input type="number" class="form-control form-control-sm" id="costArea" value="1000" min="100"></div>
+                                <div class="col-6"><label class="small text-muted">Area (sq ft)</label><input aria-label="Cost area" type="number" class="form-control form-control-sm" id="costArea" value="1000" min="100"></div>
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-6"><label class="small text-muted">Quality</label><select aria-label="Cost quality" class="form-select form-select-sm" id="costQuality"><option value="basic">Basic</option><option value="standard" selected>Standard</option><option value="premium">Premium</option><option value="luxury">Luxury</option></select></div>
@@ -146,8 +146,8 @@
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
-                                <div class="col-4"><label class="small text-muted">Width (ft)</label><input type="number" class="form-control form-control-sm" id="plannerW" value="12" min="4" max="50"></div>
-                                <div class="col-4"><label class="small text-muted">Length (ft)</label><input type="number" class="form-control form-control-sm" id="plannerL" value="14" min="4" max="50"></div>
+                                <div class="col-4"><label class="small text-muted">Width (ft)</label><input aria-label="Planner w" type="number" class="form-control form-control-sm" id="plannerW" value="12" min="4" max="50"></div>
+                                <div class="col-4"><label class="small text-muted">Length (ft)</label><input aria-label="Planner l" type="number" class="form-control form-control-sm" id="plannerL" value="14" min="4" max="50"></div>
                                 <div class="col-4"><label class="small text-muted">Convert to</label><select aria-label="Planner unit" class="form-select form-select-sm" id="plannerUnit"><option value="sqft">Sq Ft</option><option value="sqm">Sq Meters</option><option value="sqyd">Sq Yards</option><option value="gaj">Gaj</option></select></div>
                             </div>
                             <button class="btn btn-sm btn-success" onclick="planRoom()"><i class="fas fa-arrows-alt me-1"></i>Calculate</button>
@@ -166,7 +166,7 @@
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
-                                <div class="col-6"><label class="small text-muted">Total Budget (₹)</label><input type="number" class="form-control form-control-sm" id="budgetTotal" value="500000" min="5000" step="10000"></div>
+                                <div class="col-6"><label class="small text-muted">Total Budget (₹)</label><input aria-label="Budget total" type="number" class="form-control form-control-sm" id="budgetTotal" value="500000" min="5000" step="10000"></div>
                                 <div class="col-6"><label class="small text-muted">Home Type</label><select aria-label="Budget type" class="form-select form-select-sm" id="budgetType"><option value="1bhk">1 BHK</option><option value="2bhk" selected>2 BHK</option><option value="3bhk">3 BHK</option><option value="villa">Villa</option></select></div>
                             </div>
                             <button class="btn btn-sm btn-warning" onclick="planBudget()"><i class="fas fa-pie-chart me-1"></i>Plan Budget</button>
@@ -211,8 +211,8 @@
                     <div class="collapse">
                         <div class="card card-body border-0 bg-light text-start mt-2">
                             <div class="row g-2 mb-3">
-                                <div class="col-4"><label class="small text-muted">Room Width (ft)</label><input type="number" class="form-control form-control-sm" id="roomW" value="12" min="6" max="30"></div>
-                                <div class="col-4"><label class="small text-muted">Room Length (ft)</label><input type="number" class="form-control form-control-sm" id="roomL" value="14" min="6" max="40"></div>
+                                <div class="col-4"><label class="small text-muted">Room Width (ft)</label><input aria-label="Room w" type="number" class="form-control form-control-sm" id="roomW" value="12" min="6" max="30"></div>
+                                <div class="col-4"><label class="small text-muted">Room Length (ft)</label><input aria-label="Room l" type="number" class="form-control form-control-sm" id="roomL" value="14" min="6" max="40"></div>
                                 <div class="col-4"><label class="small text-muted">Room Type</label><select aria-label="Furniture type" class="form-select form-select-sm" id="furnitureType"><option>Living Room</option><option>Bedroom</option><option selected>Dining Room</option><option>Home Office</option></select></div>
                             </div>
                             <button class="btn btn-sm btn-success mb-3" onclick="planFurniture()"><i class="fas fa-arrows-alt me-1"></i>Plan Layout</button>
@@ -479,9 +479,9 @@ function planBudget() {
                                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             <input type="hidden" name="service_type" value="interior">
                             <div class="row g-3">
-                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_name') ?> <span class="text-danger">*</span></label><input type="text" name="name" class="form-control form-control-lg" required></div>
-                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_phone') ?> <span class="text-danger">*</span></label><input type="tel" name="phone" class="form-control form-control-lg" required></div>
-                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_email') ?></label><input type="email" name="email" class="form-control form-control-lg"></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_name') ?> <span class="text-danger">*</span></label><input aria-label="Name" type="text" name="name" class="form-control form-control-lg" required></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_phone') ?> <span class="text-danger">*</span></label><input aria-label="Phone" type="tel" name="phone" class="form-control form-control-lg" required></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_email') ?></label><input aria-label="Email" type="email" name="email" class="form-control form-control-lg"></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_property_type') ?></label>
                                     <select aria-label="Property type" name="property_type" class="form-select form-select-lg">
                                         <option value=""><?= __('id_form_select') ?></option>
@@ -491,7 +491,7 @@ function planBudget() {
                                         <option value="office"><?= __('id_form_office') ?></option>
                                     </select>
                                 </div>
-                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_area') ?></label><input type="number" name="area" class="form-control form-control-lg" placeholder="<?= __('id_form_area_placeholder') ?>"></div>
+                                <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_area') ?></label><input aria-label="Area" type="number" name="area" class="form-control form-control-lg" placeholder="<?= __('id_form_area_placeholder') ?>"></div>
                                 <div class="col-md-6"><label class="form-label fw-medium"><?= __('id_form_budget') ?></label>
                                     <select aria-label="Budget" name="budget" class="form-select form-select-lg">
                                         <option value=""><?= __('id_form_budget_select') ?></option>

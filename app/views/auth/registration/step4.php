@@ -72,7 +72,7 @@ $verified = $_GET['verified'] ?? '';
                     </div>
                     <?php if (!$emailVerified): ?>
                         <div class="input-group">
-                            <input type="text" name="email_otp" class="form-control" placeholder="6-digit OTP" maxlength="6" pattern="[0-9]{6}">
+                            <input aria-label="Email otp" type="text" name="email_otp" class="form-control" placeholder="6-digit OTP" maxlength="6" pattern="[0-9]{6}">
                             <button type="button" class="btn btn-success" onclick="verifyOtp('email')">
                                 <i class="fas fa-check me-1"></i> Verify
                             </button>
@@ -95,7 +95,7 @@ $verified = $_GET['verified'] ?? '';
                     </div>
                     <?php if (!$phoneVerified): ?>
                         <div class="input-group">
-                            <input type="text" name="phone_otp" class="form-control" placeholder="6-digit OTP" maxlength="6" pattern="[0-9]{6}">
+                            <input aria-label="Phone otp" type="text" name="phone_otp" class="form-control" placeholder="6-digit OTP" maxlength="6" pattern="[0-9]{6}">
                             <button type="button" class="btn btn-success" onclick="verifyOtp('phone')">
                                 <i class="fas fa-check me-1"></i> Verify
                             </button>
@@ -105,7 +105,7 @@ $verified = $_GET['verified'] ?? '';
 
                 <div class="mb-3">
                     <label class="form-label">Captcha * <small class="text-muted">(type the characters shown above)</small></label>
-                    <input type="text" name="captcha" class="form-control" required placeholder="Enter the code above" >
+                    <input aria-label="Captcha" type="text" name="captcha" class="form-control" required placeholder="Enter the code above" >
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">

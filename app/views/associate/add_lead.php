@@ -48,15 +48,15 @@ $properties = $properties ?? [];
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label"><?= __('assoc_al_full_name', [], 'Full Name') ?> <span class="required-star">*</span></label>
-                    <input type="text" class="form-control" name="name" required placeholder="<?= __('assoc_al_name_placeholder', [], 'e.g. Rajesh Kumar') ?>" id="leadName">
+                    <input aria-label="Name" type="text" class="form-control" name="name" required placeholder="<?= __('assoc_al_name_placeholder', [], 'e.g. Rajesh Kumar') ?>" id="leadName">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('assoc_al_phone', [], 'Phone Number') ?> <span class="required-star">*</span></label>
-                    <input type="tel" class="form-control" name="phone" required placeholder="<?= __('assoc_al_phone_placeholder', [], '10-digit mobile number') ?>" pattern="[0-9]{10}" maxlength="10" id="leadPhone">
+                    <input aria-label="Phone" type="tel" class="form-control" name="phone" required placeholder="<?= __('assoc_al_phone_placeholder', [], '10-digit mobile number') ?>" pattern="[0-9]{10}" maxlength="10" id="leadPhone">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('assoc_al_email', [], 'Email Address') ?></label>
-                    <input type="email" class="form-control" name="email" placeholder="name@example.com">
+                    <input aria-label="Email" type="email" class="form-control" name="email" placeholder="name@example.com">
                 </div>
             </div>
         </div>
@@ -92,7 +92,7 @@ $properties = $properties ?? [];
                 </div>
                 <div class="col-md-4">
                     <label class="form-label"><?= __('assoc_al_location', [], 'Preferred Location') ?></label>
-                    <input type="text" class="form-control" name="location_preference" placeholder="<?= __('assoc_al_location_placeholder', [], 'e.g. Suryoday Colony') ?>">
+                    <input aria-label="Location preference" type="text" class="form-control" name="location_preference" placeholder="<?= __('assoc_al_location_placeholder', [], 'e.g. Suryoday Colony') ?>">
                 </div>
             </div>
         </div>

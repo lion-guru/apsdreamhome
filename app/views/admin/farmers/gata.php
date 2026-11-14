@@ -53,19 +53,19 @@ $gataRecords = $gata_records ?? [];
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Site ID</label>
-                        <input type="number" name="site_id" class="form-control" required>
+                        <input aria-label="Site id" type="number" name="site_id" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Gata No</label>
-                        <input type="text" name="gata_no" class="form-control" required>
+                        <input aria-label="Gata no" type="text" name="gata_no" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Total Area (sq.ft)</label>
-                        <input type="number" step="0.01" name="area" class="form-control" required>
+                        <input aria-label="Area" type="number" step="0.01" name="area" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Available Area (sq.ft)</label>
-                        <input type="number" step="0.01" name="available_area" class="form-control">
+                        <input aria-label="Available area" type="number" step="0.01" name="available_area" class="form-control">
                         <small class="text-muted">Leave empty to use total area</small>
                     </div>
                 </div>

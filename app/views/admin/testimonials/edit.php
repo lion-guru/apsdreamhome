@@ -12,15 +12,15 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Customer Name</label>
-                                    <input type="text" name="customer_name" class="form-control" value="<?php echo htmlspecialchars($testimonial['customer_name'] ?? ''); ?>" required>
+                                    <input aria-label="Customer name" type="text" name="customer_name" class="form-control" value="<?php echo htmlspecialchars($testimonial['customer_name'] ?? ''); ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Customer Email</label>
-                                    <input type="email" name="customer_email" class="form-control" value="<?php echo htmlspecialchars($testimonial['customer_email'] ?? ''); ?>">
+                                    <input aria-label="Customer email" type="email" name="customer_email" class="form-control" value="<?php echo htmlspecialchars($testimonial['customer_email'] ?? ''); ?>">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Customer Phone</label>
-                                    <input type="text" name="customer_phone" class="form-control" value="<?php echo htmlspecialchars($testimonial['customer_phone'] ?? ''); ?>">
+                                    <input aria-label="Customer phone" type="text" name="customer_phone" class="form-control" value="<?php echo htmlspecialchars($testimonial['customer_phone'] ?? ''); ?>">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -45,7 +45,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Display on Website</label>
                                     <div class="form-check">
-                                        <input type="checkbox" name="is_featured" class="form-check-input" id="is_featured" value="1" <?php echo !empty($testimonial['is_featured']) ? 'checked' : ''; ?>>
+                                        <input aria-label="Is featured" type="checkbox" name="is_featured" class="form-check-input" id="is_featured" value="1" <?php echo !empty($testimonial['is_featured']) ? 'checked' : ''; ?>>
                                         <label class="form-check-label" for="is_featured">Featured Testimonial</label>
                                     </div>
                                 </div>

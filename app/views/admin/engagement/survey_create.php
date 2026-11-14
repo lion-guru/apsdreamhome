@@ -51,7 +51,7 @@ $surveyTypes = $surveyTypes ?? [];
                 <div class="row g-3">
                     <div class="col-md-8">
                         <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required value="<?= htmlspecialchars($survey['title'] ?? '') ?>" placeholder="e.g., Q4 Employee Pulse Survey">
+                        <input aria-label="Title" type="text" name="title" class="form-control" required value="<?= htmlspecialchars($survey['title'] ?? '') ?>" placeholder="e.g., Q4 Employee Pulse Survey">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Type</label>
@@ -73,21 +73,21 @@ $surveyTypes = $surveyTypes ?? [];
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Start Date</label>
-                        <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($survey['start_date'] ?? '') ?>">
+                        <input aria-label="Start date" type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($survey['start_date'] ?? '') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">End Date</label>
-                        <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($survey['end_date'] ?? '') ?>">
+                        <input aria-label="End date" type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($survey['end_date'] ?? '') ?>">
                     </div>
                     <div class="col-md-4">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="is_anonymous" value="1" id="is_anonymous" <?= empty($survey['is_anonymous']) ? '' : 'checked' ?>>
+                            <input aria-label="Is anonymous" class="form-check-input" type="checkbox" name="is_anonymous" value="1" id="is_anonymous" <?= empty($survey['is_anonymous']) ? '' : 'checked' ?>>
                             <label class="form-check-label" for="is_anonymous">Anonymous Responses</label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-check form-switch mt-3">
-                            <input class="form-check-input" type="checkbox" name="allow_multiple" value="1" id="allow_multiple" <?= empty($survey['allow_multiple']) ? '' : 'checked' ?>>
+                            <input aria-label="Allow multiple" class="form-check-input" type="checkbox" name="allow_multiple" value="1" id="allow_multiple" <?= empty($survey['allow_multiple']) ? '' : 'checked' ?>>
                             <label class="form-check-label" for="allow_multiple">Allow Multiple Responses</label>
                         </div>
                     </div>
@@ -127,7 +127,7 @@ $surveyTypes = $surveyTypes ?? [];
                         <div class="row g-3">
                             <div class="col-md-8">
                                 <label class="form-label fw-semibold small">Question Text <span class="text-danger">*</span></label>
-                                <input type="text" name="questions[<?= $index ?>][text]" class="form-control" required value="<?= htmlspecialchars($q['text'] ?? '') ?>" placeholder="Enter your question...">
+                                <input aria-label="Questions index text" type="text" name="questions[<?= $index ?>][text]" class="form-control" required value="<?= htmlspecialchars($q['text'] ?? '') ?>" placeholder="Enter your question...">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold small">Type</label>
@@ -139,7 +139,7 @@ $surveyTypes = $surveyTypes ?? [];
                             </div>
                             <div class="col-md-2">
                                 <div class="form-check form-switch mt-3">
-                                    <input class="form-check-input" type="checkbox" name="questions[<?= $index ?>][required]" value="1" id="req_<?= $index ?>" <?= empty($q['required']) ? '' : 'checked' ?>>
+                                    <input aria-label="Questions index required" class="form-check-input" type="checkbox" name="questions[<?= $index ?>][required]" value="1" id="req_<?= $index ?>" <?= empty($q['required']) ? '' : 'checked' ?>>
                                     <label class="form-check-label small" for="req_<?= $index ?>">Required</label>
                                 </div>
                             </div>
@@ -152,10 +152,10 @@ $surveyTypes = $surveyTypes ?? [];
                                 <label class="form-label fw-semibold small">Scale Range</label>
                                 <div class="row g-2">
                                     <div class="col-md-6">
-                                        <input type="number" min="1" max="10" name="questions[<?= $index ?>][scale_min]" class="form-control" value="<?= $q['scale_min'] ?? 1 ?>" placeholder="Min (e.g., 1)">
+                                        <input aria-label="Questions index scale min" type="number" min="1" max="10" name="questions[<?= $index ?>][scale_min]" class="form-control" value="<?= $q['scale_min'] ?? 1 ?>" placeholder="Min (e.g., 1)">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="number" min="2" max="10" name="questions[<?= $index ?>][scale_max]" class="form-control" value="<?= $q['scale_max'] ?? 5 ?>" placeholder="Max (e.g., 5, 10)">
+                                        <input aria-label="Questions index scale max" type="number" min="2" max="10" name="questions[<?= $index ?>][scale_max]" class="form-control" value="<?= $q['scale_max'] ?? 5 ?>" placeholder="Max (e.g., 5, 10)">
                                     </div>
                                 </div>
                             </div>
@@ -179,7 +179,7 @@ $surveyTypes = $surveyTypes ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Redirect URL (after completion)</label>
-                        <input type="url" name="settings[redirect_url]" class="form-control" value="<?= htmlspecialchars($survey['settings']['redirect_url'] ?? '') ?>" placeholder="https://...">
+                        <input aria-label="Settings redirect url" type="url" name="settings[redirect_url]" class="form-control" value="<?= htmlspecialchars($survey['settings']['redirect_url'] ?? '') ?>" placeholder="https://...">
                     </div>
                 </div>
             </div>
@@ -214,7 +214,7 @@ function addQuestion() {
             <div class="row g-3">
                 <div class="col-md-8">
                     <label class="form-label fw-semibold small">Question Text <span class="text-danger">*</span></label>
-                    <input type="text" name="questions[${index}][text]" class="form-control" required placeholder="Enter your question...">
+                    <input aria-label="Questions index text" type="text" name="questions[${index}][text]" class="form-control" required placeholder="Enter your question...">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold small">Type</label>
@@ -226,7 +226,7 @@ function addQuestion() {
                 </div>
                 <div class="col-md-2">
                     <div class="form-check form-switch mt-3">
-                        <input class="form-check-input" type="checkbox" name="questions[${index}][required]" value="1" id="req_${index}" checked>
+                        <input aria-label="Questions index required" class="form-check-input" type="checkbox" name="questions[${index}][required]" value="1" id="req_${index}" checked>
                         <label class="form-check-label small" for="req_${index}">Required</label>
                     </div>
                 </div>
@@ -239,10 +239,10 @@ function addQuestion() {
                     <label class="form-label fw-semibold small">Scale Range</label>
                     <div class="row g-2">
                         <div class="col-md-6">
-                            <input type="number" min="1" max="10" name="questions[${index}][scale_min]" class="form-control" value="1" placeholder="Min">
+                            <input aria-label="Questions index scale min" type="number" min="1" max="10" name="questions[${index}][scale_min]" class="form-control" value="1" placeholder="Min">
                         </div>
                         <div class="col-md-6">
-                            <input type="number" min="2" max="10" name="questions[${index}][scale_max]" class="form-control" value="5" placeholder="Max">
+                            <input aria-label="Questions index scale max" type="number" min="2" max="10" name="questions[${index}][scale_max]" class="form-control" value="5" placeholder="Max">
                         </div>
                     </div>
                 </div>

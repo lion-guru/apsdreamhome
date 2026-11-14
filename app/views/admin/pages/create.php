@@ -19,11 +19,11 @@ $page_title = $page_title ?? "Create Page";
                         <div class="row g-3 mb-4">
                             <div class="col-md-8">
                                 <label class="form-label fw-semibold">Page Title <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="title" required placeholder="Enter page title">
+                                <input aria-label="Title" type="text" class="form-control" name="title" required placeholder="Enter page title">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">Slug <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="slug" required placeholder="page-slug" pattern="[a-z0-9-]+">
+                                <input aria-label="Slug" type="text" class="form-control" name="slug" required placeholder="page-slug" pattern="[a-z0-9-]+">
                                 <div class="form-text">URL-friendly identifier (lowercase, numbers, hyphens)</div>
                             </div>
                         </div>
@@ -35,7 +35,7 @@ $page_title = $page_title ?? "Create Page";
                         
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Meta Keywords</label>
-                            <input type="text" class="form-control" name="meta_keywords" placeholder="keyword1, keyword2, keyword3">
+                            <input aria-label="Meta keywords" type="text" class="form-control" name="meta_keywords" placeholder="keyword1, keyword2, keyword3">
                         </div>
                         
                         <div class="mb-4">

@@ -80,7 +80,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input js-toggle-alert" type="checkbox"
+                                        <input aria-label="int s" class="form-check-input js-toggle-alert" type="checkbox"
                                                data-search-id="<?= (int)$s['id'] ?>"
                                                id="alertSwitch<?= (int)$s['id'] ?>"
                                                <?= $alertsOn ? 'checked' : '' ?>>

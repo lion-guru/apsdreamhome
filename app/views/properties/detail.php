@@ -375,17 +375,17 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
                     <input type="hidden" name="property_id" value="<?= $property['id'] ?? 0 ?>">
                     <div class="mb-3">
                         <label class="form-label">Your Name</label>
-                        <input type="text" name="name" class="form-control" placeholder="Full name" required
+                        <input aria-label="Name" type="text" name="name" class="form-control" placeholder="Full name" required
                                value="<?= htmlspecialchars($_SESSION['user_name'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Phone Number</label>
-                        <input type="tel" name="mobile" class="form-control" pattern="[0-9]{10}" placeholder="10-digit number" required
+                        <input aria-label="Mobile" type="tel" name="mobile" class="form-control" pattern="[0-9]{10}" placeholder="10-digit number" required
                                value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" placeholder="your@email.com" required
+                        <input aria-label="Email" type="email" name="email" class="form-control" placeholder="your@email.com" required
                                value="<?= htmlspecialchars($_SESSION['user_email'] ?? '') ?>">
                     </div>
                     <div class="mb-3">
@@ -478,11 +478,11 @@ if ($jsonLd) { $seo = is_array($seo ?? null) ? $seo : []; $seo['json_ld'] = $jso
             <div class="row mb-3">
                 <div class="col-md-6 mb-3 mb-md-0">
                     <label class="form-label">Name *</label>
-                    <input type="text" name="name" class="form-control" required>
+                    <input aria-label="Name" type="text" name="name" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Email *</label>
-                    <input type="email" name="email" class="form-control" required>
+                    <input aria-label="Email" type="email" name="email" class="form-control" required>
                 </div>
             </div>
             <div class="mb-3">

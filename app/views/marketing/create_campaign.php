@@ -5,7 +5,7 @@
         <div class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">Campaign Name <span class="text-danger">*</span></label>
-                <input type="text" name="name" class="form-control" required>
+                <input aria-label="Name" type="text" name="name" class="form-control" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Type</label>
@@ -21,11 +21,11 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label">Start Date</label>
-                <input type="date" name="start_date" class="form-control">
+                <input aria-label="Start date" type="date" name="start_date" class="form-control">
             </div>
             <div class="col-md-6">
                 <label class="form-label">End Date</label>
-                <input type="date" name="end_date" class="form-control">
+                <input aria-label="End date" type="date" name="end_date" class="form-control">
             </div>
         </div>
         <button type="submit" class="btn btn-warning mt-3"><i class="fas fa-rocket me-1"></i>Create Campaign</button>

@@ -35,11 +35,11 @@ $isEdit = !empty($payment['id']);
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">Amount (₹) <span class="text-danger">*</span></label>
-                                <input type="number" name="amount" step="0.01" class="form-control form-control-sm" required value="<?= htmlspecialchars($payment['amount'] ?? '') ?>">
+                                <input aria-label="Amount" type="number" name="amount" step="0.01" class="form-control form-control-sm" required value="<?= htmlspecialchars($payment['amount'] ?? '') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small">Payment Date <span class="text-danger">*</span></label>
-                                <input type="date" name="payment_date" class="form-control form-control-sm" required value="<?= htmlspecialchars($payment['payment_date'] ?? date('Y-m-d')) ?>">
+                                <input aria-label="Payment date" type="date" name="payment_date" class="form-control form-control-sm" required value="<?= htmlspecialchars($payment['payment_date'] ?? date('Y-m-d')) ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small">Mode</label>
@@ -61,11 +61,11 @@ $isEdit = !empty($payment['id']);
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">Reference # (Cheque/DD/UTR)</label>
-                                <input type="text" name="reference_number" class="form-control form-control-sm" value="<?= htmlspecialchars($payment['reference_number'] ?? '') ?>">
+                                <input aria-label="Reference number" type="text" name="reference_number" class="form-control form-control-sm" value="<?= htmlspecialchars($payment['reference_number'] ?? '') ?>">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">Bank Name</label>
-                                <input type="text" name="bank_name" class="form-control form-control-sm" value="<?= htmlspecialchars($payment['bank_name'] ?? '') ?>">
+                                <input aria-label="Bank name" type="text" name="bank_name" class="form-control form-control-sm" value="<?= htmlspecialchars($payment['bank_name'] ?? '') ?>">
                             </div>
                             <div class="col-12">
                                 <label class="form-label small">Remarks</label>

@@ -73,7 +73,7 @@ $page_title = $page_title ?? 'Withdraw Funds';
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Amount (₹)</label>
-                        <input type="number" name="amount" class="form-control" required min="1000" step="100" max="<?= $walletBalance ?>">
+                        <input aria-label="Amount" type="number" name="amount" class="form-control" required min="1000" step="100" max="<?= $walletBalance ?>">
                         <div class="form-text">Min: ₹1,000 | Max: ₹<?= number_format($walletBalance, 2) ?></div>
                     </div>
                 </div>

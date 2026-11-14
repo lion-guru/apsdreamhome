@@ -10,11 +10,11 @@
                     <div class="card-body p-4">
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="propVal"><?php echo __('property_value_rs', [], 'Property Value (₹)'); ?></label>
-                            <input type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcTax()">
+                            <input aria-label="Prop val" type="number" class="form-control form-control-lg" id="propVal" value="5000000" oninput="calcTax()">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="area"><?php echo __('area_sqft', [], 'Area (sq ft)'); ?></label>
-                            <input type="number" class="form-control" id="area" value="1500" oninput="calcTax()">
+                            <input aria-label="Area" type="number" class="form-control" id="area" value="1500" oninput="calcTax()">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold" for="propType"><?php echo __('property_type', [], 'Property Type'); ?></label>

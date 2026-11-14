@@ -286,7 +286,7 @@ $early_settlement = $early_settlement ?? [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Amount (₹)</label>
-                    <input type="number" name="amount" class="form-control" min="1" step="1" required>
+                    <input aria-label="Amount" type="number" name="amount" class="form-control" min="1" step="1" required>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
@@ -301,7 +301,7 @@ $early_settlement = $early_settlement ?? [];
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Transaction ID</label>
-                        <input type="text" name="transaction_id" class="form-control" placeholder="Optional">
+                        <input aria-label="Transaction id" type="text" name="transaction_id" class="form-control" placeholder="Optional">
                     </div>
                 </div>
                 <div class="mb-3">
@@ -327,41 +327,41 @@ $early_settlement = $early_settlement ?? [];
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input aria-label="Name" type="text" name="name" class="form-control" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Phone <span class="text-danger">*</span></label>
-                        <input type="text" name="phone" class="form-control" required>
+                        <input aria-label="Phone" type="text" name="phone" class="form-control" required>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control">
+                        <input aria-label="Email" type="email" name="email" class="form-control">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">PAN Number</label>
-                        <input type="text" name="pan_number" class="form-control" placeholder="ABCDE1234F">
+                        <input aria-label="Pan number" type="text" name="pan_number" class="form-control" placeholder="ABCDE1234F">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Aadhar Number</label>
-                        <input type="text" name="aadhar_number" class="form-control" placeholder="1234 1234 1234">
+                        <input aria-label="Aadhar number" type="text" name="aadhar_number" class="form-control" placeholder="1234 1234 1234">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Occupation</label>
-                        <input type="text" name="occupation" class="form-control">
+                        <input aria-label="Occupation" type="text" name="occupation" class="form-control">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Annual Income (₹)</label>
-                        <input type="number" name="annual_income" class="form-control" min="0">
+                        <input aria-label="Annual income" type="number" name="annual_income" class="form-control" min="0">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Relationship</label>
-                        <input type="text" name="relationship" class="form-control" placeholder="e.g., Spouse, Parent">
+                        <input aria-label="Relationship" type="text" name="relationship" class="form-control" placeholder="e.g., Spouse, Parent">
                     </div>
                 </div>
                 <div class="mb-3">
@@ -428,7 +428,7 @@ $early_settlement = $early_settlement ?? [];
                 <?php endif; ?>
                 <div class="mb-3">
                     <label class="form-label">Settlement Amount (₹) <span class="text-danger">*</span></label>
-                    <input type="number" name="settlement_amount" class="form-control" min="1" step="1" required value="<?= round($early_settlement['settlement_amount'] ?? 0) ?>">
+                    <input aria-label="Settlement amount" type="number" name="settlement_amount" class="form-control" min="1" step="1" required value="<?= round($early_settlement['settlement_amount'] ?? 0) ?>">
                 </div>
                 <p class="text-danger small"><i class="fas fa-exclamation-triangle me-1"></i>This action is irreversible. All remaining installments will be marked as paid.</p>
             </div>

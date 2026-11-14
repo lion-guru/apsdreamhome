@@ -30,7 +30,7 @@
         <option value="<?= $p ?>" <?= ($filters['priority'] ?? '') === $p ? 'selected' : '' ?>><?= ucfirst($p) ?></option>
       <?php endforeach; ?>
     </select></div>
-    <div class="col-auto"><input type="text" name="search" class="form-control form-control-sm" placeholder="<?= __('admin_search_placeholder') ?>" value="<?= htmlspecialchars($filters['search'] ?? '') ?>"></div>
+    <div class="col-auto"><input aria-label="Search" type="text" name="search" class="form-control form-control-sm" placeholder="<?= __('admin_search_placeholder') ?>" value="<?= htmlspecialchars($filters['search'] ?? '') ?>"></div>
     <div class="col-auto"><button class="btn btn-primary btn-sm"><?= __('admin_filter_btn') ?></button></div>
   </form>
 

@@ -80,7 +80,7 @@
                             </select>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" name="comment" placeholder="Add a comment (optional)">
+                            <input aria-label="Comment" type="text" class="form-control" name="comment" placeholder="Add a comment (optional)">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -100,10 +100,10 @@
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="row g-3">
                         <div class="col-md-5">
-                            <input type="number" class="form-control" name="user_id" placeholder="User ID">
+                            <input aria-label="User id" type="number" class="form-control" name="user_id" placeholder="User ID">
                         </div>
                         <div class="col-md-5">
-                            <input type="text" class="form-control" name="role" placeholder="Role (e.g. legal_head)">
+                            <input aria-label="Role" type="text" class="form-control" name="role" placeholder="Role (e.g. legal_head)">
                         </div>
                         <div class="col-md-2">
                             <button type="submit" class="btn btn-primary w-100">Assign</button>
@@ -125,7 +125,7 @@
                         </div>
                         <div class="col-12">
                             <label class="form-check">
-                                <input type="checkbox" name="is_internal" value="1" class="form-check-input">
+                                <input aria-label="Is internal" type="checkbox" name="is_internal" value="1" class="form-check-input">
                                 <label class="form-check-label">Internal comment (not visible to requester)</label>
                             </label>
                             <button type="submit" class="btn btn-sm btn-primary">Add Comment</button>

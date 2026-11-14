@@ -21,7 +21,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                     <div class="aps-cp-card-header"><i class="fas fa-cog me-2"></i>Template Details</div>
                     <div class="aps-cp-card-body">
                         <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label">Name</label><input type="text" name="name" class="form-control" value="<?= htmlspecialchars($template['name'] ?? '') ?>" required></div>
+                            <div class="col-md-6"><label class="form-label">Name</label><input aria-label="Name" type="text" name="name" class="form-control" value="<?= htmlspecialchars($template['name'] ?? '') ?>" required></div>
                             <div class="col-md-6"><label class="form-label">Category</label><select aria-label="Category id" name="category_id" class="form-select"><?php foreach ($categories as $c): ?><option value="<?= $c['id'] ?>" <?= ($template['category_id'] ?? '') == $c['id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['name'] ?? '') ?></option><?php endforeach; ?></select></div>
                             <div class="col-md-4"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><option value="draft" <?= $template['status'] === 'draft' ? 'selected' : '' ?>>Draft</option><option value="active" <?= $template['status'] === 'active' ? 'selected' : '' ?>>Active</option><option value="archived" <?= $template['status'] === 'archived' ? 'selected' : '' ?>>Archived</option></select></div>
                             <div class="col-md-4"><label class="form-label">Language</label><select aria-label="Language" name="language" class="form-select"><option value="en" <?= ($template['language'] ?? 'en') === 'en' ? 'selected' : '' ?>>English</option><option value="hi" <?= ($template['language'] ?? '') === 'hi' ? 'selected' : '' ?>>Hindi</option></select></div>
@@ -47,7 +47,7 @@ if (!$template) { echo '<div class="container-fluid py-4"><div class="alert aler
                                     <?php endforeach; ?>
                                 </div>
                             </div>
-                            <small class="text-muted ms-2">Change notes: <input type="text" name="change_notes" class="form-control-sm" placeholder="What changed?" ></small>
+                            <small class="text-muted ms-2">Change notes: <input aria-label="Change notes" type="text" name="change_notes" class="form-control-sm" placeholder="What changed?" ></small>
                         </div>
                         <textarea aria-label="Content" name="content" id="content" class="form-control font-monospace" rows="20"><?= htmlspecialchars($template['content'] ?? '') ?></textarea>
                     </div>

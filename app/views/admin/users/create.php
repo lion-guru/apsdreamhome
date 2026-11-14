@@ -17,19 +17,19 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="name" required>
+                            <input aria-label="Name" type="text" class="form-control" name="name" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" name="email" required>
+                            <input aria-label="Email" type="email" class="form-control" name="email" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Phone</label>
-                            <input type="text" class="form-control" name="phone" maxlength="10">
+                            <input aria-label="Phone" type="text" class="form-control" name="phone" maxlength="10">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="password" required value="Aps@2026">
+                            <input aria-label="Password" type="text" class="form-control" name="password" required value="Aps@2026">
                             <div class="form-text">Default: Aps@2026</div>
                         </div>
                         <div class="col-md-6">
@@ -102,15 +102,15 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Designation</label>
-                                    <input type="text" class="form-control" name="designation" placeholder="e.g. Executive, Sr. Executive, Team Lead">
+                                    <input aria-label="Designation" type="text" class="form-control" name="designation" placeholder="e.g. Executive, Sr. Executive, Team Lead">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Salary (₹/month)</label>
-                                    <input type="number" class="form-control" name="salary" step="100" min="0">
+                                    <input aria-label="Salary" type="number" class="form-control" name="salary" step="100" min="0">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Joining Date</label>
-                                    <input type="date" class="form-control" name="join_date" value="<?= date('Y-m-d') ?>">
+                                    <input aria-label="Join date" type="date" class="form-control" name="join_date" value="<?= date('Y-m-d') ?>">
                                 </div>
                             </div>
                         </div>
@@ -122,11 +122,11 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Occupation</label>
-                                    <input type="text" class="form-control" name="occupation" placeholder="e.g. Real Estate Advisor">
+                                    <input aria-label="Occupation" type="text" class="form-control" name="occupation" placeholder="e.g. Real Estate Advisor">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">Sponsor/Referral Code <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" name="referral_code" id="adminReferralCode" placeholder="Enter sponsor's referral code" required>
+                                    <input aria-label="Referral code" type="text" class="form-control" name="referral_code" id="adminReferralCode" placeholder="Enter sponsor's referral code" required>
                                 </div>
                                 <div class="col-12">
                                     <div id="adminReferralNameDisplay" class="mt-2"></div>

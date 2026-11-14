@@ -70,19 +70,19 @@ $baseUrl = defined('BASE_URL') ? BASE_URL : '';
                                 </select>
                             <?php elseif ($field['type'] === 'checkbox'): ?>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" id="field_<?= md5($field['label']) ?>">
+                                    <input aria-label="htmlspecialchars field" type="checkbox" class="form-check-input" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" id="field_<?= md5($field['label']) ?>">
                                     <label class="form-check-label" for="field_<?= md5($field['label']) ?>"><?= htmlspecialchars($field['label'] ?? '') ?></label>
                                 </div>
                             <?php elseif ($field['type'] === 'email'): ?>
-                                <input type="email" class="form-control" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" 
+                                <input aria-label="htmlspecialchars field" type="email" class="form-control" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" 
                                     placeholder="<?= htmlspecialchars($field['placeholder'] ?? 'email@example.com') ?>" 
                                     <?= !empty($field['required']) ? 'required' : '' ?>>
                             <?php elseif ($field['type'] === 'phone'): ?>
-                                <input type="tel" class="form-control" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" 
+                                <input aria-label="htmlspecialchars field" type="tel" class="form-control" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" 
                                     placeholder="<?= htmlspecialchars($field['placeholder'] ?? '+91 9876543210') ?>" 
                                     pattern="[0-9+\s()-]{10,}" <?= !empty($field['required']) ? 'required' : '' ?>>
                             <?php else: ?>
-                                <input type="text" class="form-control" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" 
+                                <input aria-label="htmlspecialchars field" type="text" class="form-control" name="<?= htmlspecialchars($field['name'] ?? $field['label']) ?>" 
                                     placeholder="<?= htmlspecialchars($field['placeholder'] ?? '') ?>" 
                                     <?= !empty($field['required']) ? 'required' : '' ?>>
                             <?php endif; ?>

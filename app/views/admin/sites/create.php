@@ -27,7 +27,7 @@ $active_page = 'sites';
 
                     <div class="mb-3">
                         <label for="site_name" class="form-label">Site Name *</label>
-                        <input type="text" class="form-control" id="site_name" name="site_name" required>
+                        <input aria-label="Site name" type="text" class="form-control" id="site_name" name="site_name" required>
                         <div class="form-text">Enter a descriptive name for the site</div>
                     </div>
 
@@ -41,20 +41,20 @@ $active_page = 'sites';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="city" class="form-label">City</label>
-                                <input type="text" class="form-control" id="city" name="city">
+                                <input aria-label="City" type="text" class="form-control" id="city" name="city">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="state" class="form-label">State</label>
-                                <input type="text" class="form-control" id="state" name="state">
+                                <input aria-label="State" type="text" class="form-control" id="state" name="state">
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="pincode" class="form-label">Pincode</label>
-                        <input type="text" class="form-control" id="pincode" name="pincode">
+                        <input aria-label="Pincode" type="text" class="form-control" id="pincode" name="pincode">
                     </div>
 
                     <div class="row">
@@ -90,13 +90,13 @@ $active_page = 'sites';
 
                     <div class="mb-3">
                         <label for="total_area" class="form-label">Total Area (sq ft) *</label>
-                        <input type="number" class="form-control" id="total_area" name="total_area" step="0.01" required>
+                        <input aria-label="Total area" type="number" class="form-control" id="total_area" name="total_area" step="0.01" required>
                         <div class="form-text">Total area of the site in square feet</div>
                     </div>
 
                     <div class="mb-3">
                         <label for="developed_area" class="form-label">Developed Area (sq ft)</label>
-                        <input type="number" class="form-control" id="developed_area" name="developed_area" step="0.01" value="0">
+                        <input aria-label="Developed area" type="number" class="form-control" id="developed_area" name="developed_area" step="0.01" value="0">
                         <div class="form-text">Area that has been developed</div>
                     </div>
 
@@ -106,13 +106,13 @@ $active_page = 'sites';
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="latitude" class="form-label">Latitude</label>
-                                <input type="number" class="form-control" id="latitude" name="latitude" step="0.00000001" placeholder="28.6139">
+                                <input aria-label="Latitude" type="number" class="form-control" id="latitude" name="latitude" step="0.00000001" placeholder="28.6139">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="longitude" class="form-label">Longitude</label>
-                                <input type="number" class="form-control" id="longitude" name="longitude" step="0.00000001" placeholder="77.2090">
+                                <input aria-label="Longitude" type="number" class="form-control" id="longitude" name="longitude" step="0.00000001" placeholder="77.2090">
                             </div>
                         </div>
                     </div>
@@ -147,7 +147,7 @@ $active_page = 'sites';
                     <h5 class="mb-3"><i class="fas fa-image"></i> Media</h5>
                     <div class="mb-3">
                         <label for="image" class="form-label">Featured Image</label>
-                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <input aria-label="Image" type="file" class="form-control" id="image" name="image" accept="image/*">
                         <div class="form-text">Recommended size: 800x600px</div>
                     </div>
                 </div>

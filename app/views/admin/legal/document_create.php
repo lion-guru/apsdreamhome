@@ -22,11 +22,11 @@ $merge_fields = $merge_fields ?? [];
                     <div class="aps-cp-card-header"><i class="fas fa-info-circle me-2"></i>Document Details</div>
                     <div class="aps-cp-card-body">
                         <div class="row g-3">
-                            <div class="col-12"><label class="form-label">Title</label><input type="text" name="title" class="form-control" required placeholder="e.g. Booking Terms & Conditions - Plot 42"></div>
+                            <div class="col-12"><label class="form-label">Title</label><input aria-label="Title" type="text" name="title" class="form-control" required placeholder="e.g. Booking Terms & Conditions - Plot 42"></div>
                             <div class="col-md-6"><label class="form-label">Template (optional)</label><select aria-label="Template id" name="template_id" class="form-select" id="templateSelect"><option value="">No template (enter content manually)</option><?php foreach ($templates as $t): ?><option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['name'] ?? '') ?> (v<?= (int)($t['version'] ?? 1) ?>)</option><?php endforeach; ?></select></div>
-                            <div class="col-md-6"><label class="form-label">Document Number (leave blank for auto)</label><input type="text" name="document_number" class="form-control" placeholder="LEG-2026-XXXX"></div>
-                            <div class="col-md-4"><label class="form-label">Effective Date</label><input type="date" name="effective_date" class="form-control" value="<?= date('Y-m-d') ?>"></div>
-                            <div class="col-md-4"><label class="form-label">Expiry Date</label><input type="date" name="expiry_date" class="form-control"></div>
+                            <div class="col-md-6"><label class="form-label">Document Number (leave blank for auto)</label><input aria-label="Document number" type="text" name="document_number" class="form-control" placeholder="LEG-2026-XXXX"></div>
+                            <div class="col-md-4"><label class="form-label">Effective Date</label><input aria-label="Effective date" type="date" name="effective_date" class="form-control" value="<?= date('Y-m-d') ?>"></div>
+                            <div class="col-md-4"><label class="form-label">Expiry Date</label><input aria-label="Expiry date" type="date" name="expiry_date" class="form-control"></div>
                             <div class="col-md-4"><label class="form-label">Status</label><select aria-label="Status" name="status" class="form-select"><option value="draft">Draft</option><option value="final">Final</option></select></div>
                         </div>
                     </div>

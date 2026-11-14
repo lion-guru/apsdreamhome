@@ -120,7 +120,7 @@ $refundPct = $plotPrice > 0 ? round($refundAmount / $plotPrice * 100, 1) : 0;
                 </div>
                 <div class="col-md-6">
                     <label class="form-label"><?= __('sale_cancellation_charge') ?></label>
-                    <input type="number" step="0.01" name="cancellation_charge" value="<?= $deductionAmount ?>" class="form-control" id="cancelCharge">
+                    <input aria-label="Cancellation charge" type="number" step="0.01" name="cancellation_charge" value="<?= $deductionAmount ?>" class="form-control" id="cancelCharge">
                     <small class="text-muted">Auto-calculated: <?= $deductionPct ?>% of ₹<?= number_format($bookingAmount, 2) ?></small>
                 </div>
                 <div class="col-12">
@@ -132,7 +132,7 @@ $refundPct = $plotPrice > 0 ? round($refundAmount / $plotPrice * 100, 1) : 0;
             <!-- ═══ LEGAL COMPLIANCE: Admin Confirmation Checkbox ═══ -->
             <div class="border border-danger rounded-3 p-3 mt-4" style="background: #fff5f5;">
                 <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" id="adminConfirmDeduction"
+                    <input aria-label="Admin confirm deduction" class="form-check-input" type="checkbox" id="adminConfirmDeduction"
                            style="border-color: #dc3545; width: 1.3em; height: 1.3em; margin-top: 0.15em;">
                     <label class="form-check-label fw-semibold" for="adminConfirmDeduction" style="font-size: 0.92rem; line-height: 1.5; color: #1a1a2e;">
                         <i class="fas fa-calculator text-danger me-1"></i>
@@ -140,7 +140,7 @@ $refundPct = $plotPrice > 0 ? round($refundAmount / $plotPrice * 100, 1) : 0;
                     </label>
                 </div>
                 <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" id="adminConfirmPlotRelease"
+                    <input aria-label="Admin confirm plot release" class="form-check-input" type="checkbox" id="adminConfirmPlotRelease"
                            style="border-color: #dc3545; width: 1.3em; height: 1.3em; margin-top: 0.15em;">
                     <label class="form-check-label fw-semibold" for="adminConfirmPlotRelease" style="font-size: 0.92rem; line-height: 1.5; color: #1a1a2e;">
                         <i class="fas fa-home text-danger me-1"></i>
@@ -148,7 +148,7 @@ $refundPct = $plotPrice > 0 ? round($refundAmount / $plotPrice * 100, 1) : 0;
                     </label>
                 </div>
                 <div class="form-check mb-0">
-                    <input class="form-check-input" type="checkbox" id="adminConfirmLegal"
+                    <input aria-label="Admin confirm legal" class="form-check-input" type="checkbox" id="adminConfirmLegal"
                            style="border-color: #dc3545; width: 1.3em; height: 1.3em; margin-top: 0.15em;">
                     <label class="form-check-label fw-semibold" for="adminConfirmLegal" style="font-size: 0.92rem; line-height: 1.5; color: #1a1a2e;">
                         <i class="fas fa-gavel text-danger me-1"></i>

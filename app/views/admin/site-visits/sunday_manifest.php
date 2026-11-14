@@ -21,7 +21,7 @@ $e = function ($v) { return htmlspecialchars((string)($v ?? '')); };
     <div class="toolbar">
         <strong>Sunday Dispatch Manifest</strong>
         <form method="GET" class="d-flex gap-2 ms-auto">
-            <input type="date" name="date" class="form-control form-control-sm" value="<?= $e($date) ?>" onchange="this.form.submit()">
+            <input aria-label="Date" type="date" name="date" class="form-control form-control-sm" value="<?= $e($date) ?>" onchange="this.form.submit()">
         </form>
         <button class="btn btn-primary btn-sm" onclick="window.print()"><i class="fas fa-print me-1"></i>Print All</button>
     </div>

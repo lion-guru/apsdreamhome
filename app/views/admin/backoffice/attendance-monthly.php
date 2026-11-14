@@ -8,7 +8,7 @@ $month = $month ?? date('Y-m');
   <form class="row g-2 mb-4" method="get">
     <?php echo CSRFProtection::csrfField(); ?>
     <div class="col-auto">
-      <input type="month" name="month" class="form-control" value="<?= $month ?>">
+      <input aria-label="Month" type="month" name="month" class="form-control" value="<?= $month ?>">
     </div>
     <div class="col-auto">
       <button class="btn btn-primary"><?= __('bko_filter') ?></button>

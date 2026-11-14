@@ -204,15 +204,15 @@ function lvDays($d) { return (int)$d; }
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Emergency Contact</label>
-                            <input type="text" name="emergency_contact" class="form-control" placeholder="Phone number">
+                            <input aria-label="Emergency contact" type="text" name="emergency_contact" class="form-control" placeholder="Phone number">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Start Date <span class="text-danger">*</span></label>
-                            <input type="date" name="start_date" class="form-control" required min="<?= date('Y-m-d') ?>">
+                            <input aria-label="Start date" type="date" name="start_date" class="form-control" required min="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">End Date <span class="text-danger">*</span></label>
-                            <input type="date" name="end_date" class="form-control" required min="<?= date('Y-m-d') ?>">
+                            <input aria-label="End date" type="date" name="end_date" class="form-control" required min="<?= date('Y-m-d') ?>">
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Reason <span class="text-danger">*</span></label>
@@ -220,7 +220,7 @@ function lvDays($d) { return (int)$d; }
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold">Work Coverage Plan</label>
-                            <input type="text" name="work_coverage" class="form-control" placeholder="Who will cover your responsibilities? (optional)">
+                            <input aria-label="Work coverage" type="text" name="work_coverage" class="form-control" placeholder="Who will cover your responsibilities? (optional)">
                         </div>
                     </div>
                 </div>

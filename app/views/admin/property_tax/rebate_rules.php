@@ -31,11 +31,11 @@ $csrf = $this->getCsrfToken();
                 <div class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label">Rule Name <span class="text-danger">*</span></label>
-                        <input type="text" name="rule_name" class="form-control" required placeholder="e.g., Early Payment Rebate">
+                        <input aria-label="Rule name" type="text" name="rule_name" class="form-control" required placeholder="e.g., Early Payment Rebate">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Rule Code <span class="text-danger">*</span></label>
-                        <input type="text" name="rule_code" class="form-control" required placeholder="e.g., early_payment">
+                        <input aria-label="Rule code" type="text" name="rule_code" class="form-control" required placeholder="e.g., early_payment">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Rebate Type</label>
@@ -46,19 +46,19 @@ $csrf = $this->getCsrfToken();
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Rebate Value</label>
-                        <input type="number" step="0.01" name="rebate_value" class="form-control" value="0" required>
+                        <input aria-label="Rebate value" type="number" step="0.01" name="rebate_value" class="form-control" value="0" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Max Rebate Amount</label>
-                        <input type="number" step="0.01" name="max_rebate_amount" class="form-control" placeholder="Optional cap">
+                        <input aria-label="Max rebate amount" type="number" step="0.01" name="max_rebate_amount" class="form-control" placeholder="Optional cap">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Effective From</label>
-                        <input type="date" name="effective_from" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input aria-label="Effective from" type="date" name="effective_from" class="form-control" value="<?= date('Y-m-d') ?>" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Effective To</label>
-                        <input type="date" name="effective_to" class="form-control">
+                        <input aria-label="Effective to" type="date" name="effective_to" class="form-control">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Applicable Tax Types</label>
@@ -73,7 +73,7 @@ $csrf = $this->getCsrfToken();
                     </div>
                     <div class="col-md-3">
                         <div class="form-check mt-4">
-                            <input class="form-check-input" type="checkbox" name="is_active" id="isActive" checked>
+                            <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="isActive" checked>
                             <label class="form-check-label" for="isActive">Active</label>
                         </div>
                     </div>
@@ -166,11 +166,11 @@ $csrf = $this->getCsrfToken();
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Rule Name <span class="text-danger">*</span></label>
-                                <input type="text" name="rule_name" class="form-control" id="editRuleName" required>
+                                <input aria-label="Rule name" type="text" name="rule_name" class="form-control" id="editRuleName" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Rule Code <span class="text-danger">*</span></label>
-                                <input type="text" name="rule_code" class="form-control" id="editRuleCode" required>
+                                <input aria-label="Rule code" type="text" name="rule_code" class="form-control" id="editRuleCode" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Rebate Type</label>
@@ -181,19 +181,19 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Rebate Value</label>
-                                <input type="number" step="0.01" name="rebate_value" class="form-control" id="editRebateValue" required>
+                                <input aria-label="Rebate value" type="number" step="0.01" name="rebate_value" class="form-control" id="editRebateValue" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Max Rebate Amount</label>
-                                <input type="number" step="0.01" name="max_rebate_amount" class="form-control" id="editMaxRebate">
+                                <input aria-label="Max rebate amount" type="number" step="0.01" name="max_rebate_amount" class="form-control" id="editMaxRebate">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Effective From</label>
-                                <input type="date" name="effective_from" class="form-control" id="editEffectiveFrom" required>
+                                <input aria-label="Effective from" type="date" name="effective_from" class="form-control" id="editEffectiveFrom" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Effective To</label>
-                                <input type="date" name="effective_to" class="form-control" id="editEffectiveTo">
+                                <input aria-label="Effective to" type="date" name="effective_to" class="form-control" id="editEffectiveTo">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Applicable Tax Types</label>
@@ -208,7 +208,7 @@ $csrf = $this->getCsrfToken();
                             </div>
                             <div class="col-md-6">
                                 <div class="form-check mt-4">
-                                    <input class="form-check-input" type="checkbox" name="is_active" id="editIsActive">
+                                    <input aria-label="Is active" class="form-check-input" type="checkbox" name="is_active" id="editIsActive">
                                     <label class="form-check-label" for="editIsActive">Active</label>
                                 </div>
                             </div>

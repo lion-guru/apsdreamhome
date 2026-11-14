@@ -72,20 +72,20 @@ $grnRecords = $grnRecords ?? [];
         <form id="grnForm" method="POST" action="<?= BASE_URL ?>/admin/purchase-orders/receive/<?= $order['id'] ?? '' ?>">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
             <div class="row">
-                <div class="col-md-4"><label>GRN Number</label><input type="text" name="grn_number" class="form-control" value="GRN-<?= date('YmdHis') ?>"></div>
-                <div class="col-md-4"><label>Invoice Number</label><input type="text" name="invoice_number" class="form-control"></div>
-                <div class="col-md-4"><label>Invoice Date</label><input type="date" name="invoice_date" class="form-control" value="<?= date('Y-m-d') ?>"></div>
-                <div class="col-md-4"><label>Transport Name</label><input type="text" name="transport_name" class="form-control"></div>
-                <div class="col-md-4"><label>Vehicle Number</label><input type="text" name="vehicle_number" class="form-control"></div>
-                <div class="col-md-4"><label>Driver Name</label><input type="text" name="driver_name" class="form-control"></div>
-                <div class="col-md-4"><label>Driver Phone</label><input type="text" name="driver_phone" class="form-control"></div>
-                <div class="col-md-4"><label>Challan Number</label><input type="text" name="challan_number" class="form-control"></div>
-                <div class="col-md-4"><label>Challan Date</label><input type="date" name="challan_date" class="form-control"></div>
+                <div class="col-md-4"><label>GRN Number</label><input aria-label="Grn number" type="text" name="grn_number" class="form-control" value="GRN-<?= date('YmdHis') ?>"></div>
+                <div class="col-md-4"><label>Invoice Number</label><input aria-label="Invoice number" type="text" name="invoice_number" class="form-control"></div>
+                <div class="col-md-4"><label>Invoice Date</label><input aria-label="Invoice date" type="date" name="invoice_date" class="form-control" value="<?= date('Y-m-d') ?>"></div>
+                <div class="col-md-4"><label>Transport Name</label><input aria-label="Transport name" type="text" name="transport_name" class="form-control"></div>
+                <div class="col-md-4"><label>Vehicle Number</label><input aria-label="Vehicle number" type="text" name="vehicle_number" class="form-control"></div>
+                <div class="col-md-4"><label>Driver Name</label><input aria-label="Driver name" type="text" name="driver_name" class="form-control"></div>
+                <div class="col-md-4"><label>Driver Phone</label><input aria-label="Driver phone" type="text" name="driver_phone" class="form-control"></div>
+                <div class="col-md-4"><label>Challan Number</label><input aria-label="Challan number" type="text" name="challan_number" class="form-control"></div>
+                <div class="col-md-4"><label>Challan Date</label><input aria-label="Challan date" type="date" name="challan_date" class="form-control"></div>
             </div>
             <h6 class="mt-3">Item Receipt</h6>
             <table class="table table-sm"><thead><tr><th scope="col">Item</th><th scope="col">Ordered</th><th scope="col">Accepted Qty</th></tr></thead><tbody>
             <?php foreach ($items as $item): ?>
-                <tr><td><?= htmlspecialchars($item['item_name']) ?></td><td><?= $item['quantity'] ?></td><td><input type="hidden" name="items_po_id[]" value="<?= $item['id'] ?>"><input type="number" name="items_accepted[]" class="form-control form-control-sm" step="0.01" min="0" max="<?= $item['quantity'] ?>" value="0"></td></tr>
+                <tr><td><?= htmlspecialchars($item['item_name']) ?></td><td><?= $item['quantity'] ?></td><td><input type="hidden" name="items_po_id[]" value="<?= $item['id'] ?>"><input aria-label="Items accepted" type="number" name="items_accepted[]" class="form-control form-control-sm" step="0.01" min="0" max="<?= $item['quantity'] ?>" value="0"></td></tr>
             <?php endforeach; ?>
             </tbody></table>
             <div class="mt-3"><label>Remarks</label><textarea aria-label="Remarks" name="remarks" class="form-control" rows="2"></textarea></div>

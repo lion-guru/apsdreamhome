@@ -34,7 +34,7 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input" id="auto_reply_enabled" name="auto_reply_enabled" <?= !empty($settings['auto_reply_enabled']) ? 'checked' : '' ?>>
+                                        <input aria-label="Auto reply enabled" type="checkbox" class="custom-control-input" id="auto_reply_enabled" name="auto_reply_enabled" <?= !empty($settings['auto_reply_enabled']) ? 'checked' : '' ?>>
                                         <label class="custom-control-label" for="auto_reply_enabled"><strong>Enable Auto-Reply</strong></label>
                                     </div>
                                     <small class="text-muted">When enabled, the AI will automatically respond to incoming messages.</small>
@@ -56,13 +56,13 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Business Hours Start</label>
-                                            <input type="time" name="business_hours_start" class="form-control" value="<?= htmlspecialchars($settings['business_hours_start'] ?? '09:00') ?>">
+                                            <input aria-label="Business hours start" type="time" name="business_hours_start" class="form-control" value="<?= htmlspecialchars($settings['business_hours_start'] ?? '09:00') ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Business Hours End</label>
-                                            <input type="time" name="business_hours_end" class="form-control" value="<?= htmlspecialchars($settings['business_hours_end'] ?? '19:00') ?>">
+                                            <input aria-label="Business hours end" type="time" name="business_hours_end" class="form-control" value="<?= htmlspecialchars($settings['business_hours_end'] ?? '19:00') ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -81,7 +81,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Max Auto-Replies Before Human Handoff</label>
-                                            <input type="number" name="max_auto_replies" class="form-control" value="<?= (int)($settings['max_auto_replies'] ?? 5) ?>" min="1" max="20">
+                                            <input aria-label="Max auto replies" type="number" name="max_auto_replies" class="form-control" value="<?= (int)($settings['max_auto_replies'] ?? 5) ?>" min="1" max="20">
                                             <small class="text-muted">After this many AI replies, conversation is flagged for human agent.</small>
                                         </div>
                                     </div>

@@ -52,11 +52,11 @@ $page_title = 'Create Deal - APS Dream Home';
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Deal Value (₹ Lakhs)</label>
-                                <input type="number" step="0.01" class="form-control" name="deal_value" required placeholder="e.g. 50.00">
+                                <input aria-label="Deal value" type="number" step="0.01" class="form-control" name="deal_value" required placeholder="e.g. 50.00">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Expected Close Date</label>
-                                <input type="date" class="form-control" name="expected_close_date" required min="<?= date('Y-m-d') ?>">
+                                <input aria-label="Expected close date" type="date" class="form-control" name="expected_close_date" required min="<?= date('Y-m-d') ?>">
                             </div>
                         </div>
 

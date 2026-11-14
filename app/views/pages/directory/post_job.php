@@ -18,7 +18,7 @@
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Title *</label>
-                            <input type="text" name="title" class="form-control" required placeholder="e.g. Experienced Mason Needed or Looking for Plumbing Work">
+                            <input aria-label="Title" type="text" name="title" class="form-control" required placeholder="e.g. Experienced Mason Needed or Looking for Plumbing Work">
                         </div>
 
                         <div class="row">
@@ -70,22 +70,22 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Location</label>
-                                <input type="text" name="location" class="form-control" placeholder="e.g. Patna, Bihar">
+                                <input aria-label="Location" type="text" name="location" class="form-control" placeholder="e.g. Patna, Bihar">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Salary / Pay Range</label>
-                                <input type="text" name="salary_range" class="form-control" placeholder="e.g. ₹500-800/day or ₹15,000-25,000/month">
+                                <input aria-label="Salary range" type="text" name="salary_range" class="form-control" placeholder="e.g. ₹500-800/day or ₹15,000-25,000/month">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Contact Phone *</label>
-                                <input type="text" name="contact_phone" class="form-control" required placeholder="9876543210">
+                                <input aria-label="Contact phone" type="text" name="contact_phone" class="form-control" required placeholder="9876543210">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Contact Person</label>
-                                <input type="text" name="contact_person" class="form-control" placeholder="Your name">
+                                <input aria-label="Contact person" type="text" name="contact_person" class="form-control" placeholder="Your name">
                             </div>
                         </div>
 

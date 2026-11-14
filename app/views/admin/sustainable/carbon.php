@@ -71,17 +71,17 @@ $csrf = $_SESSION['csrf_token'] ?? '';
                 <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                 <div class="modal-header"><h5 class="modal-title">Add Carbon Credit Entry</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
-                    <div class="mb-3"><label class="form-label">Credit Type</label><input type="text" name="credit_type" class="form-control" placeholder="e.g. renewable_energy" required></div>
+                    <div class="mb-3"><label class="form-label">Credit Type</label><input aria-label="Credit type" type="text" name="credit_type" class="form-control" placeholder="e.g. renewable_energy" required></div>
                     <div class="row">
                         <div class="col-md-6 mb-3"><label class="form-label">Reference Type</label><select aria-label="Reference type" name="reference_type" class="form-select"><option value="project">Project</option><option value="plot">Plot</option><option value="audit">Audit</option></select></div>
-                        <div class="col-md-6 mb-3"><label class="form-label">Reference ID</label><input type="number" name="reference_id" class="form-control"></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Reference ID</label><input aria-label="Reference id" type="number" name="reference_id" class="form-control"></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 mb-3"><label class="form-label">Credits Earned (t)</label><input type="number" step="0.01" name="credits_earned" class="form-control" required></div>
-                        <div class="col-md-6 mb-3"><label class="form-label">Value / Credit (₹)</label><input type="number" step="0.01" name="value_per_credit" class="form-control" value="0"></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Credits Earned (t)</label><input aria-label="Credits earned" type="number" step="0.01" name="credits_earned" class="form-control" required></div>
+                        <div class="col-md-6 mb-3"><label class="form-label">Value / Credit (₹)</label><input aria-label="Value per credit" type="number" step="0.01" name="value_per_credit" class="form-control" value="0"></div>
                     </div>
-                    <div class="mb-3"><label class="form-label">Credit Date</label><input type="date" name="credit_date" class="form-control" value="<?= date('Y-m-d') ?>"></div>
-                    <div class="form-check"><input class="form-check-input" type="checkbox" name="verified" id="v"><label class="form-check-label" for="v">Verified</label></div>
+                    <div class="mb-3"><label class="form-label">Credit Date</label><input aria-label="Credit date" type="date" name="credit_date" class="form-control" value="<?= date('Y-m-d') ?>"></div>
+                    <div class="form-check"><input aria-label="Verified" class="form-check-input" type="checkbox" name="verified" id="v"><label class="form-check-label" for="v">Verified</label></div>
                 </div>
                 <div class="modal-footer"><button type="submit" class="btn btn-warning">Save</button></div>
             </form>

@@ -152,18 +152,18 @@
     <?php echo CSRFProtection::csrfField(); ?>
                         <div class="mb-3">
                             <label class="form-label">Selected EMI</label>
-                            <input type="text" class="form-control" id="selectedEmi" readonly placeholder="Select an EMI">
+                            <input aria-label="Selected emi" type="text" class="form-control" id="selectedEmi" readonly placeholder="Select an EMI">
                             <input type="hidden" id="emiId" name="emi_id">
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label">EMI Amount</label>
-                            <input type="text" class="form-control" id="emiAmount" readonly placeholder="₹0.00">
+                            <input aria-label="Emi amount" type="text" class="form-control" id="emiAmount" readonly placeholder="₹0.00">
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label">Transfer Amount</label>
-                            <input type="number" class="form-control" id="transferAmount" name="amount" placeholder="Enter amount" min="1" step="0.01">
+                            <input aria-label="Transfer amount" type="number" class="form-control" id="transferAmount" name="amount" placeholder="Enter amount" min="1" step="0.01">
                             <small class="text-muted">Max: ₹<?php echo number_format($wallet['points_balance'], 2); ?></small>
                         </div>
                         

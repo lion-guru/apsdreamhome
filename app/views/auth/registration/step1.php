@@ -45,27 +45,27 @@ $old = $old ?? [];
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token ?? '') ?>">
                 <div class="mb-3">
                     <label class="form-label">Full Name *</label>
-                    <input type="text" name="name" class="form-control" required minlength="2"
+                    <input aria-label="Name" type="text" name="name" class="form-control" required minlength="2"
                            value="<?= htmlspecialchars($old['name'] ?? ($state['form_data']['name'] ?? '')) ?>" placeholder="e.g. Amit Kumar">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email *</label>
-                    <input type="email" name="email" class="form-control" required
+                    <input aria-label="Email" type="email" name="email" class="form-control" required
                            value="<?= htmlspecialchars($old['email'] ?? ($state['form_data']['email'] ?? '')) ?>" placeholder="you@example.com">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Phone *</label>
-                    <input type="tel" name="phone" class="form-control" required pattern="[0-9+\-\s]{7,15}"
+                    <input aria-label="Phone" type="tel" name="phone" class="form-control" required pattern="[0-9+\-\s]{7,15}"
                            value="<?= htmlspecialchars($old['phone'] ?? ($state['form_data']['phone'] ?? '')) ?>" placeholder="+91 9876543210">
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Password *</label>
-                        <input type="password" name="password" class="form-control" required minlength="6" placeholder="Min 6 chars">
+                        <input aria-label="Password" type="password" name="password" class="form-control" required minlength="6" placeholder="Min 6 chars">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Confirm *</label>
-                        <input type="password" name="confirm_password" class="form-control" required minlength="6">
+                        <input aria-label="Confirm password" type="password" name="confirm_password" class="form-control" required minlength="6">
                     </div>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-4">

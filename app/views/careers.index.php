@@ -24,7 +24,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label small">Location</label>
-                            <input type="text" class="form-control form-control-sm" name="location" placeholder="City" value="<?= htmlspecialchars($_GET['location'] ?? '') ?>">
+                            <input aria-label="Location" type="text" class="form-control form-control-sm" name="location" placeholder="City" value="<?= htmlspecialchars($_GET['location'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label small">Type</label>

@@ -22,13 +22,13 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">New Image (optional)</label>
-                        <input type="file" class="form-control form-control-lg" name="image" accept="image/*">
+                        <input aria-label="Image" type="file" class="form-control form-control-lg" name="image" accept="image/*">
                         <div class="form-text">Leave empty to keep current image.</div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Title</label>
-                        <input type="text" class="form-control" name="title" value="<?= htmlspecialchars($image['title'] ?? '') ?>" maxlength="255">
+                        <input aria-label="Title" type="text" class="form-control" name="title" value="<?= htmlspecialchars($image['title'] ?? '') ?>" maxlength="255">
                     </div>
 
                     <div class="row mb-3">
@@ -49,13 +49,13 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Sort Order</label>
-                            <input type="number" class="form-control" name="sort_order" value="<?= (int)($image['sort_order'] ?? 0) ?>" min="0">
+                            <input aria-label="Sort order" type="number" class="form-control" name="sort_order" value="<?= (int)($image['sort_order'] ?? 0) ?>" min="0">
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Caption</label>
-                        <input type="text" class="form-control" name="caption" value="<?= htmlspecialchars($image['caption'] ?? '') ?>" maxlength="255">
+                        <input aria-label="Caption" type="text" class="form-control" name="caption" value="<?= htmlspecialchars($image['caption'] ?? '') ?>" maxlength="255">
                     </div>
 
                     <div class="mb-4">

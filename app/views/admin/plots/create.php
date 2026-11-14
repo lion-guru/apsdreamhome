@@ -49,13 +49,13 @@
                                     <div class="col-md-3">
                                         <div class="mb-3">
                                             <label class="form-label">Plot Number *</label>
-                                            <input type="text" class="form-control" name="plot_number" required placeholder="e.g., A-101">
+                                            <input aria-label="Plot number" type="text" class="form-control" name="plot_number" required placeholder="e.g., A-101">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="mb-3">
                                             <label class="form-label">Block</label>
-                                            <input type="text" class="form-control" name="block" placeholder="e.g., A, B, C">
+                                            <input aria-label="Block" type="text" class="form-control" name="block" placeholder="e.g., A, B, C">
                                         </div>
                                     </div>
                                 </div>
@@ -77,7 +77,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Gata (free text, agar parcel me na ho)</label>
-                                            <input type="text" class="form-control" name="gata_number" id="gata_number" placeholder="e.g., Gata 1206">
+                                            <input aria-label="Gata number" type="text" class="form-control" name="gata_number" id="gata_number" placeholder="e.g., Gata 1206">
                                             <small class="text-muted">Parcel chuna to ye ignore hoga (parcel jeetega).</small>
                                         </div>
                                     </div>
@@ -136,39 +136,39 @@
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Width (ft)</label>
-                                        <input type="number" class="form-control" name="width_ft" step="0.01" id="width_ft" onchange="calcCreateDim()">
+                                        <input aria-label="Width ft" type="number" class="form-control" name="width_ft" step="0.01" id="width_ft" onchange="calcCreateDim()">
                                         <small class="text-muted">e.g., 20 for 20x40</small>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Length (ft)</label>
-                                        <input type="number" class="form-control" name="length_ft" step="0.01" id="length_ft" onchange="calcCreateDim()">
+                                        <input aria-label="Length ft" type="number" class="form-control" name="length_ft" step="0.01" id="length_ft" onchange="calcCreateDim()">
                                         <small class="text-muted">e.g., 40 for 20x40</small>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Dimension Label</label>
-                                        <input type="text" class="form-control" name="dimension_label" id="dimension_label" placeholder="20x40" readonly>
+                                        <input aria-label="Dimension label" type="text" class="form-control" name="dimension_label" id="dimension_label" placeholder="20x40" readonly>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Area (sqft) *</label>
-                                        <input type="number" class="form-control" name="area_sqft" min="1" step="0.01" required id="area_sqft" onchange="calcCreatePps()">
+                                        <input aria-label="Area sqft" type="number" class="form-control" name="area_sqft" min="1" step="0.01" required id="area_sqft" onchange="calcCreatePps()">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Area (sqm)</label>
-                                        <input type="number" class="form-control" name="area_sqm" step="0.01" value="0">
+                                        <input aria-label="Area sqm" type="number" class="form-control" name="area_sqm" step="0.01" value="0">
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Frontage (ft)</label>
-                                        <input type="number" class="form-control" name="frontage_ft" step="0.01" value="0">
+                                        <input aria-label="Frontage ft" type="number" class="form-control" name="frontage_ft" step="0.01" value="0">
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Depth (ft)</label>
-                                        <input type="number" class="form-control" name="depth_ft" step="0.01" value="0">
+                                        <input aria-label="Depth ft" type="number" class="form-control" name="depth_ft" step="0.01" value="0">
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Road Width (ft)</label>
-                                        <input type="number" class="form-control" name="road_width_ft" step="0.01" value="0" id="road_width_ft" onchange="calcCreatePps()">
+                                        <input aria-label="Road width ft" type="number" class="form-control" name="road_width_ft" step="0.01" value="0" id="road_width_ft" onchange="calcCreatePps()">
                                     </div>
                                 </div>
                                 <div class="alert alert-info">
@@ -189,21 +189,21 @@
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Base Price per Sqft *</label>
-                                        <input type="number" class="form-control" name="base_price_per_sqft" min="0" step="0.01" id="base_pps" value="1500" onchange="calcCreatePps()">
+                                        <input aria-label="Base price per sqft" type="number" class="form-control" name="base_price_per_sqft" min="0" step="0.01" id="base_pps" value="1500" onchange="calcCreatePps()">
                                         <small class="text-muted">Standard colony rate</small>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Current Price per Sqft *</label>
-                                        <input type="number" class="form-control" name="price_per_sqft" min="0" step="0.01" required id="price_per_sqft" onchange="calcCreatePps()">
+                                        <input aria-label="Price per sqft" type="number" class="form-control" name="price_per_sqft" min="0" step="0.01" required id="price_per_sqft" onchange="calcCreatePps()">
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Total Price</label>
-                                        <input type="number" class="form-control" name="total_price" min="0" step="0.01" id="total_price" readonly>
+                                        <input aria-label="Total price" type="number" class="form-control" name="total_price" min="0" step="0.01" id="total_price" readonly>
                                         <small class="text-muted" id="plc_breakdown"></small>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Negotiated / Deal Price</label>
-                                        <input type="number" class="form-control" name="negotiated_price" step="0.01" placeholder="Only if different from total">
+                                        <input aria-label="Negotiated price" type="number" class="form-control" name="negotiated_price" step="0.01" placeholder="Only if different from total">
                                     </div>
                                 </div>
                                 <div class="card border-0 bg-light mt-3">
@@ -226,13 +226,13 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="corner_plot" id="corner_plot" value="1">
+                                            <input aria-label="Corner plot" class="form-check-input" type="checkbox" name="corner_plot" id="corner_plot" value="1">
                                             <label class="form-check-label" for="corner_plot">Corner Plot</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="park_facing" id="park_facing" value="1">
+                                            <input aria-label="Park facing" class="form-check-input" type="checkbox" name="park_facing" id="park_facing" value="1">
                                             <label class="form-check-label" for="park_facing">Park Facing</label>
                                         </div>
                                     </div>

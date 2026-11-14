@@ -19,7 +19,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label >Batch Name *</label>
-                                <input type="text" name="batch_name" class="form-control" required
+                                <input aria-label="Batch name" type="text" name="batch_name" class="form-control" required
                                        placeholder="e.g. July 2026 Commission Payout"
                                        >
                             </div>
@@ -36,11 +36,11 @@
                         <div class="row mt-3">
                             <div class="col-md-6">
                                 <label >Period From</label>
-                                <input type="date" name="period_from" class="form-control">
+                                <input aria-label="Period from" type="date" name="period_from" class="form-control">
                             </div>
                             <div class="col-md-6">
                                 <label >Period To</label>
-                                <input type="date" name="period_to" class="form-control">
+                                <input aria-label="Period to" type="date" name="period_to" class="form-control">
                             </div>
                         </div>
                         <div class="mt-3">
@@ -55,7 +55,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 >
-                            <input type="checkbox" name="auto_populate" value="1" id="autoPopulate" class="me-2">
+                            <input aria-label="Auto populate" type="checkbox" name="auto_populate" value="1" id="autoPopulate" class="me-2">
                             <label for="autoPopulate" >
                                 <i class="fas fa-magic me-2"></i> Auto-populate with pending commission entries
                             </label>
@@ -78,11 +78,11 @@
                             </div>
                             <div class="col-md-4">
                                 <label >Date From (optional)</label>
-                                <input type="date" name="populate_from" class="form-control">
+                                <input aria-label="Populate from" type="date" name="populate_from" class="form-control">
                             </div>
                             <div class="col-md-4">
                                 <label >Date To (optional)</label>
-                                <input type="date" name="populate_to" class="form-control">
+                                <input aria-label="Populate to" type="date" name="populate_to" class="form-control">
                             </div>
                         </div>
                         <small class=" mt-2 d-block">

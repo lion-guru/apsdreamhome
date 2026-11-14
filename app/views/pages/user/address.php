@@ -74,7 +74,7 @@ ob_start();
             <div class="aps-cp-modal-body">
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="label"><?= __('user_address_label', null, 'Label') ?> *</label>
-                    <input type="text" name="label" id="label" class="aps-cp-input" placeholder="<?= __('user_address_label_placeholder', null, 'e.g. Home, Office') ?>" required>
+                    <input aria-label="Label" type="text" name="label" id="label" class="aps-cp-input" placeholder="<?= __('user_address_label_placeholder', null, 'e.g. Home, Office') ?>" required>
                 </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="address_type"><?= __('user_address_type', null, 'Type') ?></label>
@@ -89,7 +89,7 @@ ob_start();
 <div class="aps-cp-form-section">
                         <label class="aps-cp-label" for="address_line1"><?= __('user_address_line1', null, 'Address Line 1') ?> *</label>
                         <div class="input-group">
-                            <input type="text" name="address_line1" id="address_line1" class="aps-cp-input" placeholder="House/Flat No., Building, Street" required data-autofill="address">
+                            <input aria-label="Address line1" type="text" name="address_line1" id="address_line1" class="aps-cp-input" placeholder="House/Flat No., Building, Street" required data-autofill="address">
                             <button type="button" class="btn btn-outline-secondary" data-action="map-picker" data-target="address_line1" title="Pick on Map">
                                 <i class="fas fa-map-marker-alt"></i>
                             </button>
@@ -97,17 +97,17 @@ ob_start();
                     </div>
                     <div class="aps-cp-form-section">
                         <label class="aps-cp-label" for="address_line2"><?= __('user_address_line2', null, 'Address Line 2') ?></label>
-                        <input type="text" name="address_line2" id="address_line2" class="aps-cp-input" placeholder="Area, Sector, Landmark">
+                        <input aria-label="Address line2" type="text" name="address_line2" id="address_line2" class="aps-cp-input" placeholder="Area, Sector, Landmark">
                     </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="address_line2"><?= __('user_address_line2', null, 'Address Line 2') ?></label>
-                    <input type="text" name="address_line2" id="address_line2" class="aps-cp-input" placeholder="<?= __('user_address_line2_placeholder', null, 'Landmark, Area') ?>">
+                    <input aria-label="Address line2" type="text" name="address_line2" id="address_line2" class="aps-cp-input" placeholder="<?= __('user_address_line2_placeholder', null, 'Landmark, Area') ?>">
                 </div>
                 <div class="aps-cp-form-row">
                     <div class="aps-cp-form-section">
                         <label class="aps-cp-label" for="pincode"><?= __('user_address_pincode', null, 'Pincode') ?> *</label>
                         <div class="input-group">
-                            <input type="text" name="pincode" id="pincode" class="aps-cp-input" pattern="[0-9]{4,10}" placeholder="273001" required data-autofill="pincode" maxlength="6">
+                            <input aria-label="Pincode" type="text" name="pincode" id="pincode" class="aps-cp-input" pattern="[0-9]{4,10}" placeholder="273001" required data-autofill="pincode" maxlength="6">
                             <button type="button" class="btn btn-outline-secondary" data-action="gps" title="Use My Location">
                                 <i class="fas fa-location-crosshairs"></i>
                             </button>
@@ -116,26 +116,26 @@ ob_start();
                     </div>
                     <div class="aps-cp-form-section">
                         <label class="aps-cp-label" for="city"><?= __('user_address_city', null, 'City') ?> *</label>
-                        <input type="text" name="city" id="city" class="aps-cp-input" required data-autofill="city">
+                        <input aria-label="City" type="text" name="city" id="city" class="aps-cp-input" required data-autofill="city">
                     </div>
                 </div>
                 <div class="aps-cp-form-row">
                     <div class="aps-cp-form-section">
                         <label class="aps-cp-label" for="state"><?= __('user_address_state', null, 'State') ?> *</label>
-                        <input type="text" name="state" id="state" class="aps-cp-input" required data-autofill="state">
+                        <input aria-label="State" type="text" name="state" id="state" class="aps-cp-input" required data-autofill="state">
                     </div>
                     <div class="aps-cp-form-section">
                         <label class="aps-cp-label" for="district"><?= __('user_address_district', null, 'District') ?></label>
-                        <input type="text" name="district" id="district" class="aps-cp-input" data-autofill="district">
+                        <input aria-label="District" type="text" name="district" id="district" class="aps-cp-input" data-autofill="district">
                     </div>
                 </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-label" for="phone"><?= __('user_address_phone', null, 'Phone') ?></label>
-                    <input type="tel" name="phone" id="phone" class="aps-cp-input" pattern="[0-9+\-\s]{7,15}" placeholder="+91 98765 43210">
+                    <input aria-label="Phone" type="tel" name="phone" id="phone" class="aps-cp-input" pattern="[0-9+\-\s]{7,15}" placeholder="+91 98765 43210">
                 </div>
                 <div class="aps-cp-form-section">
                     <label class="aps-cp-form-check">
-                        <input type="checkbox" name="is_primary" value="1" id="is_primary"> <span><?= __('user_address_set_primary_address', null, 'Set as primary address') ?></span>
+                        <input aria-label="Is primary" type="checkbox" name="is_primary" value="1" id="is_primary"> <span><?= __('user_address_set_primary_address', null, 'Set as primary address') ?></span>
                     </label>
                 </div>
             </div>

@@ -57,7 +57,7 @@ $profile = $profile ?? [];
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Full Name *</label>
-                                <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($farmer['name'] ?? ''); ?>" required>
+                                <input aria-label="Name" type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($farmer['name'] ?? ''); ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Phone Number</label>
@@ -68,7 +68,7 @@ $profile = $profile ?? [];
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Email Address</label>
-                            <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($farmer['email'] ?? ''); ?>">
+                            <input aria-label="Email" type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($farmer['email'] ?? ''); ?>">
                         </div>
 
                         <div class="mb-3">

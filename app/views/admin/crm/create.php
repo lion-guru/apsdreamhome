@@ -7,15 +7,15 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Full Name *</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input aria-label="Name" type="text" name="name" class="form-control" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control">
+                        <input aria-label="Email" type="email" name="email" class="form-control">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Phone *</label>
-                        <input type="tel" name="phone" class="form-control" required>
+                        <input aria-label="Phone" type="tel" name="phone" class="form-control" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Source</label>
@@ -30,7 +30,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Budget Range</label>
-                        <input type="text" name="budget" class="form-control" placeholder="e.g. 25-50 Lakh">
+                        <input aria-label="Budget" type="text" name="budget" class="form-control" placeholder="e.g. 25-50 Lakh">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Interested Colony</label>

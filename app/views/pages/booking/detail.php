@@ -346,13 +346,13 @@ $waAdvisorUrl = "https://api.whatsapp.com/send?phone=919235306634&text=" . urlen
                             <label class="form-label small fw-semibold" for="plotEmiTenureSlider">
                                 Loan Tenure: <span id="dispEmiTenure" class="text-primary fw-bold">3 Years (36 Months)</span>
                             </label>
-                            <input type="range" class="form-range" id="plotEmiTenureSlider" min="1" max="10" step="1" value="3" oninput="updatePlotEmiCalc()">
+                            <input aria-label="Plot emi tenure slider" type="range" class="form-range" id="plotEmiTenureSlider" min="1" max="10" step="1" value="3" oninput="updatePlotEmiCalc()">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold" for="plotEmiRateSlider">
                                 Interest Rate: <span id="dispEmiRate" class="text-primary fw-bold">9.5% p.a.</span>
                             </label>
-                            <input type="range" class="form-range" id="plotEmiRateSlider" min="8" max="15" step="0.5" value="9.5" oninput="updatePlotEmiCalc()">
+                            <input aria-label="Plot emi rate slider" type="range" class="form-range" id="plotEmiRateSlider" min="8" max="15" step="0.5" value="9.5" oninput="updatePlotEmiCalc()">
                         </div>
                     </div>
                     <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-2 border-top">
@@ -423,7 +423,7 @@ $waAdvisorUrl = "https://api.whatsapp.com/send?phone=919235306634&text=" . urlen
                 <!-- Copy Link Input -->
                 <label class="form-label small fw-semibold text-muted mb-1" for="plotShareLinkInput">Direct Plot Link:</label>
                 <div class="input-group mb-2">
-                    <input type="text" id="plotShareLinkInput" class="form-control form-control-sm bg-light" value="<?= htmlspecialchars($shareUrl) ?>" readonly>
+                    <input aria-label="Plot share link input" type="text" id="plotShareLinkInput" class="form-control form-control-sm bg-light" value="<?= htmlspecialchars($shareUrl) ?>" readonly>
                     <button class="btn btn-sm btn-outline-primary" type="button" id="btnCopyShareLink" onclick="copyPlotShareLink()">
                         <i class="fas fa-copy me-1"></i> Copy
                     </button>

@@ -122,19 +122,19 @@
         <div class="modal-body">
           <div class="mb-3">
             <label class="form-label">Date From</label>
-            <input type="date" name="date_from" class="form-control">
+            <input aria-label="Date from" type="date" name="date_from" class="form-control">
           </div>
           <div class="mb-3">
             <label class="form-label">Date To</label>
-            <input type="date" name="date_to" class="form-control">
+            <input aria-label="Date to" type="date" name="date_to" class="form-control">
           </div>
           <div class="mb-3">
             <label class="form-label">Min Valuation (₹)</label>
-            <input type="number" name="min_value" class="form-control" step="100000">
+            <input aria-label="Min value" type="number" name="min_value" class="form-control" step="100000">
           </div>
           <div class="mb-3">
             <label class="form-label">Max Valuation (₹)</label>
-            <input type="number" name="max_value" class="form-control" step="100000">
+            <input aria-label="Max value" type="number" name="max_value" class="form-control" step="100000">
           </div>
         </div>
         <div class="modal-footer">

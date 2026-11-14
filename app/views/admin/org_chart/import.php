@@ -79,12 +79,12 @@ $page_title = $page_title ?? 'Import Org Chart';
                 
                 <div class="mb-3">
                     <label class="form-label fw-semibold">JSON File <span class="text-danger">*</span></label>
-                    <input type="file" name="chart_file" class="form-control" accept=".json" required>
+                    <input aria-label="Chart file" type="file" name="chart_file" class="form-control" accept=".json" required>
                     <div class="form-text">Exported org chart JSON file</div>
                 </div>
                 
                 <div class="mb-3 form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="dry_run" id="dry_run" value="1">
+                    <input aria-label="Dry run" class="form-check-input" type="checkbox" name="dry_run" id="dry_run" value="1">
                     <label class="form-check-label" for="dry_run">Dry run only (validate without importing)</label>
                 </div>
                 

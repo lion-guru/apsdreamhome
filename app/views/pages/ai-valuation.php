@@ -58,17 +58,17 @@ $content = $content ?? '';
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"><?= __('user_ai_valuation_label_area', 'Area (sqft)') ?></label>
-                                <input type="number" class="form-control" id="area_sqft" name="area_sqft"
+                                <input aria-label="Area sqft" type="number" class="form-control" id="area_sqft" name="area_sqft"
                                     placeholder="<?= __('user_ai_valuation_placeholder_area', 'e.g. 1200') ?>" required min="100">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label"><?= __('user_ai_valuation_label_bedrooms', 'Bedrooms') ?></label>
-                                <input type="number" class="form-control" id="bedrooms" name="bedrooms"
+                                <input aria-label="Bedrooms" type="number" class="form-control" id="bedrooms" name="bedrooms"
                                     placeholder="<?= __('user_ai_valuation_placeholder_bedrooms', 'e.g. 3') ?>" min="0">
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label class="form-label"><?= __('user_ai_valuation_label_bathrooms', 'Bathrooms') ?></label>
-                                <input type="number" class="form-control" id="bathrooms" name="bathrooms"
+                                <input aria-label="Bathrooms" type="number" class="form-control" id="bathrooms" name="bathrooms"
                                     placeholder="<?= __('user_ai_valuation_placeholder_bathrooms', 'e.g. 2') ?>" min="0">
                             </div>
                         </div>

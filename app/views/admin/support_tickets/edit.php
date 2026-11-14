@@ -46,7 +46,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
                     
                     <div class="mb-3">
                         <label class="form-label">Subject</label>
-                        <input type="text" name="subject" class="form-control" value="<?php echo htmlspecialchars($ticket['subject'] ?? ''); ?>" required>
+                        <input aria-label="Subject" type="text" name="subject" class="form-control" value="<?php echo htmlspecialchars($ticket['subject'] ?? ''); ?>" required>
                     </div>
                     
                     <div class="mb-3">

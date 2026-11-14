@@ -49,7 +49,7 @@ $title = $inquiry['listing_title'] ?? $inquiry['property_title'] ?? ('Inquiry #'
             <form method="POST" action="<?= $base ?>/user/inquiries/threads/<?= (int)($inquiry['id'] ?? 0) ?>/reply">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
                 <div class="input-group">
-                    <input type="text" name="message" class="form-control" placeholder="Type your reply..." required maxlength="2000">
+                    <input aria-label="Message" type="text" name="message" class="form-control" placeholder="Type your reply..." required maxlength="2000">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-1"></i>Send</button>
                 </div>
             </form>

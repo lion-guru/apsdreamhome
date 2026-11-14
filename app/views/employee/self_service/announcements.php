@@ -133,7 +133,7 @@ $announcements = $announcements ?? [];
                         </div>
                         <div class="col-md-3">
                             <label for="filter_date_from" class="form-label">From Date</label>
-                            <input type="date" class="form-control" id="filter_date_from" name="date_from">
+                            <input aria-label="Filter date from" type="date" class="form-control" id="filter_date_from" name="date_from">
                         </div>
                         <div class="col-md-3 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary w-100">

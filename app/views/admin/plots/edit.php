@@ -28,15 +28,15 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Plot Number *</label>
-                                        <input type="text" class="form-control" name="plot_number" value="<?= htmlspecialchars($plot['plot_number'] ?? '') ?>" required>
+                                        <input aria-label="Plot number" type="text" class="form-control" name="plot_number" value="<?= htmlspecialchars($plot['plot_number'] ?? '') ?>" required>
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Block</label>
-                                        <input type="text" class="form-control" name="block" value="<?= htmlspecialchars($plot['block'] ?? '') ?>">
+                                        <input aria-label="Block" type="text" class="form-control" name="block" value="<?= htmlspecialchars($plot['block'] ?? '') ?>">
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Sector</label>
-                                        <input type="text" class="form-control" name="sector" value="<?= htmlspecialchars($plot['sector'] ?? '') ?>">
+                                        <input aria-label="Sector" type="text" class="form-control" name="sector" value="<?= htmlspecialchars($plot['sector'] ?? '') ?>">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -84,7 +84,7 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Gata (free text, agar parcel me na ho)</label>
-                                        <input type="text" class="form-control" name="gata_number" value="<?= htmlspecialchars((empty($plot['land_parcel_id']) ? ($plot['gata_number'] ?? '') : '')) ?>" placeholder="e.g., Gata 1206">
+                                        <input aria-label="Gata number" type="text" class="form-control" name="gata_number" value="<?= htmlspecialchars((empty($plot['land_parcel_id']) ? ($plot['gata_number'] ?? '') : '')) ?>" placeholder="e.g., Gata 1206">
                                     </div>
                                 </div>
                             </div>
@@ -94,40 +94,40 @@
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Width (ft)</label>
-                                        <input type="number" class="form-control" name="width_ft" step="0.01" value="<?= $plot['width_ft'] ?? '' ?>" id="width_ft" onchange="calcDimensionLabel()">
+                                        <input aria-label="Width ft" type="number" class="form-control" name="width_ft" step="0.01" value="<?= $plot['width_ft'] ?? '' ?>" id="width_ft" onchange="calcDimensionLabel()">
                                         <small class="text-muted">e.g., 20 for 20x40</small>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Length (ft)</label>
-                                        <input type="number" class="form-control" name="length_ft" step="0.01" value="<?= $plot['length_ft'] ?? '' ?>" id="length_ft" onchange="calcDimensionLabel()">
+                                        <input aria-label="Length ft" type="number" class="form-control" name="length_ft" step="0.01" value="<?= $plot['length_ft'] ?? '' ?>" id="length_ft" onchange="calcDimensionLabel()">
                                         <small class="text-muted">e.g., 40 for 20x40</small>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Dimension Label</label>
-                                        <input type="text" class="form-control" name="dimension_label" id="dimension_label" value="<?= htmlspecialchars($plot['dimension_label'] ?? '') ?>" placeholder="20x40">
+                                        <input aria-label="Dimension label" type="text" class="form-control" name="dimension_label" id="dimension_label" value="<?= htmlspecialchars($plot['dimension_label'] ?? '') ?>" placeholder="20x40">
                                         <small class="text-muted">Auto-calculated if width x length set</small>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Area (sqft) *</label>
-                                        <input type="number" class="form-control" name="area_sqft" step="0.01" value="<?= $plot['area_sqft'] ?? 0 ?>" required id="area_sqft" onchange="calcFromArea()">
+                                        <input aria-label="Area sqft" type="number" class="form-control" name="area_sqft" step="0.01" value="<?= $plot['area_sqft'] ?? 0 ?>" required id="area_sqft" onchange="calcFromArea()">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Area (sqm)</label>
-                                        <input type="number" class="form-control" name="area_sqm" step="0.01" value="<?= $plot['area_sqm'] ?? 0 ?>">
+                                        <input aria-label="Area sqm" type="number" class="form-control" name="area_sqm" step="0.01" value="<?= $plot['area_sqm'] ?? 0 ?>">
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Frontage (ft)</label>
-                                        <input type="number" class="form-control" name="frontage_ft" step="0.01" value="<?= $plot['frontage_ft'] ?? 0 ?>">
+                                        <input aria-label="Frontage ft" type="number" class="form-control" name="frontage_ft" step="0.01" value="<?= $plot['frontage_ft'] ?? 0 ?>">
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Depth (ft)</label>
-                                        <input type="number" class="form-control" name="depth_ft" step="0.01" value="<?= $plot['depth_ft'] ?? 0 ?>">
+                                        <input aria-label="Depth ft" type="number" class="form-control" name="depth_ft" step="0.01" value="<?= $plot['depth_ft'] ?? 0 ?>">
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label class="form-label">Road Width (ft)</label>
-                                        <input type="number" class="form-control" name="road_width_ft" step="0.01" value="<?= $plot['road_width_ft'] ?? 0 ?>" id="road_width_ft" onchange="calcPlcPrice()">
+                                        <input aria-label="Road width ft" type="number" class="form-control" name="road_width_ft" step="0.01" value="<?= $plot['road_width_ft'] ?? 0 ?>" id="road_width_ft" onchange="calcPlcPrice()">
                                     </div>
                                 </div>
                                 <div class="alert alert-info">
@@ -148,16 +148,16 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Base Price per Sqft</label>
-                                        <input type="number" class="form-control" name="base_price_per_sqft" step="0.01" value="<?= $plot['base_price_per_sqft'] ?? $plot['price_per_sqft'] ?? 0 ?>" id="base_pps">
+                                        <input aria-label="Base price per sqft" type="number" class="form-control" name="base_price_per_sqft" step="0.01" value="<?= $plot['base_price_per_sqft'] ?? $plot['price_per_sqft'] ?? 0 ?>" id="base_pps">
                                         <small class="text-muted">Original base rate (₹/sqft)</small>
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Current Price per Sqft *</label>
-                                        <input type="number" class="form-control" name="price_per_sqft" step="0.01" value="<?= $plot['price_per_sqft'] ?? 0 ?>" required id="curr_pps" onchange="calcTotalPrice()">
+                                        <input aria-label="Price per sqft" type="number" class="form-control" name="price_per_sqft" step="0.01" value="<?= $plot['price_per_sqft'] ?? 0 ?>" required id="curr_pps" onchange="calcTotalPrice()">
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label">Total Price</label>
-                                        <input type="number" class="form-control" name="total_price" step="0.01" value="<?= $plot['total_price'] ?? 0 ?>" id="total_price" onchange="calcPpsFromTotal()">
+                                        <input aria-label="Total price" type="number" class="form-control" name="total_price" step="0.01" value="<?= $plot['total_price'] ?? 0 ?>" id="total_price" onchange="calcPpsFromTotal()">
                                         <small class="text-muted" id="plc_breakdown"></small>
                                         <div class="mt-1"><button type="button" class="btn btn-sm btn-outline-primary" onclick="calcPlcPrice()">Apply PLC from Base</button></div>
                                     </div>
@@ -172,11 +172,11 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
                                                 <label class="form-label">Negotiated / Deal Price</label>
-                                                <input type="number" class="form-control" name="negotiated_price" step="0.01" value="<?= $plot['negotiated_price'] ?? '' ?>" placeholder="Leave empty if same as total price">
+                                                <input aria-label="Negotiated price" type="number" class="form-control" name="negotiated_price" step="0.01" value="<?= $plot['negotiated_price'] ?? '' ?>" placeholder="Leave empty if same as total price">
                                             </div>
                                             <div class="col-md-8 mb-3">
                                                 <label class="form-label">Override Reason</label>
-                                                <input type="text" class="form-control" name="price_override_reason" value="<?= htmlspecialchars($plot['price_override_reason'] ?? '') ?>" placeholder="e.g., Special deal for cash payment, Festival discount, etc.">
+                                                <input aria-label="Price override reason" type="text" class="form-control" name="price_override_reason" value="<?= htmlspecialchars($plot['price_override_reason'] ?? '') ?>" placeholder="e.g., Special deal for cash payment, Festival discount, etc.">
                                             </div>
                                         </div>
                                     </div>
@@ -209,13 +209,13 @@
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="corner_plot" id="corner_plot" value="1" <?= ($plot['corner_plot'] ?? 0) ? 'checked' : '' ?>>
+                                            <input aria-label="Corner plot" class="form-check-input" type="checkbox" name="corner_plot" id="corner_plot" value="1" <?= ($plot['corner_plot'] ?? 0) ? 'checked' : '' ?>>
                                             <label class="form-check-label" for="corner_plot">Corner Plot</label>
                                         </div>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="park_facing" id="park_facing" value="1" <?= ($plot['park_facing'] ?? 0) ? 'checked' : '' ?>>
+                                            <input aria-label="Park facing" class="form-check-input" type="checkbox" name="park_facing" id="park_facing" value="1" <?= ($plot['park_facing'] ?? 0) ? 'checked' : '' ?>>
                                             <label class="form-check-label" for="park_facing">Park Facing</label>
                                         </div>
                                     </div>
@@ -231,11 +231,11 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Booking Amount</label>
-                                        <input type="number" class="form-control" name="booking_amount" step="0.01" value="<?= $plot['booking_amount'] ?? 0 ?>">
+                                        <input aria-label="Booking amount" type="number" class="form-control" name="booking_amount" step="0.01" value="<?= $plot['booking_amount'] ?? 0 ?>">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Total Paid</label>
-                                        <input type="number" class="form-control" name="total_paid" step="0.01" value="<?= $plot['total_paid'] ?? 0 ?>">
+                                        <input aria-label="Total paid" type="number" class="form-control" name="total_paid" step="0.01" value="<?= $plot['total_paid'] ?? 0 ?>">
                                     </div>
                                 </div>
                                 <div class="mb-3">

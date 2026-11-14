@@ -17,11 +17,11 @@ ob_start();
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Widget Title</label>
-                        <input type="text" name="widget_title" class="form-control" value="<?= htmlspecialchars($settings['widget_title'] ?? '') ?>">
+                        <input aria-label="Widget title" type="text" name="widget_title" class="form-control" value="<?= htmlspecialchars($settings['widget_title'] ?? '') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Subtitle</label>
-                        <input type="text" name="widget_subtitle" class="form-control" value="<?= htmlspecialchars($settings['widget_subtitle'] ?? '') ?>">
+                        <input aria-label="Widget subtitle" type="text" name="widget_subtitle" class="form-control" value="<?= htmlspecialchars($settings['widget_subtitle'] ?? '') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Position</label>
@@ -32,7 +32,7 @@ ob_start();
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Theme Color</label>
-                        <input type="color" name="widget_color" class="form-control form-control-color" value="<?= htmlspecialchars($settings['widget_color'] ?? '#007bff') ?>">
+                        <input aria-label="Widget color" type="color" name="widget_color" class="form-control form-control-color" value="<?= htmlspecialchars($settings['widget_color'] ?? '#007bff') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Status</label>
@@ -58,11 +58,11 @@ ob_start();
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Start Time</label>
-                        <input type="time" name="business_hours_start" class="form-control" value="<?= htmlspecialchars($settings['business_hours_start'] ?? '09:00') ?>">
+                        <input aria-label="Business hours start" type="time" name="business_hours_start" class="form-control" value="<?= htmlspecialchars($settings['business_hours_start'] ?? '09:00') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">End Time</label>
-                        <input type="time" name="business_hours_end" class="form-control" value="<?= htmlspecialchars($settings['business_hours_end'] ?? '19:00') ?>">
+                        <input aria-label="Business hours end" type="time" name="business_hours_end" class="form-control" value="<?= htmlspecialchars($settings['business_hours_end'] ?? '19:00') ?>">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Auto-Assign</label>

@@ -54,15 +54,15 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Client Name <span class="text-danger">*</span></label>
-                                <input type="text" name="client_name" class="form-control" id="clientName" value="<?= htmlspecialchars($invoice['client_name'] ?? '') ?>" required>
+                                <input aria-label="Client name" type="text" name="client_name" class="form-control" id="clientName" value="<?= htmlspecialchars($invoice['client_name'] ?? '') ?>" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Email</label>
-                                <input type="email" name="client_email" class="form-control" id="clientEmail" value="<?= htmlspecialchars($invoice['client_email'] ?? '') ?>">
+                                <input aria-label="Client email" type="email" name="client_email" class="form-control" id="clientEmail" value="<?= htmlspecialchars($invoice['client_email'] ?? '') ?>">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Phone</label>
-                                <input type="text" name="client_phone" class="form-control" id="clientPhone" value="<?= htmlspecialchars($invoice['client_phone'] ?? '') ?>">
+                                <input aria-label="Client phone" type="text" name="client_phone" class="form-control" id="clientPhone" value="<?= htmlspecialchars($invoice['client_phone'] ?? '') ?>">
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label">Client Address</label>
@@ -98,8 +98,8 @@
                                     <?php $rowNum = 0; foreach (($invoice['items'] ?? []) as $item): $rowNum++; ?>
                                         <tr class="item-row">
                                             <td><?= $rowNum ?></td>
-                                            <td><input type="text" name="item_name[]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['item_name'] ?? '') ?>" required></td>
-                                            <td><input type="text" name="item_description[]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['item_description'] ?? '') ?>"></td>
+                                            <td><input aria-label="Item name" type="text" name="item_name[]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['item_name'] ?? '') ?>" required></td>
+                                            <td><input aria-label="Item description" type="text" name="item_description[]" class="form-control form-control-sm" value="<?= htmlspecialchars($item['item_description'] ?? '') ?>"></td>
                                             <td>
                                                 <select aria-label="Item type" name="item_type[]" class="form-select form-select-sm">
                                                     <option value="property" <?= ($item['item_type'] ?? '') === 'property' ? 'selected' : '' ?>>Property</option>
@@ -107,10 +107,10 @@
                                                     <option value="product" <?= ($item['item_type'] ?? '') === 'product' ? 'selected' : '' ?>>Product</option>
                                                 </select>
                                             </td>
-                                            <td><input type="number" name="item_quantity[]" class="form-control form-control-sm calc-input" value="<?= $item['quantity'] ?? 1 ?>" min="0.01" step="any"></td>
-                                            <td><input type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="<?= $item['unit_price'] ?? 0 ?>" min="0" step="0.01"></td>
-                                            <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="<?= $item['discount_percent'] ?? 0 ?>" min="0" max="100" step="0.01"></td>
-                                            <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="<?= $item['tax_percent'] ?? 18 ?>" min="0" max="100" step="0.01"></td>
+                                            <td><input aria-label="Item quantity" type="number" name="item_quantity[]" class="form-control form-control-sm calc-input" value="<?= $item['quantity'] ?? 1 ?>" min="0.01" step="any"></td>
+                                            <td><input aria-label="Item unit price" type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="<?= $item['unit_price'] ?? 0 ?>" min="0" step="0.01"></td>
+                                            <td><input aria-label="Item discount" type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="<?= $item['discount_percent'] ?? 0 ?>" min="0" max="100" step="0.01"></td>
+                                            <td><input aria-label="Item tax" type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="<?= $item['tax_percent'] ?? 18 ?>" min="0" max="100" step="0.01"></td>
                                             <td class="fw-bold item-total">₹<?= number_format($item['line_total'] ?? 0, 2) ?></td>
                                             <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" title="Remove" aria-label="Close"><i class="fas fa-times"></i></button></td>
                                         </tr>
@@ -118,8 +118,8 @@
                                     <?php if (empty($invoice['items'])): ?>
                                         <tr class="item-row">
                                             <td>1</td>
-                                            <td><input type="text" name="item_name[]" class="form-control form-control-sm" required></td>
-                                            <td><input type="text" name="item_description[]" class="form-control form-control-sm"></td>
+                                            <td><input aria-label="Item name" type="text" name="item_name[]" class="form-control form-control-sm" required></td>
+                                            <td><input aria-label="Item description" type="text" name="item_description[]" class="form-control form-control-sm"></td>
                                             <td>
                                                 <select aria-label="Item type" name="item_type[]" class="form-select form-select-sm">
                                                     <option value="property">Property</option>
@@ -127,10 +127,10 @@
                                                     <option value="product">Product</option>
                                                 </select>
                                             </td>
-                                            <td><input type="number" name="item_quantity[]" class="form-control form-control-sm calc-input" value="1" min="0.01" step="any"></td>
-                                            <td><input type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="0" min="0" step="0.01"></td>
-                                            <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>
-                                            <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="18" min="0" max="100" step="0.01"></td>
+                                            <td><input aria-label="Item quantity" type="number" name="item_quantity[]" class="form-control form-control-sm calc-input" value="1" min="0.01" step="any"></td>
+                                            <td><input aria-label="Item unit price" type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="0" min="0" step="0.01"></td>
+                                            <td><input aria-label="Item discount" type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>
+                                            <td><input aria-label="Item tax" type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="18" min="0" max="100" step="0.01"></td>
                                             <td class="fw-bold item-total">₹0.00</td>
                                             <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" title="Remove" aria-label="Close"><i class="fas fa-times"></i></button></td>
                                         </tr>
@@ -159,24 +159,24 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Due Date</label>
-                            <input type="date" name="due_date" class="form-control" value="<?= htmlspecialchars($invoice['due_date'] ?? '') ?>">
+                            <input aria-label="Due date" type="date" name="due_date" class="form-control" value="<?= htmlspecialchars($invoice['due_date'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Place of Supply</label>
-                            <input type="text" name="place_of_supply" class="form-control" value="<?= htmlspecialchars($invoice['place_of_supply'] ?? 'Uttar Pradesh') ?>" id="placeOfSupply">
+                            <input aria-label="Place of supply" type="text" name="place_of_supply" class="form-control" value="<?= htmlspecialchars($invoice['place_of_supply'] ?? 'Uttar Pradesh') ?>" id="placeOfSupply">
                             <small class="text-muted">UP = CGST+SGST | Other = IGST</small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">GSTIN</label>
-                            <input type="text" name="gstin" class="form-control" value="<?= htmlspecialchars($invoice['gstin'] ?? '') ?>" maxlength="15">
+                            <input aria-label="Gstin" type="text" name="gstin" class="form-control" value="<?= htmlspecialchars($invoice['gstin'] ?? '') ?>" maxlength="15">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">HSN Code</label>
-                            <input type="text" name="hsn_code" class="form-control" value="<?= htmlspecialchars($invoice['hsn_code'] ?? '') ?>">
+                            <input aria-label="Hsn code" type="text" name="hsn_code" class="form-control" value="<?= htmlspecialchars($invoice['hsn_code'] ?? '') ?>">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Discount Amount</label>
-                            <input type="number" name="discount_amount" class="form-control" value="<?= $invoice['discount_amount'] ?? 0 ?>" min="0" step="0.01">
+                            <input aria-label="Discount amount" type="number" name="discount_amount" class="form-control" value="<?= $invoice['discount_amount'] ?? 0 ?>" min="0" step="0.01">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
@@ -244,13 +244,13 @@ document.addEventListener('DOMContentLoaded', function() {
         row.className = 'item-row';
         row.innerHTML = `
             <td>${rowIndex}</td>
-            <td><input type="text" name="item_name[]" class="form-control form-control-sm" required></td>
-            <td><input type="text" name="item_description[]" class="form-control form-control-sm"></td>
+            <td><input aria-label="Item name" type="text" name="item_name[]" class="form-control form-control-sm" required></td>
+            <td><input aria-label="Item description" type="text" name="item_description[]" class="form-control form-control-sm"></td>
             <td><select aria-label="Item type" name="item_type[]" class="form-select form-select-sm"><option value="property">Property</option><option value="service">Service</option><option value="product">Product</option></select></td>
-            <td><input type="number" name="item_quantity[]" class="form-control form-control-sm calc-input" value="1" min="0.01" step="any"></td>
-            <td><input type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="0" min="0" step="0.01"></td>
-            <td><input type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>
-            <td><input type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="18" min="0" max="100" step="0.01"></td>
+            <td><input aria-label="Item quantity" type="number" name="item_quantity[]" class="form-control form-control-sm calc-input" value="1" min="0.01" step="any"></td>
+            <td><input aria-label="Item unit price" type="number" name="item_unit_price[]" class="form-control form-control-sm calc-input" value="0" min="0" step="0.01"></td>
+            <td><input aria-label="Item discount" type="number" name="item_discount[]" class="form-control form-control-sm calc-input" value="0" min="0" max="100" step="0.01"></td>
+            <td><input aria-label="Item tax" type="number" name="item_tax[]" class="form-control form-control-sm calc-input" value="18" min="0" max="100" step="0.01"></td>
             <td class="fw-bold item-total">₹0.00</td>
             <td><button type="button" class="btn btn-sm btn-outline-danger remove-item" aria-label="Close"><i class="fas fa-times"></i></button></td>
         `;

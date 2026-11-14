@@ -88,7 +88,7 @@ $active_page = 'possession';
                                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     <div class="mb-2">
                         <label class="form-label">Item Name</label>
-                        <input type="text" class="form-control" name="item_name" placeholder="e.g. Water connection checked" required>
+                        <input aria-label="Item name" type="text" class="form-control" name="item_name" placeholder="e.g. Water connection checked" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus"></i> Add Item</button>
                 </form>

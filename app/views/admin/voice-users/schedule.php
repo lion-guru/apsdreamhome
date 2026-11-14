@@ -64,7 +64,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Schedule For</label>
-                        <input type="datetime-local" name="scheduled_at" class="form-control">
+                        <input aria-label="Scheduled at" type="datetime-local" name="scheduled_at" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Script</label>
@@ -86,8 +86,8 @@
         <input type="hidden" name="schedule_id" id="rescheduleId">
         <div class="modal-body">
             <p id="rescheduleCustomer"></p>
-            <div class="mb-3"><label class="form-label">New Date</label><input type="date" name="new_date" class="form-control" required></div>
-            <div class="mb-3"><label class="form-label">New Time</label><input type="time" name="new_time" class="form-control"></div>
+            <div class="mb-3"><label class="form-label">New Date</label><input aria-label="New date" type="date" name="new_date" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">New Time</label><input aria-label="New time" type="time" name="new_time" class="form-control"></div>
         </div>
         <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-success">Reschedule</button></div>
     </form>

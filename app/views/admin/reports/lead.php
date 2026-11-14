@@ -6,8 +6,8 @@
                 <div>
                     <form method="GET" class="d-inline-flex align-items-center gap-2">
     <?php echo CSRFProtection::csrfField(); ?>
-                        <input type="date" name="start_date" class="form-control form-control-sm" value="<?php echo htmlspecialchars($start_date ?? ''); ?>">
-                        <input type="date" name="end_date" class="form-control form-control-sm" value="<?php echo htmlspecialchars($end_date ?? ''); ?>">
+                        <input aria-label="Start date" type="date" name="start_date" class="form-control form-control-sm" value="<?php echo htmlspecialchars($start_date ?? ''); ?>">
+                        <input aria-label="End date" type="date" name="end_date" class="form-control form-control-sm" value="<?php echo htmlspecialchars($end_date ?? ''); ?>">
                         <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> Filter</button>
                     </form>
                 </div>

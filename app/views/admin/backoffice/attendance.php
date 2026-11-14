@@ -36,11 +36,11 @@ $today = $today ?? date('Y-m-d');
         </div>
         <div class="col-md-2">
           <label class="form-label"><?= __('admin_check_in') ?></label>
-          <input type="time" name="check_in_time" class="form-control" value="09:30">
+          <input aria-label="Check in time" type="time" name="check_in_time" class="form-control" value="09:30">
         </div>
         <div class="col-md-2">
           <label class="form-label"><?= __('admin_check_out') ?></label>
-          <input type="time" name="check_out_time" class="form-control" value="18:00">
+          <input aria-label="Check out time" type="time" name="check_out_time" class="form-control" value="18:00">
         </div>
         <div class="col-md-2 d-flex align-items-end">
           <button type="submit" class="btn btn-primary w-100"><i class="fas fa-check me-1"></i><?= __('admin_mark_button') ?></button>
