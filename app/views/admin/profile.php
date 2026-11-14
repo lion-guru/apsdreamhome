@@ -43,8 +43,8 @@ unset($_SESSION['success'], $_SESSION['error']);
                         ?>
                         <h5 class="mb-1 mt-3"><?php echo htmlspecialchars($user['name'] ?? $user['username'] ?? 'User'); ?></h5>
                         <p class="text-muted mb-3"><?php echo htmlspecialchars($user['email'] ?? ''); ?></p>
-                        <span class="role-badge role-<?php echo $user['role'] ?? 'admin'; ?>">
-                            <?php echo ucwords(str_replace('_', ' ', $user['role'] ?? 'Admin')); ?>
+                        <span class="role-badge role-<?php echo htmlspecialchars($user['role'] ?? 'admin', ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php echo htmlspecialchars(ucwords(str_replace('_', ' ', $user['role'] ?? 'Admin')), ENT_QUOTES, 'UTF-8'); ?>
                         </span>
 
                         <hr class="my-4">

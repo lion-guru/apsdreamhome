@@ -8,8 +8,8 @@ $cid = (int)($colony['id'] ?? 0);
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h4 class="mb-0"><i class="fas fa-eye text-info me-2"></i><?php echo htmlspecialchars($colony['name'] ?? 'Colony Details'); ?></h4>
         <div class="d-flex gap-2 flex-wrap">
-            <a href="<?php echo BASE_URL; ?>/admin/colony-pipeline/<?php echo $cid; ?>" class="btn btn-outline-primary btn-sm"><i class="fas fa-sitemap me-1"></i>Pipeline</a>
-            <a href="<?php echo BASE_URL; ?>/admin/colonies/<?php echo $cid; ?>/edit" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
+            <a href="<?php echo BASE_URL; ?>/admin/colony-pipeline/<?php echo (int)($cid ?? 0); ?>" class="btn btn-outline-primary btn-sm"><i class="fas fa-sitemap me-1"></i>Pipeline</a>
+            <a href="<?php echo BASE_URL; ?>/admin/colonies/<?php echo (int)($cid ?? 0); ?>/edit" class="btn btn-primary btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
             <a href="<?php echo BASE_URL; ?>/colony/<?php echo htmlspecialchars($colony['slug'] ?? ''); ?>" class="btn btn-success btn-sm" target="_blank"><i class="fas fa-external-link-alt me-1"></i>View Public Page</a>
         </div>
     </div>

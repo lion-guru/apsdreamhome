@@ -52,7 +52,7 @@ function pnl_color($v) { return $v >= 0 ? 'success' : 'danger'; }
             <div class="card-body">
                 <h5 class="card-title mb-1"><?php echo e($r['name'] ?? ''); ?></h5>
                 <div class="text-muted small mb-2"><?php echo e($r['location'] ?? ''); ?> · <?php echo (int)($r['sold'] ?? 0); ?>/<?php echo (int)($r['plots'] ?? 0); ?> sold</div>
-                <div class="meter mb-2"><div class="bg-<?php echo pnl_color($r['projected'] ?? 0); ?>" style="width: <?php echo $meterW; ?>%"></div></div>
+                <div class="meter mb-2"><div class="bg-<?php echo pnl_color($r['projected'] ?? 0); ?>" style="width: <?php echo (int)($meterW ?? 0); ?>%"></div></div>
                 <div class="small">
                     <div class="d-flex justify-content-between"><span>Land + Dev Cost</span><strong>₹<?php echo number_format($r['cost'] ?? 0, 0); ?></strong></div>
                     <div class="d-flex justify-content-between"><span>Booking Value</span><strong>₹<?php echo number_format($r['value'] ?? 0, 0); ?></strong></div>
