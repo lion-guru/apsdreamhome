@@ -47,7 +47,7 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
                 <i class="fas fa-robot"></i>
             </div>
             <div class="chatbot-info">
-                <h5><?= __('component_aps_ai_assistant', 'APS AI Assistant') ?></h5>
+                <h2 class="fs-6 mb-0"><?= __('component_aps_ai_assistant', 'APS AI Assistant') ?></h2>
                 <span class="status"><i class="fas fa-circle"></i> <?= __('component_online', 'Online') ?></span>
             </div>
             <div class="chatbot-actions">
@@ -209,7 +209,7 @@ if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_user_id'])) {
         flex: 1;
     }
 
-    .chatbot-info h5 {
+    .chatbot-info h2 {
         margin: 0;
         font-size: 16px;
         font-weight: 600;

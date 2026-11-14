@@ -11,7 +11,7 @@ $base = defined('BASE_URL') ? BASE_URL : '/' . trim(dirname($_SERVER['SCRIPT_NAM
 <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="mb-1">Payments</h2>
+                <h1 class="mb-1 h2">Payments</h1>
                 <p class="text-muted mb-0">Manage booking payments</p>
             </div>
             <a href="<?php echo e($base); ?>/admin/dashboard" class="btn btn-outline-secondary">Back</a>

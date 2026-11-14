@@ -815,7 +815,7 @@ $GLOBALS['_html_doc_started'] = true;
             <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="modal-content" style="border: none; border-radius: 12px; overflow: hidden;">
                     <div class="modal-header border-0 pb-0" id="apsConfirmHeader" style="background: linear-gradient(135deg, #1e293b, #334155); color: #fff; border-radius: 12px 12px 0 0;">
-                        <h6 class="modal-title fw-semibold" id="apsConfirmModalLabel">Confirm Action</h6>
+                        <h2 class="modal-title fw-semibold fs-6" id="apsConfirmModalLabel">Confirm Action</h2>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center py-4">
