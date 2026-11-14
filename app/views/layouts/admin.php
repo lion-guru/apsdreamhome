@@ -53,7 +53,7 @@ $GLOBALS['_html_doc_started'] = true;
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Admin Theme (consolidated: admin.css + responsive-fixes + uiux-fixes) -->
-    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin-theme.css?v=5" rel="stylesheet">
+    <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/admin/css/admin-theme.css?v=6" rel="stylesheet">
     <!-- Shared aps-cp-* component system (systematic UI: cards, stats, empty, pills, wizard) -->
     <link href="<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>/assets/css/consolidated/aps-components.css?v=2" rel="stylesheet">
     <!-- Utility classes (display, min-width, visibility) -->

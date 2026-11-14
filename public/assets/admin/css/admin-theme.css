@@ -3539,9 +3539,10 @@ footer ul li a,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  gap: 6px;
+  padding: 8px 12px;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 8px;
   margin: 4px 8px;
   transition: background 0.15s ease;
 }
@@ -3551,15 +3552,21 @@ footer ul li a,
 .sidebar-hub-header span {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  min-width: 0;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   color: var(--sidebar-text);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  line-height: 1.3;
+  word-break: break-word;
+  white-space: normal;
 }
 .sidebar-hub-header i {
-  font-size: 1rem;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  opacity: 0.75;
 }
 .sidebar-hub-header .sidebar-sec-arrow {
   transition: transform 0.2s ease;

@@ -69,20 +69,29 @@ class ServiceConfigController extends AdminController
 
         $svc = ServiceConfigService::getInstance();
         $updated = 0;
+        $kept = 0;
 
         foreach ($configs as $service => $pairs) {
             if (!is_array($pairs)) {
                 continue;
             }
+            $service = (string) $service;
             foreach ($pairs as $key => $value) {
-                // Boolean checkboxes send nothing when unchecked
-                $row = $svc->get($service, $key);
+                $key = (string) $key;
+                $value = (string) $value;
+                $row = $svc->getRow($service, $key);
+                $isSecret = $row !== null && (int)($row['is_secret'] ?? 0) === 1;
+                // Blank secret = keep existing value (admin never sees/transmitted stored secrets)
+                if ($isSecret && trim($value) === '') {
+                    $kept++;
+                    continue;
+                }
                 $svc->set($service, $key, $value);
                 $updated++;
             }
         }
 
-        $this->redirect(BASE_URL . '/admin/service-configs?saved=' . urlencode("Saved {$updated} configuration(s)"));
+        $this->redirect(BASE_URL . '/admin/service-configs?saved=' . urlencode("Saved {$updated} configuration(s), kept {$kept} secret(s) unchanged"));
     }
 
     /**

@@ -424,6 +424,15 @@ class ServiceConfigService
 
     // ── Private helpers ──
 
+    /**
+     * Public read-only row accessor (decrypted value). Used by admin controllers
+     * to inspect is_secret/config_type without printing secrets to views/logs.
+     */
+    public function getRow(string $service, string $key): ?array
+    {
+        return $this->find($service, $key);
+    }
+
     private function find(string $service, string $key): ?array
     {
         $this->loadAll();
