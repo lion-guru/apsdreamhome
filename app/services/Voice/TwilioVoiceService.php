@@ -169,4 +169,108 @@ class TwilioVoiceService extends UnifiedVoiceService
             error_log('TwilioVoiceService::updateSessionStatus: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Generate TwiML from the DB-driven ai_call_scripts table.
+     *
+     * script_body line format (all keys optional):
+     *   GREETING: text spoken before the gather
+     *   PROMPT:   text spoken INSIDE the gather while waiting for DTMF
+     *   CLOSE:    text spoken after the gather times out
+     *
+     * Falls back to the default static menu when the script cannot be loaded.
+     */
+    public function generateTwiMLFromScript(?string $scriptCode, array $opts = []): string
+    {
+        $e = fn($s) => htmlspecialchars((string)$s, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+        $code = trim((string)($scriptCode ?? ''));
+        $leadName = trim((string)($opts['lead_name'] ?? ''));
+        $name = $leadName !== '' ? $leadName : 'sir/madam';
+        $gatherUrl = $opts['gatherUrl'] ?? '/api/twilio/voice/gather';
+        $fallback = $this->buildGatherMenu(
+            'Thank you for calling APS Dream Home. Press 1 to schedule a site visit. Press 2 to speak with an agent. Press 3 to hear our EMI plans.',
+            'We did not receive any input. Thank you for calling APS Dream Home. Goodbye.',
+            $gatherUrl
+        );
+
+        if ($code === '') {
+            return $fallback;
+        }
+
+        try {
+            $db = \App\Core\Database\Database::getInstance();
+            $pdo = method_exists($db, 'getPdo') ? $db->getPdo() : null;
+            if (!$pdo) {
+                error_log('generateTwiMLFromScript: Database::getInstance()->getPdo() unavailable');
+                return $fallback;
+            }
+            $stmt = $pdo->prepare(
+                "SELECT script_body FROM ai_call_scripts
+                  WHERE script_code = ? AND is_active = 1 AND tenant_id = ?"
+            );
+            $stmt->execute([$code, (int)($opts['tenant_id'] ?? 1)]);
+            $body = $stmt->fetchColumn();
+            if ($body === false || $body === '') {
+                error_log("generateTwiMLFromScript: script '$code' missing/inactive (tenant-scoped)");
+                return $fallback;
+            }
+
+            $parts = $this->parseScriptBody((string)$body);
+            $greeting = $this->replaceName($parts['GREETING'] ?? '', $e($name));
+            $prompt   = $this->replaceName($parts['PROMPT']   ?? '', $e($name));
+            $close    = $this->replaceName($parts['CLOSE']    ?? '', $e($name));
+
+            if ($greeting === '' && $prompt === '') {
+                return $fallback;
+            }
+
+            $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n";
+            if ($greeting !== '') {
+                $xml .= '<Say voice="alice" language="hi-en">' . $greeting . "</Say>\n";
+            }
+            $xml .= '<Gather numDigits="1" action="' . $e($gatherUrl) . '" method="POST" timeout="10">'
+                . '<Say voice="alice" language="hi-en">' . ($prompt !== '' ? $prompt : $greeting) . "</Say>\n"
+                . "</Gather>\n";
+            if ($close !== '') {
+                $xml .= '<Say voice="alice" language="hi-en">' . $close . "</Say>\n";
+            } else {
+                $xml .= '<Say voice="alice" language="hi-en">Thank you. An agent will contact you shortly.</Say>' . "\n";
+            }
+            return $xml . '</Response>';
+        } catch (\Throwable $e2) {
+            error_log('generateTwiMLFromScript: ' . $e2->getMessage());
+            return $fallback;
+        }
+    }
+
+    /**
+     * Parse a script_body into GREETING/PROMPT/CLOSE parts.
+     * If no structured prefixes exist, the whole body becomes the prompt.
+     */
+    private function parseScriptBody(string $body): array
+    {
+        $out = ['GREETING' => '', 'PROMPT' => '', 'CLOSE' => ''];
+        foreach (preg_split('/\r?\n/', $body) as $line) {
+            $line = trim($line);
+            if ($line === '') {
+                continue;
+            }
+            if (stripos($line, 'GREETING:') === 0) {
+                $out['GREETING'] = trim(substr($line, strlen('GREETING:')));
+            } elseif (stripos($line, 'PROMPT:') === 0) {
+                $out['PROMPT'] = trim(substr($line, strlen('PROMPT:')));
+            } elseif (stripos($line, 'CLOSE:') === 0) {
+                $out['CLOSE'] = trim(substr($line, strlen('CLOSE:')));
+            }
+        }
+        if ($out['GREETING'] === '' && $out['PROMPT'] === '' && $out['CLOSE'] === '') {
+            $out['PROMPT'] = trim($body);
+        }
+        return $out;
+    }
+
+    private function replaceName(string $s, string $name): string
+    {
+        return str_replace(['{customer_name}', '{name}'], $name, $s);
+    }
 }

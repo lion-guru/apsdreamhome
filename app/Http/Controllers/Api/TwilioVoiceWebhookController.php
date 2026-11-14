@@ -74,6 +74,33 @@ class TwilioVoiceWebhookController extends Controller
         exit;
     }
 
+    /**
+     * Resolve the lead name + tenant for a scheduled AI call so the dynamic
+     * script can personalise its greeting (and read ai_call_scripts in the
+     * correct tenant scope). Best-effort: null when unavailable.
+     */
+    protected function resolveScheduleLead(int $scheduleId): ?array
+    {
+        if ($scheduleId <= 0) {
+            return null;
+        }
+        try {
+            $pdo = \App\Core\Database\Database::getInstance()->getConnection();
+            $stmt = $pdo->prepare(
+                "SELECT l.name AS name, s.tenant_id AS tenant_id
+                   FROM ai_calling_schedule s
+                   LEFT JOIN leads l ON l.id = s.lead_id
+                  WHERE s.id = ?"
+            );
+            $stmt->execute([$scheduleId]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $row ?: null;
+        } catch (\Throwable $e) {
+            error_log('TwilioVoiceWebhookController::resolveScheduleLead: ' . $e->getMessage());
+            return null;
+        }
+    }
+
     /* ------------------------------------------------------------------ */
     /*  POST /api/twilio/voice — initial inbound / outbound answer        */
     /* ------------------------------------------------------------------ */
@@ -95,6 +122,23 @@ class TwilioVoiceWebhookController extends Controller
         // For outbound AI calls, generate the appropriate TwiML for the
         // agent type (site_visit / property_inquiry / follow_up).
         $type = $params['CustomParam'] ?? $_GET['type'] ?? 'greeting';
+        $gatherUrl = '/api/twilio/voice/gather';
+
+        // Dynamic script path: when the AI dialer passes ?script=<code>,
+        // build TwiML from ai_call_scripts rather than the static menu.
+        // Falls back to the static menu if the script cannot be resolved.
+        $scriptCode = trim((string)($_GET['script'] ?? ''));
+        if ($scriptCode !== '') {
+            $scheduleId = isset($_GET['schedule_id']) ? (int)$_GET['schedule_id'] : 0;
+            $lead = $this->resolveScheduleLead($scheduleId);
+            $xml = $this->voice->generateTwiMLFromScript($scriptCode, [
+                'gatherUrl' => $gatherUrl,
+                'lead_name' => $lead['name'] ?? '',
+                'tenant_id' => isset($lead['tenant_id']) ? (int)$lead['tenant_id'] : 1,
+            ]);
+            $this->respondTwiML($xml);
+            return;
+        }
 
         switch ($type) {
             case 'site_visit':

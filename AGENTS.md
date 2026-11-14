@@ -21,6 +21,52 @@
 
 > **⚠️ SESSION LOG INTEGRITY (new, since S463):** `AGENTS.md` was found truncated at exactly 500 KiB with a tool's `[truncated for diff preview]` marker appended - 45 session entries lost, invisible in `git status`. **Before committing `AGENTS.md`, run `php scripts/verify_agents_log.php`** (add `--restore` to repair it byte-exactly from HEAD). See lesson _857.
 
+## Session 536: Dynamic DB-Driven TwiML Scripts Live End-to-End — Signed Webhook Serves Hi-En Scripts, Static Fallback Intact (2026-11-14)
+
+### Trigger
+User: "do next" — continue the AI outbound-call work. AI agents spoke a fixed greeting to everyone; the fix is speaking the actual `ai_call_scripts` script text.
+
+### What was done (all probe-verified, 0 leftovers)
+
+**1. `TwilioVoiceService::generateTwiMLFromScript(null, array $opts): string` (new)** — builds TwiML from an `ai_call_scripts` row.
+- Script format: `GREETING:` (before gather), `PROMPT:` (inside gather, waits for DTMF), `CLOSE:` (after timeout). If no prefixed lines exist, the whole body becomes the prompt.
+- `{customer_name}` / `{name}` placeholders replaced with the callee's name; all text XML-escaped ENT_XML1/ENT_QUOTES so a hostile lead name can never break the TwiML (probe: `<script>alert(1)</script>` went through as `&lt;script&gt;...` and still parsed as valid XML).
+- Tenant-scoped `SELECT script_body` (tenant_id from `$opts['tenant_id'] ?? 1`).
+- Missing / inactive / bogus script code, or DB failure, returns the existing static English menu — the webhook never 500s on a script lookup miss.
+
+**2. Idempotent migration `seed_ai_call_scripts_s549.php`** — seeds two bilingual (hi-en) scripts:
+- `property_introduction` — Gorakhpur township-plots pitch; gather options: 1 site visit / 2 price-EMI / 3 agent.
+- `site_visit_confirmation` — visit confirmation / reschedule / agent.
+- Run 1 = SEEDED×2, run 2 = SKIP×2. Safety dump taken before the write: `backups/db/ai_call_scripts_pre_seed_s549.sql` (2.4 KB; table was empty).
+
+**3. `TwilioVoiceWebhookController::voice()`** — prefers the dynamic path when `?script=<code>` is present:
+- New `resolveScheduleLead()` looks up `ai_calling_schedule s JOIN leads l` to resolve `{customer_name}` + tenant for personalised greetings; best-effort null on failure (falls back to "sir/madam"). Probe: schedule 10 (lead_id NULL) → "Namaste sir/madam ji!"; unknown tenant/script → static menu.
+- `?script` absent → identical static English behaviour as before.
+
+**4. `App\Services\AI\VoiceService::initiateCall()`** — outbound TwiML URL now passes the schedule's `script_template` as `&script=<code>`, so Twilio fetches the dynamic script (e.g. `?type=property_inquiry&schedule_id=10&script=property_introduction`).
+
+### Verification (all over real HTTP against the live app, not stubs)
+- In-process: both scripts render as well-formed TwiML with correct Hindi text; twice-called-twice path (script × null) returns static menu; XSS lead_name probe escaped; `simplexml_load_string()` → VALID for both.
+- Signed HTTP POSTs (HMAC-SHA1 over URL+sorted POST params — Twilio's own algorithm), body via `--data-binary @file`:
+  - `?script=property_introduction&schedule_id=10` → **200 + Hindi script TwiML**
+  - `?script=site_visit_confirmation&schedule_id=10` → **200 + Hindi site-visit TwiML**
+  - no `script` → **200 + static English property_inquiry menu** (no regression)
+  - `?script=bogus_script_s549` → **200 + static greeting** (no regression)
+  - unsigned → **403** (gate still fires when `?script=` is present)
+- phpstan → `[OK] No errors`. Master → **11/11 PASSED**. `php scripts/verify_agents_log.php` → OK (282 headings before this entry; S536 added).
+- Temp probe files deleted same turn (`_temp_probe549.php`, `_temp3.php`, sig*.php, probe_twiml*.php, .tmp_body*.txt — all gone).
+
+### The debugging detour (do not repeat)
+HTTP signature checks returned 403 for weeks even though in-process `verifyWebhookSignature()` returned true for the identical URL+params. Root cause: **cmd.exe parsed `%2B` in the URL-encoded POST body as a variable `%2B%` with empty value, silently deleting the plus signs from `From=%2B91...`. The app never received a well-formed body, so the signature never matched.** Fix is transport-side, not app-side: send the body via `--data-binary @file` (escapes zero metacharacters), then the same URL+params+sig round-trips perfectly (the identical .tmp body content signed in-process validates against the live handler). A temporary `error_log()` line in the 403 branch captured the `php://input` bytes to identify the mangling — added for one request, then **reverted in the same session**; final `grep -c TWILIO-403` = 0.
+
+### Key lessons (carried, continued)
+_998. **cmd.exe silently expands `%X2...` as a variable — never pass percent-encoded bodies on a shell line.** Write the body to a temp file and send `curl --data-binary @file`; the Twilio production path (real HTTPS POST) never touches a shell. Every recurring "signature rejected" mystery with exact-match in-process tests should check the wire bytes first.
+_999. **Test-mode gate is not a test harness** — the app executes the production algorithm; only the client's transport was corrupted. Separate algorithm correctness (in-process) from wire correctness (real HTTP with file body) from Twilio-oracle reproduction (literal signed POST).
+_1000. **Debug prints inside the failing branch must be one-shot and reverted same-turn.** A temporary log line changes request-side output and leaks trace data into php_error.log for as long as it lives. Add → capture → revert → confirm absence with grep.
+
+### AGENTS.md numbering (Rule 4)
+Highest pre-existing heading = 533 (parallel S534 landed mid-round). This entry = **S536** per the parallel-race rescue precedent (S227, S481). Next-free = **537**.
+
 ## Session 476: Full-Stack Customer Festive Booking Flow, Promo Code Concession Engine, Multi-View Booking Synchronization, 1508/1508 Clean (2026-11-13)
 
 ### Trigger

@@ -243,7 +243,7 @@ class VoiceService
 
         // Build the TwiML URL Twilio fetches - it IS the existing /api/twilio/voice IVR
         $schemeHost = rtrim(defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome', '/');
-        $twimlUrl = $schemeHost . '/api/twilio/voice?type=' . rawurlencode($agentType) . '&schedule_id=' . (int)$scheduleId;
+        $twimlUrl = $schemeHost . '/api/twilio/voice?type=' . rawurlencode($agentType) . '&schedule_id=' . (int)$scheduleId . '&script=' . rawurlencode($tpl);
 
         $tid = $this->tenantId();
         $callResult = $this->makeCall([
