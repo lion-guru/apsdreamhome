@@ -267,3 +267,6 @@ database/migrations/update_twilio_number_s419.php
 storage/keys/
 
 /.phpunit.result.cache
+
+# Machine-specific Flutter/Android build config (never commit)
+**/android/local.properties

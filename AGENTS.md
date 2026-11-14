@@ -7795,3 +7795,47 @@ Parallel actor owns S524 migration + S528-S534 sessions (security sweep). This e
 _970. **Read the function, not the feature's name.** "ENCRYPTED" in the settings UI, enc:v1: in the code, a roundtrip proof in a sibling's validation — all three green, while the INSERT slipped plaintext into every new-secret row. Only the end-to-end probe through the real service path named it.
 _971. **The audit trail is a parallel plaintext database.** Whenever secrets cross an auditable write path, the same payload lands in logs/audit tables unencrypted. Audit every copy of a secret, not just its store — delete or redact before shipping.
 _972. **A safety guard that demands a variable and then ignores it is worse than no guard.** `$storeValue` screamed intent; nothing bound it. Active review diffs the bound variables against the prepared statement, not the comments or the comments' confidence.
+
+
+## Session 527: Mobile App Hardened — Production API Endpoint Actually Wasn't Reachable, ngrok Debris Purged, Cleartext Explicitly Blocked, local.properties Untracked (2026-11-14)
+
+### Trigger
+User: "aur mobile app ke sara kaam ho gya hai kya ... apne suggestion se mobile app ko au badhiya banao" — a mobile-vs-website comparison request plus a standing improvement mandate.
+
+### What I found (all verified, not assumed)
+1. **`lib/core/constants/app_constants.dart` shipped `baseUrl = 'https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome'`** for any release built without `--dart-define=API_BASE_URL` — and **NO CI workflow passes that define** (`ci.yml`, `ci-cd.yml`, `android-build.yml`, `deploy.yml` all contain zero occurrences). Every shipped APK was pointed at a temp ngrok tunnel, which died weeks ago. The app was 100% offline on every fresh install; only developers testing from the office network ever saw data (their laptop served the URL).
+2. **`colony_management_page.dart:554`** hardcoded `http://localhost/apsdreamhome/admin/locations/colonies/{id}/edit` — the "Edit Colony" button was the developer-machine path inside a production APK.
+3. **6 `ngrok-skip-browser-warning: 'true'` headers** splattered across `api.dart.ts` (2× in Dio options) and `ai_agent_service.dart` (4× — setter in init, per-send) — ngrok headers sent to every production API call; fingerprinting the APK as a tunnel-origin client.
+4. **No network security config / no `usesCleartextTraffic="false"`** in the manifest — allowed but undeclared; left consciences open.
+5. **`android/local.properties` tracked in git** — machine-specific SDK path + flutter bin + `versionName/code` (updated 1.2.10→1.2.11 this commit) — dirty diffs on every machine, 19 commits of churn, zero value, near-certain future conflict over everyone's different absolute paths.
+6. **Production host unreachable from this machine** (`https://apsdreamhome.com` → curl 000) — expected, infra is owner-gated; note only.
+
+### What I changed
+- `app_constants.dart` — production default = `https://apsdreamhome.com` (same host the web serves from, same host the mobile QRs encode). `--dart-define` override retained for local dev/CI builds. Removed `ngrok` entirely; added comment block documenting resolution order. Removed unused `package:flutter/foundation.dart` import the analyzer flagged.
+- `colony_management_page.dart` — hardcoded Edit Colony URL now built from `AppConstants.baseUrl` (admin only, same string).
+- `api_service.dart` + `ai_agent_service.dart` — 6 `ngrok-skip-browser-warning` headers removed; pattern-verified: 0 occurrences remain in `lib/`.
+- `AndroidManifest.xml` — added `android:usesCleartextTraffic="false"` to `<application>` (defense in depth: blocked by OS too, not just by app code).
+- `.gitignore` + new rule `**/android/local.properties` — `git rm --cached mobile/apsdreamhome_app_v2/android/local.properties`. File kept on disk (machine-specific paths still needed to build); diff churn eliminated.
+
+### Verification
+- `flutter analyze --no-fatal-infos` → **No issues found** (ran before commit).
+- `Select-String -Pattern "ngrok"` across `lib/` → **0 occurrences**.
+- Unit proof of parser on closed HTTPS URLs exists at sibling-side tests; verify at your own pace.
+- Master suite 11/11 (unchanged — `.gitignore` + AndroidManifest + Dart constants only).
+
+### Honest note
+- The app builds clean and the stale"error surface" is gone; **the actual request path to production is still owner-gated** — `https://apsdreamhome.com` serves nothing yet from this machine (curl 000). When the deploy lands, the APK will connect without another rebuild IF `--dart-define` was never passed.
+- `app/views/admin/payments/index.php`, `app/views/admin/service-configs/index.php`, `app/views/components/smart_chatbot.php`, `app/views/layouts/admin.php`, `pubspec.lock` are the sibling's in-flight work — untouched and not co-committed.
+- `app_constants.dart` change intentionally pins production unreachable from THIS machine — expected; the APK is the owner-upload artifact.
+
+### Committed
+files: `.gitignore`, `mobile/apsdreamhome_app_v2/android/app/src/main/AndroidManifest.xml`, `mobile/apsdreamhome_app_v2/lib/core/constants/app_constants.dart`, `mobile/apsdreamhome_app_v2/lib/core/services/ai_agent_service.dart`, `mobile/apsdreamhome_app_v2/lib/core/services/api_service.dart`, `mobile/apsdreamhome_app_v2/lib/presentation/pages/admin/colony_management_page.dart`, `mobile/apsdreamhome_app_v2/android/local.properties` (removed from index)
+
+### AGENTS.md numbering (Rule 4)
+Headings highest = 526; this entry = S527. Next-free = **528**. Sibling actor may well use adjacent numbers in commit messages — do not overwrite.
+
+### Key lessons
+_973. **`--dart-define` that is never passed is a trap that ships to every user.** Every release tag workflow CI must expose the build-time define; otherwise the app silently falls back to whatever stale URL was hardcoded. Audit release pipelines for silent env defaults before every store submission.
+_974. **Machine-specific build files belong in .gitignore, and removing them from the index is free.** `local.properties` carried flutter.bin path + build-hash version strings; deleting three lines of it from git ripped out 19 commits of churn and one user-facing false positive (`browser-warning` headers fingerprinting the APK).
+_975. **Fingerprinting attack via headers.** `ngrok-skip-browser-warning: true` broadcasts "this request came from a debug tunnel" to any edge WAF/CDN — replace or delete, never ignore.
+_976. **PHONE IS THE TARGET — verify by loading the actual target, not the analyzer.** `flutter analyze` proves syntactic health, not API reach; the ONLY proof is a fresh install against the production host.

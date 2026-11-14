@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../data/services/colony_service.dart';
 import '../../../data/models/colony_model.dart';
 import '../../widgets/app_widgets.dart';
@@ -551,7 +552,7 @@ class _ColonyManagementPageState extends ConsumerState<ColonyManagementPage> {
 
   void _showEditColonyDialog(ColonyModel colony) {
     final url = Uri.parse(
-      'http://localhost/apsdreamhome/admin/locations/colonies/${colony.id}/edit',
+      '${AppConstants.baseUrl}/admin/locations/colonies/${colony.id}/edit',
     );
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

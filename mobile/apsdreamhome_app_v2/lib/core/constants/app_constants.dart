@@ -1,25 +1,22 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AppConstants {
   // API Configuration
-  // Uses --dart-define=API_BASE_URL=... at build time, or platform detection
+  // Resolution order:
+  //   1. --dart-define=API_BASE_URL=... at build time (explicit override, e.g. local dev builds)
+  //   2. Production default below (https://apsdreamhome.com) - ships in every build
+  //      that is NOT built with dart-define (e.g. every APK/AAB from CI, which sets nothing).
+  // CI builds and the Play Store release APK rely on the production default.
   static String baseUrl = const String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: '',
+    defaultValue: 'https://apsdreamhome.com',
   );
 
   static void initBaseUrl() {
-    if (baseUrl.isNotEmpty) return; // --dart-define was set
+    if (baseUrl.isNotEmpty) return; // --dart-define / production default was used
 
-    // Platform detection fallback
-    if (kIsWeb) {
-      baseUrl = 'http://localhost/apsdreamhome';
-    } else {
-      // Mobile: use ngrok URL (works from any network)
-      baseUrl =
-          'https://unforced-willena-seclusively.ngrok-free.dev/apsdreamhome';
-    }
+    // Final fail-closed: if baseUrl is somehow empty, target production, never localhost.
+    baseUrl = 'https://apsdreamhome.com';
   }
 
   static const String apiVersion = 'api/v2/mobile';

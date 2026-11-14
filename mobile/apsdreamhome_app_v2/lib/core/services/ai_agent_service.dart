@@ -63,7 +63,6 @@ class AIAgentService {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
       },
     ),
   );
@@ -82,7 +81,6 @@ class AIAgentService {
   /// Initialize the AI Agent Service
   Future<void> initialize() async {
     _dio.options.baseUrl = AppConstants.baseUrl;
-    _dio.options.headers['ngrok-skip-browser-warning'] = 'true';
     developer.log('AI Agent Service initialized with baseUrl: ${AppConstants.baseUrl}');
   }
 
@@ -111,7 +109,6 @@ class AIAgentService {
     Map<String, dynamic>? context,
   }) async {
     _dio.options.baseUrl = AppConstants.baseUrl;
-    _dio.options.headers['ngrok-skip-browser-warning'] = 'true';
 
     try {
       final response = await _dio.post(
@@ -231,7 +228,6 @@ class AIAgentService {
     developer.log('Processing message for agent: $agentId');
 
     _dio.options.baseUrl = AppConstants.baseUrl;
-    _dio.options.headers['ngrok-skip-browser-warning'] = 'true';
 
     try {
       final response = await _dio.post(
