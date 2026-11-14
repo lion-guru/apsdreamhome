@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use PDO;
 use App\Core\Controller;
 use App\Services\Voice\TwilioVoiceService;
 use App\Services\Voice\TwiMLBuilder;
@@ -351,6 +352,49 @@ class TwilioVoiceWebhookController extends Controller
         } catch (\Throwable $e) {
         // ignore
         error_log($e->getMessage());
+        }
+        // Outcome handoff: log the call outcome on the lead's timeline and
+        // ping the assigned owner so follow-up actually happens.
+        if ($outcome !== null && $callSid !== '' && isset($pdo) && $pdo) {
+            try {
+                $db = \App\Core\Database\Database::getInstance();
+                $handoff = $pdo->prepare(
+                    "SELECT s.lead_id, l.assigned_to
+                       FROM ai_call_sessions ss
+                       JOIN ai_calling_schedule s ON s.call_session_id = ss.id
+                       LEFT JOIN leads l ON l.id = s.lead_id
+                      WHERE ss.call_sid = ?
+                      LIMIT 1"
+                );
+                $handoff->execute([$callSid]);
+                $row = $handoff->fetch(\PDO::FETCH_ASSOC);
+                $leadId = (int)($row['lead_id'] ?? 0);
+                if ($leadId > 0) {
+                    $note = 'AI call outcome: ' . $outcome . ' (digit ' . $digits . ')';
+                    if ($followUpDate !== null) {
+                        $note .= ' - follow up by ' . $followUpDate;
+                    }
+                    $pdo->prepare(
+                        "INSERT INTO lead_activities (lead_id, activity_type, description, new_value, tenant_id, created_at)
+                         VALUES (?, 'ai_call_outcome', ?, ?, 1, NOW())"
+                    )->execute([$leadId, $note, $outcome]);
+
+                    $assignedTo = (int)($row['assigned_to'] ?? 0);
+                    if ($assignedTo > 0) {
+                        $notifier = new \App\Services\NotificationService($db);
+                        $notifier->notify(
+                            'ai_call_outcome',
+                            'Lead #' . $leadId . ': AI call outcome ' . strtoupper((string)$outcome)
+                                . ($followUpDate !== null ? ' - follow up by ' . $followUpDate : ' - follow up now') . '.',
+                            $assignedTo,
+                            '/employee/leads/' . $leadId,
+                            'AI Call Outcome'
+                        );
+                    }
+                }
+            } catch (\Throwable $e) {
+                error_log('TwilioVoiceWebhookController::gather handoff: ' . $e->getMessage());
+            }
         }
         $builder = new TwiMLBuilder();
 

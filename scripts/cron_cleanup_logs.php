@@ -5,6 +5,7 @@
 // - csp_violations:     DELETE older than 30 days (received_at — table has no created_at)
 // - notification_logs:  DELETE older than 180 days (created_at)
 // - audit_logs:         DELETE older than 365 days (created_at)
+// - recordings:         REPORT-ONLY count of AI calls with recording_url older than 90 days
 // Runnable standalone: php scripts/cron_cleanup_logs.php           (deletes per retention rules)
 //                      php scripts/cron_cleanup_logs.php --dry-run   (counts only, no deletes)
 // Also wired as daily Task 10 in scripts/run_all_crons.php
@@ -34,6 +35,14 @@ function cron_cleanup_logs(PDO $pdo, bool $dryRun = false): array
             error_log("cron_cleanup_logs: $table failed: " . $e->getMessage());
             $deleted[$table] = -1; // overloaded sentinel; callers must treat -1 as error
         }
+    }
+    // Report-only: AI call recordings on Twilio's side older than 90 days.
+    // No rows are changed - audio retention is a project-owner decision.
+    try {
+        $stmt = $pdo->query("SELECT COUNT(*) FROM ai_call_sessions WHERE recording_url IS NOT NULL AND recording_url != '' AND created_at < NOW() - INTERVAL 90 DAY");
+        $deleted['recordings_stale_90d'] = (int)$stmt->fetchColumn();
+    } catch (Throwable $e) {
+        $deleted['recordings_stale_90d'] = -1;
     }
     return ['deleted' => $deleted, 'dry_run' => $dryRun];
 }

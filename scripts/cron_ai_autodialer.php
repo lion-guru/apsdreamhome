@@ -70,11 +70,18 @@ foreach (['phone', 'status', 'scheduled_date', 'scheduled_time', 'max_attempts',
 // Find calls due now (today, scheduled time reached, attempts not exhausted)
 $stmt = $db->prepare(
     "SELECT id, lead_id, phone, script_template, attempt_count, max_attempts
-       FROM ai_calling_schedule
-      WHERE status = 'pending'
-        AND scheduled_date <= CURDATE()
-        AND (scheduled_time IS NULL OR scheduled_time <= CURTIME())
-        AND attempt_count < max_attempts
+       FROM ai_calling_schedule s
+      WHERE s.status = 'pending'
+        AND s.scheduled_date <= CURDATE()
+        AND (s.scheduled_time IS NULL OR s.scheduled_time <= CURTIME())
+        AND s.attempt_count < s.max_attempts
+        /* TCCCPR: skip leads whose last AI call outcome was DND */
+        AND NOT EXISTS (
+            SELECT 1 FROM ai_call_sessions ss
+             WHERE ss.lead_id = s.lead_id
+               AND ss.customer_response = 'dnd'
+               AND ss.lead_id IS NOT NULL
+        )
       ORDER BY
         FIELD(priority, 'urgent', 'high', 'medium', 'low') ASC,
         id ASC

@@ -86,6 +86,10 @@ $probes = [
     ['admin-payout-batches', '/admin/payout-batches', 'admin', [200], 0],
     ['admin-leads', '/admin/leads', 'admin', [200], 0],
     ['admin-users', '/admin/users', 'admin', [200], 0],
+    ['admin-ai-voice-users', '/admin/voice-users', 'admin', [200], 0],
+    ['admin-ai-voice-history', '/admin/voice-users/history', 'admin', [200], 0],
+    ['admin-ai-voice-schedule', '/admin/voice-users/schedule', 'admin', [200], 0],
+    ['admin-ai-voice-settings', '/admin/voice-users/settings', 'admin', [200], 0],
     // apis (3) — expect HTTP 200 + JSON body
     ['api-health', '/api/health', 'public', [200], 1],
     ['api-colonies', '/api/v2/mobile/colonies', 'public', [200], 1],
