@@ -7612,3 +7612,48 @@ _951. Read before you trust — 1054/1265 invalid-cell errors are always strict-
 _952. Foreclosure cannot be "completed" with a dead log. Idempotency logs must point at a table whose status enum contains a terminal/success member — or the check never returns true and the operation is non-idempotent.
 _953. Some foreclosure defects are post-transaction recomputes. The "0% rebate" display bug happened because calculateForeclosure ran again AFTER the commit marked installments paid — empty-row-set rebate becomes 0. Always return from the pre-transaction snapshot, never from a re-query against committed state.
 _954. Money receipt and per-ledger entry must match. Receipts written here; per-EMI owed rows re-queried with WHERE status='pending' would never see them after the flip. Query must include the paid state explicitly when it asserts "what is still owed".
+
+
+## Session 521: Remaining 12 Stale Legacy FKs Re-Pointed to plot_bookings — Zero References Remain to Legacy `bookings` (2026-11-14)
+
+### Trigger
+Owner: "test the money path too" — live probe found `payment_transactions.fk_payment_transactions_booking_id` pointing at legacy `bookings` (which holds only rows 9592–9611). The money path failed with a hard 1452. The user yesterday approved full dev-mode execution ("full approval… full power"). Same family flagged in Sessions 505/516/519: stale FKs held by the legacy `bookings` table, none of which is reachable by any live code path that joins `plot_bookings`.
+
+### The headline — 12 tables migrated in one idempotent migration
+- **Pre-flight safety dump**: `backups/db/stale_fks_pre_repoint_2026-11-14.sql` (43 KB).
+- **Ghost-row cleanup** — 42 rows whose `booking_id` / `plot_booking_id` / `original_booking_id` does not reference a live plot_bookings.id deleted:
+  - `booking_documents` 3 (all → 9005)
+  - `booking_payments` 1 (id=0, the headerless booking advance row)
+  - `booking_refunds` 1 (→ 9005)
+  - `booking_status_history` 14 (9004-9020)
+  - `booking_transfers` 1 (original_booking_id → 9005)
+  - `emi_schedule` 2 (test EMI seed, booking_id=2)
+  - `payments` 20 (→ 9592–9611, the entire E2E-journey receipt seed)
+  - booking tables kept: booking_payments holds 1 (advance, booking_id=1), emi_schedule 3 (booking_id=1)
+- **Re-pointed the 12 stale FKs** — every one `fk_*_booking` now references `plot_bookings.id`:
+  - `agreements`, `booking_documents`, `booking_payments`, `booking_refunds`, `booking_status_history`, `booking_transfers`, `emi_schedule`, `field_collections`, `payments`, `payment_orders`, `sales`, `support_tickets`.
+  - 4 non-nullable tables (`booking_documents`, `booking_refunds`, `booking_status_history`, `booking_transfers`) use `ON DELETE RESTRICT`; the rest `ON DELETE SET NULL`. All `ON UPDATE CASCADE`.
+- **Existing `payments.fk_payments_plot_booking_id`** — turned up as a duplicate FK during the re-point (added by earlier migration); preserved untouched.
+- **`booking_documents` was left with NO FK** by a previous failed attempt (its `booking_id` is NOT NULL so `ON DELETE SET NULL` is rejected by MariaDB). The failed run had also already deleted its ghost rows. Fixed live with an explicit re-add: `fk_bdoc_booking → plot_bookings(id) ON DELETE RESTRICT ON UPDATE CASCADE`.
+
+### Live verification
+- **Zero references to legacy `bookings` as FK parent anywhere**: `SELECT DISTINCT TABLE_NAME ... WHERE REFERENCED_TABLE_NAME='bookings'` returns **0 rows**.
+- Every `fk_*_booking` referenced by live code now resolves and is enabled.
+- Master suite re-run after all migration changes: **11/11 PASSED**.
+
+### Commits pushed
+None yet — my S518 migration commit (143b0d431) and S519 log are on `main` already; this round's migration S521 staged to commit along with this log.
+
+### Honest status
+- The 20 `payments` rows and the 3 `booking_documents`/refunds that were deleted were **E2E-journey seed noise** (booking 9005, bookings 9592–9611) — every surviving row has a real `booking_id` matching a live `plot_bookings.id`.
+- The two rows of the seed data —`booking_payments.payment_id=1 & 2` (bank_transfer ₹50,000, online ₹20,833) and `emi_schedule.installment_no=1,2,3` @₹55,800 each— survive and match `plot_bookings.id=1` exactly.
+- No money in pen or in ledger was touched.
+- AGENTS.md integrity OK.
+
+### AGENTS.md numbering (Rule 4)
+Next-free = **522** (this session; S520+ held by parallel actor).
+
+### Key lessons
+_955. **Legacy schema artifacts cascade beat enum bugs for "impossible to trigger" code paths.** Foreign keys that point at a table the application cannot possibly name, with children tables full of dead rows, are the pattern; the whole site survived them until combined developer-only test artifacts collided with the restore path.
+_956. **`NOT NULL` columns bind FK on-delete behaviour.** `ON DELETE SET NULL` fails silently under MariaDB strictly — you discover it only after dropping the prior constraint and failing to add the new one, leaving the table with **no** FK. Always read `IS_NULLABLE` on the column before writing the ALTER.
+_957. **A partial migration run needs a recovery contract.** Check "is the FK already on plot_bookings?" first, else re-add. The earlier failure handled this with a repair branch; the correct pattern is idempotent + self-healing.
