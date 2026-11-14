@@ -1397,6 +1397,23 @@ $router->get('/api/v2/mobile/properties/{id}/messages', 'Api\MobilePropertyApiCo
 $router->post('/api/v2/mobile/properties/boost', 'Api\MobilePropertyApiController@boostProperty')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/properties/messages/{id}/read', 'Api\MobileUserApiController@markMessageRead')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 
+// Mobile v2-mobile lane alias: the Flutter app requests '/ai/property-recommendations/me'
+// via the /api/v2/mobile base, which resolved to a path with no route (404). The
+// canonical '/api/ai/property-recommendations/me' was unreachable for mobile clients.
+$router->get('/api/v2/mobile/ai/property-recommendations/me', 'Api\PropertyRecommendationController@getMyRecommendations')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+// Owner marketplace: direct-from-owner verified listings. Sellers post via
+// the app; admins verify via /admin/user-properties. Verified/approved
+// listings become publicly visible on mobile; pending ones wait for review.
+$router->get('/api/v2/mobile/properties/owner-listings', 'Api\MobileUserApiController@getOwnerListings');
+$router->get('/api/v2/mobile/properties/owner-listing/{id}', 'Api\MobileUserApiController@getOwnerListingDetail');
+$router->post('/api/v2/mobile/properties/owner-listings', 'Api\MobileUserApiController@createOwnerListing')
+    ->middleware(applyRateLimit('api.default'))
+    ->middleware('App\Http\Middleware\ApiAuthMiddleware');
+
+
 // --- Listing Upgrade Payment ---
 $router->post('/api/v2/mobile/listing/create-order', 'Api\ListingPaymentController@createOrder')->middleware('App\Http\Middleware\ApiAuthMiddleware');
 $router->post('/api/v2/mobile/listing/verify-payment', 'Api\ListingPaymentController@verifyPayment')->middleware('App\Http\Middleware\ApiAuthMiddleware');
