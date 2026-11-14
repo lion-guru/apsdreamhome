@@ -261,9 +261,22 @@ import '../../presentation/pages/agent/cash_drawer_page.dart';
 import '../../presentation/pages/property/property_auctions_page.dart';
 import '../../presentation/pages/customer/farmer_desk_page.dart';
 import '../../presentation/pages/customer/meeting_scheduler_page.dart';
+import '../../presentation/pages/common/public_verify_page.dart';
 
 // User model
 import '../../data/models/user_model.dart';
+
+// Orphaned pages wired this session
+import '../../presentation/pages/ar/ar_plot_overlay_page.dart';
+import '../../presentation/pages/mlm/auto_payout_page.dart';
+import '../../presentation/pages/customer/compare_properties_page.dart';
+import '../../presentation/pages/emi/emi_collection_page.dart';
+import '../../presentation/pages/leads/lead_list_page.dart';
+import '../../presentation/pages/property/listing_packages_page.dart';
+import '../../presentation/pages/property/my_listings_page.dart';
+import '../../presentation/pages/properties/property_list_page.dart';
+import '../../presentation/pages/properties/property_swipe_page.dart';
+
 
 /// Global auth state bridge — ValueNotifier avoids Riverpod ↔ InheritedModel conflict in GoRouter redirect
 class AuthBridge {
@@ -1603,6 +1616,53 @@ isDisclaimer ||
         path: '/site-visit-tracker',
         builder: (context, state) => const SiteVisitPage(),
       ),
+      // Orphaned pages wired this session
+      GoRoute(
+        path: '/ar-plot-overlay',
+        builder: (context, state) => const ARPlotOverlayPage(),
+      ),
+      GoRoute(
+        path: '/swipe',
+        builder: (context, state) => const PropertySwipePage(),
+      ),
+      GoRoute(
+        path: '/properties-list',
+        builder: (context, state) => const PropertyListPage(),
+      ),
+      GoRoute(
+        path: '/voice-leads',
+        builder: (context, state) => const LeadListPage(),
+      ),
+      GoRoute(
+        path: '/compare-properties',
+        builder: (context, state) => const ComparePropertiesPage(),
+      ),
+      GoRoute(
+        path: '/listing-packages/:propertyId',
+        builder: (context, state) => ListingPackagesPage(
+          propertyId: state.pathParameters['propertyId']!,
+        ),
+      ),
+      GoRoute(
+        path: '/my-listings',
+        builder: (context, state) => const MyListingsPage(),
+      ),
+      GoRoute(
+        path: '/agent/emi-collection',
+        builder: (context, state) => const EMICollectionPage(),
+      ),
+      GoRoute(
+        path: '/admin/auto-payout',
+        builder: (context, state) => const AutoPayoutPage(),
+      ),
+      GoRoute(
+        path: '/public-verify/:type/:ref',
+        builder: (context, state) => PublicVerifyPage(
+          type: state.pathParameters['type']!,
+          ref: state.pathParameters['ref']!,
+        ),
+      ),
+
       GoRoute(
         path: '/telecaller/dashboard',
         builder: (context, state) => const TelecallerDashboardPage(),

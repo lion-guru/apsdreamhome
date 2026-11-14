@@ -63,10 +63,41 @@ class DeepLinkService {
     }
   }
 
-  /// Pure parser - unit-testable, no Flutter bindings required.
+  // Supported link forms:
+  //   apsdreamhome://property/123          -> /property-detail/123
+  //   https://<host>/verify/{type}/{ref}   -> /public-verify/{type}/{ref}
+  //
+  // Manifest tunnels both schemes into this parser (sibling added the
+  // android:autoVerify="true" https filter on <activity>).
   static String? parseRoute(String link) {
     final uri = Uri.tryParse(link);
-    if (uri == null || uri.scheme != 'apsdreamhome') return null;
+    if (uri == null) return null;
+
+    final isAppScheme = uri.scheme == 'apsdreamhome';
+    final isHttps = uri.scheme == 'https';
+    if (!isAppScheme && !isHttps) return null;
+
+    // For HTTPS links, only accept links hosted by an APS Dream Home domain.
+    if (isHttps) {
+      final host = uri.host.toLowerCase();
+      final trusted = host == 'apsdreamhome.com'
+          || host == 'www.apsdreamhome.com'
+          || host.endsWith('.apsdreamhome.com');
+      if (!trusted) return null;
+      final segs = uri.pathSegments.where((s) => s.isNotEmpty).toList();
+      if (segs.length >= 3 && segs[0] == 'verify') {
+        return '/public-verify/${segs[1]}/${segs[2]}';
+      }
+      if (segs.length >= 2 && segs[0] == 'colony-plots') {
+        final digits = RegExp(r'\d+').stringMatch(segs[1]) ?? segs[1];
+        return '/colony-plots/$digits';
+      }
+      if (segs.length >= 2 && segs[0] == 'property') {
+        final digits = RegExp(r'\d+').stringMatch(segs[1]) ?? segs[1];
+        return '/property-detail/$digits';
+      }
+      return null;
+    }
 
     final host = uri.host.toLowerCase();
     final segs = [

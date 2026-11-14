@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.apsdreamhomes.mobileapp",
+      "sha256_cert_fingerprints": [
+        "0E:58:5F:24:37:07:C1:D5:23:64:77:07:C2:F5:0F:6F:BC:71:96:0D:06:61:9A:6C:39:B4:E9:8E:28:B3:0D:BE"
+      ]
+    }
+  }
+]

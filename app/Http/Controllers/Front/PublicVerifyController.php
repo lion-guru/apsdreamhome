@@ -25,30 +25,53 @@ class PublicVerifyController extends PageController
 
     public function verify($type = null, $ref = null)
     {
+        $r = self::resolve($type, $ref);
+        $this->render('pages/public_verify', [
+            'page_title' => 'Document Verification - APS Dream Home',
+            'doc_type' => $r['type'],
+            'ref_no' => $r['ref'],
+            'doc' => $r['doc'],
+        ]);
+    }
+
+    /**
+     * Read-only JSON twin of verify() - lets the APS app render the same
+     * green/red verification card natively via GET /api/public-verify/{type}/{ref}.
+     */
+    public function verifyJson($type = null, $ref = null)
+    {
+        $r = self::resolve($type, $ref);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => true, 'type' => $r['type'], 'ref' => $r['ref'], 'valid' => $r['doc'] !== null, 'doc' => $r['doc']]);
+        exit;
+    }
+
+    /**
+     * Shared resolution for verify() and verifyJson() - identical lookup, so the
+     * green/red card can never drift between the website and the app.
+     * @return array{type:string, ref:string, doc:?array}
+     */
+    private static function resolve($type = null, $ref = null): array
+    {
         $type = strtolower(trim((string)($type ?? '')));
         $ref = trim((string)($ref ?? ''));
         $validTypes = ['receipt', 'allotment', 'statement', 'noc', 'title_cert', 'transfer', 'registry_deed', 'cancellation_deed', 'possession_certificate', 'allotment_letter', 'stamp_paper'];
         $found = null;
         if (in_array($type, $validTypes, true) && $ref !== '') {
             try {
-                $found = $this->lookup(Database::getInstance(), $type, $ref);
+                $found = self::lookup(Database::getInstance(), $type, $ref);
             } catch (\Throwable $e) {
-                error_log('[PublicVerifyController::verify] ' . $e->getMessage());
+                error_log('[PublicVerifyController::resolve] ' . $e->getMessage());
                 $found = null;
             }
         }
-        $this->render('pages/public_verify', [
-            'page_title' => 'Document Verification - APS Dream Home',
-            'doc_type' => $type,
-            'ref_no' => $ref,
-            'doc' => $found,
-        ]);
+        return ['type' => $type, 'ref' => $ref, 'doc' => $found];
     }
 
     /**
      * @return array|null normalized doc fields or null when not found
      */
-    private function lookup($db, string $type, string $ref): ?array
+    private static function lookup($db, string $type, string $ref): ?array
     {
         switch ($type) {
             case 'receipt':

@@ -1252,6 +1252,9 @@ $router->get('/api/v2/mobile/landmarks/list', 'Api\LandmarksApiController@list')
 $router->get('/api/v2/mobile/landmarks/types', 'Api\LandmarksApiController@types');
 $router->get('/api/v2/mobile/landmarks/colony/{colonyId}', 'Api\LandmarksApiController@byColony');
 
+// --- Public Verification API (receipt/allotment/etc - no auth, masked) ---
+$router->get('/api/v2/public-verify/{type}/{ref}', 'Front\\PublicVerifyController@verifyJson');
+
 // --- RERA Verification API (mobile) ---
 $router->get('/api/v2/mobile/rera/verify/{reraNumber}', 'Api\MobileUserApiController@reraVerify');
 $router->get('/api/v2/mobile/rera/search', 'Api\MobileUserApiController@reraSearch');
