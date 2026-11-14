@@ -123,30 +123,81 @@ class MobileAuthApiController extends BaseController
         }
     }
 
+    /**
+     * Verify a Google id_token via Google's tokeninfo endpoint.
+     * Returns ['ok' => true, 'email' => string, 'name' => string, ...] on success,
+     * or ['ok' => false, 'error' => string]. Required before any session is created.
+     * No google/apiclient needed — a single HTTPS call to tokeninfo is enough here.
+     */
+    private static function verifyGoogleIdToken(string $idToken): array
+    {
+        $url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($idToken);
+        $raw = @file_get_contents($url, false, stream_context_create([
+            'http' => ['timeout' => 10, 'method' => 'GET', 'header' => "User-Agent: apsdreamhome\r\n"],
+        ]));
+        if ($raw === false) {
+            return ['ok' => false, 'error' => 'Could not reach Google to verify token'];
+        }
+        $ti = json_decode($raw, true);
+        if (!is_array($ti)) {
+            return ['ok' => false, 'error' => 'Google returned an invalid verification response'];
+        }
+        $email = strtolower(trim((string)($ti['email'] ?? '')));
+        if ($email === '') {
+            return ['ok' => false, 'error' => 'Google token carried no email'];
+        }
+        // Audience must match one of the known web-client IDs this app signs in with
+        // (.env GOOGLE_CLIENT_ID, plus the serverClientId baked into lib/data/services/google_auth_service.dart)
+        $envId = getenv('GOOGLE_CLIENT_ID') ?: '';
+        $mobileServerClientId = '387997879764-rk0cvpfqcf3m6nm20n93cpc4gprht2o3.apps.googleusercontent.com';
+        $aud = (string)($ti['aud'] ?? '');
+        $allIn = array_values(array_filter([$envId, $mobileServerClientId]));
+        if ($aud === '' || !in_array($aud, $allIn, true)) {
+            return ['ok' => false, 'error' => 'Google token audience mismatch'];
+        }
+        $exp = (int)($ti['expires_in'] ?? 0);
+        if ($exp < 0) {
+            return ['ok' => false, 'error' => 'Google token already expired'];
+        }
+        return [
+            'ok' => true,
+            'email' => $email,
+            'name' => (string)($ti['name'] ?? ''),
+            'picture' => (string)($ti['picture'] ?? ''),
+            'email_verified' => ((string)($ti['email_verified'] ?? 'false') === 'true'),
+        ];
+    }
+
     public function googleLogin()
     {
         $this->setCorsHeaders();
         $data = json_decode(file_get_contents('php://input'), true);
 
         $idToken = $data['id_token'] ?? '';
-        $email = trim($data['email'] ?? '');
         $name = \App\Core\Security::sanitize(trim($data['name'] ?? ''));
         $photoUrl = filter_var($data['photo_url'] ?? '', FILTER_SANITIZE_URL);
 
-        if (empty($email)) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Email is required']);
-            return;
-        }
-
-        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Invalid email format']);
-            return;
-        }
-
+        // Token MUST be verified with Google. Unverified tokens are forged login vectors.
         $idToken = substr(trim($idToken), 0, 2048);
+        if (strlen($idToken) < 100) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Valid Google id_token required']);
+            return;
+        }
+
+        // Verify with Google's tokeninfo endpoint - fixes the account-takeover hole
+        // Finding an account by attacker-supplied $email alone must NOT grant a session.
+        $verified = self::verifyGoogleIdToken($idToken);
+        if (!$verified['ok']) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => $verified['error']]);
+            return;
+        }
+
+        $email = strtolower(trim((string)$verified['email']));
+        if ($name === '') {
+            $name = trim((string)($verified['name'] ?? 'Google User'));
+        }
 
         try {
             $pdo = $this->db->getConnection();
@@ -165,9 +216,11 @@ class MobileAuthApiController extends BaseController
                 $customerId = $prefix . date('Y') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
                 $newReferralCode = strtoupper(substr($name, 0, 3)) . date('ymd') . rand(100, 999);
 
-                $cols = "customer_id, name, email, password, role, status, provider, provider_id, avatar, referral_code, created_at, updated_at";
-                $vals = "?, ?, ?, ?, 'customer', 'active', 'google', ?, ?, ?, NOW(), NOW()";
-                $uParams = [$customerId, $name, $email, $password, $idToken, $photoUrl, $newReferralCode];
+                // Mirror the Web path exactly - users has no provider/provider_id/avatar columns.
+                $phone = $data['phone'] ?? '';
+                $cols = "customer_id, name, email, phone, password, referral_code, role, status, created_at, updated_at";
+                $vals = "?, ?, ?, ?, ?, ?, 'customer', 'active', NOW(), NOW()";
+                $uParams = [$customerId, $name, $email, $phone, $password, $newReferralCode];
 
                 $insertExtra = $this->tenantInsertData();
                 if (!empty($insertExtra)) {
