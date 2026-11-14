@@ -46,6 +46,7 @@ class VoiceService
     private $voiceProviderManager;
     private $notificationService;
     private $providers = [];
+    private $currentProvider;
 
     public const VOICE_PROVIDERS = [
         'exotel'   => 'Exotel',
@@ -205,12 +206,11 @@ class VoiceService
     public function initiateCall(int $scheduleId): array
     {
         $schedule = $this->db->fetch(
-            "SELECT s.*, l.name as lead_name, l.phone as lead_phone, l.property_interest,
-                    a.agent_name, a.agent_id as agent_identifier
-             FROM ai_calling_schedule s
-             LEFT JOIN leads l ON l.id = s.lead_id
-             LEFT JOIN ai_calling_agents a ON a.agent_id = s.ai_agent_id
-             WHERE s.id = ?",
+            "SELECT s.lead_id, s.phone, s.script_template, s.status, s.attempt_count, s.max_attempts,
+                    l.name AS lead_name, l.phone AS lead_phone
+               FROM ai_calling_schedule s
+               LEFT JOIN leads l ON l.id = s.lead_id
+              WHERE s.id = ?" . $this->tenantSql(),
             [$scheduleId]
         );
 
@@ -221,78 +221,89 @@ class VoiceService
             return ['success' => false, 'error' => 'Schedule status is ' . $schedule['status']];
         }
 
+        // Mark processing + bump attempts (status enum: pending/processing/completed/failed/cancelled)
         $this->db->execute(
-            "UPDATE ai_calling_schedule SET status = 'processing', attempt_count = attempt_count + 1, last_attempt_at = NOW(), updated_at = NOW() WHERE id = ?" . $this->tenantSql(),
-            array_merge([$scheduleId], $this->tenantId() > 1 ? [$this->tenantId()] : [])
+            "UPDATE ai_calling_schedule
+                SET status = 'processing', attempt_count = attempt_count + 1,
+                    last_attempt_at = NOW(), updated_at = NOW()
+              WHERE id = ?" . $this->tenantSql(),
+            [$scheduleId]
         );
 
-        try {
-            $script = $this->db->fetch(
-                "SELECT * FROM ai_call_scripts WHERE script_code = ? AND is_active = 1 LIMIT 1" . $this->tenantSql(),
-                [$schedule['script_template']]
-            );
-        } catch (\Throwable $e) {
-            error_log($e->getMessage());
-            $script = null;
+        // Determine call type from the script template so the right IVR runs
+        $tpl = (string)($schedule['script_template'] ?? '');
+        $agentType = 'greeting';
+        if (stripos($tpl, 'visit') !== false || stripos($tpl, 'site') !== false) {
+            $agentType = 'site_visit';
+        } elseif (stripos($tpl, 'follow') !== false) {
+            $agentType = 'follow_up';
+        } elseif (stripos($tpl, 'inquir') !== false || stripos($tpl, 'property') !== false) {
+            $agentType = 'property_inquiry';
         }
 
-        $tid = $this->tenantId();
-        $sessionData = [
-            'lead_id' => $schedule['lead_id'],
-            'phone' => $schedule['phone'] ?: ($schedule['lead_phone'] ?? ''),
-            'call_type' => 'outbound',
-            'lead_name' => $schedule['lead_name'] ?? '',
-            'caller_id' => $schedule['caller_id'] ?? '',
-            'agent_id' => $schedule['agent_id'] ?? null,
-            'call_flow' => $schedule['script_template'] ?? 'property_introduction',
-            'agent_name' => $schedule['agent_name'] ?? '',
-            'agent_phone' => $schedule['agent_phone'] ?? '',
-            'lead_details' => [
-                'lead_id' => $schedule['lead_id'],
-                'name' => $schedule['lead_name'] ?? '',
-                'phone' => $schedule['lead_phone'] ?? '',
-                'property_interest' => $schedule['property_interest'] ?? '',
-                'colony_id' => $schedule['colony_id'] ?? null,
-            ],
-        ];
+        // Build the TwiML URL Twilio fetches - it IS the existing /api/twilio/voice IVR
+        $schemeHost = rtrim(defined('BASE_URL') ? BASE_URL : 'http://localhost/apsdreamhome', '/');
+        $twimlUrl = $schemeHost . '/api/twilio/voice?type=' . rawurlencode($agentType) . '&schedule_id=' . (int)$scheduleId;
 
+        $tid = $this->tenantId();
         $callResult = $this->makeCall([
-            'to' => $sessionData['phone'],
-            'from' => $schedule['caller_id'] ?? '',
-            'script_id' => $schedule['script_template'] ?? 1,
-            'lead_id' => $schedule['lead_id'],
-            'campaign_id' => null,
-            'webhook_url' => BASE_URL . '/api/voice/webhook?session_id=' . uniqid(),
-            'options' => [
-                'record' => true,
-                'timeout' => 60,
-                'statusCallback' => BASE_URL . '/api/voice/webhook/status?session_id=' . uniqid(),
+            'to'           => $schedule['phone'] ?: ($schedule['lead_phone'] ?? ''),
+            'from'         => '',
+            'script_id'    => $tpl,
+            'lead_id'      => $schedule['lead_id'],
+            'campaign_id'  => null,
+            'webhook_url'  => $twimlUrl,
+            'options'      => [
+                'record'         => true,
+                'timeout'        => 30,
+                'statusCallback' => $schemeHost . '/api/twilio/voice/status',
             ],
         ]);
 
         if ($callResult['success'] ?? false) {
-            $this->db->execute(
-                "UPDATE ai_calling_schedule SET status = 'ringing', call_sid = ?, provider_call_sid = ?, started_at = NOW() WHERE id = ?",
-                [$callResult['call_sid'] ?? null, $callResult['call_sid'] ?? null, $scheduleId]
-            );
+            $sid = $callResult['sid'] ?? null;
+            // Persist session + call SID so the gather/status webhooks can link back
+            if ($sid) {
+                $sessionId = 'sched_' . $scheduleId . '_' . substr(md5($sid), 0, 6);
+                try {
+                    $this->db->execute(
+                        "INSERT INTO ai_call_sessions
+                            (campaign_id, tenant_id, session_id, lead_id, agent_id, call_type,
+                             phone, status, script_template, created_at, updated_at, call_sid)
+                         VALUES (?, ?, ?, ?, NULL, 'outbound', ?, 'in_progress', ?, NOW(), NOW(), ?)",
+                        [null, $tid > 1 ? $tid : 1, $sessionId, $schedule['lead_id'],
+                         $schedule['phone'] ?: $schedule['lead_phone'] ?? '0000000000', $tpl, $sid]
+                    );
+                } catch (\Throwable $e) {
+                    error_log('initiateCall session insert: ' . $e->getMessage());
+                }
+                try {
+                    $this->db->execute(
+                        "UPDATE ai_calling_schedule SET result_notes = ?, updated_at = NOW() WHERE id = ?",
+                        ['initiated sid=' . $sid, $scheduleId]
+                    );
+                } catch (\Throwable $e) { /* best-effort */ }
+            }
             return [
-                'success' => true,
-                'call_sid' => $callResult['call_sid'] ?? null,
-                'schedule_id' => $scheduleId,
-                'call_result' => $callResult,
-            ];
-        } else {
-            $this->db->execute(
-                "UPDATE ai_calling_schedule SET status = 'failed', error_message = ?, updated_at = NOW() WHERE id = ?",
-                [$sendErr ?? $callResult['error'] ?? 'Call failed', $scheduleId]
-            );
-            return [
-                'success' => false,
-                'error' => $sendErr ?? $callResult['error'] ?? 'Call failed'
+                'success'    => true,
+                'call_sid'   => $sid,
+                'schedule_id'=> $scheduleId,
+                'call_result'=> $callResult,
             ];
         }
-    }
 
+        $this->db->execute(
+            "UPDATE ai_calling_schedule SET status = 'failed', result_notes = ?, updated_at = NOW() WHERE id = ?",
+            [$callResult['error'] ?? 'Call initiation failed', $scheduleId]
+        );
+        return [
+            'success' => false,
+            'error'   => $callResult['error'] ?? 'Call initiation failed',
+        ];
+    }
+    /**
+     * Initiate an outbound call from a scheduled record
+     */
 /**
      * Select the best available provider
      */
@@ -374,13 +385,43 @@ class VoiceService
 
     private function callTwilio(array $params): array
     {
+        // Place a REAL outbound call via the Twilio REST API: Twilio fetches our
+        // TwiML URL (GET), keeps the line connected, runs the IVR from that
+        // script, and WebHooking callbacks update the schedule. Anything other
+        // than this path silently never dials the customer.
         try {
-            $twilio = new \App\Services\Gateway\TwilioService();
-            $result = $twilio->sendSms($params['to'], $params['body'] ?? '');
-            if (!empty($result['success'])) {
-                return ['success' => true, 'status' => 'sent', 'provider' => 'twilio', 'sid' => $result['sid'] ?? null];
+            $to = (string)($params['to'] ?? '');
+            if ($to === '') {
+                return ['success' => false, 'status' => 'failed', 'error' => 'Recipient number (to) required', 'provider' => 'twilio'];
             }
-            return ['success' => false, 'status' => 'failed', 'error' => $result['error'] ?? 'Twilio send failed', 'provider' => 'twilio'];
+            $twimlUrl = (string)($params['webhook_url'] ?? '');
+            if ($twimlUrl === '') {
+                return ['success' => false, 'status' => 'failed', 'error' => 'webhook_url (TwiML URL) required for outbound call', 'provider' => 'twilio'];
+            }
+
+            $twilio = new \App\Services\Gateway\TwilioService();
+            $options = $params['options'] ?? [];
+            $result = $twilio->makeCall($to, $twimlUrl, [
+                'timeout' => (int)($options['timeout'] ?? 60),
+                'record' => !empty($options['record']),
+                'statusCallback' => $options['statusCallback'] ?? null,
+            ]);
+
+            if (!empty($result['success'])) {
+                return [
+                    'success' => true,
+                    'status' => 'sent',
+                    'provider' => 'twilio',
+                    'sid' => $result['sid'] ?? null,
+                    'cost' => $result['cost'] ?? null,
+                ];
+            }
+            return [
+                'success' => false,
+                'status' => 'failed',
+                'error' => $result['error'] ?? 'Twilio call failed',
+                'provider' => 'twilio',
+            ];
         } catch (\Throwable $e) {
             return ['success' => false, 'status' => 'failed', 'error' => 'TwilioService unavailable: ' . $e->getMessage(), 'provider' => 'twilio'];
         }

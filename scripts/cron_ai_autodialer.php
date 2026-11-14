@@ -1,150 +1,136 @@
 <?php
 /**
- * AI Auto-Dialer Cron
- * Runs every 2 minutes during business hours (9AM-8PM)
+ * AI Auto-Dialer Cron - runs the scheduled AI outbound calls.
+ *
+ * Usage:
+ *   php scripts/cron_ai_autodialer.php            # Dry-run (prints what it would dial)
+ *   php scripts/cron_ai_autodialer.php --execute  # Actually places calls
+ *   php scripts/cron_ai_autodialer.php --execute --force  # Ignore business-hours window
+ *
+ * SAFETY: default is dry-run. Placing real outbound calls to customers requires
+ * an explicit --execute flag. The Twilio trial account dials only verified numbers;
+ * test-lead numbers must be Twilio-verified on the account or calls fail with 21219.
+ *
+ * Schema (verified): ai_calling_schedule(
+ *   id, campaign_id, tenant_id, lead_id, user_id,
+ *   phone, priority, scheduled_date, scheduled_time, script_template,
+ *   max_attempts, attempt_count, status ENUM('pending','processing','completed','failed','cancelled')
+ * )
  */
 
 require_once __DIR__ . '/../config/bootstrap.php';
 
-use App\Services\AI\VoiceProviderManager;
-use App\Services\Voice\VoiceCallService;
+use App\Services\AI\VoiceService;
 use App\Core\Database\Database;
+
+$execute = in_array('--execute', $argv, true);
+$force   = in_array('--force',   $argv, true);
 
 echo "=== AI Auto-Dialer Cron ===\n";
 echo "Time: " . date('Y-m-d H:i:s') . "\n";
+echo "Mode: " . ($execute ? 'EXECUTE' : 'DRY-RUN') . "\n";
 
-// Only run during business hours (9AM-8PM)
-$hour = (int)date('H');
-if ($hour < 9 || $hour >= 20) {
-    echo "Outside business hours (9AM-8PM). Skipping.\n";
+// Business hours (9 AM - 8 PM) unless forced
+$hour = (int) date('H');
+if (!$force && ($hour < 9 || $hour >= 20)) {
+    echo "Outside business hours (9 AM - 8 PM). Skipping. Use --force to override.\n";
     exit(0);
 }
 
+$db = Database::getInstance()->getConnection();
+
+// Check provider is reachable before doing anything
+$svc = new VoiceService();
+$status = $svc->getProvidersStatus();
+if (empty($status)) {
+    echo "No voice providers configured. Nothing to call.\n";
+    echo "(voice_provider_configs is empty - seed it from /admin/service-configs)\n";
+    exit(0);
+}
+echo "Providers available: " . implode(', ', array_keys($status)) . "\n";
+
+// Fail-safe verify: ensure the target table + columns exist before querying
 try {
-    $voiceService = new VoiceCallService();
-    $providerManager = VoiceProviderManager::getInstance();
-    
-    // Check provider health
-    $providerStatus = $providerManager->getProviderStatus();
-    $activeProviders = array_filter($providerStatus, fn($p) => $p['available'] ?? false);
-    
-    if (empty($activeProviders)) {
-        echo "No active voice providers. Skipping dialer.\n";
-        exit(0);
-    }
-    
-    echo "Active providers: " . implode(', ', array_keys($activeProviders)) . "\n";
-    
-    // Process scheduled calls
-    $db = Database::getInstance()->getConnection();
-    
-    // Get due calls (status = scheduled, scheduled_time <= now)
-    $stmt = $db->prepare("
-        SELECT * FROM ai_calling_schedule 
-        WHERE status = 'scheduled' 
-        AND scheduled_time <= NOW()
-        AND retry_count < 3
-        ORDER BY scheduled_time ASC
-        LIMIT 10
-    ");
+    $stmt = $db->prepare("DESCRIBE ai_calling_schedule");
     $stmt->execute();
-    $dueCalls = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    if (empty($dueCalls)) {
-        echo "No due calls to process.\n";
-        exit(0);
-    }
-    
-    echo "Processing " . count($dueCalls) . " due calls...\n";
-    
-    $processed = 0;
-    $failed = 0;
-    
-    foreach ($dueCalls as $call) {
-        try {
-            $provider = $providerManager->getProvider($call['provider'] ?? 'exotel');
-            
-            if (!$provider || !($provider->isAvailable() ?? false)) {
-                // Try next available provider
-                $provider = array_values($activeProviders)[0] ?? null;
-                if (!$provider) {
-                    throw new Exception("No available provider");
-                }
-            }
-            
-            // Initiate call
-            $result = $provider->makeCall([
-                'to' => $call['phone_number'],
-                'from' => $call['caller_id'] ?? '',
-                'script' => $call['script'] ?? '',
-                'webhook_url' => $call['webhook_url'] ?? '',
-                'metadata' => [
-                    'schedule_id' => $call['id'],
-                    'lead_id' => $call['lead_id'] ?? null,
-                ],
-            ]);
-            
-            if ($result['success'] ?? false) {
-                // Update schedule status
-                $stmt = $db->prepare("
-                    UPDATE ai_calling_schedule 
-                    SET status = 'in_progress', 
-                        call_sid = ?, 
-                        provider = ?,
-                        started_at = NOW()
-                    WHERE id = ?
-                ");
-                $stmt->execute([
-                    $result['call_sid'] ?? '',
-                    $provider->getName() ?? 'unknown',
-                    $call['id'],
-                ]);
-                
-                $processed++;
-                echo "  ✅ Call initiated to {$call['phone_number']} (SID: {$result['call_sid']})\n";
-            } else {
-                throw new Exception($result['error'] ?? 'Call failed');
-            }
-            
-        } catch (\Throwable $e) {
-            $failed++;
-            
-            // Increment retry count
-            $stmt = $db->prepare("
-                UPDATE ai_calling_schedule 
-                SET retry_count = retry_count + 1,
-                    last_error = ?,
-                    updated_at = NOW()
-                WHERE id = ?
-            ");
-            $stmt->execute([$e->getMessage(), $call['id']]);
-            
-            echo "  ❌ Failed to call {$call['phone_number']}: " . $e->getMessage() . "\n";
-        }
-    }
-    
-    echo "Processed: $processed, Failed: $failed\n";
-    
-    // Also check for stuck in-progress calls (timeout after 5 minutes)
-    $stmt = $db->prepare("
-        UPDATE ai_calling_schedule 
-        SET status = 'failed', 
-            last_error = 'Call timeout (5 min)',
-            updated_at = NOW()
-        WHERE status = 'in_progress' 
-        AND started_at < DATE_SUB(NOW(), INTERVAL 5 MINUTE)
-    ");
-    $stmt->execute();
-    $timedOut = $stmt->rowCount();
-    
-    if ($timedOut > 0) {
-        echo "Timed out $timedOut stuck calls\n";
-    }
-    
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $c) {
+    $cols[] = isset($c['Field']) ? $c['Field'] : reset($c);
+}
 } catch (\Throwable $e) {
-    echo "❌ ERROR: " . $e->getMessage() . "\n";
-    echo $e->getTraceAsString() . "\n";
+    echo "ERROR: ai_calling_schedule unavailable: " . $e->getMessage() . "\n";
     exit(1);
 }
+foreach (['phone', 'status', 'scheduled_date', 'scheduled_time', 'max_attempts', 'attempt_count'] as $needed) {
+    if (!in_array($needed, $cols, true)) {
+        echo "ERROR: ai_calling_schedule is missing required column '{$needed}'.\n";
+        exit(1);
+    }
+}
 
-echo "=== AI Auto-Dialer Completed ===\n";
+// Find calls due now (today, scheduled time reached, attempts not exhausted)
+$stmt = $db->prepare(
+    "SELECT id, lead_id, phone, script_template, attempt_count, max_attempts
+       FROM ai_calling_schedule
+      WHERE status = 'pending'
+        AND scheduled_date <= CURDATE()
+        AND (scheduled_time IS NULL OR scheduled_time <= CURTIME())
+        AND attempt_count < max_attempts
+      ORDER BY
+        FIELD(priority, 'urgent', 'high', 'medium', 'low') ASC,
+        id ASC
+      LIMIT 10"
+);
+$stmt->execute();
+$due = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+if (empty($due)) {
+    echo "No due calls to process.\n";
+    exit(0);
+}
+
+echo "Found " . count($due) . " due call(s).\n";
+
+$processed = 0;
+$failed = 0;
+foreach ($due as $call) {
+    $id = (int) $call['id'];
+    $attemptsLeft = (int) $call['max_attempts'] - (int) $call['attempt_count'];
+
+    if (!$execute) {
+        echo "  DRY-RUN id={$id} phone={$call['phone']} script={$call['script_template']} attempts_left={$attemptsLeft}\n";
+        continue;
+    }
+
+    try {
+        $result = $svc->initiateCall($id);
+        if (!empty($result['success'])) {
+            $processed++;
+            echo "  SENT id={$id} phone={$call['phone']} sid=" . ($result['call_sid'] ?? '?') . "\n";
+        } else {
+            $failed++;
+            echo "  FAIL id={$id} error=" . ($result['error'] ?? 'unknown') . "\n";
+        }
+    } catch (\Throwable $e) {
+        $failed++;
+        echo "  ERROR id={$id}: " . $e->getMessage() . "\n";
+    }
+}
+
+echo "\nProcessed: $processed | Failed: $failed\n";
+
+// Stuck-call watchdog: processing > 15 min without completion = stale
+$stmt = $db->prepare(
+    "UPDATE ai_calling_schedule
+        SET status = 'failed',
+            result_notes = 'Timed out (no status callback within 15 min)',
+            updated_at = NOW()
+      WHERE status = 'processing'
+        AND updated_at < DATE_SUB(NOW(), INTERVAL 15 MINUTE)"
+);
+$stmt->execute();
+$timedOut = $stmt->rowCount();
+if ($timedOut > 0) {
+    echo "Marked $timedOut stale call(s) as failed.\n";
+}
+
+exit(0);
