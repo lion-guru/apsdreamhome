@@ -88,12 +88,78 @@ Rules added:
 6. **Smoke-test the actual write path with a sacrificial probe, not the unit of the feature.** A service that "uses encryption" at class level can enqueue PLAINTEXT through its INSERT — one line of commented intent (\`$storeValue\` computed-but-unused) slipped past four reviews of the file.
 7. **Secrets have three layers to audit: storage, transport, and audit/logs. Fixing only the storage layer leaves the audit table as a parallel plaintext copy.** All three were fake here.
 
-- `storage/keys/service_config.key` (the 32-byte key behind `enc:v1:`) was committed in `bee73667e` (Session 348, "OpenCode Zen multi-key switcher …") and sat on `origin/main`, byte-identical to the working-tree copy (SHA256 `21896032…`). Anyone with a clone had the full encryption primitive.
-- **Verification before rotation**: `SELECT COUNT(*) FROM service_configs WHERE config_value LIKE 'enc:v1:%'` → **0**. No ciphertext depended on the compromised key, so the rotation destroys nothing.
-- **What was done**: key was untracked from git (`git rm --cached`), a fresh 32-byte random key was written, `storage/keys/` added to `.gitignore`. Roundtrip through `ServiceConfigService::encryptValue`/`decryptValue` passed on the new key.
-- **Backup of the old key**: `backups/keys/service_config.key.2026-11-14.bak` (gitignored; not in the repo).
-- **What history holds**: the compromised key remains in git history (force-push was declined). Anyone who cloned before this point must be treated as having it. The correct response — rotating every secret ever written with it — is equivalent to rotating every `enc:v1:` secret in the DB, of which there are currently **zero**. The live (plaintext) SMTP/Twilio/AWS/Razorpay values already require provider-side rotation per the original runbook; this exposure does not enlarge that set, it just removes the last theoretical protection of future writes.
+## Addendum 3 (2026-11-14): exact plaintext token manifest - rotate at providers, then delete rows
+
+`scripts/secret_audit.php` (committed, exit 1 on findings) found **31 token-shaped plaintext rows**.
+Every row audited: `usage_count = 0`, `last_used_at = NULL` for all `api_keys` rows - the app reads credentials from `.env` / `service_configs`, never from these tables.
+
+### `settings` (14 rows, `key` shown; values are the raw tokens - never printed here)
+| id | key |
+|----|-----|
+| 423 | `api_groq_key` |
+| 425 | `api_openrouter_key` |
+| 426 | `api_openrouter_key_backup` |
+| 427 | `api_anthropic_key` |
+| 428 | `api_openai_key` |
+| 429 | `api_openai_key_test` |
+| 430 | `api_gemini_key` |
+| 431 | `api_google_speech_key` |
+| 432 | `api_opencode_key` |
+| 434 | `api_huggingface_key` |
+| 435 | `api_kimi_key` |
+| 436 | `api_zenmux_key` |
+| 458 | `api_opencode_key_techguru` |
+| 459 | `api_opencode_key_aps` |
+
+### `api_keys` (17 rows)
+| id | service_name | key_name |
+|----|--------------|----------|
+| 4 | OpenRouter | OPENROUTER_API_KEY |
+| 7 | OpenAI | OPENAI_API_KEY |
+| 10 | Anthropic Claude | ANTHROPIC_API_KEY |
+| 11 | Hugging Face | HUGGING_FACE_API_KEY |
+| 19 | groq | GROQ_API_KEY |
+| 20 | openrouter | OPENROUTER_API_KEY_BACKUP |
+| 22 | opencode | OPENCODE_ZEN_KEY_TECHGURU |
+| 23 | zenmux | ZENMUX_API_KEY |
+| 25 | (empty) | GROQ_API_KEY |
+| 26 | (empty) | OPENROUTER_API_KEY |
+| 27 | (empty) | OPENAI_API_KEY |
+| 28 | (empty) | ANTHROPIC_API_KEY |
+| 29 | (empty) | OPENCODE_API_KEY |
+| 30 | (empty) | ZENMUX_API_KEY |
+| 32 | (empty) | GOOGLE_SPEECH_API_KEY |
+| 33 | opencode | OPENCODE_ZEN_KEY_TECHGURU |
+| 34 | opencode | OPENCODE_ZEN_KEY_APS |
+
+### What the owner must do (in order)
+1. **Rotate at the provider console**: OpenCode Zen (apsdreamhomes44@gmail.com + techguruabhay@gmail.com), OpenAI, OpenRouter, Groq, Anthropic, HuggingFace, Kimi/Zenmux (if they exist), GCP (`api_gemini_key`, `api_google_speech_key`).
+   The live app keeps working - none of these rows feed any code path (all API reads go through `.env` / `service_configs`; live keys live there).
+2. **Re-enter the rotated values** through `/admin/service-configs` (stored `enc:v1:` + audit-redacted per Session 526), or into `.env` as env keys.
+3. **Delete the 31 stale rows** once rotation is confirmed (safety dump first):
+   `C:\xampp\mysql\bin\mysqldump.exe -u root apsdreamhome settings api_keys > backups\db\pre-token-delete.sql`
+   Then apply the DELETEs for the exact IDs above. Do NOT delete before rotation is announced - the rows are the owner's only local copy of the keys.
+4. **Verify**: `php scripts/secret_audit.php` -> `RESULT: OK`; `php testing/master_test_runner.php` -> 11/11.
+5. **`service_config_audit`** still holds 11 legacy plaintext rows (Exotel/Twilio/AWS, Addendum 2) - same rotation class applies; purging audit rows is a separate explicit owner decision.
 
 Rules added:
-4. **Encryption keys belong in gitignored storage, never in the repo** — and they must be treated as compromised from the moment they land anywhere shared. A key leak is total: no rotation of ciphertexts is possible after the fact.
-5. **A feature whose entire point is "encrypted at rest" is only as safe as its key file.** When adopting `enc:v1:` for a new secret, first check `git ls-files storage/keys` is empty and `git check-ignore storage/keys` matches — in this repo both failed for months.
+8. **A plaintext credential is compromised the instant it exists in a shared sink.** The fix is deletion + provider-rotation, never "rename to `_backup`" or "move to another table".
+9. **Audit tables are sinks too.** Any audit/logging that stores secret payloads must record `[redacted]` for `is_secret` rows - see Session 526. Rotation cures the copy; deletion cleans the audit; rotation does not fix the audit.
+
+## Addendum 4 (2026-11-14): log retention was silently dead; now one daily run + owner registration
+
+- `ab_events` had 42,584 rows older than the 90-day rule (never executed: no OS scheduled task invoked
+  `scripts/run_all_crons.php`; `logs/` shows no cleanup run). `visitor_page_views` held 5,837 overdue;
+  `csp_violations` 637.
+- **Purged** on 2026-11-14 (safety dump `backups/db/retention_purge_pre_2026-11-14.sql`, 25 MB):
+  49,058 rows across 5 rules; post-purge `older_*` == 0.
+- `scripts/cron_cleanup_logs.php` now has `--dry-run` (counts only, zero deletes) and prints
+  per-table would-delete counts; `scripts/run_retention_purge.bat` wraps the standalone CLI
+  (`php scripts/cron_cleanup_logs.php`) for scheduler use.
+- **Owner action (interactive, elevated shell required)** - the current shell token lacks admin rights
+  (schtasks returned E_ACCESSDENIED, consistent with the S174 salary-grant block):
+
+  `schtasks /create /tn "APS_LogRetentionPurge" /tr "C:\xampp\htdocs\apsdreamhome\scripts\run_retention_purge.bat" /sc daily /st 03:30 /rl HIGHEST /f`
+
+- Until that task exists, retention rules drift at ~12 ab_events rows/day. Run the bat manually or
+  accept growth; do NOT wire web-request-triggered purges (deleting on page views is unacceptable).

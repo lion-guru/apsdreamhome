@@ -5,10 +5,11 @@
 // - csp_violations:     DELETE older than 30 days (received_at — table has no created_at)
 // - notification_logs:  DELETE older than 180 days (created_at)
 // - audit_logs:         DELETE older than 365 days (created_at)
-// Runnable standalone: php scripts/cron_cleanup_logs.php
+// Runnable standalone: php scripts/cron_cleanup_logs.php           (deletes per retention rules)
+//                      php scripts/cron_cleanup_logs.php --dry-run   (counts only, no deletes)
 // Also wired as daily Task 10 in scripts/run_all_crons.php
 // Returns ['deleted' => [...]] when included; echoes summary on CLI.
-function cron_cleanup_logs(PDO $pdo): array
+function cron_cleanup_logs(PDO $pdo, bool $dryRun = false): array
 {
     $rules = [
         'ab_events'          => ['created_at', 90],
@@ -20,15 +21,21 @@ function cron_cleanup_logs(PDO $pdo): array
     $deleted = [];
     foreach ($rules as $table => [$col, $days]) {
         try {
-            $stmt = $pdo->prepare("DELETE FROM `$table` WHERE `$col` < NOW() - INTERVAL " . (int)$days . " DAY");
-            $stmt->execute();
-            $deleted[$table] = $stmt->rowCount();
+            if ($dryRun) {
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM `$table` WHERE `$col` < NOW() - INTERVAL " . (int)$days . " DAY");
+                $stmt->execute();
+                $deleted[$table] = (int)$stmt->fetchColumn(); // would-delete count (no rows deleted)
+            } else {
+                $stmt = $pdo->prepare("DELETE FROM `$table` WHERE `$col` < NOW() - INTERVAL " . (int)$days . " DAY");
+                $stmt->execute();
+                $deleted[$table] = $stmt->rowCount();
+            }
         } catch (Throwable $e) {
             error_log("cron_cleanup_logs: $table failed: " . $e->getMessage());
-            $deleted[$table] = -1;
+            $deleted[$table] = -1; // overloaded sentinel; callers must treat -1 as error
         }
     }
-    return ['deleted' => $deleted];
+    return ['deleted' => $deleted, 'dry_run' => $dryRun];
 }
 
 if (PHP_SAPI === 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
@@ -39,7 +46,12 @@ if (PHP_SAPI === 'cli' && realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE
         $config['username'], $config['password'],
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
-    $result = cron_cleanup_logs($pdo);
-    foreach ($result['deleted'] as $t => $n) echo "$t: $n rows purged\n";
-    echo "DONE cron_cleanup_logs\n";
+    $dryRun = in_array('--dry-run', $argv ?? [], true);
+    $result = cron_cleanup_logs($pdo, $dryRun);
+    foreach ($result['deleted'] as $t => $n) {
+        echo $n === -1
+            ? "$t: FAILED (see error log)\n"
+            : ($dryRun ? "$t: would delete $n rows\n" : "$t: $n rows purged\n");
+    }
+    echo $dryRun ? "DRY RUN DONE - no rows deleted\n" : "DONE cron_cleanup_logs\n";
 }
